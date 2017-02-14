@@ -1,0 +1,89 @@
+Program instructions  (to be completed)
+
+When the program start, the default analysis file is loaded (default.par in the
+folder files). It contains the same as the alzrc example but without phases
+and datafiles. Saving an analysis as default.par in the files folder will
+overwrite it and this will become you standard initial analysis loaded when
+you press the "new analysis" toolbar button or menu item. Use it has a 
+default template.
+
+The general phylosophy is that you can have one or more samples, anyone 
+containing one or more phases arranged in layers and having some data sets 
+associated (only its active datasets are used by any sample). Any set of data
+(that you specify in the dataset panel) may contain more spectra collected on
+different instruments (you have also the possibility to define more instruments).
+The phase panel contains the phases. 
+To work with datasets, phases, samples and intruments, just select the 
+corresponding tabpanel and select one item from the list. Then press the edit 
+button to edit/see that object.
+
+Special fast and short notes: 
+
+ - Spectra are under dataset. To plot a spectrum use the edit button for the 
+   dataset, go to the datafile tabpanel, select the datafile and press the view
+   button. In the plot use the right mouse button (options + mouse click on Mac)
+   to activate some features. Clicking and dragging the mouse works like a box
+   zoom. Double click to reset the scale.
+   NOTE: to plot the datafiles from the main Maud window:
+   selecting a dataset and choosing from the menu "Graphic:Plot selected Dataset"
+   will make a multiplot of all enabled diffraction datafiles in the selected
+   Dataset. If the compute spectra or refine button was never used, the fitting
+   is not available and only the experimental data will be plotted.
+
+ - To load a datafile go to the datafile tabpanel as specified above and use the
+   Browse... button.
+   
+ - To view all the parameters used for the refinements you may select the
+   "Parameters list" menu item. Only the refinable/not refinable parameters are
+   visibles trough this method. They are arranged in principal and subordinate
+   objects they belong to. You can change the status (refinable/not refinable
+   or "equals to") by pressing the mouse in the last column. Or double clicking
+   in the values column you may edit the actual value.
+   Entire objects (like a phase) can be set refinable (means all the parameters
+   in that object become refinables) or can be set "equals to" another phase (
+   only equivalent object can be specified as "equals to"; equivalent means they
+   have the same number of parameters and subordinate objects like atoms etc.).
+   The "equals to" will put all the parameters of the selected phase "equal to"
+   the parameters of the target phase, one by one; the action can be inherited
+   to subordinate objects or not.
+   
+ - Use the wizard panel to perform an automatic analysis (there is an help inside
+   the panel). Or specify the refinable/not refinable parameters as you like
+   and choose the refine menu command to start the least square refinement.
+   The wizard panel can be used also for fast setting of the parameters (see
+   the help inside).
+   
+ - You can load some phases and/or instruments from the databases. (Instruments.mdb
+   for instruments and structures.mdb for phases).
+   In general to load an object (phase, instrument, dataset...) you can select the 
+   corresponding tabpanel and use the "add (database)" button. Then load a file
+   containing the object you need (file in CIF format, also an analysis file
+   can be choosen), a window will appear containing a list of all the objects of
+   that type in the file. Choose the one you need and that's all. If you load an
+   Instrument from an analysis files, two object will be displayed with the same
+   name, the second is a dummy one.
+
+ - Texture and microstructure are under the phase edit panel.
+
+You can load some examples from the files folder. The starting one can be the
+file alzrc.par. It's a double phase example. To load it, use the 
+File:open analysis   menu item and choose the specified file.
+With this example you can compute the spectrum (in the menu) or to refine. Try
+also this last. You can watch the fitting under dataset, select the data files
+tab, select the file and press the view button. Data files can be loaded using
+the browse button. You can zoom in dragging a rectangle. Then try the right
+button, a menu will appear. The right button is special, if you use it in the
+pink fields a popup menu appears that permit you to specify if the underlaying
+parameter must be refinable or not or equal to another parameter. When you
+complete one refine cycle leaving the free parameters as they are you can try to
+refine better the spectrum going to the instrument/aberration/HWHM tab, select
+one by one the three Caglioti parameters and use the right button in the pink
+field to specify all these parameters refinables. Close the window (the close
+button save the changes, the cancel not) and choose again refine from the compute
+menu. This time the wss will go lower and the fit will be better.
+
+Try to play as you like.  There are more examples (gtial.par, neutron, more 
+files). You can load it from the menu, select file and open. (The new will load 
+the default example). Try the compute spectrum and then go to see with the view 
+button the fitting.
+

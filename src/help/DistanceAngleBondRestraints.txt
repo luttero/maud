@@ -1,0 +1,38 @@
+------- Distance & Angles Restraints Help -----------
+
+The object permit to add some penalty functions based on bond lengths and
+angles.
+
+The penalty function for each bond distance or angle is:
+
+Energy = strength * (Optimal_distance - Actual_distance)^2
+
+Energy = strength * (Optimal_angle - Actual_angle)^2
+
+Advised values for strength are in the order of 100000. Change it
+and use the "spectra computation" button to compute the energy
+value. It should be a non trascurable fraction of the WSS to be
+effective.
+
+In the WSS this is used as: WSS(Energy) = Energy^2 * energy_weight^2
+
+The energy_weight is the field near the "options" button that you press
+when you open the options window for this object.
+
+The angle is defined as the acute angle between A-B and A-C where A is
+the pivot atom and B and C the other two atoms. Angles in degrees.
+Distances are in angstroms.
+
+If you change the number of atoms after this object is already activated,
+you need to press the "Refresh atoms" button to update the list of
+bonds. The list depends also on the max bond length as only bonds with
+distances below this value are listed (also for angles). Use it to
+decrease or increase the number of considered bonds.
+If you press the "Refresh atoms" button and a distance has changed and
+becomes greater than the maximum bond length, the restraint will disappear
+from the list. Before pressing the "Refresh atoms" button, you may want
+to save the modifications you made, otherwise you'll loose them.
+
+In the tables you can change only the optimum distance and angle and
+the strength value.
+If the strength value is 0 the restraint is not used for that bond.

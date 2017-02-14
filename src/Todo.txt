@@ -1,0 +1,13 @@
+- hkl labels
+- window with coordinates always on top
+- search box, fixed does not work
+- +-2theta, texture not working for the minus
+- more samples, phases with slightly different parameters?
+- add excluded range plotting to multiplot
+- add pole figure for arbitrary hkl
+- 00l pole figures
+- Pauley fitting
+- interpolation and point selection/range
+- add repulsion to restraints
+
+- Superflip: storing the phase info, save FWHM, have a panel for text options

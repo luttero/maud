@@ -1,0 +1,76 @@
+
+This is Version 0.3-3 of the HTTPClient package. The latest version should
+always be available at http://www.innovation.ch/java/HTTPClient/ .
+Copyright (C) 1996-2001  Ronald Tschalär
+
+The HTTPClient is fairly full-featured http client library. It implements
+most of the relevant parts of HTTP/1.1, and automatically handles things
+like redirections, authorization, and cookies. The functionality can be
+easily extended through the use of modules.
+
+
+Installation:
+-------------
+
+Unpacking the .tar.Z or .zip should've created a subdirectory
+'HTTPClient'. Put this directory somewhere in your classpath. If you
+haven't done the following already I recommend setting up a main
+directory that contains a subdirectory for every java package you
+install, and then add this main directory to your classpath - that way
+for new packages all you have to do is unpack them into a subdirectory
+under that main directory and away you go. Now add a 'import
+HTTPClient.*;' statement to each of your files that use any part of the
+package and you're set to go.
+
+Alternatively you can put everything into a zip file and add that file
+to your CLASSPATH. If your JDK/development-environment supports
+compressed zip files and you downloaded the HTTPClient.zip file then
+you can just add that file to your CLASSPATH. If you downloaded the
+tar file, or if your JDK does not support compressed zip files, then
+unpack the HTTPClient and create an uncompressed zip file to put in
+the CLASSPATH with something like the following:
+
+  zip -r0 HTTPClient.zip HTTPClient -i '*.class'
+
+
+Directory Structure:
+--------------------
+
+ HTTPClient -- the source and compiled class files
+   |
+   +-- http --- the http handler (for use with URLConnection)
+   |
+   +-- shttp -- the shttp handler (for use with URLConnection)
+   |
+   +-- https -- the https handler (for use with URLConnection)
+   |
+   +-- alt ---- alternative versions of the core classes
+   |    |
+   |    +-- HotJava ---- the HotJava specific replacement classes
+   |
+   +-- doc -- all the documentation
+         |
+         +-- api ----- all the javadoc generated api docs
+         |
+         +-- images -- images for the documentation
+
+
+Use:
+----
+
+See the documentation in the doc subdirectory. The beginning is at
+HTTPClient/doc/index.html .
+
+
+Comments:
+---------
+
+Mail suggestions, comments, bugs, enhancement-requests to:
+
+ronald@innovation.ch
+
+
+  Have fun,
+
+  Ronald
+

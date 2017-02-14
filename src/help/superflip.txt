@@ -1,0 +1,39 @@
+-----------------------The Superflip (Palatinus) structure solution model---------------------------------------------
+
+Note:
+Maud does not come with the superflip executable included. Before to use this method, you should
+download an executable appropriate for your platform from:
+http://superspace.epfl.ch/superflip/
+and put ot in the plugins directory that must be in the same directory containing the Maud executable.
+If you want to change the Superflip module in Maud you can download the source code for it from
+http://www.ing.unitn.it/~maud/developer.html
+and compile it yourself using the instructions given there. Then you put it in the plugins directory
+(may be changing the name of the module as a Superflip (Palatinus) is already present. That way you may
+customize it for your purposes. You just need the Maud library/libraries (maud.jar) and a java compiler.
+
+Info:
+This module permit to integrate the superflip program of Palatinus into the Maud work flow.
+You need to first download the superflip executable and put it in the plugins directory. The name of the executable
+should be "superflip" (superflip.exe on Windows) but you can change it in the preferences, look for
+"superflip.executable_name".
+To use superflip, in the Adavanced models panel when editing a phase, select for "Structure Factor model"
+-> "structure solution model", then be sure you have an "Structure Factor Extractor" model like "Le Bail"
+and set the correct options in the "Superflip (Palatinus)" model under "Structure solution model".
+At the moment Maud uses only basic features of superflip. You select the correct division of the electron map
+(only the entire cell can be used; reduced cell is not enabled). Remember to set a division in a way the
+element has same dimensions along all axes and respect the presence of 3-fold, 2-fold axes (set the number
+of elements a multiple of the symmetry axis value).
+The other button are for plottig the e-map or resetting it.
+
+How it works:
+To effectively work with it, I normally perform some cycles using arbitrary structure factor and Le Bail extractor,
+then I switch to Structure solution model and Superflip (Palatinus). I run it in a normal refinement as the solution
+improves by multiple iterations. It is advisable to set the overlapping range in Le Bail (summation range) to zero
+and number of iterations not too high (5 is a good value) to preserve also part of the previous solution found
+by superflip, as in principle by running multiple iteration should converge to the real e-map.
+If you wish to look at the executable script used by Maud to run Superflip, in the Preferences set
+superflip_script.remove to false, then the script in the plugins folder will not be removed at end and you can check it.
+Maud prepare a file with the phase name ending in .inflip for input of superflip. Then at the end of the computation
+Maud read the .xplor and .m80 files produced by superflip. The .xplor is used to read the electron map file for
+plotting. From the .m80 file Maud read the structure factors to be used for the actual computation and starting
+values for extraction of structure factors by Le Bail.

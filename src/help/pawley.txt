@@ -1,0 +1,21 @@
+The Pawley method permits to refine structure factors directly into the least squares. Position and broadening
+of the peaks are computed as in the normal Rietveld refinement, only structure factors are refined and not computed
+from atoms positions. In such way Maud works similarly to a full profile pattern.
+In the case of multi-pattern analysis, only one structure factor for peak is refined, so variations between
+different patterns are to be accounted and modeled through texture or equivalent model.
+The list of structure factors refined is visible in the parameter list. You don't need to set them refined one by
+one (avoiding to refine the structure factors for peaks out of the range, but listed by Maud). To refine them
+the trick is to use the parameter list panel/window, select the Pawley object and click with the mouse button
+over the status of the object (should disply ***). In the combo box apeearing select "refinable", this will set
+all the parameters in the object (thus all the structure factors) to "refinable", also for peaks out of the range,
+don't worry. Be sure to set "not refinable" the parameter correlated or no more valid (atom positions, phase quantity
+for this phase etc.). Start refine, Maud will check the Pawley method and if there are structure factors outside
+the computation range refinable, it will put them "not refinable" before to start the least square or another
+optimization algorithm. To set all of them "not refinable" use the same method, but for the status of the Pawley
+object select "not refinable". You can do the same (refine/not refine) the Fhkl by enabling/disabling the
+"refine Fhkl" check box in the Pawley method options.
+When you go from one model to the Pawley (or reverse), the initial Fhkl will be tranferred. So you may start with
+arbitrary structure factors with Le Bail extractor, and switch after to Pawley.
+You can tweak the starting Fhkl value of Pawley (when resetting) in the Preferences. Be careful that this is the value
+usued for all peaks outside the range. So if you set a too high value, you will end up in too high peak tails from
+outside peaks coming in at the pattern borders.

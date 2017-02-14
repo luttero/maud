@@ -1,0 +1,132 @@
+data_Instrument_GenericFilteredDiffractometer_diffrn_measurement_device 'GenericFilteredDiffractometer'_pd_proc_intensity_incident 10_riet_par_asymmetry_truncation 0.4loop__riet_par_asymmetry_value  72.17134  -.229337loop__riet_par_caglioti_value  0.00252935  0.002716717  0.002312246loop__riet_par_gaussian_value  0.0  0.012loop__riet_par_2-theta_offset  0.0#subordinateObject_none_inst_intensity_calibration 'none'#end_subordinateObject_none#subordinateObject_none_inst_angular_calibration 'none'#end_subordinateObject_none#subordinateObject_Bragg-Brentano_pd_instr_geometry 'Bragg-Brentano'_diffrn_radiation_monochromator 'Monochromator'_pd_instr_2theta_monochr_post '0'_pd_instr_dist_src/samp '175.0'_pd_instr_monochr_pre_spec 'none'_pd_instr_2theta_monochr_pre '0'_pd_instr_divg_ax_src/samp '0.5'#end_subordinateObject_Bragg-Brentano#subordinateObject_Theta-2Theta_diffrn_measurement_method 'Theta-2Theta'#end_subordinateObject_Theta-2Theta#subordinateObject_X-ray tube_diffrn_radiation_type 'X-ray tube'#subordinateObject_1_diffrn_radiation_wavelength_id '1'_diffrn_radiation_wavelength 1.5405981_diffrn_radiation_wavelength_wt 1.0#end_subordinateObject_1#subordinateObject_2_diffrn_radiation_wavelength_id '2'_diffrn_radiation_wavelength 1.544497_diffrn_radiation_wavelength_wt 0.5#end_subordinateObject_2#end_subordinateObject_X-ray tube#subordinateObject_Scintillation_diffrn_radiation_detector 'Scintillation'#end_subordinateObject_Scintillation#subordinateObject_none_exptl_absorpt_correction_type 'none'#end_subordinateObject_nonedata_Instrument_RigakuIIIDmax_diffrn_measurement_device 'RigakuIIIDmax'_pd_proc_intensity_incident 10_riet_par_asymmetry_truncation 0.4loop__riet_par_asymmetry_value  72.17134  -.229337loop__riet_par_caglioti_value  0.00252935  0.002716717  0.002312246loop__riet_par_gaussian_value  0.0  0.012loop__riet_par_2-theta_offset  0.013079660996180626#subordinateObject_none_inst_intensity_calibration 'none'#end_subordinateObject_none#subordinateObject_none_inst_angular_calibration 'none'#end_subordinateObject_none#subordinateObject_Bragg-Brentano_pd_instr_geometry 'Bragg-Brentano'_diffrn_radiation_monochromator 'Monochromator'_pd_instr_2theta_monochr_post '26.57'_pd_instr_dist_src/samp '185.0'_pd_instr_monochr_pre_spec 'none'_pd_instr_2theta_monochr_pre '0'_pd_instr_divg_ax_src/samp '0.5'#end_subordinateObject_Bragg-Brentano#subordinateObject_Theta-2Theta_diffrn_measurement_method 'Theta-2Theta'#end_subordinateObject_Theta-2Theta#subordinateObject_X-ray tube_diffrn_radiation_type 'X-ray tube'#subordinateObject_1_diffrn_radiation_wavelength_id '1'_diffrn_radiation_wavelength 1.5405981_diffrn_radiation_wavelength_wt 1.0#end_subordinateObject_1#subordinateObject_2_diffrn_radiation_wavelength_id '2'_diffrn_radiation_wavelength 1.544497_diffrn_radiation_wavelength_wt 0.5#end_subordinateObject_2#end_subordinateObject_X-ray tube#subordinateObject_Scintillation_diffrn_radiation_detector 'Scintillation'#end_subordinateObject_Scintillation#subordinateObject_none_exptl_absorpt_correction_type 'none'#end_subordinateObject_nonedata_Instrument_Inel_LeMans_diffrn_measurement_device 'Inel_LeMans'_pd_proc_intensity_incident 50(0.0)_riet_par_asymmetry_truncation 0.4loop__riet_par_asymmetry_value  72.17134  -.229337loop__riet_par_caglioti_value  0.00252935  0.002716717  0.002312246loop__riet_par_gaussian_value  0.0  0.012loop__riet_par_2-theta_offset  -5#subordinateObject_none_inst_intensity_calibration 'none'#end_subordinateObject_none#subordinateObject_none_inst_angular_calibration 'none'#end_subordinateObject_none#subordinateObject_Bragg-Brentano_pd_instr_geometry 'Bragg-Brentano'_diffrn_radiation_monochromator 'filtered'_pd_instr_2theta_monochr_post '0'_pd_instr_dist_src/samp '175.0'_pd_instr_monochr_pre_spec 'filtered'_pd_instr_2theta_monochr_pre '0'_pd_instr_divg_ax_src/samp '0.0'#end_subordinateObject_Bragg-Brentano#subordinateObject_Theta-2Theta_diffrn_measurement_method 'Theta-2Theta'#end_subordinateObject_Theta-2Theta#subordinateObject_X-ray tube_diffrn_radiation_type 'X-ray tube'#subordinateObject_1_diffrn_radiation_wavelength_id '1'_diffrn_radiation_wavelength 1.5405981_diffrn_radiation_wavelength_wt 1.0#end_subordinateObject_1#subordinateObject_2_diffrn_radiation_wavelength_id '2'_diffrn_radiation_wavelength 1.544497_diffrn_radiation_wavelength_wt 0.5#end_subordinateObject_2#end_subordinateObject_X-ray tube#subordinateObject_Curved position sensitive_diffrn_radiation_detector 'Curved position sensitive'#end_subordinateObject_Curved position sensitive#subordinateObject_None_exptl_absorpt_correction_type 'None'#end_subordinateObject_Nonedata_Instrument_Inel_LeMans_kbeta_diffrn_measurement_device 'Inel_LeMans_kbeta'_pd_proc_intensity_incident 50(0.0)_riet_par_asymmetry_truncation 0.4loop__riet_par_asymmetry_value  72.17134  -.229337loop__riet_par_caglioti_value  0.00252935  0.002716717  0.002312246loop__riet_par_gaussian_value  0.0  0.012loop__riet_par_2-theta_offset  -5#subordinateObject_none_inst_intensity_calibration 'none'#end_subordinateObject_none#subordinateObject_none_inst_angular_calibration 'none'#end_subordinateObject_none#subordinateObject_Bragg-Brentano_pd_instr_geometry 'Bragg-Brentano'_diffrn_radiation_monochromator 'Filtered'_pd_instr_2theta_monochr_post '0'_pd_instr_dist_src/samp '175.0'_pd_instr_monochr_pre_spec 'none'_pd_instr_2theta_monochr_pre '0'_pd_instr_divg_ax_src/samp '0.0'#end_subordinateObject_Bragg-Brentano#subordinateObject_Theta-2Theta_diffrn_measurement_method 'Theta-2Theta'#end_subordinateObject_Theta-2Theta#subordinateObject_X-ray custom_diffrn_radiation_type 'X-ray custom'#subordinateObject_Cu-Kbeta_diffrn_radiation_wavelength_id 'Cu-Kbeta'_diffrn_radiation_wavelength 1.5405981_diffrn_radiation_wavelength_wt 1.0#end_subordinateObject_Cu-Kbeta#end_subordinateObject_X-ray custom#subordinateObject_Curved position sensitive_diffrn_radiation_detector 'Curved position sensitive'#end_subordinateObject_Curved position sensitive#subordinateObject_None_exptl_absorpt_correction_type 'None'#end_subordinateObject_Nonedata_Instrument_IPNS_3_diffrn_measurement_device 'IPNS_3'_pd_proc_intensity_incident 0.16224559(0.0)_riet_par_asymmetry_truncation -0.04loop__riet_par_asymmetry_value  58.23315264703177  -521.1983973085107  145.77676018922742loop__riet_par_caglioti_value  8.142292747725859E-5  -0.4240390073397155  588.8248121975258loop__riet_par_gaussian_value  0.0  0.0loop__riet_par_2-theta_offset  -5.02011879e-4(0.0)#subordinateObject_IPNS/LANSCE Incident Spectrum_inst_intensity_calibration 'IPNS/LANSCE Incident Spectrum'_inst_inc_parameter_file 'iparm_s94.gpp'_instrument_counter_bank 'Bank 3'loop__instrument_counter_bank_ID 'Bank 3'loop__inst_incident_spectrum_type '2'loop__inst_inc_spectrum_coeff_0  0.311925E+01loop__inst_inc_spectrum_coeff_1  0.494393E+09loop__inst_inc_spectrum_coeff_2  0.235432E+03loop__inst_inc_spectrum_coeff_3  0.332860E+04loop__inst_inc_spectrum_coeff_4  0.531141E-01loop__inst_inc_spectrum_coeff_5  -0.364654E+04loop__inst_inc_spectrum_coeff_6  0.164462E-01loop__inst_inc_spectrum_coeff_7  0.173938E+04loop__inst_inc_spectrum_coeff_8  0.406953E-02loop__inst_inc_spectrum_coeff_9  0.000000E+00loop__inst_inc_spectrum_coeff_10  0.000000E+00loop__inst_inc_spectrum_coeff_11  0.000000E+00#end_subordinateObject_IPNS/LANSCE Incident Spectrum#subordinateObject_IPNS/LANSCE Bank_inst_angular_calibration 'IPNS/LANSCE Bank'_instrument_parameter_file 'iparm_s94.gpp'_instrument_counter_bank 'Bank 3'loop__instrument_counter_bank_ID 'Bank 3'loop__instrument_bank_difc  7686.99loop__instrument_bank_difa  0.49loop__instrument_bank_zero  -4.55loop__instrument_bank_tof_theta  90.00#end_subordinateObject_IPNS/LANSCE Bank#subordinateObject_IPNS/LANSCE TOF_pd_instr_geometry 'IPNS/LANSCE TOF'#end_subordinateObject_IPNS/LANSCE TOF#subordinateObject_TOF_diffrn_measurement_method 'TOF'#end_subordinateObject_TOF#subordinateObject_TOF_diffrn_radiation_type 'TOF'#end_subordinateObject_TOF#subordinateObject_TOF_diffrn_radiation_detector 'TOF'#end_subordinateObject_TOF#subordinateObject_none abs_exptl_absorpt_correction_type 'none abs'#end_subordinateObject_none absdata_Instrument_IPNS_1_diffrn_measurement_device 'IPNS_1'_pd_proc_intensity_incident 0.2668196711325724_riet_par_asymmetry_truncation -0.04loop__riet_par_asymmetry_value  80.4376688375712  -1121.2617521293498  221.35640389745032loop__riet_par_caglioti_value  1.2708581311843698E-5  -0.06281480741794396  79.17409855957794loop__riet_par_gaussian_value  0  0loop__riet_par_2-theta_offset  -2.720051034908685E-4#subordinateObject_IPNS/LANSCE Incident Spectrum_inst_intensity_calibration 'IPNS/LANSCE Incident Spectrum'_inst_inc_parameter_file 'iparm_s94.gpp'_instrument_counter_bank 'Bank 1'loop__instrument_counter_bank_ID 'Bank 1'loop__inst_incident_spectrum_type '2'loop__inst_inc_spectrum_coeff_0  0.509109E+01loop__inst_inc_spectrum_coeff_1  0.745294E+09loop__inst_inc_spectrum_coeff_2  0.239962E+03loop__inst_inc_spectrum_coeff_3  0.100993E+05loop__inst_inc_spectrum_coeff_4  0.607286E-01loop__inst_inc_spectrum_coeff_5  -0.471445E+04loop__inst_inc_spectrum_coeff_6  0.988313E-02loop__inst_inc_spectrum_coeff_7  -0.763459E+03loop__inst_inc_spectrum_coeff_8  0.494027E-02loop__inst_inc_spectrum_coeff_9  0.000000E+00loop__inst_inc_spectrum_coeff_10  0.000000E+00loop__inst_inc_spectrum_coeff_11  0.000000E+00#end_subordinateObject_IPNS/LANSCE Incident Spectrum#subordinateObject_IPNS/LANSCE Bank_inst_angular_calibration 'IPNS/LANSCE Bank'_instrument_parameter_file 'iparm_s94.gpp'_instrument_counter_bank 'Bank 1'loop__instrument_counter_bank_ID 'Bank 1'loop__instrument_bank_difc  10450.0loop__instrument_bank_difa  -0.03loop__instrument_bank_zero  -7.07loop__instrument_bank_tof_theta  148.00#end_subordinateObject_IPNS/LANSCE Bank#subordinateObject_IPNS/LANSCE TOF_pd_instr_geometry 'IPNS/LANSCE TOF'#end_subordinateObject_IPNS/LANSCE TOF#subordinateObject_TOF_diffrn_measurement_method 'TOF'#end_subordinateObject_TOF#subordinateObject_TOF_diffrn_radiation_type 'TOF'#end_subordinateObject_TOF#subordinateObject_TOF_diffrn_radiation_detector 'TOF'#end_subordinateObject_TOF#subordinateObject_None_exptl_absorpt_correction_type 'None'#end_subordinateObject_Nonedata_Instrument_IPNS_2_diffrn_measurement_device 'IPNS_2'_pd_proc_intensity_incident 0.20090523018436455_riet_par_asymmetry_truncation -0.04loop__riet_par_asymmetry_value  91.07549610932769  -1279.1308159859936  145.19992327119488loop__riet_par_caglioti_value  3.206994711336458E-5  -0.19304296673971721  285.7994154993927loop__riet_par_gaussian_value  0.0  0.0loop__riet_par_2-theta_offset  -1.579074798408006E-4#subordinateObject_IPNS/LANSCE Incident Spectrum_inst_intensity_calibration 'IPNS/LANSCE Incident Spectrum'_inst_inc_parameter_file 'iparm_s94.gpp'_instrument_counter_bank 'Bank 2'loop__instrument_counter_bank_ID 'Bank 2'loop__inst_incident_spectrum_type '2'loop__inst_inc_spectrum_coeff_0  0.509109E+01loop__inst_inc_spectrum_coeff_1  0.745294E+09loop__inst_inc_spectrum_coeff_2  0.239962E+03loop__inst_inc_spectrum_coeff_3  0.100993E+05loop__inst_inc_spectrum_coeff_4  0.607286E-01loop__inst_inc_spectrum_coeff_5  -0.471445E+04loop__inst_inc_spectrum_coeff_6  0.988313E-02loop__inst_inc_spectrum_coeff_7  -0.763459E+03loop__inst_inc_spectrum_coeff_8  0.494027E-02loop__inst_inc_spectrum_coeff_9  0.000000E+00loop__inst_inc_spectrum_coeff_10  0.000000E+00loop__inst_inc_spectrum_coeff_11  0.000000E+00#end_subordinateObject_IPNS/LANSCE Incident Spectrum#subordinateObject_IPNS/LANSCE Bank_inst_angular_calibration 'IPNS/LANSCE Bank'_instrument_parameter_file 'iparm_s94.gpp'_instrument_counter_bank 'Bank 2'loop__instrument_counter_bank_ID 'Bank 2'loop__instrument_bank_difc  10450.0loop__instrument_bank_difa  -0.03loop__instrument_bank_zero  -7.07loop__instrument_bank_tof_theta  212.00#end_subordinateObject_IPNS/LANSCE Bank#subordinateObject_IPNS/LANSCE TOF_pd_instr_geometry 'IPNS/LANSCE TOF'#end_subordinateObject_IPNS/LANSCE TOF#subordinateObject_TOF_diffrn_measurement_method 'TOF'#end_subordinateObject_TOF#subordinateObject_TOF_diffrn_radiation_type 'TOF'#end_subordinateObject_TOF#subordinateObject_TOF_diffrn_radiation_detector 'TOF'#end_subordinateObject_TOF#subordinateObject_None_exptl_absorpt_correction_type 'None'#end_subordinateObject_Nonedata_Instrument_IPNS_4_diffrn_measurement_device 'IPNS_4'_pd_proc_intensity_incident 0.13916559359308384_riet_par_asymmetry_truncation -0.04loop__riet_par_asymmetry_value  53.43737693693772  -457.9046170446887  186.5001720102505loop__riet_par_caglioti_value  7.658103559747961E-5  -0.4099779180834208  591.4898227057023loop__riet_par_gaussian_value  0.0  0.0loop__riet_par_2-theta_offset  -0.0012555499087143986#subordinateObject_IPNS/LANSCE Incident Spectrum_inst_intensity_calibration 'IPNS/LANSCE Incident Spectrum'_inst_inc_parameter_file 'iparm_s94.gpp'_instrument_counter_bank 'Bank 4'loop__instrument_counter_bank_ID 'Bank 4'loop__inst_incident_spectrum_type '2'loop__inst_inc_spectrum_coeff_0  0.311925E+01loop__inst_inc_spectrum_coeff_1  0.494393E+09loop__inst_inc_spectrum_coeff_2  0.235432E+03loop__inst_inc_spectrum_coeff_3  0.332860E+04loop__inst_inc_spectrum_coeff_4  0.531141E-01loop__inst_inc_spectrum_coeff_5  -0.364654E+04loop__inst_inc_spectrum_coeff_6  0.164462E-01loop__inst_inc_spectrum_coeff_7  0.173938E+04loop__inst_inc_spectrum_coeff_8  0.406953E-02loop__inst_inc_spectrum_coeff_9  0.000000E+00loop__inst_inc_spectrum_coeff_10  0.000000E+00loop__inst_inc_spectrum_coeff_11  0.000000E+00#end_subordinateObject_IPNS/LANSCE Incident Spectrum#subordinateObject_IPNS/LANSCE Bank_inst_angular_calibration 'IPNS/LANSCE Bank'_instrument_parameter_file 'iparm_s94.gpp'_instrument_counter_bank 'Bank 4'loop__instrument_counter_bank_ID 'Bank 4'loop__instrument_bank_difc  7686.99loop__instrument_bank_difa  0.49loop__instrument_bank_zero  -4.55loop__instrument_bank_tof_theta  270.00#end_subordinateObject_IPNS/LANSCE Bank#subordinateObject_IPNS/LANSCE TOF_pd_instr_geometry 'IPNS/LANSCE TOF'#end_subordinateObject_IPNS/LANSCE TOF#subordinateObject_TOF_diffrn_measurement_method 'TOF'#end_subordinateObject_TOF#subordinateObject_TOF_diffrn_radiation_type 'TOF'#end_subordinateObject_TOF#subordinateObject_TOF_diffrn_radiation_detector 'TOF'#end_subordinateObject_TOF#subordinateObject_None_exptl_absorpt_correction_type 'None'#end_subordinateObject_Nonedata_Instrument_IPNS_5_diffrn_measurement_device 'IPNS_5'_pd_proc_intensity_incident -1.958437599128456E-3_riet_par_asymmetry_truncation -0.04loop__riet_par_asymmetry_value  49.26954442581683  -482.9649917818251  -8.439089091979854loop__riet_par_caglioti_value  2.606238648458718E-4  -1.3550481505110081  1847.798375108433loop__riet_par_gaussian_value  0.0  0.0loop__riet_par_2-theta_offset  -0.01303811917298047#subordinateObject_IPNS/LANSCE Incident Spectrum_inst_intensity_calibration 'IPNS/LANSCE Incident Spectrum'_inst_inc_parameter_file 'iparm_s94.gpp'_instrument_counter_bank 'Bank 5'loop__instrument_counter_bank_ID 'Bank 5'loop__inst_incident_spectrum_type '1'loop__inst_inc_spectrum_coeff_0  0.348040E+01loop__inst_inc_spectrum_coeff_1  0.171204E+04loop__inst_inc_spectrum_coeff_2  0.219193E+00loop__inst_inc_spectrum_coeff_3  -0.108988E+04loop__inst_inc_spectrum_coeff_4  0.298885E-01loop__inst_inc_spectrum_coeff_5  0.297087E+03loop__inst_inc_spectrum_coeff_6  0.828340E-02loop__inst_inc_spectrum_coeff_7  0.000000E+00loop__inst_inc_spectrum_coeff_8  0.000000E+00loop__inst_inc_spectrum_coeff_9  0.000000E+00loop__inst_inc_spectrum_coeff_10  0.000000E+00loop__inst_inc_spectrum_coeff_11  0.000000E+00#end_subordinateObject_IPNS/LANSCE Incident Spectrum#subordinateObject_IPNS/LANSCE Bank_inst_angular_calibration 'IPNS/LANSCE Bank'_instrument_parameter_file 'iparm_s94.gpp'_instrument_counter_bank 'Bank 5'loop__instrument_counter_bank_ID 'Bank 5'loop__instrument_bank_difc  5439.19loop__instrument_bank_difa  1.30loop__instrument_bank_zero  -3.31loop__instrument_bank_tof_theta  60.00#end_subordinateObject_IPNS/LANSCE Bank#subordinateObject_IPNS/LANSCE TOF_pd_instr_geometry 'IPNS/LANSCE TOF'#end_subordinateObject_IPNS/LANSCE TOF#subordinateObject_TOF_diffrn_measurement_method 'TOF'#end_subordinateObject_TOF#subordinateObject_TOF_diffrn_radiation_type 'TOF'#end_subordinateObject_TOF#subordinateObject_TOF_diffrn_radiation_detector 'TOF'#end_subordinateObject_TOF#subordinateObject_None_exptl_absorpt_correction_type 'None'#end_subordinateObject_Nonedata_Instrument_IPNS_6_diffrn_measurement_device 'IPNS_6'_pd_proc_intensity_incident 1.9479188381859872E-4_riet_par_asymmetry_truncation -0.04loop__riet_par_asymmetry_value  46.984075855307964  -619.0868114620512  -91.99944798454757loop__riet_par_caglioti_value  2.635055164184315E-4  -0.9748855746790062  347.9180941738552loop__riet_par_gaussian_value  0.0  0.0loop__riet_par_2-theta_offset  0.019761970685321626#subordinateObject_IPNS/LANSCE Incident Spectrum_inst_intensity_calibration 'IPNS/LANSCE Incident Spectrum'_inst_inc_parameter_file 'iparm_s94.gpp'_instrument_counter_bank 'Bank 6'loop__instrument_counter_bank_ID 'Bank 6'loop__inst_incident_spectrum_type '1'loop__inst_inc_spectrum_coeff_0  0.348040E+01loop__inst_inc_spectrum_coeff_1  0.171204E+04loop__inst_inc_spectrum_coeff_2  0.219193E+00loop__inst_inc_spectrum_coeff_3  -0.108988E+04loop__inst_inc_spectrum_coeff_4  0.298885E-01loop__inst_inc_spectrum_coeff_5  0.297087E+03loop__inst_inc_spectrum_coeff_6  0.828340E-02loop__inst_inc_spectrum_coeff_7  0.000000E+00loop__inst_inc_spectrum_coeff_8  0.000000E+00loop__inst_inc_spectrum_coeff_9  0.000000E+00loop__inst_inc_spectrum_coeff_10  0.000000E+00loop__inst_inc_spectrum_coeff_11  0.000000E+00#end_subordinateObject_IPNS/LANSCE Incident Spectrum#subordinateObject_IPNS/LANSCE Bank_inst_angular_calibration 'IPNS/LANSCE Bank'_instrument_parameter_file 'iparm_s94.gpp'_instrument_counter_bank 'Bank 6'loop__instrument_counter_bank_ID 'Bank 6'loop__instrument_bank_difc  5439.19loop__instrument_bank_difa  1.30loop__instrument_bank_zero  -3.31loop__instrument_bank_tof_theta  300.00#end_subordinateObject_IPNS/LANSCE Bank#subordinateObject_IPNS/LANSCE TOF_pd_instr_geometry 'IPNS/LANSCE TOF'#end_subordinateObject_IPNS/LANSCE TOF#subordinateObject_TOF_diffrn_measurement_method 'TOF'#end_subordinateObject_TOF#subordinateObject_TOF_diffrn_radiation_type 'TOF'#end_subordinateObject_TOF#subordinateObject_TOF_diffrn_radiation_detector 'TOF'#end_subordinateObject_TOF#subordinateObject_None_exptl_absorpt_correction_type 'None'#end_subordinateObject_Nonedata_Instrument_Huber-Stress-Texture_diffrn_measurement_device 'Huber-Stress-Texture'_pd_proc_intensity_incident 1.71440224(0.03012)_riet_par_asymmetry_truncation 0.4loop__riet_par_caglioti_value  0.00252935  0.002716717  0.002312246loop__riet_par_gaussian_value  0.0  0.012loop__riet_par_2-theta_offset  -0.19102004(1.40325)loop__riet_par_broadening_chi  0.37386313#subordinateObject_none cal_inst_intensity_calibration 'none cal'#end_subordinateObject_none cal#subordinateObject_none_inst_angular_calibration 'none'#end_subordinateObject_none#subordinateObject_Bragg-Brentano_pd_instr_geometry 'Bragg-Brentano'_diffrn_radiation_monochromator 'Monochromator'_pd_instr_2theta_monochr_post '26.57'_pd_instr_dist_src/samp '185.0'_pd_instr_monochr_pre_spec 'none'_pd_instr_2theta_monochr_pre '0'_pd_instr_divg_ax_src/samp '0.5'#end_subordinateObject_Bragg-Brentano#subordinateObject_Theta-2Theta_diffrn_measurement_method 'Theta-2Theta'#end_subordinateObject_Theta-2Theta#subordinateObject_X-ray tube_diffrn_radiation_type 'X-ray tube'#subordinateObject_1_diffrn_radiation_wavelength_id '1'_diffrn_radiation_wavelength 1.54059810_diffrn_radiation_wavelength_wt 1.00000000#end_subordinateObject_1#subordinateObject_2_diffrn_radiation_wavelength_id '2'_diffrn_radiation_wavelength 1.54449700_diffrn_radiation_wavelength_wt 0.50000000#end_subordinateObject_2#end_subordinateObject_X-ray tube#subordinateObject_Scintillation_diffrn_radiation_detector 'Scintillation'#end_subordinateObject_Scintillation#subordinateObject_none abs_exptl_absorpt_correction_type 'none abs'#end_subordinateObject_none absdata_instrument_instrument 3
+_diffrn_measurement_device_type 'instrument 3'
+_pd_proc_intensity_incident 128.38829 #positive
+
+loop_
+_riet_par_2-theta_offset
+  0.0
+
+
+#subordinateObject_none cal
+
+_inst_intensity_calibration 'none cal'
+
+
+#end_subordinateObject_none cal
+
+
+#subordinateObject_Instrument disalignment
+
+_inst_angular_calibration 'Instrument disalignment'
+
+
+#end_subordinateObject_Instrument disalignment
+
+
+#subordinateObject_Bragg-Brentano
+
+_pd_instr_geometry 'Bragg-Brentano'
+
+_diffrn_radiation_monochromator Filtered
+_pd_instr_2theta_monochr_post 0
+_pd_instr_dist_src/samp 175.0
+_pd_instr_monochr_pre_spec none
+_pd_instr_2theta_monochr_pre 0
+_pd_instr_divg_ax_src/samp 0.0
+_pd_instr_divg_slit_auto false
+_diffrn_radiation_polarisn_norm 0
+_diffrn_radiation_polarisn_ratio 0
+
+#end_subordinateObject_Bragg-Brentano
+
+
+#subordinateObject_Theta-2Theta
+
+_diffrn_measurement_method 'Theta-2Theta'
+
+
+#end_subordinateObject_Theta-2Theta
+
+
+#subordinateObject_X-ray
+
+_diffrn_radiation_type 'X-ray'
+
+
+#subordinateObject_Added_by_default
+
+_diffrn_radiation_wavelength_id 'Added_by_default'
+
+_diffrn_radiation_wavelength 1.5405982
+_diffrn_radiation_wavelength_wt 1.0
+
+#end_subordinateObject_Added_by_default
+
+
+#subordinateObject_unknown
+
+_diffrn_radiation_wavelength_id 'unknown'
+
+_diffrn_radiation_wavelength 1.5444219
+_diffrn_radiation_wavelength_wt 0.4767213
+
+#end_subordinateObject_unknown
+
+
+#subordinateObject_unknown
+
+_diffrn_radiation_wavelength_id 'unknown'
+
+_diffrn_radiation_wavelength 1.3926828
+_diffrn_radiation_wavelength_wt 0.0015545221
+
+#end_subordinateObject_unknown
+
+
+#end_subordinateObject_X-ray
+
+
+#subordinateObject_Scintillation
+
+_diffrn_radiation_detector 'Scintillation'
+
+
+#end_subordinateObject_Scintillation
+
+
+#subordinateObject_Caglioti PV
+
+_diffrn_inst_broadening 'Caglioti PV'
+
+_riet_caglioti_d_dep true
+_riet_asymmetry_tan_dep false
+_riet_omega/chi_broadening_convoluted false
+_riet_par_asymmetry_truncation 0.4
+
+loop_
+_riet_par_asymmetry_value
+  127.651405
+  2.9541132
+
+loop_
+_riet_par_caglioti_value
+  0.011850597
+  -0.0048401156
+  0.00654444
+
+loop_
+_riet_par_gaussian_value
+  0.3915662
+  0.003204132
+
+
+#end_subordinateObject_Caglioti PV
+
+
+#subordinateObject_none abs
+
+_exptl_absorpt_correction_type 'none abs'
+
+
+#end_subordinateObject_none abs
+

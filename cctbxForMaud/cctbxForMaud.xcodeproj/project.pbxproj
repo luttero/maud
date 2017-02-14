@@ -1,0 +1,436 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		812009D81CD64EB90077C890 /* libcctbx.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 812009D71CD64EB90077C890 /* libcctbx.dylib */; };
+		81E9436F1AFC062C0032A958 /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = 81E9436D1AFC062C0032A958 /* sqlite3.c */; };
+		81E943701AFC062C0032A958 /* sqlite3.h in Headers */ = {isa = PBXBuildFile; fileRef = 81E9436E1AFC062C0032A958 /* sqlite3.h */; };
+		81E943731AFC8ACC0032A958 /* StringUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 81E943711AFC8ACC0032A958 /* StringUtilities.h */; };
+		81E943741AFC8ACC0032A958 /* StringUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 81E943721AFC8ACC0032A958 /* StringUtilities.cpp */; };
+		81E943761AFC8ADA0032A958 /* IOerror.h in Headers */ = {isa = PBXBuildFile; fileRef = 81E943751AFC8ADA0032A958 /* IOerror.h */; };
+		81E943801AFC8AE60032A958 /* CifDatablock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 81E943771AFC8AE60032A958 /* CifDatablock.cpp */; };
+		81E943811AFC8AE60032A958 /* CifDatablock.h in Headers */ = {isa = PBXBuildFile; fileRef = 81E943781AFC8AE60032A958 /* CifDatablock.h */; };
+		81E943821AFC8AE60032A958 /* CifFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 81E943791AFC8AE60032A958 /* CifFile.cpp */; };
+		81E943831AFC8AE60032A958 /* CifFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 81E9437A1AFC8AE60032A958 /* CifFile.h */; };
+		81E943841AFC8AE60032A958 /* CifItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 81E9437B1AFC8AE60032A958 /* CifItem.cpp */; };
+		81E943851AFC8AE60032A958 /* CifItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 81E9437C1AFC8AE60032A958 /* CifItem.h */; };
+		81E943861AFC8AE60032A958 /* CifLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 81E9437D1AFC8AE60032A958 /* CifLoop.cpp */; };
+		81E943871AFC8AE60032A958 /* CifLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = 81E9437E1AFC8AE60032A958 /* CifLoop.h */; };
+		81E943881AFC8AE60032A958 /* JournalCodens.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 81E9437F1AFC8AE60032A958 /* JournalCodens.hpp */; };
+		81E943971AFC8B1D0032A958 /* CrystalUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 81E943921AFC8B1D0032A958 /* CrystalUtilities.h */; };
+		81E943981AFC8B1D0032A958 /* CrystalUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 81E943931AFC8B1D0032A958 /* CrystalUtilities.cpp */; };
+		81E943991AFC8B1D0032A958 /* CrystalSystem.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 81E943941AFC8B1D0032A958 /* CrystalSystem.hpp */; };
+		81E9439A1AFC8B1D0032A958 /* CrystalSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 81E943951AFC8B1D0032A958 /* CrystalSystem.cpp */; };
+		81E943A01AFCDC6D0032A958 /* PeriodicTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 81E9439E1AFCDC6D0032A958 /* PeriodicTable.h */; };
+		81E943A11AFCDC6D0032A958 /* PeriodicTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 81E9439F1AFCDC6D0032A958 /* PeriodicTable.cpp */; };
+		81E943A31AFCDCEA0032A958 /* CrystalStructuresDefinition.h in Headers */ = {isa = PBXBuildFile; fileRef = 81E943A21AFCDCEA0032A958 /* CrystalStructuresDefinition.h */; };
+		81E943B11AFE04F40032A958 /* it_unitn_ing_rista_util_SpaceGroups.h in Headers */ = {isa = PBXBuildFile; fileRef = 81E943B01AFE04F40032A958 /* it_unitn_ing_rista_util_SpaceGroups.h */; };
+		81E943B71AFE06810032A958 /* it_unitn_ing_rista_util_SpaceGroups.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 81E943B61AFE06810032A958 /* it_unitn_ing_rista_util_SpaceGroups.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		812009D71CD64EB90077C890 /* libcctbx.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libcctbx.dylib; sourceTree = "<group>"; };
+		81E943161AFBFE8D0032A958 /* libcctbxForMaud.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libcctbxForMaud.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		81E9436D1AFC062C0032A958 /* sqlite3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sqlite3.c; path = ../../../MaudX/sqlite/sqlite3.c; sourceTree = SOURCE_ROOT; };
+		81E9436E1AFC062C0032A958 /* sqlite3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sqlite3.h; path = ../../../MaudX/sqlite/sqlite3.h; sourceTree = SOURCE_ROOT; };
+		81E943711AFC8ACC0032A958 /* StringUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StringUtilities.h; path = ../../../MaudX/radiographema/util/StringUtilities.h; sourceTree = "<group>"; };
+		81E943721AFC8ACC0032A958 /* StringUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StringUtilities.cpp; path = ../../../MaudX/radiographema/util/StringUtilities.cpp; sourceTree = "<group>"; };
+		81E943751AFC8ADA0032A958 /* IOerror.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IOerror.h; path = ../../../MaudX/radiographema/io/IOerror.h; sourceTree = "<group>"; };
+		81E943771AFC8AE60032A958 /* CifDatablock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CifDatablock.cpp; path = ../../../MaudX/radiographema/io/cif/CifDatablock.cpp; sourceTree = "<group>"; };
+		81E943781AFC8AE60032A958 /* CifDatablock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CifDatablock.h; path = ../../../MaudX/radiographema/io/cif/CifDatablock.h; sourceTree = "<group>"; };
+		81E943791AFC8AE60032A958 /* CifFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CifFile.cpp; path = ../../../MaudX/radiographema/io/cif/CifFile.cpp; sourceTree = "<group>"; };
+		81E9437A1AFC8AE60032A958 /* CifFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CifFile.h; path = ../../../MaudX/radiographema/io/cif/CifFile.h; sourceTree = "<group>"; };
+		81E9437B1AFC8AE60032A958 /* CifItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CifItem.cpp; path = ../../../MaudX/radiographema/io/cif/CifItem.cpp; sourceTree = "<group>"; };
+		81E9437C1AFC8AE60032A958 /* CifItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CifItem.h; path = ../../../MaudX/radiographema/io/cif/CifItem.h; sourceTree = "<group>"; };
+		81E9437D1AFC8AE60032A958 /* CifLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CifLoop.cpp; path = ../../../MaudX/radiographema/io/cif/CifLoop.cpp; sourceTree = "<group>"; };
+		81E9437E1AFC8AE60032A958 /* CifLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CifLoop.h; path = ../../../MaudX/radiographema/io/cif/CifLoop.h; sourceTree = "<group>"; };
+		81E9437F1AFC8AE60032A958 /* JournalCodens.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = JournalCodens.hpp; path = ../../../MaudX/radiographema/io/cif/JournalCodens.hpp; sourceTree = "<group>"; };
+		81E943921AFC8B1D0032A958 /* CrystalUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CrystalUtilities.h; path = ../../../MaudX/radiographema/corediffraction/CrystalUtilities.h; sourceTree = "<group>"; };
+		81E943931AFC8B1D0032A958 /* CrystalUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CrystalUtilities.cpp; path = ../../../MaudX/radiographema/corediffraction/CrystalUtilities.cpp; sourceTree = "<group>"; };
+		81E943941AFC8B1D0032A958 /* CrystalSystem.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = CrystalSystem.hpp; path = ../../../MaudX/radiographema/corediffraction/CrystalSystem.hpp; sourceTree = "<group>"; };
+		81E943951AFC8B1D0032A958 /* CrystalSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CrystalSystem.cpp; path = ../../../MaudX/radiographema/corediffraction/CrystalSystem.cpp; sourceTree = "<group>"; };
+		81E9439E1AFCDC6D0032A958 /* PeriodicTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PeriodicTable.h; path = ../../../MaudX/radiographema/chemistry/PeriodicTable.h; sourceTree = "<group>"; };
+		81E9439F1AFCDC6D0032A958 /* PeriodicTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PeriodicTable.cpp; path = ../../../MaudX/radiographema/chemistry/PeriodicTable.cpp; sourceTree = "<group>"; };
+		81E943A21AFCDCEA0032A958 /* CrystalStructuresDefinition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CrystalStructuresDefinition.h; path = ../../../MaudX/radiographema/corediffraction/CrystalStructuresDefinition.h; sourceTree = "<group>"; };
+		81E943B01AFE04F40032A958 /* it_unitn_ing_rista_util_SpaceGroups.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = it_unitn_ing_rista_util_SpaceGroups.h; sourceTree = "<group>"; };
+		81E943B61AFE06810032A958 /* it_unitn_ing_rista_util_SpaceGroups.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = it_unitn_ing_rista_util_SpaceGroups.cpp; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		81E943131AFBFE8D0032A958 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				812009D81CD64EB90077C890 /* libcctbx.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		81E9430D1AFBFE8D0032A958 = {
+			isa = PBXGroup;
+			children = (
+				812009D71CD64EB90077C890 /* libcctbx.dylib */,
+				81E943B01AFE04F40032A958 /* it_unitn_ing_rista_util_SpaceGroups.h */,
+				81E943B61AFE06810032A958 /* it_unitn_ing_rista_util_SpaceGroups.cpp */,
+				81E9436C1AFC060F0032A958 /* sqlite */,
+				81E943441AFC041F0032A958 /* radiographema */,
+				81E943171AFBFE8D0032A958 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		81E943171AFBFE8D0032A958 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				81E943161AFBFE8D0032A958 /* libcctbxForMaud.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		81E943441AFC041F0032A958 /* radiographema */ = {
+			isa = PBXGroup;
+			children = (
+				81E9439D1AFCDC5B0032A958 /* chemistry */,
+				81E943611AFC04BD0032A958 /* corediffraction */,
+				81E943601AFC04AF0032A958 /* database */,
+				81E943461AFC04470032A958 /* util */,
+				81E943451AFC04330032A958 /* io */,
+			);
+			name = radiographema;
+			sourceTree = "<group>";
+		};
+		81E943451AFC04330032A958 /* io */ = {
+			isa = PBXGroup;
+			children = (
+				81E943751AFC8ADA0032A958 /* IOerror.h */,
+				81E943491AFC04710032A958 /* cif */,
+			);
+			name = io;
+			sourceTree = "<group>";
+		};
+		81E943461AFC04470032A958 /* util */ = {
+			isa = PBXGroup;
+			children = (
+				81E943711AFC8ACC0032A958 /* StringUtilities.h */,
+				81E943721AFC8ACC0032A958 /* StringUtilities.cpp */,
+			);
+			name = util;
+			sourceTree = "<group>";
+		};
+		81E943491AFC04710032A958 /* cif */ = {
+			isa = PBXGroup;
+			children = (
+				81E943771AFC8AE60032A958 /* CifDatablock.cpp */,
+				81E943781AFC8AE60032A958 /* CifDatablock.h */,
+				81E943791AFC8AE60032A958 /* CifFile.cpp */,
+				81E9437A1AFC8AE60032A958 /* CifFile.h */,
+				81E9437B1AFC8AE60032A958 /* CifItem.cpp */,
+				81E9437C1AFC8AE60032A958 /* CifItem.h */,
+				81E9437D1AFC8AE60032A958 /* CifLoop.cpp */,
+				81E9437E1AFC8AE60032A958 /* CifLoop.h */,
+				81E9437F1AFC8AE60032A958 /* JournalCodens.hpp */,
+			);
+			name = cif;
+			sourceTree = "<group>";
+		};
+		81E943601AFC04AF0032A958 /* database */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = database;
+			sourceTree = "<group>";
+		};
+		81E943611AFC04BD0032A958 /* corediffraction */ = {
+			isa = PBXGroup;
+			children = (
+				81E943A21AFCDCEA0032A958 /* CrystalStructuresDefinition.h */,
+				81E943921AFC8B1D0032A958 /* CrystalUtilities.h */,
+				81E943931AFC8B1D0032A958 /* CrystalUtilities.cpp */,
+				81E943941AFC8B1D0032A958 /* CrystalSystem.hpp */,
+				81E943951AFC8B1D0032A958 /* CrystalSystem.cpp */,
+			);
+			name = corediffraction;
+			sourceTree = "<group>";
+		};
+		81E9436C1AFC060F0032A958 /* sqlite */ = {
+			isa = PBXGroup;
+			children = (
+				81E9436D1AFC062C0032A958 /* sqlite3.c */,
+				81E9436E1AFC062C0032A958 /* sqlite3.h */,
+			);
+			name = sqlite;
+			sourceTree = "<group>";
+		};
+		81E9439D1AFCDC5B0032A958 /* chemistry */ = {
+			isa = PBXGroup;
+			children = (
+				81E9439E1AFCDC6D0032A958 /* PeriodicTable.h */,
+				81E9439F1AFCDC6D0032A958 /* PeriodicTable.cpp */,
+			);
+			name = chemistry;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		81E943141AFBFE8D0032A958 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				81E943731AFC8ACC0032A958 /* StringUtilities.h in Headers */,
+				81E943761AFC8ADA0032A958 /* IOerror.h in Headers */,
+				81E943871AFC8AE60032A958 /* CifLoop.h in Headers */,
+				81E943A01AFCDC6D0032A958 /* PeriodicTable.h in Headers */,
+				81E943991AFC8B1D0032A958 /* CrystalSystem.hpp in Headers */,
+				81E943831AFC8AE60032A958 /* CifFile.h in Headers */,
+				81E943701AFC062C0032A958 /* sqlite3.h in Headers */,
+				81E943851AFC8AE60032A958 /* CifItem.h in Headers */,
+				81E943B11AFE04F40032A958 /* it_unitn_ing_rista_util_SpaceGroups.h in Headers */,
+				81E943A31AFCDCEA0032A958 /* CrystalStructuresDefinition.h in Headers */,
+				81E943881AFC8AE60032A958 /* JournalCodens.hpp in Headers */,
+				81E943971AFC8B1D0032A958 /* CrystalUtilities.h in Headers */,
+				81E943811AFC8AE60032A958 /* CifDatablock.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		81E943151AFBFE8D0032A958 /* cctbxForMaud */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 81E9431A1AFBFE8D0032A958 /* Build configuration list for PBXNativeTarget "cctbxForMaud" */;
+			buildPhases = (
+				81E943121AFBFE8D0032A958 /* Sources */,
+				81E943131AFBFE8D0032A958 /* Frameworks */,
+				81E943141AFBFE8D0032A958 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = cctbxForMaud;
+			productName = cctbxForMaud;
+			productReference = 81E943161AFBFE8D0032A958 /* libcctbxForMaud.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		81E9430E1AFBFE8D0032A958 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0630;
+				ORGANIZATIONNAME = "Luca Lutterotti";
+				TargetAttributes = {
+					81E943151AFBFE8D0032A958 = {
+						CreatedOnToolsVersion = 6.3.1;
+					};
+				};
+			};
+			buildConfigurationList = 81E943111AFBFE8D0032A958 /* Build configuration list for PBXProject "cctbxForMaud" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 81E9430D1AFBFE8D0032A958;
+			productRefGroup = 81E943171AFBFE8D0032A958 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				81E943151AFBFE8D0032A958 /* cctbxForMaud */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		81E943121AFBFE8D0032A958 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				81E9436F1AFC062C0032A958 /* sqlite3.c in Sources */,
+				81E943741AFC8ACC0032A958 /* StringUtilities.cpp in Sources */,
+				81E943861AFC8AE60032A958 /* CifLoop.cpp in Sources */,
+				81E9439A1AFC8B1D0032A958 /* CrystalSystem.cpp in Sources */,
+				81E943821AFC8AE60032A958 /* CifFile.cpp in Sources */,
+				81E943841AFC8AE60032A958 /* CifItem.cpp in Sources */,
+				81E943A11AFCDC6D0032A958 /* PeriodicTable.cpp in Sources */,
+				81E943B71AFE06810032A958 /* it_unitn_ing_rista_util_SpaceGroups.cpp in Sources */,
+				81E943981AFC8B1D0032A958 /* CrystalUtilities.cpp in Sources */,
+				81E943801AFC8AE60032A958 /* CifDatablock.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		81E943181AFBFE8D0032A958 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				CLANG_CXX_LIBRARY = "compiler-default";
+				CLANG_ENABLE_MODULES = NO;
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer: Luca Lutterotti (46BWEFAJP5)";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		81E943191AFBFE8D0032A958 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				CLANG_CXX_LIBRARY = "compiler-default";
+				CLANG_ENABLE_MODULES = NO;
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer: Luca Lutterotti (46BWEFAJP5)";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		81E9431B1AFBFE8D0032A958 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				FRAMEWORK_SEARCH_PATHS = "";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					../../../MaudX/radiographema,
+					../../../MaudX/sqlite,
+					../../../MaudX/cctbx/source,
+					../../../MaudX/cctbx/source/include,
+					../../../MaudX/libraries,
+					"\"/Users/luca/Google Drive/Projects/rta/maud/Installers/Home/include\"",
+					"\"/Users/luca/Google Drive/Projects/rta/maud/Installers/Home/include/darwin\"",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+					"\"/Users/luca/Google Drive/Projects/rta/maud/Installers/Home/jre/lib/server\"",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		81E9431C1AFBFE8D0032A958 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				FRAMEWORK_SEARCH_PATHS = "";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					../../../MaudX/radiographema,
+					../../../MaudX/sqlite,
+					../../../MaudX/cctbx/source,
+					../../../MaudX/cctbx/source/include,
+					../../../MaudX/libraries,
+					"\"/Users/luca/Google Drive/Projects/rta/maud/Installers/Home/include\"",
+					"\"/Users/luca/Google Drive/Projects/rta/maud/Installers/Home/include/darwin\"",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+					"\"/Users/luca/Google Drive/Projects/rta/maud/Installers/Home/jre/lib/server\"",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		81E943111AFBFE8D0032A958 /* Build configuration list for PBXProject "cctbxForMaud" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				81E943181AFBFE8D0032A958 /* Debug */,
+				81E943191AFBFE8D0032A958 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		81E9431A1AFBFE8D0032A958 /* Build configuration list for PBXNativeTarget "cctbxForMaud" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				81E9431B1AFBFE8D0032A958 /* Debug */,
+				81E9431C1AFBFE8D0032A958 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 81E9430E1AFBFE8D0032A958 /* Project object */;
+}

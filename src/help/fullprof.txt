@@ -1,0 +1,3 @@
+FullProf module structure factor calculator for Maud
+
+To be completed!

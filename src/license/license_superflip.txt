@@ -1,0 +1,7 @@
+The computer program Superflip (copyright: Lukas Palatinus & Gervais Chapuis, Laboratory of Crystallography, EPFL, 1015 Lausanne) is distributed free of charge, and without any restrictions for non-commerical use except for the following rules:
+- It is permitted to modify the computer code for your purposes.
+- It is not permitted to redistribute the unmodified or modified code or parts of it either under the name Superflip, or under another name, without prior consultation with and permission from the copyright holders..
+- Whenever you publish results obtained with the aid of program Superflip, ackowledge its use by citing it as:
+Palatinus L., Chapuis G. (2007): Superflip - a computer program for the solution of crystal structures by charge flipping in arbitrary dimensions. J. Appl. Cryst. 40, 786-790
+
+Any user wishing to make a commercial use of the software should contact the copyright holders to obtain information about licensing conditions.

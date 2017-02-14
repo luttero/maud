@@ -1,0 +1,63 @@
+------------The Metadynamics search algorithm-----------------
+
+The idea for such algorithm arrived after seeing the lecture of Laio at
+the IUcr congress in Firenze.
+The Metadynamics algorithm is based on the idea of filling a newly found
+minimum in the solution space with a Gaussian function of a certain width
+and intensity to be add as a cost function to prevent the system to
+remain in such minimum. So other solutions can be investigated.
+This implementation shares only the general idea, but was written without
+looking at the original algorithm. So many details can be completely
+differents.
+
+The implementation in Maud is based on the Marqardt least squares algorithm
+also.
+The user should first fix the minimum and maximum limit value for each
+refinable parameter (used not to bound the solution but for generating
+a new starting point in the least squares by shaking the system).
+Then check the options in the metadynamics algorithm.
+Starting a refinement, the program start from the actual parameters and
+perform the number of cycles imposed.
+For each cycle the algorithm performs a least squares refinement (Marqardt)
+until the convergence or the number of iterations is reached (see the
+options for both parameters value). Then the solution is stored and
+ranked with the others (only a certain maximum number is stored, the
+worser are rejected when there are more than the maximum).
+At the end of each cycle after storing the solution (unless is equivalent
+to a previous one) a Gaussian additional cost function is added to the
+Weighted Sum of Squares centered on that solution.
+A new random starting point (based on the parameter limits) is generated
+to perform the next cycle.
+At end the best solution is kept.
+
+Algorithm options:
+
+"Number of cycles" : number of cycles to be performed
+"Number of iterations" : maximum number of LS iterations in each cycle
+"Convergenge precision" : convergence is reached if each parameter change
+                          less than the precision (relative value)
+"Step for derivative computation" : relative step for numerical derivative
+                                    computation in the LS
+"Number of stored solutions" : max number of stored solutions
+"Filling Gaussian normalized HWHM" : the Gaussian width of the filling cost
+                                     function is computed by this value *
+                                     parameter error. If the error is zero
+                                     then equal to the value * 1000 *
+                                     derivative step.
+"Filling minima starting intensity" : initial intensity of a filling
+                                      gaussian.
+"Filling minima intensity increase step" : increment of intensity for the
+                                           Gaussian cost function when
+                                           an equivalent solution is
+                                           found.
+"Use double derivative" : use double numerical derivative in the LS
+"Fill minima" : fill the minima with a Gaussian cost function. If false
+                the algorithm just scan the solution space by generating
+                each cycle a random starting point. No additional cost
+                function. Not in the original Metadynamics algorithm.
+
+
+References
+
+A. Laio and M. PArrinello, Proc. Natl. Acad. Sci. USA 20, 12562 (2002).
+M. Iannuzzi, A. Laio and M. Parrinello, Phys. Rev. Lett. 90, 238302 (2003).

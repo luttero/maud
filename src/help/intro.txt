@@ -1,0 +1,87 @@
+- Maud introduction - (to be completed)
+
+The program was developed to analyse diffraction spectra and obtain crystal
+structures, quantity and microstructure of phases along with the texture and
+residual stresses. It applied the RITA/RISTA method as developed by Wenk,
+Matthies & Lutterotti (1994) and Ferrari & Lutterotti (1994). The diffraction
+spectra fitting is based on the so-called Rietveld method.
+If you dont have experience on this method we suggest the user to read something
+in the book: "The Rietveld method" edited by R. A. Young, Int. Union of Cryst.,
+Oxford University Press, New York, 1993.
+
+Be sure to read all the notes around waiting for a comprehensive manual to be 
+finished. In particular read: all the notes in the online help from the menu, 
+there are a couple of more specific helps in some windows (by pressing the help
+button when visible) and in particular: 
+- datafile format help in the datafiles tabPanel in the dataset edit frame
+- analysis wizard help in the wizard frame
+- anysotropic Popa model help in the corresponding option panel.
+In the readme (also in this help menu) there are some additional tips and notes
+after the installation notes. Reading the version notes can be helpfull to
+understand what the program can do and how to do it.
+In the Maud web page there are some tutorials for particular analyses. They
+are the best way to understand how to perform and set an analysis with Maud.
+Be sure to read them.
+At the beginning, the program may seem to be confusing but when you get
+accustomed to it you will find very fast in performing routinary work and
+or trials, analysis with lot of parameters and/or phases, datafiles.
+It works and was used for X-ray diffractometers (Bragg-Brentano, Debye-Sherrer,
+film cameras, texture goniometers, position sensitive detectors like INEL 120),
+neutron spectrometers (ILL-D1B, D20 or TOF) and even reflectivity measurements.
+Instruments as well Phases can be saved in a database for subsequent retrievial
+to speed up analysis preparation. The program may import crystal structures
+from the ICSD database, by exporting CIF formatted structures from it.
+Maud databases and analysis files are ASCII files in CIF format (enriched
+by additional terms I never found in the CIF dictionary) and can be
+edited manually.
+
+References:
+
+Theory.
+
+	RITA
+	
+H.-R. Wenk, S. Matthies and L. Lutterotti, "Texture analysis from diffraction
+spectra", Mater. Sci. Forum, 157-162, 473-480, 1994. 
+
+M. Ferrari, L. Lutterotti, S. Matthies, P. Polonioli, H. -R. Wenk, "New
+opportunities in the texture and stress field by the whole pattern analysis",
+Mat. Sci. Forum, vols 228-231, pp. 83-88, (1996). 
+
+S. Matthies, L. Lutterotti and H. -R. Wenk, "Progress in combining Rietveld and
+QTA Algorithms on Advanced Level", Presented at ICOTOM 11, China, September 1996.
+
+S. Matthies, L. Lutterotti, H. -R. Wenk, "Advances in Texture Analysis from
+Diffraction Spectra", J. Appl. Cryst., 30, 31-42, (1997). 
+
+	RISTA
+
+M. Ferrari and L. Lutterotti, "Method for the simultaneous determination of
+anisotropic residual stresses and texture by X-ray diffraction", J. Appl. Phys.,
+76 (11), 7246-55, 1994. 
+
+Analysis examples.
+
+L. Lutterotti, P. Polonioli, P. G. Orsini and M. Ferrari, "Stress and texture
+analysis of zirconia coatings by XRD total pattern fitting",  in ASME Materials
+and Design Technology 1994, Ed. T. J. Kozik, ASME, 15-20, 1994. 
+
+L. Lutterotti, S. Matthies, H.-R. Wenk, A.J. Schultz and J. Richardson, "Texture
+and structure analysis of deformed limestone from neutron diffraction spectra",
+J. Appl. Phys., 81[2], 594-600, (1997). 
+
+D. Chateigner, L. Lutterotti & T. Hansen, "Quantitative phase and texture
+analysis of ceramic matrix composites", ILL Annual Report 97, 1998. 
+
+Microstructure and Rietveld.
+
+L. Lutterotti & P. Scardi, "Simultaneous Structure and Size-Strain Refinement by
+the Rietveld Method", J. Appl. Cryst. (1990), 23, 246-252. 
+
+L. Lutterotti and S. Gialanella, "X-ray diffraction characterization of heavily
+deformed metallic specimens", Acta Materialia, 46[1], 101-110, (1998).
+
+P. Scardi, L. Lutterotti & P. Maistrelli, "Experimental Determination of the
+Instrumental Broadening in the Bragg-Brentano Geometry". Powder Diffraction., 9
+(3), pp.180-186, 1994. 
+
