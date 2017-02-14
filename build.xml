@@ -1,0 +1,2682 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Ant makefile for Maud -->
+
+<project name="Maud" default="copy_full" basedir=".">
+
+    <property name="src" location="src"/>
+    <property name="web" location="src/web"/>
+    <property name="inst" location="Installers"/>
+    <property name="build" location="${user.home}/Library/Developer/Maud/build"/>
+    <property name="build_ant" location="${build}/build.ant"/>
+    <property name="libs" location="libs"/>
+    <property name="script" location="script_files/macosx"/>
+    <property name="buildnumber" location="build_numbers"/>
+    <property name="myself" value="myself"/>
+    <property file="${user.home}/.ant_maud.properties"/>
+    <property name="java_version" value="1.7"/>
+    <property name="bundle.icon" value="maud.icns"/>
+    <property name="application_OSX.title" value="Maud.app"/>
+    <property name="app_osx" location="${user.home}/Projects/maud/osx"/>
+    <property name="JAVA_HOME" location="/Library/Java/JavaVirtualMachines/jdk1.7.0_80.jdk/Contents/Home"/>
+
+
+    <target name="clean" description="Delete the build files.">
+        <delete dir="${build_ant}"/>
+    </target>
+
+    <target name="clean_maud" description="Delete the build files.">
+        <delete dir="${build_ant}"/>
+        <delete file="${build}/Maud_dev.jar"/>
+        <delete file="${build}/Maud_reduced.jar"/>
+        <delete file="${build}/Maud_essential.jar"/>
+    </target>
+
+    <target name="encode_UTF8" depends="clean_maud" description="Encode source files in UTF-8">
+        <native2ascii encoding="UTF-8" src="${src}" dest="srcUTF8" includes="**/*.java"/>
+    </target>
+
+
+    <target name="compile_open" depends="clean_maud" description="Compile Maud_dev.jar">
+        <!-- First, ensure the build directory exists. -->
+        <delete dir="${build_ant}"/>
+        <delete file="${build}/Maud_dev.jar"/>
+        <delete file="${build}/Maud_reduced.jar"/>
+        <delete file="${build}/Maud_essential.jar"/>
+        <mkdir dir="${build}"/>
+        <mkdir dir="${build_ant}"/>
+        <!-- Build everything -->
+        <javac destdir="${build_ant}" debug="on" target="${java_version}" encoding="UTF-8">
+            <src path="${src}"/>
+            <!--exclude name="it/unitn/ing/jsginfo/**" /-->
+            <!--exclude name="it/unitn/ing/jgraph/**" /-->
+            <exclude name="it/unitn/ing/esqui/client/**"/>
+            <exclude name="it/unitn/ing/esqui/server/**"/>
+            <exclude name="it/unitn/ing/esqui/wizard/MeasurementWizard.java"/>
+            <exclude name="it/unitn/ing/esqui/wizard/AnalysisWizard.java"/>
+            <exclude name="it/unitn/ing/esqui/wizard/AnalysisMeasurementWizard.java"/>
+            <exclude name="it/unitn/ing/esqui/wizard/WizardFrame.java"/>
+            <exclude name="it/unitn/ing/rista/mdyn/**"/>
+            <exclude name="it/unitn/ing/rista/MaudApp.java"/>
+            <exclude name="it/unitn/ing/rista/MaudetteApp.java"/>
+            <!--exclude name="com/hypernex/analysis/rietveld/PhotoplateSpectraIntegration.java" /-->
+            <exclude name="it/unitn/ing/rista/awt/MaudAppMacOSFrame.java"/>
+            <exclude name="it/unitn/ing/rista/awt/MRJInterface.java"/>
+            <exclude name="it/unitn/ing/rista/awt/StrainPlot.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/data/GSASNewDataFile.java"/>
+            <!--exclude name="it/unitn/ing/rista/diffr/data/D19ImageSummedDatafile.java" /!-->
+            <exclude name="it/unitn/ing/rista/diffr/intext/IntensityExtLeBailWt.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/intext/IntensityExtEntropy.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/rsa/HarmonicStrainT.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/rsa/HarmonicStrainRT.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/rsa/NoStress.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/rsa/VoigtReussStress.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/Stress.java"/>
+            <!--exclude name="it/unitn/ing/rista/diffr/cal/AngularInclinedFlatImageCalibration.java" />
+      <exclude name="it/unitn/ing/rista/diffr/rsa/PopaBalzarHarmonicStrainModel.java" /-->
+            <exclude name="it/unitn/ing/rista/diffr/sizestrain/DiffaXLayerModel.java"/>
+            <!--exclude name="it/unitn/ing/rista/diffr/geometry/GeometryInclinedImage.java" /-->
+            <!--exclude name="it/unitn/ing/rista/diffr/sdpd/Superflip.java" /-->
+            <exclude name="it/unitn/ing/rista/diffr/sdpd/ArtificialNetworkIndexing.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/sdpd/ChargeFlippingDensityMap.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/sdpd/EvolutionarySmartIndexing.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/sdpd/FourierMapMEM_ComputatorExtractor.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/sdpd/GenerateIndexingDataUI.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/sdpd/GenerateIndexingData.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/sdpd/ShelxsSolution.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/sdpd/StructureSolutionGANew.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/sdpd/StructureSolutionGeneticAlgorithm.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/sdpd/StructureSolutionGeneticAlgorithmClassic.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/sdpd/StructureSolutionReverseMontecarlo.java"/>
+            <!--exclude name="it/unitn/ing/rista/diffr/sfm/FullProfStructureModel.java" /-->
+            <!--exclude name="it/unitn/ing/rista/diffr/sdpd/GiacovazzoSirIC.java" /-->
+            <!--exclude name="it/unitn/ing/rista/diffr/forcefield/ABINITEnergyComputation.java" /-->
+            <exclude name="it/unitn/ing/rista/interfaces/myObj.java"/>
+            <exclude name="it/unitn/ing/rista/io/ZIPNLextractor.java"/>
+            <!--exclude name="it/unitn/ing/xgridagent/**"/-->
+            <exclude name="jnt/**"/>
+            <exclude name="HTTPClient/**"/>
+            <exclude name="gl4java/**"/>
+            <exclude name="ij/gui/PlotWindow.java"/>
+            <exclude name="org/java/misc/GL4Installer/MSJVMVersionApplet.java"/>
+            <exclude name="ec/**"/>
+            <exclude name="com/jtex/**"/>
+            <exclude name="fr/ensicaen/**"/>
+            <!--exclude name="it/unitn/ing/fortran/**" /-->
+            <exclude name="help/**"/>
+            <exclude name="images/**"/>
+            <exclude name="files/**"/>
+            <exclude name="com/hypernex/**"/>
+            <exclude name="com/nova/**"/>
+            <exclude name="web/**"/>
+            <exclude name="license/**"/>
+            <exclude name="dot/**"/>
+            <classpath>
+                <pathelement location="libs/current/jogl.all.jar"/>
+                <pathelement location="libs/current/EsquiClient.jar"/>
+                <pathelement location="libs/current/nativewindow.all.jar"/>
+                <pathelement location="libs/current/newt.all.jar"/>
+                <pathelement location="libs/current/miscLib.jar"/>
+                <pathelement location="libs/current/jgaec.jar"/>
+                <pathelement location="libs/current/jgap.jar"/>
+                <!--pathelement location="libs/current/jmol.jar"/-->
+                <!--pathelement location="${build}/jnlp.jar"/-->
+                <pathelement location="libs/current/ij.jar"/>
+                <!--pathelement location="${build}/jspline.jar"/>
+				<pathelement location="${build}/JNIAltivec.jar"/-->
+                <pathelement location="libs/current/HTTPClient.jar"/>
+                <!--pathelement location="libs/current/jdom.jar"/>
+                <pathelement location="libs/current/rome.jar"/-->
+                <pathelement location="libs/current/MySQL-ConnectorJ.jar"/>
+                <pathelement location="libs/current/xgridlib.jar"/>
+                <!--pathelement location="${build}/capsapi_classes.zip"/>
+				<pathelement location="${build}/Apple_ui.jar"/-->
+                <pathelement location="libs/current/aparapi.jar"/>
+                <pathelement location="libs/current/joone-engine.jar"/>
+                <pathelement location="libs/current/swingx.jar"/>
+                <pathelement location="libs/current/com.github.tschoonj.xraylib.jar"/>
+                <pathelement location="libs/current/commons-math.jar"/>
+                <!--pathelement location="${build}/jdic.jar"/>
+        <pathelement location="${build}/jhdf.jar"/>
+        <pathelement location="${build}/jhdf4obj.jar"/>
+        <pathelement location="${build}/jhdf5.jar"/>
+        <pathelement location="${build}/jhdf5obj.jar"/>
+        <pathelement location="${build}/jhdfobj.jar"/>
+        <pathelement location="${build}/quaqua.jar"/>
+        <pathelement location="${build}/nova/TestManager.jar"/>
+        <pathelement location="${build}/nova/NeuralWorks.jar"/-->
+                <pathelement location="/System/Library/java"/>
+            </classpath>
+        </javac>
+        <buildnumber file="${buildnumber}/Maud_full_build.number"/>
+    </target>
+
+
+    <target name="compile_full" depends="clean_maud" description="Compile all classes">
+        <!-- First, ensure the build directory exists. -->
+        <delete dir="${build_ant}"/>
+        <delete file="${build}/Maud_dev.jar"/>
+        <delete file="${build}/Maud_reduced.jar"/>
+        <delete file="${build}/Maud_essential.jar"/>
+        <mkdir dir="build"/>
+        <mkdir dir="${build_ant}"/>
+        <!-- Build everything -->
+        <javac destdir="${build_ant}" debug="on" target="${java_version}" encoding="UTF-8">
+            <src path="${src}"/>
+            <!--exclude name="it/unitn/ing/jsginfo/**" /-->
+            <!--exclude name="it/unitn/ing/jgraph/**" /-->
+            <!--exclude name="it/unitn/ing/esqui/client/**" />
+          <exclude name="it/unitn/ing/esqui/server/**" />
+          <exclude name="it/unitn/ing/esqui/wizard/MeasurementWizard.java" />
+          <exclude name="it/unitn/ing/esqui/wizard/AnalysisWizard.java" />
+          <exclude name="it/unitn/ing/esqui/wizard/AnalysisMeasurementWizard.java" />
+          <exclude name="it/unitn/ing/esqui/wizard/WizardFrame.java" /-->
+            <exclude name="it/unitn/ing/rista/mdyn/**"/>
+            <!--exclude name="it/unitn/ing/rista/MaudApp.java" /-->
+            <!--exclude name="com/hypernex/analysis/rietveld/PhotoplateSpectraIntegration.java" /-->
+            <exclude name="it/unitn/ing/rista/awt/MaudAppMacOSFrame.java"/>
+            <exclude name="it/unitn/ing/rista/awt/MRJInterface.java"/>
+            <exclude name="it/unitn/ing/rista/awt/StrainPlot.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/data/GSASNewDataFile.java"/>
+            <!--exclude name="it/unitn/ing/rista/diffr/data/D19ImageSummedDatafile.java" /!-->
+            <exclude name="it/unitn/ing/rista/diffr/intext/IntensityExtLeBailWt.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/intext/IntensityExtEntropy.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/rsa/HarmonicStrainT.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/rsa/HarmonicStrainRT.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/rsa/NoStress.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/rsa/VoigtReussStress.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/Stress.java"/>
+            <!--exclude name="it/unitn/ing/rista/diffr/cal/AngularInclinedFlatImageCalibration.java" /-->
+            <!--exclude name="it/unitn/ing/rista/diffr/rsa/PopaBalzarHarmonicStrainModel.java" /-->
+            <exclude name="it/unitn/ing/rista/diffr/sizestrain/DiffaXLayerModel.java"/>
+            <!--exclude name="it/unitn/ing/rista/diffr/geometry/GeometryInclinedImage.java" /-->
+            <exclude name="it/unitn/ing/rista/diffr/sdpd/Superflip.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/sdpd/ArtificialNetworkIndexing.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/sdpd/ChargeFlippingDensityMap.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/sdpd/EvolutionarySmartIndexing.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/sdpd/FourierMapMEM_ComputatorExtractor.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/sdpd/GenerateIndexingDataUI.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/sdpd/GenerateIndexingData.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/sdpd/ShelxsSolution.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/sdpd/StructureSolutionGANew.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/sdpd/StructureSolutionGeneticAlgorithm.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/sdpd/StructureSolutionGeneticAlgorithmClassic.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/sdpd/StructureSolutionReverseMontecarlo.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/sdpd/GiacovazzoSirIC.java"/>
+            <!--exclude name="it/unitn/ing/rista/diffr/forcefield/ABINITEnergyComputation.java" /-->
+            <exclude name="it/unitn/ing/rista/interfaces/myObj.java"/>
+            <exclude name="it/unitn/ing/rista/io/ZIPNLextractor.java"/>
+            <exclude name="it/unitn/ing/xgridagent/**"/>
+            <exclude name="jnt/**"/>
+            <exclude name="HTTPClient/**"/>
+            <exclude name="gl4java/**"/>
+            <exclude name="ij/gui/PlotWindow.java"/>
+            <exclude name="org/java/misc/GL4Installer/MSJVMVersionApplet.java"/>
+            <exclude name="ec/**"/>
+            <exclude name="com/jtex/**"/>
+            <exclude name="fr/ensicaen/**"/>
+            <!--exclude name="it/unitn/ing/fortran/**" /-->
+            <exclude name="help/**"/>
+            <exclude name="images/**"/>
+            <exclude name="files/**"/>
+            <exclude name="com/hypernex/**"/>
+            <exclude name="com/nova/**"/>
+            <classpath>
+                <pathelement location="libs/current/jogl.all.jar"/>
+                <pathelement location="libs/current/EsquiClient.jar"/>
+                <pathelement location="libs/current/nativewindow.all.jar"/>
+                <pathelement location="libs/current/newt.all.jar"/>
+                <pathelement location="libs/current/miscLib.jar"/>
+                <pathelement location="libs/current/jgaec.jar"/>
+                <pathelement location="libs/current/jgap.jar"/>
+                <pathelement location="libs/current/jmol.jar"/>
+                <!--pathelement location="${build}/jnlp.jar"/-->
+                <pathelement location="libs/current/ij.jar"/>
+                <!--pathelement location="${build}/jspline.jar"/>
+              <pathelement location="${build}/JNIAltivec.jar"/-->
+                <pathelement location="libs/current/HTTPClient.jar"/>
+                <pathelement location="libs/current/jdom.jar"/>
+                <pathelement location="libs/current/rome.jar"/>
+                <pathelement location="libs/current/MySQL-ConnectorJ.jar"/>
+                <pathelement location="libs/current/xgridlib.jar"/>
+                <!--pathelement location="${build}/capsapi_classes.zip"/>
+              <pathelement location="${build}/Apple_ui.jar"/-->
+                <pathelement location="libs/current/aparapi.jar"/>
+                <pathelement location="libs/current/joone-engine.jar"/>
+                <pathelement location="libs/current/swingx.jar"/>
+                <pathelement location="libs/current/com.github.tschoonj.xraylib.jar"/>
+                <pathelement location="libs/current/commons-math.jar"/>
+                <!--pathelement location="${build}/jdic.jar"/>
+              <pathelement location="${build}/jhdf.jar"/>
+              <pathelement location="${build}/jhdf4obj.jar"/>
+              <pathelement location="${build}/jhdf5.jar"/>
+              <pathelement location="${build}/jhdf5obj.jar"/>
+              <pathelement location="${build}/jhdfobj.jar"/>
+              <pathelement location="${build}/quaqua.jar"/>
+              <pathelement location="${build}/nova/TestManager.jar"/>
+              <pathelement location="${build}/nova/NeuralWorks.jar"/-->
+                <pathelement location="/System/Library/java"/>
+            </classpath>
+        </javac>
+        <buildnumber file="${buildnumber}/Maud_full_build.number"/>
+    </target>
+
+
+    <target name="build_full" depends="compile_open" description="Build Maud.jar.">
+        <!-- Copy needed files into the build directory. -->
+        <delete dir="${build_ant}/ec"/>
+        <delete dir="${build_ant}/it/unitn/ing/esqui/client"/>
+        <!--delete dir="${build_ant}/it/unitn/ing/fortran" />
+    <delete dir="${build_ant}/it/unitn/ing/jgraph" /-->
+        <!--delete dir="${build_ant}/it/unitn/ing/jsginfo" /-->
+        <delete dir="${build_ant}/HTTPClient"/>
+        <copy file="${buildnumber}/Maud_full_build.number" todir="${build_ant}"/>
+        <copy file="${src}/ij/IJ_Props.txt" todir="${build_ant}"/>
+        <mkdir dir="${build_ant}/files"/>
+        <!--copy file="${src}/files/classnames.ins" todir="${build_ant}/files" /-->
+        <copy file="${src}/files/atominfo.cif" todir="${build_ant}/files"/>
+        <copy file="${src}/files/default.par" todir="${build_ant}/files"/>
+        <copy file="${src}/files/marker.txt" todir="${build_ant}/files"/>
+        <copy file="${src}/files/Properties.3D" todir="${build_ant}/files"/>
+        <copy file="${src}/files/CWWARRAY.DAT" todir="${build_ant}/files"/>
+        <copy file="${src}/files/IADARRAY.DAT" todir="${build_ant}/files"/>
+        <copy file="${src}/files/xraydata.db" todir="${build_ant}/files" />
+    <!--copy file="${src}/files/ElectronScatteringFactors.txt" todir="${build_ant}/files" />
+    <copy file="${src}/files/asf_Kissel.dat" todir="${build_ant}/files" />
+    <copy file="${src}/files/integratedBessel.dat" todir="${build_ant}/files" />
+    <copy file="${src}/files/ScatteringLengths.txt" todir="${build_ant}/files" />
+    <copy file="${src}/files/CrossSection.dat" todir="${build_ant}/files" /-->
+        <mkdir dir="${build_ant}/media"/>
+        <mkdir dir="${build_ant}/media/music"/>
+        <mkdir dir="${build_ant}/media/music/samples"/>
+        <copy file="media/music/samples/MO1.au" todir="${build_ant}/media/music/samples"/>
+        <copy file="media/music/samples/MO2.au" todir="${build_ant}/media/music/samples"/>
+        <copy file="media/music/samples/MO3.au" todir="${build_ant}/media/music/samples"/>
+        <copy file="${src}/it/unitn/ing/wizard/wizard.properties" todir="${build_ant}/it/unitn/ing/wizard"/>
+        <copy file="${src}/it/unitn/ing/wizard/backIcon.gif" todir="${build_ant}/it/unitn/ing/wizard"/>
+        <copy file="${src}/it/unitn/ing/wizard/cancelIcon.gif" todir="${build_ant}/it/unitn/ing/wizard"/>
+        <copy file="${src}/it/unitn/ing/wizard/finishIcon.gif" todir="${build_ant}/it/unitn/ing/wizard"/>
+        <copy file="${src}/it/unitn/ing/wizard/nextIcon.gif" todir="${build_ant}/it/unitn/ing/wizard"/>
+        <!-- Build Maud.jar. -->
+        <jar jarfile="${build}/Maud_dev.jar" basedir="${build_ant}">
+            <!--exclude name="it/unitn/ing/rista/diffr/cal/AngularInclinedFlatImageCalibration.class" />
+      <exclude name="it/unitn/ing/rista/diffr/geometry/GeometryInclinedImage.class" /-->
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Main-class" value="com.radiographema.Maud"/>
+            </manifest>
+        </jar>
+        <copy file="${build}/Maud_dev.jar" tofile="${build}/Maud.jar"/>
+    </target>
+
+    <target name="jar_nova_classes" depends="compile_full" description="Build Maud.jar.">
+        <mkdir dir="${build_ant}/nova"/>
+        <mkdir dir="${build_ant}/nova/ImageConversionOriginal/com/hypernex/analysis/rietveld"/>
+        <copy file="${build_ant}/com/hypernex/analysis/rietveld/PhotoplateSpectraIntegration.class"
+              todir="${build_ant}/nova/ImageConversionOriginal/com/hypernex/analysis/rietveld"/>
+        <mkdir dir="${build_ant}/nova/ImageConversionASCII/com/hypernex/analysis/rietveld"/>
+        <copy file="${build_ant}/com/hypernex/analysis/rietveld/PhotoplateSaveToASCII.class"
+              todir="${build_ant}/nova/ImageConversionASCII/com/hypernex/analysis/rietveld"/>
+        <mkdir dir="${build_ant}/nova/ImageConversionTest/com/hypernex/analysis/rietveld"/>
+        <copy file="${build_ant}/com/hypernex/analysis/rietveld/PhotoplateConversionToASCII.class"
+              todir="${build_ant}/nova/ImageConversionTest/com/hypernex/analysis/rietveld"/>
+        <mkdir dir="${build_ant}/nova/QuantitativeTextureAnalysis/com/hypernex/analysis/rietveld"/>
+        <copy file="${build_ant}/com/hypernex/analysis/rietveld/QuantitativeTextureAnalysis.class"
+              todir="${build_ant}/nova/QuantitativeTextureAnalysis/com/hypernex/analysis/rietveld"/>
+        <!-- Build Maud.jar. -->
+        <jar jarfile="${build_ant}/nova/ImageConversionOriginal/ImageConversionOriginal.jar"
+             basedir="${build_ant}/nova/ImageConversionOriginal">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Main-class" value="com.radiographema.Maud"/>
+            </manifest>
+        </jar>
+        <jar jarfile="${build_ant}/nova/ImageConversionASCII/ImageConversionASCII.jar"
+             basedir="${build_ant}/nova/ImageConversionASCII">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Main-class" value="com.radiographema.Maud"/>
+            </manifest>
+        </jar>
+        <jar jarfile="${build_ant}/nova/ImageConversionTest/ImageConversionTest.jar"
+             basedir="${build_ant}/nova/ImageConversionTest">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Main-class" value="com.radiographema.Maud"/>
+            </manifest>
+        </jar>
+        <jar jarfile="${build_ant}/nova/QuantitativeTextureAnalysis/QuantitativeTextureAnalysis.jar"
+             basedir="${build_ant}/nova/QuantitativeTextureAnalysis">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Main-class" value="com.radiographema.Maud"/>
+            </manifest>
+        </jar>
+        <delete file="${user.home}/Analysis/Analysis_07/nova/LargePhotoplateExample/analysis/QuantitaveTextureAnalysis/QuantitativeTextureAnalysis.jar"/>
+        <copy file="${build_ant}/nova/QuantitativeTextureAnalysis/QuantitativeTextureAnalysis.jar"
+              todir="${user.home}/Analysis/Analysis_07/nova/LargePhotoplateExample/analysis/QuantitaveTextureAnalysis"/>
+    </target>
+
+    <target name="jar_radiographema_plugins" depends="compile_full" description="Build radiographema.jar.">
+        <mkdir dir="${build_ant}/radiographema"/>
+        <mkdir dir="${build_ant}/radiographema/plugins/it/unitn/ing/rista/diffr/cal"/>
+        <copy file="${build_ant}/it/unitn/ing/rista/diffr/cal/AngularInclinedFlatImageCalibration.class"
+              todir="${build_ant}/radiographema/plugins/it/unitn/ing/rista/diffr/cal"/>
+        <copy file="${build_ant}/it/unitn/ing/rista/diffr/cal/AngularInclinedFlatImageCalibration$JPolAngOptionsD.class"
+              todir="${build_ant}/radiographema/plugins/it/unitn/ing/rista/diffr/cal"/>
+        <mkdir dir="${build_ant}/radiographema/plugins/it/unitn/ing/rista/diffr/geometry"/>
+        <copy file="${build_ant}/it/unitn/ing/rista/diffr/geometry/GeometryInclinedImage.class"
+              todir="${build_ant}/radiographema/plugins/it/unitn/ing/rista/diffr/geometry"/>
+        <!--mkdir dir="${build_ant}/radiographema/plugins/com/nova/xrd" />
+    <copy file="${build_ant}/com/nova/xrd/InstrumentBroadeningNova.class" todir="${build_ant}/radiographema/plugins/com/nova/xrd" />
+    <copy file="${build_ant}/com/nova/xrd/InstrumentBroadeningNova$JBankOptionsD.class" todir="${build_ant}/radiographema/plugins/com/nova/xrd" / -->
+        <!-- Build Maud.jar. -->
+        <jar jarfile="${build_ant}/radiographema/plugins/radiographema.jar"
+             basedir="${build_ant}/radiographema/plugins">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+            </manifest>
+        </jar>
+        <!--delete file="${user.home}/Analysis/Analysis_07/nova/LargePhotoplateExample/bin/plugins/radiographema.jar" /!-->
+        <!--copy file="${build_ant}/radiographema/plugins/radiographema.jar" todir="${user.home}/Analysis/Analysis_07/nova/LargePhotoplateExample/bin/plugins" /!-->
+        <copy file="${build_ant}/radiographema/plugins/radiographema.jar" todir="${mirrorfulldir2}/plugins"/>
+    </target>
+
+    <target name="jar_zurich_eth_plugins" depends="compile_full" description="Build sdpdETH.jar.">
+        <mkdir dir="${build_ant}/ethZurich"/>
+        <mkdir dir="${build_ant}/ethZurich/plugins/it/unitn/ing/rista/diffr/sdpd"/>
+        <copy file="${build_ant}/it/unitn/ing/rista/diffr/sdpd/Superflip.class"
+              todir="${build_ant}/ethZurich/plugins/it/unitn/ing/rista/diffr/sdpd"/>
+        <copy file="${build_ant}/it/unitn/ing/rista/diffr/sdpd/Superflip$JSFSDPDOptionsD.class"
+              todir="${build_ant}/ethZurich/plugins/it/unitn/ing/rista/diffr/sdpd"/>
+        <copy file="${build_ant}/it/unitn/ing/rista/diffr/sdpd/Superflip$JSFSDPDOptionsD$1.class"
+              todir="${build_ant}/ethZurich/plugins/it/unitn/ing/rista/diffr/sdpd"/>
+        <copy file="${build_ant}/it/unitn/ing/rista/diffr/sdpd/Superflip$JSFSDPDOptionsD$2.class"
+              todir="${build_ant}/ethZurich/plugins/it/unitn/ing/rista/diffr/sdpd"/>
+        <copy file="${build_ant}/it/unitn/ing/rista/diffr/sdpd/Superflip$JSFSDPDOptionsD$3.class"
+              todir="${build_ant}/ethZurich/plugins/it/unitn/ing/rista/diffr/sdpd"/>
+        <copy file="${build_ant}/it/unitn/ing/rista/diffr/sdpd/Superflip$JSFSDPDOptionsD$4.class"
+              todir="${build_ant}/ethZurich/plugins/it/unitn/ing/rista/diffr/sdpd"/>
+        <!-- Build Maud.jar. -->
+        <jar jarfile="${build_ant}/ethZurich/plugins/sdpdETH.jar" basedir="${build_ant}/ethZurich/plugins">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+            </manifest>
+        </jar>
+        <copy file="${build_ant}/ethZurich/plugins/sdpdETH.jar" todir="${mirrorfulldir2}/plugins"/>
+        <copy file="${build_ant}/ethZurich/plugins/sdpdETH.jar" todir="${installfulldirMac}/../../../../plugins"/>
+        <copy file="${build_ant}/ethZurich/plugins/sdpdETH.jar" todir="${installfulldirMac64}/../../../../plugins"/>
+        <copy file="${build_ant}/ethZurich/plugins/sdpdETH.jar" todir="${installfulldirUnix}/plugins"/>
+        <copy file="${build_ant}/ethZurich/plugins/sdpdETH.jar" todir="${installfulldirWindows}/plugins"/>
+        <copy file="${build_ant}/ethZurich/plugins/sdpdETH.jar" todir="${installfulldirLinux64}/plugins"/>
+        <copy file="${build_ant}/ethZurich/plugins/sdpdETH.jar" todir="${installfulldirWin64}/plugins"/>
+        <copy file="${build_ant}/ethZurich/plugins/sdpdETH.jar" todir="${installfulldirUnixNJ}/plugins"/>
+        <copy file="${build_ant}/ethZurich/plugins/sdpdETH.jar" todir="${installfulldirWindowsNJ}/plugins"/>
+        <copy file="${build_ant}/ethZurich/plugins/sdpdETH.jar" todir="${installfulldirLinux64NJ}/plugins"/>
+        <copy file="${build_ant}/ethZurich/plugins/sdpdETH.jar" todir="${installfulldirWin64NJ}/plugins"/>
+    </target>
+
+    <target name="jar_fullprof_plugins" depends="compile_full" description="Build fullprof.jar.">
+        <mkdir dir="${build_ant}/fullprof"/>
+        <mkdir dir="${build_ant}/fullprof/plugins/it/unitn/ing/rista/diffr/sfm"/>
+        <copy file="${build_ant}/it/unitn/ing/rista/diffr/sfm/FullProfStructureModel.class"
+              todir="${build_ant}/fullprof/plugins/it/unitn/ing/rista/diffr/sfm"/>
+        <copy file="${build_ant}/it/unitn/ing/rista/diffr/sfm/FullProfStructureModel$JFPOptionsD.class"
+              todir="${build_ant}/fullprof/plugins/it/unitn/ing/rista/diffr/sfm"/>
+        <!-- Build Maud.jar. -->
+        <jar jarfile="${build_ant}/fullprof/plugins/fullprof.jar" basedir="${build_ant}/fullprof/plugins">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+            </manifest>
+        </jar>
+        <copy file="${build_ant}/fullprof/plugins/fullprof.jar" todir="${mirrorfulldir2}/plugins"/>
+        <!--copy file="${build_ant}/fullprof/plugins/fullprof.jar" todir="${installfulldirMac}/../../../../plugins" />
+    <copy file="${build_ant}/fullprof/plugins/fullprof.jar" todir="${installfulldirMac64}/../../../../plugins" />
+    <copy file="${build_ant}/fullprof/plugins/fullprof.jar" todir="${installfulldirUnix}/plugins" />
+    <copy file="${build_ant}/fullprof/plugins/fullprof.jar" todir="${installfulldirWindows}/plugins" />
+    <copy file="${build_ant}/fullprof/plugins/fullprof.jar" todir="${installfulldirWin64}/plugins" />
+    <copy file="${build_ant}/fullprof/plugins/fullprof.jar" todir="${installfulldirLinux64}/plugins" />
+    <copy file="${build_ant}/fullprof/plugins/fullprof.jar" todir="${installfulldirUnixNJ}/plugins" />
+    <copy file="${build_ant}/fullprof/plugins/fullprof.jar" todir="${installfulldirWindowsNJ}/plugins" />
+    <copy file="${build_ant}/fullprof/plugins/fullprof.jar" todir="${installfulldirWin64NJ}/plugins" />
+    <copy file="${build_ant}/fullprof/plugins/fullprof.jar" todir="${installfulldirLinux64NJ}/plugins" /-->
+    </target>
+
+    <target name="jar_sir2k_plugins" depends="compile_full" description="Build sir2k.jar.">
+        <mkdir dir="${build_ant}/sir2k"/>
+        <mkdir dir="${build_ant}/sir2k/plugins/it/unitn/ing/rista/diffr/sdpd"/>
+        <copy file="${build_ant}/it/unitn/ing/rista/diffr/sdpd/GiacovazzoSirIC.class"
+              todir="${build_ant}/sir2k/plugins/it/unitn/ing/rista/diffr/sdpd"/>
+        <copy file="${build_ant}/it/unitn/ing/rista/diffr/sdpd/GiacovazzoSirIC$JSirOptionsD.class"
+              todir="${build_ant}/sir2k/plugins/it/unitn/ing/rista/diffr/sdpd"/>
+        <!-- Build sir2k.jar. -->
+        <jar jarfile="${build_ant}/sir2k/plugins/sir2k.jar" basedir="${build_ant}/sir2k/plugins">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+            </manifest>
+        </jar>
+        <copy file="${build_ant}/sir2k/plugins/sir2k.jar" todir="${mirrorfulldir2}/plugins"/>
+        <!--copy file="${build_ant}/sir2k/plugins/sir2k.jar" todir="${installfulldirMac}/../../../../plugins" />
+    <copy file="${build_ant}/sir2k/plugins/sir2k.jar" todir="${installfulldirMac64}/../../../../plugins" />
+    <copy file="${build_ant}/sir2k/plugins/sir2k.jar" todir="${installfulldirUnix}/plugins" />
+    <copy file="${build_ant}/sir2k/plugins/sir2k.jar" todir="${installfulldirWindows}/plugins" />
+    <copy file="${build_ant}/sir2k/plugins/sir2k.jar" todir="${installfulldirWin64}/plugins" />
+    <copy file="${build_ant}/sir2k/plugins/sir2k.jar" todir="${installfulldirLinux64}/plugins" />
+        <copy file="${build_ant}/sir2k/plugins/sir2k.jar" todir="${installfulldirUnixNJ}/plugins" />
+        <copy file="${build_ant}/sir2k/plugins/sir2k.jar" todir="${installfulldirWindowsNJ}/plugins" />
+        <copy file="${build_ant}/sir2k/plugins/sir2k.jar" todir="${installfulldirWin64NJ}/plugins" />
+        <copy file="${build_ant}/sir2k/plugins/sir2k.jar" todir="${installfulldirLinux64NJ}/plugins" /-->
+    </target>
+
+    <target name="jar_abinit_plugins" depends="compile_full" description="Build Maud.jar.">
+        <mkdir dir="${build_ant}/abinit"/>
+        <mkdir dir="${build_ant}/abinit/plugins/it/unitn/ing/rista/diffr/forcefield"/>
+        <copy file="${build_ant}/it/unitn/ing/rista/diffr/forcefield/ABINITEnergyComputation.class"
+              todir="${build_ant}/abinit/plugins/it/unitn/ing/rista/diffr/forcefield"/>
+        <copy file="${build_ant}/it/unitn/ing/rista/diffr/forcefield/ABINITEnergyComputation$JAbinitOptionsD.class"
+              todir="${build_ant}/abinit/plugins/it/unitn/ing/rista/diffr/forcefield"/>
+        <!-- Build Maud.jar. -->
+        <jar jarfile="${build_ant}/abinit/plugins/abinit.jar" basedir="${build_ant}/abinit/plugins">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+            </manifest>
+        </jar>
+        <copy file="${build_ant}/abinit/plugins/abinit.jar" todir="${mirrorfulldir2}/plugins"/>
+        <copy file="${build_ant}/abinit/plugins/abinit.jar" todir="${installfulldirMac}/../../../../plugins"/>
+        <copy file="${build_ant}/abinit/plugins/abinit.jar" todir="${installfulldirMac64}/../../../../plugins"/>
+        <copy file="${build_ant}/abinit/plugins/abinit.jar" todir="${installfulldirUnix}/plugins"/>
+        <copy file="${build_ant}/abinit/plugins/abinit.jar" todir="${installfulldirWindows}/plugins"/>
+        <copy file="${build_ant}/abinit/plugins/abinit.jar" todir="${installfulldirWin64}/plugins"/>
+        <copy file="${build_ant}/abinit/plugins/abinit.jar" todir="${installfulldirLinux64}/plugins"/>
+        <copy file="${build_ant}/abinit/plugins/abinit.jar" todir="${installfulldirUnixNJ}/plugins"/>
+        <copy file="${build_ant}/abinit/plugins/abinit.jar" todir="${installfulldirWindowsNJ}/plugins"/>
+        <copy file="${build_ant}/abinit/plugins/abinit.jar" todir="${installfulldirWin64NJ}/plugins"/>
+        <copy file="${build_ant}/abinit/plugins/abinit.jar" todir="${installfulldirLinux64NJ}/plugins"/>
+    </target>
+
+    <target name="jar_inxitu_plugins" depends="compile_full" description="Build Maud.jar.">
+        <mkdir dir="${build_ant}/inxitu"/>
+        <mkdir dir="${build_ant}/inxitu/plugins/it/unitn/ing/rista/diffr/microabs"/>
+        <copy file="${build_ant}/it/unitn/ing/rista/diffr/microabs/LaueMicroAbsorption.class"
+              todir="${build_ant}/inxitu/plugins/it/unitn/ing/rista/diffr/microabs"/>
+        <!-- Build Maud.jar. -->
+        <jar jarfile="${build_ant}/inxitu/plugins/inxitu.jar" basedir="${build_ant}/inxitu/plugins">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+            </manifest>
+        </jar>
+        <copy file="${build_ant}/inxitu/plugins/inxitu.jar" todir="${mirrorfulldir2}/plugins"/>
+    </target>
+
+    <target name="jar_D19_plugins" depends="compile_full" description="Build Maud.jar.">
+        <mkdir dir="${build_ant}/D19"/>
+        <mkdir dir="${build_ant}/D19/plugins/it/unitn/ing/rista/diffr/data"/>
+        <copy file="${build_ant}/it/unitn/ing/rista/diffr/data/D19ImageSummedDatafile.class"
+              todir="${build_ant}/D19/plugins/it/unitn/ing/rista/diffr/data"/>
+        <!-- Build Maud.jar. -->
+        <jar jarfile="${build_ant}/inxitu/plugins/D19.jar" basedir="${build_ant}/D19/plugins">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+            </manifest>
+        </jar>
+        <copy file="${build_ant}/inxitu/plugins/D19.jar" todir="${mirrorfulldir2}/plugins"/>
+    </target>
+
+    <!--target name="jar_test_plugins" depends="compile_full" description="Build Maud.jar.">
+        <mkdir dir="${build_ant}/test" />
+        <mkdir dir="${build_ant}/test/plugins/it/unitn/ing/rista/diffr/rsa" />
+        <copy file="${build_ant}/it/unitn/ing/rista/diffr/rsa/PopaBalzarHarmonicStrainModel.class" todir="${build_ant}/test/plugins/it/unitn/ing/rista/diffr/rsa" />
+        <copy file="${build_ant}/it/unitn/ing/rista/diffr/rsa/PopaBalzarHarmonicStrainModel$JHStrainOptionsD.class" todir="${build_ant}/test/plugins/it/unitn/ing/rista/diffr/rsa" />
+        <copy file="${build_ant}/it/unitn/ing/rista/diffr/rsa/PopaBalzarHarmonicStrainModel$JHStrainOptionsD$1.class" todir="${build_ant}/test/plugins/it/unitn/ing/rista/diffr/rsa" />
+        <copy file="${build_ant}/it/unitn/ing/rista/diffr/rsa/PopaBalzarHarmonicStrainModel$JHStrainOptionsD$2.class" todir="${build_ant}/test/plugins/it/unitn/ing/rista/diffr/rsa" />
+        <copy file="${build_ant}/it/unitn/ing/rista/diffr/rsa/PopaBalzarHarmonicStrainModel$JHStrainOptionsD$3.class" todir="${build_ant}/test/plugins/it/unitn/ing/rista/diffr/rsa" />
+        <copy file="${build_ant}/it/unitn/ing/rista/diffr/rsa/PopaBalzarHarmonicStrainModel$JHStrainOptionsD$4.class" todir="${build_ant}/test/plugins/it/unitn/ing/rista/diffr/rsa" />
+        <copy file="${build_ant}/it/unitn/ing/rista/diffr/rsa/PopaBalzarHarmonicStrainModel$JHStrainOptionsD$5.class" todir="${build_ant}/test/plugins/it/unitn/ing/rista/diffr/rsa" />
+        <copy file="${build_ant}/it/unitn/ing/rista/diffr/rsa/PopaBalzarHarmonicStrainModel$HarmonicPane.class" todir="${build_ant}/test/plugins/it/unitn/ing/rista/diffr/rsa" />
+        <jar jarfile="${build_ant}/test/plugins/test.jar" basedir="${build_ant}/test/plugins">
+              <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+              </manifest>
+        </jar>
+        <copy file="${build_ant}/test/plugins/test.jar" todir="${mirrorfulldir2}/plugins" />
+       </target-->
+
+    <target name="compile_textmode" depends="clean_maud" description="Compile Maud_essential.jar">
+        <!-- First, ensure the build directory exists. -->
+        <delete dir="${build_ant}"/>
+        <delete file="${build}/Maud_dev.jar"/>
+        <delete file="${build}/Maud_reduced.jar"/>
+        <delete file="${build}/Maud_essential.jar"/>
+        <mkdir dir="build"/>
+        <mkdir dir="${build_ant}"/>
+        <!-- Build everything -->
+        <javac destdir="${build_ant}" debug="on" target="${java_version}" encoding="UTF-8">
+            <src path="${src}"/>
+            <exclude name="it/unitn/ing/esqui/client/**"/>
+            <exclude name="it/unitn/ing/esqui/server/**"/>
+            <exclude name="it/unitn/ing/esqui/wizard/MeasurementWizard.java"/>
+            <exclude name="it/unitn/ing/esqui/wizard/AnalysisWizard.java"/>
+            <exclude name="it/unitn/ing/esqui/wizard/AnalysisMeasurementWizard.java"/>
+            <exclude name="it/unitn/ing/esqui/wizard/WizardFrame.java"/>
+            <exclude name="it/unitn/ing/rista/mdyn/**"/>
+            <!--exclude name="it/unitn/ing/rista/MaudApp.java" /-->
+            <!--exclude name="com/hypernex/analysis/rietveld/PhotoplateSpectraIntegration.java" /-->
+            <exclude name="it/unitn/ing/rista/awt/MaudAppMacOSFrame.java"/>
+            <exclude name="it/unitn/ing/rista/awt/MRJInterface.java"/>
+            <exclude name="it/unitn/ing/rista/awt/StrainPlot.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/data/GSASNewDataFile.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/rsa/HarmonicStrainT.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/rsa/HarmonicStrainRT.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/rsa/NoStress.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/rsa/VoigtReussStress.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/Stress.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/cal/AngularInclinedFlatImageCalibration.java"/>
+            <!--exclude name="it/unitn/ing/rista/diffr/rsa/PopaBalzarHarmonicStrainModel.java" /-->
+            <exclude name="it/unitn/ing/rista/diffr/sizestrain/DiffaXLayerModel.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/geometry/GeometryInclinedImage.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/sdpd/Superflip.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/sfm/FullProfStructureModel.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/forcefield/ABINITEnergyComputation.java"/>
+            <exclude name="it/unitn/ing/rista/interfaces/myObj.java"/>
+            <exclude name="it/unitn/ing/rista/io/ZIPNLextractor.java"/>
+            <exclude name="it/unitn/ing/xgridagent/**"/>
+            <exclude name="it/unitn/ing/rista/MaudWebStart.java"/>
+            <exclude name="jnt/**"/>
+            <exclude name="HTTPClient/**"/>
+            <exclude name="gl4java/**"/>
+            <exclude name="ij/gui/PlotWindow.java"/>
+            <exclude name="org/java/misc/GL4Installer/MSJVMVersionApplet.java"/>
+            <exclude name="ec/**"/>
+            <exclude name="it/unitn/ing/fortran/**"/>
+            <exclude name="help/**"/>
+            <exclude name="images/**"/>
+            <exclude name="files/**"/>
+            <exclude name="com/hypernex/**"/>
+            <exclude name="com/nova/**"/>
+            <classpath>
+                <pathelement location="libs/current/jogl.all.jar"/>
+                <pathelement location="libs/current/EsquiClient.jar"/>
+                <pathelement location="libs/current/nativewindow.all.jar"/>
+                <pathelement location="libs/current/newt.all.jar"/>
+                <pathelement location="libs/current/miscLib.jar"/>
+                <pathelement location="libs/current/jgaec.jar"/>
+                <pathelement location="libs/current/jgap.jar"/>
+                <pathelement location="libs/current/jmol.jar"/>
+                <!--pathelement location="${build}/jnlp.jar"/-->
+                <pathelement location="libs/current/ij.jar"/>
+                <!--pathelement location="${build}/jspline.jar"/>
+          <pathelement location="${build}/JNIAltivec.jar"/-->
+                <pathelement location="libs/current/HTTPClient.jar"/>
+                <pathelement location="libs/current/jdom.jar"/>
+                <pathelement location="libs/current/rome.jar"/>
+                <pathelement location="libs/current/MySQL-ConnectorJ.jar"/>
+                <pathelement location="libs/current/xgridlib.jar"/>
+                <!--pathelement location="${build}/capsapi_classes.zip"/>
+          <pathelement location="${build}/Apple_ui.jar"/-->
+                <pathelement location="libs/current/aparapi.jar"/>
+                <pathelement location="libs/current/joone-engine.jar"/>
+                <pathelement location="libs/current/swingx.jar"/>
+                <pathelement location="libs/current/com.github.tschoonj.xraylib.jar"/>
+                <pathelement location="libs/current/commons-math.jar"/>
+                <!--pathelement location="${build}/jdic.jar"/>
+          <pathelement location="${build}/jhdf.jar"/>
+          <pathelement location="${build}/jhdf4obj.jar"/>
+          <pathelement location="${build}/jhdf5.jar"/>
+          <pathelement location="${build}/jhdf5obj.jar"/>
+          <pathelement location="${build}/jhdfobj.jar"/>
+          <pathelement location="${build}/quaqua.jar"/>
+          <pathelement location="${build}/nova/TestManager.jar"/>
+          <pathelement location="${build}/nova/NeuralWorks.jar"/-->
+                <pathelement location="/System/Library/java"/>
+            </classpath>
+        </javac>
+        <buildnumber file="${buildnumber}/Maud_full_build.number"/>
+    </target>
+
+
+    <target name="build_textmode" depends="compile_textmode" description="Build Maud.jar.">
+        <!-- Copy needed files into the build directory. -->
+        <!--delete dir="${build_ant}/ec" /-->
+        <delete dir="${build_ant}/it/unitn/ing/esqui/client"/>
+        <delete dir="${build_ant}/gov"/>
+        <!--delete dir="${build_ant}/ij" /-->
+        <delete dir="${build_ant}/org"/>
+        <delete dir="${build_ant}/it/unitn/ing/esqui"/>
+        <delete dir="${build_ant}/it/unitn/ing/xgridclient"/>
+        <delete dir="${build_ant}/it/unitn/ing/xgridagent"/>
+        <!--delete dir="${build_ant}/it/unitn/ing/rista/awt" /-->
+        <!--delete dir="${build_ant}/it/unitn/ing/rista/jpvm" /-->
+        <delete dir="${build_ant}/it/unitn/ing/rista/render3d"/>
+        <!--delete dir="${build_ant}/it/unitn/ing/fortran" /-->
+        <delete dir="${build_ant}/it/unitn/ing/jgraph"/>
+        <!--delete dir="${build_ant}/it/unitn/ing/jsginfo" /-->
+        <delete dir="${build_ant}/HTTPClient"/>
+        <copy file="${buildnumber}/Maud_full_build.number" todir="${build_ant}"/>
+        <!--copy file="${src}/files/classnames.ins" todir="${build_ant}" /-->
+        <mkdir dir="${build_ant}/files"/>
+        <copy file="${src}/files/atominfo.cif" todir="${build_ant}/files"/>
+        <copy file="${src}/files/default.par" todir="${build_ant}/files"/>
+        <copy file="${src}/files/marker.txt" todir="${build_ant}/files"/>
+        <copy file="${src}/files/Properties.3D" todir="${build_ant}/files"/>
+        <copy file="${src}/files/CWWARRAY.DAT" todir="${build_ant}/files"/>
+        <copy file="${src}/files/IADARRAY.DAT" todir="${build_ant}/files"/>
+        <unjar dest="${build_ant}">
+            <patternset>
+                <include name="*"/>
+                <include name="**/*"/>
+                <exclude name="META-INF"/>
+                <exclude name="META-INF/*"/>
+                <exclude name="**/*.java"/>
+            </patternset>
+            <fileset dir="${libs}">
+                <!--include name="twain.jar"/-->
+                <include name="JSci.jar"/>
+                <include name="ij.jar"/>
+                <!--include name="Jsgt.jar"/-->
+                <include name="jspline.jar"/>
+                <!--include name="others.jar"/-->
+                <!--include name="JFortran.jar"/-->
+                <!--include name="jgl.jar"/-->
+                <include name="colt.jar"/>
+                <include name="jgap.jar"/>
+                <include name="aparapi.jar"/>
+                <include name="joone-engine.jar"/>
+            </fileset>
+        </unjar>
+        <!-- Build Maud.jar. -->
+        <jar jarfile="${build}/Maud_essential.jar" basedir="${build_ant}">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Main-class" value="com.radiographema.MaudText"/>
+            </manifest>
+        </jar>
+    </target>
+
+
+    <target name="compile_xgridagent" depends="clean_maud" description="Compile xgridagent.jar">
+        <!-- First, ensure the build directory exists. -->
+        <delete dir="${build_ant}"/>
+        <delete file="${build}/Maud_dev.jar"/>
+        <delete file="${build}/Maud_reduced.jar"/>
+        <delete file="${build}/Maud_essential.jar"/>
+        <mkdir dir="build"/>
+        <mkdir dir="${build_ant}"/>
+        <!-- Build everything -->
+        <javac destdir="${build_ant}" debug="on" target="${java_version}" encoding="UTF-8">
+            <src path="${src}"/>
+            <include name="com/deadmoo/xgridagent/**"/>
+            <include name="jint/scimark2/**"/>
+            <classpath>
+                <pathelement location="${build}/xgridlib.jar"/>
+            </classpath>
+        </javac>
+        <buildnumber file="${buildnumber}/xgridagent.number"/>
+    </target>
+
+
+    <target name="build_xgridagent" depends="compile_xgridagent" description="Build xgridagent.jar.">
+        <!-- Copy needed files into the build directory. -->
+        <unjar dest="${build_ant}">
+            <patternset>
+                <include name="*"/>
+                <include name="**/*"/>
+                <exclude name="META-INF"/>
+                <exclude name="META-INF/*"/>
+                <exclude name="**/*.java"/>
+            </patternset>
+            <fileset dir="build">
+                <include name="xgridlib.jar"/>
+            </fileset>
+        </unjar>
+        <!-- Build Maud.jar. -->
+        <jar jarfile="${build}/xgridagent.jar" basedir="${build_ant}">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Main-class" value="com.deadmoo.xgridagent.XGridAgent"/>
+            </manifest>
+            <include name="**/*"/>
+        </jar>
+    </target>
+
+    <target name="copy_xgridagent" depends="build_xgridagent"
+            description="Copy the xgridagent libs to the final destination.">
+        <copy file="${build}/xgridagent.jar" tofile="${mirrorfulldir}/xgridagent.jar"/>
+        <copy file="${build}/xgridagent.jar" tofile="${mirrorfulldir2}/lib/xgridagent.jar"/>
+        <copy file="${build}/xgridagent.jar" tofile="${installfulldirMac}/xgridagent.jar"/>
+        <copy file="${build}/xgridagent.jar" tofile="${installfulldirMac64}/xgridagent.jar"/>
+        <copy file="${build}/xgridagent.jar" tofile="${installfulldirUnix}/lib/xgridagent.jar"/>
+        <copy file="${build}/xgridagent.jar" tofile="${installfulldirLinux64}/lib/xgridagent.jar"/>
+        <copy file="${build}/xgridagent.jar" tofile="${installfulldirWindows}/lib/xgridagent.jar"/>
+        <copy file="${build}/xgridagent.jar" tofile="${installfulldirWin64}/lib/xgridagent.jar"/>
+        <copy file="${build}/xgridagent.jar" tofile="${installfulldirUnixNJ}/lib/xgridagent.jar"/>
+        <copy file="${build}/xgridagent.jar" tofile="${installfulldirLinux64NJ}/lib/xgridagent.jar"/>
+        <copy file="${build}/xgridagent.jar" tofile="${installfulldirWindowsNJ}/lib/xgridagent.jar"/>
+        <copy file="${build}/xgridagent.jar" tofile="${installfulldirWin64NJ}/lib/xgridagent.jar"/>
+        <copy file="${build}/xgridagent.jar" tofile="${mirrorfulldir2}/xgrid/xgridagent.jar"/>
+    </target>
+
+
+    <target name="compile_xgridclient" depends="clean_maud" description="Compile xgridclient.jar">
+        <!-- First, ensure the build directory exists. -->
+        <delete dir="${build_ant}"/>
+        <delete file="${build}/Maud_dev.jar"/>
+        <delete file="${build}/Maud_reduced.jar"/>
+        <delete file="${build}/Maud_essential.jar"/>
+        <mkdir dir="build"/>
+        <mkdir dir="${build_ant}"/>
+        <!-- Build everything -->
+        <javac destdir="${build_ant}" debug="on" target="${java_version}" encoding="UTF-8">
+            <src path="${src}"/>
+            <include name="it/unitn/ing/xgridclient/**"/>
+            <classpath>
+                <pathelement location="${build}/xgridlib.jar"/>
+            </classpath>
+        </javac>
+        <buildnumber file="${buildnumber}/xgridclient.number"/>
+    </target>
+
+
+    <target name="build_xgridclient" depends="compile_xgridclient" description="Build xgridclient.jar.">
+        <!-- Copy needed files into the build directory. -->
+        <unjar dest="${build_ant}">
+            <patternset>
+                <include name="*"/>
+                <include name="**/*"/>
+                <exclude name="META-INF"/>
+                <exclude name="META-INF/*"/>
+                <exclude name="**/*.java"/>
+            </patternset>
+            <fileset dir="build">
+                <include name="xgridlib.jar"/>
+            </fileset>
+        </unjar>
+        <!-- Build Maud.jar. -->
+        <jar jarfile="${build}/xgridclient.jar" basedir="${build_ant}">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Main-class" value="it/unitn/ing/xgridclient/XGrid"/>
+            </manifest>
+            <include name="**/*"/>
+        </jar>
+    </target>
+
+    <target name="copy_xgridclient" depends="build_xgridclient"
+            description="Copy the xgridclient libs to the final destination.">
+        <copy file="${build}/xgridclient.jar" tofile="${mirrorfulldir2}/xgrid/xgridclient.jar"/>
+    </target>
+
+
+    <target name="compile_xgridhello" depends="clean_maud" description="Compile xgridhello.jar">
+        <!-- First, ensure the build directory exists. -->
+        <delete dir="${build_ant}"/>
+        <delete file="${build}/Maud_dev.jar"/>
+        <delete file="${build}/Maud_reduced.jar"/>
+        <delete file="${build}/Maud_essential.jar"/>
+        <mkdir dir="build"/>
+        <mkdir dir="${build_ant}"/>
+        <!-- Build everything -->
+        <javac destdir="${build_ant}" debug="on" target="${java_version}" encoding="UTF-8">
+            <src path="${src}"/>
+            <include name="it/unitn/ing/xgridclient/XGridHello.java"/>
+            <classpath>
+                <pathelement location="${build}/xgridlib.jar"/>
+            </classpath>
+        </javac>
+        <buildnumber file="${buildnumber}/xgridhello.number"/>
+    </target>
+
+
+    <target name="build_xgridhello" depends="compile_xgridhello" description="Build xgridhello.jar.">
+        <!-- Copy needed files into the build directory. -->
+        <!-- Build Maud.jar. -->
+        <jar jarfile="${build}/xgridhello.jar" basedir="${build_ant}">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Main-class" value="it/unitn/ing/xgridclient/XGridHello"/>
+            </manifest>
+            <include name="it/unitn/ing/xgridclient/XGridHello.class"/>
+        </jar>
+    </target>
+
+    <target name="copy_xgridhello" depends="build_xgridhello"
+            description="Copy the xgridhello libs to the final destination.">
+        <copy file="${build}/xgridhello.jar" tofile="${mirrorfulldir2}/xgrid/xgridhello.jar"/>
+    </target>
+
+
+    <target name="compile_xgridlauncher" depends="clean_maud" description="Compile xgridlauncher.jar">
+        <!-- First, ensure the build directory exists. -->
+        <delete dir="${build_ant}"/>
+        <delete file="${build}/xgridlauncher.jar"/>
+        <mkdir dir="build"/>
+        <mkdir dir="${build_ant}"/>
+        <!-- Build everything -->
+        <javac destdir="${build_ant}" debug="on" target="${java_version}" encoding="UTF-8">
+            <src path="${src}"/>
+            <include name="it/unitn/ing/xgridagent/XGridJavaLauncher.java"/>
+            <!--include name="HTTPClient/*.java" />
+      <include name="HTTPClient/**/*.java" /-->
+            <classpath>
+                <pathelement location="${build}/base64.jar"/>
+                <!--pathelement location="${build}/commons-httpclient-3.0.jar"/-->
+            </classpath>
+        </javac>
+        <buildnumber file="${buildnumber}/xgridlauncher.number"/>
+    </target>
+
+
+    <target name="build_xgridlauncher" depends="compile_xgridlauncher" description="Build xgridlauncher.jar.">
+        <!-- Copy needed files into the build directory. -->
+        <!-- Build xgridlauncher.jar. -->
+        <unjar dest="${build_ant}">
+            <patternset>
+                <include name="*"/>
+                <include name="**/*"/>
+                <exclude name="META-INF"/>
+                <exclude name="META-INF/*"/>
+                <exclude name="**/*.java"/>
+            </patternset>
+            <fileset dir="build">
+                <include name="base64.jar"/>
+                <!--include name="commons-httpclient-3.0.jar"/>
+         <include name="commons-logging.jar"/>
+         <include name="commons-codec-1.3.jar"/-->
+            </fileset>
+        </unjar>
+        <jar jarfile="${build}/xgridlauncher.jar" basedir="${build_ant}">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Main-class" value="it.unitn.ing.xgridagent.XGridJavaLauncher"/>
+            </manifest>
+            <include name="it/unitn/ing/xgridagent/*"/>
+            <include name="base64/*"/>
+            <!--include name="org/**/*"/-->
+        </jar>
+    </target>
+
+
+    <target name="copy_full" depends="build_full" description="Copy the full build files to the final destination.">
+        <copy file="${build}/Maud_dev.jar" tofile="${mirrorfulldir}/Maud.jar"/>
+        <copy file="${build}/Maud_dev.jar" tofile="${mirrorfulldir2}/lib/Maud.jar"/>
+        <!--signjar jar="${mirrorfulldir}/Maud.jar" alias="${myself}" storepass="${keypasswd}" keystore="${keystore}"/-->
+        <copy file="${build}/Maud_dev.jar" tofile="${inst}/Maud.jar"/>
+        <copy file="${build}/Maud_dev.jar" tofile="${inst}/Maud_OSX/Maud.app/Contents/Resources/Java/Maud.jar"/>
+        <copy file="${build}/Maud_dev.jar" tofile="${installfulldirMac}/Maud.jar"/>
+        <copy file="${build}/Maud_dev.jar" tofile="${installfulldirMac64}/Maud.jar"/>
+        <copy file="${build}/Maud_dev.jar" tofile="${installfulldirUnix}/lib/Maud.jar"/>
+        <copy file="${build}/Maud_dev.jar" tofile="${installfulldirLinux64}/lib/Maud.jar"/>
+        <copy file="${build}/Maud_dev.jar" tofile="${installfulldirWindows}/lib/Maud.jar"/>
+        <copy file="${build}/Maud_dev.jar" tofile="${installfulldirWin64}/lib/Maud.jar"/>
+        <copy file="${build}/Maud_dev.jar" tofile="${installfulldirUnixNJ}/lib/Maud.jar"/>
+        <copy file="${build}/Maud_dev.jar" tofile="${installfulldirLinux64NJ}/lib/Maud.jar"/>
+        <copy file="${build}/Maud_dev.jar" tofile="${installfulldirWindowsNJ}/lib/Maud.jar"/>
+        <copy file="${build}/Maud_dev.jar" tofile="${installfulldirWin64NJ}/lib/Maud.jar"/>
+        <!--copy file="${build}/Maud_dev.jar" tofile="${user.home}/Analysis/Analysis_07/nova/LargePhotoplateExample/lib/maud/Maud.jar" /-->
+        <!--		<exec dir="." executable="cmd" os="Windows NT"> -->
+        <!--  		<arg line="/c test.bat"/> -->
+        <!--		<exec dir="." executable="/bin/sh" os="Mac OS X">
+  		<arg line="${script}/cpmaud_dev.sh"/>
+		</exec> -->
+    </target>
+
+
+    <target name="copy_full_no_install" depends="build_full"
+            description="Copy the full build files to the final destination.">
+        <!--copy file="${build}/Maud_dev.jar" tofile="${mirrorfulldir}/Maud.jar" />
+        <copy file="${build}/Maud_dev.jar" tofile="${mirrorfulldir2}/Maud.jar" /-->
+        <!--signjar jar="${mirrorfulldir}/Maud.jar" alias="${myself}" storepass="${keypasswd}" keystore="${keystore}"/-->
+        <copy file="${build}/Maud_dev.jar" tofile="${inst}/Maud.jar"/>
+        <copy file="${build}/Maud_dev.jar" tofile="${installfulldirMac}/Maud.jar"/>
+        <copy file="${build}/Maud_dev.jar" tofile="${installfulldirMac64}/Maud.jar"/>
+        <copy file="${build}/Maud_dev.jar" tofile="${installfulldirUnix}/lib/Maud.jar"/>
+        <copy file="${build}/Maud_dev.jar" tofile="${installfulldirLinux64}/lib/Maud.jar"/>
+        <copy file="${build}/Maud_dev.jar" tofile="${installfulldirWindows}/lib/Maud.jar"/>
+        <copy file="${build}/Maud_dev.jar" tofile="${installfulldirWin64}/lib/Maud.jar"/>
+        <copy file="${build}/Maud_dev.jar" tofile="${installfulldirUnixNJ}/lib/Maud.jar"/>
+        <copy file="${build}/Maud_dev.jar" tofile="${installfulldirLinux64NJ}/lib/Maud.jar"/>
+        <copy file="${build}/Maud_dev.jar" tofile="${installfulldirWindowsNJ}/lib/Maud.jar"/>
+        <copy file="${build}/Maud_dev.jar" tofile="${installfulldirWin64NJ}/lib/Maud.jar"/>
+        <!--copy file="${build}/Maud_dev.jar" tofile="${user.home}/Analysis/Analysis_07/nova/LargePhotoplateExample/lib/maud/Maud.jar" /-->
+        <!--		<exec dir="." executable="cmd" os="Windows NT"> -->
+        <!--  		<arg line="/c test.bat"/> -->
+        <!--		<exec dir="." executable="/bin/sh" os="Mac OS X">
+                  <arg line="${script}/cpmaud_dev.sh"/>
+                </exec> -->
+    </target>
+
+
+    <target name="run_full" depends="copy_full" description="Build and run Maud.">
+        <java fork="true" dir="." maxmemory="1024M" classname="com.radiographema.Maud">
+            <jvmarg value="-Dapple.laf.useScreenMenuBar=true"/>
+            <jvmarg value="-Dcom.apple.mrj.application.live-resize=false"/>
+            <classpath>
+                <fileset dir="build">
+                    <include name="**/*.jar"/>
+                </fileset>
+            </classpath>
+        </java>
+    </target>
+
+
+    <target name="run_film" depends="copy_full" description="Build and run FilmScreamer.">
+        <java fork="true" dir="." maxmemory="1024M" classname="com.radiographema.FilmScreamer">
+            <jvmarg value="-Dapple.laf.useScreenMenuBar=true"/>
+            <jvmarg value="-Dcom.apple.mrj.application.live-resize=false"/>
+            <classpath>
+                <fileset dir="build">
+                    <include name="**/*.jar"/>
+                </fileset>
+            </classpath>
+        </java>
+    </target>
+
+
+    <target name="run_maudette" depends="copy_full" description="Build and run Diffraction Screamer.">
+        <java fork="true" dir="." maxmemory="1024M" classname="com.radiographema.Maudette">
+            <jvmarg value="-Dapple.laf.useScreenMenuBar=true"/>
+            <jvmarg value="-Dcom.apple.mrj.application.live-resize=false"/>
+            <classpath>
+                <fileset dir="build">
+                    <include name="**/*.jar"/>
+                </fileset>
+            </classpath>
+        </java>
+    </target>
+
+
+    <target name="run_only" description="Run Maud.">
+        <java fork="true" dir="." maxmemory="1024M" classname="com.radiographema.Maud">
+            <!---jvmarg value="-Dapple.laf.useScreenMenuBar=true" /-->
+            <jvmarg value="-Dcom.apple.mrj.application.live-resize=false"/>
+            <classpath>
+                <fileset dir="build">
+                    <include name="**/*.jar"/>
+                </fileset>
+            </classpath>
+        </java>
+    </target>
+
+
+    <target name="compile_reduced" depends="clean_maud" description="Compile Maud_reduced.jar.">
+        <!-- First, ensure the build directory exists. -->
+        <delete dir="${build_ant}"/>
+        <delete file="${build}/Maud_dev.jar"/>
+        <delete file="${build}/Maud_reduced.jar"/>
+        <mkdir dir="build"/>
+        <mkdir dir="${build_ant}"/>
+        <!-- Build everything -->
+        <javac destdir="${build_ant}" debug="on" target="${java_version}" encoding="UTF-8">
+            <src path="${src}"/>
+            <!--exclude name="it/unitn/ing/jsginfo/*" /-->
+            <!--exclude name="it/unitn/ing/jgraph/*" /-->
+            <exclude name="it/unitn/ing/esqui/client/*"/>
+            <exclude name="it/unitn/ing/esqui/server/*"/>
+            <exclude name="it/unitn/ing/esqui/wizard/MeasurementWizard.java"/>
+            <exclude name="it/unitn/ing/esqui/wizard/AnalysisWizard.java"/>
+            <exclude name="it/unitn/ing/esqui/wizard/AnalysisMeasurementWizard.java"/>
+            <exclude name="it/unitn/ing/esqui/wizard/WizardFrame.java"/>
+            <exclude name="it/unitn/ing/rista/mdyn/**"/>
+            <!--exclude name="it/unitn/ing/rista/MaudApp.java" /-->
+            <!--exclude name="it/unitn/ing/rista/awt/SpectrumPlotPanel.java" /-->
+            <exclude name="it/unitn/ing/rista/awt/MaudAppMacOSFrame.java"/>
+            <exclude name="it/unitn/ing/rista/awt/MRJInterface.java"/>
+            <exclude name="it/unitn/ing/rista/awt/StrainPlot.java"/>
+            <!--exclude name="it/unitn/ing/rista/comp/MaximumEntropyFit.java" /-->
+            <!--exclude name="it/unitn/ing/rista/comp/MaximumEntropyTextureFit.java" /-->
+            <exclude name="it/unitn/ing/rista/diffr/data/GSASNewDataFile.java"/>
+            <!--exclude name="it/unitn/ing/rista/diffr/intext/IntensityExtEntropy.java" /-->
+            <!--exclude name="it/unitn/ing/rista/diffr/intext/IntensityExtLeBailWt.java" /-->
+            <!--exclude name="it/unitn/ing/rista/diffr/reflectivity/ReflectivityGeneticAlgorithm.java" /-->
+            <!--exclude name="it/unitn/ing/rista/diffr/reflectivity/SingleLayerDWBARefl.java" /-->
+            <exclude name="it/unitn/ing/rista/diffr/rsa/HarmonicStrainT.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/rsa/NoStress.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/rsa/HarmonicStrainRT.java"/>
+            <!--exclude name="it/unitn/ing/rista/diffr/rsa/TriaxialStress.java" /-->
+            <!--exclude name="it/unitn/ing/rista/diffr/rsa/MomentPoleStress.java" /-->
+            <!--exclude name="it/unitn/ing/rista/diffr/rsa/Sla33Constants.java" /-->
+            <exclude name="it/unitn/ing/rista/diffr/rsa/VoigtReussStress.java"/>
+            <!--exclude name="it/unitn/ing/rista/diffr/rsa/PopaBalzarHarmonicStrainModel.java" /-->
+            <!--exclude name="it/unitn/ing/rista/diffr/rta/MEMLTexture.java" /-->
+            <!--exclude name="it/unitn/ing/rista/diffr/rta/MEMTexture.java" /-->
+            <!--exclude name="it/unitn/ing/rista/diffr/rta/EWIMVTexture.java" /-->
+            <!--exclude name="it/unitn/ing/rista/diffr/sizestrain/SizeStrainDistributions.java" /-->
+            <!--exclude name="it/unitn/ing/rista/diffr/sizestrain/sizeStrainIT.java" /-->
+            <!--exclude name="it/unitn/ing/rista/diffr/sizestrain/SizeStrainLS.java" /-->
+            <!--exclude name="it/unitn/ing/rista/diffr/sizestrain/SizeStrainOnlyVoigt.java" /-->
+            <!--exclude name="it/unitn/ing/rista/diffr/sizestrain/SizeStrainBFrules.java" /-->
+            <!--exclude name="it/unitn/ing/rista/diffr/sizestrain/SizeStrainSymDefault.java" /-->
+            <exclude name="it/unitn/ing/rista/diffr/Stress.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/Phase14.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/Atom14.java"/>
+            <!--exclude name="it/unitn/ing/rista/diffr/sdpd/StructureSolutionGeneticAlgorithm.java" /-->
+            <!--exclude name="it/unitn/ing/rista/diffr/sdpd/StructureSolutionGANew.java" /-->
+            <!--exclude name="it/unitn/ing/rista/diffr/sdpd/StructureSolutionGeneticAlgorithmClassic.java" /-->
+            <!--exclude name="it/unitn/ing/rista/diffr/sdpd/SDPDFourierMapsMEM.java" /-->
+            <!--exclude name="it/unitn/ing/rista/diffr/structure/AtomicStructure.java" /-->
+            <!--exclude name="it.unitn.ing.rista.comp.GeneticAlgorithmRefinement.java" /-->
+            <!--exclude name="it.unitn.ing.rista.comp.SimulatedAnnealingRefinement.java" /-->
+            <exclude name="it/unitn/ing/rista/interfaces/myObj.java"/>
+            <exclude name="it/unitn/ing/rista/io/ZIPNLextractor.java"/>
+            <exclude name="it/unitn/ing/rista/util/Assert.java"/>
+            <exclude name="HTTPClient/**"/>
+            <exclude name="gl4java/**"/>
+            <exclude name="ij/gui/PlotWindow.java"/>
+            <exclude name="org/java/misc/GL4Installer/MSJVMVersionApplet.java"/>
+            <exclude name="ec/**"/>
+            <exclude name="it/unitn/ing/fortran/**"/>
+            <exclude name="help/**"/>
+            <exclude name="images/**"/>
+            <exclude name="files/**"/>
+            <exclude name="hypernex/**"/>
+            <exclude name="nova/**"/>
+            <classpath>
+                <pathelement location="libs/current/jogl.all.jar"/>
+                <pathelement location="libs/current/EsquiClient.jar"/>
+                <pathelement location="libs/current/nativewindow.all.jar"/>
+                <pathelement location="libs/current/newt.all.jar"/>
+                <pathelement location="libs/current/miscLib.jar"/>
+                <pathelement location="libs/current/jgaec.jar"/>
+                <pathelement location="libs/current/jgap.jar"/>
+                <pathelement location="libs/current/jmol.jar"/>
+                <!--pathelement location="${build}/jnlp.jar"/-->
+                <pathelement location="libs/current/ij.jar"/>
+                <!--pathelement location="${build}/jspline.jar"/>
+          <pathelement location="${build}/JNIAltivec.jar"/-->
+                <pathelement location="libs/current/HTTPClient.jar"/>
+                <pathelement location="libs/current/jdom.jar"/>
+                <pathelement location="libs/current/rome.jar"/>
+                <pathelement location="libs/current/MySQL-ConnectorJ.jar"/>
+                <pathelement location="libs/current/xgridlib.jar"/>
+                <!--pathelement location="${build}/capsapi_classes.zip"/>
+          <pathelement location="${build}/Apple_ui.jar"/-->
+                <pathelement location="libs/current/aparapi.jar"/>
+                <pathelement location="libs/current/joone-engine.jar"/>
+                <pathelement location="libs/current/swingx.jar"/>
+                <pathelement location="libs/current/com.github.tschoonj.xraylib.jar"/>
+                <pathelement location="libs/current/commons-math.jar"/>
+                <!--pathelement location="${build}/jdic.jar"/>
+          <pathelement location="${build}/jhdf.jar"/>
+          <pathelement location="${build}/jhdf4obj.jar"/>
+          <pathelement location="${build}/jhdf5.jar"/>
+          <pathelement location="${build}/jhdf5obj.jar"/>
+          <pathelement location="${build}/jhdfobj.jar"/>
+          <pathelement location="${build}/quaqua.jar"/>
+          <pathelement location="${build}/nova/TestManager.jar"/>
+          <pathelement location="${build}/nova/NeuralWorks.jar"/-->
+                <pathelement location="/System/Library/java"/>
+            </classpath>
+        </javac>
+        <buildnumber file="${buildnumber}/Maud_reduced_build.number"/>
+    </target>
+
+
+    <target name="build_reduced" depends="compile_reduced" description="Build public Maud.jar.">
+        <!-- Copy needed files into the build directory. -->
+        <delete dir="${build_ant}/ec"/>
+        <delete dir="${build_ant}/it/unitn/ing/esqui/client"/>
+        <delete dir="${build_ant}/it/unitn/ing/fortran"/>
+        <!--delete dir="${build_ant}/it/unitn/ing/jgraph" /-->
+        <!--delete dir="${build_ant}/it/unitn/ing/jsginfo" /-->
+        <delete dir="${build_ant}/HTTPClient"/>
+        <copy file="${buildnumber}/Maud_reduced_build.number" todir="${build_ant}/Maud_full_build.number"/>
+        <!--copy file="${src}/files/classnames.ins" todir="${build_ant}" /-->
+        <copy file="IJ_Props.txt" todir="${build_ant}"/>
+        <mkdir dir="${build_ant}/files"/>
+        <copy file="${src}/files/atominfo.cif" todir="${build_ant}/files"/>
+        <copy file="${src}/files/default.par" todir="${build_ant}/files"/>
+        <copy file="${src}/files/marker.txt" todir="${build_ant}/files"/>
+        <copy file="${src}/files/Properties.3D" todir="${build_ant}/files"/>
+        <mkdir dir="${build_ant}/media"/>
+        <mkdir dir="${build_ant}/media/music"/>
+        <mkdir dir="${build_ant}/media/music/samples"/>
+        <copy file="media/music/samples/MO1.au" todir="${build_ant}/media/music/samples"/>
+        <copy file="media/music/samples/MO2.au" todir="${build_ant}/media/music/samples"/>
+        <copy file="media/music/samples/MO3.au" todir="${build_ant}/media/music/samples"/>
+        <!-- Build Maud.jar. -->
+        <jar jarfile="${build}/Maud_reduced.jar" basedir="${build_ant}">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+            </manifest>
+        </jar>
+    </target>
+
+
+    <target name="copy_reduced" depends="build_reduced"
+            description="Copy the reduced build files to the final destination.">
+        <copy file="${build}/Maud_reduced.jar" tofile="${mirrorreddir}/Maud.jar"/>
+        <!--signjar jar="${mirrorreddir}/Maud.jar" alias="${myself}" storepass="${keypasswd}" keystore="${keystore}"/-->
+        <!--		<exec dir="." executable="cmd" os="Windows NT"> -->
+        <!--  		<arg line="/c test.bat"/> -->
+        <!--		<exec dir="." executable="/bin/sh" os="Mac OS X">
+  		<arg line="${script}/cpmaud_reduced.sh"/>
+		</exec> -->
+    </target>
+
+
+    <target name="zip" depends="zap" description="Build src.zip.">
+        <zip zipfile="src.zip"
+             basedir="${src}"
+             includes="**/*.*"
+             excludes="../CVS"
+        />
+    </target>
+
+
+    <target name="maud_javadocs" description="Build the Maud JavaDocs.">
+        <delete dir="api"/>
+        <mkdir dir="api"/>
+        <javadoc
+                destdir="api"
+                author="true"
+                version="true"
+                use="true"
+                windowtitle="Maud API">
+            <fileset dir="${src}" defaultexcludes="yes">
+                <include name="it/unitn/ing/rista/**"/>
+                <exclude name="it/unitn/ing/rista/esqui/**"/>
+                <exclude name="it/unitn/ing/rista/fortran/**"/>
+                <exclude name="com/deadmoo/xgridagent/**"/>
+                <exclude name="it/unitn/ing/rista/xgridclient/**"/>
+                <exclude name="it/unitn/ing/rista/xgridcontroller/**"/>
+                <exclude name="it/unitn/ing/rista/mdyn/**"/>
+                <exclude name="it/unitn/ing/rista/awt/MaudAppMacOSFrame.java"/>
+                <exclude name="it/unitn/ing/rista/awt/MRJInterface.java"/>
+                <exclude name="it/unitn/ing/rista/awt/StrainPlot.java"/>
+                <exclude name="it/unitn/ing/rista/diffr/data/GSASNewDataFile.java"/>
+                <exclude name="it/unitn/ing/rista/diffr/rsa/HarmonicStrainT.java"/>
+                <exclude name="it/unitn/ing/rista/diffr/rsa/NoStress.java"/>
+                <exclude name="it/unitn/ing/rista/diffr/rsa/VoigtReussStress.java"/>
+                <exclude name="it/unitn/ing/rista/diffr/Stress.java"/>
+                <exclude name="it/unitn/ing/rista/diffr/Phase14.java"/>
+                <exclude name="it/unitn/ing/rista/diffr/Atom14.java"/>
+                <exclude name="it/unitn/ing/rista/interfaces/myObj.java"/>
+                <exclude name="it/unitn/ing/rista/io/ZIPNLextractor.java"/>
+                <exclude name="it/unitn/ing/rista/util/Assert.java"/>
+                <exclude name="it/unitn/ing/rista/diffr/sizestrain/DiffaXLayerModel.java"/>
+                <exclude name="it/unitn/ing/rista/diffr/rsa/Sla33.c"/>
+            </fileset>
+        </javadoc>
+    </target>
+
+
+    <target name="zap" description="Delete .DS_Store files created by OS X.">
+        <delete file=".DS_Store"/>
+        <delete file="${src}/**/.DS_Store"/>
+    </target>
+
+
+    <target name="prepare_miscLib" depends="clean" description="Compile miscLib.jar">
+        <!-- First, ensure the build directory exists. -->
+        <delete dir="${build_ant}"/>
+        <mkdir dir="build"/>
+        <mkdir dir="${build_ant}"/>
+        <!-- Build everything -->
+
+        <unjar dest="${build_ant}">
+            <patternset>
+                <include name="*"/>
+                <include name="**/*"/>
+                <exclude name="META-INF"/>
+                <exclude name="META-INF/*"/>
+                <exclude name="**/*.java"/>
+            </patternset>
+            <fileset dir="${libs}">
+                <include name="twain.jar"/>
+                <include name="JSci.jar"/>
+                <!--include name="Jsgt.jar"/-->
+                <include name="jspline.jar"/>
+                <include name="others.jar"/>
+                <include name="JFortran.jar"/>
+                <include name="jgl.jar"/>
+                <include name="colt.jar"/>
+            </fileset>
+        </unjar>
+        <buildnumber file="${buildnumber}/miscLib_build.number"/>
+    </target>
+
+
+    <target name="build_miscLib" depends="prepare_miscLib" description="Build miscLib.jar.">
+        <!-- Copy needed files into the build directory. -->
+        <copy file="${buildnumber}/miscLib_build.number" todir="${build_ant}"/>
+        <!-- Build miscLib.jar. -->
+        <jar jarfile="${build}/miscLib.jar" basedir="${build_ant}"/>
+    </target>
+
+
+    <target name="copy_miscLib" depends="build_miscLib"
+            description="Copy all libraries files to the final destination.">
+        <copy file="${build}/miscLib.jar" tofile="${mirrorfulldir}/miscLib.jar"/>
+        <copy file="${build}/miscLib.jar" tofile="${mirrorfulldir2}/lib/miscLib.jar"/>
+        <copy file="${build}/miscLib.jar" tofile="${installfulldirMac}/miscLib.jar"/>
+        <copy file="${build}/miscLib.jar" tofile="${installfulldirMac64}/miscLib.jar"/>
+        <copy file="${build}/miscLib.jar" tofile="${installfulldirLinux64}/lib/miscLib.jar"/>
+        <copy file="${build}/miscLib.jar" tofile="${installfulldirWindows}/lib/miscLib.jar"/>
+        <copy file="${build}/miscLib.jar" tofile="${installfulldirWin64}/lib/miscLib.jar"/>
+        <!--signjar jar="${mirrorreddir}/lib/miscLib.jar" alias="${myself}" storepass="${keypasswd}" keystore="${keystore}"/-->
+        <!--		<exec dir="." executable="cmd" os="Windows NT"> -->
+        <!--  		<arg line="/c test.bat"/> -->
+        <!--		<exec dir="." executable="/bin/sh" os="Mac OS X">
+  		<arg line="${script}/cpMiscLib.sh"/>
+		</exec> -->
+    </target>
+
+
+    <target name="compile_JSgInfo" depends="clean" description="Compile JSgInfo.jar">
+        <!-- First, ensure the build directory exists. -->
+        <delete dir="${build_ant}"/>
+        <mkdir dir="build"/>
+        <mkdir dir="${build_ant}"/>
+        <!-- Build everything -->
+        <javac destdir="${build_ant}" debug="on" target="${java_version}" encoding="UTF-8">
+            <src path="${src}/it/unitn/ing/jsginfo"/>
+            <exclude name="it/unitn/ing/jsginfo/sglib.java"/>
+            <exclude name="it/unitn/ing/jsginfo/sginfoh.tmp.java"/>
+            <exclude name="it/unitn/ing/jsginfo/sgios.java"/>
+        </javac>
+        <buildnumber file="${buildnumber}/JSgInfo_build.number"/>
+    </target>
+
+
+    <target name="build_JSgInfo" depends="compile_JSgInfo" description="Build JSgInfo.jar.">
+        <!-- Copy needed files into the build directory. -->
+        <copy file="${buildnumber}/JSgInfo_build.number" todir="${build_ant}"/>
+        <!-- Build JSgInfo.jar. -->
+        <jar jarfile="${build}/JSgInfo.jar" basedir="${build_ant}"/>
+    </target>
+
+
+    <target name="copy_JSgInfo" depends="build_JSgInfo"
+            description="Copy the JSgInfo build files to the final destination.">
+        <copy file="${build}/JSgInfo.jar" tofile="${mirrorfulldir}/JSgInfo.jar"/>
+        <copy file="${build}/JSgInfo.jar" tofile="${mirrorfulldir2}/lib/JSgInfo.jar"/>
+        <copy file="${build}/JSgInfo.jar" tofile="${installfulldirMac}/JSgInfo.jar"/>
+        <copy file="${build}/JSgInfo.jar" tofile="${installfulldirMac64}/JSgInfo.jar"/>
+        <copy file="${build}/JSgInfo.jar" tofile="${installfulldirLinux64}/lib/JSgInfo.jar"/>
+        <copy file="${build}/JSgInfo.jar" tofile="${installfulldirWindows}/lib/JSgInfo.jar"/>
+        <copy file="${build}/JSgInfo.jar" tofile="${installfulldirWin64}/lib/JSgInfo.jar"/>
+        <!--signjar jar="${mirrorreddir}/lib/JSgInfo.jar" alias="${myself}" storepass="${keypasswd}" keystore="${keystore}"/-->
+        <!--		<exec dir="." executable="cmd" os="Windows NT"> -->
+        <!--  		<arg line="/c test.bat"/> -->
+        <!--		<exec dir="." executable="/bin/sh" os="Mac OS X">
+  		<arg line="${script}/cpJSgInfo.sh"/>
+		</exec> -->
+    </target>
+
+
+    <target name="compile_jgaec" depends="clean" description="Compile jgaec.jar">
+        <!-- First, ensure the build directory exists. -->
+        <delete dir="${build_ant}"/>
+        <mkdir dir="build"/>
+        <mkdir dir="${build_ant}"/>
+        <!-- Build everything -->
+        <javac destdir="${build_ant}" debug="on" target="${java_version}" encoding="UTF-8">
+            <src path="${src}/ec"/>
+            <exclude name="vector/AtomVectorIndividual.java"/>
+            <exclude name="teambots/**"/>
+            <classpath>
+                <pathelement location="${build}/Maud_dev.jar"/>
+            </classpath>
+        </javac>
+        <buildnumber file="${buildnumber}/jgaec_build.number"/>
+    </target>
+
+
+    <target name="build_jgaec" depends="compile_jgaec" description="Build jgaec.jar.">
+        <!-- Copy needed files into the build directory. -->
+        <copy file="${buildnumber}/jgaec_build.number" todir="${build_ant}"/>
+        <!-- Build jgaec.jar. -->
+        <jar jarfile="${build}/jgaec.jar" basedir="${build_ant}"/>
+    </target>
+
+
+    <target name="copy_jgaec" description="Copy the jgaec build files to the final destination.">
+        <copy file="${build}/jgaec.jar" tofile="${mirrorfulldir}/jgaec.jar"/>
+        <copy file="${build}/jgaec.jar" tofile="${mirrorfulldir2}/lib/jgaec.jar"/>
+        <copy file="${build}/jgaec.jar" tofile="${installfulldirMac}/jgaec.jar"/>
+        <copy file="${build}/jgaec.jar" tofile="${installfulldirMac64}/jgaec.jar"/>
+        <copy file="${build}/jgaec.jar" tofile="${installfulldirUnix}/lib/jgaec.jar"/>
+        <copy file="${build}/jgaec.jar" tofile="${installfulldirLinux64}/lib/jgaec.jar"/>
+        <copy file="${build}/jgaec.jar" tofile="${installfulldirWindows}/lib/jgaec.jar"/>
+        <copy file="${build}/jgaec.jar" tofile="${installfulldirWin64}/lib/jgaec.jar"/>
+        <!--signjar jar="${mirrorreddir}/lib/jgaec.jar" alias="${myself}" storepass="${keypasswd}" keystore="${keystore}"/-->
+        <!--		<exec dir="." executable="cmd" os="Windows NT"> -->
+        <!--  		<arg line="/c test.bat"/> -->
+        <!--		<exec dir="." executable="/bin/sh" os="Mac OS X">
+  		<arg line="${script}/cpJgaec.sh"/>
+		</exec> -->
+    </target>
+
+
+    <target name="copy_jgap" description="Copy the jgap jar to the final destination.">
+        <copy file="${build}/jgap.jar" tofile="${mirrorfulldir}/jgap.jar"/>
+        <copy file="${build}/jgap.jar" tofile="${mirrorfulldir2}/lib/jgap.jar"/>
+        <copy file="${build}/jgap.jar" tofile="${installfulldirMac}/jgap.jar"/>
+        <copy file="${build}/jgap.jar" tofile="${installfulldirMac64}/jgap.jar"/>
+        <copy file="${build}/jgap.jar" tofile="${installfulldirUnix}/lib/jgap.jar"/>
+        <copy file="${build}/jgap.jar" tofile="${installfulldirLinux64}/lib/jgap.jar"/>
+        <copy file="${build}/jgap.jar" tofile="${installfulldirWindows}/lib/jgap.jar"/>
+        <copy file="${build}/jgap.jar" tofile="${installfulldirWin64}/lib/jgap.jar"/>
+        <copy file="${build}/jgap.jar" tofile="${installfulldirUnixNJ}/lib/jgap.jar"/>
+        <copy file="${build}/jgap.jar" tofile="${installfulldirLinux64NJ}/lib/jgap.jar"/>
+        <copy file="${build}/jgap.jar" tofile="${installfulldirWindowsNJ}/lib/jgap.jar"/>
+        <copy file="${build}/jgap.jar" tofile="${installfulldirWin64NJ}/lib/jgap.jar"/>
+        <!--signjar jar="${mirrorreddir}/lib/jgaec.jar" alias="${myself}" storepass="${keypasswd}" keystore="${keystore}"/-->
+        <!--		<exec dir="." executable="cmd" os="Windows NT"> -->
+        <!--  		<arg line="/c test.bat"/> -->
+        <!--		<exec dir="." executable="/bin/sh" os="Mac OS X">
+  		<arg line="${script}/cpJgaec.sh"/>
+		</exec> -->
+    </target>
+
+
+    <target name="copy_jmol" description="Copy the jmol jar to the final destination.">
+        <copy file="${build}/jmol.jar" tofile="${mirrorfulldir}/jmol.jar"/>
+        <copy file="${build}/jmol.jar" tofile="${mirrorfulldir2}/lib/jmol.jar"/>
+        <copy file="${build}/jmol.jar" tofile="${installfulldirMac}/jmol.jar"/>
+        <copy file="${build}/jmol.jar" tofile="${installfulldirMac64}/jmol.jar"/>
+        <copy file="${build}/jmol.jar" tofile="${installfulldirUnix}/lib/jmol.jar"/>
+        <copy file="${build}/jmol.jar" tofile="${installfulldirLinux64}/lib/jmol.jar"/>
+        <copy file="${build}/jmol.jar" tofile="${installfulldirWindows}/lib/jmol.jar"/>
+        <copy file="${build}/jmol.jar" tofile="${installfulldirWin64}/lib/jmol.jar"/>
+        <copy file="${build}/jmol.jar" tofile="${installfulldirUnixNJ}/lib/jmol.jar"/>
+        <copy file="${build}/jmol.jar" tofile="${installfulldirLinux64NJ}/lib/jmol.jar"/>
+        <copy file="${build}/jmol.jar" tofile="${installfulldirWindowsNJ}/lib/jmol.jar"/>
+        <copy file="${build}/jmol.jar" tofile="${installfulldirWin64NJ}/lib/jmol.jar"/>
+        <!--signjar jar="${mirrorreddir}/lib/jgaec.jar" alias="${myself}" storepass="${keypasswd}" keystore="${keystore}"/-->
+        <!--		<exec dir="." executable="cmd" os="Windows NT"> -->
+        <!--  		<arg line="/c test.bat"/> -->
+        <!--		<exec dir="." executable="/bin/sh" os="Mac OS X">
+  		<arg line="${script}/cpJgaec.sh"/>
+		</exec> -->
+    </target>
+
+
+    <target name="copy_joone" description="Copy the joone jar to the final destination.">
+        <copy file="${build}/joone-engine.jar" tofile="${mirrorfulldir}/joone-engine.jar"/>
+        <copy file="${build}/joone-engine.jar" tofile="${mirrorfulldir2}/lib/joone-engine.jar"/>
+        <copy file="${build}/joone-engine.jar" tofile="${installfulldirMac}/joone-engine.jar"/>
+        <copy file="${build}/joone-engine.jar" tofile="${installfulldirMac64}/joone-engine.jar"/>
+        <copy file="${build}/joone-engine.jar" tofile="${installfulldirUnix}/lib/joone-engine.jar"/>
+        <copy file="${build}/joone-engine.jar" tofile="${installfulldirLinux64}/lib/joone-engine.jar"/>
+        <copy file="${build}/joone-engine.jar" tofile="${installfulldirWindows}/lib/joone-engine.jar"/>
+        <copy file="${build}/joone-engine.jar" tofile="${installfulldirWin64}/lib/joone-engine.jar"/>
+        <copy file="${build}/joone-engine.jar" tofile="${installfulldirUnixNJ}/lib/joone-engine.jar"/>
+        <copy file="${build}/joone-engine.jar" tofile="${installfulldirLinux64NJ}/lib/joone-engine.jar"/>
+        <copy file="${build}/joone-engine.jar" tofile="${installfulldirWindowsNJ}/lib/joone-engine.jar"/>
+        <copy file="${build}/joone-engine.jar" tofile="${installfulldirWin64NJ}/lib/joone-engine.jar"/>
+        <!--signjar jar="${mirrorreddir}/lib/jgaec.jar" alias="${myself}" storepass="${keypasswd}" keystore="${keystore}"/-->
+        <!--		<exec dir="." executable="cmd" os="Windows NT"> -->
+        <!--  		<arg line="/c test.bat"/> -->
+        <!--		<exec dir="." executable="/bin/sh" os="Mac OS X">
+  		<arg line="${script}/cpJgaec.sh"/>
+		</exec> -->
+    </target>
+
+
+    <target name="copy_textmode" depends="build_textmode"
+            description="Copy the Maud_essential jar to the final destination.">
+        <copy file="${build}/Maud_essential.jar" tofile="${mirrorfulldir2}/xgrid/Maud_essential.jar"/>
+        <copy file="${build}/Maud_essential.jar" tofile="${inst}/Maud_all_xgrid/Maud/xgrid/Maud_essential.jar"/>
+        <!--copy file="${build}/Maud_essential.jar" tofile="${user.home}/Analysis/Analysis_07/nova/LargePhotoplateExample/bin/Maud_essential.jar" />
+		<signjar jar="${mirrorreddir}/lib/jgaec.jar" alias="${myself}" storepass="${keypasswd}" keystore="${keystore}"/-->
+        <!--		<exec dir="." executable="cmd" os="Windows NT"> -->
+        <!--  		<arg line="/c test.bat"/> -->
+        <!--		<exec dir="." executable="/bin/sh" os="Mac OS X">
+  		<arg line="${script}/cpJgaec.sh"/>
+		</exec> -->
+    </target>
+
+
+    <target name="compile_JGraph" depends="clean" description="Compile JGraph.jar">
+        <!-- First, ensure the build directory exists. -->
+        <delete dir="${build_ant}"/>
+        <mkdir dir="build"/>
+        <mkdir dir="${build_ant}"/>
+        <!-- Build everything -->
+        <javac destdir="${build_ant}" debug="on" target="${java_version}" encoding="UTF-8">
+            <src path="${src}/it/unitn/ing/jgraph"/>
+            <classpath>
+                <pathelement location="${build}/Maud_dev.jar"/>
+            </classpath>
+        </javac>
+        <buildnumber file="${buildnumber}/JGraph_build.number"/>
+    </target>
+
+
+    <target name="build_JGraph" depends="compile_JGraph" description="Build JGraph.jar.">
+        <!-- Copy needed files into the build directory. -->
+        <copy file="${buildnumber}/JGraph_build.number" todir="${build_ant}"/>
+        <!-- Build JGraph.jar. -->
+        <jar jarfile="${build}/JGraph.jar" basedir="${build_ant}"/>
+    </target>
+
+
+    <target name="copy_JGraph" depends="build_JGraph"
+            description="Copy the JGraph build files to the final destination.">
+        <copy file="${build}/JGraph.jar" tofile="${mirrorfulldir}/JGraph.jar"/>
+        <copy file="${build}/JGraph.jar" tofile="${mirrorfulldir2}/lib/JGraph.jar"/>
+        <copy file="${build}/JGraph.jar" tofile="${installfulldirMac}/JGraph.jar"/>
+        <copy file="${build}/JGraph.jar" tofile="${installfulldirMac64}/JGraph.jar"/>
+        <copy file="${build}/JGraph.jar" tofile="${installfulldirUnix}/lib/JGraph.jar"/>
+        <copy file="${build}/JGraph.jar" tofile="${installfulldirLinux64}/lib/JGraph.jar"/>
+        <copy file="${build}/JGraph.jar" tofile="${installfulldirWindows}/lib/JGraph.jar"/>
+        <copy file="${build}/JGraph.jar" tofile="${installfulldirWin64}/lib/JGraph.jar"/>
+        <copy file="${build}/JGraph.jar" tofile="${installfulldirUnixNJ}/lib/JGraph.jar"/>
+        <copy file="${build}/JGraph.jar" tofile="${installfulldirLinux64NJ}/lib/JGraph.jar"/>
+        <copy file="${build}/JGraph.jar" tofile="${installfulldirWindowsNJ}/lib/JGraph.jar"/>
+        <copy file="${build}/JGraph.jar" tofile="${installfulldirWin64NJ}/lib/JGraph.jar"/>
+        <!--signjar jar="${mirrorreddir}/lib/JGraph.jar" alias="${myself}" storepass="${keypasswd}" keystore="${keystore}"/-->
+        <!--		<exec dir="." executable="cmd" os="Windows NT"> -->
+        <!--  		<arg line="/c test.bat"/> -->
+        <!--		<exec dir="." executable="/bin/sh" os="Mac OS X">
+  		<arg line="${script}/cpJGraph.sh"/>
+		</exec> -->
+    </target>
+
+
+    <target name="compile_Jsgt" depends="clean" description="Compile Jsgt.jar">
+        <!-- First, ensure the build directory exists. -->
+        <delete dir="${build_ant}"/>
+        <mkdir dir="build"/>
+        <mkdir dir="${build_ant}"/>
+        <!-- Build everything -->
+        <javac destdir="${build_ant}" debug="on" target="${java_version}" encoding="UTF-8">
+            <src path="${src}/gov/noaa/pmel"/>
+            <!--classpath>
+			<pathelement location="${build}/Maud_dev.jar"/>
+			</classpath-->
+        </javac>
+        <buildnumber file="${buildnumber}/Jsgt_build.number"/>
+    </target>
+
+
+    <target name="build_Jsgt" depends="compile_Jsgt" description="Build Jsgt.jar.">
+        <!-- Copy needed files into the build directory. -->
+        <copy file="${buildnumber}/Jsgt_build.number" todir="${build_ant}"/>
+        <!-- Build JGraph.jar. -->
+        <jar jarfile="${build}/Jsgt.jar" basedir="${build_ant}"/>
+    </target>
+
+
+    <target name="copy_rome" description="Copy the rome and jdom libraries to the final destination.">
+        <copy file="${build}/jdom.jar" tofile="${mirrorfulldir}/jdom.jar"/>
+        <copy file="${build}/rome.jar" tofile="${mirrorfulldir}/rome.jar"/>
+        <copy file="${build}/jdom.jar" tofile="${mirrorfulldir2}/lib/jdom.jar"/>
+        <copy file="${build}/rome.jar" tofile="${mirrorfulldir2}/lib/rome.jar"/>
+        <copy file="${build}/jdom.jar" tofile="${installfulldirMac}/jdom.jar"/>
+        <copy file="${build}/rome.jar" tofile="${installfulldirMac}/rome.jar"/>
+        <copy file="${build}/jdom.jar" tofile="${installfulldirMac64}/jdom.jar"/>
+        <copy file="${build}/rome.jar" tofile="${installfulldirMac64}/rome.jar"/>
+        <copy file="${build}/jdom.jar" tofile="${installfulldirUnix}/lib/jdom.jar"/>
+        <copy file="${build}/rome.jar" tofile="${installfulldirUnix}/lib/rome.jar"/>
+        <copy file="${build}/jdom.jar" tofile="${installfulldirLinux64}/lib/jdom.jar"/>
+        <copy file="${build}/rome.jar" tofile="${installfulldirLinux64}/lib/rome.jar"/>
+        <copy file="${build}/jdom.jar" tofile="${installfulldirWindows}/lib/jdom.jar"/>
+        <copy file="${build}/rome.jar" tofile="${installfulldirWindows}/lib/rome.jar"/>
+        <copy file="${build}/jdom.jar" tofile="${installfulldirWin64}/lib/jdom.jar"/>
+        <copy file="${build}/rome.jar" tofile="${installfulldirWin64}/lib/rome.jar"/>
+        <copy file="${build}/jdom.jar" tofile="${installfulldirUnixNJ}/lib/jdom.jar"/>
+        <copy file="${build}/rome.jar" tofile="${installfulldirUnixNJ}/lib/rome.jar"/>
+        <copy file="${build}/jdom.jar" tofile="${installfulldirLinux64NJ}/lib/jdom.jar"/>
+        <copy file="${build}/rome.jar" tofile="${installfulldirLinux64NJ}/lib/rome.jar"/>
+        <copy file="${build}/jdom.jar" tofile="${installfulldirWindowsNJ}/lib/jdom.jar"/>
+        <copy file="${build}/rome.jar" tofile="${installfulldirWindowsNJ}/lib/rome.jar"/>
+        <copy file="${build}/jdom.jar" tofile="${installfulldirWin64NJ}/lib/jdom.jar"/>
+        <copy file="${build}/rome.jar" tofile="${installfulldirWin64NJ}/lib/rome.jar"/>
+        <!--signjar jar="${mirrorreddir}/lib/jdom.jar" alias="${myself}" storepass="${keypasswd}" keystore="${keystore}"/-->
+        <!--signjar jar="${mirrorreddir}/lib/rome.jar" alias="${myself}" storepass="${keypasswd}" keystore="${keystore}"/-->
+        <!--		<exec dir="." executable="cmd" os="Windows NT"> -->
+        <!--  		<arg line="/c test.bat"/> -->
+        <!--		<exec dir="." executable="/bin/sh" os="Mac OS X">
+  		<arg line="${script}/cpRome.sh"/>
+		</exec> -->
+    </target>
+
+
+    <target name="copy_MySQL-ConnectorJ" description="Copy the jgaec build files to the final destination.">
+        <copy file="${build}/MySQL-ConnectorJ.jar" tofile="${mirrorfulldir}/MySQL-ConnectorJ.jar"/>
+        <copy file="${build}/MySQL-ConnectorJ.jar" tofile="${mirrorfulldir2}/lib/MySQL-ConnectorJ.jar"/>
+        <copy file="${build}/MySQL-ConnectorJ.jar" tofile="${installfulldirMac}/MySQL-ConnectorJ.jar"/>
+        <copy file="${build}/MySQL-ConnectorJ.jar" tofile="${installfulldirMac64}/MySQL-ConnectorJ.jar"/>
+        <copy file="${build}/MySQL-ConnectorJ.jar" tofile="${installfulldirUnix}/lib/MySQL-ConnectorJ.jar"/>
+        <copy file="${build}/MySQL-ConnectorJ.jar" tofile="${installfulldirLinux64}/lib/MySQL-ConnectorJ.jar"/>
+        <copy file="${build}/MySQL-ConnectorJ.jar" tofile="${installfulldirWindows}/lib/MySQL-ConnectorJ.jar"/>
+        <copy file="${build}/MySQL-ConnectorJ.jar" tofile="${installfulldirWin64}/lib/MySQL-ConnectorJ.jar"/>
+        <copy file="${build}/MySQL-ConnectorJ.jar" tofile="${installfulldirUnixNJ}/lib/MySQL-ConnectorJ.jar"/>
+        <copy file="${build}/MySQL-ConnectorJ.jar" tofile="${installfulldirLinux64NJ}/lib/MySQL-ConnectorJ.jar"/>
+        <copy file="${build}/MySQL-ConnectorJ.jar" tofile="${installfulldirWindowsNJ}/lib/MySQL-ConnectorJ.jar"/>
+        <copy file="${build}/MySQL-ConnectorJ.jar" tofile="${installfulldirWin64NJ}/lib/MySQL-ConnectorJ.jar"/>
+        <!--signjar jar="${mirrorreddir}/lib/MySQL-ConnectorJ.jar" alias="${myself}" storepass="${keypasswd}" keystore="${keystore}"/-->
+        <!--		<exec dir="." executable="cmd" os="Windows NT"> -->
+        <!--  		<arg line="/c test.bat"/> -->
+        <!--		<exec dir="." executable="/bin/sh" os="Mac OS X">
+  		<arg line="${script}/cpMySQL-ConnectorJ.sh"/>
+		</exec> -->
+    </target>
+
+
+    <!--target name="compile_ImageJ" depends="clean" description="Compile ImageJ.jar">
+    <delete dir="${build_ant}" />
+    <mkdir dir="build" />
+    <mkdir dir="${build_ant}" />
+    <javac destdir="${build_ant}" debug="on" target="1.5" encoding="UTF-8">
+    	<src path="ImageJ"/>
+      <exclude name="plugins/*" />
+    </javac>
+    <buildnumber file="${buildnumber}/ImageJ_build.number"/>
+  </target>
+  
+
+  <target name="build_ImageJ" depends="compile_ImageJ" description="Build ImageJ.jar.">
+     <copy file="ImageJ/IJ_Props.txt" todir="${build_ant}" />
+    <copy file="ImageJ/images/microscope.gif" tofile="${build_ant}/microscope.gif" />
+    <copy file="ImageJ/images/about.jpg" tofile="${build_ant}/about.jpg" />
+    <copy file="${buildnumber}/ImageJ_build.number" todir="${build_ant}" />
+    <jar jarfile="${build}/ij.jar" basedir="${build_ant}" manifest="ImageJ/MANIFEST.MF" />
+  </target!-->
+
+
+    <target name="copy_ImageJ" description="Copy the ImageJ build files to the final destination.">
+        <copy file="${build}/ij.jar" tofile="${mirrorfulldir}/ij.jar"/>
+        <copy file="${build}/ij.jar" tofile="${mirrorfulldir2}/lib/ij.jar"/>
+        <copy file="${build}/ij.jar" tofile="${installfulldirMac}/ij.jar"/>
+        <copy file="${build}/ij.jar" tofile="${installfulldirMac64}/ij.jar"/>
+        <copy file="${build}/ij.jar" tofile="${installfulldirUnix}/lib/ij.jar"/>
+        <copy file="${build}/ij.jar" tofile="${installfulldirLinux64}/lib/ij.jar"/>
+        <copy file="${build}/ij.jar" tofile="${installfulldirWindows}/lib/ij.jar"/>
+        <copy file="${build}/ij.jar" tofile="${installfulldirWin64}/lib/ij.jar"/>
+        <copy file="${build}/ij.jar" tofile="${installfulldirUnixNJ}/lib/ij.jar"/>
+        <copy file="${build}/ij.jar" tofile="${installfulldirLinux64NJ}/lib/ij.jar"/>
+        <copy file="${build}/ij.jar" tofile="${installfulldirWindowsNJ}/lib/ij.jar"/>
+        <copy file="${build}/ij.jar" tofile="${installfulldirWin64NJ}/lib/ij.jar"/>
+        <!--signjar jar="${mirrorreddir}/lib/ij.jar" alias="${myself}" storepass="${keypasswd}" keystore="${keystore}"/-->
+        <!--		<exec dir="." executable="cmd" os="Windows NT"> -->
+        <!--  		<arg line="/c test.bat"/> -->
+        <!--		<exec dir="." executable="/bin/sh" os="Mac OS X">
+  		<arg line="${script}/cpImageJ.sh"/>
+		</exec> -->
+    </target>
+
+
+    <target name="compile_HTTPClient" depends="clean" description="Compile HTTPClient.jar">
+        <!-- First, ensure the build directory exists. -->
+        <delete dir="${build_ant}"/>
+        <mkdir dir="build"/>
+        <mkdir dir="${build_ant}"/>
+        <!-- Build everything -->
+        <javac destdir="${build_ant}" debug="on" target="1.5" encoding="UTF-8">
+            <src path="${src}/HTTPClient"/>
+        </javac>
+        <buildnumber file="${buildnumber}/HTTPClient_build.number"/>
+    </target>
+
+
+    <target name="build_HTTPClient" depends="compile_HTTPClient" description="Build HTTPClient.jar.">
+        <!-- Copy needed files into the build directory. -->
+        <copy file="${buildnumber}/HTTPClient_build.number" todir="${build_ant}"/>
+        <!-- Build HTTPclient.jar. -->
+        <jar jarfile="${build}/HTTPClient.jar" basedir="${build_ant}"/>
+    </target>
+
+
+    <target name="copy_HTTPclient" depends="build_HTTPClient"
+            description="Copy the HTTPClient build files to the final destination.">
+        <copy file="${build}/HTTPClient.jar" tofile="${mirrorfulldir}/HTTPClient.jar"/>
+        <copy file="${build}/HTTPClient.jar" tofile="${mirrorfulldir2}/lib/HTTPClient.jar"/>
+        <copy file="${build}/HTTPClient.jar" tofile="${installfulldirMac}/HTTPClient.jar"/>
+        <copy file="${build}/HTTPClient.jar" tofile="${installfulldirMac64}/HTTPClient.jar"/>
+        <copy file="${build}/HTTPClient.jar" tofile="${installfulldirUnix}/lib/HTTPClient.jar"/>
+        <copy file="${build}/HTTPClient.jar" tofile="${installfulldirLinux64}/lib/HTTPClient.jar"/>
+        <copy file="${build}/HTTPClient.jar" tofile="${installfulldirWindows}/lib/HTTPClient.jar"/>
+        <copy file="${build}/HTTPClient.jar" tofile="${installfulldirWin64}/lib/HTTPClient.jar"/>
+        <copy file="${build}/HTTPClient.jar" tofile="${installfulldirUnixNJ}/lib/HTTPClient.jar"/>
+        <copy file="${build}/HTTPClient.jar" tofile="${installfulldirLinux64NJ}/lib/HTTPClient.jar"/>
+        <copy file="${build}/HTTPClient.jar" tofile="${installfulldirWindowsNJ}/lib/HTTPClient.jar"/>
+        <copy file="${build}/HTTPClient.jar" tofile="${installfulldirWin64NJ}/lib/HTTPClient.jar"/>
+        <!--signjar jar="${mirrorreddir}/lib/HTTPClient.jar" alias="${myself}" storepass="${keypasswd}" keystore="${keystore}"/-->
+        <!--		<exec dir="." executable="cmd" os="Windows NT"> -->
+        <!--  		<arg line="/c test.bat"/> -->
+        <!--		<exec dir="." executable="/bin/sh" os="Mac OS X">
+  		<arg line="${script}/cpHTTPClient.sh"/>
+		</exec> -->
+    </target>
+
+
+    <target name="copy_jogl" description="Copy the jogl build files to the final destination.">
+        <!--    <delete file="${mirrorreddir}/lib/jogl.jar" /> -->
+        <copy file="libs/jogl-2.0/jogl.all.jar" todir="${mirrorfulldir}"/>
+        <copy file="libs/jogl-2.0/nativewindow.all.jar" todir="${mirrorfulldir}"/>
+        <copy file="libs/jogl-2.0/newt.all.jar" todir="${mirrorfulldir}"/>
+        <copy file="libs/jogl-2.0/macosx-universal/lib/libgluegen-rt.jnilib" todir="${mirrorfulldir}"/>
+        <copy file="libs/jogl-2.0/macosx-universal/lib/libjogl_desktop.jnilib" todir="${mirrorfulldir}"/>
+        <copy file="libs/jogl-2.0/macosx-universal/lib/libjogl_es1.jnilib" todir="${mirrorfulldir}"/>
+        <copy file="libs/jogl-2.0/macosx-universal/lib/libjogl_es2.jnilib" todir="${mirrorfulldir}"/>
+        <copy file="libs/jogl-2.0/macosx-universal/lib/libnativewindow_awt.jnilib" todir="${mirrorfulldir}"/>
+        <copy file="libs/jogl-2.0/macosx-universal/lib/libnewt.jnilib" todir="${mirrorfulldir}"/>
+        <copy file="libs/jogl-2.0/jogl.all.jar" todir="${mirrorfulldir2}/lib"/>
+        <copy file="libs/jogl-2.0/nativewindow.all.jar" todir="${mirrorfulldir2}/lib"/>
+        <copy file="libs/jogl-2.0/newt.all.jar" todir="${mirrorfulldir2}/lib"/>
+        <copy file="libs/jogl-2.0/macosx-universal/lib/libgluegen-rt.jnilib" todir="${mirrorfulldir2}"/>
+        <copy file="libs/jogl-2.0/macosx-universal/lib/libjogl_desktop.jnilib" todir="${mirrorfulldir2}"/>
+        <copy file="libs/jogl-2.0/macosx-universal/lib/libjogl_es1.jnilib" todir="${mirrorfulldir2}"/>
+        <copy file="libs/jogl-2.0/macosx-universal/lib/libjogl_es2.jnilib" todir="${mirrorfulldir2}"/>
+        <copy file="libs/jogl-2.0/macosx-universal/lib/libnativewindow_awt.jnilib" todir="${mirrorfulldir2}"/>
+        <copy file="libs/jogl-2.0/macosx-universal/lib/libnewt.jnilib" todir="${mirrorfulldir2}"/>
+        <copy file="libs/jogl-2.0/jogl.all.jar" todir="${installfulldirMac}"/>
+        <copy file="libs/jogl-2.0/nativewindow.all.jar" todir="${installfulldirMac}"/>
+        <copy file="libs/jogl-2.0/newt.all.jar" todir="${installfulldirMac}"/>
+        <copy file="libs/jogl-2.0/macosx-universal/lib/libgluegen-rt.jnilib" todir="${installfulldirMac}"/>
+        <copy file="libs/jogl-2.0/macosx-universal/lib/libjogl_desktop.jnilib" todir="${installfulldirMac}"/>
+        <copy file="libs/jogl-2.0/macosx-universal/lib/libjogl_es1.jnilib" todir="${installfulldirMac}"/>
+        <copy file="libs/jogl-2.0/macosx-universal/lib/libjogl_es2.jnilib" todir="${installfulldirMac}"/>
+        <copy file="libs/jogl-2.0/macosx-universal/lib/libnativewindow_awt.jnilib" todir="${installfulldirMac}"/>
+        <copy file="libs/jogl-2.0/macosx-universal/lib/libnewt.jnilib" todir="${installfulldirMac}"/>
+        <copy file="libs/jogl-2.0/jogl.all.jar" todir="${installfulldirMac64}"/>
+        <copy file="libs/jogl-2.0/nativewindow.all.jar" todir="${installfulldirMac64}"/>
+        <copy file="libs/jogl-2.0/newt.all.jar" todir="${installfulldirMac64}"/>
+        <copy file="libs/jogl-2.0/macosx-universal/lib/libgluegen-rt.jnilib" todir="${installfulldirMac64}"/>
+        <copy file="libs/jogl-2.0/macosx-universal/lib/libjogl_desktop.jnilib" todir="${installfulldirMac64}"/>
+        <copy file="libs/jogl-2.0/macosx-universal/lib/libjogl_es1.jnilib" todir="${installfulldirMac64}"/>
+        <copy file="libs/jogl-2.0/macosx-universal/lib/libjogl_es2.jnilib" todir="${installfulldirMac64}"/>
+        <copy file="libs/jogl-2.0/macosx-universal/lib/libnativewindow_awt.jnilib" todir="${installfulldirMac64}"/>
+        <copy file="libs/jogl-2.0/macosx-universal/lib/libnewt.jnilib" todir="${installfulldirMac64}"/>
+        <copy file="libs/jogl-2.0/jogl.all.jar" todir="${installfulldirUnix}/lib"/>
+        <copy file="libs/jogl-2.0/nativewindow.all.jar" todir="${installfulldirUnix}/lib"/>
+        <copy file="libs/jogl-2.0/newt.all.jar" todir="${installfulldirUnix}/lib"/>
+        <copy file="libs/jogl-2.0/linux-i586/lib/libgluegen-rt.so" todir="${installfulldirUnix}"/>
+        <copy file="libs/jogl-2.0/linux-i586/lib/libjogl_desktop.so" todir="${installfulldirUnix}"/>
+        <copy file="libs/jogl-2.0/linux-i586/lib/libjogl_es1.so" todir="${installfulldirUnix}"/>
+        <copy file="libs/jogl-2.0/linux-i586/lib/libjogl_es2.so" todir="${installfulldirUnix}"/>
+        <copy file="libs/jogl-2.0/linux-i586/lib/libnativewindow_awt.so" todir="${installfulldirUnix}"/>
+        <copy file="libs/jogl-2.0/linux-i586/lib/libnativewindow_X11.so" todir="${installfulldirUnix}"/>
+        <copy file="libs/jogl-2.0/linux-i586/lib/libnewt.so" todir="${installfulldirUnix}"/>
+        <copy file="libs/jogl-2.0/jogl.all.jar" todir="${installfulldirLinux64}/lib"/>
+        <copy file="libs/jogl-2.0/nativewindow.all.jar" todir="${installfulldirLinux64}/lib"/>
+        <copy file="libs/jogl-2.0/newt.all.jar" todir="${installfulldirLinux64}/lib"/>
+        <copy file="libs/jogl-2.0/linux-amd64/lib/libgluegen-rt.so" todir="${installfulldirLinux64}"/>
+        <copy file="libs/jogl-2.0/linux-amd64/lib/libjogl_desktop.so" todir="${installfulldirLinux64}"/>
+        <copy file="libs/jogl-2.0/linux-amd64/lib/libjogl_es1.so" todir="${installfulldirLinux64}"/>
+        <copy file="libs/jogl-2.0/linux-amd64/lib/libjogl_es2.so" todir="${installfulldirLinux64}"/>
+        <copy file="libs/jogl-2.0/linux-amd64/lib/libnativewindow_awt.so" todir="${installfulldirLinux64}"/>
+        <copy file="libs/jogl-2.0/linux-amd64/lib/libnativewindow_X11.so" todir="${installfulldirLinux64}"/>
+        <copy file="libs/jogl-2.0/linux-amd64/lib/libnewt.so" todir="${installfulldirLinux64}"/>
+        <copy file="libs/jogl-2.0/jogl.all.jar" todir="${installfulldirWindows}/lib"/>
+        <copy file="libs/jogl-2.0/nativewindow.all.jar" todir="${installfulldirWindows}/lib"/>
+        <copy file="libs/jogl-2.0/newt.all.jar" todir="${installfulldirWindows}/lib"/>
+        <copy file="libs/jogl-2.0/windows-i586/lib/jogl_desktop.dll" todir="${installfulldirWindows}"/>
+        <copy file="libs/jogl-2.0/windows-i586/lib/jogl_es1.dll" todir="${installfulldirWindows}"/>
+        <copy file="libs/jogl-2.0/windows-i586/lib/jogl_es2.dll" todir="${installfulldirWindows}"/>
+        <copy file="libs/jogl-2.0/windows-i586/lib/nativewindow_awt.dll" todir="${installfulldirWindows}"/>
+        <copy file="libs/jogl-2.0/windows-i586/lib/nativewindow_Win32.dll" todir="${installfulldirWindows}"/>
+        <copy file="libs/jogl-2.0/windows-i586/lib/newt.dll" todir="${installfulldirWindows}"/>
+        <copy file="libs/jogl-2.0/jogl.all.jar" todir="${installfulldirWin64}/lib"/>
+        <copy file="libs/jogl-2.0/nativewindow.all.jar" todir="${installfulldirWin64}/lib"/>
+        <copy file="libs/jogl-2.0/newt.all.jar" todir="${installfulldirWin64}/lib"/>
+        <copy file="libs/jogl-2.0/windows-amd64/lib/jogl_desktop.dll" todir="${installfulldirWin64}"/>
+        <copy file="libs/jogl-2.0/windows-amd64/lib/jogl_es1.dll" todir="${installfulldirWin64}"/>
+        <copy file="libs/jogl-2.0/windows-amd64/lib/jogl_es2.dll" todir="${installfulldirWin64}"/>
+        <copy file="libs/jogl-2.0/windows-amd64/lib/nativewindow_awt.dll" todir="${installfulldirWin64}"/>
+        <copy file="libs/jogl-2.0/windows-amd64/lib/nativewindow_Win32.dll" todir="${installfulldirWin64}"/>
+        <copy file="libs/jogl-2.0/windows-amd64/lib/newt.dll" todir="${installfulldirWin64}"/>
+        <!-- to be restored		<signjar jar="${mirrorreddir}/lib/jogl.all.jar" alias="${myself}" storepass="${keypasswd}" keystore="${keystore}"/> -->
+        <!--		<exec dir="." executable="cmd" os="Windows NT"> -->
+        <!--  		<arg line="/c test.bat"/> -->
+        <!--		<exec dir="." executable="/bin/sh" os="Mac OS X">
+  		<arg line="${script}/cpjogl.sh"/>
+		</exec> -->
+    </target>
+
+
+    <!--  <target name="copy_JNIAltivec" description="Copy the JNIAltivec build files to the final destination.">
+    <copy file="${build}/JNIAltivec.jar" tofile="${mirrorreddir}/lib/JNIAltivec.jar" />
+    <copy file="${mirrorreddir}/lib/JNIAltivec.jar" tofile="${mirrorfulldir}/lib/JNIAltivec.jar" />
+		<exec dir="." executable="/bin/sh" os="Mac OS X">
+  		<arg line="${script}/cpJNIAltivec.sh"/>
+		</exec>
+  </target> -->
+
+
+    <target name="build_Images" depends="clean" description="Build Images.jar.">
+        <buildnumber file="${buildnumber}/Images_build.number"/>
+        <!-- Copy needed files into the build directory. -->
+        <delete dir="${build_ant}"/>
+        <mkdir dir="${build_ant}/images"/>
+        <copy file="${buildnumber}/Images_build.number" todir="${build_ant}/images"/>
+        <copy todir="${build_ant}/images">
+            <fileset dir="${src}/images"/>
+        </copy>
+        <!-- Build Images.jar. -->
+        <jar jarfile="${build}/Images.jar" basedir="${build_ant}"/>
+    </target>
+
+
+    <target name="copy_Images" depends="build_Images" description="Copy the Images jar files to the final destination.">
+        <copy file="${build}/Images.jar" todir="${mirrorfulldir}"/>
+        <copy file="${build}/Images.jar" todir="${mirrorfulldir2}/lib"/>
+        <copy file="${build}/Images.jar" todir="${installfulldirMac}"/>
+        <copy file="${build}/Images.jar" todir="${installfulldirMac64}"/>
+        <copy file="${build}/Images.jar" todir="${installfulldirUnix}/lib"/>
+        <copy file="${build}/Images.jar" todir="${installfulldirLinux64}/lib"/>
+        <copy file="${build}/Images.jar" todir="${installfulldirWindows}/lib"/>
+        <copy file="${build}/Images.jar" todir="${installfulldirWin64}/lib"/>
+        <copy file="${build}/Images.jar" todir="libs/current"/>
+        <copy file="${build}/Images.jar" todir="${installfulldirUnixNJ}/lib"/>
+        <copy file="${build}/Images.jar" todir="${installfulldirLinux64NJ}/lib"/>
+        <copy file="${build}/Images.jar" todir="${installfulldirWindowsNJ}/lib"/>
+        <copy file="${build}/Images.jar" todir="${installfulldirWin64NJ}/lib"/>
+        <!--signjar jar="${mirrorreddir}/lib/Images.jar" alias="${myself}" storepass="${keypasswd}" keystore="${keystore}"/-->
+        <!--		<exec dir="." executable="cmd" os="Windows NT"> -->
+        <!--  		<arg line="/c test.bat"/> -->
+        <!--		<exec dir="." executable="/bin/sh" os="Mac OS X">
+  		<arg line="${script}/cpImages.sh"/>
+		</exec> -->
+    </target>
+
+
+    <target name="build_Help" depends="clean" description="Build Help.jar.">
+        <buildnumber file="${buildnumber}/Help_build.number"/>
+        <!-- Copy needed files into the build directory. -->
+        <delete dir="${build_ant}"/>
+        <mkdir dir="${build_ant}/help"/>
+        <copy file="${buildnumber}/Help_build.number" todir="${build_ant}/help"/>
+        <copy todir="${build_ant}/help">
+            <fileset dir="${src}/help"/>
+        </copy>
+        <!-- Build Help.jar. -->
+        <jar jarfile="${build}/Help.jar" basedir="${build_ant}"/>
+    </target>
+
+
+    <target name="copy_Help" depends="build_Help" description="Copy the Help jar files to the final destination.">
+        <copy file="${build}/Help.jar" todir="${mirrorfulldir}"/>
+        <copy file="${build}/Help.jar" todir="${mirrorfulldir2}/lib"/>
+        <copy file="${build}/Help.jar" todir="${installfulldirMac}"/>
+        <copy file="${build}/Help.jar" todir="${installfulldirMac64}"/>
+        <copy file="${build}/Help.jar" todir="${installfulldirUnix}/lib"/>
+        <copy file="${build}/Help.jar" todir="${installfulldirLinux64}/lib"/>
+        <copy file="${build}/Help.jar" todir="${installfulldirWindows}/lib"/>
+        <copy file="${build}/Help.jar" todir="${installfulldirWin64}/lib"/>
+        <copy file="${build}/Help.jar" todir="${installfulldirUnixNJ}/lib"/>
+        <copy file="${build}/Help.jar" todir="${installfulldirLinux64NJ}/lib"/>
+        <copy file="${build}/Help.jar" todir="${installfulldirWindowsNJ}/lib"/>
+        <copy file="${build}/Help.jar" todir="${installfulldirWin64NJ}/lib"/>
+        <copy file="${build}/Help.jar" todir="libs/current"/>
+        <!--signjar jar="${mirrorreddir}/lib/Help.jar" alias="${myself}" storepass="${keypasswd}" keystore="${keystore}"/-->
+        <!--		<exec dir="." executable="cmd" os="Windows NT"> -->
+        <!--  		<arg line="/c test.bat"/> -->
+        <!--		<exec dir="." executable="/bin/sh" os="Mac OS X">
+  		<arg line="${script}/cpHelp.sh"/>
+		</exec> -->
+    </target>
+
+
+    <target name="build_Files" depends="clean" description="Build Files.jar.">
+        <buildnumber file="${buildnumber}/Files_build.number"/>
+        <!-- Copy needed files into the build directory. -->
+        <delete dir="${build_ant}"/>
+        <mkdir dir="${build_ant}/files"/>
+        <mkdir dir="${build_ant}/ij"/>
+        <copy file="${buildnumber}/Files_build.number" todir="${build_ant}/files"/>
+        <copy file="${src}/ij/IJ_Props.txt" todir="${build_ant}"/>
+        <copy todir="${build_ant}/files">
+            <fileset dir="${src}/files"/>
+        </copy>
+        <!-- Build Files.jar. -->
+        <jar jarfile="${build}/Files.jar" basedir="${build_ant}"/>
+    </target>
+
+
+    <target name="copy_Files" depends="build_Files" description="Copy the Files jar files to the final destination.">
+        <copy file="${build}/Files.jar" todir="${mirrorfulldir}"/>
+        <copy file="${build}/Files.jar" todir="${mirrorfulldir2}/lib"/>
+        <copy file="${build}/Files.jar" todir="${installfulldirMac}"/>
+        <copy file="${build}/Files.jar" todir="${installfulldirMac64}"/>
+        <copy file="${build}/Files.jar" todir="${installfulldirUnix}/lib"/>
+        <copy file="${build}/Files.jar" todir="${installfulldirLinux64}/lib"/>
+        <copy file="${build}/Files.jar" todir="${installfulldirWindows}/lib"/>
+        <copy file="${build}/Files.jar" todir="${installfulldirWin64}/lib"/>
+        <copy file="${build}/Files.jar" todir="${installfulldirUnixNJ}/lib"/>
+        <copy file="${build}/Files.jar" todir="${installfulldirLinux64NJ}/lib"/>
+        <copy file="${build}/Files.jar" todir="${installfulldirWindowsNJ}/lib"/>
+        <copy file="${build}/Files.jar" todir="${installfulldirWin64NJ}/lib"/>
+        <copy file="${build}/Files.jar" todir="libs/current"/>
+        <!--signjar jar="${mirrorreddir}/lib/Files.jar" alias="${myself}" storepass="${keypasswd}" keystore="${keystore}"/-->
+        <!--		<exec dir="." executable="cmd" os="Windows NT"> -->
+        <!--  		<arg line="/c test.bat"/> -->
+        <!--		<exec dir="." executable="/bin/sh" os="Mac OS X">
+  		<arg line="${script}/cpFiles.sh"/>
+		</exec> -->
+    </target>
+
+
+    <target name="build_Examples" depends="clean" description="Build Examples.jar.">
+        <buildnumber file="${buildnumber}/Examples_build.number"/>
+        <!-- Copy needed files into the build directory. -->
+        <delete dir="${build_ant}"/>
+        <mkdir dir="${build_ant}/examples"/>
+        <copy file="${buildnumber}/Examples_build.number" todir="${build_ant}/examples"/>
+        <copy todir="${build_ant}/examples">
+            <fileset dir="${src}/examples"/>
+        </copy>
+        <!-- Build Examples.jar. -->
+        <jar jarfile="${build}/Examples.jar" basedir="${build_ant}"/>
+    </target>
+
+
+    <target name="copy_Examples" depends="build_Examples"
+            description="Copy the Examples jar files to the final destination.">
+        <copy file="${build}/Examples.jar" todir="${mirrorfulldir}"/>
+        <copy file="${build}/Examples.jar" todir="${mirrorfulldir2}/lib"/>
+        <copy file="${build}/Examples.jar" todir="${installfulldirMac}"/>
+        <copy file="${build}/Examples.jar" todir="${installfulldirMac64}"/>
+        <copy file="${build}/Examples.jar" todir="${installfulldirUnix}/lib"/>
+        <copy file="${build}/Examples.jar" todir="${installfulldirLinux64}/lib"/>
+        <copy file="${build}/Examples.jar" todir="${installfulldirWindows}/lib"/>
+        <copy file="${build}/Examples.jar" todir="${installfulldirWin64}/lib"/>
+        <copy file="${build}/Examples.jar" todir="${installfulldirUnixNJ}/lib"/>
+        <copy file="${build}/Examples.jar" todir="${installfulldirLinux64NJ}/lib"/>
+        <copy file="${build}/Examples.jar" todir="${installfulldirWindowsNJ}/lib"/>
+        <copy file="${build}/Examples.jar" todir="${installfulldirWin64NJ}/lib"/>
+        <copy file="${build}/Examples.jar" todir="libs/current"/>
+        <!--signjar jar="${mirrorreddir}/lib/Files.jar" alias="${myself}" storepass="${keypasswd}" keystore="${keystore}"/-->
+        <!--		<exec dir="." executable="cmd" os="Windows NT"> -->
+        <!--  		<arg line="/c test.bat"/> -->
+        <!--		<exec dir="." executable="/bin/sh" os="Mac OS X">
+                  <arg line="${script}/cpFiles.sh"/>
+                </exec> -->
+    </target>
+
+
+    <target name="deploy_jgaec" depends="deploy_test_jgaec"
+            description="Deploy the jgaec build files to the web server.">
+        <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}"
+             remotedir="${deployfulldir}/lib">
+            <fileset file="${mirrorfulldir}/lib/jgaec.jar"/>
+        </ftp>
+        <ftp server="${ftpredserver}" userid="${ftpuserred}" password="${passwdred}" remotedir="${deployreddir}/lib">
+            <fileset file="${mirrorfulldir}/lib/jgaec.jar"/>
+        </ftp>
+    </target>
+
+
+    <target name="deploy_test_jgaec" depends="copy_jgaec"
+            description="Deploy the jgaec build files to the test web server.">
+        <ftp server="${ftptestserver}" userid="${ftpusertest}" password="${passwdtest}"
+             remotedir="${deploytestfulldir}/lib">
+            <fileset file="${mirrorfulldir}/lib/jgaec.jar"/>
+        </ftp>
+    </target>
+
+
+    <target name="deploy_JGraph" depends="deploy_test_JGraph"
+            description="Deploy the JGraph build files to the web server.">
+        <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}"
+             remotedir="${deployfulldir}/lib">
+            <fileset file="${mirrorfulldir}/lib/JGraph.jar"/>
+        </ftp>
+        <ftp server="${ftpredserver}" userid="${ftpuserred}" password="${passwdred}" remotedir="${deployreddir}/lib">
+            <fileset file="${mirrorfulldir}/lib/JGraph.jar"/>
+        </ftp>
+    </target>
+
+
+    <target name="deploy_test_JGraph" depends="copy_JGraph"
+            description="Deploy the JGraph build files to the test web server.">
+        <ftp server="${ftptestserver}" userid="${ftpusertest}" password="${passwdtest}"
+             remotedir="${deploytestfulldir}/lib">
+            <fileset file="${mirrorfulldir}/lib/JGraph.jar"/>
+        </ftp>
+    </target>
+
+
+    <target name="deploy_HTTPclient" depends="deploy_test_HTTPclient"
+            description="Deploy the HTTPclient build files to the web server.">
+        <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}"
+             remotedir="${deployfulldir}/lib">
+            <fileset file="${mirrorfulldir}/lib/HTTPclient.jar"/>
+        </ftp>
+        <ftp server="${ftpredserver}" userid="${ftpuserred}" password="${passwdred}" remotedir="${deployreddir}/lib">
+            <fileset file="${mirrorfulldir}/lib/HTTPclient.jar"/>
+        </ftp>
+    </target>
+
+
+    <target name="deploy_test_HTTPclient" depends="copy_HTTPclient"
+            description="Deploy the HTTPclient build files to the test web server.">
+        <ftp server="${ftptestserver}" userid="${ftpusertest}" password="${passwdtest}"
+             remotedir="${deploytestfulldir}/lib">
+            <fileset file="${mirrorfulldir}/lib/HTTPclient.jar"/>
+        </ftp>
+    </target>
+
+
+    <target name="deploy_rome" depends="deploy_test_rome"
+            description="Deploy the rome library files to the web server.">
+        <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}"
+             remotedir="${deployfulldir}/lib">
+            <fileset file="${mirrorfulldir}/lib/rome.jar"/>
+            <fileset file="${mirrorfulldir}/lib/jdom.jar"/>
+        </ftp>
+        <ftp server="${ftpredserver}" userid="${ftpuserred}" password="${passwdred}" remotedir="${deployreddir}/lib">
+            <fileset file="${mirrorfulldir}/lib/rome.jar"/>
+            <fileset file="${mirrorfulldir}/lib/jdom.jar"/>
+        </ftp>
+    </target>
+
+
+    <target name="deploy_test_rome" depends="copy_rome"
+            description="Deploy the rome library files to the test web server.">
+        <ftp server="${ftptestserver}" userid="${ftpusertest}" password="${passwdtest}"
+             remotedir="${deploytestfulldir}/lib">
+            <fileset file="${mirrorfulldir}/lib/rome.jar"/>
+            <fileset file="${mirrorfulldir}/lib/jdom.jar"/>
+        </ftp>
+    </target>
+
+
+    <target name="deploy_MySQL-ConnectorJ" depends="deploy_test_MySQL-ConnectorJ"
+            description="Deploy the MySQL-ConnectorJ library files to the web server.">
+        <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}"
+             remotedir="${deployfulldir}/lib">
+            <fileset file="${mirrorfulldir}/lib/MySQL-ConnectorJ.jar"/>
+        </ftp>
+        <ftp server="${ftpredserver}" userid="${ftpuserred}" password="${passwdred}" remotedir="${deployreddir}/lib">
+            <fileset file="${mirrorfulldir}/lib/MySQL-ConnectorJ.jar"/>
+        </ftp>
+    </target>
+
+
+    <target name="deploy_test_MySQL-ConnectorJ" depends="copy_MySQL-ConnectorJ"
+            description="Deploy the MySQL-ConnectorJ library files to the test web server.">
+        <ftp server="${ftptestserver}" userid="${ftpusertest}" password="${passwdtest}"
+             remotedir="${deploytestfulldir}/lib">
+            <fileset file="${mirrorfulldir}/lib/MySQL-ConnectorJ.jar"/>
+        </ftp>
+    </target>
+
+
+    <target name="deploy_Maud_update" depends="deploy_full,deploy_webPages_full"
+            description="Deploy the full build files to the web server.">
+    </target>
+
+
+    <target name="deploy_Maud" depends="rebuild_allLib,deploy_full,deploy_webPages_full"
+            description="Deploy the full build files to the web server.">
+    </target>
+
+
+    <target name="deploy_Maud_beta" depends="rebuild_allLib,deploy_full_beta,deploy_webPages_full"
+            description="Deploy the full build files to the web server.">
+    </target>
+
+
+    <target name="rebuild_allLib"
+            depends="copy_miscLib,copy_jgaec,copy_jgap,copy_jmol,copy_Files,copy_Examples,copy_Help,copy_Images,copy_HTTPclient,copy_ImageJ,copy_MySQL-ConnectorJ,copy_rome"
+            description="Deploy the full build files to the web server.">
+    </target>
+
+
+    <target name="rebuild_everything" depends="rebuild_allLib,copy_full"
+            description="Deploy the full build files to the web server.">
+    </target>
+
+
+    <target name="bundle" depends="copy_full">
+        <!-- Import the AppBundlerTaks from ant lib directory -->
+        <taskdef name="bundleapp"
+                 classname="com.oracle.appbundler.AppBundlerTask"/>
+
+        <bundleapp outputdirectory="${app_osx}/"
+                   name="Maud"
+                   displayname="Maud"
+                   identifier="com.radiographema.maud"
+                   executableName="Maud"
+                   shortversion="2.71"
+                   icon="${inst}/maud.icns"
+                   mainclassname="com.radiographema.Maud"
+                   copyright="Maud, for materials analysis, Copyright 1997-2016 Luca Lutterotti"
+                   applicationCategory="public.app-category.productivity">
+
+            <!-- The directory where your OpenJDK runtime is. -->
+            <runtime dir="${inst}/Home/"/>
+
+            <!-- The bundleapp task doesn't support classpathref so all
+                the run classpath entries must be stated here too.
+            -->
+            <classpath file="${build}/Maud.jar"/>
+            <classpath file="libs/current/Files.jar"/>
+            <classpath file="libs/current/Examples.jar"/>
+            <classpath file="libs/current/jmol.jar"/>
+            <classpath file="libs/current/Help.jar"/>
+            <classpath file="libs/current/Images.jar"/>
+            <classpath file="libs/current/miscLib.jar"/>
+            <classpath file="libs/current/HTTPClient.jar"/>
+            <classpath file="libs/current/jdom.jar"/>
+            <classpath file="libs/current/ij.jar"/>
+            <classpath file="libs/current/jgap.jar"/>
+            <classpath file="libs/current/jogl.all.jar"/>
+            <classpath file="libs/current/joone-engine.jar"/>
+            <classpath file="libs/current/jgaec.jar"/>
+            <classpath file="libs/current/jsplines.jar"/>
+            <classpath file="libs/current/jnlp.jar"/>
+            <classpath file="libs/current/MySQL-ConnectorJ.jar"/>
+            <classpath file="libs/current/swingx.jar"/>
+            <classpath file="libs/current/sqlite-jdbc.jar"/>
+            <classpath file="libs/current/newt.all.jar"/>
+            <classpath file="libs/current/nativewindow.all.jar"/>
+            <classpath file="libs/current/sqlite-jdbc.jar"/>
+            <classpath file="libs/current/xgridagent.jar"/>
+            <classpath file="libs/current/xgridlib.jar"/>
+            <classpath file="libs/current/com.github.tschoonj.xraylib.jar"/>
+            <classpath file="libs/current/commons-math.jar"/>
+
+            <!-- Workaround since the icon parameter for bundleapp
+                 doesn't work. (It's not a bug in AppBundler but
+                 in the JavaAppLauncher, see Known Problems).
+            -->
+            <option value="-Xdock:icon=Contents/Resources/${bundle.icon}"/>
+
+            <!-- Specify which architectures you want to support -->
+            <arch name="x86_64"/>
+            <arch name="i386"/>
+
+            <!-- Register the application as an editor for PNG and JPG files -->
+            <bundledocument extensions="par"
+                            icon="${bundle.icon}"
+                            name="Analysis"
+                            role="editor">
+            </bundledocument>
+
+            <!-- OSX specific options, optional -->
+            <option value="-Dapple.laf.useScreenMenuBar=true"/>
+            <option value="-Dcom.apple.macos.use-file-dialog-packages=true"/>
+            <option value="-Dcom.apple.macos.useScreenMenuBar=true"/>
+            <option value="-Dapple.awt.application.name=Maud"/>
+            <option value="-Dcom.apple.smallTabs=true"/>
+
+            <option value="-Xmx8192M"/>
+        </bundleapp>
+
+        <mkdir dir="${app_osx}/Maud.app/Contents/MacOS/lib"/>
+        <!--copy file="cctbxForMaud/build/Debug/libcctbxForMaud.dylib" tofile="${inst}/Maud_mac/Maud.app/Contents/Plugins/Home/jre/lib/libcctbxForMaud.dylib" /-->
+        <copy file="cctbxForMaud/libcctbx.dylib" tofile="${app_osx}/Maud.app/Contents/MacOS/lib/libcctbx.dylib"/>
+        <copy file="cctbxForMaud/libcctbxForMaud.dylib"
+              tofile="${app_osx}/Maud.app/Contents/MacOS/libcctbxForMaud.dylib"/>
+
+        <!--bundleapp outputdirectory="${inst}/Maud_mac/"
+                   name="Maud"
+                   displayname="Maud"
+                   identifier="com.radiographema.maud"
+                   executableName="Maud"
+                   shortversion="2.60"
+                   icon="${inst}/maud.icns"
+                   mainclassname="com.radiographema.Maud"
+                   copyright="Maud, for materials analysis, Copyright 1997-2016 Luca Lutterotti"
+                   applicationCategory="public.app-category.productivity"-->
+
+        <!-- The directory where your OpenJDK runtime is. -->
+        <!--runtime dir="${inst}/Home/"/-->
+
+        <!-- The bundleapp task doesn't support classpathref so all
+                the run classpath entries must be stated here too.
+            -->
+        <!--classpath file="${inst}/Maud.jar"/>
+            <classpath file="${build}/Files.jar"/>
+            <classpath file="${build}/Examples.jar"/>
+            <classpath file="libs/current/jmol.jar"/>
+            <classpath file="${build}/Help.jar"/>
+            <classpath file="${build}/Images.jar"/>
+            <classpath file="libs/current/miscLib.jar"/>
+            <classpath file="libs/current/HTTPClient.jar"/>
+            <classpath file="libs/current/jdom.jar"/>
+            <classpath file="libs/current/ij.jar"/>
+            <classpath file="libs/current/jgap.jar"/>
+            <classpath file="libs/current/jogl.all.jar"/>
+            <classpath file="libs/current/joone-engine.jar"/>
+            <classpath file="libs/current/jgaec.jar"/>
+            <classpath file="libs/current/jsplines.jar"/>
+            <classpath file="libs/current/jnlp.jar"/>
+            <classpath file="libs/current/MySQL-ConnectorJ.jar"/>
+            <classpath file="libs/current/swingx.jar"/>
+            <classpath file="libs/current/sqlite-jdbc.jar"/>
+            <classpath file="libs/current/newt.all.jar"/>
+            <classpath file="libs/current/nativewindow.all.jar"/>
+            <classpath file="libs/current/sqlite-jdbc.jar"/>
+            <classpath file="libs/current/xgridagent.jar"/>
+            <classpath file="libs/current/xgridlib.jar"/-->
+
+        <!-- Workaround since the icon parameter for bundleapp
+                 doesn't work. (It's not a bug in AppBundler but
+                 in the JavaAppLauncher, see Known Problems).
+            -->
+        <!--option value="-Xdock:icon=Contents/Resources/${bundle.icon}"/-->
+
+        <!-- Specify which architectures you want to support -->
+        <!--arch name="x86_64"/>
+            <arch name="i386"/-->
+
+        <!-- Register the application as an editor for PNG and JPG files -->
+        <!--bundledocument extensions="par"
+                            icon="${bundle.icon}"
+                            name="Analysis"
+                            role="editor">
+            </bundledocument-->
+
+        <!-- OSX specific options, optional -->
+        <!--option value="-Dapple.laf.useScreenMenuBar=true"/>
+            <option value="-Dcom.apple.macos.use-file-dialog-packages=true"/>
+            <option value="-Dcom.apple.macos.useScreenMenuBar=true"/>
+            <option value="-Dapple.awt.application.name=Maud"/>
+            <option value="-Dcom.apple.smallTabs=true"/>
+
+            <option value="-Xmx8192M"/>
+        </bundleapp>
+        <mkdir dir="${inst}/Maud_mac/Maud.app/Contents/MacOS/lib" /-->
+        <!--copy file="cctbxForMaud/build/Debug/libcctbxForMaud.dylib" tofile="${inst}/Maud_mac/Maud.app/Contents/Plugins/Home/jre/lib/libcctbxForMaud.dylib" /-->
+        <!--copy file="cctbxForMaud/libcctbx.dylib" tofile="${inst}/Maud_mac/Maud.app/Contents/MacOS/lib/libcctbx.dylib" />
+        <copy file="cctbxForMaud/libcctbxForMaud.dylib" tofile="${inst}/Maud_mac/Maud.app/Contents/MacOS/libcctbxForMaud.dylib" /-->
+    </target>
+
+    <target name="build_installer_osx" depends="bundle" description="Build the macOS application">
+        <!--		<ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}" remotedir="${deployfulldir}">
+                  <fileset file="${mirrorfulldir}/Maud.jar"/>
+                </ftp> -->
+        <!--copy file="${inst}/Maud.entitlements" todir="${inst}/Maud_OSX/Maud.app/Contents" /-->
+        <exec dir="${installerDir}" executable="codesign" os="Mac OS X">
+            <arg line="-v --force --deep -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; --entitlements Maud.entitlements ${app_osx}/Maud.app"/>
+        </exec>
+        <!--exec dir="${inst}/Maud_OSX/" executable="/Users/luca/bin/mkdmg.pl" os="Mac OS X">
+            <arg line="Maud.dmg.gz Maud"/>
+        </exec-->
+    </target>
+
+    <target name="build_app_bundle" depends="bundle" description="Package the application for OSX" xmlns:fx="javafx:com.sun.javafx.tools.ant">
+
+        <taskdef resource="com/sun/javafx/tools/ant/antlib.xml"
+                 uri="javafx:com.sun.javafx.tools.ant"
+                 classpath="${JAVA_HOME}/lib/ant-javafx.jar"/>
+
+        <fx:deploy width="${javafx.run.width}" height="${javafx.run.height}"
+                   nativeBundles="all"
+                   outdir="${inst}/Maud_OSX1" outfile="${application.title}">
+            <fx:application name="${application.title}" mainClass="${javafx.main.class}"/>
+            <fx:resources>
+                <fx:fileset dir="${basedir}/${dist.dir}" includes="*.jar"/>
+            </fx:resources>
+            <fx:info title="${application.title}" vendor="${application.vendor}"/>
+        </fx:deploy>
+
+        <fx:info title="Association example">
+            <fx:association mimetype="application/x-vnd.MyAppFile" description="Sample Test Files">
+            </fx:association>
+        </fx:info>
+
+        <exec dir="${inst}/Maud_OSX1" executable="codesign" os="Mac OS X">
+            <arg line="-v -force -deep -s &quot;Mac Developer: Luca Lutterotti (46BWEFAJP5)&quot; -entitlements ../Maud.entitlements Maud.app"/>
+        </exec>
+    </target>
+
+
+    <target name="build_installers" depends="build_installer_osx, jar_abinit_plugins"
+            description="Deploy the full build files to the web server.">
+        <!--		<ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}" remotedir="${deployfulldir}">
+  		<fileset file="${mirrorfulldir}/Maud.jar"/>
+		</ftp> -->
+        <!--delete file="${inst}/Maud_MacOSX/Maud.dmg.gz"/>
+        <exec dir="${inst}/Maud_MacOSX/" executable="/Users/luca/bin/mkdmg.pl" os="Mac OS X">
+            <arg line="Maud.dmg.gz Maud"/>
+        </exec-->
+        <delete dir="${inst}/Maud_MacOSX64/Maud/Maud.app"/>
+        <delete file="${inst}/Maud_MacOSX64/Maud.dmg.gz"/>
+        <copy todir="${inst}/Maud_MacOSX64/Maud">
+              <fileset dir="${app_osx}"/>
+        </copy>
+         <exec dir="${inst}/Maud_MacOSX64/" executable="/Users/luca/bin/mkdmg.pl" os="Mac OS X">
+            <arg line="Maud.dmg.gz Maud"/>
+        </exec>
+        <delete file="${inst}/Maud_unix/Maud.tar.gz"/>
+        <exec dir="${inst}/Maud_unix/" executable="tar" os="Mac OS X">
+            <arg line="cfz Maud.tar.gz Maud"/>
+        </exec>
+        <delete file="${inst}/Maud_linux64/Maud.tar.gz"/>
+        <exec dir="${inst}/Maud_linux64/" executable="tar" os="Mac OS X">
+            <arg line="cfz Maud.tar.gz Maud"/>
+        </exec>
+        <delete file="${inst}/Maud_windows/Maud.zip"/>
+        <exec dir="${inst}/Maud_windows/" executable="zip" os="Mac OS X">
+            <arg line="-r Maud.zip Maud"/>
+        </exec>
+        <delete file="${inst}/Maud_windows64/Maud.zip"/>
+        <exec dir="${inst}/Maud_windows64/" executable="zip" os="Mac OS X">
+            <arg line="-r Maud.zip Maud"/>
+        </exec>
+        <delete file="${inst}/Maud_unix_nj/Maud.tar.gz"/>
+        <exec dir="${inst}/Maud_unix_nj/" executable="tar" os="Mac OS X">
+            <arg line="cfz Maud.tar.gz Maud"/>
+        </exec>
+        <delete file="${inst}/Maud_linux64_nj/Maud.tar.gz"/>
+        <exec dir="${inst}/Maud_linux64_nj/" executable="tar" os="Mac OS X">
+            <arg line="cfz Maud.tar.gz Maud"/>
+        </exec>
+        <delete file="${inst}/Maud_windows_nj/Maud.zip"/>
+        <exec dir="${inst}/Maud_windows_nj/" executable="zip" os="Mac OS X">
+            <arg line="-r Maud.zip Maud"/>
+        </exec>
+        <delete file="${inst}/Maud_windows64_nj/Maud.zip"/>
+        <exec dir="${inst}/Maud_windows64_nj/" executable="zip" os="Mac OS X">
+            <arg line="-r Maud.zip Maud"/>
+        </exec>
+    </target>
+
+    <target name="build_installers_only" description="build installers">
+        <!--		<ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}" remotedir="${deployfulldir}">
+  		<fileset file="${mirrorfulldir}/Maud.jar"/>
+		</ftp> -->
+        <!--delete file="${inst}/Maud_MacOSX/Maud.dmg.gz"/>
+        <exec dir="${inst}/Maud_MacOSX/" executable="/Users/luca/bin/mkdmg.pl" os="Mac OS X">
+            <arg line="Maud.dmg.gz Maud"/>
+        </exec-->
+        <delete file="${inst}/Maud_MacOSX64/Maud.dmg.gz"/>
+        <exec dir="${inst}/Maud_MacOSX64/" executable="/Users/luca/bin/mkdmg.pl" os="Mac OS X">
+            <arg line="Maud.dmg.gz Maud"/>
+        </exec>
+        <delete file="${inst}/Maud_unix/Maud.tar.gz"/>
+        <exec dir="${inst}/Maud_unix/" executable="tar" os="Mac OS X">
+            <arg line="cfz Maud.tar.gz Maud"/>
+        </exec>
+        <delete file="${inst}/Maud_linux64/Maud.tar.gz"/>
+        <exec dir="${inst}/Maud_linux64/" executable="tar" os="Mac OS X">
+            <arg line="cfz Maud.tar.gz Maud"/>
+        </exec>
+        <delete file="${inst}/Maud_windows/Maud.zip"/>
+        <exec dir="${inst}/Maud_windows/" executable="zip" os="Mac OS X">
+            <arg line="-r Maud.zip Maud"/>
+        </exec>
+        <delete file="${inst}/Maud_windows64/Maud.zip"/>
+        <exec dir="${inst}/Maud_windows64/" executable="zip" os="Mac OS X">
+            <arg line="-r Maud.zip Maud"/>
+        </exec>
+        <delete file="${inst}/Maud_unix_nj/Maud.tar.gz"/>
+        <exec dir="${inst}/Maud_unix_nj/" executable="tar" os="Mac OS X">
+            <arg line="cfz Maud.tar.gz Maud"/>
+        </exec>
+        <delete file="${inst}/Maud_linux64_nj/Maud.tar.gz"/>
+        <exec dir="${inst}/Maud_linux64_nj/" executable="tar" os="Mac OS X">
+            <arg line="cfz Maud.tar.gz Maud"/>
+        </exec>
+        <delete file="${inst}/Maud_windows_nj/Maud.zip"/>
+        <exec dir="${inst}/Maud_windows_nj/" executable="zip" os="Mac OS X">
+            <arg line="-r Maud.zip Maud"/>
+        </exec>
+        <delete file="${inst}/Maud_windows64_nj/Maud.zip"/>
+        <exec dir="${inst}/Maud_windows64_nj/" executable="zip" os="Mac OS X">
+            <arg line="-r Maud.zip Maud"/>
+        </exec>
+    </target>
+
+    <target name="deploy_full" depends="build_installers" description="Deploy the full build files to the web server.">
+        <!--		<ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}" remotedir="${deployfulldir}">
+  		<fileset file="${mirrorfulldir}/Maud.jar"/>
+		</ftp> -->
+        <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}"
+             remotedir="${deployfulldir}/macosx">
+            <fileset file="${inst}/Maud_MacOSX/Maud.dmg.gz"/>
+        </ftp>
+        <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}"
+             remotedir="${deployfulldir}/macosx64">
+            <fileset file="${inst}/Maud_MacOSX64/Maud.dmg.gz"/>
+        </ftp>
+        <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}"
+             remotedir="${deployfulldir}/linux64">
+            <fileset file="${inst}/Maud_linux64/Maud.tar.gz"/>
+        </ftp>
+        <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}"
+             remotedir="${deployfulldir}/unix">
+            <fileset file="${inst}/Maud_unix/Maud.tar.gz"/>
+        </ftp>
+        <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}"
+             remotedir="${deployfulldir}/windows">
+            <fileset file="${inst}/Maud_windows/Maud.zip"/>
+        </ftp>
+        <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}"
+             remotedir="${deployfulldir}/windows64">
+            <fileset file="${inst}/Maud_windows64/Maud.zip"/>
+        </ftp>
+        <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}"
+             remotedir="${deployfulldir}/linux64_nj">
+            <fileset file="${inst}/Maud_linux64_nj/Maud.tar.gz"/>
+        </ftp>
+        <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}"
+             remotedir="${deployfulldir}/unix_nj">
+            <fileset file="${inst}/Maud_unix_nj/Maud.tar.gz"/>
+        </ftp>
+        <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}"
+             remotedir="${deployfulldir}/windows_nj">
+            <fileset file="${inst}/Maud_windows_nj/Maud.zip"/>
+        </ftp>
+        <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}"
+             remotedir="${deployfulldir}/windows64_nj">
+            <fileset file="${inst}/Maud_windows64_nj/Maud.zip"/>
+        </ftp>
+    </target>
+
+    <target name="deploy_full_beta" depends="build_installers"
+            description="Deploy the full build files to the web server.">
+        <!--		<ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}" remotedir="${deployfulldir}">
+                  <fileset file="${mirrorfulldir}/Maud.jar"/>
+                </ftp> -->
+        <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}"
+             remotedir="${deployfulldir}/beta/macosx">
+            <fileset file="${inst}/Maud_MacOSX/Maud.dmg.gz"/>
+        </ftp>
+        <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}"
+             remotedir="${deployfulldir}/beta/macosx64">
+            <fileset file="${inst}/Maud_MacOSX64/Maud.dmg.gz"/>
+        </ftp>
+        <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}"
+             remotedir="${deployfulldir}/beta/linux64">
+            <fileset file="${inst}/Maud_linux64/Maud.tar.gz"/>
+        </ftp>
+        <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}"
+             remotedir="${deployfulldir}/beta/unix">
+            <fileset file="${inst}/Maud_unix/Maud.tar.gz"/>
+        </ftp>
+        <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}"
+             remotedir="${deployfulldir}/beta/windows">
+            <fileset file="${inst}/Maud_windows/Maud.zip"/>
+        </ftp>
+        <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}"
+             remotedir="${deployfulldir}/beta/windows64">
+            <fileset file="${inst}/Maud_windows64/Maud.zip"/>
+        </ftp>
+        <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}"
+             remotedir="${deployfulldir}/beta/linux64_nj">
+            <fileset file="${inst}/Maud_linux64_nj/Maud.tar.gz"/>
+        </ftp>
+        <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}"
+             remotedir="${deployfulldir}/beta/unix_nj">
+            <fileset file="${inst}/Maud_unix_nj/Maud.tar.gz"/>
+        </ftp>
+        <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}"
+             remotedir="${deployfulldir}/beta/windows_nj">
+            <fileset file="${inst}/Maud_windows_nj/Maud.zip"/>
+        </ftp>
+        <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}"
+             remotedir="${deployfulldir}/beta/windows64_nj">
+            <fileset file="${inst}/Maud_windows64_nj/Maud.zip"/>
+        </ftp>
+    </target>
+
+
+    <target name="deploy_macosx64_beta" depends="build_installers"
+            description="Deploy the full build files to the web server.">
+        <!--		<ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}" remotedir="${deployfulldir}">
+                  <fileset file="${mirrorfulldir}/Maud.jar"/>
+                </ftp> -->
+        <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}"
+             remotedir="${deployfulldir}/beta/macosx64">
+            <fileset file="${inst}/Maud_MacOSX64/Maud.dmg.gz"/>
+        </ftp>
+    </target>
+
+
+    <target name="deploy_webPages_full" description="Deploy the web Pages to the web server.">
+        <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}" remotedir="${deployfulldir}">
+            <fileset file="${web}/index.html"/>
+            <fileset file="${web}/bugzilla.html"/>
+            <fileset file="${web}/beta.html"/>
+            <fileset file="${web}/download.html"/>
+            <fileset file="${web}/facts.html"/>
+            <fileset file="${web}/forum.html"/>
+            <fileset file="${web}/links.html"/>
+            <fileset file="${web}/news.html"/>
+            <fileset file="${web}/tutorial.html"/>
+            <fileset file="${web}/developer.html"/>
+        </ftp>
+        <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}"
+             remotedir="${deployfulldir}/feed">
+            <fileset file="${web}/feed/MaudRSSfeed.xml"/>
+        </ftp>
+        <!--ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}" remotedir="${deployfulldir}/facts">
+      <fileset file="${web}/facts/*.pdf"/>
+    </ftp>
+    <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}" remotedir="${deployfulldir}/Tutorial/QPA2">
+      <fileset file="${web}/Tutorial/QPA2/*.*"/>
+    </ftp>
+    <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}" remotedir="${deployfulldir}/Tutorial/QPA2/images">
+      <fileset file="${web}/Tutorial/QPA2/images/*.*"/>
+    </ftp>
+    <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}" remotedir="${deployfulldir}/Tutorial/imagesToSpectra2">
+      <fileset file="${web}/Tutorial/imagesToSpectra2/*.*"/>
+    </ftp>
+    <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}" remotedir="${deployfulldir}/Tutorial/ODFfromPF2">
+      <fileset file="${web}/Tutorial/ODFfromPF2/*.*"/>
+    </ftp>
+    <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}" remotedir="${deployfulldir}/Tutorial/sizestrain">
+      <fileset file="${web}/Tutorial/sizestrain/*.*"/>
+    </ftp>
+    <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}" remotedir="${deployfulldir}/developer">
+      <fileset file="${web}/developer/*.*"/>
+    </ftp-->
+    </target>
+
+
+    <target name="deploy_allLib" depends="rebuild_allLib" description="Deploy all libraries to the web server.">
+        <ftp server="${ftpredserver}" userid="${ftpuserred}" password="${passwdred}" remotedir="${deployreddir}/lib">
+            <fileset dir="${mirrorreddir}/lib"/>
+        </ftp>
+        <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}"
+             remotedir="${deployfulldir}/lib">
+            <fileset dir="${mirrorfulldir}/lib"/>
+        </ftp>
+    </target>
+
+
+    <target name="deploy_test_full" depends="copy_full"
+            description="Deploy the full build files to the test web server.">
+        <ftp server="${ftptestserver}" userid="${ftpusertest}" password="${passwdtest}"
+             remotedir="${deploytestfulldir}">
+            <fileset file="${mirrorfulldir}/Maud.jar"/>
+        </ftp>
+    </target>
+
+
+    <!--target name="deploy_reduced" depends="copy_reduced" description="Deploy the reduced build files to the web server.">
+		<ftp server="${ftpredserver}" userid="${ftpuserred}" password="${passwdred}" remotedir="${deployreddir}"> 
+  		<fileset file="${mirrorreddir}/Maud.jar"/>
+		</ftp>
+		<exec dir="${inst}/Maud_red_MacOSX/" executable="/Users/luca/bin/mkdmg.pl" os="Mac OS X">
+  		<arg line="Maud.dmg.gz Maud/Maud.app"/>
+		</exec>
+		<ftp server="${ftpredserver}" userid="${ftpuserred}" password="${passwdred}" remotedir="${deployreddir}/../Installers/macosx"> 
+  		<fileset file="${inst}/Maud_red_MacOSX/Maud.dmg.gz"/>
+		</ftp>
+		<exec dir="${inst}/Maud_red_unix/" executable="tar" os="Mac OS X"> 
+  		<arg line="cfz Maud.tar.gz Maud"/>
+		</exec>
+		<ftp server="${ftpredserver}" userid="${ftpuserred}" password="${passwdred}" remotedir="${deployreddir}/../Installers/unix"> 
+  		<fileset file="${inst}/Maud_red_unix/Maud.tar.gz"/>
+		</ftp>
+    	<delete file="${inst}/Maud_red_windows/Maud.zip" />
+		<exec dir="${inst}/Maud_red_windows/" executable="zip" os="Mac OS X"> 
+  		<arg line="-r Maud.zip Maud"/>
+		</exec>
+		<ftp server="${ftpredserver}" userid="${ftpuserred}" password="${passwdred}" remotedir="${deployreddir}/../Installers/windows"> 
+  		<fileset file="${inst}/Maud_red_windows/Maud.zip"/>
+		</ftp>
+  </target>
+
+
+  <target name="deploytmp" description="Deploy the reduced build files to the web server.">
+		<exec dir="${inst}/Maud_windows/" executable="zip" os="Mac OS X"> 
+  		<arg line="-r Maud.zip Maud"/>
+		</exec>
+		<ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}" remotedir="${deployfulldir}/windows"> 
+  		<fileset file="${inst}/Maud_windows/Maud.zip"/>
+		</ftp>
+		<exec dir="${inst}/Maud_red_windows/" executable="zip" os="Mac OS X"> 
+  		<arg line="-r Maud.zip Maud"/>
+		</exec>
+		<ftp server="${ftpredserver}" userid="${ftpuserred}" password="${passwdred}" remotedir="${deployreddir}/../Installers/windows"> 
+  		<fileset file="${inst}/Maud_red_windows/Maud.zip"/>
+		</ftp>
+  </target>
+
+
+  <target name="deploytmp1" description="Deploy the reduced build files to the web server.">
+		<ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}" remotedir="${deployfulldir}/windows"> 
+  		<fileset file="${inst}/Maud_windows/Maud.zip"/>
+		</ftp>
+		<ftp server="${ftpredserver}" userid="${ftpuserred}" password="${passwdred}" remotedir="${deployreddir}/../Installers/windows"> 
+  		<fileset file="${inst}/Maud_red_windows/Maud.zip"/>
+		</ftp>
+  </target>
+
+
+  <target name="deploy_test_reduced" depends="copy_reduced" description="Deploy the reduced build files to the test web server.">
+		<ftp server="${ftptestserver}" userid="${ftpusertest}" password="${passwdtest}" remotedir="${deploytestreddir}"> 
+  		<fileset file="${mirrorreddir}/Maud.jar"/>
+		</ftp>
+  </target>
+
+
+  <target name="deploy_allLib_test" description="Deploy all libraries to the test web server.">
+		<ftp server="${ftptestserver}" userid="${ftpusertest}" password="${passwdtest}" remotedir="${deploytestreddir}/lib"> 
+  		<fileset dir="${mirrorreddir}/lib"/>
+		</ftp>
+  </target>
+
+
+  <target name="deploy_webPages_reduced" description="Deploy the web Pages to the web server.">
+    	<copy file="${src}/web/index.html" tofile="${mirrorreddir}/../index.html" />
+    	<copy file="${src}/web/reduced/maudInstallers.html" tofile="${mirrorreddir}/../Installers/maudInstallers.html" />
+    	<copy file="${src}/web/reduced/maudWebStart.html" tofile="${mirrorreddir}/maudWebStart.html" />
+		<ftp server="${ftpredserver}" userid="${ftpuserred}" password="${passwdred}" remotedir="${deployreddir}/.."> 
+  		<fileset file="${mirrorreddir}/../index.html"/>
+		</ftp>
+		<ftp server="${ftpredserver}" userid="${ftpuserred}" password="${passwdred}" remotedir="${deployreddir}"> 
+  		<fileset file="${mirrorreddir}/Maud.jnlp"/>
+  		<fileset file="${mirrorreddir}/Maud256M.jnlp"/>
+  		<fileset file="${mirrorreddir}/Maud512M.jnlp"/>
+  		<fileset file="${mirrorreddir}/Maud1G.jnlp"/>
+  		<fileset file="${mirrorreddir}/maudWebStart.html"/>
+		</ftp>
+		<ftp server="${ftpredserver}" userid="${ftpuserred}" password="${passwdred}" remotedir="${deployreddir}/../Installers"> 
+  		<fileset file="${mirrorreddir}/../Installers/maudInstallers.html"/>
+		</ftp>
+		<ftp server="${ftpredserver}" userid="${ftpuserred}" password="${passwdred}" remotedir="${deployreddir}/../Facts"> 
+  		<fileset file="${mirrorreddir}/../Facts/facts.html"/>
+		</ftp>
+		<ftp server="${ftpredserver}" userid="${ftpuserred}" password="${passwdred}" remotedir="${deployreddir}/../News"> 
+  		<fileset file="${mirrorreddir}/../News/news.html"/>
+		</ftp>
+		<ftp server="${ftpredserver}" userid="${ftpuserred}" password="${passwdred}" remotedir="${deployreddir}/../tutorial"> 
+  		<fileset file="${mirrorreddir}/../tutorial/index.html"/>
+		</ftp>
+  </target-->
+
+
+    <target name="deploy_JSgInfo" depends="deploy_test_JSgInfo"
+            description="Deploy the JSgInfo build files to the web server.">
+        <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}"
+             remotedir="${deployfulldir}/lib">
+            <fileset file="${mirrorfulldir}/lib/JSgInfo.jar"/>
+        </ftp>
+        <ftp server="${ftpredserver}" userid="${ftpuserred}" password="${passwdred}" remotedir="${deployreddir}/lib">
+            <fileset file="${mirrorfulldir}/lib/JSgInfo.jar"/>
+        </ftp>
+    </target>
+
+
+    <target name="deploy_test_JSgInfo" depends="copy_JSgInfo"
+            description="Deploy the JSgInfo build files to the test web server.">
+        <ftp server="${ftptestserver}" userid="${ftpusertest}" password="${passwdtest}"
+             remotedir="${deploytestreddir}/lib">
+            <fileset file="${mirrorfulldir}/lib/JSgInfo.jar"/>
+        </ftp>
+    </target>
+
+
+    <target name="deploy_ImageJ" depends="deploy_test_ImageJ"
+            description="Deploy the ImageJ build files to the web server.">
+        <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}"
+             remotedir="${deployfulldir}/lib">
+            <fileset file="${mirrorfulldir}/lib/ij.jar"/>
+        </ftp>
+        <ftp server="${ftpredserver}" userid="${ftpuserred}" password="${passwdred}" remotedir="${deployreddir}/lib">
+            <fileset file="${mirrorfulldir}/lib/ij.jar"/>
+        </ftp>
+    </target>
+
+
+    <target name="deploy_test_ImageJ" depends="copy_ImageJ"
+            description="Deploy the ImageJ build files to the test web server.">
+        <ftp server="${ftptestserver}" userid="${ftpusertest}" password="${passwdtest}"
+             remotedir="${deploytestreddir}/lib">
+            <fileset file="${mirrorfulldir}/lib/ij.jar"/>
+        </ftp>
+    </target>
+
+
+    <target name="deploy_Images" depends="deploy_test_Images"
+            description="Deploy the Images build files to the web server.">
+        <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}"
+             remotedir="${deployfulldir}/lib">
+            <fileset file="${mirrorfulldir}/lib/Images.jar"/>
+        </ftp>
+        <ftp server="${ftpredserver}" userid="${ftpuserred}" password="${passwdred}" remotedir="${deployreddir}/lib">
+            <fileset file="${mirrorfulldir}/lib/Images.jar"/>
+        </ftp>
+    </target>
+
+
+    <target name="deploy_test_Images" depends="copy_Images"
+            description="Deploy the Images build files to the test web server.">
+        <ftp server="${ftptestserver}" userid="${ftpusertest}" password="${passwdtest}"
+             remotedir="${deploytestreddir}/lib">
+            <fileset file="${mirrorfulldir}/lib/Images.jar"/>
+        </ftp>
+    </target>
+
+
+    <target name="deploy_Help" depends="deploy_test_Help" description="Deploy the Help build files to the web server.">
+        <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}"
+             remotedir="${deployfulldir}/lib">
+            <fileset file="${mirrorfulldir}/lib/Help.jar"/>
+        </ftp>
+        <ftp server="${ftpredserver}" userid="${ftpuserred}" password="${passwdred}" remotedir="${deployreddir}/lib">
+            <fileset file="${mirrorfulldir}/lib/Help.jar"/>
+        </ftp>
+    </target>
+
+
+    <target name="deploy_test_Help" depends="copy_Help"
+            description="Deploy the Help build files to the test web server.">
+        <ftp server="${ftptestserver}" userid="${ftpusertest}" password="${passwdtest}"
+             remotedir="${deploytestreddir}/lib">
+            <fileset file="${mirrorfulldir}/lib/Help.jar"/>
+        </ftp>
+    </target>
+
+
+    <target name="deploy_Files" depends="deploy_test_Files"
+            description="Deploy the Files build files to the web server.">
+        <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}"
+             remotedir="${deployfulldir}/lib">
+            <fileset file="${mirrorfulldir}/lib/Files.jar"/>
+        </ftp>
+        <ftp server="${ftpredserver}" userid="${ftpuserred}" password="${passwdred}" remotedir="${deployreddir}/lib">
+            <fileset file="${mirrorfulldir}/lib/Files.jar"/>
+        </ftp>
+    </target>
+
+
+    <target name="deploy_test_Files" depends="copy_Files"
+            description="Deploy the Files build files to the test web server.">
+        <ftp server="${ftptestserver}" userid="${ftpusertest}" password="${passwdtest}"
+             remotedir="${deploytestreddir}/lib">
+            <fileset file="${mirrorfulldir}/lib/Files.jar"/>
+        </ftp>
+    </target>
+
+</project>
+
