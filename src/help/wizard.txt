@@ -1,0 +1,54 @@
+----------The refinement wizard: automatic analyses------------
+
+Warning: To be updated!!
+
+In this panel you can select the kind of analysis you wish to perform
+and pressing Go! the program will try to complete that analysis.
+
+Actually you can choose three kind of complete analyses (Special panel):
+
+- quantitative phase analysis
+- crystal structure analysis
+- texture analysis
+
+Obviously you have to check before if you have at least one sample
+defined (with one or more active dataset in it, the datasets with
+some datafile to be analyzed at least one instrument and one or more
+phases.
+For the texture also you have to add one intensity extractor (like
+Le Bail) from the dataset edit panel (general properties) if not already
+enabled and to specify the texture model to be applied (in the phase
+edit panel press the texture button and select the model) for any phase
+you want to analyze the texture.
+
+If you have all you need defined than you can use this wizard panel to
+let the program select the refinement cycle more appropriate for
+your analysis.
+
+
+There are others options if you don't want to follow the entire 
+automatic cycle. For example if you have already performed a 
+quantitative analysis and you want only to do some addition iterations
+you can choose the option:
+-	previous + microstructure parameters
+to repeat only the last analysis cycle.
+
+As a guideline the quantitative analysis perform a sequence of the first
+three options in the refine panel.
+The crystal structure analysis add the forth option at end and the texture
+analysis is equivalent to a quantitative analysis + the last option in the
+refine panel.
+
+There are also some buttons to free, fix or bound some specific parameters.
+The bound B factor for examples bound all B factors equal to the first one
+of the first phase that will be free. If you don't want to perform
+additional setting exit the panel by closing it.
+
+If you press the Go! button an automatic refinement will start with the
+option selected in the special or refine panel.
+Pressing the Set parameters button the program will prepare the 
+parameters for the analysis specified in the refine Panel and the frame
+is closed. Then you can free or fix some others parameters and select
+the manual refinement (refine in the refinement menu).
+
+		Good work!

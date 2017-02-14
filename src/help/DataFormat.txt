@@ -1,0 +1,102 @@
+-----------DataFormats recognized by Maud----------------
+
+This is a list of data formats recognized by Maud when
+you try to load a datfile in a dataset using the browse
+button.
+
+On the base of the extension of the datafile name Maud
+will try to load the datafile assuming a certain internal
+format. If the file will not be loaded, then the format
+was not the one Maud was especting. Or the format is not
+supported, or the extension of the file is not the one 
+Maud expect for that format or there is an error inside
+the datafile or a change not expected by Maud.
+
+If for a datafile with a certain format you have a 
+different extension from the one listed here for that 
+format, you need to change the extension to the file in
+order to load the datafile by Maud.
+
+Notes: 
+- To recognize an extension Maud look for a matching
+substring inside the datafile name. So if the extension
+recognized by Maud is ".gd", then any file containing the
+substring ".gd" will be recognized; for example:
+myfile.gda
+myfile.gdat.txt
+*.gd*
+- Only ASCII dataformats are recognized by Maud. It is 
+the only format that could be cross platform. If you have 
+a binary datafile you should use the software of your
+diffractometer to transform it to an ASCII datafile.
+If your diffractometer has no possibility to do that
+complain with the manufacturer because in general you
+will not be able to use any software that is not of the
+manufacturer. Binary formats are not portables!!
+- Line ending is not a problem for Maud (CR, LF or both)
+
+Here is the list of formats recognized by the program 
+with the corresponding extension (or a subset of the extension, so
+.mbin works as .mbi)
+
+extension / multispectra supported / datafile description
+
+.awa       n      awav datafile format (Stanford)
+.spc       n      Berkeley dataformat
+.cif       n      CIF (IUCr) dataformat
+.cpi       n      Sietronic CPI datafile
+.f1b       y      D1B (ILL, Grenoble)
+.num       y      numor (ILL, Grenoble), D20 (ILL)
+.dbw       n      DBWS datafile (Young & Wiles program)
+.prn       n      double column format (2Theta Intensity)
+.asc       n      first line: title, following: double column format (2Theta Intensity)
+.ddq       n      reflectivity, double column in Q Int
+.dlq       n      reflectivity, double column in Q Int
+                  but fitting in Log10, weigths = 1
+.dcq       n      reflectivity, double column in Q Int
+                  but weigths = 1/Log10(Int)
+srwa       y      Dubna (SKAT) dataformat
+.c00       n      ESRF B11 double column (Q Int)
+.eth       n      ETH Zurich, 3 columns, 2Th Int Standard Deviation
+.fit       n      Same as .cif
+.fpr       n      FullProf datafile
+.gda       y      GSAS datafile
+.hda       y      Same as .gda for Hippo
+.ttx       y      INEL ASCII datafile
+.fdt       y      INEL binary datafile
+.inl       y      Same as .ttx
+.gs        y      Same as .gda for IPNS
+.its       n      ItalStructures datafile
+.esg       y      ESQUI/CIF datafile
+.lp1       y      LPEC (Le Mans) datafile for Low Temp Diffractometer
+.udf       n      Philips datafile
+.raw       n      Rigaku datafile
+.uxd       n      Siemens datafile
+.dat       n      Venezia datafile
+.rit       n      free format (     first row :   starting_angle step ending_angle
+                               subsequent rows:   intensity
+                                                  .....                            )
+.mbi       y      INEL banana detector format in binary
+.xy        n      two column datafile as the .prn
+.txt       n      two column datafile as the .prn
+.f20       y      D1B format for D20 at ILL
+
+(Added in version 2.0)
+.spe       n      Fluorescence ItalStructures data format
+.spm       y      Fluorescence ItalStructures data format
+.gem       y      GEM/Rotax at ISIS data format
+.tbl       y      table data from unknown synchrotron source, each line a spectrum
+.xrdml     y      xml datafile format of PANalytical
+
+If the datafile format you have is not listed here and
+you like to include it in Maud send an e-mail to
+maud@ing.unitn.it
+specifying the dataformat, the extension to use and the
+name for it for inclusion in this list.
+
+Also if you find that Maud is not able to load correctly
+one of above formats send a note to:
+maud@ing.unitn.it
+specifying the problem and the format not loaded with
+the specification of the format if necessary or an 
+example.

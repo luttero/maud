@@ -1,0 +1,29 @@
+------------The Popa anisotropic size-strain model-----------------
+
+The model implemented follows the theory reported by N. C. Popa
+in J. Appl. Cryst. (1998), 31, 176-180.
+
+All the parameters corresponds exactly to those reported in the
+paper except that the crystallite value correspond to the diameter
+of the crystallitem not to the radius and the microstrain is the
+sqrt of the Ei parameters reported by Popa (the sign of the parameter
+is conserved).
+
+You can control the harmonic expansion (Lmax) using the slider. Only
+even values are permitted.
+You can press one of the plot buttons to watch the shape of the 
+crystallite. The dimension is rescaled to the value of the first
+parameters. Dragging the mouse in the plot window permits to
+move the crystallite around its center. The crystallite starts having
+the z axis pointing versus the upper part of the screen, the x axis
+versus the right direction in the screen and the y axis normal entering
+the screen.
+A slider in the crystallite panel permits the resolution control. Be
+aware that increasing the resolution will decrease the speed for 
+rendering in the plot window.
+
+To specify if a parameter is refinable or not, click using the right 
+mouse button (hold down the control button and click on the Mac) in
+one of the value fields (pink color) corresponding to the parameter
+you want to change status (in a list with only one field select
+before the parameter in the list).

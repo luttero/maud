@@ -1,0 +1,70 @@
+		- Tutorial examples - (to be completed)
+
+Availables in the files folder:
+
+- alzrc.par: a double phase example (Corundum + Zirconia-Ceria), one datafile,
+  Bragg-Brentano instrument. The microstructure use the anisotropic Popa model.
+  The refinement can be improved slightly by refining the crystal structure of
+  the phases. Choose the wizard menu item in the refinement menu. In the 
+  appearing frame, select "previous + crystal structure" in the refine panel
+  and press the "Go" button. The program will select all the necessary 
+  parameters to refine and will execute the number of iterations as they
+  are set in the Refinement:Options panel. To view the spectrum fitted, 
+  click the Datasets tabPanel and select the only dataset available in the list.
+  Press the button in the toolbar corresponding to a small graphic icon.
+  
+- sio250.par: silica glass + Corundum example. Good to see how analyse silica
+  (amorphous) content. The analysis has not been refined completely.
+  To finish the analysis, select the Refinement:wizard menu item and in the
+  refine panel select "previous + microstructure" (to see what this mean
+  press the help button). Exit the wizard frame by pressing the "set
+  parameters" button. If you check in the parameters list the wizard has
+  turned some parameters to refinable. Expand the tree branchs for the
+  Silica-cubic-glass and you will see that for the crystallite microstrain
+  only the crystallite value has been set refinable to avoid some correlations
+  and perform a better quantitative analysis (this is controlled by the label
+  "Amorph" or "Amorphous" in the Phase id field in the edit panel for the
+  silica-glass phase). Press the hammer button to iterate the refinement with
+  the actual status of the parameters. At end you can check under the 
+  sample edit frame inside the Layer tabPanel the amount in volume or
+  weight for the two phases (the sample was prepared mixing 50-50 % in 
+  weight of silica and corundum).
+  
+- bbm48bis.par: deformation and stacking faults example. The fcc phase is
+  broadened by faulting. After opening the analysis file, you can press the
+  "calculator" toolbar button to compute the spectrum as it is with the 
+  actual parameters. After the computation, select the "bbm48bis" dataset in the
+  Datasets list and press the "graphic" toolbar button. Select the fcc phase
+  and press the edit button to enter the panel for editing the structure/
+  microstructure characteristics. Pressing the microstructure button you can
+  see the models used for refining the planar faults (use the options buttons
+  to see the parameters values and settings for the selected models).
+  
+- gtial1.par: how Maud deal with more spectra togheter and neutron from ILL D1B.
+
+- cpd1h.par: this is the analysis on the corresponding sample of the round-robin
+  on quantitative analysis. See the Iucr web pages for more explanations.
+  
+- y2o3.par: how it was refined the instrumental function for the round-robin
+  example cpd1h.par. Assuming the y2o3 was perfectly crystallized.......
+  In this case also the ratio apha1/alpha2 was refined (check in the 
+  instrument edit frame under the radiation options).
+
+- film1.par: refinement of an intermetallic from a film from a Debye-Scherrer
+  camera. The spectrum was imported with Maud from the image film1.jpg (
+  or the film16.tif, 16 bit gray-scale tiff image).
+  See the tutorials web pages on how to import a datafile from a scannerized 
+  image.
+
+- limestone.par: texture example from neutron TOF diffraction at IPNS. This is 
+  available only has tutorial directly on the web pages:
+  http://www.ing.unitn.it/~luttero/maud/tutorial
+
+Other tutorials are availables on-line:
+- Quantitative analysis tutorial (see http://www.ing.unitn.it/~luttero/maud/tutorial) 
+  by L. Cont
+- Exporting data from film images 
+  (see http://www.ccp14.ac.uk/tutorial/maud/film_to_data.html)
+- Another tutorial on texture analysis using traditional pole figures and spectra.
+
+More to come....

@@ -1,0 +1,64 @@
+-------------------Texture Plotting------------------------
+
+This can be used only if you have at least one texture model specified associated
+with one phase. It doesn't require any computation before. The pole figures
+reconstructed are based on the actual available ODF.
+
+To plot one or more pole figures (2D):
+
+- select the sample to be used;
+- select the phase for which you want to plot the pole figures;
+- in the list of hkl's check or uncheck the buttons on the left to specify
+  the pole figures you want;
+- check that the 2D plot is active and the reconstructed pole figure intensity
+  option also;
+- press the plot button. A window will appear showing the minimum and maximum
+  intensity values for all pole figures. Confirming will use that values for
+  all pole figures. You can also specify your own minimum and maximum or
+  press the button to have different scales for the different pole figures.
+Additional option is for gray scale rendering, otherwise colors will be used
+for intensity.
+
+  
+To plot one pole figure (3D):
+
+- select the sample to be used;
+- select the phase for which you want to plot the pole figures;
+- in the list of hkl's select the pole figure to be plotted;
+- check that the 3D plot is active and the reconstructed pole figure intensity
+  option also;
+- press the plot button. In the 3D window you can turn the pole figure by
+  pressing and holding down the mouse button while moving the pointer.
+Additional option is for gray scale rendering, otherwise colors will be used
+for intensity.
+  
+To plot the pole figure coverage by the experimental data:
+
+- select the sample;
+- select the phase for which you want to check the coverage;
+- select the particular hkl plane (it has no influence if every hkl has the same
+  pole figure angles in one spectrum, e.g. TOF measurements);
+- select the 2D plot;
+- deselect the reconstructed pole figure intensity option;
+- press the plot button.
+Note: only enabled datafiles in active dataset for that sample are used.
+To view the different coverage of the different datasets make them active or
+not in the sample panel. In the future different markers or colors will be
+used instead.
+
+If you want to reduce the number of datafiles you can use the "Disable files wizard"
+button after selecting the sample, phase and hkl plane. 
+It permits to disable a certain number of datafiles to obtain a more 
+uniform pole figure coverage (hexagonal etc.). This reduces the amount of data
+used in the coomputation and speed up the analysis. To be used carefully. If 
+necessary you can choose to simply disable these files or remove them completely 
+from the analysis.
+ATTENTION: the disabling is based on the hkl you choose. So if you have different
+coverage for different hkl planes the result may be different for different planes.
+
+Choose the "Close" button to close the window.
+
+The help button shows this file.
+
+
+

@@ -1,0 +1,26 @@
+The computer program Maud by Luca Lutterotti is distributed free
+of charge, and without any restrictions except for the following rules:
+- It is permitted to extend the program capabilities or modify them for
+your own purposes.
+- It is not permitted to redistribute the program or parts of it either
+under the name Maud, or under another name, without prior consultation
+with and permission from the author Luca Lutterotti.
+- Whenever you publish results obtained with the aid of program Maud,
+please acknowledge its use by citing one or more of these articles
+(depending on your subject):
+- L. Lutterotti, "Total pattern fitting for the combined
+size-strain-stress-texture determination in thin film diffraction",
+Nuclear Inst. and Methods in Physics Research, B, 268, 334-340, 2010.
+- L. Lutterotti, M. Bortolotti, G. Ischia, I. Lonardelli and H.-R. Wenk,
+"Rietveld texture analysis from diffraction images", Z. Kristallogr.,
+Suppl. 26, 125-130, 2007.
+- L. Lutterotti, D. Chateigner, S. Ferrari and J. Ricote, "Texture,
+Residual Stress and Structural Analysis of Thin Films using a Combined
+X-Ray Analysis", Thin Solid Films, 450, 34-41, 2004.
+- L. Lutterotti, S. Matthies, H.-R. Wenk, A.J. Schultz and J. Richardson,
+“Combined texture and structure analysis of deformed limestone from neutron
+diffraction spectra", J. Appl. Phys., 81[2], 594-600, 1997.
+
+Anyone wishing to distribute commercially the software (not the results
+obtained with it) should contact the author to obtain information about
+licensing conditions.

@@ -1,0 +1,11 @@
+-----------------------The abinit model (DFT nergy computation)---------------------------------------------
+
+Note:
+Maud does not come with the abinit executable included. Before to use this method, you should
+download an executable appropriate for your platform from:
+http://www.abinit.org
+For the moment the method is under evaluation, so you are advised not to use it. More info in the future.
+
+Info:
+
+How it works:
