@@ -2189,7 +2189,7 @@
         </exec-->
     </target>
 
-    <target name="build_app_bundle" depends="bundle" description="Package the application for OSX" xmlns:fx="javafx:com.sun.javafx.tools.ant">
+    <!--target name="build_app_bundle" depends="bundle" description="Package the application for OSX" xmlns:fx="javafx:com.sun.javafx.tools.ant">
 
         <taskdef resource="com/sun/javafx/tools/ant/antlib.xml"
                  uri="javafx:com.sun.javafx.tools.ant"
@@ -2213,7 +2213,7 @@
         <exec dir="${inst}/Maud_OSX1" executable="codesign" os="Mac OS X">
             <arg line="-v -force -deep -s &quot;Mac Developer: Luca Lutterotti (46BWEFAJP5)&quot; -entitlements ../Maud.entitlements Maud.app"/>
         </exec>
-    </target>
+    </target-->
 
 
     <target name="build_installers" depends="build_installer_osx, jar_abinit_plugins"
@@ -2575,6 +2575,15 @@
   </target-->
 
 
+    <target name="deploy_test_JSgInfo" depends="copy_JSgInfo"
+            description="Deploy the JSgInfo build files to the test web server.">
+        <ftp server="${ftptestserver}" userid="${ftpusertest}" password="${passwdtest}"
+             remotedir="${deploytestreddir}/lib">
+            <fileset file="${mirrorfulldir}/lib/JSgInfo.jar"/>
+        </ftp>
+    </target>
+
+
     <target name="deploy_JSgInfo" depends="deploy_test_JSgInfo"
             description="Deploy the JSgInfo build files to the web server.">
         <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}"
@@ -2582,15 +2591,6 @@
             <fileset file="${mirrorfulldir}/lib/JSgInfo.jar"/>
         </ftp>
         <ftp server="${ftpredserver}" userid="${ftpuserred}" password="${passwdred}" remotedir="${deployreddir}/lib">
-            <fileset file="${mirrorfulldir}/lib/JSgInfo.jar"/>
-        </ftp>
-    </target>
-
-
-    <target name="deploy_test_JSgInfo" depends="copy_JSgInfo"
-            description="Deploy the JSgInfo build files to the test web server.">
-        <ftp server="${ftptestserver}" userid="${ftpusertest}" password="${passwdtest}"
-             remotedir="${deploytestreddir}/lib">
             <fileset file="${mirrorfulldir}/lib/JSgInfo.jar"/>
         </ftp>
     </target>
@@ -2617,6 +2617,15 @@
     </target>
 
 
+    <target name="deploy_test_Images" depends="copy_Images"
+            description="Deploy the Images build files to the test web server.">
+        <ftp server="${ftptestserver}" userid="${ftpusertest}" password="${passwdtest}"
+             remotedir="${deploytestreddir}/lib">
+            <fileset file="${mirrorfulldir}/lib/Images.jar"/>
+        </ftp>
+    </target>
+
+
     <target name="deploy_Images" depends="deploy_test_Images"
             description="Deploy the Images build files to the web server.">
         <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}"
@@ -2624,15 +2633,6 @@
             <fileset file="${mirrorfulldir}/lib/Images.jar"/>
         </ftp>
         <ftp server="${ftpredserver}" userid="${ftpuserred}" password="${passwdred}" remotedir="${deployreddir}/lib">
-            <fileset file="${mirrorfulldir}/lib/Images.jar"/>
-        </ftp>
-    </target>
-
-
-    <target name="deploy_test_Images" depends="copy_Images"
-            description="Deploy the Images build files to the test web server.">
-        <ftp server="${ftptestserver}" userid="${ftpusertest}" password="${passwdtest}"
-             remotedir="${deploytestreddir}/lib">
             <fileset file="${mirrorfulldir}/lib/Images.jar"/>
         </ftp>
     </target>
