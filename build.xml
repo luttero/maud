@@ -3,21 +3,21 @@
 
 <project name="Maud" default="copy_full" basedir=".">
 
+    <property file="${user.home}/.ant_maud.properties"/>
     <property name="src" location="src"/>
     <property name="web" location="src/web"/>
     <property name="inst" location="Installers"/>
-    <property name="build" location="${user.home}/Library/Developer/Maud/build"/>
+    <!--property name="build" location="${user.home}/Library/Developer/Maud/build"/-->
     <property name="build_ant" location="${build}/build.ant"/>
     <property name="libs" location="libs"/>
     <property name="script" location="script_files/macosx"/>
     <property name="buildnumber" location="build_numbers"/>
     <property name="myself" value="myself"/>
-    <property file="${user.home}/.ant_maud.properties"/>
-    <property name="java_version" value="1.7"/>
     <property name="bundle.icon" value="maud.icns"/>
     <property name="application_OSX.title" value="Maud.app"/>
-    <property name="app_osx" location="${user.home}/Projects/maud/osx"/>
-    <property name="JAVA_HOME" location="/Library/Java/JavaVirtualMachines/jdk1.7.0_80.jdk/Contents/Home"/>
+    <!--property name="app_osx" location="${user.home}/Projects/maud/osx"/>
+    <property name="java_version" value="1.8"/>
+    <property name="JAVA_HOME" location="/Library/Java/JavaVirtualMachines/jdk1.8.0_121.jdk/Contents/Home"/-->
 
 
     <target name="clean" description="Delete the build files.">
