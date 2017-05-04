@@ -3019,7 +3019,8 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 
   public void computeFit() {
     setParameters();
-    mainfunction(false, false);
+    boolean refreshAll = MaudPreferences.getBoolean("testing.computeWithRefresh", false);
+    mainfunction(false, refreshAll);
 //    getFit();
 
     refreshFit = false;

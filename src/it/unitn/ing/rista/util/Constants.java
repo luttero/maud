@@ -846,6 +846,7 @@ public class Constants {
 		    }
 	    }).start();
     } catch (Exception e) {
+    	e.printStackTrace(System.out);
     }
 
 //	  Fmt.setMaximumFractionDigits(9);
@@ -855,7 +856,7 @@ public class Constants {
 		  ffmt = new it.unitn.ing.fortran.Formatter("F12.4");
 		  efmt = new it.unitn.ing.fortran.Formatter("E12.4");
 	  } catch (InvalidFormatException e) {
-		  e.printStackTrace();
+		  e.printStackTrace(System.out);
 	  }
 
 	  BufferedReader reader;
@@ -882,7 +883,7 @@ public class Constants {
         }
         jarEntries = null;
       } catch (IOException ioe) {
-        ioe.printStackTrace();
+        ioe.printStackTrace(System.out);
       }
 
       if (MaudPreferences.getBoolean("startupMusic.enable", false))
@@ -950,13 +951,14 @@ public class Constants {
 		    }
 	    }
 
+	    try {
       for (int j = 0; j < allMaudJars.length; j++) {
         if (testing)
           System.out.println("Loading from jar: " + allMaudJars[j]);
         Vector list = ClassScanner.getClassListFromJar(allMaudJars[j], "",
             "it.unitn.ing.rista.diffr.XRDcat");
-//        if (testing)
-//          System.out.println("List number: " + list.size());
+        if (testing)
+          System.out.println("List number: " + list.size());
 
         for (int i = 0; i < list.size(); i++) {
           String token = (String) list.get(i);
@@ -979,6 +981,9 @@ public class Constants {
         }
 
       }
+	    } catch (Exception e) {
+		    e.printStackTrace(System.out);  //To change body of catch statement use File | Settings | File Templates.
+	    }
     }
 
     if (numberofclasstype > 0) {

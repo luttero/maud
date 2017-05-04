@@ -507,7 +507,13 @@ public class PlotFitting extends PlotDataFile {
       updatePlotForTools();
   }
 
-  public void backgroundSubtraction() {
+	public void smoothing() {
+		prepareForTools(true);
+		if (thePlotPanel.datafile[0].smoothing())
+			updatePlotForTools();
+	}
+
+	public void backgroundSubtraction() {
     prepareForTools(true);
     if (thePlotPanel.datafile[0].backgroundSubtraction())
       updatePlotForTools();

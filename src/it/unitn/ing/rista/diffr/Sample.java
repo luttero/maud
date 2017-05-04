@@ -1484,6 +1484,7 @@ public class Sample extends Maincat {
       Layer alayer = getlayer(j);
       absorption += alayer.getLayerAbsorption(rad);
       thickness += alayer.getThicknessValue();
+//	    System.out.println("Thickness: " + thickness + " absorption " + absorption);
     }
     if (thickness != 0.0)
       absorption /= thickness;

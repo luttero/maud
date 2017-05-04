@@ -256,7 +256,8 @@ public class Layer extends XRDcat {
           if (i == 0) {
             notifyParameterChanged(source, Constants.THICKNESS_CHANGED);
             notifyParameterChanged(source, Constants.REFLECTIVITY_PARAMETER_CHANGED);
-            return;
+//ll	          resetTables();
+	          return;
           } else {
             notifyParameterChanged(source, Constants.REFLECTIVITY_PARAMETER_CHANGED);
             return;
@@ -268,6 +269,7 @@ public class Layer extends XRDcat {
           if (apar == source) {
             notifyParameterChanged(source, Constants.PHASE_WEIGHT_CHANGED);
 	          chemicalComposition = null;
+//ll	          resetTables();
             return;
           }
         }
@@ -281,6 +283,7 @@ public class Layer extends XRDcat {
 		if (reason == Constants.CELL_CHANGED || reason == Constants.STRUCTURE_FACTOR_CHANGED
 		|| reason == Constants.ATOM_POSITION_CHANGED || reason == Constants.FRAGMENT_POSITION_CHANGED) {
 			chemicalComposition = null;
+//ll			resetTables();
 		}
 //    System.out.println("Phase down: " + refreshComputation);
 	}
@@ -298,7 +301,8 @@ public class Layer extends XRDcat {
     checkPhaseNumber();
 //    System.out.println("After " + numberofelementPL(0));
 	  chemicalComposition = null;
-    super.refreshAll(firstLoading);
+//ll	  resetTables();
+	  super.refreshAll(firstLoading);
   }
 
   public void checkThickness() {
@@ -642,12 +646,13 @@ public class Layer extends XRDcat {
     normalizePhaseQuantity(true);
   }
 
-  Hashtable layerAbsorption = new Hashtable();
-  Hashtable overlayerAbsorption = new Hashtable();
+//ll  Hashtable layerAbsorption = new Hashtable();
+//ll  Hashtable overlayerAbsorption = new Hashtable();
 
   public void resetTables() {
-    layerAbsorption = new Hashtable();
-    overlayerAbsorption = new Hashtable();
+//	    System.out.println("Resetting layer absorption tables!");
+//ll    layerAbsorption = new Hashtable();
+//ll    overlayerAbsorption = new Hashtable();
   }
 
   public double getLayerAbsorption(RadiationType rad) {
@@ -655,15 +660,15 @@ public class Layer extends XRDcat {
       return 1.0;
     double[] absorption = new double[1];
     absorption[0] = 0.0;
-    if (layerAbsorption == null)
-      resetTables();
-    if (layerAbsorption.containsKey(rad))
-      absorption = (double[]) layerAbsorption.get(rad);
-    else {
+//ll    if (layerAbsorption == null)
+//ll      resetTables();
+//ll    if (layerAbsorption.containsKey(rad))
+//ll      absorption = (double[]) layerAbsorption.get(rad);
+//ll    else {
       absorption[0] = getThicknessValue() * getAbsorption(rad);
 //	    System.out.println(getThicknessValue() + " ----- " + getAbsorption(rad));
-      layerAbsorption.put(rad, absorption);
-    }
+//ll      layerAbsorption.put(rad, absorption);
+//ll    }
     return absorption[0];
   }
 
@@ -672,9 +677,9 @@ public class Layer extends XRDcat {
 			return 0.0;
 		double[] totalthick = new double[1];
 		totalthick[0] = 0.0;
-		if (overlayerAbsorption.containsKey(rad))
-			totalthick = (double[]) overlayerAbsorption.get(rad);
-		else {
+//ll		if (overlayerAbsorption.containsKey(rad))
+//ll			totalthick = (double[]) overlayerAbsorption.get(rad);
+//ll		else {
 			Sample asample = (Sample) getParent();
 			boolean mustStop = false;
 			for (int j = 0; j < asample.layersnumber() && !mustStop; j++) {
@@ -684,8 +689,8 @@ public class Layer extends XRDcat {
 				else
 					mustStop = true;
 			}
-			overlayerAbsorption.put(rad, totalthick);
-		}
+//ll			overlayerAbsorption.put(rad, totalthick);
+//ll		}
 		return totalthick[0];
 	}
 

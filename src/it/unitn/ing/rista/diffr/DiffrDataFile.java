@@ -3821,7 +3821,11 @@ public class DiffrDataFile extends XRDcat {
     return backgroundSubtraction(false);
   }
 
-  public void resetBackgroundInterpolated() {
+	public boolean smoothing() {
+		return smoothing(false);
+	}
+
+	public void resetBackgroundInterpolated() {
     if (refreshInterpolatedBkgComputation) {
       if (getFilePar().isBackgroundInterpolationPermitted()) {
         for (int i = 0; i < intbkgfit.length; i++) {
@@ -4367,7 +4371,31 @@ public class DiffrDataFile extends XRDcat {
     return true;
   }
 
-  public boolean kalpha2Stripping() {
+	public boolean smoothing(boolean forFit) {
+
+		SavitzkyGolay.initialM = MaudPreferences.getInteger("Savitzky-Golay.initialM",
+				SavitzkyGolay.initialM + 1) - 1;
+
+		int dtanumber = computeDataNumber();
+
+		double dta[] = new double[dtanumber];
+		double wgt[] = new double[dtanumber];
+		int index[] = new int[dtanumber];
+		for (int j =  0; j < dtanumber; j++) {
+			dta[j] = getYData(j);
+			wgt[j] = getWeight(j);
+			index[j] = SavitzkyGolay.initialM;
+		}
+		double[] smooth = SavitzkyGolay.smoothPattern(dta, wgt, index, true);
+
+		for (int i = 0; i < dtanumber; i++) {
+			setPhasesFit(i, smooth[i]);
+		}
+
+		return true;
+	}
+
+	public boolean kalpha2Stripping() {
     int pointsToInterpolate = MaudPreferences.getInteger("lineStripping.interpolatedPoints", 2);
     if (!dspacingbase) {
 	    RadiationType radType = getDataFileSet().getInstrument().getRadiationType();

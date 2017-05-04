@@ -150,7 +150,14 @@ public class PlotDataFile extends GraphFrame {
       }
     });
 
-    toolsMenu.add(menuitem = new JMenuItem("Background subtraction"));
+	  toolsMenu.add(menuitem = new JMenuItem("Savitzky-Golay smoothing"));
+	  menuitem.addActionListener(new ActionListener() {
+		  public void actionPerformed(ActionEvent e) {
+			  smoothing();
+		  }
+	  });
+
+	  toolsMenu.add(menuitem = new JMenuItem("Background subtraction"));
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         backgroundSubtraction();
@@ -254,6 +261,9 @@ public class PlotDataFile extends GraphFrame {
   }
 
   public void resetStartingPoint() {
+  }
+
+  public void smoothing() {
   }
 
   public void fourierSmoothing() {

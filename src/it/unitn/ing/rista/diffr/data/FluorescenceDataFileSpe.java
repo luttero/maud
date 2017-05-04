@@ -21,7 +21,6 @@
 package it.unitn.ing.rista.diffr.data;
 
 import it.unitn.ing.rista.diffr.XRDcat;
-import it.unitn.ing.rista.util.Misc;
 
 import java.io.BufferedReader;
 import java.io.IOException;
