@@ -25,6 +25,8 @@ import it.unitn.ing.rista.util.*;
 import it.unitn.ing.rista.awt.*;
 import it.unitn.ing.rista.util.function.*;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.lang.*;
 import java.awt.*;
 
@@ -460,7 +462,42 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
     return getInstrument().getGeometry();
   }
 
-  public double[] getInstrumentalBroadeningAt(double x, DiffrDataFile diffrDataFile) {
+	public void exportToCif(BufferedWriter output) throws IOException {
+		if (asymmetryN > 0) {
+			output.write("loop_");
+			output.newLine();
+			output.write("_riet_par_asymmetry_value");
+			output.newLine();
+			for (int i = 0; i < asymmetryN; i++) {
+				output.write(" " + Fmt.format(asymmetry[i]));
+				output.newLine();
+			}
+		}
+
+		if (cagliotiN > 0) {
+			output.write("loop_");
+			output.newLine();
+			output.write("_riet_par_caglioti_value");
+			output.newLine();
+			for (int i = 0; i < cagliotiN; i++) {
+				output.write(" " + Fmt.format(caglioti[i]));
+				output.newLine();
+			}
+		}
+
+		if (gaussianN > 0) {
+			output.write("loop_");
+			output.newLine();
+			output.write("_riet_par_gaussian_value");
+			output.newLine();
+			for (int i = 0; i < gaussianN; i++) {
+				output.write(" " + Fmt.format(gaussian[i]));
+				output.newLine();
+			}
+		}
+	}
+
+	public double[] getInstrumentalBroadeningAt(double x, DiffrDataFile diffrDataFile) {
 
 // Attention: x equal to 2theta
 

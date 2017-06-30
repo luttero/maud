@@ -22,6 +22,8 @@ package it.unitn.ing.rista.diffr;
 
 import it.unitn.ing.rista.awt.*;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.lang.*;
 import java.awt.*;
 //import javax.swing.*;
@@ -81,6 +83,10 @@ public class InstrumentBroadening extends XRDcat {
 
 	public double getTextureBroadeningAt(double position) {
 		return 0;
+	}
+
+	public void exportToCif(BufferedWriter output) throws IOException {
+
 	}
 
 	public class JBroadOptionsD extends JOptionsDialog {

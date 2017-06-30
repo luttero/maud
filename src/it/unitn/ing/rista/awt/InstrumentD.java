@@ -45,7 +45,7 @@ public class InstrumentD extends myJFrame {
   JTextField InstrumentnameTF;
   JTextField intensityTF;
   JComboBox[] optchoice;
-  JParameterListPane ThetaPanel;
+//  JParameterListPane ThetaPanel;
 
   public InstrumentD(Frame parent, Instrument ainstrument) {
 
@@ -62,14 +62,15 @@ public class InstrumentD extends myJFrame {
     Container c1 = getContentPane();
     c1.setLayout(new BorderLayout(6, 6));
 
-    JTabbedPane p1 = new JTabbedPane();
+   /* JTabbedPane p1 = new JTabbedPane();
     c1.add(p1, BorderLayout.CENTER);
     String p1String[] = {"General",
-                         "Errors"};
+                         "Errors"};*/
 
     JPanel jp1 = new JPanel();
     jp1.setLayout(new BorderLayout(6, 6));
-    p1.addTab(p1String[0], null, jp1);
+    c1.add(jp1, BorderLayout.CENTER);
+//    p1.addTab(p1String[0], null, jp1);
 
     JPanel jPanel12 = new JPanel();
     jPanel12.setLayout(new BorderLayout(6, 6));
@@ -136,13 +137,13 @@ public class InstrumentD extends myJFrame {
       jPanel2.add(optbutton);
     }
 
-    JPanel panel1 = new JPanel(new FlowLayout());
+/*    JPanel panel1 = new JPanel(new FlowLayout());
     panel1.setBorder(new TitledBorder(new BevelBorder(BevelBorder.LOWERED), "2theta or d-space displacement"));
     //"2theta displ.";
     p1.addTab(p1String[1], null, panel1);
 
     ThetaPanel = new JParameterListPane(this, false, true);
-    panel1.add(ThetaPanel);
+    panel1.add(ThetaPanel);*/
 
     JPanel closebuttonPanel = new JPanel();
     closebuttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 3, 3));
@@ -178,7 +179,7 @@ public class InstrumentD extends myJFrame {
     intensityTF.setText(theinstrument.getIntensity().getValue());
     addComponenttolist(intensityTF, theinstrument.getIntensity());
 
-    ThetaPanel.setList(theinstrument, 0);
+//    ThetaPanel.setList(theinstrument, 0);
 
     for (i = 0; i < theinstrument.Nsubordinate - 1; i++) { //absorption removed here
       for (j = 0; j < theinstrument.getsubordClassNumber(i); j++)
@@ -194,7 +195,7 @@ public class InstrumentD extends myJFrame {
     theinstrument.setInstrumentID(InstrumentnameTF.getText());
     theinstrument.getIntensity().setValue(intensityTF.getText());
 
-    ThetaPanel.retrieveparlist();
+//    ThetaPanel.retrieveparlist();
 
     for (int i = 0; i < theinstrument.Nsubordinate - 1; i++) { //absorption removed here
       String value = optchoice[i].getSelectedItem().toString();
@@ -219,7 +220,7 @@ public class InstrumentD extends myJFrame {
     }
     optchoice = null;
     theinstrument = null;
-    ThetaPanel.dispose();
+//    ThetaPanel.dispose();
 
     super.dispose();
   }

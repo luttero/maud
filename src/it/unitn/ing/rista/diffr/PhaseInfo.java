@@ -43,6 +43,8 @@ public class PhaseInfo {
 	public int LGgroup = -1;
 	public int PGgroup = -1;
 
+	public int inversionOffOrigin = 0;  // means it is centrosymmetric
+
 	public Vector<SitePosition> sitePositionv = new Vector<SitePosition>(0, 1);
 
 	public PhaseInfo() {
@@ -51,9 +53,9 @@ public class PhaseInfo {
 
 	public int InversionOffOrigin() {
 		if (SpaceGroups.useCCTBX())
-			return SgInfo.InversionOffOrigin;
+			return inversionOffOrigin;
 		else
-			return SgInfo.InversionOffOrigin;
+			return inversionOffOrigin;
 	}
 
 	public void refreshSpaceGroupComputation(String SgName, int sgconv) {
@@ -80,6 +82,8 @@ public class PhaseInfo {
 				F_Convention = 'H';
 
 			SgInfo = new T_SgInfo(SgName, F_Convention);
+
+			inversionOffOrigin = SgInfo.InversionOffOrigin;
 
 			LGgroup = T_SgInfo.LG_Number(SgInfo.PointGroup);
 			PGgroup = T_SgInfo.PG_Index(SgInfo.PointGroup);

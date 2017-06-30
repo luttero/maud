@@ -20,8 +20,7 @@
 
 package it.unitn.ing.rista.diffr.instrument;
 
-import it.unitn.ing.rista.diffr.Instrument;
-import it.unitn.ing.rista.diffr.XRDcat;
+import it.unitn.ing.rista.diffr.*;
 
 
 /**
@@ -54,5 +53,23 @@ public class DefaultInstrument extends Instrument {
     IDlabel = modelID;
     description = modelID;
   }
+
+	public void checkConsistencyForVersion(double version) {
+//		thetaDisplacement = getParameterLoopVector(thetaDisplacementID);
+		int n2theta = numberOfLoopParameters[thetaDisplacementID];
+  	   if (getAngularCalibrationMethod().equalsIgnoreCase("no ang")) {
+  	   	setAngularCalibration("Instrument disalignment");
+	      getAngularCalibration().parameterloopField[0].removeAllItems();
+  	   	for (int i = 0; i < n2theta; i++)
+		      getAngularCalibration().addparameterloopField(0, new Parameter(getAngularCalibration(),
+				      getAngularCalibration().getParameterString(0, i),
+				      -((Parameter) parameterloopField[thetaDisplacementID].elementAt(i)).getValueD()));
+	      parameterloopField[thetaDisplacementID].removeAllItems();
+      } else if (getAngularCalibrationMethod().equalsIgnoreCase("Instrument disalignment")) {
+  	   	if (getAngularCalibration().numberofelementPL(0) == 0)
+		      getAngularCalibration().addparameterloopField(0, new Parameter(getAngularCalibration(),
+				      getAngularCalibration().getParameterString(0, 0), 0));
+      }
+	}
 
 }

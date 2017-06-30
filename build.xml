@@ -2030,10 +2030,10 @@
                    displayname="Maud"
                    identifier="com.radiographema.maud"
                    executableName="Maud"
-                   shortversion="2.71"
+                   shortversion="2.74"
                    icon="${inst}/maud.icns"
                    mainclassname="com.radiographema.Maud"
-                   copyright="Maud, for materials analysis, Copyright 1997-2016 Luca Lutterotti"
+                   copyright="Maud, for materials analysis, Copyright 1997-2017 Luca Lutterotti"
                    applicationCategory="public.app-category.productivity">
 
             <!-- The directory where your OpenJDK runtime is. -->
@@ -2096,11 +2096,11 @@
             <option value="-Xmx8192M"/>
         </bundleapp>
 
-        <mkdir dir="${app_osx}/Maud.app/Contents/MacOS/lib"/>
+        <mkdir dir="${app_osx}/Maud.app/Contents/Frameworks"/>
         <!--copy file="cctbxForMaud/build/Debug/libcctbxForMaud.dylib" tofile="${inst}/Maud_mac/Maud.app/Contents/Plugins/Home/jre/lib/libcctbxForMaud.dylib" /-->
-        <copy file="cctbxForMaud/libcctbx.dylib" tofile="${app_osx}/Maud.app/Contents/MacOS/lib/libcctbx.dylib"/>
         <copy file="cctbxForMaud/libcctbxForMaud.dylib"
-              tofile="${app_osx}/Maud.app/Contents/MacOS/libcctbxForMaud.dylib"/>
+              tofile="${app_osx}/Maud.app/Contents/Frameworks/libcctbxForMaud.dylib"/>
+        <copy file="${inst}/Info.plist" tofile="${app_osx}/Maud.app/Contents/Plugins/"/>
 
         <!--bundleapp outputdirectory="${inst}/Maud_mac/"
                    name="Maud"
@@ -2181,9 +2181,37 @@
                   <fileset file="${mirrorfulldir}/Maud.jar"/>
                 </ftp> -->
         <!--copy file="${inst}/Maud.entitlements" todir="${inst}/Maud_OSX/Maud.app/Contents" /-->
-        <exec dir="${installerDir}" executable="codesign" os="Mac OS X">
-            <arg line="-v --force --deep -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; --entitlements Maud.entitlements ${app_osx}/Maud.app"/>
+        <exec executable="chmod">
+            <arg line=" -R +w ${app_osx}/Maud.app/Contents/PlugIns"/>
         </exec>
+        <apply dir="${installerDir}" executable="codesign">
+            <arg line="-v -s &quot;Mac Developer: Luca Lutterotti (46BWEFAJP5)&quot; --entitlements Maud.entitlements"/>
+            <fileset dir="${app_osx}/Maud.app/Contents/PlugIns" />
+        </apply>
+        <exec dir="${installerDir}" executable="codesign" os="Mac OS X">
+            <arg line="-v -s &quot;Mac Developer: Luca Lutterotti (46BWEFAJP5)&quot; ${app_osx}/Maud.app/Contents/Frameworks/libcctbxForMaud.dylib"/>
+        </exec>
+        <apply dir="${installerDir}" executable="codesign">
+            <arg line="-v -s &quot;Mac Developer: Luca Lutterotti (46BWEFAJP5)&quot; "/>
+            <fileset dir="${app_osx}/Maud.app/Contents/Resources/Java" />
+        </apply>
+        <!--exec dir="${installerDir}" executable="codesign" os="Mac OS X">
+            <arg line="-v -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; ${app_osx}/Maud.app/Contents/_CodeSignature/CodeResources"/>
+        </exec-->
+        <exec dir="${installerDir}" executable="codesign" os="Mac OS X">
+            <arg line="-v -s &quot;Mac Developer: Luca Lutterotti (46BWEFAJP5)&quot; --entitlements Maud.entitlements ${app_osx}/Maud.app"/>
+        </exec>
+        <exec dir="${installerDir}" executable="codesign" os="Mac OS X">
+            <arg line="-d ${app_osx}/Maud.app"/>
+        </exec>
+        <!-- verify codesign -->
+        <exec executable="codesign" dir="${app_osx}" failonerror="true">
+            <arg line="-vv Maud.app"/>
+        </exec>
+        <!-- verify gatekeeper -->
+        <!--exec executable="spctl" dir="${app_osx}" failonerror="true">
+            <arg line="-vv -a -t execute Maud.app"/>
+        </exec-->
         <!--exec dir="${inst}/Maud_OSX/" executable="/Users/luca/bin/mkdmg.pl" os="Mac OS X">
             <arg line="Maud.dmg.gz Maud"/>
         </exec-->
@@ -2216,7 +2244,7 @@
     </target-->
 
 
-    <target name="build_installers" depends="build_installer_osx, jar_abinit_plugins"
+    <target name="build_installers" depends="build_installer_osx"
             description="Deploy the full build files to the web server.">
         <!--		<ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}" remotedir="${deployfulldir}">
   		<fileset file="${mirrorfulldir}/Maud.jar"/>
@@ -2225,14 +2253,14 @@
         <exec dir="${inst}/Maud_MacOSX/" executable="/Users/luca/bin/mkdmg.pl" os="Mac OS X">
             <arg line="Maud.dmg.gz Maud"/>
         </exec-->
-        <delete dir="${inst}/Maud_MacOSX64/Maud/Maud.app"/>
+        <!--delete dir="${inst}/Maud_MacOSX64/Maud/Maud.app"/-->
         <delete file="${inst}/Maud_MacOSX64/Maud.dmg.gz"/>
-        <copy todir="${inst}/Maud_MacOSX64/Maud">
-              <fileset dir="${app_osx}"/>
-        </copy>
-         <exec dir="${inst}/Maud_MacOSX64/" executable="/Users/luca/bin/mkdmg.pl" os="Mac OS X">
-            <arg line="Maud.dmg.gz Maud"/>
+         <exec dir="${app_osx}/" executable="/Users/luca/bin/mkdmg.pl" os="Mac OS X">
+            <arg line="Maud.dmg.gz Maud.app"/>
         </exec>
+        <copy todir="${inst}/Maud_MacOSX64">
+            <fileset dir="${app_osx}"/>
+        </copy>
         <delete file="${inst}/Maud_unix/Maud.tar.gz"/>
         <exec dir="${inst}/Maud_unix/" executable="tar" os="Mac OS X">
             <arg line="cfz Maud.tar.gz Maud"/>

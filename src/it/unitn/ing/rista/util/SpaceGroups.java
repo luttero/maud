@@ -24,6 +24,9 @@ import java.lang.*;
 import java.util.Vector;
 
 import it.unitn.ing.jsginfo.*;
+import it.unitn.ing.rista.diffr.Reflection;
+
+import static it.unitn.ing.rista.util.Constants.cctbxNativeLibrary;
 
 /**
  * The SpaceGroups is a class providing static methods for
@@ -75,7 +78,8 @@ public class SpaceGroups {
 
 	static {
 		try {
-			System.loadLibrary("cctbxForMaud");
+//			cctbxNativeLibrary = MaudPreferences.getPref("cctbxNativeLibrary.pathToLibrary", cctbxNativeLibrary);
+			System.load(cctbxNativeLibrary); //"/Users/luca/Projects/maud/osx/Maud.app/Contents/Frameworks/libcctbxForMaud.dylib");
 			loaded = true;
 		} catch (UnsatisfiedLinkError err) {
 			System.out.println("cctbx native library not loaded, using SgInfo!");
@@ -91,8 +95,11 @@ public class SpaceGroups {
 
 	public static native Spacegroup checkSpaceGroup(String spaceGroupHall, String spaceGroupHM, String spaceGroupNumber);
 
+	public static native Vector<PureReflection> getReflectionListFor(String spaceGroupHall,
+	                                                             double[] cell, double minimumDspace);
+
 	public static boolean useCCTBX() {
-		return MaudPreferences.getBoolean("spacegroup.useCCTBX", false) && loaded;
+		return MaudPreferences.getBoolean("spacegroup.useCCTBX", true) && loaded;
 	}
 
 	public static String getCorrectSpaceGroupHall(String sg) {

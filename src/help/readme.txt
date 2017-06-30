@@ -43,9 +43,21 @@ from the older one.
 
 Maud Version notes:
 
+(1/01/2017):    2.73. The "Vilnius" release.
+                Dancing researchers on the streets.
+                Export for FPSM, from the separate plot window in the tools
+                menu. The exported cif can be loaded as datafile into the
+                web version of FPSM providing also the instrument/measurement
+                specification that are used instead of the ones on the web
+                interface.
+
+(1/01/2017):    2.72. The "Quails" release (unreleased).
+                Think about fortheen of them.
+                Bug fixing release.
+
 (17/08/2016):   2.71. The "Coco Bongo" release.
-                The one in Cancun is not exactly has in the movie "The Mask".
-                Speed up of the pherical component calculation in standard
+                The one in Cancun is not exactly as in the movie "The Mask".
+                Speed up of the spherical component calculation in standard
                 functions in the case of texture broadening coefficients.
                 Corrected the behaviour of the omega offset in the Hippo
                 Wizard.

@@ -165,7 +165,7 @@ public class Phase extends XRDcat {
       "Hall"};
   public static final int SGconvN = 4;
   public String SGconv = sgconvlist[2];
-  private Vector<Reflection> reflectionv = new Vector<Reflection>(0, 10);
+  protected Vector<Reflection> reflectionv = new Vector<>(100, 100);
 //  public Vector<Reflection> absentreflectionv = new Vector<Reflection>(0, 10);
   public boolean refreshReflectionv = true;
   //	protected boolean refreshReflectionvHard = false;
@@ -1943,7 +1943,7 @@ public static final String getSpaceGroup(int index, int sgconv) {
 
   public void sghklcompute(boolean forceRange) {
     if (refreshReflectionv) {
-//      System.out.println("compute " + refreshReflectionv);
+      System.out.println("compute " + refreshReflectionv);
       refreshReflectionv = false;
       refreshFhklcomp = true;
       refreshCrystMicrostrain = true;
@@ -1974,7 +1974,7 @@ public static final String getSpaceGroup(int index, int sgconv) {
         updateReflectionsFromInternalList(reflectionv);
       else {
 	      if (SpaceGroups.useCCTBX())
-		      checkSghkllist(getSpaceGroup(), dspacemin, dspacemax);
+		      checkSghkllist(getSpaceGroup(), dspacemin);
 	      else
 	        checkSghkllist(getSpaceGroup(), getSGconv(), dspacemin, dspacemax);
       }
@@ -2517,9 +2517,9 @@ public static final String getSpaceGroup(int index, int sgconv) {
   }*/
 
   public int gethklNumber() {
-//	  System.out.println("Before " + getPhaseName() + " " + reflectionv.size());
+	  System.out.println("Before " + getPhaseName() + " " + reflectionv.size());
     sghklcompute(false);
-//	  System.out.println("After  " + getPhaseName() + " " + reflectionv.size());
+	  System.out.println("After  " + getPhaseName() + " " + reflectionv.size());
     return reflectionv.size();
   }
 
@@ -3000,127 +3000,129 @@ public static final String getSpaceGroup(int index, int sgconv) {
 
   public Vector<Reflection> sghkllist(String SgName, int sgconv, double dplanecut, double dplanestart,
                                       boolean permitAbsent) {
-/*	  if (SpaceGroups.useCCTBX()) {
-		  return PhaseInfo.sghkllist(this, SgName, sgconv, cellpar, dplanecut, dplanestart);
-	  }*/
-    int im, M2;
+
+	  Vector<Reflection> reflectionList = new Vector<Reflection>(100, 100);
+	  if (SpaceGroups.useCCTBX()) {
+// todo
+	  } else {
+		  int im, M2;
 //    char F_Convention;
-    int h, k, l, M; //restriction;
-    int Maxh, Maxk, Maxl;
-    int[] Minh = new int[1], Mink = new int[1], Minl = new int[1];
-    double dpi; //, so12, so23, so13;
+		  int h, k, l, M; //restriction;
+		  int Maxh, Maxk, Maxl;
+		  int[] Minh = new int[1], Mink = new int[1], Minl = new int[1];
+		  double dpi; //, so12, so23, so13;
 //    double 		          parm12, parm22, parm32, w1, so11, so22, so33;
-    int[] hlist = new int[24], klist = new int[24], llist = new int[24];
-    int[] jhlist;
-    int[] jklist;
-    int[] jllist;
-    T_Eq_hkl Eq_hkl = new T_Eq_hkl();
-    int friedelLaw = 1;
-    Vector<Reflection> reflectionList = new Vector<Reflection>(0, 1);
-    if (refreshSpaceGroup) {
-      refreshSpaceGroup = refreshSpaceGroupComputation(SgName, sgconv);
+		  int[] hlist = new int[24], klist = new int[24], llist = new int[24];
+		  int[] jhlist;
+		  int[] jklist;
+		  int[] jllist;
+		  T_Eq_hkl Eq_hkl = new T_Eq_hkl();
+		  int friedelLaw = 1;
+		  if (refreshSpaceGroup) {
+			  refreshSpaceGroup = refreshSpaceGroupComputation(SgName, sgconv);
 //      reflectionList.removeAllElements();
-    }
+		  }
 
-	  cellVolumeComp();
-	  double[] soVector = getSoVector();
+		  cellVolumeComp();
+		  double[] soVector = getSoVector();
 
-	  Maxh = (int) (1.0 / (Math.sqrt(soVector[0]) * dplanecut)) + 1;
-    Maxk = (int) (1.0 / (Math.sqrt(soVector[1]) * dplanecut)) + 1;
-    Maxl = (int) (1.0 / (Math.sqrt(soVector[2]) * dplanecut)) + 1;
+		  Maxh = (int) (1.0 / (Math.sqrt(soVector[0]) * dplanecut)) + 1;
+		  Maxk = (int) (1.0 / (Math.sqrt(soVector[1]) * dplanecut)) + 1;
+		  Maxl = (int) (1.0 / (Math.sqrt(soVector[2]) * dplanecut)) + 1;
 
-    boolean showWarningMaxIndex = MaudPreferences.getBoolean("millerIndices.showWarning", true);
-    int maxIndexPermitted = MaudPreferences.getInteger("millerIndices.maxValue", 100);
-    if (Maxh > maxIndexPermitted) {
-      Maxh = maxIndexPermitted;
-      if (showWarningMaxIndex)
-        System.out.println(
-            "Warning: the h miller index was exceeding the max permitted value (modifiable in the preferences); " +
-                "try to restrict the computing range or change max value");
-    }
-    if (Maxk > maxIndexPermitted) {
-      Maxk = maxIndexPermitted;
-      if (showWarningMaxIndex)
-        System.out.println(
-            "Warning: the k miller index was exceeding the max permitted value (modifiable in the preferences); " +
-                "try to restrict the computing range or change max value");
-    }
-    if (Maxl > maxIndexPermitted) {
-      Maxl = maxIndexPermitted;
-      if (showWarningMaxIndex)
-        System.out.println(
-            "Warning: the l miller index was exceeding the max permitted value (modifiable in the preferences); " +
-                "try to restrict the computing range or change max value");
-    }
+		  boolean showWarningMaxIndex = MaudPreferences.getBoolean("millerIndices.showWarning", true);
+		  int maxIndexPermitted = MaudPreferences.getInteger("millerIndices.maxValue", 100);
+		  if (Maxh > maxIndexPermitted) {
+			  Maxh = maxIndexPermitted;
+			  if (showWarningMaxIndex)
+				  System.out.println(
+						  "Warning: the h miller index was exceeding the max permitted value (modifiable in the preferences); " +
+								  "try to restrict the computing range or change max value");
+		  }
+		  if (Maxk > maxIndexPermitted) {
+			  Maxk = maxIndexPermitted;
+			  if (showWarningMaxIndex)
+				  System.out.println(
+						  "Warning: the k miller index was exceeding the max permitted value (modifiable in the preferences); " +
+								  "try to restrict the computing range or change max value");
+		  }
+		  if (Maxl > maxIndexPermitted) {
+			  Maxl = maxIndexPermitted;
+			  if (showWarningMaxIndex)
+				  System.out.println(
+						  "Warning: the l miller index was exceeding the max permitted value (modifiable in the preferences); " +
+								  "try to restrict the computing range or change max value");
+		  }
 
-    Sghkl sghkl = new Sghkl(getPhaseInfo().SgInfo);
+		  Sghkl sghkl = new Sghkl(getPhaseInfo().SgInfo);
 
-    sghkl.SetListMin_hkl(friedelLaw, Maxh, Maxk, Maxl, Minh, Mink, Minl);
+		  sghkl.SetListMin_hkl(friedelLaw, Maxh, Maxk, Maxl, Minh, Mink, Minl);
 
 //    System.out.println("Build reflection list: " + Maxh +" "+Maxk+" "+Maxl + " " +dplanestart + " " +dplanecut);
-    for (h = Minh[0]; h <= Maxh; h++) {
-      for (k = Mink[0]; k <= Maxk; k++) {
-        for (l = Minl[0]; l <= Maxl; l++) {
-          if (sghkl.IsSysAbsent_hkl(h, k, l, null) == 0) {
-            if ((sghkl.IsHidden_hkl(friedelLaw, Minh[0], Mink[0], Minl[0],
-                Maxh, Maxk, Maxl, h, k, l)) == 0) {
-              if (!((h == 0 && k == 0) && l == 0)) {
-                dpi = 1.0 / Math.sqrt(soVector[0] * h * h + soVector[1] * k * k + soVector[2] * l * l + 2.
-                    * soVector[5] * h * k + 2. * soVector[3] * k * l + 2. * soVector[4] * h * l);
+		  for (h = Minh[0]; h <= Maxh; h++) {
+			  for (k = Mink[0]; k <= Maxk; k++) {
+				  for (l = Minl[0]; l <= Maxl; l++) {
+					  if (sghkl.IsSysAbsent_hkl(h, k, l, null) == 0) {
+						  if ((sghkl.IsHidden_hkl(friedelLaw, Minh[0], Mink[0], Minl[0],
+								  Maxh, Maxk, Maxl, h, k, l)) == 0) {
+							  if (!((h == 0 && k == 0) && l == 0)) {
+								  dpi = 1.0 / Math.sqrt(soVector[0] * h * h + soVector[1] * k * k + soVector[2] * l * l + 2.
+										  * soVector[5] * h * k + 2. * soVector[3] * k * l + 2. * soVector[4] * h * l);
 //                System.out.println("dpi: " + dpi);
-                if (dpi >= dplanecut && dpi <= dplanestart) {
-                  M = sghkl.BuildEq_hkl(friedelLaw, Eq_hkl, h, k, l);
-                  M2 = M / 2;
-                  for (im = 0; im < M2; im++) {
-                    hlist[im] = Eq_hkl.h[im];
-                    klist[im] = Eq_hkl.k[im];
-                    llist[im] = Eq_hkl.l[im];
-                  }
-                  jhlist = new int[M2];
-                  jklist = new int[M2];
-                  jllist = new int[M2];
-                  for (int i = 0; i < M2; i++) {
-                    jhlist[i] = hlist[i];
-                    jklist[i] = klist[i];
-                    jllist[i] = llist[i];
-                  }
-                  reflectionList.addElement(new Reflection(this, jhlist, jklist, jllist, M, dpi));
+								  if (dpi >= dplanecut && dpi <= dplanestart) {
+									  M = sghkl.BuildEq_hkl(friedelLaw, Eq_hkl, h, k, l);
+									  M2 = M / 2;
+									  for (im = 0; im < M2; im++) {
+										  hlist[im] = Eq_hkl.h[im];
+										  klist[im] = Eq_hkl.k[im];
+										  llist[im] = Eq_hkl.l[im];
+									  }
+									  jhlist = new int[M2];
+									  jklist = new int[M2];
+									  jllist = new int[M2];
+									  for (int i = 0; i < M2; i++) {
+										  jhlist[i] = hlist[i];
+										  jklist[i] = klist[i];
+										  jllist[i] = llist[i];
+									  }
+									  reflectionList.addElement(new Reflection(this, jhlist, jklist, jllist, M, dpi));
 //                  System.out.println("New Reflection " + h +" "+k+" "+l + " " +dpi);
-                }
-              }
-            }
-          } else if (permitAbsent) {
-            if ((sghkl.IsHidden_hkl(friedelLaw, Minh[0], Mink[0], Minl[0],
-                Maxh, Maxk, Maxl, h, k, l)) == 0) {
-              if (!((h == 0 && k == 0) && l == 0)) {
-                dpi = 1.0 / Math.sqrt(soVector[0] * h * h + soVector[1] * k * k + soVector[2] * l * l + 2.
-                    * soVector[5] * h * k + 2. * soVector[3] * k * l + 2. * soVector[4] * h * l);
-                if (dpi >= dplanecut && dpi <= dplanestart) {
-                  M = sghkl.BuildEq_hkl(friedelLaw, Eq_hkl, h, k, l);
-                  M2 = M / 2;
-                  for (im = 0; im < M2; im++) {
-                    hlist[im] = Eq_hkl.h[im];
-                    klist[im] = Eq_hkl.k[im];
-                    llist[im] = Eq_hkl.l[im];
-                  }
-                  jhlist = new int[M2];
-                  jklist = new int[M2];
-                  jllist = new int[M2];
-                  for (int i = 0; i < M2; i++) {
-                    jhlist[i] = hlist[i];
-                    jklist[i] = klist[i];
-                    jllist[i] = llist[i];
-                  }
-                  reflectionList.addElement(new Reflection(this, jhlist, jklist, jllist, M, dpi));
+								  }
+							  }
+						  }
+					  } else if (permitAbsent) {
+						  if ((sghkl.IsHidden_hkl(friedelLaw, Minh[0], Mink[0], Minl[0],
+								  Maxh, Maxk, Maxl, h, k, l)) == 0) {
+							  if (!((h == 0 && k == 0) && l == 0)) {
+								  dpi = 1.0 / Math.sqrt(soVector[0] * h * h + soVector[1] * k * k + soVector[2] * l * l + 2.
+										  * soVector[5] * h * k + 2. * soVector[3] * k * l + 2. * soVector[4] * h * l);
+								  if (dpi >= dplanecut && dpi <= dplanestart) {
+									  M = sghkl.BuildEq_hkl(friedelLaw, Eq_hkl, h, k, l);
+									  M2 = M / 2;
+									  for (im = 0; im < M2; im++) {
+										  hlist[im] = Eq_hkl.h[im];
+										  klist[im] = Eq_hkl.k[im];
+										  llist[im] = Eq_hkl.l[im];
+									  }
+									  jhlist = new int[M2];
+									  jklist = new int[M2];
+									  jllist = new int[M2];
+									  for (int i = 0; i < M2; i++) {
+										  jhlist[i] = hlist[i];
+										  jklist[i] = klist[i];
+										  jllist[i] = llist[i];
+									  }
+									  reflectionList.addElement(new Reflection(this, jhlist, jklist, jllist, M, dpi));
 //									System.out.println("New Reflection " + h +" "+k+" "+l + " " +dpi);
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-    return reflectionList;
+								  }
+							  }
+						  }
+					  }
+				  }
+			  }
+		  }
+	  }
+	  return reflectionList;
   }
 
   public double[] computeReflectionList(int totNumber, boolean permitAbsent, double sumOverlapped) {
@@ -3251,7 +3253,7 @@ public static final String getSpaceGroup(int index, int sgconv) {
     return reflectionList;
   }
 
-  private void checkSghkllist(String SgName, double dplanecut, double dplanestart) {
+  private void checkSghkllist(String SgName, double dplanecut) {
 
   	// cctbx
 
@@ -3261,56 +3263,12 @@ public static final String getSpaceGroup(int index, int sgconv) {
 
 	  cellVolumeComp(); // to refresh
 
-	  Sghkl sghkl = new Sghkl(getPhaseInfo().SgInfo);
-
-	  boolean done = getActivePlanarDefects().checkSghkllist(this, sghkl, dplanecut, dplanestart);
+	  boolean done = getActivePlanarDefects().checkSghkllist(this, dplanecut);
 
 	  if (!done) {
-		  int im, M2;
-//    char F_Convention;
-		  int h, k, l, M; //restriction;
-		  int Maxh, Maxk, Maxl;
-		  int[] Minh = new int[1], Mink = new int[1], Minl = new int[1];
-		  double dpi; //, so12, so23, so13;
-		  int[] hlist = new int[24], klist = new int[24], llist = new int[24];
-		  int[] jhlist;
-		  int[] jklist;
-		  int[] jllist;
-		  T_Eq_hkl Eq_hkl = new T_Eq_hkl();
 
-		  int friedelLaw = 1;
-
+		  double dpi;
 		  double[] soVector = getSoVector();
-
-		  Maxh = (int) (1.0 / (Math.sqrt(soVector[0]) * dplanecut)) + 1;
-		  Maxk = (int) (1.0 / (Math.sqrt(soVector[1]) * dplanecut)) + 1;
-		  Maxl = (int) (1.0 / (Math.sqrt(soVector[2]) * dplanecut)) + 1;
-
-		  boolean showWarningMaxIndex = MaudPreferences.getBoolean("millerIndices.showWarning", true);
-		  int maxIndexPermitted = MaudPreferences.getInteger("millerIndices.maxValue", 100);
-		  if (Maxh > maxIndexPermitted) {
-			  Maxh = maxIndexPermitted;
-			  if (showWarningMaxIndex)
-				  System.out.println(
-						  "Warning: the h miller index was exceeding the max permitted value (modifiable in the preferences); " +
-								  "try to restrict the computing range or change max value");
-		  }
-		  if (Maxk > maxIndexPermitted) {
-			  Maxk = maxIndexPermitted;
-			  if (showWarningMaxIndex)
-				  System.out.println(
-						  "Warning: the k miller index was exceeding the max permitted value (modifiable in the preferences); " +
-								  "try to restrict the computing range or change max value");
-		  }
-		  if (Maxl > maxIndexPermitted) {
-			  Maxl = maxIndexPermitted;
-			  if (showWarningMaxIndex)
-				  System.out.println(
-						  "Warning: the l miller index was exceeding the max permitted value (modifiable in the preferences); " +
-								  "try to restrict the computing range or change max value");
-		  }
-
-		  sghkl.SetListMin_hkl(friedelLaw, Maxh, Maxk, Maxl, Minh, Mink, Minl);
 
 		  for (int i = 0; i < reflectionv.size()/* don't change */; i++) {
 			  Reflection refl = reflectionv.elementAt(i);
@@ -3318,78 +3276,76 @@ public static final String getSpaceGroup(int index, int sgconv) {
 					  + soVector[2] * refl.getL() * refl.getL()
 					  + 2. * soVector[5] * refl.getH() * refl.getK() + 2. * soVector[3] * refl.getK() * refl.getL()
 					  + 2. * soVector[4] * refl.getH() * refl.getL());
-			  if (dpi < dplanecut || dpi > dplanestart) {
-//        System.out.println("Removing " + refl.h +" "+refl.k+" "+refl.l + " " + refl + " " +dpi);
+			  if (dpi < dplanecut ) {
 				  reflectionv.removeElementAt(i);
 				  i--;
 			  }
 		  }
+
+		  double[] cell = new double[6];
+		  for (int i = 0; i < 6; i++)
+			  cell[i] = getCellValue(i);
+		  Vector<PureReflection> reflList = SpaceGroups.getReflectionListFor(getSpaceGroupHall(), cell, dplanecut);
+
 		  int numberReflections = reflectionv.size();
 		  boolean[] alreadyChecked = new boolean[numberReflections];
 		  for (int i = 0; i < numberReflections; i++)
 			  alreadyChecked[i] = false;
 		  int minimumChecked = 0;
 
-		  for (h = Minh[0]; h <= Maxh; h++) {
-			  for (k = Mink[0]; k <= Maxk; k++) {
-				  for (l = Minl[0]; l <= Maxl; l++) {
-					  if (sghkl.IsSysAbsent_hkl(h, k, l, null) == 0) {
-						  if ((sghkl.IsHidden_hkl(friedelLaw, Minh[0], Mink[0], Minl[0],
-								  Maxh, Maxk, Maxl, h, k, l)) == 0) {
-							  if (!((h == 0 && k == 0) && l == 0) && getActivePlanarDefects().acceptReflection(h, k, l)) {
-								  dpi = 1.0 / Math.sqrt(soVector[0] * h * h + soVector[1] * k * k + soVector[2] * l * l + 2.
-										  * soVector[5] * h * k + 2. * soVector[3] * k * l + 2. * soVector[4] * h * l);
-								  if (dpi >= dplanecut && dpi <= dplanestart) {
+		  int h, k, l;
+		  for (int j = 0; j < reflList.size(); j++) {
+			  PureReflection prefl = reflList.elementAt(j);
+			  h = prefl.h[0];
+			  k = prefl.k[0];
+			  l = prefl.l[0];
+//			  System.out.println("Reflection: " + h + " " + k + " " + l + ", n = " + reflectionv.size());
+			  if (!((h == 0 && k == 0) && l == 0) && getActivePlanarDefects().acceptReflection(h, k, l)) {
+				  dpi = prefl.dspace;
+				  if (dpi >= dplanecut) {
 //        System.out.println("Checking " + h +" "+k+" "+l + " " +dpi);
-									  int found = -1;
-									  for (int i = minimumChecked; i < numberReflections; i++) {
-										  if (!alreadyChecked[i]) {
-											  Reflection refl = reflectionv.elementAt(i);
-											  if (refl.equalsTo(h, k, l)) {
-												  found = i;
-												  break;
-											  }
-										  } else {
-											  if (i == minimumChecked)
-												  minimumChecked++;
-										  }
-									  }
-									  if (found < 0) {
-										  M = sghkl.BuildEq_hkl(friedelLaw, Eq_hkl, h, k, l);
-										  M2 = M / 2;
-										  for (im = 0; im < M2; im++) {
-											  hlist[im] = Eq_hkl.h[im];
-											  klist[im] = Eq_hkl.k[im];
-											  llist[im] = Eq_hkl.l[im];
-										  }
-										  jhlist = new int[M2];
-										  jklist = new int[M2];
-										  jllist = new int[M2];
-										  for (int i = 0; i < M2; i++) {
-											  jhlist[i] = hlist[i];
-											  jklist[i] = klist[i];
-											  jllist[i] = llist[i];
-										  }
-										  Reflection refl = new Reflection(this, jhlist, jklist, jllist, M, dpi);
-										  reflectionv.addElement(refl);
-//										System.out.println("check, New Reflection " + h +" "+k+" "+l + " " + refl);
-									  } else {
-										  alreadyChecked[found] = true;
-										  Reflection refl = reflectionv.elementAt(found);
-										  refl.setDSpace(dpi);
-										  refl.refreshforUpdate();
-//                    System.out.println("check, Old Reflection " + h +" "+k+" "+l + " " + refl);
-									  }
-								  }
+					  int found = -1;
+					  for (int i = minimumChecked; i < numberReflections; i++) {
+						  if (!alreadyChecked[i]) {
+							  Reflection refl = reflectionv.elementAt(i);
+							  if (refl.equalsTo(h, k, l)) {
+								  found = i;
+								  break;
 							  }
+						  } else {
+							  if (i == minimumChecked)
+								  minimumChecked++;
 						  }
+					  }
+					  if (found < 0) {
+						  int[] jhlist = new int[prefl.multiplicity];
+						  int[] jklist = new int[prefl.multiplicity];
+						  int[] jllist = new int[prefl.multiplicity];
+						  for (int i = 0; i < prefl.multiplicity; i++) {
+							  jhlist[i] = prefl.h[i];
+							  jklist[i] = prefl.k[i];
+							  jllist[i] = prefl.l[i];
+						  }
+						  int M = prefl.mates * prefl.multiplicity;
+						  Reflection refl = new Reflection(this, jhlist, jklist, jllist,
+								  M, dpi);
+						  reflectionv.add(refl);
+						  System.out.println("Adding, New Reflection " + refl.toString() + " " + reflectionv.size());
+					  } else {
+						  alreadyChecked[found] = true;
+						  Reflection refl = reflectionv.elementAt(found);
+						  refl.setDSpace(dpi);
+						  refl.refreshforUpdate();
+//                    System.out.println("check, Old Reflection " + h +" "+k+" "+l + " " + refl);
 					  }
 				  }
 			  }
 		  }
+		  System.out.println("Reflection number " + numberReflections + " " + reflectionv.size());
 		  for (int i = numberReflections - 1; i >= 0; i--)
 			  if (!alreadyChecked[i])
 				  reflectionv.removeElementAt(i);
+		  System.out.println("Reflection number after removing: " + reflectionv.size());
 	  }
   }
 

@@ -26,6 +26,8 @@ import it.unitn.ing.rista.awt.*;
 import it.unitn.ing.rista.util.function.*;
 import it.unitn.ing.rista.diffr.cal.*;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.lang.*;
 import java.awt.*;
 import java.util.Vector;
@@ -78,7 +80,7 @@ public class Instrument extends XRDcat {
 
   double thetaDisplacement[] = null;
   int thetaDisplacementN = 0;
-  static int thetaDisplacementID = 0;
+	public static int thetaDisplacementID = 0;
 
   public Instrument(XRDcat afile, String alabel) {
     super(afile, alabel);
@@ -726,5 +728,120 @@ public class Instrument extends XRDcat {
     if (acal instanceof GSASbankIntCalibration)
       ((GSASbankIntCalibration) acal).forceFreeAllTOFSFParameters();
   }
+
+	public void exportInstrumentDataForFPSM(BufferedWriter output) throws IOException {
+
+
+		output.write("_pd_instr_geometry ");
+		output.write(getGeometry().getLabel().toLowerCase());
+		output.newLine();
+		output.write("_diffrn_measurement_method ");
+		output.write(getMeasurement().getLabel().toLowerCase());
+		output.newLine();
+		if (getGeometryS().toLowerCase().contains("transmission"))
+			output.write("_pd_spec_mount_mode transmission");
+		else
+			output.write("_pd_spec_mount_mode reflection");
+		output.newLine();
+
+		output.write("_diffrn_source ");
+		String source_label = "x-ray";
+		if (getRadiationType().toIDString().toLowerCase().contains("neutron"))
+			source_label = "neutron";
+		else if (getRadiationType().toIDString().toLowerCase().contains("electron"))
+			source_label = "electron";
+		else if (getRadiationType().toIDString().toLowerCase().contains("tof"))
+			source_label = "tof";
+		output.write(source_label);
+		output.newLine();
+		getRadiationType().exportToCif(output);
+
+		getInstrumentBroadening().exportToCif(output);
+		/*
+		data_
+_pd_block_id  'CRITT Charleville'
+# 1. INSTRUMENT CHARACTERIZATION
+# This following item is used to identify the equipment used to record the
+# powder pattern when the diffractogram was measured at a laboratory
+_pd_instr_location
+_pd_instr_geometry 'Bragg-Brentano'
+_pd_instr_2theta_monochr_pre 27.3
+_pd_instr_monochr_pre_spec     'Ge111'
+_pd_instr_beam_size_ax 0.15
+_pd_instr_beam_size_eq 5
+_pd_instr_dist_src/spec 120
+_pd_instr_dist_spec/detc 250.0
+_pd_instr_slit_ax_src/spec 0.2
+_pd_instr_slit_eq_src/spec 1
+_diffrn_source 'sealed X-ray tube'
+_diffrn_source_target 'Cu'
+_diffrn_source_type 'INEL standard'
+_diffrn_radiation_monochromator 'Ge 111'# none or Ni filter
+_diffrn_radiation_collimation 'Johansson'          # or 0.3 mm pinhole    0.5 mm slit
+loop_
+_diffrn_radiation_type
+_diffrn_radiation_wavelength
+_diffrn_radiation_wavelength_wt
+'Cu kalpha1'  1.5405981 1
+'Cu kalpha2'  1.544497 0.5
+_diffrn_detector  'Curved Position Sensitive'
+_diffrn_detector_type  'Inel CPS120'
+_diffrn_measurement_device_type  'INEL unknown model'
+# 2. INSTRUMENT CALIBRATION
+# Calibration for 2theta, intensity and instrument broadening
+_pd_calib_2theta_offset 0
+_diffrn_inst_broadening 'Caglioti PV'        # calibrated with Maud
+_riet_caglioti_d_dep true
+_riet_asymmetry_tan_dep false
+_riet_omega/chi_broadening_convoluted false
+_riet_par_asymmetry_truncation 0.4
+loop_
+_riet_par_asymmetry_value
+0.0
+loop_
+_riet_par_caglioti_value
+  0.0032639795
+  -6.959328E-4
+  2.6953057E-4
+loop_
+_riet_par_gaussian_value
+  -0.11062577
+  0.0063514803
+# 3. SAMPLE DETAILS
+# Specimen size and mounting information
+_diffrn_ambient_environment     air       # not needed if air, examples 'mother liquor' He
+_diffrn_ambient_temperature     295          # Kelvin
+_diffrn_ambient_pressure     10              # in kPa
+# The next three fields give the specimen dimensions in mm.  The equatorial
+# plane contains the incident and diffracted beam.
+_pd_spec_size_axial               20
+_pd_spec_size_equat               20
+_pd_spec_size_thick               5
+_pd_spec_mounting 'powder SSRT'
+_pd_spec_mount_mode  'reflection'
+_pd_spec_shape                   'flat_sheet'
+_pd_spec_description 'Powder'
+_pd_spec_orientation_omega 0
+_pd_spec_orientation_chi 0
+_pd_spec_orientation_phi 0
+_pd_spec_displac_x 0
+_pd_spec_displac_y 0
+_pd_spec_displac_z 0
+# 4. MEASURING AUTHOR
+# 5. EXPERIMENTAL DATA
+_diffrn_measurement_method       'theta-2theta'
+_pd_meas_scan_method             'step'
+_pd_meas_units_of_intensity  'counts'
+_pd_meas_step_count_time 5
+_pd_meas_angle_chi 0
+_pd_meas_angle_omega 0        # zero if theta-2theta and no offset, otherwise the fixed omega
+_pd_meas_angle_phi 0
+_pd_meas_angle_eta 0          # this angle is out of the diffraction plane, not in standard CIF
+loop_
+_pd_meas_2theta_scan
+_pd_meas_intensity_total
+
+		 */
+	}
 }
 

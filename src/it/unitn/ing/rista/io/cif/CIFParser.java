@@ -24,10 +24,10 @@ import java.io.*;
 import java.util.*;
 import java.awt.*;
 
+import it.unitn.ing.rista.diffr.instrument.*;
 import it.unitn.ing.rista.util.*;
 import it.unitn.ing.rista.awt.*;
 import it.unitn.ing.rista.diffr.*;
-import it.unitn.ing.rista.diffr.instrument.DefaultInstrument;
 
 import javax.swing.*;
 import java.awt.event.*;
@@ -128,7 +128,16 @@ public class CIFParser {
             xrdobject[i] = new Phase(parentObj, catname);
             break;
           case 1:
-            xrdobject[i] = new DefaultInstrument(parentObj, catname);
+          	// _diffrn_measurement_device_type
+	          String instrumentType = readuntilCif(index[i], "_diffrn_measurement_device");
+//          	System.out.println(instrumentType);
+          	if (instrumentType.equalsIgnoreCase("EDXRF Instrument")) {
+	            xrdobject[i] = new EDXRFInstrument(parentObj, catname);
+            } else if (instrumentType.equalsIgnoreCase("XRF Instrument")) {
+	            xrdobject[i] = new XRFInstrument(parentObj, catname);
+            } else {
+	            xrdobject[i] = new DefaultInstrument(parentObj, catname);
+            }
             break;
           case 2:
             xrdobject[i] = new DataFileSet(parentObj, catname);
@@ -342,7 +351,7 @@ public class CIFParser {
     }
   }
 
-	public void readallDataField(BufferedReader reader, Vector namelist, int indexToStop) {
+	public String readallDataField(BufferedReader reader, Vector namelist, int indexToStop) {
 		boolean checkInput = Constants.checkCIFinputInConsole;
 		int objIndex = 0;
 		boolean nextStop = false;
@@ -389,8 +398,9 @@ public class CIFParser {
 						if (isCIFname(token)) {
 							if (checkInput)
 								System.out.println("Is CIF name to check: " + token + " " + isCIFname(token));
-							if (nextStop)
-								return;
+							if (nextStop) {
+								return token + " " + inputCifItem(st);
+							}
 							StringBuffer tmp = new StringBuffer("");
 							while (st.hasMoreTokens()) {
 								token = st.nextToken();
@@ -452,7 +462,7 @@ public class CIFParser {
 											if (checkInput)
 												System.out.println("Checking again the CIF name: " + token + " " + isCIFname(token));
 											if (nextStop)
-												return;
+												return token + " " + inputCifItem(st);
 											tmp = new StringBuffer("");
 											while (st.hasMoreTokens()) {
 												token = st.nextToken();
@@ -506,6 +516,52 @@ public class CIFParser {
 				e.printStackTrace();
 			}
 		}
+		return "";
+	}
+
+	private String inputCifItem(StringTokenizer st) {
+  	   String result = "";
+		if (st.hasMoreTokens()) {
+			String partial = st.nextToken("\r\n");
+			while (partial.startsWith(" ")) {
+				partial = partial.substring(1);
+			}
+			while (partial.startsWith("\t")) {
+				partial = partial.substring(1);
+			}
+			if (partial.length() > 0) {
+				if (partial.startsWith("'")) {
+					partial = partial.substring(1);
+					if (st.hasMoreTokens())
+						partial += st.nextToken("'\r\n");
+					if (partial.endsWith("'"))
+						partial = partial.substring(0, partial.length() - 1);
+				} else if (partial.startsWith("\"")) {
+					partial = partial.substring(1);
+					if (st.hasMoreTokens())
+						partial += st.nextToken("\"\r\n");
+					if (partial.endsWith("'"))
+						partial = partial.substring(0, partial.length() - 1);
+				} else if (partial.startsWith("`")) {
+					partial = partial.substring(1);
+					if (st.hasMoreTokens())
+						partial += st.nextToken("`\r\n");
+					if (partial.endsWith("'"))
+						partial = partial.substring(0, partial.length() - 1);
+				} else if (partial.startsWith(";")) {
+					partial = partial.substring(1);
+					if (st.hasMoreTokens())
+						partial += st.nextToken(";\r\n");
+					if (partial.endsWith("'"))
+						partial = partial.substring(0, partial.length() - 1);
+				} else {
+					if (st.hasMoreTokens())
+						partial += st.nextToken(" \r\n");
+				}
+				result = partial;
+			}
+		}
+		return result;
 	}
 
 	public boolean isCIFname(String cifstring) {
@@ -537,7 +593,73 @@ public class CIFParser {
     }
   }
 
-  class ListJDialog extends myJDialog {
+	public String readuntilCif(int objectindex, String cif_keyword) {
+
+		BufferedReader in = Misc.getReader(filename);
+
+		String result = readallDataField(in, null, objectindex);
+		if (result.length() > cif_keyword.length()) {
+			if (result.startsWith(cif_keyword)) {
+				int index = result.indexOf(' ');
+//				System.out.println("Found: " + result.substring(index + 1));
+				return result.substring(index + 1);
+			}
+		}
+
+		CIFtoken ciffile = new CIFtoken(in);
+		ciffile.pushBack();
+
+			String thecife;
+			int newtoken, tokentype;
+			boolean endofInput = false;
+			try {
+				do {
+					tokentype = ciffile.nextToken();
+//					System.out.println(tokentype);
+					switch (tokentype) {
+						case CIFtoken.TT_DATA:
+						case CIFtoken.TT_GLOB:
+						case CIFtoken.TT_DATASET:
+						case CIFtoken.TT_SAMPLE:
+						case CIFtoken.TT_PHASE:
+						case CIFtoken.TT_SUBE:
+						case CIFtoken.TT_SUBO:
+						case CIFtoken.TT_CUSTOM:
+						case CIFtoken.TT_CUSTOM_END:
+						case CIFtoken.TT_LOOP:
+							// subordinate loop
+//							System.out.println("End of input");
+							endofInput = true;
+							break;
+						case CIFtoken.TT_INST:
+						case CIFtoken.TT_CIFE:
+//							System.out.println("inst or cife");
+							// CIF item
+							thecife = ciffile.thestring;
+							newtoken = ciffile.nextToken();
+//							System.out.println(thecife + " : " + ciffile.thestring);
+							if (thecife.startsWith(cif_keyword))
+								return ciffile.thestring;
+							break;
+						default:
+						{
+						}
+					}
+				} while (tokentype != CIFtoken.TT_EOF && !endofInput);
+			} catch (Exception ioe) {
+				ioe.printStackTrace();
+			}
+
+
+		try {
+			in.close();
+		} catch (IOException ioe) {
+			System.out.println("IO exception in closing the file");
+		}
+		return "Diffraction instrument";
+	}
+
+	class ListJDialog extends myJDialog {
 
     JList thelist;
     Hashtable originalindexes;

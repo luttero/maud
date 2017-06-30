@@ -20,6 +20,8 @@
 
 package it.unitn.ing.rista.diffr;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.lang.*;
 import java.awt.*;
 
@@ -294,7 +296,25 @@ public class RadiationType extends XRDcat {
     return 1;
   }
 
-  public class JRadiationTypeOptionsD extends JOptionsDialog {
+	public void exportToCif(BufferedWriter output) throws IOException {
+
+		output.write("loop_");
+		output.newLine();
+		output.write("_diffrn_radiation_type");
+		output.newLine();
+		output.write("_diffrn_radiation_wavelength");
+		output.newLine();
+		output.write("_diffrn_radiation_wavelength_wt");
+		output.newLine();
+		for (int i = 0; i < getLinesCount(); i++) {
+			output.write(" " + getRadiation(i).getWavelengthID() + " " + Fmt.format(getRadiationWavelength(i)) +
+			" " + Fmt.format(getRadiationWeigth(i)));
+			output.newLine();
+		}
+
+	}
+
+	public class JRadiationTypeOptionsD extends JOptionsDialog {
 
     JSubordListPane RadiationPanel;
 		JCheckBox dynamical = null;

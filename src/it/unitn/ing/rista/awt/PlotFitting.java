@@ -608,7 +608,91 @@ public class PlotFitting extends PlotDataFile {
     }
   }
 
-  public void exportOriginalData() {
+	public void exportOriginalDataFPSM() {
+
+		if (thePlotPanel.datafile == null || thePlotPanel.datafile[0] == null)
+			return;
+
+		String filename = Utility.openFileDialog(this, "Save as CIF...",
+				FileDialog.SAVE, thePlotPanel.datafile[0].getFilePar().getDirectory(), null, "put a name.cif");
+		if (filename == null)
+			return;
+
+		String[] folderAndName = Misc.getFolderandName(filename);
+
+		String folder = folderAndName[0];
+		filename = folderAndName[1];
+
+		if (Constants.sandboxEnabled && !filename.endsWith(".cif"))
+			filename = filename + ".cif";
+
+		if (filename != null) {
+
+			BufferedWriter output = Misc.getWriter(folder, filename);
+			try {
+				int nPoints = thePlotPanel.datafile[0].computeDataNumber();
+				output.write("data_" + thePlotPanel.datafile[0]);
+				output.newLine();
+				datafile[0].getDataFileSet().getInstrument().exportInstrumentDataForFPSM(output);
+
+				output.write("_pd_meas_angle_omega " + Fmt.format(datafile[0].getOmegaValue()));
+				output.newLine();
+				output.write("_pd_meas_angle_chi " + Fmt.format(datafile[0].getChiValue()));
+				output.newLine();
+				output.write("_pd_meas_angle_phi " + Fmt.format(datafile[0].getPhiValue()));
+				output.newLine();
+				output.write("_pd_meas_angle_eta " + Fmt.format(datafile[0].getEtaValue()));
+				output.newLine();
+				output.write("_pd_meas_angle_2theta " + Fmt.format(datafile[0].get2ThetaValue()));
+				output.newLine();
+
+				output.write("_pd_meas_number_of_points " + Integer.toString(nPoints));
+				output.newLine();
+//        if (datafile[0].originalNotCalibrated)
+//          output.write("_riet_meas_datafile_calibrated false");
+//        else
+				output.write("_riet_meas_datafile_calibrated true");
+				output.newLine();
+				output.write("loop_");
+				output.newLine();
+				output.write("_pd_meas_2theta_scan");
+				output.newLine();
+				output.write("_pd_meas_intensity_total");
+				output.newLine();
+				int starting = thePlotPanel.datafile[0].startingindex;
+				int ending = thePlotPanel.datafile[0].finalindex;
+				int step = 1;
+				int mode = checkScaleModeX();
+				if (thePlotPanel.datafile[0].getXData(ending - 1) < thePlotPanel.datafile[0].getXData(starting)) {
+					starting = thePlotPanel.datafile[0].finalindex - 1;
+					ending = thePlotPanel.datafile[0].startingindex - 1;
+					step = -1;
+				}
+				boolean from_Plot = MaudPreferences.getBoolean("exportData.useXcoordinateFromPlot", false);
+				for (int i = starting; i != ending; i+=step) {
+					double intens = thePlotPanel.datafile[0].getYData(i);
+					double xcoorddata;
+					if (!from_Plot)
+						xcoorddata = thePlotPanel.datafile[0].getXData(i);
+					else
+						xcoorddata = thePlotPanel.datafile[0].getXDataForPlot(i, mode);
+					output.write(" " + Fmt.format(xcoorddata) + " " + Fmt.format(intens));
+					output.newLine();
+				}
+			} catch (IOException io) {
+			}
+			try {
+				output.close();
+			} catch (IOException io) {
+			}
+		}
+	}
+
+	public void phaseIdentificationByFPSM() {
+
+	}
+
+	public void exportOriginalData() {
 
     if (thePlotPanel.datafile == null || thePlotPanel.datafile[0] == null)
       return;
@@ -631,6 +715,7 @@ public class PlotFitting extends PlotDataFile {
       BufferedWriter output = Misc.getWriter(folder, filename);
       try {
         int nPoints = thePlotPanel.datafile[0].computeDataNumber();
+	      output.write("data_" + thePlotPanel.datafile[0]);
         output.write("_pd_meas_number_of_points " + Integer.toString(nPoints));
         output.newLine();
 //        if (datafile[0].originalNotCalibrated)

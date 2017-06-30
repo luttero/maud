@@ -160,6 +160,10 @@ public class PlanarDefects extends XRDcat {
 		return false;
 	}
 
+	public boolean checkSghkllist(Phase aphase, double dplanecut) {
+		return false;
+	}
+
 	public class JPlanarDefectsOptionsD extends JOptionsDialog {
 
     public JPlanarDefectsOptionsD(Frame parent, XRDcat obj) {

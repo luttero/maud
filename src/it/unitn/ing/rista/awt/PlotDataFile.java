@@ -208,7 +208,21 @@ public class PlotDataFile extends GraphFrame {
       });
     }
 
-    toolsMenu.add(menuitem = new JMenuItem("Export experimental data"));
+	  toolsMenu.add(menuitem = new JMenuItem("Export for FPSM"));
+	  menuitem.addActionListener(new ActionListener() {
+		  public void actionPerformed(ActionEvent e) {
+			  exportOriginalDataFPSM();
+		  }
+	  });
+
+	  toolsMenu.add(menuitem = new JMenuItem("Run FPSM on data"));
+	  menuitem.addActionListener(new ActionListener() {
+		  public void actionPerformed(ActionEvent e) {
+			  phaseIdentificationByFPSM();
+		  }
+	  });
+
+	  toolsMenu.add(menuitem = new JMenuItem("Export experimental data"));
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         exportOriginalData();
@@ -260,7 +274,7 @@ public class PlotDataFile extends GraphFrame {
 	  return toolsMenu;
   }
 
-  public void resetStartingPoint() {
+	public void resetStartingPoint() {
   }
 
   public void smoothing() {
@@ -293,7 +307,15 @@ public class PlotDataFile extends GraphFrame {
   public void setCustomPeakList(Phase aphase) {
   }
 
-  public void exportOriginalData() {
+	public void exportOriginalDataFPSM() {
+
+	}
+
+	public void phaseIdentificationByFPSM() {
+
+	}
+
+	public void exportOriginalData() {
 /*
     if (datafile == null || datafile[0] == null)
       return;
