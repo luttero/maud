@@ -125,7 +125,7 @@ public class Instrument extends XRDcat {
     setDetector("Scintillation");
     setAbsorption("none abs");
     setIntensityCalibration("none cal");
-    setAngularCalibration("no ang");
+    setAngularCalibration("Instrument disalignment");
     setInstrumentBroadening("Caglioti PV");
     for (int i = 0; i < 1; i++) {
       parameterField[i].setValueMin(ParameterPreferences.getDouble(parameterField[i].getLabel() + ".min",

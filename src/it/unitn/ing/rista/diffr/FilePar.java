@@ -1422,6 +1422,13 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 
   public void removesample() {
     getSamplesList().removeSelElement();
+    if (getSamplesList().isEmpty()) {
+    	Sample asample = newsample();
+    	setActiveSample(asample);
+    	DataFileSet adataset = asample.newData(3);
+    	adataset.getInstrument();
+    	refreshAll(true);
+    }
   }
 
   public void loadsample(String filename) {

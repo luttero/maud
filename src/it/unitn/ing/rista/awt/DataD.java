@@ -81,7 +81,8 @@ public class DataD extends myJFrame {
   JCheckBox asBkgCB;
   JCheckBox enabledCB;
   JCheckBox replaceCB;
-  JCheckBox randomCB;
+	JCheckBox randomCB;
+	JCheckBox noStrainCB;
 
   JComboBox unitCB;
   JTextField countTimeTF;
@@ -189,15 +190,18 @@ public class DataD extends myJFrame {
     enabledCB = new JCheckBox("Computation enabled");
     p3.add(enabledCB);
 
-    replaceCB = new JCheckBox("Replace datafile on add");
-    replaceCB.setToolTipText("When adding a new datafile, the old one/ones is/are removed");
-    p3.add(replaceCB);
-
     randomCB = new JCheckBox("Force random texture");
     randomCB.setToolTipText("If marked, spectra will be treated as for no texture, independently from other settings");
     p3.add(randomCB);
+	  noStrainCB = new JCheckBox("Force no strain");
+	  noStrainCB.setToolTipText("If marked, spectra will be treated as having no strain, independently from other settings");
+	  p3.add(noStrainCB);
 
-    jp6 = new JPanel(new FlowLayout());
+	  replaceCB = new JCheckBox("Replace datafile on add");
+	  replaceCB.setToolTipText("When adding a new datafile, the old one/ones is/are removed");
+	  p3.add(replaceCB);
+
+	  jp6 = new JPanel(new FlowLayout());
     p3.add(jp6);
     jp6.add(new JLabel("Peak cutoff:"));
     peakcutoffTF = new JTextField(Constants.FLOAT_FIELD);
@@ -1023,6 +1027,12 @@ public class DataD extends myJFrame {
         thedata.setRandomTexture(randomCB.isSelected());
       }
     });
+	  noStrainCB.setSelected(thedata.hasNoStrain());
+	  noStrainCB.addActionListener(new ActionListener() {
+		  public void actionPerformed(ActionEvent e) {
+			  thedata.setNoStrain(noStrainCB.isSelected());
+		  }
+	  });
   }
 
   /**

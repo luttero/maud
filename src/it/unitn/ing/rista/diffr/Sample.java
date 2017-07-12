@@ -382,8 +382,10 @@ public class Sample extends Maincat {
   public DataFileSet getSelectedDataSet() {
     DataFileSet object = (DataFileSet) getDatasetsList().selectedElement();
     if (object == null) {
-      if (getDatasetsList().size() == 0)
-        object = newData(3);
+      if (getDatasetsList().size() == 0) {
+	      object = newData(3);
+	      object.getInstrument();
+      }
       object = getDataSet(0);
     }
     return object;

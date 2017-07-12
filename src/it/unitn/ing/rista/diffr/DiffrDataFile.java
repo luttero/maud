@@ -6066,13 +6066,15 @@ public class DiffrDataFile extends XRDcat {
 	}
 
 	public void computeStrain(Phase aphase) {
-		double[][] strains = getStrainFactors(aphase);
-		double[][][] positions = getPositions(aphase);
-		int reflNumber = aphase.gethklNumber();
-		for (int i = 0; i < reflNumber; i++) {
-			for (int j = 0; j < positionsPerPattern; j++) {
-				double strain = aphase.getActiveStrain().computeStrain(aphase.getReflex(i), getTextureAngles(positions[0][i][j]));
-				strains[i][j] = strain;
+		if (!getDataFileSet().hasNoStrain()) {
+			double[][] strains = getStrainFactors(aphase);
+			double[][][] positions = getPositions(aphase);
+			int reflNumber = aphase.gethklNumber();
+			for (int i = 0; i < reflNumber; i++) {
+				for (int j = 0; j < positionsPerPattern; j++) {
+					double strain = aphase.getActiveStrain().computeStrain(aphase.getReflex(i), getTextureAngles(positions[0][i][j]));
+					strains[i][j] = strain;
+				}
 			}
 		}
 	}
@@ -6132,6 +6134,17 @@ public class DiffrDataFile extends XRDcat {
 			for (int i1 = 0; i1 < textureFactors[0].length; i1++) {
 				for (int j = 0; j < textureFactors[0][i1].length; j++) {
 					textureFactors[0][i1][j] = textureFactors[1][i1][j] = 1.0;
+				}
+			}
+		}
+	}
+
+	public void resetForNoStrain(Phase phase) {
+		double[][] strainFactors = getStrainFactors(phase);
+		if (strainFactors != null) {
+			for (int i1 = 0; i1 < strainFactors.length; i1++) {
+				for (int j = 0; j < strainFactors[i1].length; j++) {
+					strainFactors[i1][j] = 0.0;
 				}
 			}
 		}
@@ -6245,11 +6258,13 @@ public class DiffrDataFile extends XRDcat {
 	}
 
 	public void setTextureFactors(Phase aphase, double[] textureValues) {
-		synchronized(this) {
-			double[][] textF = getTextureFactors(aphase)[1];
-			int hkln = aphase.gethklNumber();
-			for (int i = 0; i < hkln; i++)
-				textF[i][0] = textureValues[i];
+		if (!getDataFileSet().hasRandomTexture()) {
+			synchronized (this) {
+				double[][] textF = getTextureFactors(aphase)[1];
+				int hkln = aphase.gethklNumber();
+				for (int i = 0; i < hkln; i++)
+					textF[i][0] = textureValues[i];
+			}
 		}
 	}
 

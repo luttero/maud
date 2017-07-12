@@ -56,7 +56,7 @@ public class DataFileSet extends XRDcat {
 		  "_riet_meas_dataset_compute", "_riet_meas_datafile_replace",
 		  "_riet_meas_dataset_random_texture", "_maud_background_add_automatic",
 		  "_maud_interpolated_background_iterations",
-		  "_pd_proc_ls_datafile_weight",
+		  "_pd_proc_ls_datafile_weight", "_riet_meas_dataset_no_strain",
 
 		  "_riet_par_background_exp_shift",
 		  "_riet_par_background_exp_thermal_shift",
@@ -88,7 +88,7 @@ public class DataFileSet extends XRDcat {
 		  "_riet_meas_dataset_compute", "_riet_meas_datafile_replace",
 		  "_riet_meas_dataset_random_texture", "_maud_background_add_automatic",
 		  "number of iteration for background interpolation",
-		  "_pd_proc_ls_datafile_weight",
+		  "_pd_proc_ls_datafile_weight", "_riet_meas_dataset_no_strain",
 
 /*    "_pd_meas_orientation_omega_offset",
     "_pd_meas_orientation_chi_offset",
@@ -163,6 +163,7 @@ public class DataFileSet extends XRDcat {
   public boolean automaticPolynomialBackground = false;
   public static final int randomTextureID = 16;
   public boolean randomTexture = false;
+  public boolean noStrain = false;
   boolean hasNegative2theta = false;
   double[] sample_angles = new double[3];
 	double[] disalignement_angles = new double[4];
@@ -170,6 +171,7 @@ public class DataFileSet extends XRDcat {
 	public static int interpolationIterationsID = 18;
 	protected int interpolationIterations;
 	static final int datasetWeightFieldID = 19;
+	static final int noStrainID = 20;
 	double datasetWeight = 1.0;
 	boolean[] needRestore = null;
 	Vector overallVector = null;
@@ -189,7 +191,7 @@ public class DataFileSet extends XRDcat {
 
   @Override
   public void initConstant() {
-    Nstring = 20;
+    Nstring = 21;
     Nstringloop = 0;
     Nparameter = 12;
     Nparameterloop = 3;
@@ -223,6 +225,7 @@ public class DataFileSet extends XRDcat {
     setFluorescence("none fluorescence");
     stringField[0] = "Date/time meas"; // to avoid the notify staff
     setRandomTexture("false");
+	    setNoStrain("false");
 	  setBackgroundInterpolationIterations(MaudPreferences.getInteger("backgroundSubtraction.iterations", 10));
 	  setString(datasetWeightFieldID, "1.0");
 	    for (int i = 0; i < Nparameter; i++)
@@ -300,6 +303,7 @@ public class DataFileSet extends XRDcat {
     replaceDatafile = mustReplace();
     automaticPolynomialBackground = isAutomaticPolynomialBackground();
     randomTexture = hasRandomTexture();
+    noStrain = hasNoStrain();
 	    bkgDatafiles.removeAllElements();
       for (int i = 0; i < datafilesnumber(); i++) {
         DiffrDataFile tmpDatafile = getDataFile(i);
@@ -2074,10 +2078,6 @@ public class DataFileSet extends XRDcat {
     return getRandomTexture().equals("true");
   }
 
-  public boolean randomTexture() {
-    return randomTexture;
-  }
-
   public void setRandomTexture(String avalue) {
     setString(randomTextureID, avalue);
   }
@@ -2100,6 +2100,39 @@ public class DataFileSet extends XRDcat {
 			Phase phase = getSample().getPhase(j);
 			for (int i = 0; i < activedatafilesnumber(); i++)
 				getActiveDataFile(i).resetForRandomTexture(phase);
+		}
+	}
+
+	public String getNoStrain() {
+		return getString(noStrainID);
+	}
+
+	public boolean hasNoStrain() {
+		return getNoStrain().equals("true");
+	}
+
+	public void setNoStrain(String avalue) {
+		setString(noStrainID, avalue);
+	}
+
+	public void setNoStrain(boolean avalue) {
+		if (avalue)
+			setNoStrain("true");
+		else
+			setNoStrain("false");
+		noStrain = hasNoStrain();
+		Sample asample = (Sample) getParent();
+		resetForNoStrain();
+
+//    System.out.println(toXRDcatString() + " enabled");
+	}
+
+	private void resetForNoStrain() {
+		int phasesnumber = getSample().phasesNumber();
+		for (int j = 0; j < phasesnumber; j++) {
+			Phase phase = getSample().getPhase(j);
+			for (int i = 0; i < activedatafilesnumber(); i++)
+				getActiveDataFile(i).resetForNoStrain(phase);
 		}
 	}
 

@@ -1943,7 +1943,7 @@ public static final String getSpaceGroup(int index, int sgconv) {
 
   public void sghklcompute(boolean forceRange) {
     if (refreshReflectionv) {
-      System.out.println("compute " + refreshReflectionv);
+//      System.out.println("compute " + refreshReflectionv);
       refreshReflectionv = false;
       refreshFhklcomp = true;
       refreshCrystMicrostrain = true;
@@ -2517,9 +2517,9 @@ public static final String getSpaceGroup(int index, int sgconv) {
   }*/
 
   public int gethklNumber() {
-	  System.out.println("Before " + getPhaseName() + " " + reflectionv.size());
+//	  System.out.println("Before " + getPhaseName() + " " + reflectionv.size());
     sghklcompute(false);
-	  System.out.println("After  " + getPhaseName() + " " + reflectionv.size());
+//	  System.out.println("After  " + getPhaseName() + " " + reflectionv.size());
     return reflectionv.size();
   }
 

@@ -43,7 +43,34 @@ from the older one.
 
 Maud Version notes:
 
-(1/01/2017):    2.73. The "Vilnius" release.
+(10/07/2017):   2.76. The "kite" release.
+                Finally is flying.
+                Now if you have the "default.par" file messed up (the one loaded
+                by Maud when you choose "New analysis") you can start a new
+                analysis, delete all the objects you have (first all phases if
+                any, than the sample), the sample and the dataset will be recreated
+                as the default one. Then, save the analysis, this new default.par
+                will be saved over the one messed up.
+                Now,  when you edit the dataset, under general you can specify and
+                force a specific dataset to use random texture and no strains.
+                This is usefull when you mix datasets measured under stress with
+                data measured with no stress applied. Same as for texture.
+
+(04/07/2017):   2.75. The "Fixed" release.
+                Let's hope it is.
+                On Mac OS by mistake the use of the cctbx library for space group
+                calculation was activated, but it is still not fully working.
+                I removed the library to avoid the problem and it will be added
+                only when ready.
+                Now when you create a new dataset, the default instrument will
+                correctly define the default "Instrument disalignment" model
+                for the angular calibration as the twotheta shift error has
+                been removed and substituted by this model.
+
+(26/06/2017):   2.74. The "Bugged" release.
+                Renamed as too many annoying errors where introduced.
+
+(21/06/2017):   2.73. The "Vilnius" release.
                 Dancing researchers on the streets.
                 Export for FPSM, from the separate plot window in the tools
                 menu. The exported cif can be loaded as datafile into the

@@ -1023,17 +1023,7 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
     }
 
     rebuildParameterTreeList(null, -1);
-    if (parameterfile != null) {
-      if (parameterfile.getActiveSample() == null)
-        parameterfile.newsample();
-      parameterfile.getSamplesList().setList(samplesList);
-      if (parameterfile.getActiveSample() != null) {
-        if (parameterfile.getActiveSample().getPhasesList() != null)
-          parameterfile.getActiveSample().getPhasesList().setList(phaseList);
-        if (parameterfile.getActiveSample().getDatasetsList() != null)
-          parameterfile.getActiveSample().getDatasetsList().setList(datasetsList);
-      }
-    }
+    refreshTheTree();
     updateDataFilePlot(false);
     outputPanel.reset();
     outputPanel.removeAllButtons();
@@ -1042,7 +1032,22 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
     }
   }
 
-  public void dispose(myJFrame child) {
+	public void refreshTheTree() {
+		if (parameterfile != null) {
+			if (parameterfile.getActiveSample() == null)
+				parameterfile.newsample();
+			parameterfile.getSamplesList().setList(samplesList);
+			if (parameterfile.getActiveSample() != null) {
+				if (parameterfile.getActiveSample().getPhasesList() != null)
+					parameterfile.getActiveSample().getPhasesList().setList(phaseList);
+				if (parameterfile.getActiveSample().getDatasetsList() != null)
+					parameterfile.getActiveSample().getDatasetsList().setList(datasetsList);
+			}
+		}
+
+	}
+
+	public void dispose(myJFrame child) {
     if (child == parListFrame)
       parListFrame = null;
   }
@@ -1210,13 +1215,16 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
     int index = getVisibleTabPanelIndex();
     switch (index) {
       case 0: // datasets
-        parameterfile.getActiveSample().newData(3);
+        DataFileSet adata = parameterfile.getActiveSample().newData(3);
+	      adata.getInstrument();
         break;
       case 1: // phases
         parameterfile.getActiveSample().newPhase();
         break;
       case 2: // samples
-        parameterfile.newObject(0);
+/*        parameterfile.newObject(0);
+	      parameterfile.getActiveSample().newData(3);
+	      adata.getInstrument();*/
         break;
       default: {
       }
@@ -1359,6 +1367,7 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
         }
       }
     }
+    initParameters();
   }
 
   boolean result = false;

@@ -99,7 +99,8 @@ public class SpaceGroups {
 	                                                             double[] cell, double minimumDspace);
 
 	public static boolean useCCTBX() {
-		return MaudPreferences.getBoolean("spacegroup.useCCTBX", true) && loaded;
+		return MaudPreferences.getBoolean("spacegroup.useCCTBX", true) && loaded &&
+				Constants.testing;
 	}
 
 	public static String getCorrectSpaceGroupHall(String sg) {
