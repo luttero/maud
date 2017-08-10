@@ -129,11 +129,19 @@ public class EDXRFAngularCalibration extends AngularCalibration {
 		int channel = 0;
 		double value = datafile.getXDataForCalibration(channel);
 		double angcal = zero + gain * value;
+		double minValue = Math.abs(angcal);
 
-		while (angcal > 0)
-			angcal = zero + gain * datafile.getXDataForCalibration(--channel);
-		while (angcal < 0)
+		while (angcal < 0) {
 			angcal = zero + gain * datafile.getXDataForCalibration(++channel);
+			double absValue = Math.abs(angcal);
+			if (absValue < minValue)
+				minValue = absValue;
+		}
+		while (angcal > 0 && channel > 0) {
+			angcal = zero + gain * datafile.getXDataForCalibration(--channel);
+		}
+		if (minValue < Math.abs(angcal))
+			channel++;
 
 		return channel;
 	}

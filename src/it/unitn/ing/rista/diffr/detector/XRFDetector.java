@@ -438,6 +438,21 @@ public class XRFDetector extends Detector {
 		return integral;
 	}
 
+	public double computeMACForLineWithEnergy(double energyInKeV) {
+		// only valid for one layer, revise for more layers, todo
+		double integral = 0.0;
+		double totalThickness = 0;
+		for (int i = 0; i < getList(filter_material_id).size(); i++) {
+			AbsorptionWindow absorptionWindow = (AbsorptionWindow) getList(filter_material_id).elementAt(i);
+			double thick = absorptionWindow.getWindowThickness();
+			integral += absorptionWindow.computeMACForLineWithEnergy(energyInKeV) * thick;
+			totalThickness += thick;
+		}
+		return integral / totalThickness;
+	}
+
+
+
 	public double computeDetectorEfficiency(double energyInKeV) {
 		double absorption = 0;
 		double totalFraction = getTotalSemiconductorAtomFraction();

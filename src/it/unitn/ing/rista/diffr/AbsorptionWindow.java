@@ -193,6 +193,18 @@ public class AbsorptionWindow extends XRDcat {
 		return integral;
 	}
 
+	public double computeMACForLineWithEnergy(double energyInKeV) {
+		double absorption = 0;
+		for (int i = 0; i < subordinateloopField[window_composition_id].size(); i++) {
+			String atomLabel = ((CompositionElement) subordinateloopField[window_composition_id].elementAt(i)).getString(0);
+			double atomFraction = ((CompositionElement) subordinateloopField[window_composition_id].elementAt(i)).getParameterValue(0) /
+					totalAtomFraction;
+			int atomNumber = AtomInfo.retrieveAtomNumber(atomLabel);
+			absorption += atomFraction * XRayDataSqLite.getTotalAbsorptionForAtomAndEnergy(atomNumber, energyInKeV);
+		}
+		return absorption;
+	}
+
 	public double computeAbsorptionForLineWithEnergy(double energyInKeVIntensity, double incidentAngleInRad) {
 		double absorption = 0;
 		for (int i = 0; i < subordinateloopField[window_composition_id].size(); i++) {

@@ -504,7 +504,7 @@ public class InstrumentBroadeningGSAS1f extends InstrumentBroadening {
   }
 
 
-  public double[] getInstrumentalBroadeningAt(double x, DiffrDataFile diffrDataFile) {
+  public double[][] getInstrumentalBroadeningAt(double x, DiffrDataFile diffrDataFile) {
 
     int bank = getBankNumber(diffrDataFile);
     double d = diffrDataFile.getXDataDspace(x);
@@ -521,7 +521,7 @@ public class InstrumentBroadeningGSAS1f extends InstrumentBroadening {
     double x2 = ainstrument.getAngularCalibration().calibrateX(diffrDataFile, xo + sigma);
 //	  System.out.println(x + " " + sigma + " " + xo + " " + (xo - sigma) + " " + (xo + sigma));
     sigma = x2 - x1;
-    return new double[]{0.0, Math.max(sigma, InstrumentBroadeningPVCaglioti.minimumHWHMvalue)};
+    return new double[][]{{0.0, Math.max(sigma, InstrumentBroadeningPVCaglioti.minimumHWHMvalue)}};
   }
 
 /*  public double getConvolutedBroadening(double x, double[] tilting_angles, boolean dspacingbase) {

@@ -43,6 +43,12 @@ from the older one.
 
 Maud Version notes:
 
+(10/07/2017):   2.78. The "Astix" release.
+                We achieved 4E9 photon/sec in the lab.
+                Fixed an issue using an interpolated background with intensity
+                calibration.
+                Implemented the proper asymmetry function for X-ray fluorescence.
+
 (10/07/2017):   2.76. The "kite" release.
                 Finally is flying.
                 Now if you have the "default.par" file messed up (the one loaded

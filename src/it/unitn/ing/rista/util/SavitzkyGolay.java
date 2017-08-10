@@ -24,11 +24,8 @@ public class SavitzkyGolay {
 		// derivative evaluated at i, order k, over 2m+1 points
 		double gramPol;
 		if (k > 0) {
-			gramPol = ((double) (4*k-2)) / ((double) (k*(2*m-k+1))) *
-					(((double) (i)) * gramPoly(i, m, k-1, s) +
-							((double) (s)) * gramPoly(i, m, k-1, s-1)) -
-					((double) ((k-1)*(2*m+k))) / ((double) (k*(2*m-k+1))) *
-					gramPoly(i, m, k-2, s);
+			gramPol = (gramPoly(i, m, k-1, s) * i + gramPoly(i, m, k-1, s-1) * s) * (4*k-2) / (k*(2*m-k+1)) -
+					gramPoly(i, m, k-2, s) * (2*m+k) * (k-1) / (k*(2*m-k+1));
 		} else {
 			if ((k == 0) && (s == 0)) {
 				gramPol = 1.0;
@@ -45,8 +42,8 @@ public class SavitzkyGolay {
 		// i, t from -m to m, t != 0 when evaluating initial or final points
 		double w = 0;
 		for (int k = 0; k <= n; k++) {
-			w += ((double) ((2*k+1) * genFact(2*m, k))) / ((double) genFact(2*m+k+1, k+1)) *
-			gramPoly(i, m, k, 0) * gramPoly(t, m, k, s);
+			w += gramPoly(i, m, k, 0) * gramPoly(t, m, k, s) * (2*k+1) *
+					genFact(2*m, k) / genFact(2*m+k+1, k+1);
 		}
 		return w;
 	}
@@ -349,7 +346,7 @@ public class SavitzkyGolay {
 				}
 
 			} // end of while loop "finished"
-			System.out.println(i + " " + index[i]);
+//			System.out.println(i + " " + index[i]);
 		}
 		return index;
 	}

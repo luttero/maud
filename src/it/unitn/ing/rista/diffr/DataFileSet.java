@@ -1459,11 +1459,12 @@ public class DataFileSet extends XRDcat {
       intensity = new double[xlength];
       int mode = 0;  // default
       for (int is1 = 0; is1 < xlength; is1++) {
-        xcoord[is1] = (double) (xmin + is1 * stepX);
+      	tmpdatafile = (DiffrDataFile) datafiles.elementAt(0);
+        xcoord[is1] = tmpdatafile.getXDataOriginal(tmpdatafile.startingindex + is1);
         int total = 0;
         for (int sn = 0; sn < ylength; sn++) {
           tmpdatafile = (DiffrDataFile) datafiles.elementAt(sn);
-          double xstartmin = tmpdatafile.getXDataForPlot(tmpdatafile.startingindex, mode);
+/*          double xstartmin = tmpdatafile.getXDataForPlot(tmpdatafile.startingindex, mode);
           double xendmax = tmpdatafile.getXDataForPlot(tmpdatafile.finalindex - 1, mode);
           if (xendmax < tmpdatafile.getXDataForPlot(tmpdatafile.startingindex, mode))
             xendmax = tmpdatafile.getXDataForPlot(tmpdatafile.startingindex, mode);
@@ -1472,9 +1473,11 @@ public class DataFileSet extends XRDcat {
           if (xcoord[is1] >= xstartmin && xcoord[is1] <= xendmax) {
             double xvalue = xcoord[is1];
             double fitValue = tmpdatafile.getInterpolatedYForSummation(xvalue);
-            intensity[is1] += (double) fitValue;
+            intensity[is1] += fitValue;
             total++;
-          }
+          }*/
+	        intensity[is1] += tmpdatafile.getYData(tmpdatafile.startingindex + is1);
+	        total++;
         }
         if (total > 0)
           intensity[is1] /= total;
@@ -1482,22 +1485,27 @@ public class DataFileSet extends XRDcat {
       }
       boolean first = true;
 
-      boolean[] verifySameAngles = new boolean[DiffrDataFile.maxAngleNumber];
+//      boolean[] verifySameAngles = new boolean[DiffrDataFile.maxAngleNumber];
+      double[] meanAngles = new double[DiffrDataFile.maxAngleNumber];
       for (int ib = 0; ib < DiffrDataFile.maxAngleNumber; ib++)
-        verifySameAngles[ib] = true;
+	      meanAngles[ib] = 0;
+//        verifySameAngles[ib] = true;
       double[] firstTilt = null;
       int start = 0, end = 0;
+
+      boolean energyDispersive = false;
 
       for (int i = 0; i < ylength; i++) {
         try {
           tmpdatafile = (DiffrDataFile) datafiles.elementAt(i);
+          if (tmpdatafile.energyDispersive)
+	          energyDispersive = true;
           double[] tilt = tmpdatafile.getTiltingAngle();
-          if (i == 0) {
-            firstTilt = tilt;
-          }
+//          if (i == 0) firstTilt = tilt;
           for (int ib = 0; ib < DiffrDataFile.maxAngleNumber; ib++)
-            if (tilt[ib] != firstTilt[ib])
-              verifySameAngles[ib] = false;
+	          meanAngles[ib] += tilt[ib] / ylength;
+//            if (tilt[ib] != firstTilt[ib])
+//              verifySameAngles[ib] = false;
 //				if (tmpdatafile.getComputePermission()) {
 //          numberOfFilesTotal++;
           if (first) {
@@ -1506,16 +1514,19 @@ public class DataFileSet extends XRDcat {
             start = 0; // tmpdatafile.startingindex;
             datanumber = end - start;
 //          System.out.println("n="+i+" , start="+tmpdatafile.startingindex+" , end:"+tmpdatafile.finalindex);
-  				}
+          }
 
         } catch (Exception e) {
           e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-          out.println("File number: " + i + ", start: " + start + ", end: " + end);
-          out.println("Error summing files, may be they are uncompatible?");
+//          out.println("File number: " + i + ", start: " + start + ", end: " + end);
+//          out.println("Error summing files, may be they are uncompatible?");
         }
       }
 
 
+      if (energyDispersive)
+      	output.write("_pd_meas_scan_method disp");
+	    output.newLine();
       output.write("_pd_meas_number_of_points " + Integer.toString(xlength));
       output.newLine();
 /*      if (tmpdatafile.originalNotCalibrated) {
@@ -1524,11 +1535,11 @@ public class DataFileSet extends XRDcat {
       }*/
       output.newLine();
       for (int ib = 0; ib < DiffrDataFile.maxAngleNumber; ib++) {
-        if (verifySameAngles[ib]) {
+//        if (verifySameAngles[ib]) {
           output.write(DiffrDataFile.diclistc[ib + 1] + ' ');
-          output.write(Fmt.format(firstTilt[ib]));
+          output.write(Fmt.format(meanAngles[ib]));
           output.newLine();
-        }
+//        }
       }
       output.write(DiffrDataFile.diclistc[7] + ' ');
       output.write(tmpdatafile.getString(7));
@@ -1554,8 +1565,170 @@ public class DataFileSet extends XRDcat {
     }
   }
 
-  public void SumDatafileOutput(Frame aframe, boolean[] sameAngle,
-                                double[] angle) {
+	public void sumDatafileOutput(Frame aframe, int selectedIndex, double angle_range) {
+		int datanumber = 0;
+		double[] xcoord = null;
+		double[] intensity = null;
+		double angleRange = Math.abs(2 * angle_range);
+
+		String filename = Utility.openFileDialog(aframe, "Save summed datafile as (.esg extension mandatory)",
+				FileDialog.SAVE, getFilePar().getDirectory(), null, "put a name (with extension).esg");
+		if (filename == null)
+			return;
+
+		String[] folderAndName = Misc.getFolderandName(filename);
+		String folder = folderAndName[0];
+		filename = folderAndName[1];
+
+		DiffrDataFile tmpdatafile = null;
+
+		Vector datafiles = getSelectedDatafiles();
+		int datafilenumber = datafiles.size();
+		if (datafilenumber == 0) {
+			(new AttentionD(new Frame(), "No selected items in the list")).setVisible(true);
+			return;
+		}
+
+		Vector<DiffrDataFile> datafileOrdered = new Vector<>(datafilenumber, 10);
+		for (int i = 0; i < datafilenumber; i++) {
+			tmpdatafile = (DiffrDataFile) datafiles.elementAt(i);
+			datafileOrdered.add(tmpdatafile);
+		}
+		Collections.sort(datafileOrdered, new AngleComparator(selectedIndex));
+
+		Vector<Vector<DiffrDataFile>> datafileTable = new Vector<>();
+		double startingAngle = datafileOrdered.elementAt(0).getTiltingAngle()[selectedIndex];
+		double maxAngle = datafileOrdered.elementAt(datafilenumber - 1).getTiltingAngle()[selectedIndex];
+		double angle = startingAngle;
+		int index = 0;
+		int groupIndex = 0;
+		while (angle < maxAngle && index < datafilenumber) {
+			double nextAngle = angle + angleRange;
+			boolean nextGroup = false;
+			Vector<DiffrDataFile> datalist = new Vector<>();
+			while (index < datafilenumber && !nextGroup) {
+				double actualAngle = datafileOrdered.elementAt(index).getTiltingAngle()[selectedIndex];
+//				System.out.println(index + " " + angle + " " + nextAngle + " " + actualAngle);
+				if (actualAngle >= angle && actualAngle <= nextAngle) {
+					datalist.add(datafileOrdered.elementAt(index++));
+				} else {
+					nextGroup = true;
+				}
+			}
+			if (datalist.size() > 0)
+				datafileTable.add(datalist);
+			angle = nextAngle;
+		}
+
+		BufferedWriter output = Misc.getWriter(folder, filename);
+		int groupfilenumber = datafileTable.size();
+		for (int ij = 0; ij < groupfilenumber; ij++) {
+			Vector<DiffrDataFile> datalist = datafileTable.elementAt(ij);
+			try {
+				boolean first = true;
+				boolean energyDispersive = false;
+				boolean useCountTimeToScale = false;
+
+				datafilenumber = datalist.size();
+
+				double[] meanAngle = new double[DiffrDataFile.maxAngleNumber];
+				double countingTime = 0;
+				for (int k = 0; k < DiffrDataFile.maxAngleNumber; k++)
+					meanAngle[k] = 0;
+				for (int j = 0; j < datafilenumber; j++) {
+					for (int k = 0; k < DiffrDataFile.maxAngleNumber; k++)
+						meanAngle[k] += datalist.elementAt(j).getTiltingAngle()[k];
+					if (datalist.elementAt(j).useCountTimeToScale())
+						useCountTimeToScale = true;
+					countingTime += datalist.elementAt(j).getCountTimeValue();
+				}
+				for (int k = 0; k < DiffrDataFile.maxAngleNumber; k++)
+					meanAngle[k] /= datafilenumber;
+
+				for (int i = 0; i < datafilenumber; i++) {
+					tmpdatafile = datalist.elementAt(i);
+					if (tmpdatafile.energyDispersive)
+						energyDispersive = true;
+					if (first) {
+						first = false;
+						datanumber = tmpdatafile.finalindex - tmpdatafile.startingindex;
+						xcoord = new double[datanumber];
+						intensity = new double[datanumber];
+						for (int j = tmpdatafile.startingindex; j < tmpdatafile.finalindex; j++) {
+							xcoord[j - tmpdatafile.startingindex] = tmpdatafile.getXDataOriginal(j);
+							intensity[j - tmpdatafile.startingindex] = tmpdatafile.getYData(j);
+						}
+					} else {
+						for (int j = tmpdatafile.startingindex; j < tmpdatafile.finalindex; j++) {
+							intensity[j - tmpdatafile.startingindex] += tmpdatafile.getYData(j);
+						}
+					}
+				}
+				output.write("_pd_block_id " + tmpdatafile.toString());
+				output.newLine();
+				output.newLine();
+				output.write("_pd_meas_number_of_points " + Integer.toString(datanumber));
+				output.newLine();
+				output.write("_riet_meas_datafile_calibrated false");
+				output.newLine();
+				output.write(DiffrDataFile.diclistc[DiffrDataFile.countingTimeValueID] + " ");
+				output.write(Fmt.format(countingTime));
+				output.newLine();
+				if (energyDispersive) {
+					output.write(DiffrDataFile.pd_meas_scan_method + " disp");
+					output.newLine();
+				}
+				if (useCountTimeToScale) {
+					output.write(DiffrDataFile.diclistc[DiffrDataFile.useCountTimeToScaleID] + " true");
+					output.newLine();
+				}
+				output.newLine();
+				for (int ib = 0; ib < DiffrDataFile.maxAngleNumber; ib++) {
+						output.write(DiffrDataFile.diclistc[ib + 1] + ' ');
+						output.write(Fmt.format(meanAngle[ib]));
+						output.newLine();
+				}
+//				output.write(DiffrDataFile.diclistc[7] + ' ');
+//				output.write(tmpdatafile.getString(7));
+//				output.newLine();
+				output.newLine();
+				output.write("loop_");
+				output.newLine();
+				if (energyDispersive) {
+					output.write(DiffrDataFile.pd_meas_counts_total);
+					output.newLine();
+					for (int i = 0; i < datanumber; i++) {
+						output.write(Fmt.format(intensity[i]));
+						output.newLine();
+					}
+					output.newLine();
+				} else {
+					output.write(tmpdatafile.getCIFXcoord());
+					output.newLine();
+					output.write(DiffrDataFile.intensityCalcCIFstring);
+					output.newLine();
+					for (int i = 0; i < datanumber; i++) {
+						output.write(' ' + Fmt.format(xcoord[i]) + ' ' + Fmt.format(intensity[i]));
+						output.newLine();
+					}
+					output.newLine();
+				}
+			} catch (IOException ignored) {
+			}
+//			datalist.removeAllElements();
+//      datalist = null;
+		}
+		try {
+			output.flush();
+			output.close();
+		} catch (IOException ignored) {
+		}
+		datafileTable.removeAllElements();
+		datafileOrdered.removeAllElements();
+//    datafileTable = null;
+	}
+
+	public void SumDatafileOutput(Frame aframe, boolean[] sameAngle, double[] angle) {
     int datanumber = 0;
     double[] xcoord = null;
     double[] intensity = null;
@@ -1581,8 +1754,8 @@ public class DataFileSet extends XRDcat {
       return;
     }
 
-    Vector<double[]> angles = new Vector<double[]>(10, 10);
-    Vector<Vector<DiffrDataFile>> datafileTable = new Vector<Vector<DiffrDataFile>>(10, 10);
+    Vector<double[]> angles = new Vector<>(10, 10);
+    Vector<Vector<DiffrDataFile>> datafileTable = new Vector<>(10, 10);
     int check;
 //    boolean[] alreadyPickedUp = new boolean[datafilenumber];
 //    for (int i = 0; i < datafilenumber; i++)
@@ -1595,7 +1768,7 @@ public class DataFileSet extends XRDcat {
         check = getAnglesPosition(angles, tilt, sameAngle, angleRange);
         if (check == -1) {
           angles.addElement(tilt);
-          Vector<DiffrDataFile> datalist = new Vector<DiffrDataFile>(0, 1);
+          Vector<DiffrDataFile> datalist = new Vector<>(0, 1);
           datalist.addElement(tmpdatafile);
           datafileTable.addElement(datalist);
         } else {
@@ -1621,7 +1794,7 @@ public class DataFileSet extends XRDcat {
     }
 
     boolean[] verifySameAngles = new boolean[sameAngle.length];
-    double[] meanAngles = new double[sameAngle.length];
+    double[] meanAngles = new double[angle.length];
     for (int ij = 0; ij < groupfilenumber; ij++) {
 
       Vector<DiffrDataFile> datalist = datafileTable.elementAt(ij);
@@ -1634,12 +1807,16 @@ public class DataFileSet extends XRDcat {
       try {
         boolean first = true;
 
-        datafilenumber = datalist.size();
+	      boolean energyDispersive = false;
+
+	      datafilenumber = datalist.size();
         for (int ib = 0; ib < sameAngle.length; ib++)
           verifySameAngles[ib] = true;
         double[] firstTilt = null;
         for (int i = 0; i < datafilenumber; i++) {
           tmpdatafile = datalist.elementAt(i);
+          if (tmpdatafile.energyDispersive)
+          	energyDispersive = true;
           double[] tilt = tmpdatafile.getTiltingAngle();
           if (i == 0) {
             firstTilt = tilt;
@@ -1680,7 +1857,11 @@ public class DataFileSet extends XRDcat {
         output.newLine();
         output.write("_riet_meas_datafile_calibrated false");
         output.newLine();
-        output.newLine();
+        if (energyDispersive) {
+	        output.write("_pd_meas_scan_method disp");
+	        output.newLine();
+        }
+	      output.newLine();
         for (int ib = 0; ib < sameAngle.length; ib++) {
           if (verifySameAngles[ib]) {
             output.write(DiffrDataFile.diclistc[ib + 1] + ' ');
@@ -3782,6 +3963,27 @@ public class DataFileSet extends XRDcat {
       return 1;
     }
   }
+
+	class AngleComparator implements Comparator {
+
+		public int selectedAngle = 0;
+
+		AngleComparator(int index) {
+			selectedAngle = index;
+		}
+
+		public int compare(Object obj1, Object obj2) {
+			double dspace1 = ((DiffrDataFile) obj1).getTiltingAngle()[selectedAngle];
+			double dspace2 = ((DiffrDataFile) obj2).getTiltingAngle()[selectedAngle];
+			double diff = dspace1 - dspace2;
+
+			if (diff == 0.0)
+				return 0;
+			else if (diff > 0)
+				return 1;
+			return -1;
+		}
+	}
 
 }
 

@@ -237,7 +237,10 @@ public class Constants {
 	public static final double LN2_2 = 3.4657359027997E-01;
   public static final double sqrtln2pi = 4.6971863935E-01;
   public static final double SQRT_OF_PILN2 = 1.475664626635606;
+  public static final double sqrt2ln2 = 1.177410022515475;
+  public static final double one_sqrt2ln2 = 0.849321800288019;
   public static final double sqrt2 = 1.41421356237;
+	public static final double one_sqrt2 = 0.707106781186548;
   public static final double sqrt3 = 1.73205080757;
   public static final double mstraintoetilde = 1.253314137316; // Math.sqrt(Math.PI/2)
   public static final double integrationStepPF = 1.0;
@@ -261,13 +264,13 @@ public class Constants {
   public static String resultsFile = "results.txt";
   public static String userName = null;
   public static String startPath = "/";
-  public static String maudReleaseBuilt = "$Revision: 2.76 $";
-  public static String maudDateBuilt = "$Date: 2017/07/10 21:58:00 $";
+  public static String maudReleaseBuilt = "$Revision: 2.78 $";
+  public static String maudDateBuilt = "$Date: 2017/08/09 21:24:00 $";
 
   public static final double arg2PIover3 = PI2 / 3.;
   public static final double sinArg2PIover3 = Math.sin(arg2PIover3);
   public static final double cosArg2PIover3 = Math.cos(arg2PIover3);
-  public static double maud_version = 2.76;
+  public static double maud_version = 2.78;
 	public static boolean useOpenCL = false;
 	public static Vector<OpenCLDevice> openClDevices= null;
 	public static OpenCLDevice openclDevice = null;

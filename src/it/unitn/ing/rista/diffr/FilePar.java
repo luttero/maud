@@ -2879,13 +2879,13 @@ public class FilePar extends XRDcat implements lFilePar, Function {
   }
 
   public double getWSS() {
-    double WSS = 0.0;
-    double diff;
+    double WSS = refinementIndexes[8];
+/*    double diff;
 
     for (int i = 0; i < numberOfData; i++) {
       diff = (getFit(i) - getData(i)) * getWeight(i);
       WSS += diff * diff;
-    }
+    }*/
 
 //    double[] indexes = getRefinementIndexes();
 

@@ -20,7 +20,9 @@
 package it.unitn.ing.rista.util;
 
 import com.github.tschoonj.xraylib.Xraylib;
-import it.unitn.ing.rista.chemistry.XRayDataSqLite;
+
+import static org.apache.commons.math3.special.Erf.erfc;
+//import com.imsl.math.Sfun;
 
 /**
  * The FluorescenceLine is a class to
@@ -31,16 +33,16 @@ import it.unitn.ing.rista.chemistry.XRayDataSqLite;
  */
 public class FluorescenceLine {
 
-	double dgx_dx = 1.0;
-	double dcx_dx = 1.0;
-	double eta_dx;
-	double hwhm_dx;
-	double one_over_hwhm_dx;
-	double dgx_sx = 1.0;
-	double dcx_sx = 1.0;
-	double eta_sx;
-	double hwhm_sx;
-	double one_over_hwhm_sx;
+	double dgx = 1.0;
+	double dcx = 1.0;
+	double eta;
+	double hwhm;
+	double one_over_hwhm;
+	double one_over_sigma;
+	double one_over_beta;
+	double one_over_beta2;
+	double fT;
+	double fS;
 
 	double energy;
 	double intensity = 1.0;
@@ -50,6 +52,7 @@ public class FluorescenceLine {
 	double coreShellEnergy = 0;
 	public String transitionID = "";
 	public int xrl_line_number = -9999;
+	public double mhuDet = 0;
 
 	public FluorescenceLine(double energyPosition, int inner_shell_ID, double innerShellEnergy, String id) {
     energy = energyPosition;
@@ -71,22 +74,18 @@ public class FluorescenceLine {
 	public FluorescenceLine(FluorescenceLine lineToCopy) {
 		energy = lineToCopy.energy;
 		intensity = lineToCopy.intensity;
+		mhuDet = lineToCopy.mhuDet;
 		coreShellID = lineToCopy.coreShellID;
 		transitionID = lineToCopy.transitionID;
 		xrl_line_number = lineToCopy.xrl_line_number;
 		transitionProbability = lineToCopy.transitionProbability;
 		fluorescenceYield = lineToCopy.fluorescenceYield;
 		coreShellEnergy = lineToCopy.coreShellEnergy;
-		eta_dx = lineToCopy.eta_dx;
-		hwhm_dx = lineToCopy.hwhm_dx;
-		one_over_hwhm_dx = 1.0 / hwhm_dx;
-		dgx_dx = (1.0 - eta_dx) * Constants.sqrtln2pi * one_over_hwhm_dx;
-		dcx_dx = eta_dx * one_over_hwhm_dx / Math.PI;
-		eta_sx = lineToCopy.eta_sx;
-		hwhm_sx = lineToCopy.hwhm_sx;
-		one_over_hwhm_sx = 1.0 / hwhm_sx;
-		dgx_sx = (1.0 - eta_sx) * Constants.sqrtln2pi * one_over_hwhm_sx;
-		dcx_sx = eta_sx * one_over_hwhm_sx / Math.PI;
+		eta = lineToCopy.eta;
+		hwhm = lineToCopy.hwhm;
+		one_over_hwhm = lineToCopy.one_over_hwhm;
+		dgx = lineToCopy.dgx;
+		dcx = lineToCopy.dcx;
 	}
 
   public void setIntensity(double intensity) {
@@ -107,36 +106,71 @@ public class FluorescenceLine {
 
 	public double getCoreShellEnergy() { return coreShellEnergy; }
 
-  public void setShape(double hwhm_dx, double eta_dx, double hwhm_sx, double eta_sx) {
-    this.hwhm_dx = hwhm_dx;
-    this.eta_dx = eta_dx;
-	  one_over_hwhm_dx = 1.0 / hwhm_dx;
-	  dgx_dx = (1.0 - eta_dx) * Constants.sqrtln2pi * one_over_hwhm_dx;
-	  dcx_dx = eta_dx * one_over_hwhm_dx / Math.PI;
-	  this.hwhm_sx = hwhm_sx;
-	  this.eta_sx = eta_sx;
-	  one_over_hwhm_sx = 1.0 / hwhm_sx;
-	  dgx_sx = (1.0 - eta_sx) * Constants.sqrtln2pi * one_over_hwhm_sx;
-	  dcx_sx = eta_sx * one_over_hwhm_sx / Math.PI;
+  public void setShape(double[][] broad) {
+		double energy = getEnergy();
+	  hwhm = broad[0][0];
+	  eta = broad[1][0];
+	  for (int i = 1; i < broad[0].length; i++) {
+	  	hwhm += broad[0][i] * MoreMath.pow(energy, i - 1);
+		  eta += broad[1][i] * MoreMath.pow(energy, i - 1);
+	  }
+	  hwhm = Math.sqrt(Math.abs(hwhm));
+
+	  fS = broad[2][0];
+		double beta = broad[3][0];
+	  for (int i = 1; i < broad[0].length; i++) {
+		  fS += broad[2][i] * MoreMath.pow(energy, i - 1);
+		  beta += broad[3][i] * MoreMath.pow(energy, i - 1);
+	  }
+	  fS *= mhuDet;
+
+	  if (beta > 0)
+	   one_over_beta = 1.0 / beta;
+	  else
+		  one_over_beta = 0.0;
+
+	  if (coreShellID != -1) {
+	  	if (transitionID.toUpperCase().startsWith("KL")) { // Kalpha
+		   fT = broad[4][0];
+		   for (int i = 1; i < broad[0].length; i++)
+			   fT += broad[4][i] * MoreMath.pow(mhuDet, i - 1);
+	   } else /*if (transitionID.toUpperCase().startsWith("KM"))*/ {
+		   fT = broad[5][0];
+		   for (int i = 1; i < broad[0].length; i++)
+			   fT += broad[5][i] * MoreMath.pow(mhuDet, i - 1);
+	   }
+	  }
+
+	  one_over_hwhm = 1.0 / hwhm;
+	  double symPeakIntensity = 1.0 - fT - fS;
+	  dgx = symPeakIntensity * (1.0 - eta) * Constants.sqrtln2pi * one_over_hwhm;
+	  dcx = symPeakIntensity * eta * one_over_hwhm / Math.PI;
+
+	  one_over_sigma = Constants.sqrt2ln2 * one_over_hwhm;
+
+	  one_over_beta2 = one_over_beta * one_over_beta;
   }
 
   public double getIntensity(double x) {
-    double dx = x - getEnergy();
-	  if (dx <= 0) {
-		  dx *= one_over_hwhm_sx;
-		  dx *= dx;
-		  if (dx > 30.0)
-			  return getIntensity() * dcx_sx / (1.0 + dx);
-		  else
-			  return getIntensity() * (dcx_sx / (1.0 + dx) + dgx_sx * Math.exp(-Constants.LN2 * dx));
-	  } else {
-		  dx *= one_over_hwhm_dx;
-		  dx *= dx;
-		  if (dx > 30.0)
-			  return getIntensity() * dcx_dx / (1.0 + dx);
-		  else
-			  return getIntensity() * (dcx_dx / (1.0 + dx) + dgx_dx * Math.exp(-Constants.LN2 * dx));
-	  }
+		double intensity = 0;
+    double dx1 = x - getEnergy();
+    double dx = dx1;
+	 dx *= one_over_hwhm;
+	 dx *= dx;
+//	 dx1 *= 0.001;
+	 if (dx > 30.0)
+		 intensity = getIntensity() * dcx / (1.0 + dx);
+	 else
+		 intensity = getIntensity() * (dcx / (1.0 + dx) + dgx * Math.exp(-Constants.LN2 * dx));
+
+	 if (fT > 0)
+	 intensity += getIntensity() * fT * one_over_beta * one_over_sigma * 0.5 / Math.exp(-0.5 * one_over_beta2) *
+			 Math.exp(dx1 * one_over_beta * one_over_sigma) *
+			 erfc(Constants.one_sqrt2 * (dx1 * one_over_sigma + one_over_beta));
+	 if (fS > 0)
+	   intensity += getIntensity() * fS * erfc(Constants.one_sqrt2 * dx1 * one_over_sigma) /
+			   (2.0 * getEnergy());
+	 return intensity;
 	}
 
   public void multiplyIntensityBy(double atomsQuantity) {
@@ -168,6 +202,6 @@ public class FluorescenceLine {
 	}
 
 	public void printToConsole() {
-		System.out.println("Peak " + energy + " " + dcx_dx + " " + dcx_sx + " " + dgx_dx + " " + dgx_sx + " " + hwhm_dx + " " + hwhm_sx + " " + eta_dx + " " + eta_sx);
+		System.out.println("Peak " + energy + " " + dcx + " " + dgx + " " + hwhm + " " + eta);
 	}
 }
