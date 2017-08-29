@@ -1283,7 +1283,7 @@ C
     }
     for (int itheta = 0; itheta < spectrumPointsNumber; itheta++) {
       for (int ieta = 0; ieta < spectraNumber; ieta++) {
-        if (counts[ieta][itheta] > 0) {
+        if (counts[ieta][itheta] > 2) {
           spectra[0][ieta][itheta] /= counts[ieta][itheta];
           spectra[1][ieta][itheta] /= counts[ieta][itheta];
           spectra[2][ieta][itheta] /= counts[ieta][itheta];
