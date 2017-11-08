@@ -60,11 +60,11 @@ public class DiffrDataFile extends XRDcat {
 
 	public static String[] diclistc = {
       "_riet_meas_datafile_format",
-      "_pd_meas_orientation_omega",
-      "_pd_meas_orientation_chi",
-      "_pd_meas_orientation_phi",
-      "_pd_meas_orientation_eta",
-			"_pd_meas_orientation_2theta",
+      "_pd_meas_angle_omega",
+      "_pd_meas_angle_chi",
+      "_pd_meas_angle_phi",
+      "_pd_meas_angle_eta",
+			"_pd_meas_angle_2theta",
 			"_pd_meas_energy_kev",
       "_riet_meas_datafile_compute",
       "_riet_meas_datafile_fitting",

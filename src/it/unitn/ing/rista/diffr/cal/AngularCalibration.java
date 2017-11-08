@@ -126,7 +126,7 @@ public class AngularCalibration extends it.unitn.ing.rista.diffr.Calibration {
 		return Constants.PI_2;
 	}
 
-	public boolean loadAndUnrollImage(ImagePlus imp, MultDiffrDataFile mdatafile) { return false; }
+	public boolean loadAndUnrollImage(ImagePlus imp, MultDiffrDataFile mdatafile, double[] gonioAngles) { return false; }
 
 	public boolean positionAlreadyCorrected() {
 		return false;

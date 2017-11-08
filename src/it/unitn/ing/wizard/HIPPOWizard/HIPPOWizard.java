@@ -178,10 +178,12 @@ public class HIPPOWizard extends Wizard {
               String name = data.dataFiles.get(k).toString() + "(" + Integer.toString(j) + ")";
 //              Misc.println("Add: " + name);
               adataset.addDataFileforName(name, false);
-//              adataset.refreshAll();
+
+//              adataset.refreshAll(true);
               int newdatanumber = adataset.datafilesnumber();
               if (newdatanumber > actualdatanumber) {
                 DiffrDataFile adatafile = adataset.getDataFile(actualdatanumber);
+
 	              adatafile.setAngleValue(0, omega);
 	              for (int bj = 0; bj < numberIndividualBackground; bj++)
                   adatafile.addBackgroundParameter();
@@ -285,8 +287,9 @@ public class HIPPOWizard extends Wizard {
 
           adataset.setMinRange(((HIPPOBank) data.mbank.elementAt(i)).dSpacingMin);
           adataset.setMaxRange(((HIPPOBank) data.mbank.elementAt(i)).dSpacingMax);
-          for (int k = 0; k < data.dataFiles.size(); k++) {
-	          HashMap<String, Vector<int[]>> datafilesNumberForBank = getDatafilesNumbersForBank(data.dataFiles.get(k).toString());
+	        analysis.loadingFile = false;
+	        for (int k = 0; k < data.dataFiles.size(); k++) {
+          	HashMap<String, Vector<int[]>> datafilesNumberForBank = getDatafilesNumbersForBank(data.dataFiles.get(k).toString());
             for (int j = 0; j < maxBanksNumber; j++) {
 	            try {
 		            Vector<int[]> bankNumber = datafilesNumberForBank.get(instAngCal.getBankID(j));
@@ -303,6 +306,7 @@ public class HIPPOWizard extends Wizard {
 						            adatafile[ij].addBackgroundParameter();
 						            adatafile[ij].addBackgroundParameter();
 					            }
+//					            System.out.println(adatafile[ij].toString() + " " + adatafile[ij].getBankID());
 				            }
 			            }
 		            }
@@ -312,6 +316,10 @@ public class HIPPOWizard extends Wizard {
 
             }
           }
+	        analysis.loadingFile = true;
+
+//	        adataset.refreshAll(true);
+
 	        for (int j = instAngCal.banknumbers() - 1; j >= 0; j--) {
 		        String bankID = instAngCal.getBankID(j);
 		        boolean present = false;
@@ -329,6 +337,7 @@ public class HIPPOWizard extends Wizard {
         }
       }
     }
+
     analysis.loadingFile = false;
     analysis.setStoreSpectraOption(original);
     analysis.refreshAll(false);

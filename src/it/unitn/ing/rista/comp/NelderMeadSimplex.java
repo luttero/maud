@@ -752,7 +752,7 @@ public class NelderMeadSimplex {
   // prec = truncation precision
 /*	public void print(String filename){
 
-	    if(filename.indexOf('.')==-1)filename = filename+".txt";
+	    if(filename.lastIndexOf('.')==-1)filename = filename+".txt";
 	    FileOutput fout = new FileOutput(filename, 'n');
 	    fout.dateAndTimeln(filename);
 	    fout.println(" ");

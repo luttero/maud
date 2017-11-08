@@ -43,6 +43,12 @@ from the older one.
 
 Maud Version notes:
 
+(03/11/2017):   2.79. The "Utah" release.
+                Ready to leave for ICOTOM.
+                Fixed the Hippo wizard.
+                Improved the automatic image slicing for tif in arbitrary
+                position.
+
 (10/07/2017):   2.78. The "Astix" release.
                 We achieved 4E9 photon/sec in the lab.
                 Fixed an issue using an interpolated background with intensity

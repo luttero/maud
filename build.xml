@@ -46,7 +46,7 @@
         <mkdir dir="${build}"/>
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
-        <javac destdir="${build_ant}" debug="on" target="${java_version}" encoding="UTF-8">
+        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" encoding="UTF-8">
             <src path="${src}"/>
             <!--exclude name="it/unitn/ing/jsginfo/**" /-->
             <!--exclude name="it/unitn/ing/jgraph/**" /-->
@@ -100,7 +100,7 @@
             <exclude name="ij/gui/PlotWindow.java"/>
             <exclude name="org/java/misc/GL4Installer/MSJVMVersionApplet.java"/>
             <exclude name="ec/**"/>
-            <exclude name="com/jtex/**"/>
+            <!--exclude name="com/jtex/**"/-->
             <exclude name="fr/ensicaen/**"/>
             <!--exclude name="it/unitn/ing/fortran/**" /-->
             <exclude name="help/**"/>
@@ -161,7 +161,7 @@
         <mkdir dir="build"/>
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
-        <javac destdir="${build_ant}" debug="on" target="${java_version}" encoding="UTF-8">
+        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" encoding="UTF-8">
             <src path="${src}"/>
             <!--exclude name="it/unitn/ing/jsginfo/**" /-->
             <!--exclude name="it/unitn/ing/jgraph/**" /-->
@@ -213,7 +213,7 @@
             <exclude name="ij/gui/PlotWindow.java"/>
             <exclude name="org/java/misc/GL4Installer/MSJVMVersionApplet.java"/>
             <exclude name="ec/**"/>
-            <exclude name="com/jtex/**"/>
+            <!--exclude name="com/jtex/**"/-->
             <exclude name="fr/ensicaen/**"/>
             <!--exclude name="it/unitn/ing/fortran/**" /-->
             <exclude name="help/**"/>
@@ -264,12 +264,12 @@
 
     <target name="build_full" depends="compile_open" description="Build Maud.jar.">
         <!-- Copy needed files into the build directory. -->
-        <delete dir="${build_ant}/ec"/>
+        <!--delete dir="${build_ant}/ec"/>
         <delete dir="${build_ant}/it/unitn/ing/esqui/client"/>
-        <!--delete dir="${build_ant}/it/unitn/ing/fortran" />
-    <delete dir="${build_ant}/it/unitn/ing/jgraph" /-->
-        <!--delete dir="${build_ant}/it/unitn/ing/jsginfo" /-->
-        <delete dir="${build_ant}/HTTPClient"/>
+        <delete dir="${build_ant}/it/unitn/ing/fortran" />
+        <delete dir="${build_ant}/it/unitn/ing/jgraph" />
+        <delete dir="${build_ant}/it/unitn/ing/jsginfo" />
+        <delete dir="${build_ant}/HTTPClient"/-->
         <copy file="${buildnumber}/Maud_full_build.number" todir="${build_ant}"/>
         <copy file="${src}/ij/IJ_Props.txt" todir="${build_ant}"/>
         <mkdir dir="${build_ant}/files"/>
@@ -281,6 +281,42 @@
         <copy file="${src}/files/CWWARRAY.DAT" todir="${build_ant}/files"/>
         <copy file="${src}/files/IADARRAY.DAT" todir="${build_ant}/files"/>
         <copy file="${src}/files/xraydata.db" todir="${build_ant}/files" />
+        <mkdir dir="${build_ant}/com/jtex/external/bin/glnx64"/>
+        <copy file="${src}/com/jtex/external/bin/glnx64/fc2odf" todir="${build_ant}/com/jtex/external/bin/glnx64"/>
+        <copy file="${src}/com/jtex/external/bin/glnx64/odf2fc" todir="${build_ant}/com/jtex/external/bin/glnx64"/>
+        <copy file="${src}/com/jtex/external/bin/glnx64/odf2pf" todir="${build_ant}/com/jtex/external/bin/glnx64"/>
+        <copy file="${src}/com/jtex/external/bin/glnx64/pdf2pf" todir="${build_ant}/com/jtex/external/bin/glnx64"/>
+        <copy file="${src}/com/jtex/external/bin/glnx64/pf2odf" todir="${build_ant}/com/jtex/external/bin/glnx64"/>
+        <mkdir dir="${build_ant}/com/jtex/external/bin/glnx86"/>
+        <copy file="${src}/com/jtex/external/bin/glnx86/fc2odf" todir="${build_ant}/com/jtex/external/bin/glnx86"/>
+        <copy file="${src}/com/jtex/external/bin/glnx86/odf2fc" todir="${build_ant}/com/jtex/external/bin/glnx86"/>
+        <copy file="${src}/com/jtex/external/bin/glnx86/odf2pf" todir="${build_ant}/com/jtex/external/bin/glnx86"/>
+        <copy file="${src}/com/jtex/external/bin/glnx86/pdf2pf" todir="${build_ant}/com/jtex/external/bin/glnx86"/>
+        <copy file="${src}/com/jtex/external/bin/glnx86/pf2odf" todir="${build_ant}/com/jtex/external/bin/glnx86"/>
+        <mkdir dir="${build_ant}/com/jtex/external/bin/maci"/>
+        <copy file="${src}/com/jtex/external/bin/maci/fc2odf" todir="${build_ant}/com/jtex/external/bin/maci"/>
+        <copy file="${src}/com/jtex/external/bin/maci/odf2fc" todir="${build_ant}/com/jtex/external/bin/maci"/>
+        <copy file="${src}/com/jtex/external/bin/maci/odf2pf" todir="${build_ant}/com/jtex/external/bin/maci"/>
+        <copy file="${src}/com/jtex/external/bin/maci/pdf2pf" todir="${build_ant}/com/jtex/external/bin/maci"/>
+        <copy file="${src}/com/jtex/external/bin/maci/pf2odf" todir="${build_ant}/com/jtex/external/bin/maci"/>
+        <mkdir dir="${build_ant}/com/jtex/external/bin/maci64"/>
+        <copy file="${src}/com/jtex/external/bin/maci64/fc2odf" todir="${build_ant}/com/jtex/external/bin/maci64"/>
+        <copy file="${src}/com/jtex/external/bin/maci64/odf2fc" todir="${build_ant}/com/jtex/external/bin/maci64"/>
+        <copy file="${src}/com/jtex/external/bin/maci64/odf2pf" todir="${build_ant}/com/jtex/external/bin/maci64"/>
+        <copy file="${src}/com/jtex/external/bin/maci64/pdf2pf" todir="${build_ant}/com/jtex/external/bin/maci64"/>
+        <copy file="${src}/com/jtex/external/bin/maci64/pf2odf" todir="${build_ant}/com/jtex/external/bin/maci64"/>
+        <mkdir dir="${build_ant}/com/jtex/external/bin/win32"/>
+        <copy file="${src}/com/jtex/external/bin/win32/fc2odf" todir="${build_ant}/com/jtex/external/bin/win32"/>
+        <copy file="${src}/com/jtex/external/bin/win32/odf2fc" todir="${build_ant}/com/jtex/external/bin/win32"/>
+        <copy file="${src}/com/jtex/external/bin/win32/odf2pf" todir="${build_ant}/com/jtex/external/bin/win32"/>
+        <copy file="${src}/com/jtex/external/bin/win32/pdf2pf" todir="${build_ant}/com/jtex/external/bin/win32"/>
+        <copy file="${src}/com/jtex/external/bin/win32/pf2odf" todir="${build_ant}/com/jtex/external/bin/win32"/>
+        <mkdir dir="${build_ant}/com/jtex/external/bin/win64"/>
+        <copy file="${src}/com/jtex/external/bin/win64/fc2odf" todir="${build_ant}/com/jtex/external/bin/win64"/>
+        <copy file="${src}/com/jtex/external/bin/win64/odf2fc" todir="${build_ant}/com/jtex/external/bin/win64"/>
+        <copy file="${src}/com/jtex/external/bin/win64/odf2pf" todir="${build_ant}/com/jtex/external/bin/win64"/>
+        <copy file="${src}/com/jtex/external/bin/win64/pdf2pf" todir="${build_ant}/com/jtex/external/bin/win64"/>
+        <copy file="${src}/com/jtex/external/bin/win64/pf2odf" todir="${build_ant}/com/jtex/external/bin/win64"/>
     <!--copy file="${src}/files/ElectronScatteringFactors.txt" todir="${build_ant}/files" />
     <copy file="${src}/files/asf_Kissel.dat" todir="${build_ant}/files" />
     <copy file="${src}/files/integratedBessel.dat" todir="${build_ant}/files" />
@@ -550,7 +586,7 @@
         <mkdir dir="build"/>
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
-        <javac destdir="${build_ant}" debug="on" target="${java_version}" encoding="UTF-8">
+        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" encoding="UTF-8">
             <src path="${src}"/>
             <exclude name="it/unitn/ing/esqui/client/**"/>
             <exclude name="it/unitn/ing/esqui/server/**"/>
@@ -702,7 +738,7 @@
         <mkdir dir="build"/>
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
-        <javac destdir="${build_ant}" debug="on" target="${java_version}" encoding="UTF-8">
+        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" encoding="UTF-8">
             <src path="${src}"/>
             <include name="com/deadmoo/xgridagent/**"/>
             <include name="jint/scimark2/**"/>
@@ -765,7 +801,7 @@
         <mkdir dir="build"/>
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
-        <javac destdir="${build_ant}" debug="on" target="${java_version}" encoding="UTF-8">
+        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" encoding="UTF-8">
             <src path="${src}"/>
             <include name="it/unitn/ing/xgridclient/**"/>
             <classpath>
@@ -815,7 +851,7 @@
         <mkdir dir="build"/>
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
-        <javac destdir="${build_ant}" debug="on" target="${java_version}" encoding="UTF-8">
+        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" encoding="UTF-8">
             <src path="${src}"/>
             <include name="it/unitn/ing/xgridclient/XGridHello.java"/>
             <classpath>
@@ -851,7 +887,7 @@
         <mkdir dir="build"/>
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
-        <javac destdir="${build_ant}" debug="on" target="${java_version}" encoding="UTF-8">
+        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" encoding="UTF-8">
             <src path="${src}"/>
             <include name="it/unitn/ing/xgridagent/XGridJavaLauncher.java"/>
             <!--include name="HTTPClient/*.java" />
@@ -1005,7 +1041,7 @@
         <mkdir dir="build"/>
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
-        <javac destdir="${build_ant}" debug="on" target="${java_version}" encoding="UTF-8">
+        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" encoding="UTF-8">
             <src path="${src}"/>
             <!--exclude name="it/unitn/ing/jsginfo/*" /-->
             <!--exclude name="it/unitn/ing/jgraph/*" /-->
@@ -1267,7 +1303,7 @@
         <mkdir dir="build"/>
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
-        <javac destdir="${build_ant}" debug="on" target="${java_version}" encoding="UTF-8">
+        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" encoding="UTF-8">
             <src path="${src}/it/unitn/ing/jsginfo"/>
             <exclude name="it/unitn/ing/jsginfo/sglib.java"/>
             <exclude name="it/unitn/ing/jsginfo/sginfoh.tmp.java"/>
@@ -1309,7 +1345,7 @@
         <mkdir dir="build"/>
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
-        <javac destdir="${build_ant}" debug="on" target="${java_version}" encoding="UTF-8">
+        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" encoding="UTF-8">
             <src path="${src}/ec"/>
             <exclude name="vector/AtomVectorIndividual.java"/>
             <exclude name="teambots/**"/>
@@ -1433,7 +1469,7 @@
         <mkdir dir="build"/>
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
-        <javac destdir="${build_ant}" debug="on" target="${java_version}" encoding="UTF-8">
+        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" encoding="UTF-8">
             <src path="${src}/it/unitn/ing/jgraph"/>
             <classpath>
                 <pathelement location="${build}/Maud_dev.jar"/>
@@ -1480,7 +1516,7 @@
         <mkdir dir="build"/>
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
-        <javac destdir="${build_ant}" debug="on" target="${java_version}" encoding="UTF-8">
+        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" encoding="UTF-8">
             <src path="${src}/gov/noaa/pmel"/>
             <!--classpath>
 			<pathelement location="${build}/Maud_dev.jar"/>
@@ -1555,11 +1591,11 @@
     </target>
 
 
-    <!--target name="compile_ImageJ" depends="clean" description="Compile ImageJ.jar">
+    <target name="compile_ImageJ" depends="clean" description="Compile ImageJ.jar">
     <delete dir="${build_ant}" />
     <mkdir dir="build" />
     <mkdir dir="${build_ant}" />
-    <javac destdir="${build_ant}" debug="on" target="1.5" encoding="UTF-8">
+    <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" encoding="UTF-8">
     	<src path="ImageJ"/>
       <exclude name="plugins/*" />
     </javac>
@@ -1573,7 +1609,7 @@
     <copy file="ImageJ/images/about.jpg" tofile="${build_ant}/about.jpg" />
     <copy file="${buildnumber}/ImageJ_build.number" todir="${build_ant}" />
     <jar jarfile="${build}/ij.jar" basedir="${build_ant}" manifest="ImageJ/MANIFEST.MF" />
-  </target!-->
+  </target>
 
 
     <target name="copy_ImageJ" description="Copy the ImageJ build files to the final destination.">
@@ -1604,7 +1640,7 @@
         <mkdir dir="build"/>
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
-        <javac destdir="${build_ant}" debug="on" target="1.5" encoding="UTF-8">
+        <javac destdir="${build_ant}" optimize="on" debug="on" target="1.5" encoding="UTF-8">
             <src path="${src}/HTTPClient"/>
         </javac>
         <buildnumber file="${buildnumber}/HTTPClient_build.number"/>
@@ -2239,7 +2275,7 @@
     </target-->
 
 
-    <target name="build_installers" depends="build_installer_osx"
+    <target name="build_installers" depends="bundle"
             description="Deploy the full build files to the web server.">
         <!--		<ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}" remotedir="${deployfulldir}">
   		<fileset file="${mirrorfulldir}/Maud.jar"/>

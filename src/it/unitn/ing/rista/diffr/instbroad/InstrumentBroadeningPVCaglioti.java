@@ -263,7 +263,7 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
     return truncationAngle;
   }
 
-	public static final int asymmetryReciprocalID = 2;
+	public static final int asymmetryReciprocalID = 4;
 
 	public void setAsymmetryReciprocal(String avalue) {
 		if (!getAsymmetryReciprocal().equalsIgnoreCase(avalue)) {

@@ -150,13 +150,13 @@ public class BrukerImageDatafile extends it.unitn.ing.rista.diffr.MultDiffrDataF
 //    System.out.println("Conversion to spectra done!");
           double xmin = min2theta * Constants.PITODEG;
           double etaStart = mineta * Constants.PITODEG;
-          int dotLocation = name.indexOf(".gfrm");
+          int dotLocation = name.lastIndexOf(".gfrm");
           String filename = name.substring(0, dotLocation) + ".esg";
           System.out.println("BrukerImageDatafile: " + profile.length + " " + profile[0].length + " " + xmin + " " +
               theta2Step + " " + etaStart + " " + coneInterval);
           FlatCCDReflectionSquareRoi.saveAsText(profile, profile.length, 0, profile[0].length, xmin, theta2Step,
               etaStart, coneInterval, directory, filename, "mm", dimension[7], dimension[3], dimension[4], dimension[6],
-              false);
+		          dimension[5], false);
           setLabel(filename);
           for (int spectrumIndex = 0; spectrumIndex < profile.length; spectrumIndex++) {
             String numberString = Integer.toString(spectrumIndex);

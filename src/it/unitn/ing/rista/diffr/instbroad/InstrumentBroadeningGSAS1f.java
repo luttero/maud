@@ -65,7 +65,7 @@ public class InstrumentBroadeningGSAS1f extends InstrumentBroadening {
   };
 
   protected static final String[] diclistcrm = {
-      "GSAS instrument parameter file", "Counter bank number", "truncation value",
+      "GSAS instrument parameter file", "truncation value",
 
       "bank number", "TOF profile function type (GSAS)",
 
@@ -841,6 +841,7 @@ public class InstrumentBroadeningGSAS1f extends InstrumentBroadening {
 	    tabPanel1.addTab(tempString[1], null, TexturePanel);
 
 	    setTitle("GSAS type instrument profile function");
+	    selectedBank = 0;
       initParameters();
 
       bankCB.addItemListener(new ItemListener() {

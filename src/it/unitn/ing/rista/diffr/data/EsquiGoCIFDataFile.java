@@ -266,6 +266,7 @@ public class EsquiGoCIFDataFile extends MultDiffrDataFile {
           datafile.setAngleValue(1, chi_angle);
           datafile.setAngleValue(2, phi_angle);
           datafile.setAngleValue(3, eta_angle);
+//          System.out.println(theta2_angle + " : " + theta2_angleD);
 	        if (theta2_angle.equalsIgnoreCase("=omega"))
 		        datafile.setAngleValue(4, omega_angle);
 	        else if (theta2_angleD == 0)
