@@ -281,47 +281,15 @@
         <copy file="${src}/files/CWWARRAY.DAT" todir="${build_ant}/files"/>
         <copy file="${src}/files/IADARRAY.DAT" todir="${build_ant}/files"/>
         <copy file="${src}/files/xraydata.db" todir="${build_ant}/files" />
-        <mkdir dir="${build_ant}/com/jtex/external/bin/glnx64"/>
-        <copy file="${src}/com/jtex/external/bin/glnx64/fc2odf" todir="${build_ant}/com/jtex/external/bin/glnx64"/>
-        <copy file="${src}/com/jtex/external/bin/glnx64/odf2fc" todir="${build_ant}/com/jtex/external/bin/glnx64"/>
-        <copy file="${src}/com/jtex/external/bin/glnx64/odf2pf" todir="${build_ant}/com/jtex/external/bin/glnx64"/>
-        <copy file="${src}/com/jtex/external/bin/glnx64/pdf2pf" todir="${build_ant}/com/jtex/external/bin/glnx64"/>
-        <copy file="${src}/com/jtex/external/bin/glnx64/pf2odf" todir="${build_ant}/com/jtex/external/bin/glnx64"/>
-        <mkdir dir="${build_ant}/com/jtex/external/bin/glnx86"/>
-        <copy file="${src}/com/jtex/external/bin/glnx86/fc2odf" todir="${build_ant}/com/jtex/external/bin/glnx86"/>
-        <copy file="${src}/com/jtex/external/bin/glnx86/odf2fc" todir="${build_ant}/com/jtex/external/bin/glnx86"/>
-        <copy file="${src}/com/jtex/external/bin/glnx86/odf2pf" todir="${build_ant}/com/jtex/external/bin/glnx86"/>
-        <copy file="${src}/com/jtex/external/bin/glnx86/pdf2pf" todir="${build_ant}/com/jtex/external/bin/glnx86"/>
-        <copy file="${src}/com/jtex/external/bin/glnx86/pf2odf" todir="${build_ant}/com/jtex/external/bin/glnx86"/>
-        <mkdir dir="${build_ant}/com/jtex/external/bin/maci"/>
-        <copy file="${src}/com/jtex/external/bin/maci/fc2odf" todir="${build_ant}/com/jtex/external/bin/maci"/>
-        <copy file="${src}/com/jtex/external/bin/maci/odf2fc" todir="${build_ant}/com/jtex/external/bin/maci"/>
-        <copy file="${src}/com/jtex/external/bin/maci/odf2pf" todir="${build_ant}/com/jtex/external/bin/maci"/>
-        <copy file="${src}/com/jtex/external/bin/maci/pdf2pf" todir="${build_ant}/com/jtex/external/bin/maci"/>
-        <copy file="${src}/com/jtex/external/bin/maci/pf2odf" todir="${build_ant}/com/jtex/external/bin/maci"/>
-        <mkdir dir="${build_ant}/com/jtex/external/bin/maci64"/>
-        <copy file="${src}/com/jtex/external/bin/maci64/fc2odf" todir="${build_ant}/com/jtex/external/bin/maci64"/>
-        <copy file="${src}/com/jtex/external/bin/maci64/odf2fc" todir="${build_ant}/com/jtex/external/bin/maci64"/>
-        <copy file="${src}/com/jtex/external/bin/maci64/odf2pf" todir="${build_ant}/com/jtex/external/bin/maci64"/>
-        <copy file="${src}/com/jtex/external/bin/maci64/pdf2pf" todir="${build_ant}/com/jtex/external/bin/maci64"/>
-        <copy file="${src}/com/jtex/external/bin/maci64/pf2odf" todir="${build_ant}/com/jtex/external/bin/maci64"/>
-        <mkdir dir="${build_ant}/com/jtex/external/bin/win32"/>
-        <copy file="${src}/com/jtex/external/bin/win32/fc2odf" todir="${build_ant}/com/jtex/external/bin/win32"/>
-        <copy file="${src}/com/jtex/external/bin/win32/odf2fc" todir="${build_ant}/com/jtex/external/bin/win32"/>
-        <copy file="${src}/com/jtex/external/bin/win32/odf2pf" todir="${build_ant}/com/jtex/external/bin/win32"/>
-        <copy file="${src}/com/jtex/external/bin/win32/pdf2pf" todir="${build_ant}/com/jtex/external/bin/win32"/>
-        <copy file="${src}/com/jtex/external/bin/win32/pf2odf" todir="${build_ant}/com/jtex/external/bin/win32"/>
-        <mkdir dir="${build_ant}/com/jtex/external/bin/win64"/>
-        <copy file="${src}/com/jtex/external/bin/win64/fc2odf" todir="${build_ant}/com/jtex/external/bin/win64"/>
-        <copy file="${src}/com/jtex/external/bin/win64/odf2fc" todir="${build_ant}/com/jtex/external/bin/win64"/>
-        <copy file="${src}/com/jtex/external/bin/win64/odf2pf" todir="${build_ant}/com/jtex/external/bin/win64"/>
-        <copy file="${src}/com/jtex/external/bin/win64/pdf2pf" todir="${build_ant}/com/jtex/external/bin/win64"/>
-        <copy file="${src}/com/jtex/external/bin/win64/pf2odf" todir="${build_ant}/com/jtex/external/bin/win64"/>
-    <!--copy file="${src}/files/ElectronScatteringFactors.txt" todir="${build_ant}/files" />
-    <copy file="${src}/files/asf_Kissel.dat" todir="${build_ant}/files" />
-    <copy file="${src}/files/integratedBessel.dat" todir="${build_ant}/files" />
-    <copy file="${src}/files/ScatteringLengths.txt" todir="${build_ant}/files" />
-    <copy file="${src}/files/CrossSection.dat" todir="${build_ant}/files" /-->
+        <mkdir dir="${build_ant}/com/jtex/data"/>
+        <copy todir="${build_ant}/com/jtex/data" >
+            <fileset dir="${src}/com/jtex/data" includes="**"/>
+        </copy>
+        <!--copy file="${src}/files/ElectronScatteringFactors.txt" todir="${build_ant}/files" />
+        <copy file="${src}/files/asf_Kissel.dat" todir="${build_ant}/files" />
+        <copy file="${src}/files/integratedBessel.dat" todir="${build_ant}/files" />
+        <copy file="${src}/files/ScatteringLengths.txt" todir="${build_ant}/files" />
+        <copy file="${src}/files/CrossSection.dat" todir="${build_ant}/files" /-->
         <mkdir dir="${build_ant}/media"/>
         <mkdir dir="${build_ant}/media/music"/>
         <mkdir dir="${build_ant}/media/music/samples"/>
@@ -2211,6 +2179,13 @@
         <!--copy file="cctbxForMaud/build/Debug/libcctbxForMaud.dylib" tofile="${inst}/Maud_mac/Maud.app/Contents/Plugins/Home/jre/lib/libcctbxForMaud.dylib" /-->
         <!--copy file="cctbxForMaud/libcctbx.dylib" tofile="${inst}/Maud_mac/Maud.app/Contents/MacOS/lib/libcctbx.dylib" />
         <copy file="cctbxForMaud/libcctbxForMaud.dylib" tofile="${inst}/Maud_mac/Maud.app/Contents/MacOS/libcctbxForMaud.dylib" /-->
+        <mkdir dir="${app_osx}/Maud.app/Contents/MacOS/mtex" />
+        <copy todir="${app_osx}/Maud.app/Contents/MacOS/mtex" >
+            <fileset dir="${src}/com/jtex/external/bin/maci64" includes="**"/>
+        </copy>
+        <exec executable="chmod">
+            <arg line=" -R a+x ${app_osx}/Maud.app/Contents/MacOS/mtex"/>
+        </exec>
     </target>
 
     <target name="build_installer_osx" depends="bundle" description="Build the macOS application">
@@ -2228,6 +2203,10 @@
         <apply dir="${installerDir}" executable="codesign">
             <arg line="-v -s &quot;Mac Developer: Luca Lutterotti (46BWEFAJP5)&quot; "/>
             <fileset dir="${app_osx}/Maud.app/Contents/Resources/Java" />
+        </apply>
+        <apply dir="${installerDir}" executable="codesign">
+            <arg line="-v -s &quot;Mac Developer: Luca Lutterotti (46BWEFAJP5)&quot; "/>
+            <fileset dir="${app_osx}/Maud.app/Contents/MacOS/mtex" />
         </apply>
         <exec dir="${installerDir}" executable="codesign" os="Mac OS X">
             <arg line="-v -s &quot;Mac Developer: Luca Lutterotti (46BWEFAJP5)&quot; --entitlements Maud.entitlements ${app_osx}/Maud.app"/>

@@ -43,6 +43,12 @@ from the older one.
 
 Maud Version notes:
 
+(11/01/2018):   2.80. The "Balilla" release.
+                Have you ever heard of the "Calcio Balilla" ?.
+                Improved import of esg file format for old files.
+                You have a comment string to input in the interface that will be saved
+                in the analysis.
+
 (03/11/2017):   2.79. The "Utah" release.
                 Ready to leave for ICOTOM.
                 Fixed the Hippo wizard.

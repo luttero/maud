@@ -1253,9 +1253,13 @@ public class FilePar extends XRDcat implements lFilePar, Function {
     saved = true;
   }
 
+  public void createFirstDateRecord() {
+	  stringField[1] = new String("Maud, version " + Constants.getVersion());
+	  stringField[0] = new String(Misc.getCurrentDateTime());
+  }
+
   public void refreshProgramInformations() {
-    stringField[1] = new String("Maud, version " + Constants.getVersion());
-    stringField[2] = new String("Last update " + Misc.getCurrentDateTime());
+    stringField[2] = new String(Misc.getCurrentDateTime());
     stringField[3] = new String("Maud, version " + Constants.getVersion());
   }
 

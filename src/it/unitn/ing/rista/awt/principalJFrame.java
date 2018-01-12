@@ -61,6 +61,7 @@ public class principalJFrame extends myJFrame {
 	public static String plotScale = "plot.scale";
 	public static String showProgressFrame = "shows.floatingProgressWindow";
 	public static String swingLF = "swing.defaultL&F";
+	JTextField titleField = null;
 
   public principalJFrame() {
     super(null);
@@ -165,6 +166,8 @@ public class principalJFrame extends myJFrame {
       parameterfile.setDirectory(folderAndName[0]);
       loadParameters(folderAndName, pcontrol);
       initParameters();
+      if (folderAndName[1].equalsIgnoreCase("default.par"))
+	      parameterfile.createFirstDateRecord();
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -181,6 +184,9 @@ public class principalJFrame extends myJFrame {
       parameterfile.readall(in, pcontrol);
 	    parameterfile.setFileName(folderAndName[1], false);
 	    parameterfile.setDirectory(folderAndName[0]);
+	    if (titleField != null) {
+		    titleField.setText(parameterfile.getTitleField());
+	    }
     } catch (Exception e) {
       e.printStackTrace();
     }

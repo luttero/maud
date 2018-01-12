@@ -367,7 +367,7 @@ public class Symmetry extends Quaternion {
             rho *= 2.0 / 3.0;
         } else if (schoen.isLaue("-3m")) {
 
-            System.out.println(rho);
+ //           System.out.println(rho);
             rho *= 2.0 / 3.0 / (antipodal ? 2 : 1);
         } else if (schoen.isLaue("4/m", "4/mmm", "m-3m")) {
             rho /= 2.0;

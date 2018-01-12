@@ -134,9 +134,9 @@ public class EsquiGoCIFDataFile extends MultDiffrDataFile {
 			        title = st.nextToken();
 			        if (title.startsWith("2001-10-2"))
 				        bkgmess = true;
-			        if (title.contains("|#"))
+			        if (title.contains("|#") || title.contains("Esqui") || title.contains("Seven circle diffractometer"))
 				        oldESGfile = true;
-			        if (linedata.contains("APD2000"))
+			        if (linedata.contains("APD2000") || linedata.contains("GD2000"))
 				        APD2000 = true;
 			        numberString = Integer.toString(++spectrumNumber);
 			        datafile = addDiffrDatafile(numberString);

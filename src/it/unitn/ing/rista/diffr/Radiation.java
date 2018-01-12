@@ -79,7 +79,7 @@ public class Radiation extends XRDcat {
 
   public void initParameters() {
     super.initParameters();
-    parameterField[0] = new Parameter(this, getParameterString(0), 1.5405981,
+    parameterField[0] = new Parameter(this, getParameterString(0), 1.5405929,
             ParameterPreferences.getDouble(getParameterString(0) + ".min", 0.1),
             ParameterPreferences.getDouble(getParameterString(0) + ".max", 10));
     parameterField[1] = new Parameter(this, getParameterString(1), 1.0,

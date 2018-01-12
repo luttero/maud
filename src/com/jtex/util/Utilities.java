@@ -6,7 +6,14 @@
 package com.jtex.util;
 
 import com.jtex.arrays.Array1D;
+import it.unitn.ing.rista.util.Constants;
+
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.attribute.PosixFilePermission;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
@@ -38,18 +45,43 @@ public class Utilities {
         
     }
 
-    private static final String appname = "JTex" + File.separator + "0.1";
+    private static final String appname = "maud"; //"JTex" + File.separator + "0.1";
 
     public static String getAppPath() {
 
-        String env;
-        if (System.getenv("APPDATA") != null) {
+        String env = Constants.startingAppDirectory;
+/*        if (System.getenv("APPDATA") != null) {
             env = System.getenv("APPDATA") + File.separator + appname;
         } else {
             env = System.getenv("user.home") + File.separator + "." + appname;
-        }
+        }*/
 
         return env;
     }
+
+	public static void setPermission(File file, boolean executing) throws IOException {
+    	try {
+	      Set<PosixFilePermission> perms = new HashSet<>();
+	      perms.add(PosixFilePermission.OWNER_READ);
+	      perms.add(PosixFilePermission.OWNER_WRITE);
+	      if (executing)
+	         perms.add(PosixFilePermission.OWNER_EXECUTE);
+
+	      perms.add(PosixFilePermission.OTHERS_READ);
+	      perms.add(PosixFilePermission.OTHERS_WRITE);
+	      if (executing)
+	         perms.add(PosixFilePermission.OWNER_EXECUTE);
+
+	      perms.add(PosixFilePermission.GROUP_READ);
+	      perms.add(PosixFilePermission.GROUP_WRITE);
+	      if (executing)
+	         perms.add(PosixFilePermission.GROUP_EXECUTE);
+
+	      Files.setPosixFilePermissions(file.toPath(), perms);
+      } catch (Exception io) {
+    		System.out.println("Setting permissions for file " + file.getAbsolutePath() + " failed!");
+    		io.printStackTrace();
+      }
+	}
 
 }

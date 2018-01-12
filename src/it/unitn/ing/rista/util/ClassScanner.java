@@ -334,7 +334,7 @@ public class ClassScanner {
       while (jarEntries.hasMoreElements()) {
         String classname = jarEntries.nextElement().toString();
 //        System.out.println(classname);
-        if (classname.endsWith(".class") && classname.indexOf('$') == -1) {
+        if (classname.endsWith(".class") && classname.indexOf('$') == -1 && !classname.startsWith("com/jtex")) {
           classname = classname.substring(0, classname.length() - 6);
           if (classname.startsWith("/"))
             classname = classname.substring(1);

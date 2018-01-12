@@ -39,7 +39,7 @@ public class App {
         contentPane.setLayout(new BorderLayout());
         contentPane.add(pane);
         contentPane.add(menubar, "North");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setVisible(true);
 
     }

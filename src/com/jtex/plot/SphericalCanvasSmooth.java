@@ -51,7 +51,7 @@ public class SphericalCanvasSmooth extends SphericalCanvas implements
         frm.getContentPane().setBackground(Color.WHITE);
         frm.setVisible(true);
         frm.setSize(500, 500);
-        frm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frm.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
     }
 

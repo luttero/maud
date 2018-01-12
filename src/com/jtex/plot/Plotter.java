@@ -316,7 +316,7 @@ public class Plotter {
         f.getContentPane().add(cmp);
         f.setVisible(true);
         if (exit) {
-            f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         }
 
     }

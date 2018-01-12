@@ -6,6 +6,8 @@
 package com.jtex.external;
 
 import com.jtex.util.Utilities;
+import it.unitn.ing.rista.util.Constants;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -56,7 +58,7 @@ public class Native {
         if (osArch.equals("i386") || osArch.equals("i686")) {
             return "86";
         }
-        if (osArch.equals("amd64") || osArch.equals("IA64N") || osArch.equals("IA64W")) {
+        if (osArch.equals("amd64") || osArch.equals("IA64N") || osArch.equals("x86_64") || osArch.equals("IA64W")) {
             return "64";
         }
         return osArch;
@@ -83,7 +85,7 @@ public class Native {
     }
 
     public static void loadLibrary(String libname) {
-        try {
+/*        try {
             String lib = libname + (os().startsWith("win") ? ".exe" : "");
 
             File f = new File(EXECUTABLE_PATH);
@@ -93,6 +95,7 @@ public class Native {
 
             File target = new File(f + File.separator + lib);
             if (!target.isFile()) {
+//            	System.out.println("Loading: " + EXECUTABLE_JARPATH + lib);
                 InputStream in = Native.class.getResourceAsStream(EXECUTABLE_JARPATH + lib);
                 File ex = File.createTempFile(libname, "", f);
                 FileOutputStream fos = new FileOutputStream(ex);
@@ -105,9 +108,11 @@ public class Native {
                 in.close();
                 ex.renameTo(target);
             }
+	        Utilities.setPermission(target, true);
+//	        target.setExecutable(true);
         } catch (IOException ex) {
             Logger.getLogger(Native.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }*/
     }
 
     public static double[] execute(ParamSet set) {
@@ -116,20 +121,22 @@ public class Native {
 
         try {
             List<String> cmd = new ArrayList<String>();
-            cmd.add(EXECUTABLE_PATH + set.getExec());
+	         cmd.add(EXECUTABLE_PATH + set.getExec());
             cmd.add(set.getParamFile().getAbsolutePath());
 
             System.out.println(cmd);
             ProcessBuilder p = new ProcessBuilder(cmd);
+            System.out.println(p.toString());
             Process process = p.start();
             int i = process.waitFor();
             if (i == 0) {
                 result = set.read(0);
             }
         } catch (IOException ex) {
-            Logger.getLogger(Native.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Native.class.getName()).log(Level.SEVERE, "Mtex: IO problem running " + set.getExec(), ex);
+//            System.exit(0);
         } catch (InterruptedException ex) {
-            Logger.getLogger(Native.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Native.class.getName()).log(Level.SEVERE, "Mtex: " + set.getExec() + " not running properly!", ex);
         }
 
         set.cleanup();
@@ -137,7 +144,7 @@ public class Native {
     }
 
     private static String execpath() {
-        String tmpdir = Utilities.getAppPath() + File.separator + "mtex" + File.separator;
+        String tmpdir = Utilities.getAppPath() + "mtex" + File.separator;
         File path = new File(tmpdir);
         if (!path.exists()) {
             path.mkdirs();
@@ -156,7 +163,7 @@ public class Native {
         int nout;
 
         private static File getTempPath() {
-            File path = new File(Utilities.getAppPath() + File.separator + "tmp");
+            File path = new File(Constants.cachesDirectory + File.separator + "tmp");
             if (!path.exists()) {
                 path.mkdirs();
             }
@@ -167,6 +174,7 @@ public class Native {
             this.exec = exec;
             this.nout = nout;
             try {
+//            	System.out.println("Creating file: " + exec + " " + tempPath);
                 this.paramFile = File.createTempFile(exec, ".txt", tempPath);
                 this.paramFile.createNewFile();
                 this.paramFormatter = new Formatter(paramFile, "UTF-8", Locale.US);
@@ -181,7 +189,7 @@ public class Native {
             for (int i = 1; i <= nout; i++) {
                 add("res" + i, null);
             }
-            System.out.println(this.paramFile);
+//            System.out.println(this.paramFile);
         }
 
         public String getExec() {
@@ -198,6 +206,7 @@ public class Native {
             paramFormatter.format("%s: %s\r\n", name, tmpparam.getAbsoluteFile());
             paramFormatter.flush();
 
+//            System.out.println("Mtex: saving parameters for running to: " + tmpparam.getAbsoluteFile());
             try {
                 RandomAccessFile tmpfile = new RandomAccessFile(tmpparam, "rw");
                 if (val instanceof double[]) {
@@ -213,11 +222,15 @@ public class Native {
                     b2.asIntBuffer().put(d);
                     tmpfile.write(b2.array());
                 }
-                tmpfile.close();
+	            tmpfile.close();
+					Utilities.setPermission(tmpparam, false);
+					if (name.startsWith("res"))
+						tmpparam.delete();
             } catch (FileNotFoundException ex) {
-                Logger.getLogger(Native.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Native.class.getName()).log(Level.SEVERE,
+		                "Mtex: add parameter and save, file not found: " + tmpparam.getAbsolutePath(), ex);
             } catch (IOException ex) {
-                Logger.getLogger(Native.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Native.class.getName()).log(Level.SEVERE, "Mtex: add parameter and save, IO exception: " + tmpparam.getAbsolutePath(), ex);
             }
 
         }
@@ -266,11 +279,11 @@ public class Native {
         }
 
         private void cleanup() {
-            paramFile.delete();
+/*            paramFile.delete();
 
             for (File f : tempFiles) {
                 f.delete();
-            }
+            }*/
 
         }
 
