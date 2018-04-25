@@ -156,11 +156,11 @@ public class KCDDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
 //    System.out.println("Conversion to spectra done!");
           double xmin = min2theta * Constants.PITODEG;
           double etaStart = mineta * Constants.PITODEG;
-          int dotLocation = name.indexOf(".kcd");
+          int dotLocation = name.lastIndexOf(".kcd");
           String filename = name.substring(0, dotLocation) + ".esg";
           FlatCCDReflectionSquareRoi.saveAsText(profile, profile[0].length, 0, profile[0][0].length, xmin, theta2Step,
               etaStart, coneInterval, directory, filename, "mm", dimension[7], dimension[3], dimension[4], dimension[6],
-              true);
+		          dimension[5],true);
           setLabel(filename);
           for (int spectrumIndex = 0; spectrumIndex < profile[0].length; spectrumIndex++) {
             String numberString = Integer.toString(spectrumIndex);

@@ -292,7 +292,7 @@ public class Instrument extends XRDcat {
     }
   }*/
 
-  public double[] getInstrumentalBroadeningAt(double x, DiffrDataFile diffrDataFile) {
+  public double[][] getInstrumentalBroadeningAt(double x, DiffrDataFile diffrDataFile) {
 
 // Attention: x equal to 2theta
     return getInstrumentBroadening().getInstrumentalBroadeningAt(x, diffrDataFile);

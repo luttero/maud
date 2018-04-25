@@ -25,6 +25,7 @@ import it.unitn.ing.rista.diffr.cal.*;
 
 import java.lang.*;
 
+import it.unitn.ing.rista.io.StringNumber;
 import it.unitn.ing.rista.util.*;
 import ij.*;
 import ij.io.*;
@@ -67,19 +68,21 @@ public class TIFFDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
     if (name != null) {
       ImagePlus imp = (new Opener()).openImage(directory, name);
       if (imp != null) {
+	      double[] gonioAngles = StringNumber.checkAngles(name);
 	      AngularCalibration angcal = getDataFileSet().getInstrument().getAngularCalibration();
-	      getDataFileSet().getInstrument().getAngularCalibration().loadAndUnrollImage(imp, this);
+
 	      if (angcal != null) {
 		      if (angcal instanceof AngularInclinedFlatImageCalibration) {
-			      loadSuccessfull = readReflectionImage(imp);
+			      angcal.loadAndUnrollImage(imp, this, gonioAngles);
+			      loadSuccessfull = true;
 		      } else if (angcal instanceof AngularFlatImageTransmissionCalibration) {
-			      loadSuccessfull = readTransmissionImage(imp, true);
+			      loadSuccessfull = readTransmissionImage(imp, true, gonioAngles);
 		      } else if (angcal instanceof AngularFlatImageReflectionCalibration) {
-			      loadSuccessfull = readTransmissionImage(imp, false);
+			      loadSuccessfull = readTransmissionImage(imp, false, gonioAngles);
 		      } else if (angcal instanceof Angular2DCurvedDetectorCalibration) {
-			      loadSuccessfull = readCurvedReflectionImage(imp);
+			      loadSuccessfull = readCurvedReflectionImage(imp, gonioAngles);
 		      } else if (angcal instanceof AngularCameraCalibration) {
-			      loadSuccessfull = readCameraImage(imp);
+			      loadSuccessfull = readCameraImage(imp, gonioAngles);
 		      }
 	      }
       }
@@ -90,7 +93,7 @@ public class TIFFDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
     return loadSuccessfull;
   }
 
-	public boolean readReflectionImage(ImagePlus imp) {
+	public boolean readReflectionImage(ImagePlus imp, double[] gonioAngles) {
 		boolean loadSuccessfull = false;
 		AngularCalibration angcal = getDataFileSet().getInstrument().getAngularCalibration();
 		String directory = Constants.cachesDirectory; // getFolder(); //od.getDirectory();
@@ -147,6 +150,15 @@ public class TIFFDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
 		double omega = MaudPreferences.getDouble("sample.defaultOmegaAngle", 55.0);
 		double chi = MaudPreferences.getDouble("sample.defaultChiAngle", 17.0);
 		double phi = MaudPreferences.getDouble("sample.defaultPhiAngle", 0.0);
+
+		if (gonioAngles[0] != StringNumber.dummyAngle)
+			detector2Theta = gonioAngles[0];
+		if (gonioAngles[1] != StringNumber.dummyAngle)
+			omega = gonioAngles[1];
+		if (gonioAngles[2] != StringNumber.dummyAngle)
+			chi = gonioAngles[2];
+		if (gonioAngles[3] != StringNumber.dummyAngle)
+			phi = gonioAngles[3];
 
 		int minX = MaudPreferences.getInteger("squareRoi.xminValue", 0);
 		int maxX = MaudPreferences.getInteger("squareRoi.xmaxValue", width);
@@ -219,11 +231,11 @@ public class TIFFDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
 //    System.out.println("Conversion to spectra done!");
 		double xmin = min2theta * Constants.PITODEG;
 		double etaStart = mineta * Constants.PITODEG;
-		int dotLocation = name.indexOf(".");
+		int dotLocation = name.lastIndexOf(".");
 		String filename = name.substring(0, dotLocation) + ".esg";
 		FlatCCDReflectionSquareRoi.saveAsText(profile, profile[0].length, 0, profile[0][0].length, xmin, theta2Step,
 				etaStart, coneInterval, directory, filename, "mm", detectorDistance, omega, chi, phi,
-				true);
+				detector2Theta,true);
 		setLabel(filename);
 		for (int spectrumIndex = 0; spectrumIndex < profile[0].length; spectrumIndex++) {
 			String numberString = Integer.toString(spectrumIndex);
@@ -278,7 +290,7 @@ public class TIFFDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
 		return loadSuccessfull;
 	}
 
-	public boolean readCurvedReflectionImage(ImagePlus imp) { // todo
+	public boolean readCurvedReflectionImage(ImagePlus imp, double[] gonioAngles) { // todo
 		boolean loadSuccessfull = false;
 		AngularCalibration angcal = getDataFileSet().getInstrument().getAngularCalibration();
 		String directory = Constants.cachesDirectory; // getFolder(); //od.getDirectory();
@@ -309,7 +321,7 @@ public class TIFFDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
 		return loadSuccessfull;
 	}
 
-	public boolean readCameraImage(ImagePlus imp) {
+	public boolean readCameraImage(ImagePlus imp, double[] gonioAngles) {
 		boolean loadSuccessfull = false;
 		AngularCameraCalibration angcal = (AngularCameraCalibration) getDataFileSet().getInstrument().getAngularCalibration();
 
@@ -337,6 +349,14 @@ public class TIFFDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
 		double chi = MaudPreferences.getDouble("camera.defaultChiAngle", 0.0);
 		double phi = MaudPreferences.getDouble("camera.defaultPhiAngle", 0.0);
 		boolean calibrated = MaudPreferences.getBoolean("anglesCalibration.imageToSpectra", false);
+//		if (gonioAngles[0] != StringNumber.dummyAngle)
+//			detector2Theta = gonioAngles[0];
+		if (gonioAngles[1] != StringNumber.dummyAngle)
+			omega = gonioAngles[1];
+		if (gonioAngles[2] != StringNumber.dummyAngle)
+			chi = gonioAngles[2];
+		if (gonioAngles[3] != StringNumber.dummyAngle)
+			phi = gonioAngles[3];
 
 		LaueOvalRoi roi = new LaueOvalRoi(imp, radius);
 		imp.setRoi(roi);
@@ -360,7 +380,7 @@ public class TIFFDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
 		int endX = MaudPreferences.getInteger("ovalROI.maxX", 10000);
 		String directory = Constants.cachesDirectory; // getFolder(); //od.getDirectory();
 		String name = getLabel(); //od.getFileName();
-		int dotLocation = name.indexOf(".");
+		int dotLocation = name.lastIndexOf(".");
 		String filename = name.substring(0, dotLocation) + ".esg";
 		roi.save(directory, filename, profile, startX, endX);
 		setLabel(filename);
@@ -402,7 +422,7 @@ public class TIFFDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
 		return loadSuccessfull;
 	}
 
-	public boolean readTransmissionImage(ImagePlus imp, boolean transmission) {
+	public boolean readTransmissionImage(ImagePlus imp, boolean transmission, double[] gonioAngles) {
 		AngularFlatImageTransmissionCalibration angcal;
 		if (transmission)
 			angcal = (AngularFlatImageTransmissionCalibration)
@@ -437,6 +457,14 @@ public class TIFFDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
 		double startingAngle = MaudPreferences.getDouble("image2D.StartingAngle", 0.0);
 		double finalAngle = MaudPreferences.getDouble("image2D.FinalAngle", 360.0);
 		int nDivision = MaudPreferences.getInteger("image2D.nSpectraDivision", 72);
+//		if (gonioAngles[0] != StringNumber.dummyAngle)
+//			detector2Theta = gonioAngles[0];
+		if (gonioAngles[1] != StringNumber.dummyAngle)
+			omega = gonioAngles[1];
+		if (gonioAngles[2] != StringNumber.dummyAngle)
+			chi = gonioAngles[2];
+		if (gonioAngles[3] != StringNumber.dummyAngle)
+			phi = gonioAngles[3];
 
 		LaueCircleStepRoi roi = new LaueCircleStepRoi(imp, radius);
 		imp.setRoi(roi);
@@ -482,7 +510,7 @@ public class TIFFDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
 		}
 		String directory = Constants.cachesDirectory; // getFolder(); //od.getDirectory();
 		String name = getLabel(); //od.getFileName();
-		int dotLocation = name.indexOf(".");
+		int dotLocation = name.lastIndexOf(".");
 		String filename = name.substring(0, dotLocation) + ".esg";
 		roi.save(directory, filename, profile, nDivision, npoints, coneStep, startingAngle, stepIntegration);
 

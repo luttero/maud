@@ -104,7 +104,7 @@ public class XGridController {
     try {
       jmdnsService = new JmDNS();
       String name = jmdnsService.getHostName();
-      name = name.substring(0, name.indexOf(".")) + "-Maud";
+      name = name.substring(0, name.lastIndexOf(".")) + "-Maud";
       xgridService = new ServiceInfo(XGridAgent.xgridServiceString, name,
           XGridAgent.xgridport, "$servicePrincipal=xgrid/" + name + ".local");
       jmdnsService.registerService(xgridService);

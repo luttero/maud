@@ -1,0 +1,59 @@
+<html>
+<head>
+<title>cctbx - Structure factor calculation from PDB file</title>
+</head>
+<body bgcolor=#ffffff>
+
+[<a href="index.html">Index of services</a>]
+<hr>
+<h1>cctbx - Structure factor calculation from PDB file</h1>
+<hr>
+
+<FORM METHOD=POST ACTION="cctbx_web.cgi">
+<input type="HIDDEN" name="target_module" value="structure_factors_pdb">
+
+<p>
+<strong>Minimum d-spacing (highest resolution): </strong><input
+name="d_min" size=8
+value="1.0">
+
+<p>
+<strong>Structure factor algorithm: </strong><select name="algorithm">
+  <option value="automatic" selected>Automatic choice</option>
+  <option value="direct">Direct Summation</option>
+  <option value="fft">FFT Approximation</option>
+</select>
+
+<p>
+<strong>Atomic form factors approximations:</strong>
+<select name="form_factors">
+  <option value="wk1995" selected
+    >D. Waasmaier and A. Kirfel, Acta Cryst. (1995). A51, 416-431</option>
+  <option value="it1992"
+    >International Tables for Crystallography, Volume C 1992</option>
+  <option value="n_gaussian"
+    >N-Gaussian (IUCr Computing Commission Newsletter No. 3, 2004)</option>
+</select>
+
+
+<p>
+<strong>Coordinates:</strong>
+<ul>
+   <li>Please copy and paste the whole content of your PDB file.
+  <li>A CRYST1 record must be present and define both the
+     unit cell parameters and the space group symbol.
+  <li>Atomic chemical types should be defined in columns 77-78
+     (right-justified).
+</ul>
+<p>
+<textarea name="coordinates" rows=16 cols=81></textarea>
+<p>
+<input type="submit" value="Calculate structure factors">
+<p>
+<input type="reset"  value="Reset">
+</FORM>
+<hr>
+[<a href="index.html">Index of services</a>]
+<hr>
+</body>
+</html>

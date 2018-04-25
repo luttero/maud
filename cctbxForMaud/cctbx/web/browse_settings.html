@@ -1,0 +1,47 @@
+<html>
+<head>
+<title>cctbx - Browse alternative space group settings</title>
+</head>
+<body bgcolor=#ffffff>
+
+[<a href="index.html">Index of services</a>]
+<hr>
+<h1>cctbx - Browse alternative space group settings</h1>
+<hr>
+
+<FORM METHOD=POST ACTION="cctbx_web.cgi">
+<input type="HIDDEN" name="target_module" value="browse_settings">
+
+Leave the input field blank to see the entire table of
+space group symbols.
+
+<p>
+<strong>Space group symbol or number: </strong><input
+name="sgsymbol" size=40
+value=""><br>
+Convention:
+<select name="convention">
+  <option value="" selected
+    >Default</option>
+  <option value="A1983"
+    >International Tables for Crystallography, Volume A 1983</option>
+  <option value="I1952"
+    >International Tables for Crystallography, Volume I 1952</option>
+  <option value="Hall"
+    >Hall symbol</option>
+</select>
+
+<p>
+<input type="submit" value="Show alternative settings">
+<p>
+<input type="reset"  value="Reset">
+</FORM>
+<hr>
+Additional settings:
+<a href="multiple_cell.html"
+>Multiple cell C or F and triple cell H settings</a>
+<hr>
+[<a href="index.html">Index of services</a>]
+<hr>
+</body>
+</html>

@@ -206,6 +206,7 @@ public class QuantitativeXRF extends FluorescenceBase {
 						}
 						totalIntensity *= layerDensity[j1];
 						double detectorAbsorption = detector.computeAbsorptionForLineWithEnergy(lineEnergyKeV);
+						line.mhuDet = detector.computeMACForLineWithEnergy(lineEnergyKeV);
 						double detectorEfficiency = detector.computeDetectorEfficiency(lineEnergyKeV);
 						double areaCorrection = detector.getAreaCorrection(sampleLinearArea);
 //						if (lineEnergyKeV * 1000 > xEnergy[0] && lineEnergyKeV * 1000 < xEnergy[numberOfPoints - 1])
@@ -357,9 +358,10 @@ public class QuantitativeXRF extends FluorescenceBase {
 			}
 		}
 
+//		System.out.println("Compute fluo peaks");
 		for (FluorescenceLine line : fluorescenceLines) {
-			double[] broad = ainstrument.getInstrumentalBroadeningAt(line.getEnergy(), adatafile);
-			line.setShape(broad[1], broad[0], broad[3], broad[2]);
+			double[][] broad = ainstrument.getInstrumentalBroadeningAt(line.getEnergy(), adatafile);
+			line.setShape(broad);
 			line.setEnergy(line.getEnergy() * 1000.0); // in eV
 			for (int i = 0; i < numberOfPoints; i++/*, hi++*/) {
 				fluorescence[i] += line.getIntensity(xEnergy[i]);
@@ -382,7 +384,7 @@ public class QuantitativeXRF extends FluorescenceBase {
 			double[] deltaEnergies = escapeIntensitiesAndEnergies.get(numberLines);
 //			System.out.println("N lines: " + numberLines);
 			for (int l = 0; l < numberLines; l++) {
-				int deltaChannel = (int) (deltaEnergies[l] / channelStep * 1000 + 1);
+				int deltaChannel = (int) (deltaEnergies[l] / channelStep * 1000);
 //				System.out.println("Line: " + l+ ", delta E = " + deltaEnergies[l] + ", channels = " + deltaChannel);
 				double[] relativeIntensities = escapeIntensitiesAndEnergies.get(l);
 				for (int i = 0; i < numberOfPoints - deltaChannel; i++) {
@@ -402,7 +404,7 @@ public class QuantitativeXRF extends FluorescenceBase {
 		if (sumPeak > 0) {
 			for (int i = 0; i < numberOfPoints; i++) {
 				for (int j = i; j < numberOfPoints; j++) {
-					int channel = i + j - 2 * channelZero  + adatafile.startingindex;
+					int channel = i + j - channelZero + adatafile.startingindex;
 					if (channel >= 0 && channel < numberOfPoints)
 						fluorescence[channel] += sumPeak * (escFluorescence[i] * escFluorescence[j]);
 				}

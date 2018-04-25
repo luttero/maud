@@ -1260,6 +1260,7 @@ C
                                                               double etamin, double etamax, double etastep) {
 
 // System.out.println(theta2min + " " + theta2max + " " + theta2step + " " + etamin + " " + etamax + " " + etastep + " ");
+	  double saturation = MaudPreferences.getDouble("pixelDetector.saturationValue", 65536.0);
 	  double correctionExponent = MaudPreferences.getDouble("image2D.exponentCorrectionValue", 0.0);
     int spectrumPointsNumber = (int) ((theta2max - theta2min) / theta2step) + 1;
     int spectraNumber = (int) ((etamax - etamin) / etastep) + 1;
@@ -1270,7 +1271,7 @@ C
       int itheta = (int) ((theta2[i] - theta2min) / theta2step + 0.5);
       int ieta = (int) ((eta[i] - etamin) / etastep + 0.5);
       if ((itheta >= 0 && itheta < spectrumPointsNumber) && (ieta >= 0 && ieta < spectraNumber)) {
-        if (intensity[i] >= 0.0) {
+        if (intensity[i] >= 0.0 && intensity[i] < saturation) {
         double radius = x[i] * x[i] + y[i] * y[i];
         radius = radius * denominator;
         radius += 1.0;
@@ -1278,12 +1279,14 @@ C
           spectra[1][ieta][itheta] += y[i];
         spectra[2][ieta][itheta] += intensity[i] * Math.pow(radius, correctionExponent);
         counts[ieta][itheta]++;
-        }
+        }/* else {
+        	System.out.println(intensity[i]);
+        }*/
       }
     }
     for (int itheta = 0; itheta < spectrumPointsNumber; itheta++) {
       for (int ieta = 0; ieta < spectraNumber; ieta++) {
-        if (counts[ieta][itheta] > 0) {
+        if (counts[ieta][itheta] > 2) {
           spectra[0][ieta][itheta] /= counts[ieta][itheta];
           spectra[1][ieta][itheta] /= counts[ieta][itheta];
           spectra[2][ieta][itheta] /= counts[ieta][itheta];

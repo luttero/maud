@@ -143,7 +143,7 @@ public class AngularDisalignment extends AngularCalibration {
   }
 
   public double calibrateX(DiffrDataFile datafile, double value) {
-    double angcal = 0.0;
+    double angcal = value;
     for (int j = 0; j < numberCoeff; j++) {
       angcal += difc[j] * MoreMath.pow(value, j);
     }
@@ -151,7 +151,7 @@ public class AngularDisalignment extends AngularCalibration {
   }
 
    public double notCalibrated(DiffrDataFile datafile, double x) {
-    return 0.0;
+    return 0;
   }
 
 	public boolean freeAllBasicParameters() {

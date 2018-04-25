@@ -41,17 +41,15 @@ public class EDXRFInstrumentBroadening extends InstrumentBroadening {
   public static String descriptionID = "Broadening of peaks by energy";
 
   public static final String[] diclistc = {
-		  "_riet_par_asymmetry_truncation",
-
-		  "_riet_par_asymmetry_value_inv",
-		  "_riet_par_broadening_hwhm", "_riet_par_broadening_gaussian"
+		  "_riet_par_broadening_hwhm", "_riet_par_broadening_gaussian",
+		  "_riet_par_step_fraction", "_riet_par_tail_beta",
+		  "_riet_par_tail_fraction_k_alpha", "_riet_par_tail_fraction_k_beta"
   };
 
   protected static final String[] diclistcrm = {
-		  "asymmetry truncation angle",
-
-		  "asymmetry coeff ",
-		  "broadening coeff ", "gaussian coeff "
+		  "broadening coeff ", "gaussian coeff ",
+		  "step fraction", "tail beta",
+		  "tail fraction Kalpha", "tail fraction Kbeta"
   };
 
   protected static final String[] classlistc = {};
@@ -80,10 +78,10 @@ public class EDXRFInstrumentBroadening extends InstrumentBroadening {
   }
 
   public void initConstant() {
-    Nstring = 1;
+    Nstring = 0;
     Nstringloop = 0;
     Nparameter = 0;
-    Nparameterloop = 3;
+    Nparameterloop = 6;
     Nsubordinate = 0;
     Nsubordinateloop = 0;
   }
@@ -97,28 +95,76 @@ public class EDXRFInstrumentBroadening extends InstrumentBroadening {
 
   public void initParameters() {
     super.initParameters();
-	  setTruncationAngle("-1000.0");
   }
 
   public void initializeAsNew() {
     if (initialized)
       return;
     initialized = true;
-	  addparameterloopField(0, new Parameter(this, getParameterString(0, 0), 0,
-			  ParameterPreferences.getDouble(getParameterString(0, 0) + ".min", 0),
-			  ParameterPreferences.getDouble(getParameterString(0, 0) + ".max", 1)));
-    addparameterloopField(1, new Parameter(this, getParameterString(1, 0), 42.4,
-        ParameterPreferences.getDouble(getParameterString(1, 0) + ".min", 0),
-        ParameterPreferences.getDouble(getParameterString(1, 0) + ".max", 100)));
-    addparameterloopField(1, new Parameter(this, getParameterString(1, 1), 5330,
-        ParameterPreferences.getDouble(getParameterString(1, 1) + ".min", 100),
-        ParameterPreferences.getDouble(getParameterString(1, 1) + ".max", 10000)));
-    addparameterloopField(2, new Parameter(this, getParameterString(2, 0), 0.1,
-        ParameterPreferences.getDouble(getParameterString(2, 0) + ".min", -1.0),
-        ParameterPreferences.getDouble(getParameterString(2, 0) + ".max", 2.0)));
-	  addparameterloopField(2, new Parameter(this, getParameterString(2, 0), 0.0,
-			  ParameterPreferences.getDouble(getParameterString(2, 1) + ".min", -1.0),
-			  ParameterPreferences.getDouble(getParameterString(2, 1) + ".max", 2.0)));
+    // HWHM
+    int index = 0;
+    int number = 0;
+    addparameterloopField(index, new Parameter(this, getParameterString(index, number), 42.4,
+        ParameterPreferences.getDouble(getParameterString(index, number) + ".min", 0),
+        ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 100)));
+    number++;
+    addparameterloopField(index, new Parameter(this, getParameterString(0, number), 5330,
+        ParameterPreferences.getDouble(getParameterString(index, number) + ".min", 100),
+        ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 10000)));
+	  number++;
+	  addparameterloopField(index, new Parameter(this, getParameterString(0, number), 0,
+			  ParameterPreferences.getDouble(getParameterString(index, number) + ".min", 0),
+			  ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 10000)));
+    // Gaussian
+    index++;
+    number = 0;
+    addparameterloopField(index, new Parameter(this, getParameterString(index, number), 0.01,
+        ParameterPreferences.getDouble(getParameterString(index, number) + ".min", -1.0),
+        ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 2.0)));
+    number++;
+	  addparameterloopField(index, new Parameter(this, getParameterString(index, number), 0.0,
+			  ParameterPreferences.getDouble(getParameterString(index, number) + ".min", -1.0),
+			  ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 2.0)));
+	  // fS
+	  index++;
+	  number = 0;
+	  addparameterloopField(index, new Parameter(this, getParameterString(index, number), 0.0001,
+			  ParameterPreferences.getDouble(getParameterString(index, number) + ".min", -1.0),
+			  ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 2.0)));
+	  number++;
+	  addparameterloopField(index, new Parameter(this, getParameterString(index, number), 0.0,
+			  ParameterPreferences.getDouble(getParameterString(index, number) + ".min", -1.0),
+			  ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 2.0)));
+	  // beta
+	  index++;
+	  number = 0;
+	  addparameterloopField(index, new Parameter(this, getParameterString(index, number), 10,
+			  ParameterPreferences.getDouble(getParameterString(index, number) + ".min", -1.0),
+			  ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 2.0)));
+	  number++;
+	  addparameterloopField(index, new Parameter(this, getParameterString(index, number), 0.0,
+			  ParameterPreferences.getDouble(getParameterString(index, number) + ".min", -1.0),
+			  ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 2.0)));
+	  // fTKalpha
+	  index++;
+	  number = 0;
+	  addparameterloopField(index, new Parameter(this, getParameterString(index, number), 0.002,
+			  ParameterPreferences.getDouble(getParameterString(index, number) + ".min", -1.0),
+			  ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 2.0)));
+	  number++;
+	  addparameterloopField(index, new Parameter(this, getParameterString(index, number), 0.0,
+			  ParameterPreferences.getDouble(getParameterString(index, number) + ".min", -1.0),
+			  ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 2.0)));
+	  // fTKbeta
+	  index++;
+	  number = 0;
+	  addparameterloopField(index, new Parameter(this, getParameterString(index, number), 0.002,
+			  ParameterPreferences.getDouble(getParameterString(index, number) + ".min", -1.0),
+			  ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 2.0)));
+	  number++;
+	  addparameterloopField(index, new Parameter(this, getParameterString(index, number), 0.0,
+			  ParameterPreferences.getDouble(getParameterString(index, number) + ".min", -1.0),
+			  ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 2.0)));
   }
 
   public void notifyParameterChanged(Parameter source) {
@@ -136,40 +182,11 @@ public class EDXRFInstrumentBroadening extends InstrumentBroadening {
     }
   }
 
-	public static final int asymmetryTruncationID = 0;
-
-	public void setTruncationAngle(String value) {
-		setString(asymmetryTruncationID, value);
-	}
-
-	public String getTruncationAngleString() {
-		return getString(asymmetryTruncationID);
-	}
-
-	public double getTruncationAngle() {
-		return truncationAngle;
-	}
-
-	public static final int asymmetryID = 0;
-
-   public static final int cagliotiID = 1;
-
-   public static final int gaussianID = 2;
-
-	double asymmetry[] = null;
-	int asymmetryN = 0;
-	double caglioti[] = null;
-	int cagliotiN = 0;
-	double gaussian[] = null;
-	int gaussianN = 0;
-	double truncationAngle = -1000;
-
   public void updateStringtoDoubleBuffering(boolean firstLoading) {
     super.updateStringtoDoubleBuffering(false);
 
     minimumHWHMvalue = MaudPreferences.getDouble(
         "instrBroadening.minimumHWHMvalue", 0.0000001);
-	  truncationAngle = Double.parseDouble(getTruncationAngleString());
   }
 
   public void updateParametertoDoubleBuffering(boolean firstLoading) {
@@ -179,16 +196,6 @@ public class EDXRFInstrumentBroadening extends InstrumentBroadening {
       return;
     super.updateParametertoDoubleBuffering(false);
 
-//    if (MaudPreferences.getBoolean("CagliotiFirstParameter.forcePositive", true))
-//      checkCagliotiFirstParameter();
-	  asymmetry = getParameterLoopVector(asymmetryID);
-	  asymmetryN = numberOfLoopParameters[asymmetryID];
-//    if (MaudPreferences.getBoolean("CagliotiFirstParameter.forcePositive", true))
-//      checkCagliotiFirstParameter();
-	  caglioti = getParameterLoopVector(cagliotiID);
-	  cagliotiN = numberOfLoopParameters[cagliotiID];
-	  gaussian = getParameterLoopVector(gaussianID);
-	  gaussianN = numberOfLoopParameters[gaussianID];
   }
 
   public Instrument getInstrument() {
@@ -203,28 +210,21 @@ public class EDXRFInstrumentBroadening extends InstrumentBroadening {
     return getInstrument().getGeometry();
   }
 
-  public double[] getInstrumentalBroadeningAt(double x, DiffrDataFile diffrDataFile) {
+  public double[][] getInstrumentalBroadeningAt(double x, DiffrDataFile diffrDataFile) {
 
-// Attention: x equal to 2theta
+	 int maxNumber = 0;
+	 for (int i = 0; i < parameterloopField.length; i++) {
+	 	int numb = parameterloopField[i].size();
+		 if (numb > maxNumber)
+		 	maxNumber = numb;
+	 }
+    double broad[][] = new double[6][maxNumber];
 
-    x *= 0.001;
-    double broad[] = new double[4];
-
-    broad[0] = 0.0;
-    for (int i = 0; i < gaussianN; i++)
-      broad[0] += gaussian[i] * MoreMath.pow(x, i);
-/*    if (broad[0] < 0.0)
-      broad[0] = 0.0;
-    if (broad[0] > 1.0)
-      broad[0] = 1.0;*/
-    broad[1] = 0.0;
-    for (int i = 0; i < cagliotiN; i++)
-      broad[1] += caglioti[i] * MoreMath.pow(x, i);
-    if (broad[1] < minimumHWHMvalue * 10000)
-      broad[1] = minimumHWHMvalue * 10000;
-	  // sx
-	  broad[2] = broad[0];     // symmetric
-	  broad[3] = broad[1];     // symmetric
+	 for (int i = 0; i < parameterloopField.length; i++) {
+		 double[] par = getParameterLoopVector(i);
+		for (int j = 0; j < par.length; j++)
+			broad[i][j] = par[j];
+	 }
 
     return broad;
   }
@@ -239,63 +239,7 @@ public class EDXRFInstrumentBroadening extends InstrumentBroadening {
    * @return asymmetry parameter value
    */
 
-  public double getInstrumentalAsymmetry(double x, DiffrDataFile diffrDataFile) {
-
-	  double asy = 0.0;
-	  if (asymmetryN > 0) {
-		  double x1 = x;// = 0.0;
-		  if (diffrDataFile.dspacingbase)
-			  x1 = 1.0 / x;
-
-		  for (int i = 0; i < asymmetryN; i++)
-			  asy += asymmetry[i] * MoreMath.pow(x1, i);
-	  }
-	  return asy;
-  }
-
   public void computeAsymmetry(DiffrDataFile diffrDataFile, Sample asample, double[] afit, int min, int max) {
-
-	  Instrument ainstrument = getInstrument();
-
-	  double truncation_angle = getTruncationAngle();
-
-	  double newFit[] = new double[max - min];
-	  if (truncation_angle != 0.0) {
-		  int absdirection = 1;  // increasing step
-		  if (!diffrDataFile.increasingX())
-			  absdirection = -absdirection;
-		  absdirection *= (int) (truncation_angle / Math.abs(truncation_angle));
-		  truncation_angle = Math.abs(truncation_angle);
-
-		  for (int j = min; j < max; j++) {
-			  double x = diffrDataFile.getXData(j);
-			  double total_asymmetry = ainstrument.getInstrumentalAsymmetry(x, diffrDataFile) * 0.0001;
-			  if (total_asymmetry == 0.0)
-				  newFit[j - min] = afit[j];
-			  else {
-				  int direction = absdirection;
-				  if (!diffrDataFile.dspacingbase && x > 90.0)
-					  direction = -direction;
-				  double function = afit[j];
-				  double normalization = 1.0;
-				  int ij = j + direction;
-				  if (diffrDataFile.insiderange(ij)) {
-					  double difference = Math.abs(diffrDataFile.getXData(ij) - x);
-					  double expasymmetry = 1.0;
-					  for (; expasymmetry > 0.001 && difference < truncation_angle && diffrDataFile.insiderange(ij); ij += direction)
-					  {
-						  difference = Math.abs(diffrDataFile.getXData(ij) - x);
-						  expasymmetry = Math.exp(-difference * total_asymmetry);
-						  function += afit[ij] * expasymmetry;
-						  normalization += expasymmetry;
-					  }
-				  }
-				  newFit[j - min] = function / normalization;
-			  }
-
-		  }
-		  System.arraycopy(newFit, 0, afit, min, max - min);
-	  }
 
   }
 
@@ -318,10 +262,7 @@ public class EDXRFInstrumentBroadening extends InstrumentBroadening {
 
   class JEDXRFOptionsD extends JOptionsDialog {
 
-	  JParameterListPane AsymmetryPanel;
-    JParameterListPane HWHMPanel;
-    JParameterListPane GaussianPanel;
-	  JTextField truncationTF = null;
+    JParameterListPane PLPanel[];
 
     public JEDXRFOptionsD(Frame parent, XRDcat obj) {
 
@@ -331,42 +272,15 @@ public class EDXRFInstrumentBroadening extends InstrumentBroadening {
 
       JPanel aberrationPanel = new JPanel(new BorderLayout(3, 3));
       JTabbedPane tabPanel1 = new JTabbedPane();
-      String tempString[] = {"Asymmetry", "HWHM", "Gaussianity"};
+      String tempString[] = {"HWHM (FANO)", "Gaussianity", "fS", "Beta", "fT Kalpha", "fT Kbeta"};
       principalPanel.add(BorderLayout.CENTER, aberrationPanel);
       aberrationPanel.add(BorderLayout.CENTER, tabPanel1);
 
-	    JPanel jpasy = new JPanel(new BorderLayout());
-	    tabPanel1.addTab(tempString[0], null, jpasy);
-
-	    AsymmetryPanel = new JParameterListPane(this, false, true);
-	    jpasy.add(BorderLayout.CENTER, AsymmetryPanel);
-
-	    JPanel p6 = new JPanel();
-	    p6.setLayout(new FlowLayout());
-	    jpasy.add(BorderLayout.SOUTH, p6);
-	    p6.add(new JLabel(" Truncation angle [deg or d]: "));
-	    truncationTF = new JTextField(Constants.FLOAT_FIELD);
-	    p6.add(truncationTF);
-
-      HWHMPanel = new JParameterListPane(this, false, true);
-      tabPanel1.addTab(tempString[1], null, HWHMPanel);
-
-      GaussianPanel = new JParameterListPane(this, false, true);
-      tabPanel1.addTab(tempString[2], null, GaussianPanel);
-
-/*      JPanel closebuttonPanel = new JPanel();
-      closebuttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 3, 3));
-      principalPanel.add(BorderLayout.SOUTH, closebuttonPanel);
-      JButton jbok1 = new JCloseButton();
-      closebuttonPanel.add(jbok1);
-      jbok1.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          retrieveParameters();
-          setVisible(false);
-          dispose();
-        }
-      });*/
-
+	    PLPanel = new JParameterListPane[EDXRFInstrumentBroadening.this.parameterloopField.length];
+	    for (int i = 0; i < EDXRFInstrumentBroadening.this.parameterloopField.length; i++) {
+		    PLPanel[i] = new JParameterListPane(this, false, true);
+		    tabPanel1.addTab(tempString[i], null, PLPanel[i]);
+	    }
 
       setTitle("XRF/EDXRF instrumental function");
       initParameters();
@@ -374,26 +288,23 @@ public class EDXRFInstrumentBroadening extends InstrumentBroadening {
     }
 
     public void initParameters() {
-	    AsymmetryPanel.setList(EDXRFInstrumentBroadening.this, 0);
-      HWHMPanel.setList(EDXRFInstrumentBroadening.this, 1);
-      GaussianPanel.setList(EDXRFInstrumentBroadening.this, 2);
-	    truncationTF.setText(getTruncationAngleString());
+	    for (int i = 0; i < EDXRFInstrumentBroadening.this.parameterloopField.length; i++) {
+		    PLPanel[i].setList(EDXRFInstrumentBroadening.this, i);
+	    }
     }
 
     public void retrieveParameters() {
       super.retrieveParameters();
 
-	    AsymmetryPanel.retrieveparlist();
-      HWHMPanel.retrieveparlist();
-      GaussianPanel.retrieveparlist();
-	    setTruncationAngle(truncationTF.getText());
+	    for (int i = 0; i < EDXRFInstrumentBroadening.this.parameterloopField.length; i++) {
+		    PLPanel[i].retrieveparlist();
+	    }
     }
 
     public void dispose() {
-	    AsymmetryPanel.dispose();
-      HWHMPanel.dispose();
-      GaussianPanel.dispose();
-
+	    for (int i = 0; i < EDXRFInstrumentBroadening.this.parameterloopField.length; i++) {
+		    PLPanel[i].dispose();
+	    }
       super.dispose();
     }
   }

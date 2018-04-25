@@ -1490,7 +1490,19 @@ public class DataD extends myJFrame {
     thedata.SumDatafileOutput(aframe, sameAngles, angles);
   }
 
-  /**
+	/**
+	 * Sums the datafiles with some rules to generate a new datafile.
+	 * @param aframe the frame
+	 * @param selectedAngle index of the angle over which to sum
+	 * @param angle_range the angle range value for summation
+	 */
+
+	public void sumDatafileOutput(Frame aframe, int selectedAngle,
+	                              double angle_range) {
+		thedata.sumDatafileOutput(aframe, selectedAngle, angle_range);
+	}
+
+	/**
    * Show the image manager AreaDetector using ImageJ package.
    */
 
@@ -1715,31 +1727,36 @@ public class DataD extends myJFrame {
       Container c1 = summationRulesFrame.this.getContentPane();
 
       c1.setLayout(new BorderLayout(3, 3));
+
+	    JPanel panel3 = new JPanel();
+	    panel3.setLayout(new FlowLayout(FlowLayout.RIGHT, 6, 6));
+	    panel3.add(new JLabel("Sum range +- "));
+	    final JTextField angleTF = new JTextField("0.0");
+	    angleTF.setToolTipText("Specify the angle range for summation here");
+	    panel3.add(angleTF);
+	    c1.add(BorderLayout.NORTH, panel3);
+
       JPanel principalPanel = new JPanel();
       c1.add(BorderLayout.CENTER, principalPanel);
 
       principalPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
 
-      JPanel panel3 = new JPanel();
-      panel3.setLayout(new GridLayout(4, 3, 3, 3));
+      panel3 = new JPanel();
+      panel3.setLayout(new GridLayout(0, 1, 3, 3));
       principalPanel.add(panel3);
 
       panel3.add(new JLabel("Groups spectra by:"));
-      panel3.add(new JLabel(""));
-      panel3.add(new JLabel(""));
 
-	    String[] sameLabels = {"omega angle", "chi angle", "phi angle", "eta angle",
+	   final String[] sameLabels = {"omega angle", "chi angle", "phi angle", "eta angle",
 			    "2theta angle", "energy"};
-      final JCheckBox[] sameAnglesCB = new JCheckBox[DiffrDataFile.maxAngleNumber];
-	    final JTextField[] anglesTF = new JTextField[DiffrDataFile.maxAngleNumber];
-	    for (int j = 0; j < sameLabels.length; j++) {
-		    sameAnglesCB[j].setText("same " + sameLabels[j]);
-		    sameAnglesCB[j].setToolTipText("Sum the datafiles with different " + sameLabels[j] + " angle in different files");
-		    sameAnglesCB[j].setSelected(true);
+      final JRadioButton[] sameAnglesCB = new JRadioButton[DiffrDataFile.maxAngleNumber];
+	    final ButtonGroup rbg = new ButtonGroup();
+	    for (int j = 0; j < DiffrDataFile.maxAngleNumber; j++) {
+		    sameAnglesCB[j] = new JRadioButton(sameLabels[j]);
+		    rbg.add(sameAnglesCB[j]);
+		    if (j == 0)
+		      sameAnglesCB[j].setSelected(true);
 		    panel3.add(sameAnglesCB[j]);
-		    panel3.add(new JLabel(" +- "));
-		    anglesTF[j].setText("0");
-		    panel3.add(anglesTF[j]);
 	    }
 
       panel3 = new JPanel();
@@ -1747,19 +1764,19 @@ public class DataD extends myJFrame {
       c1.add(BorderLayout.SOUTH, panel3);
 
       JButton startD = new JCloseButton();
-      startD.setToolTipText("Do the summation based on the selected rules and save the file");
+      startD.setToolTipText("Do the summation based on the specified angle ranges and save the file");
 
       final DataD adata = aframe;
       startD.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent event) {
-	        boolean[] sameAngleB = new boolean[DiffrDataFile.maxAngleNumber];
-	        double[] angles = new double[DiffrDataFile.maxAngleNumber];
+        	int selectedIndex = -1;
 	        for (int j = 0; j < DiffrDataFile.maxAngleNumber; j++) {
-		        sameAngleB[j] = sameAnglesCB[j].isSelected();
-		        angles[j] = Double.parseDouble(anglesTF[j].getText());
+		        if (sameAnglesCB[j].isSelected())
+			        selectedIndex = j;
 	        }
+	        double angle = Double.parseDouble(angleTF.getText());
           summationRulesFrame.this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-          adata.SumDatafileOutput(summationRulesFrame.this, sameAngleB, angles);
+          adata.sumDatafileOutput(summationRulesFrame.this, selectedIndex, angle);
           summationRulesFrame.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
           summationRulesFrame.this.setVisible(false);
           summationRulesFrame.this.dispose();

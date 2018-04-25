@@ -871,7 +871,7 @@ public class Layer extends XRDcat {
 		  System.out.print(chemicalComposition.elementAt(j).label + " " + chemicalComposition.elementAt(j).quantity + ", ");
 	  System.out.println();*/
 
-	  return chemicalComposition;
+	  return (Vector<AtomQuantity>) chemicalComposition.clone();
   }
 
 	public void printCustomInformations(OutputStream out) throws IOException {

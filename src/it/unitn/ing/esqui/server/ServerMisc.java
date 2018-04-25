@@ -58,7 +58,7 @@ public class ServerMisc {
   }
 
   public static String getFileNoExtension(String tmpString) {
-    return tmpString.substring(0, tmpString.indexOf("."));
+    return tmpString.substring(0, tmpString.lastIndexOf("."));
   }
 
 /*

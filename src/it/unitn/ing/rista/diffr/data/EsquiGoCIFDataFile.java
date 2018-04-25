@@ -66,6 +66,8 @@ public class EsquiGoCIFDataFile extends MultDiffrDataFile {
     double phi_angle = 0.0;
     double chi_angle = 0.0;
     double eta_angle = 0.0;
+	  double theta2_angleD = 0.0;
+	  double energy_angle = 0.0;
 	  String theta2_angle = "0";
     int indexXcoord = -1, indexYcoord = -1, indexIntensity = 0;
     boolean stepscan = false;
@@ -132,9 +134,9 @@ public class EsquiGoCIFDataFile extends MultDiffrDataFile {
 			        title = st.nextToken();
 			        if (title.startsWith("2001-10-2"))
 				        bkgmess = true;
-			        if (title.contains("|#"))
+			        if (title.contains("|#") || title.contains("Esqui") || title.contains("Seven circle diffractometer"))
 				        oldESGfile = true;
-			        if (linedata.contains("APD2000"))
+			        if (linedata.contains("APD2000") || linedata.contains("GD2000"))
 				        APD2000 = true;
 			        numberString = Integer.toString(++spectrumNumber);
 			        datafile = addDiffrDatafile(numberString);
@@ -169,9 +171,11 @@ public class EsquiGoCIFDataFile extends MultDiffrDataFile {
 			              token.equalsIgnoreCase("_energy_dispersive_zero_eV")) {
 		              twothetaStart = Double.valueOf(token = st.nextToken()).doubleValue();
 	              } else if (token.equalsIgnoreCase("_pd_meas_2theta_range_inc") ||
-			              token.equalsIgnoreCase("_pd_meas_degree_per_channel") ||
-			              token.equalsIgnoreCase("_energy_dispersive_gain_eV")) {
+			              token.equalsIgnoreCase("_pd_meas_degree_per_channel")) {
 		              twothetaStep = Double.valueOf(token = st.nextToken()).doubleValue();
+	              } else if (token.equalsIgnoreCase("_energy_dispersive_gain_eV")) {
+		              twothetaStep = Double.valueOf(token = st.nextToken()).doubleValue();
+		              energyDispersive = true;
 	              } else if (token.equalsIgnoreCase("_diffrn_detector")) {
 		              detector_string = st.nextToken();
 	              } else if (token.equalsIgnoreCase("_diffrn_detector_type")) {
@@ -210,6 +214,10 @@ public class EsquiGoCIFDataFile extends MultDiffrDataFile {
 			              image2D = true;
 	              } else if (token.equalsIgnoreCase("_pd_meas_angle_eta") || token.equalsIgnoreCase("_pd_meas_orientation_eta")) {
 		              eta_angle = Double.valueOf(token = st.nextToken()).doubleValue();
+	              } else if (token.equalsIgnoreCase("_pd_meas_angle_2theta") || token.equalsIgnoreCase("_pd_meas_orientation_2theta")) {
+		              theta2_angleD = Double.valueOf(token = st.nextToken()).doubleValue();
+	              } else if (token.equalsIgnoreCase("_pd_meas_energy_kev")) {
+		              energy_angle = Double.valueOf(token = st.nextToken()).doubleValue();
 	              } else if (token.equalsIgnoreCase("_pd_meas_detector_id")) {
 		              token = st.nextToken();
 		              if (token.contains("Amptek")) {
@@ -221,6 +229,11 @@ public class EsquiGoCIFDataFile extends MultDiffrDataFile {
 //                    System.out.println(twothetaStart + " " + twothetaShift + " " + braunChannels);
 		              } else if (ketek) {
 			              int channels = Integer.valueOf(token).intValue();
+		              }
+	              } else if (token.equalsIgnoreCase(pd_meas_scan_method)) {
+		              token = st.nextToken();
+		              if (token.toLowerCase().startsWith("disp")) {
+			              energyDispersive = true;
 		              }
 	              } else if (token.equalsIgnoreCase("_riet_meas_datafile_calibrated") && st.hasMoreTokens()) {
 		              String valueT = st.nextToken();
@@ -253,10 +266,14 @@ public class EsquiGoCIFDataFile extends MultDiffrDataFile {
           datafile.setAngleValue(1, chi_angle);
           datafile.setAngleValue(2, phi_angle);
           datafile.setAngleValue(3, eta_angle);
+//          System.out.println(theta2_angle + " : " + theta2_angleD);
 	        if (theta2_angle.equalsIgnoreCase("=omega"))
 		        datafile.setAngleValue(4, omega_angle);
-	        else
+	        else if (theta2_angleD == 0)
 		        datafile.setAngleValue(4, Double.valueOf(theta2_angle));
+	        else
+		        datafile.setAngleValue(4, theta2_angleD);
+	        datafile.setAngleValue(5, energy_angle);
 
 
 // _pd_meas_detector_id
