@@ -93,7 +93,7 @@ public class FullProfDataFile extends it.unitn.ing.rista.diffr.DiffrDataFile {
           for (int j = 0; j < 10; j++) {
             if (j * 8 + 4 > linedata.length())
               break;
-            String next = linedata.substring(j * 8 + 2, (j + 1) * 8);
+            String next = linedata.substring(j * 8, (j + 1) * 8 - 1);
 //            System.out.println(next);
             if (next != null) {
               setXData(i, startingvalue + i * measurementstep);

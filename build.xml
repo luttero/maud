@@ -46,7 +46,7 @@
         <mkdir dir="${build}"/>
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
-        <javac destdir="${build_ant}" debug="on" target="${java_version}" encoding="UTF-8">
+        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" encoding="UTF-8">
             <src path="${src}"/>
             <!--exclude name="it/unitn/ing/jsginfo/**" /-->
             <!--exclude name="it/unitn/ing/jgraph/**" /-->
@@ -100,7 +100,7 @@
             <exclude name="ij/gui/PlotWindow.java"/>
             <exclude name="org/java/misc/GL4Installer/MSJVMVersionApplet.java"/>
             <exclude name="ec/**"/>
-            <exclude name="com/jtex/**"/>
+            <!--exclude name="com/jtex/**"/-->
             <exclude name="fr/ensicaen/**"/>
             <!--exclude name="it/unitn/ing/fortran/**" /-->
             <exclude name="help/**"/>
@@ -161,7 +161,7 @@
         <mkdir dir="build"/>
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
-        <javac destdir="${build_ant}" debug="on" target="${java_version}" encoding="UTF-8">
+        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" encoding="UTF-8">
             <src path="${src}"/>
             <!--exclude name="it/unitn/ing/jsginfo/**" /-->
             <!--exclude name="it/unitn/ing/jgraph/**" /-->
@@ -213,7 +213,7 @@
             <exclude name="ij/gui/PlotWindow.java"/>
             <exclude name="org/java/misc/GL4Installer/MSJVMVersionApplet.java"/>
             <exclude name="ec/**"/>
-            <exclude name="com/jtex/**"/>
+            <!--exclude name="com/jtex/**"/-->
             <exclude name="fr/ensicaen/**"/>
             <!--exclude name="it/unitn/ing/fortran/**" /-->
             <exclude name="help/**"/>
@@ -264,12 +264,12 @@
 
     <target name="build_full" depends="compile_open" description="Build Maud.jar.">
         <!-- Copy needed files into the build directory. -->
-        <delete dir="${build_ant}/ec"/>
+        <!--delete dir="${build_ant}/ec"/>
         <delete dir="${build_ant}/it/unitn/ing/esqui/client"/>
-        <!--delete dir="${build_ant}/it/unitn/ing/fortran" />
-    <delete dir="${build_ant}/it/unitn/ing/jgraph" /-->
-        <!--delete dir="${build_ant}/it/unitn/ing/jsginfo" /-->
-        <delete dir="${build_ant}/HTTPClient"/>
+        <delete dir="${build_ant}/it/unitn/ing/fortran" />
+        <delete dir="${build_ant}/it/unitn/ing/jgraph" />
+        <delete dir="${build_ant}/it/unitn/ing/jsginfo" />
+        <delete dir="${build_ant}/HTTPClient"/-->
         <copy file="${buildnumber}/Maud_full_build.number" todir="${build_ant}"/>
         <copy file="${src}/ij/IJ_Props.txt" todir="${build_ant}"/>
         <mkdir dir="${build_ant}/files"/>
@@ -281,11 +281,15 @@
         <copy file="${src}/files/CWWARRAY.DAT" todir="${build_ant}/files"/>
         <copy file="${src}/files/IADARRAY.DAT" todir="${build_ant}/files"/>
         <copy file="${src}/files/xraydata.db" todir="${build_ant}/files" />
-    <!--copy file="${src}/files/ElectronScatteringFactors.txt" todir="${build_ant}/files" />
-    <copy file="${src}/files/asf_Kissel.dat" todir="${build_ant}/files" />
-    <copy file="${src}/files/integratedBessel.dat" todir="${build_ant}/files" />
-    <copy file="${src}/files/ScatteringLengths.txt" todir="${build_ant}/files" />
-    <copy file="${src}/files/CrossSection.dat" todir="${build_ant}/files" /-->
+        <mkdir dir="${build_ant}/com/jtex/data"/>
+        <copy todir="${build_ant}/com/jtex/data" >
+            <fileset dir="${src}/com/jtex/data" includes="**"/>
+        </copy>
+        <!--copy file="${src}/files/ElectronScatteringFactors.txt" todir="${build_ant}/files" />
+        <copy file="${src}/files/asf_Kissel.dat" todir="${build_ant}/files" />
+        <copy file="${src}/files/integratedBessel.dat" todir="${build_ant}/files" />
+        <copy file="${src}/files/ScatteringLengths.txt" todir="${build_ant}/files" />
+        <copy file="${src}/files/CrossSection.dat" todir="${build_ant}/files" /-->
         <mkdir dir="${build_ant}/media"/>
         <mkdir dir="${build_ant}/media/music"/>
         <mkdir dir="${build_ant}/media/music/samples"/>
@@ -550,7 +554,7 @@
         <mkdir dir="build"/>
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
-        <javac destdir="${build_ant}" debug="on" target="${java_version}" encoding="UTF-8">
+        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" encoding="UTF-8">
             <src path="${src}"/>
             <exclude name="it/unitn/ing/esqui/client/**"/>
             <exclude name="it/unitn/ing/esqui/server/**"/>
@@ -702,7 +706,7 @@
         <mkdir dir="build"/>
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
-        <javac destdir="${build_ant}" debug="on" target="${java_version}" encoding="UTF-8">
+        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" encoding="UTF-8">
             <src path="${src}"/>
             <include name="com/deadmoo/xgridagent/**"/>
             <include name="jint/scimark2/**"/>
@@ -765,7 +769,7 @@
         <mkdir dir="build"/>
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
-        <javac destdir="${build_ant}" debug="on" target="${java_version}" encoding="UTF-8">
+        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" encoding="UTF-8">
             <src path="${src}"/>
             <include name="it/unitn/ing/xgridclient/**"/>
             <classpath>
@@ -815,7 +819,7 @@
         <mkdir dir="build"/>
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
-        <javac destdir="${build_ant}" debug="on" target="${java_version}" encoding="UTF-8">
+        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" encoding="UTF-8">
             <src path="${src}"/>
             <include name="it/unitn/ing/xgridclient/XGridHello.java"/>
             <classpath>
@@ -851,7 +855,7 @@
         <mkdir dir="build"/>
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
-        <javac destdir="${build_ant}" debug="on" target="${java_version}" encoding="UTF-8">
+        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" encoding="UTF-8">
             <src path="${src}"/>
             <include name="it/unitn/ing/xgridagent/XGridJavaLauncher.java"/>
             <!--include name="HTTPClient/*.java" />
@@ -1005,7 +1009,7 @@
         <mkdir dir="build"/>
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
-        <javac destdir="${build_ant}" debug="on" target="${java_version}" encoding="UTF-8">
+        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" encoding="UTF-8">
             <src path="${src}"/>
             <!--exclude name="it/unitn/ing/jsginfo/*" /-->
             <!--exclude name="it/unitn/ing/jgraph/*" /-->
@@ -1267,7 +1271,7 @@
         <mkdir dir="build"/>
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
-        <javac destdir="${build_ant}" debug="on" target="${java_version}" encoding="UTF-8">
+        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" encoding="UTF-8">
             <src path="${src}/it/unitn/ing/jsginfo"/>
             <exclude name="it/unitn/ing/jsginfo/sglib.java"/>
             <exclude name="it/unitn/ing/jsginfo/sginfoh.tmp.java"/>
@@ -1309,7 +1313,7 @@
         <mkdir dir="build"/>
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
-        <javac destdir="${build_ant}" debug="on" target="${java_version}" encoding="UTF-8">
+        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" encoding="UTF-8">
             <src path="${src}/ec"/>
             <exclude name="vector/AtomVectorIndividual.java"/>
             <exclude name="teambots/**"/>
@@ -1433,7 +1437,7 @@
         <mkdir dir="build"/>
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
-        <javac destdir="${build_ant}" debug="on" target="${java_version}" encoding="UTF-8">
+        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" encoding="UTF-8">
             <src path="${src}/it/unitn/ing/jgraph"/>
             <classpath>
                 <pathelement location="${build}/Maud_dev.jar"/>
@@ -1480,7 +1484,7 @@
         <mkdir dir="build"/>
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
-        <javac destdir="${build_ant}" debug="on" target="${java_version}" encoding="UTF-8">
+        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" encoding="UTF-8">
             <src path="${src}/gov/noaa/pmel"/>
             <!--classpath>
 			<pathelement location="${build}/Maud_dev.jar"/>
@@ -1555,11 +1559,11 @@
     </target>
 
 
-    <!--target name="compile_ImageJ" depends="clean" description="Compile ImageJ.jar">
+    <target name="compile_ImageJ" depends="clean" description="Compile ImageJ.jar">
     <delete dir="${build_ant}" />
     <mkdir dir="build" />
     <mkdir dir="${build_ant}" />
-    <javac destdir="${build_ant}" debug="on" target="1.5" encoding="UTF-8">
+    <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" encoding="UTF-8">
     	<src path="ImageJ"/>
       <exclude name="plugins/*" />
     </javac>
@@ -1573,7 +1577,7 @@
     <copy file="ImageJ/images/about.jpg" tofile="${build_ant}/about.jpg" />
     <copy file="${buildnumber}/ImageJ_build.number" todir="${build_ant}" />
     <jar jarfile="${build}/ij.jar" basedir="${build_ant}" manifest="ImageJ/MANIFEST.MF" />
-  </target!-->
+  </target>
 
 
     <target name="copy_ImageJ" description="Copy the ImageJ build files to the final destination.">
@@ -1604,7 +1608,7 @@
         <mkdir dir="build"/>
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
-        <javac destdir="${build_ant}" debug="on" target="1.5" encoding="UTF-8">
+        <javac destdir="${build_ant}" optimize="on" debug="on" target="1.5" encoding="UTF-8">
             <src path="${src}/HTTPClient"/>
         </javac>
         <buildnumber file="${buildnumber}/HTTPClient_build.number"/>
@@ -2031,7 +2035,7 @@
                    displayname="Maud"
                    identifier="com.radiographema.maud"
                    executableName="Maud"
-                   shortversion="2.76"
+                   shortversion="2.78"
                    icon="${inst}/maud.icns"
                    mainclassname="com.radiographema.Maud"
                    copyright="Maud, for materials analysis, Copyright 1997-2017 Luca Lutterotti"
@@ -2175,6 +2179,13 @@
         <!--copy file="cctbxForMaud/build/Debug/libcctbxForMaud.dylib" tofile="${inst}/Maud_mac/Maud.app/Contents/Plugins/Home/jre/lib/libcctbxForMaud.dylib" /-->
         <!--copy file="cctbxForMaud/libcctbx.dylib" tofile="${inst}/Maud_mac/Maud.app/Contents/MacOS/lib/libcctbx.dylib" />
         <copy file="cctbxForMaud/libcctbxForMaud.dylib" tofile="${inst}/Maud_mac/Maud.app/Contents/MacOS/libcctbxForMaud.dylib" /-->
+        <mkdir dir="${app_osx}/Maud.app/Contents/MacOS/mtex" />
+        <copy todir="${app_osx}/Maud.app/Contents/MacOS/mtex" >
+            <fileset dir="${src}/com/jtex/external/bin/maci64" includes="**"/>
+        </copy>
+        <exec executable="chmod">
+            <arg line=" -R a+x ${app_osx}/Maud.app/Contents/MacOS/mtex"/>
+        </exec>
     </target>
 
     <target name="build_installer_osx" depends="bundle" description="Build the macOS application">
@@ -2189,16 +2200,14 @@
             <arg line="-v -s &quot;Mac Developer: Luca Lutterotti (46BWEFAJP5)&quot; --entitlements Maud.entitlements"/>
             <fileset dir="${app_osx}/Maud.app/Contents/PlugIns" />
         </apply>
-        <!--exec dir="${installerDir}" executable="codesign" os="Mac OS X">
-            <arg line="-v -s &quot;Mac Developer: Luca Lutterotti (46BWEFAJP5)&quot; ${app_osx}/Maud.app/Contents/Frameworks/libcctbxForMaud.dylib"/>
-        </exec-->
         <apply dir="${installerDir}" executable="codesign">
             <arg line="-v -s &quot;Mac Developer: Luca Lutterotti (46BWEFAJP5)&quot; "/>
             <fileset dir="${app_osx}/Maud.app/Contents/Resources/Java" />
         </apply>
-        <!--exec dir="${installerDir}" executable="codesign" os="Mac OS X">
-            <arg line="-v -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; ${app_osx}/Maud.app/Contents/_CodeSignature/CodeResources"/>
-        </exec-->
+        <apply dir="${installerDir}" executable="codesign">
+            <arg line="-v -s &quot;Mac Developer: Luca Lutterotti (46BWEFAJP5)&quot; "/>
+            <fileset dir="${app_osx}/Maud.app/Contents/MacOS/mtex" />
+        </apply>
         <exec dir="${installerDir}" executable="codesign" os="Mac OS X">
             <arg line="-v -s &quot;Mac Developer: Luca Lutterotti (46BWEFAJP5)&quot; --entitlements Maud.entitlements ${app_osx}/Maud.app"/>
         </exec>
@@ -2245,7 +2254,7 @@
     </target-->
 
 
-    <target name="build_installers" depends="build_installer_osx"
+    <target name="build_installers" depends="bundle"
             description="Deploy the full build files to the web server.">
         <!--		<ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}" remotedir="${deployfulldir}">
   		<fileset file="${mirrorfulldir}/Maud.jar"/>

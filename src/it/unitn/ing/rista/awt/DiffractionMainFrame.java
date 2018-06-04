@@ -20,6 +20,7 @@
 
 package it.unitn.ing.rista.awt;
 
+import com.objectwave.viewUtility.TextFieldChangeListener;
 import com.radiographema.MaudText;
 import it.unitn.ing.rista.awt.treetable.*;
 import it.unitn.ing.rista.comp.OutputPanel;
@@ -36,6 +37,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.*;
 import java.util.StringTokenizer;
 
@@ -132,11 +135,15 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
         "Plot options",
         "-",
         "Waiting for computation...",
-      MENU_SPECIAL + ":4",
+      MENU_SPECIAL + ":8",
         "Submit structure to COD",
         "Load RSS feed",
         "-",
         "Refine in batch...",
+		  "-",
+		  "mtex Dubna demo",
+		  "mtex SantaFe demo",
+		  "mtex BrukerGPol demo",
       MENU_HELP + ":7",
         "Readme", // Help
         "Introduction",
@@ -208,6 +215,10 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
       nullKeyEvent,
       nullKeyEvent,
       nullKeyEvent,
+		  nullKeyEvent,
+		  nullKeyEvent,
+		  nullKeyEvent,
+		  nullKeyEvent,
 
       nullKeyEvent,
       nullKeyEvent,
@@ -276,6 +287,10 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
       true,
       true,
       true,
+		  true,
+		  true,
+		  true,
+		  true,
 
       true,
       true,
@@ -358,11 +373,11 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
           Constants.testing ? "Test COD HTTP connection" : null,
           //Constants.testing ? "Start refine on Xgrid" : null,
 		      "Refine in batch...",
-          null,
-          null,
-          null,
-          null,
-          null,
+		      "-",
+		      "mtex Dubna demo",
+		      "mtex SantaFe demo",
+		      "mtex BrukerGPol demo",
+		      null,
           null,
           null,
           null,
@@ -431,6 +446,8 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
     JMenu amenu;
     int pos;
     String label = mainMenuLabels[menuIndex++];
+//	  System.out.println(menuIndex - 1);
+//    System.out.println(label);
 /*    if (menu instanceof JMenu)
       System.out.println(((JMenu) menu).getText() + ", " + (menuIndex - 1) + ": " + label);
     if (menu instanceof JMenuBar)
@@ -837,19 +854,11 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
       });
     }
 
-    parListPanel = new JPanel(new BorderLayout(Constants.borderInside, Constants.borderInside));
-    parListPanel.setMinimumSize(new Dimension(10, 10));
+    JPanel lowerPanel = new JPanel(new BorderLayout(6, 6));
 
-    new FileDrop(parListPanel, new FileDrop.Listener() {
-      public void filesDropped(java.io.File[] files) {
-        // handle file drop
-        parameterFileDropped(files);
-      }   // end filesDropped
-    }); // end FileDrop.Listener
+//    parListPaneSouth = MaudPreferences.getBoolean("parameterListPanel.fullBottom", true);
 
-    parListPaneSouth = MaudPreferences.getBoolean("parameterListPanel.fullBottom", true);
-
-    if (parListPaneSouth) {
+//    if (parListPaneSouth) {
       int dividerE = WindowPreferences.getInteger(dividerEstring, 200);
       int dividerW = WindowPreferences.getInteger(dividerWstring, 460);
       int dividerP = WindowPreferences.getInteger(dividerPstring, 300);
@@ -863,11 +872,11 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
       westPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, eastPanel, plotPanel);
       westPanel.setContinuousLayout(true);
       westPanel.setDividerLocation(dividerP);
-      principalPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, westPanel, parListPanel);
+      principalPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, westPanel, lowerPanel);
       principalPanel.setContinuousLayout(true);
       principalPanel.setDividerLocation(dividerW);
       eastSPanel.setBorder(new EmptyBorder(0, 6, 0, 6));
-    } else {
+/*    } else {
       JPanel eastNPanel = new JPanel(new BorderLayout(Constants.borderInside, Constants.borderInside));
       eastNPanel.add(BorderLayout.CENTER, westTB);
       JPanel eastSPanel = new JPanel(new BorderLayout(Constants.borderInside + 6, Constants.borderInside + 6));
@@ -885,7 +894,7 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
       int dividerP = WindowPreferences.getInteger(dividerPstring, 300);
       principalPanel.setDividerLocation(dividerP);
       eastSPanel.setBorder(new EmptyBorder(0, 6, 0, 6));
-    }
+    }*/
     principalPanel.setBorder(new EmptyBorder(0, 0, 0, 0));
     westPanel.setBorder(new EmptyBorder(0, 0, 0, 0));
     eastPanel.setBorder(new EmptyBorder(0, 0, 0, 0));
@@ -902,6 +911,32 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
 
     pcontrol.setProgressText("packing the window");
     pcontrol.increaseValue();
+
+    JPanel titlePanel = new JPanel(new BorderLayout(6, 6));
+	  lowerPanel.add(BorderLayout.NORTH, titlePanel);
+    titlePanel.add(BorderLayout.WEST, new JLabel("Analysis title: "));
+	  titleField = new JTextField();
+	  titlePanel.add(BorderLayout.CENTER, titleField);
+	  TextFieldChangeListener listener = new TextFieldChangeListener(titleField) {
+		  public void onChange(String newText) {
+			  if (parameterfile != null && !newText.equals(parameterfile.getTitleField())) {
+				  parameterfile.setTitleField(newText);
+				  System.out.println("title = " + parameterfile.getTitleField());
+			  }
+		  }
+	  };
+
+	  parListPanel = new JPanel(new BorderLayout(Constants.borderInside, Constants.borderInside));
+	  parListPanel.setMinimumSize(new Dimension(10, 10));
+
+	  lowerPanel.add(BorderLayout.CENTER, parListPanel);
+
+	  new FileDrop(parListPanel, new FileDrop.Listener() {
+		  public void filesDropped(java.io.File[] files) {
+			  // handle file drop
+			  parameterFileDropped(files);
+		  }   // end filesDropped
+	  }); // end FileDrop.Listener
 
     treeTable = new JTreeTable(new ParameterTreeMutableModel(this, parameterfile));
     JScrollPane parScrollpane = new JScrollPane(treeTable);
@@ -926,7 +961,7 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
     System.setProperty("apple.awt.brushMetalRounded", "false");
   }
 
-  public OutputPanel getOutputPanel() {
+	public OutputPanel getOutputPanel() {
     return outputPanel;  //To change body of created methods use File | Settings | File Templates.
   }
 
@@ -1015,18 +1050,18 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
 
   public void initParameters() {
     try {
-    super.initParameters();
-    if (parListFrame != null) {
-      parListFrame.setVisible(false);
-      parListFrame.dispose();
-      parListFrame = null;
-    }
+	    super.initParameters();
+	    if (parListFrame != null) {
+		    parListFrame.setVisible(false);
+		    parListFrame.dispose();
+		    parListFrame = null;
+	    }
 
-    rebuildParameterTreeList(null, -1);
-    refreshTheTree();
-    updateDataFilePlot(false);
-    outputPanel.reset();
-    outputPanel.removeAllButtons();
+	    rebuildParameterTreeList(null, -1);
+	    refreshTheTree();
+	    updateDataFilePlot(false);
+	    outputPanel.reset();
+	    outputPanel.removeAllButtons();
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -1683,6 +1718,12 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
         return;
       } else if (command.equals(mainMenuCommand[index][5])) {     // batch mode
 	      startBatchMode();
+      } else if (command.equals(mainMenuCommand[index][7])) {     // batch mode
+	      com.jtex.qta.ODFDemo.DubnaDemo();
+      } else if (command.equals(mainMenuCommand[index][8])) {     // batch mode
+	      com.jtex.qta.ODFDemo.SantaFeDemo();
+      } else if (command.equals(mainMenuCommand[index][9])) {     // batch mode
+	      com.jtex.qta.ODFDemo.BrukerGPolDemo();
       } else if (command.equals(JPVMNetworkComputingCommand[0])) {     // Distribute computing configuration
         ParallelComputationController.configure();
         return;

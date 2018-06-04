@@ -1115,6 +1115,7 @@ public class AtomSite extends XRDcat {
    * Compute the occupancy value from the quantity using the number of equivalent positions (getSiteMultiplicity()).
    */
   public void computeOccupancyFromQuantity() {
+//	  getTotalOccupancy();
     int newSitePosNumber = getSiteMultiplicity();
     getOccupancy().setValue(Double.valueOf(getQuantity()).doubleValue() / newSitePosNumber);
   }
@@ -1146,6 +1147,7 @@ public class AtomSite extends XRDcat {
    * Compute the quantity value from the occupancy using the number of equivalent positions (getSiteMultiplicity()).
    */
   public void computeQuantityFromOccupancy() {
+//	  getTotalOccupancy();
     int newSitePosNumber = getSiteMultiplicity();
     setQuantity(Fmt.format(getTotalOccupancy() * newSitePosNumber));
   }

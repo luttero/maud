@@ -1253,9 +1253,13 @@ public class FilePar extends XRDcat implements lFilePar, Function {
     saved = true;
   }
 
+  public void createFirstDateRecord() {
+	  stringField[1] = new String("Maud, version " + Constants.getVersion());
+	  stringField[0] = new String(Misc.getCurrentDateTime());
+  }
+
   public void refreshProgramInformations() {
-    stringField[1] = new String("Maud, version " + Constants.getVersion());
-    stringField[2] = new String("Last update " + Misc.getCurrentDateTime());
+    stringField[2] = new String(Misc.getCurrentDateTime());
     stringField[3] = new String("Maud, version " + Constants.getVersion());
   }
 
@@ -2879,13 +2883,13 @@ public class FilePar extends XRDcat implements lFilePar, Function {
   }
 
   public double getWSS() {
-    double WSS = 0.0;
-    double diff;
+    double WSS = refinementIndexes[8];
+/*    double diff;
 
     for (int i = 0; i < numberOfData; i++) {
       diff = (getFit(i) - getData(i)) * getWeight(i);
       WSS += diff * diff;
-    }
+    }*/
 
 //    double[] indexes = getRefinementIndexes();
 

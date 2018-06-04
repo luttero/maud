@@ -237,7 +237,10 @@ public class Constants {
 	public static final double LN2_2 = 3.4657359027997E-01;
   public static final double sqrtln2pi = 4.6971863935E-01;
   public static final double SQRT_OF_PILN2 = 1.475664626635606;
+  public static final double sqrt2ln2 = 1.177410022515475;
+  public static final double one_sqrt2ln2 = 0.849321800288019;
   public static final double sqrt2 = 1.41421356237;
+	public static final double one_sqrt2 = 0.707106781186548;
   public static final double sqrt3 = 1.73205080757;
   public static final double mstraintoetilde = 1.253314137316; // Math.sqrt(Math.PI/2)
   public static final double integrationStepPF = 1.0;
@@ -261,13 +264,13 @@ public class Constants {
   public static String resultsFile = "results.txt";
   public static String userName = null;
   public static String startPath = "/";
-  public static String maudReleaseBuilt = "$Revision: 2.76 $";
-  public static String maudDateBuilt = "$Date: 2017/07/10 21:58:00 $";
+  public static String maudReleaseBuilt = "$Revision: 2.80 $";
+  public static String maudDateBuilt = "$Date: 2018/01/11 19:33:00 $";
 
   public static final double arg2PIover3 = PI2 / 3.;
   public static final double sinArg2PIover3 = Math.sin(arg2PIover3);
   public static final double cosArg2PIover3 = Math.cos(arg2PIover3);
-  public static double maud_version = 2.76;
+  public static double maud_version = 2.80;
 	public static boolean useOpenCL = false;
 	public static Vector<OpenCLDevice> openClDevices= null;
 	public static OpenCLDevice openclDevice = null;
@@ -411,6 +414,7 @@ public class Constants {
 	public static String logsDirectory = "";
 	public static String startingLog = "startingLog";
   public static boolean sandboxEnabled = false;
+  public static String startingAppDirectory = "";
 
 	public static String refineIcon = "slot_machine_20.gif";
 
@@ -429,9 +433,10 @@ public class Constants {
 		String libDir = System.getProperty("LibraryDirectory");
 		if (libDir != null && !libDir.equalsIgnoreCase("null")) {
 			libraryDirectory = libDir + fileSeparator;
-			cachesDirectory = System.getProperty("CachesDirectory") + fileSeparator;
+			cachesDirectory = System.getProperty("CachesDirectory") + fileSeparator + "com.radiographema.maud" + fileSeparator;
 			applicationSupportDirectory = System.getProperty("ApplicationSupportDirectory") + fileSeparator;
 			logsDirectory = libraryDirectory + "Logs" + fileSeparator;
+			startingAppDirectory = System.getProperty("java.library.path") + fileSeparator;
 			if (sandboxed)
 				documentsDirectory = System.getProperty("DocumentsDirectory") + fileSeparator;
 			else
@@ -537,6 +542,7 @@ public class Constants {
 		System.out.println("Logs folder: " + logsDirectory);
 		System.out.println("Caches folder: " + cachesDirectory);
 		System.out.println("Documents folder: " + documentsDirectory);
+		System.out.println("App starting folder: " + startingAppDirectory);
 
 		sounds = new Vector(0, 1);
 

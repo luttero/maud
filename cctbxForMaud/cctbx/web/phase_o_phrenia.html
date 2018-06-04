@@ -1,0 +1,217 @@
+<html>
+<head>
+<title>cctbx - Phase-O-Phrenia</title>
+</head>
+<body bgcolor=#ffffff>
+
+[<a href="index.html">Index of services</a>]
+<hr>
+<h1>cctbx - Phase-O-Phrenia<small>*</small></h1>
+
+<hr>
+
+<h2>Evaluation of substructures used in SIR or SAD phasing</h2>
+
+Single Isomorphous Replacement (SIR) phasing:
+
+<blockquote>
+An electron density map obtained through SIR phasing is the
+superposition of the true electron density and the
+<b>
+inverse
+</b>
+of the true electron density
+convoluted with the Fourier transform of exp(2 i phi_sub), where
+phi_sub are the phases of the heavy atom substructure. The Fourier
+coefficients of this map are given by (Ramachandran &amp; Srinivasan, 1970,
+Fourier Methods in Crystallography, p. 123):
+
+<pre>
+    F + conjugate(F) exp(2 i phi_sub)
+</pre>
+</blockquote>
+
+Single Anomalous Difference (SAD) phasing:
+
+<blockquote>
+An electron density map obtained through SAD phasing is the
+superposition of the true electron density and the
+<b>
+negative inverse
+</b>
+of the true electron density
+convoluted with the Fourier transform of exp(2 i phi_sub) (p. 190 in the same book):
+<pre>
+    F - conjugate(F) exp(2 i phi_sub)
+</pre>
+</blockquote>
+
+In general the second terms are expected only to contribute to the
+background in the SIR or SAD maps. However, the case when the
+substructure has a centrosymmetric configuration in a
+noncentrosymmetric crystal is special. If the centre of inversion of
+the substructure is (without loss of generality) placed at the origin
+of the unit cell, all phases phi_sub are either 0 or 180 degrees, and
+exp(2 i phi_sub) = 1 for either value. Therefore the equations above
+reduce to F + conjugate(F) and F - conjugate(F), respectively.
+The SIR or SAD map will therefore be the superposition of the true
+electron density with its exact inverse or negative inverse, respectively,
+and the interpretation of the map will therefore be significantly
+more difficult.
+
+<p>
+
+Often it is not immediately obvious that a substructure is
+centrosymmetric. This server provides a very simple method for testing
+for this condition:
+
+<ul>
+
+<li>Given the crystallographic data of the substructure the phases
+    phi_sub are computed.
+
+<li>The coefficients exp(2 i phi_sub) are Fourier transformed.
+
+<li>The resulting map is searched for peaks.
+
+<li>The peaks are sorted by height and plotted.
+
+</ul>
+
+If the resulting plot shows one sharp peak the substructure is
+centrosymmetric<small>**</small>.
+
+<p>
+To see examples, try space group P1 with one or two atoms in any
+position, or space group P6 with one atom at x1,y1,0 and optionally
+another atom at x2,y2,1/2. To see a good counter example, try four or
+more randomly placed atoms in space group P31.
+
+<p>
+
+This server can also be used to show that some maps will be more
+difficult to interpret than others even if the substructure is not
+centrosymmetric. For example, compare the plots for a randomly placed
+atom in space group P3 and space group P31.
+
+<p>
+The general rule is:
+
+<ul>
+
+<li>The pessimistic viewpoint:
+    A SIR or SAD map is more difficult to interpret if the distribution in the plot is sharp.
+
+<li>The optimistic viewpoint:
+    A SIR or SAD map is easier to interpret if the distribution in the plot is flat.
+
+</ul>
+
+<p>
+<small>
+* The name of this server is derived from the term <i>double-phasing</i>
+used by Ramachandran &amp; Srinivasan.
+</small>
+
+<p>
+<small>
+** The Fourier transform of a constant function (e.g. exp(2 i phi_sub)
+= 1) is a delta function: it is different from zero only at the origin,
+and exactly zero everywhere else. If the centre of inversion of a
+substructure is shifted away from the origin the expression exp(2 i
+phi_sub) is no longer a constant, but the Fourier transform is still a
+delta function which is different from zero only at the location (2 xc,
+2 yc, 2 zc), where (xc, yc, zc) are the coordinates of the centre of
+inversion.
+</small>
+
+<hr>
+
+<FORM ENCTYPE="multipart/form-data" METHOD=POST ACTION="cctbx_web.cgi">
+<input type="HIDDEN" name="target_module" value="phase_o_phrenia">
+
+<h3>Substructure parameters</h3>
+
+<strong>Unit cell parameters: </strong><input
+name="ucparams" size=40
+value="">
+<br>(Leave blank if read from file.)
+
+<p>
+<strong>Space group symbol: </strong><input
+name="sgsymbol" size=40
+value=""><br>
+Convention:
+<select name="convention">
+  <option value="" selected
+    >Default</option>
+  <option value="A1983"
+    >International Tables for Crystallography, Volume A 1983</option>
+  <option value="I1952"
+    >International Tables for Crystallography, Volume I 1952</option>
+  <option value="Hall"
+    >Hall symbol</option>
+</select>
+<br>(Leave blank if read from file.)
+
+<p>
+<strong>Coordinates:</strong>
+<p>
+Format:
+<select name="format">
+  <option value="generic" selected
+    >Generic</option>
+  <option value="cns_sdb"
+    >CNS sdb</option>
+</select>
+<p>
+Generic format only:
+<blockquote>
+<input type=radio name="coor_type" value="Fractional" checked>Fractional
+<br>
+<input type=radio name="coor_type" value="Cartesian">Cartesian
+<p>
+Format: Label [ScatFact] x y z [Occ [Biso]]<br>
+Examples:<br>
+<tt>Si 0.123 0.456 0.789 1.0 3.0</tt><br>
+<tt>Si Si4+ 0.123 0.456 0.789 1.0 3.0</tt>
+</blockquote>
+
+Specify file: <INPUT NAME="coor_file" TYPE="file">,
+or paste in coordinates:
+<br>
+<textarea name="coordinates" rows=16 cols=60></textarea>
+
+<h3>Map calculation and peak search parameters</h3>
+
+<p>
+<strong>Minimum distance between symmetrically equivalent sites:</strong>
+ <input name="min_distance_sym_equiv" size=8 value="0.5"><br>
+Atoms that have symmetrically equivalent sites within the given radius will<br>
+be moved to the exact site of the nearest special position.
+
+<p>
+<strong>Minimum d-spacing used in structure factor calculation: </strong><input
+name="d_min" size=8
+value="3.0">
+
+<p>
+<strong>Minimum distance between peaks in map: </strong><input
+name="min_peak_distance" size=8
+value="4.0">
+
+<p>
+<strong>Maximum number of peaks to be shown: </strong><input
+name="max_reduced_peaks" size=8
+value="60">
+
+<p>
+<input type="submit" value="Evaluate">
+<p>
+<input type="reset"  value="Reset">
+</FORM>
+<hr>
+[<a href="index.html">Index of services</a>]
+<hr>
+</body>
+</html>

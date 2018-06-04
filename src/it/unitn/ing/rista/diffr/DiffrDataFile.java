@@ -56,14 +56,15 @@ public class DiffrDataFile extends XRDcat {
 	public static String pd_meas_scan_range_min = "_pd_meas_2theta_range_min";
 	public static String pd_meas_scan_range_max = "_pd_meas_2theta_range_max";
 	public static String pd_meas_scan_range_inc = "_pd_meas_2theta_range_inc";
+	public static String pd_meas_counts_total = "_pd_meas_counts_total";
 
 	public static String[] diclistc = {
       "_riet_meas_datafile_format",
-      "_pd_meas_orientation_omega",
-      "_pd_meas_orientation_chi",
-      "_pd_meas_orientation_phi",
-      "_pd_meas_orientation_eta",
-			"_pd_meas_orientation_2theta",
+      "_pd_meas_angle_omega",
+      "_pd_meas_angle_chi",
+      "_pd_meas_angle_phi",
+      "_pd_meas_angle_eta",
+			"_pd_meas_angle_2theta",
 			"_pd_meas_energy_kev",
       "_riet_meas_datafile_compute",
       "_riet_meas_datafile_fitting",
@@ -183,6 +184,7 @@ public class DiffrDataFile extends XRDcat {
   final static int sampleDisplacementZID = 2;
 	boolean useCountTimeToScale = false;
 	boolean useChebyshevPolynomials = false;
+	final static int countingTimeValueID = maxAngleNumber + 4;
 
   //	boolean tobeloaded = true;
   String folder = ".";
@@ -1254,11 +1256,11 @@ public class DiffrDataFile extends XRDcat {
   }
 
   public void setCountTime(String time) {
-    setString(maxAngleNumber + 4, time);
+    setString(countingTimeValueID, time);
   }
 
   public String getCountTime() {
-    return getString(maxAngleNumber + 4);
+    return getString(countingTimeValueID);
   }
 
   public double getCountTimeValue() {
@@ -2124,7 +2126,7 @@ public class DiffrDataFile extends XRDcat {
   }
 
   public double getFit(int index) {
-    return finalIntensityCalibration(phasesfit[index] + bkgfit[index] + intbkgfit[index]);
+    return finalIntensityCalibration(phasesfit[index] + bkgfit[index]) + intbkgfit[index];
   }
 
   public double getPhaseFit(int index, int phaseIndex) {
@@ -2267,11 +2269,11 @@ public class DiffrDataFile extends XRDcat {
   }
 
   public double getBkgFit(int index) {
-    return bkgfit[index] + intbkgfit[index];
+    return finalIntensityCalibration(bkgfit[index]) + intbkgfit[index];
   }
 
   public double getBkgFitNoInterpolation(int index) {
-    return bkgfit[index];
+    return finalIntensityCalibration(bkgfit[index]);
   }
 
   public double getBkgFitForStatistic(int index) {
@@ -2454,7 +2456,7 @@ public class DiffrDataFile extends XRDcat {
 
       switch (weightSwitch) {
         case 0: // default
-	        value = qCorrection * weight[index];
+	        value = qCorrection * weight[index] * Math.sqrt(corr);
 	        break;
         case 1:
         case 4:
@@ -2476,7 +2478,7 @@ public class DiffrDataFile extends XRDcat {
         case 20:
         case 23:
         case 26:
-          value = qCorrection * corr;
+          value = qCorrection * Math.sqrt(corr);
           break;
 
         case 3:
@@ -2488,7 +2490,7 @@ public class DiffrDataFile extends XRDcat {
         case 21:
         case 24:
         case 27:
-          value = qCorrection;
+          value = qCorrection * Math.sqrt(corr);
           break;
       }
       }
@@ -6041,9 +6043,9 @@ public class DiffrDataFile extends XRDcat {
 		for (int j = 0; j < positionsPerPattern; j++) {
 			int reflNumber = aphase.getReflectionVector().size();
 			for (int i = 0; i < reflNumber; i++) {
-				double[] broad = ainstrument.getInstrumentalBroadeningAt(positions[0][i][j], this);
-				for (int b = 0; b < broad.length; b++)
-					instrumentBroadening[b][i][j] = broad[b];
+				double[][] broad = ainstrument.getInstrumentalBroadeningAt(positions[0][i][j], this);
+				for (int b = 0; b < broad[0].length; b++)
+					instrumentBroadening[b][i][j] = broad[0][b];
 			}
 		}
 

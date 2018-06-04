@@ -1,0 +1,164 @@
+<html>
+<head>
+<title>cctbx - Emma: Euclidean Model Matching</title>
+</head>
+<body bgcolor=#ffffff>
+
+[<a href="index.html">Index of services</a>]
+<hr>
+<h1>cctbx - Emma: Euclidean Model Matching</h1>
+
+Keywords:
+  substructure comparison,
+  isomorphous replacement,
+  anomalous diffraction,
+  heavy atom,
+  SAD, MAD, SIR, MIR
+<p>
+Related programs:
+<a href="http://www.bfsc.leidenuniv.nl/software/crank/index.html">Crank</a>,
+<a href="http://www.phenix-online.org/download/documentation/cci_apps/hyss/">HySS</a>,
+<a href="http://shelx.uni-ac.gwdg.de/">SHELXD</a>,
+<a href="http://www.hwi.buffalo.edu/SnB/">SnB</a>,
+<a href="http://www.solve.lanl.gov/">Solve</a>
+<p>
+Note: It may be much more convenient to use the comamnd-line interface.
+Look for <strong><tt>phenix.emma</tt></strong> in this document:
+
+<a
+href="http://www.phenix-online.org/download/documentation/cci_apps/hyss/examples.html"
+>HySS examples</a>
+
+<hr>
+
+<h2>Superposition of atomic models:</h2>
+
+<hr>
+
+<FORM ENCTYPE="multipart/form-data" METHOD=POST ACTION="cctbx_web.cgi">
+<input type="HIDDEN" name="target_module" value="emma">
+
+<h3>Reference model</h3>
+
+<strong>Unit cell parameters: </strong><input
+name="ucparams_1" size=40
+value="">
+<br>(Leave blank if read from file.)
+
+<p>
+<strong>Space group symbol: </strong><input
+name="sgsymbol_1" size=40
+value=""><br>
+Convention:
+<select name="convention_1">
+  <option value="" selected
+    >Default</option>
+  <option value="A1983"
+    >International Tables for Crystallography, Volume A 1983</option>
+  <option value="I1952"
+    >International Tables for Crystallography, Volume I 1952</option>
+  <option value="Hall"
+    >Hall symbol</option>
+</select>
+<br>(Leave blank if read from file.)
+
+<p>
+<strong>Coordinates:</strong>
+<p>
+Format:
+<select name="format_1">
+  <option value="auto_detect" selected
+    >Auto detect (PDB or CNS SDB)</option>
+  <option value="generic"
+    >Generic</option>
+</select>
+<p>
+Generic format only:
+<blockquote>
+<input type=radio name="coor_type_1" value="Fractional" checked>Fractional
+<br>
+<input type=radio name="coor_type_1" value="Cartesian">Cartesian
+<br>
+Skip the left <input name="skip_columns_1" size=4 value="0"> columns.
+</blockquote>
+Specify file: <INPUT NAME="coor_file_1" TYPE="file">,
+or paste in coordinates:
+<br>
+<textarea name="coordinates_1" rows=16 cols=60></textarea>
+
+<hr>
+
+<h3>Other models:</h3>
+
+<strong>Unit cell parameters: </strong><input
+name="ucparams_2" size=40
+value="">
+<br>(Leave blank if identical to reference model.)
+
+<p>
+<strong>Space group symbol: </strong><input
+name="sgsymbol_2" size=40
+value=""><br>
+Convention:
+<select name="convention_2">
+  <option value="" selected
+    >Default</option>
+  <option value="A1983"
+    >International Tables for Crystallography, Volume A 1983</option>
+  <option value="I1952"
+    >International Tables for Crystallography, Volume I 1952</option>
+  <option value="Hall"
+    >Hall symbol</option>
+</select>
+<br>(Leave blank if identical to reference model.)
+
+<p>
+<strong>Coordinates:</strong>
+<p>
+Format:
+<select name="format_2">
+  <option value="auto_detect" selected
+    >Auto detect (PDB or CNS SDB)</option>
+  <option value="generic"
+    >Generic</option>
+</select>
+<p>
+Generic format only:
+<blockquote>
+<input type=radio name="coor_type_2" value="Fractional" checked>Fractional
+<br>
+<input type=radio name="coor_type_2" value="Cartesian">Cartesian
+<p>
+Skip the left <input name="skip_columns_2" size=4 value="0"> columns.
+</blockquote>
+Specify file: <INPUT NAME="coor_file_2" TYPE="file">,
+or paste in coordinates:
+<br>
+<textarea name="coordinates_2" rows=16 cols=60></textarea>
+
+<hr>
+
+<p>
+<strong>Match tolerance: </strong><input
+name="tolerance" size=8
+value="3.0">
+
+<p>
+<strong>Are the models derived from the same diffraction data?</strong>
+<br>
+<input type=radio name="diffraction_index_equivalent" value="1">Yes
+  (May reduce the search time.)
+<br>
+<input type=radio name="diffraction_index_equivalent" value="0" checked>No
+  (Preferred for completeness.)
+
+<p>
+<input type="submit" value="Compute matches">
+<p>
+<input type="reset"  value="Reset">
+</FORM>
+<hr>
+[<a href="index.html">Index of services</a>]
+<hr>
+</body>
+</html>

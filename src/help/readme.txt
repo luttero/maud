@@ -43,6 +43,24 @@ from the older one.
 
 Maud Version notes:
 
+(11/01/2018):   2.80. The "Balilla" release.
+                Have you ever heard of the "Calcio Balilla" ?.
+                Improved import of esg file format for old files.
+                You have a comment string to input in the interface that will be saved
+                in the analysis.
+
+(03/11/2017):   2.79. The "Utah" release.
+                Ready to leave for ICOTOM.
+                Fixed the Hippo wizard.
+                Improved the automatic image slicing for tif in arbitrary
+                position.
+
+(10/07/2017):   2.78. The "Astix" release.
+                We achieved 4E9 photon/sec in the lab.
+                Fixed an issue using an interpolated background with intensity
+                calibration.
+                Implemented the proper asymmetry function for X-ray fluorescence.
+
 (10/07/2017):   2.76. The "kite" release.
                 Finally is flying.
                 Now if you have the "default.par" file messed up (the one loaded

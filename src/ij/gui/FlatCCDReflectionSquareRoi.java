@@ -106,9 +106,9 @@ public class FlatCCDReflectionSquareRoi extends LaueOvalRoi {
     return phi;
   }
 
-  public void setDet2Theta(double chi) {
+  public void setDet2Theta(double value) {
 //    tmat = null;
-    this.det2Theta = chi;
+    this.det2Theta = value;
   }
 
   public double getDet2Theta() {
@@ -409,7 +409,7 @@ public class FlatCCDReflectionSquareRoi extends LaueOvalRoi {
     IJ.showStatus("Saving plot values...");
 
     saveAsText(profile, nprofiles, startX, endX, theta2Start, theta2Step, etaStart, etaStep,
-        folder, filename, imp.getCalibration().getUnit(), radius, omega, chi, phi, calibrated);
+        folder, filename, imp.getCalibration().getUnit(), radius, omega, chi, phi, det2Theta, calibrated);
     IJ.wait(500);  // give system time to save the file
     if (filename != null && data != null)
       data.addDataFileforName(folder + filename, false);
@@ -418,7 +418,7 @@ public class FlatCCDReflectionSquareRoi extends LaueOvalRoi {
 
   public static void saveAsText(double[][][] profile, int nprofiles, int startX, int endX, double theta2Start, double theta2Step,
                   double etaStart, double etaStep, String folder, String filename, String  distanceUnit,
-                  double detectorDistance, double omega, double chi, double phi, boolean calibrated) {
+                  double detectorDistance, double omega, double chi, double phi, double theta2, boolean calibrated) {
 
 //	  System.out.println(filename + " " + nprofiles + " " + startX + " " + endX + " " + theta2Start + " " + theta2Step + " " + etaStart + " " + etaStep);
     String title = "noTitle";
@@ -457,6 +457,8 @@ public class FlatCCDReflectionSquareRoi extends LaueOvalRoi {
           output.newLine();
           output.write("_pd_meas_angle_phi " + Fmt.format(phi));
           output.newLine();
+	        output.write("_pd_meas_orientation_2theta " + Fmt.format(theta2));
+	        output.newLine();
           output.write("_riet_par_spec_displac_x 0");
           output.newLine();
           output.write("_riet_par_spec_displac_y 0");

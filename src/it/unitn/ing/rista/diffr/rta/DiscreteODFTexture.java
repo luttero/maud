@@ -379,8 +379,11 @@ public class DiscreteODFTexture extends Texture {
       } else {
         refl[referenceReflex].setOverlapNumber(izoveri);
         for (int i = 0; i < izoveri; i++) {
+        	if (meanintensity[referenceReflex] > 0)
           refl[referenceReflex + i].setOverlappedWeight(refl[referenceReflex + i].getWeight() /
               meanintensity[referenceReflex]);
+        	else
+	         refl[referenceReflex + i].setOverlappedWeight(1.0 / izoveri);
           //         System.out.println();
         }
         referencedspace = dspace;
@@ -391,8 +394,11 @@ public class DiscreteODFTexture extends Texture {
     }
     refl[referenceReflex].setOverlapNumber(izoveri);
     for (int i = 0; i < izoveri; i++) {
-      refl[referenceReflex + i].setOverlappedWeight(refl[referenceReflex + i].getWeight() /
+	    if (meanintensity[referenceReflex] > 0)
+         refl[referenceReflex + i].setOverlappedWeight(refl[referenceReflex + i].getWeight() /
           meanintensity[referenceReflex]);
+	    else
+		    refl[referenceReflex + i].setOverlappedWeight(1.0 / izoveri);
     }
 
     double minPermitted = getMinimumIntensityD();

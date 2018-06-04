@@ -25,6 +25,7 @@ import ij.gui.FlatCCDReflectionSquareRoi;
 import ij.process.ImageProcessor;
 import it.unitn.ing.rista.awt.*;
 import it.unitn.ing.rista.diffr.*;
+import it.unitn.ing.rista.io.StringNumber;
 import it.unitn.ing.rista.util.*;
 
 import javax.swing.*;
@@ -44,6 +45,7 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 		                                 "_image_original_center_x", "_image_original_center_y",
 		                                 "_image_original_detc_2theta", "_image_original_detc_phiDA",
 		                                 "_image_original_detc_omegaDN", "_image_original_detc_etaDA",
+		                                 "_image_original_rotation_inversion",
 
                                      "_pd_instr_dist_spec/detc",
                                      "_inst_ang_calibration_center_x", "_inst_ang_calibration_center_y",
@@ -53,6 +55,7 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 		                                   "image original center x (arb)", "image original center y (arb)",
 		                                   "original 2theta (deg)", "original phiDA (deg)",
 		                                   "original rotation (deg)", "original etaDA (deg)",
+		                                 "transform image with roto inversion",
 
 		                                   "sample detector distance (arb)",
                                        "image center x (arb)", "image center y (arb)",
@@ -73,6 +76,8 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
   private double detectorOmegaDN = 0.0;
   private double detectorEtaDA = 0.0;
 
+  private int rotationInversion = 0;
+
   public AngularInclinedFlatImageCalibration(XRDcat aobj, String alabel) {
     super(aobj, alabel);
     initXRD();
@@ -91,7 +96,7 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 
   @Override
   public void initConstant() {
-    Nstring = 7;
+    Nstring = 8;
     Nstringloop = 0;
     Nparameter = 7;
     Nparameterloop = 0;
@@ -120,6 +125,7 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 	  stringField[4] = MaudPreferences.getPref("pixelDetector.defaultPhiDAangle", "0.0");
 	  stringField[5] = MaudPreferences.getPref("pixelDetector.defaultOmegaDNangle", "0.0");
 	  stringField[6] = MaudPreferences.getPref("pixelDetector.defaultEtaDAangle", "0.0");
+	  stringField[7] = MaudPreferences.getPref("pixelDetector.defaultRotoInversion", "0");
     parameterField[0] = new Parameter(this, getParameterString(0), 85.0,
             ParameterPreferences.getDouble(getParameterString(0) + ".min", 10),
             ParameterPreferences.getDouble(getParameterString(0) + ".max", 1000));
@@ -263,6 +269,10 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 		stringField[6] = Double.toString(value);
 	}
 
+	public int getOriginalRotoInversionOperation() { return Integer.parseInt(stringField[7]); }
+
+	public void setOriginalRotoInversionOperation(int value) { stringField[7] = Integer.toString(value); }
+
 	@Override
   public boolean freeAllBasicParameters() {
     for (int i = 1; i < 3; i++)
@@ -305,15 +315,16 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 	  double[] tiltingAngles = datafile.getTiltingAngle();
     double omega = tiltingAngles[0];
 	  double chi = tiltingAngles[1];
+	  double detectorProper2Theta = detector2Theta + tiltingAngles[4];
 
 	  if (Math.abs(omega) > 1.0E-9)
       zs /= Math.cos((90.0 - omega) * Constants.DEGTOPI);
     zs /= Math.cos(chi * Constants.DEGTOPI);
-    double dx = zs * Math.cos((detector2Theta - 90) * Constants.DEGTOPI);
-    double dd = zs * Math.sin((detector2Theta - 90) * Constants.DEGTOPI);
+    double dx = zs * Math.cos((detectorProper2Theta - 90) * Constants.DEGTOPI);
+    double dd = zs * Math.sin((detectorProper2Theta - 90) * Constants.DEGTOPI);
 
     double[][] tmat = ConvertImageToSpectra.getTransformationMatrixNew(detectorOmegaDN, detectorPhiDA,
-        detectorEtaDA, detector2Theta, omega);
+        detectorEtaDA, detectorProper2Theta, omega);
     for (int i = 0; i < datanumber; i++) {
 //      double value = datafile.getXDataOriginal(i);
       double x = datafile.getXDataImage(i);
@@ -326,10 +337,10 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
       if (rx != 0/* || ry != 0*/) {
         double xc = rx * MoreMath.sind(90.0 - angcal / 2.0);
         double zc = rx * (1.0 - MoreMath.cosd(90.0 - angcal));
-        double dx1 = (zs - zc) * Math.cos((detector2Theta - 90) * Constants.DEGTOPI);
-        double dd1 = (zs - zc) * Math.sin((detector2Theta - 90) * Constants.DEGTOPI);
-        double dx2 = xc * Math.sin((detector2Theta - 90) * Constants.DEGTOPI);
-        double dd2 = xc * Math.cos((detector2Theta - 90) * Constants.DEGTOPI);
+        double dx1 = (zs - zc) * Math.cos((detectorProper2Theta - 90) * Constants.DEGTOPI);
+        double dd1 = (zs - zc) * Math.sin((detectorProper2Theta - 90) * Constants.DEGTOPI);
+        double dx2 = xc * Math.sin((detectorProper2Theta - 90) * Constants.DEGTOPI);
+        double dd2 = xc * Math.cos((detectorProper2Theta - 90) * Constants.DEGTOPI);
         xf = ConvertImageToSpectra.getTransformedVectorNew(tmat, x, y, centerX + dx1 + dx2, centerY, detectorDistance - dd1 - dd2);
         angcal = ConvertImageToSpectra.get2ThetaNew(xf) * Constants.PITODEG;
       }
@@ -353,9 +364,10 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 		if (Math.abs(omega) > 1.0E-9)
 			zs /= Math.sin(omega * Constants.DEGTOPI);
 		double chi = tiltingAngles[1];
+		double detectorProper2Theta = detector2Theta + tiltingAngles[4];
 		zs /= Math.cos(chi * Constants.DEGTOPI);
-		double dx = zs * Math.sin((180.0 - detector2Theta) * Constants.DEGTOPI);
-		double dd = zs * Math.cos((180.0 - detector2Theta) * Constants.DEGTOPI);
+		double dx = zs * Math.sin((180.0 - detectorProper2Theta) * Constants.DEGTOPI);
+		double dd = zs * Math.cos((180.0 - detectorProper2Theta) * Constants.DEGTOPI);
 
 		double x = datafile.getXDataImage(index);
 		double y = datafile.getYDataImage(index);
@@ -370,15 +382,19 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 	}
 
 	@Override
-	public boolean loadAndUnrollImage(ImagePlus imp, MultDiffrDataFile mdatafile) {
+	public boolean loadAndUnrollImage(ImagePlus imp, MultDiffrDataFile mdatafile, double[] gonioAngles) {
 		boolean loadSuccessfull = false;
 //		AngularCalibration angcal = this;
 		String directory = mdatafile.getFolder(); //od.getDirectory();
 		if (Constants.sandboxEnabled)
 			directory = Constants.cachesDirectory;
 		String name = mdatafile.getLabel(); //od.getFileName();
-
 		ij.measure.Calibration cal = imp.getCalibration();
+
+//		System.out.println("Opening tiff: "+ imp.getBitDepth());
+		if (imp.getBitDepth() == 32) {
+
+		}
 		if (cal.getUnit().compareToIgnoreCase("cm") == 0) {
 			cal.setUnit("mm");
 			cal.pixelWidth *= 10;
@@ -393,13 +409,46 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 			cal.pixelWidth = MaudPreferences.getDouble("pixelDetector.pixelWidth", 0.02);
 			cal.pixelHeight = MaudPreferences.getDouble("pixelDetector.pixelHeight", 0.02);
 		}
+
 		ImageProcessor ip = imp.getChannelProcessor();
+
+		rotationInversion = getOriginalRotoInversionOperation();
+
+		switch (rotationInversion) {
+			case 2: // rotation 180 clockwise
+				ip.rotateRight();
+//				System.out.println("Rotate right image!");
+			case 1: // rotation 90 clockwise
+//				System.out.println("Rotate right image!");
+				ip.rotateRight();
+				break;
+			case 4: // rotation 180 anticlockwise
+//				System.out.println("Rotate left image!");
+				ip.rotateLeft();
+			case 3: // rotation 90 anticlockwise
+//				System.out.println("Rotate left image!");
+				ip.rotateLeft();
+				break;
+			case 7: // flip both
+//				System.out.println("Flip vertical image!");
+				ip.flipVertical();
+			case 5: // flip horizontal
+//				System.out.println("Flip horizontal image!");
+				ip.flipHorizontal();
+				break;
+			case 6: // flip vertical
+//				System.out.println("Flip vertical image!");
+				ip.flipVertical();
+				break;
+			default: {}
+		}
+
 		int width = ip.getWidth();
 		int height = ip.getHeight();
-		int[] buffer = new int[width * height];
+		double[] buffer = new double[width * height];
 		for (int ix = 0; ix < width; ix++)
 			for (int iy = 0; iy < height; iy++)
-				buffer[ix + iy * width] = ip.getPixel(ix, iy);
+				buffer[ix + iy * width] = ip.getPixelValue(ix, iy);
 //        imp.show();
 
 //	      KCDReader fileReader = new KCDReader();
@@ -429,6 +478,14 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 		double omega = MaudPreferences.getDouble("sample.defaultOmegaAngle", 55.0);
 		double chi = MaudPreferences.getDouble("sample.defaultChiAngle", 17.0);
 		double phi = MaudPreferences.getDouble("sample.defaultPhiAngle", 0.0);
+		if (gonioAngles[0] != StringNumber.dummyAngle)
+			detector2Theta += gonioAngles[0];
+		if (gonioAngles[1] != StringNumber.dummyAngle)
+			omega = gonioAngles[1];
+		if (gonioAngles[2] != StringNumber.dummyAngle)
+			chi = gonioAngles[2];
+		if (gonioAngles[3] != StringNumber.dummyAngle)
+			phi = gonioAngles[3];
 
 		int minX = MaudPreferences.getInteger("squareRoi.xminValue", 0);
 		int maxX = Math.min(MaudPreferences.getInteger("squareRoi.xmaxValue", width), width);
@@ -500,12 +557,12 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 
 		double xmin = min2theta * Constants.PITODEG;
 		double etaStart = mineta * Constants.PITODEG;
-		int dotLocation = name.indexOf(".");
+		int dotLocation = name.lastIndexOf(".");
 		String filename = name.substring(0, dotLocation) + ".esg";
 		if (!(Constants.sandboxEnabled && MaudPreferences.getBoolean("imageUnrolling.saveEsgFileInCachesDir", false))) {
 			System.out.println("Conversion to spectra done! Name to save: " + filename);
 			FlatCCDReflectionSquareRoi.saveAsText(profile, profile[0].length, 0, profile[0][0].length, xmin, theta2Step,
-					etaStart, coneInterval, directory, filename, "mm", detectorDistance, omega, chi, phi,
+					etaStart, coneInterval, directory, filename, "mm", detectorDistance, omega, chi, phi, detector2Theta,
 					true);
 		}
 		mdatafile.setLabel(filename);
@@ -520,6 +577,7 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 			datafile.setAngleValue(1, chi);
 			datafile.setAngleValue(2, phi);
 			datafile.setAngleValue(3, etaStart + spectrumIndex * coneInterval);
+			datafile.setAngleValue(4, detector2Theta);
 
 /*            datafile.setField("_riet_meas_datafile_calibrated", "true", "0", "0", "0", false, null, null, null, null,
                 false);
@@ -592,7 +650,7 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 
 		  String[] textStrings = {"Detector distance:", "Center x error:   ", "Center y error:   ",
 				                      "Detector 2theta:  ", "Detector tilt:    ", "Detector rotation:",
-				                      "Detector eta:     "};
+				                      "Detector eta:     ", "Process image:    "};
 		  for (int i = 0; i < parameterField.length; i++)
 	      addParField(firstPanel, textStrings[i], parameterField[i]);
 

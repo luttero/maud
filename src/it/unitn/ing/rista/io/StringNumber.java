@@ -166,4 +166,50 @@ public class StringNumber {
     else
       return 0.0;
   }
+
+  public static String[] anglesPrefix = {"_T", "_O", "_C", "_P", "_E"};
+  public static double dummyAngle = -999.999;
+
+	public static double[] checkAngles(String name) {
+  	   double[] angles = new double[anglesPrefix.length];
+		if (name != null && containsNumber(name)) {
+			for (int i = 0; i < anglesPrefix.length; i++) {
+				angles[i] = dummyAngle;
+				int index = name.indexOf(anglesPrefix[i]);
+				if (index >= 0 && index + 2 < name.length()) {
+					index += 2;
+					angles[i] = getNumberFrom(name.substring(index));
+				}
+			}
+		}
+		return angles;
+	}
+
+	private static double getNumberFrom(String name) {
+  	   int i = 0;
+		char digit = name.charAt(i);
+		if (isANumberOrSign(digit)) {
+			boolean end = false;
+			boolean dotFound = false;
+			while (!end && i < name.length()) {
+				digit = name.charAt(i++);
+				if (!dotFound && isdot(digit)) {
+					if (i == name.length() || !is0to9(name.charAt(i)))
+						end = true;
+					dotFound = true;
+				} else if (!isANumberOrSign(digit))
+					end = true;
+			}
+			return Double.parseDouble(name.substring(0, i - 1));
+		} else
+			return dummyAngle;
+	}
+
+	private static boolean containsNumber(String name) {
+  	   char[] charseq = name.toCharArray();
+  	   for (int i = 0; i < charseq.length; i++)
+  	   	if (is0to9(charseq[i]))
+  	   		return true;
+		return false;
+	}
 }

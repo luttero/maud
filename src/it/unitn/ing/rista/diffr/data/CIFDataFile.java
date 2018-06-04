@@ -97,6 +97,13 @@ public class CIFDataFile extends it.unitn.ing.rista.diffr.DiffrDataFile {
 								iscalibrated = false;
 //								System.out.println("Energy ");
 							}
+						} else if (token.equalsIgnoreCase("_pd_meas_scan_method")) {
+							token = st.nextToken();
+							if (token.toLowerCase().startsWith("disp")) {
+								energyDispersive = true;
+								iscalibrated = false;
+//								System.out.println("Energy ");
+							}
 						} else {
 							if (token.startsWith("_") && st.hasMoreTokens()) {
 								setField(token, st.nextToken(), "0", "0", "0", false, null, null, null, null, null, false, false);
