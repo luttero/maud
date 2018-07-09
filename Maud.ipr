@@ -177,8 +177,8 @@
     <option name="OPEN_IN_BROWSER" value="true" />
   </component>
   <component name="KotlinCommonCompilerArguments">
-    <option name="languageVersion" value="1.1" />
     <option name="apiVersion" value="1.1" />
+    <option name="languageVersion" value="1.1" />
   </component>
   <component name="LogConsolePreferences">
     <option name="FILTER_ERRORS" value="false" />
@@ -306,6 +306,36 @@
         <default-constraints vsize-policy="6" hsize-policy="0" anchor="0" fill="2" />
       </item>
     </group>
+  </component>
+  <component name="ProjectCodeStyleConfiguration">
+    <option name="USE_PER_PROJECT_SETTINGS" value="true" />
+    <code_scheme name="Project" version="173">
+      <option name="AUTODETECT_INDENTS" value="false" />
+      <option name="OTHER_INDENT_OPTIONS">
+        <value>
+          <option name="INDENT_SIZE" value="2" />
+          <option name="CONTINUATION_INDENT_SIZE" value="4" />
+          <option name="TAB_SIZE" value="2" />
+          <option name="SMART_TABS" value="true" />
+        </value>
+      </option>
+      <option name="LINE_SEPARATOR" value="&#10;" />
+      <JavaCodeStyleSettings>
+        <option name="CLASS_COUNT_TO_USE_IMPORT_ON_DEMAND" value="3" />
+      </JavaCodeStyleSettings>
+      <XML>
+        <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
+      </XML>
+      <codeStyleSettings language="JAVA">
+        <indentOptions>
+          <option name="INDENT_SIZE" value="3" />
+          <option name="CONTINUATION_INDENT_SIZE" value="6" />
+          <option name="TAB_SIZE" value="3" />
+          <option name="USE_TAB_CHARACTER" value="true" />
+          <option name="SMART_TABS" value="true" />
+        </indentOptions>
+      </codeStyleSettings>
+    </code_scheme>
   </component>
   <component name="ProjectCodeStyleSettingsManager">
     <option name="PER_PROJECT_SETTINGS">

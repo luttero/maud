@@ -6109,7 +6109,9 @@ public class DiffrDataFile extends XRDcat {
 				for (int j = 0; j < instrumentBroadeningParNumber; j++)
 					broadInst[j] = instBroadening[j][kj][i];
 				double[] hwhm_eta = PseudoVoigtPeak.getHwhmEtaFromIntegralBeta(betaf, broadInst);
-//	            System.out.println("Refreshing " + hwhm_eta[0] + " " + hwhm_eta[1]);
+/*	            System.out.println("Refreshing " + hwhm_eta[0] + " " + hwhm_eta[1]
+			            + " " + broadInst[0] + " " + broadInst[1]
+			            + " " + betaf[0] + " " + betaf[1]);*/
 				for (int j = 0; j < hwhm_eta.length; j++)
 					phaseBroadening[j][kj][i] = hwhm_eta[j];
 //				for (int j = hwhm_eta.length; j < broadInst.length; j++)

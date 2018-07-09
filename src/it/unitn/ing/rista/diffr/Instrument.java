@@ -303,11 +303,6 @@ public class Instrument extends XRDcat {
     return getInstrumentBroadening().getConvolutedBroadening(x, tilting_angles, dspacingbase);
   }*/
 
-  public double getInstrumentalAsymmetry(double x, DiffrDataFile diffrDataFile) {
-
-    return getInstrumentBroadening().getInstrumentalAsymmetry(x, diffrDataFile);
-  }
-
   public double getCorrectedPosition(Sample asample, double x, double[] tilting_angles,
                                      DiffrDataFile adatafile) {
 

@@ -74,51 +74,7 @@ public class StandardFunctionTexture extends Texture {
 	double[] sfVector;
 	double[] cfVector;
 
-
-//	double acell[];
-//	double astar[];
-
-  int LGIndex = 0;
-//	int PGIndex = 0;
-
-//  double[] coefficient = null;
-
-//  COMMON /PAR/B(10),S(10),T(10)
-//  double[] B = new double[11], S = new double[11], T = new double[11];
-//       COMMON /HMGL/HL1(10),HL2(10),HL3(10),HN(10)
-//  double[] HL1 = new double[11], HL2 = new double[11], HL3 = new double[11], HN = new double[11];
-//  DIMENSION SALFA(96),SBETA(96),SGAMMA(96),CALFA(96),CBETA(96),CGAMMA(96)
-//  COMMON /ABGSC/SALFA,SBETA,SGAMMA,CALFA,CBETA,CGAMMA
-//  double[] SALFA = new double[97], SBETA = new double[97], SGAMMA = new double[97],
-//  CALFA = new double[97], CBETA = new double[97], CGAMMA = new double[97];
-//  COMMON /HMSC/HMSA(96,10),HMSB(96,10),HMSG(96,10),HMCA(96,10),HMCB(96,10),HMCG(96,10)
-//  double[][] HMSA = new double[97][11], HMSB = new double[97][11], HMSG = new double[97][11],
-//  HMCA = new double[97][11], HMCB = new double[97][11], HMCG = new double[97][11];
-//  COMMON /HGL/BST(10),HIN(10),IGALO(10),IBST(10)
-//  double[] BST = new double[11], HIN = new double[11];
-//  int[] IGALO = new int[11], IBST = new int[11];
-//  COMMON /GE/IZGA,IZGB
   public int IZGA, IZGB, IGA, IGB;
-//  COMMON /CPI/PI,PIF
-//  double PI, PIF;
-//        COMMON /CYHF/BSTF(5),HINF(5),IGLF(5),IBSTF(5)
-//  double[] BSTF = new double[6], HINF = new double[6];
-//  int[] IGLF = new int[6], IBSTF = new int[6];
-//        COMMON /HMPF/HNF(5),EPT2(5),ZT(5)
-//  double[] HNF = new double[6], EPT2 = new double[6], ZT = new double[6];
-//        COMMON /PARF/FB(5),FS(5),FT(5)
-//  double[] FB = new double[6], FS = new double[6], FT = new double[6];
-//      COMMON /XYZ/ X(24),Y(24),Z(24)
-//  double[] X = new double[25], Y = new double[25], Z = new double[25];
-//  COMMON /CSCL/S12L,C12L,S23L,C23L,S31L,C31L
-//  double S12L, C12L, S23L, C23L, S31L, C31L;
-//  COMMON /CABC/CDA,CDB
-//  double CDA, CDB;
-//  COMMON /CPI/PI,FAK
-//  COMMON /LAT/ AA,BB,CC,ALPHA23,ALPHA31,ALPHA12,IGA,IGB
-//  double AA, BB, CC, ALPHA23, ALPHA31, ALPHA12;
-//  int[] IFIW = new int[73], IFIE = new int[73];
-//  double[] SM = new double[73], CM = new double[73];
 
   public static final int[][] MGE =
       {{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, {0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1},
@@ -307,7 +263,7 @@ public class StandardFunctionTexture extends Texture {
   }
 
   public void applySymmetryRules() {
-    LGIndex = SpaceGroups.getLGNumber(getPhase().getPointGroup());
+//    LGIndex = SpaceGroups.getLGNumber(getPhase().getPointGroup());
     sampleSymmetry = getSampleSymmetryValue();
     IGA = sampleSymmetry + 1;
 	  if (sampleSymmetry > 2)
@@ -325,8 +281,8 @@ public class StandardFunctionTexture extends Texture {
 			  cfVector[i] = Math.cos(psi);
 		  }
 	  }
-		  IGB = getLaueGroupNumber();
-    refreshCoefficients();
+	  IGB = getLaueGroupNumber();
+     refreshCoefficients();
   }
 
   public void initializeAll() {
