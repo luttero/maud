@@ -43,6 +43,10 @@ from the older one.
 
 Maud Version notes:
 
+(31/07/2018):   2.82. The "Small Cat" release.
+                If you are a dog what would it be your best desire?
+                Angle-energy maps on the way.
+
 (15/06/2018):   2.81. The "Beer" release.
                 What you think Beer is?.
                 Corrected a bug when treating rotation as separated datasets

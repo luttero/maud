@@ -212,35 +212,35 @@ public class Constants {
    */
   public static final double PROTON_MOMENT = 1.41060761E-26;
 
-	public static final double E_SCAT_FACTOR = PLANCK * PLANCK / (2.0 * Math.PI * ELECTRON_MASS * CHARGE) *
+  public static final double E_SCAT_FACTOR = PLANCK * PLANCK / (2.0 * Math.PI * ELECTRON_MASS * CHARGE) *
 			1.0E20;
-	public static final double E_SCAT_FACTOR_PI = E_SCAT_FACTOR / Math.PI;
-	public static final double ENERGY_CONSTANT = 1.9569341E-6;
+  public static final double E_SCAT_FACTOR_PI = E_SCAT_FACTOR / Math.PI;
+  public static final double ENERGY_CONSTANT = 1.9569341E-6;
 	
-	public static final double ENERGY_LAMBDA = 12398.424121;
+  public static final double ENERGY_LAMBDA = 12398.424121;
   public static final double I_ENERGY_LAMBDA = 1.0 / 12398.424121;
 
 
   public static final int FLOAT_FIELD = 12;
   public static final double TOOLERANCE_COORD = 1.0E-3;
   public static final double PI = Math.PI;
-	public static final double PI_2 = PI / 2.0;
+  public static final double PI_2 = PI / 2.0;
   public static final double I_PI = 1.0 / Math.PI;
   public static final double PI2 = 2.0 * PI;
-	public static final double PI4 = 4.0 * Math.PI;
+  public static final double PI4 = 4.0 * Math.PI;
   public static final double PI_QUADRO = PI * PI;
   public static final double SQRTPI2 = Math.sqrt(PI2);
   public static final double DEGTOPI = PI / 180.0;
   public static final double PITODEG = 180.0 / PI;
   public static final double E_RADIUS = 2.81E-5;  // Angstrom
   public static final double LN2 = 6.9314718056E-01;
-	public static final double LN2_2 = 3.4657359027997E-01;
+  public static final double LN2_2 = 3.4657359027997E-01;
   public static final double sqrtln2pi = 4.6971863935E-01;
   public static final double SQRT_OF_PILN2 = 1.475664626635606;
   public static final double sqrt2ln2 = 1.177410022515475;
   public static final double one_sqrt2ln2 = 0.849321800288019;
   public static final double sqrt2 = 1.41421356237;
-	public static final double one_sqrt2 = 0.707106781186548;
+  public static final double one_sqrt2 = 0.707106781186548;
   public static final double sqrt3 = 1.73205080757;
   public static final double mstraintoetilde = 1.253314137316; // Math.sqrt(Math.PI/2)
   public static final double integrationStepPF = 1.0;
@@ -264,17 +264,17 @@ public class Constants {
   public static String resultsFile = "results.txt";
   public static String userName = null;
   public static String startPath = "/";
-  public static String maudReleaseBuilt = "$Revision: 2.81 $";
-  public static String maudDateBuilt = "$Date: 2018/06/15 15:39:00 $";
+  public static String maudReleaseBuilt = "$Revision: 2.82 $";
+  public static String maudDateBuilt = "$Date: 2018/07/31 15:39:00 $";
 
   public static final double arg2PIover3 = PI2 / 3.;
   public static final double sinArg2PIover3 = Math.sin(arg2PIover3);
   public static final double cosArg2PIover3 = Math.cos(arg2PIover3);
-  public static double maud_version = 2.81;
-	public static boolean useOpenCL = false;
-	public static Vector<OpenCLDevice> openClDevices= null;
-	public static OpenCLDevice openclDevice = null;
-	public static boolean nativeComputation = false;
+  public static double maud_version = 2.82;
+  public static boolean useOpenCL = false;
+  public static Vector<OpenCLDevice> openClDevices= null;
+  public static OpenCLDevice openclDevice = null;
+  public static boolean nativeComputation = false;
   public static boolean grayShaded = false;
   public static boolean checkCIFinputInConsole = true;
   public static String pathToMaudJar = "";
@@ -300,7 +300,7 @@ public class Constants {
 
   public static boolean useNewAbsorption = true;
 
-	public static boolean forceOverwrite = true;
+  public static boolean forceOverwrite = true;
 
   public static long tmpTime = 0l;
 
