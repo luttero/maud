@@ -1,0 +1,5 @@
+<application>
+  <component name="DaemonCodeAnalyzerSettings">
+    <option name="AUTOREPARSE_DELAY" value="2000" />
+  </component>
+</application>
