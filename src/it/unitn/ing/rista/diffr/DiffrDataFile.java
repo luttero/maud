@@ -24,7 +24,6 @@ import it.unitn.ing.rista.awt.JOptionsDialog;
 import it.unitn.ing.rista.awt.JParameterListPane;
 import it.unitn.ing.rista.awt.PlotDataFile;
 import it.unitn.ing.rista.diffr.cal.*;
-import it.unitn.ing.rista.diffr.fluorescence.FluorescenceNone;
 import it.unitn.ing.rista.diffr.measurement.Theta2ThetaMeasurement;
 import it.unitn.ing.rista.io.cif.*;
 import it.unitn.ing.rista.util.*;
@@ -3341,31 +3340,19 @@ public class DiffrDataFile extends XRDcat {
 		else
 			System.out.println(this.getLabel() + " " + refreshSpectraComputation + " " +
 					getDataFileSet().getInstrument().getIntensity().getValueD());*/
-    if (refreshSpectraComputation || !(fluo instanceof FluorescenceNone)) {
+    if (refreshSpectraComputation) {
       resetPhasesFit();
-      if (fluo instanceof FluorescenceNone) {
-        computeReflectionIntensity(asample);
-        refle.computeReflectivity(this);
-	      hasfit = true;
-	      spectrumModified = true;
-      } else {
-	      if (refreshSpectraComputation) {
-//        System.out.println("Fluorescence computing....");
-//        computeReflectionIntensity(asample); //todo
-		      fluo.computeFluorescence(this);
-//        System.out.println("Fluorescence computed!");
-		      hasfit = true;
-		      spectrumModified = true;
-	      }
-      }
+      computeReflectionIntensity(asample);
+      refle.computeReflectivity(this);
+      fluo.computeFluorescence(this);
+      hasfit = true;
+      spectrumModified = true;
       computeasymmetry(asample);
       postComputation(asample);
     }
   }
 
   public void computeReflectionIntensity(Sample asample) {
-    if (!refreshSpectraComputation)
-      return;
     if (getFilePar().isComputingDerivate()) {
 //      System.out.println("refreshing derivative: " + this.toXRDcatString());
       DataFileSet adataset = getDataFileSet();
