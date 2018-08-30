@@ -1009,7 +1009,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 		  for (int i = 0; i < getSample(0).getDatasetsList().size(); i++) {
 			  DataFileSet dataset = getSample(0).getDataSet(i);
 			  if (dataset.getInstrument().getDetector() instanceof XRFDetector) {
-				  double theta2 = ((XRFDetector) dataset.getInstrument().getDetector()).getThetaDetector();
+				  double theta2 = 75.0; // ((XRFDetector) dataset.getInstrument().getDetector()).getThetaDetector();
 				  double eta = dataset.getInstrument().getDetector().getEtaDetector(null);
 				  for (int j = 0; j < dataset.datafilesnumber(); j++) {
 					  dataset.getDataFile(j).setAngleValue(4, theta2 + dataset.getDataFile(j).getAngleValue(0));

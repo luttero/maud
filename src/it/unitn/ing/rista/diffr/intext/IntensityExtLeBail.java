@@ -289,8 +289,8 @@ The PF's of peaks of the same family are imposed equals for all the lines.
     while (!convergence && iteration++ < maxiter) {
       for (int j = startingindex; j < finalindex; j++)
         fit[j] = 0.0f;
-      datafile.computeReflectionIntensity(asample, fullpeaklist, true, fit, Constants.ENTIRE_RANGE,
-              Constants.EXPERIMENTAL, Constants.COMPUTED, Constants.COMPUTED, false, null);
+	    datafileset.computeReflectionIntensity(asample, fullpeaklist, true, fit, Constants.ENTIRE_RANGE,
+              Constants.EXPERIMENTAL, Constants.COMPUTED, Constants.COMPUTED, false, null, datafile);
       datafile.computeasymmetry(asample, fit);
       datafile.postComputation(asample, fit);
       for (int j = startingindex; j < finalindex; j++)
@@ -318,9 +318,9 @@ The PF's of peaks of the same family are imposed equals for all the lines.
           if (superOrder[n] < 0) {
             for (int j = minmaxindex[0]; j < minmaxindex[1]; j++)
               expfit[j] = 0.0f;
-            minmaxindex = datafile.computeReflectionIntensity(asample, tpeaklist, false,
+            minmaxindex = datafileset.computeReflectionIntensity(asample, tpeaklist, false,
                     expfit, rangefactor, Constants.UNITARY,
-                    Constants.COMPUTED, Constants.COMPUTED, true, null);
+                    Constants.COMPUTED, Constants.COMPUTED, true, null, datafile);
             datafile.computeasymmetryandbkg(asample, expfit, minmaxindex[0], minmaxindex[1]);
             double expfitnorm = 0.0;
 						if (useBKG)

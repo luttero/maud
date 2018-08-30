@@ -23,12 +23,6 @@ package it.unitn.ing.rista.diffr.detector;
 import java.lang.*;
 
 import it.unitn.ing.rista.diffr.*;
-import it.unitn.ing.rista.awt.*;
-import it.unitn.ing.rista.util.*;
-
-import java.awt.*;
-import java.awt.*;
-import java.awt.event.*;
 
 /**
  *  The ScintillationDetector is a class

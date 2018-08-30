@@ -336,7 +336,8 @@ The PF's of peaks of the same family are imposed equals for all the lines.
           newexpfitnorm[in] = 0;
         }
         for (int ks = 0; ks < datafilenumber; ks++) {
-          DiffrDataFile datafile = asample.getActiveDataSet(di).getActiveDataFile(ks);
+        	DataFileSet datafileset = asample.getActiveDataSet(di);
+          DiffrDataFile datafile = datafileset.getActiveDataFile(ks);
           int datanumber = datafile.getTotalNumberOfData();
           double[] expfit = new double[datanumber];
           double[] fit = new double[datanumber];
@@ -356,9 +357,9 @@ The PF's of peaks of the same family are imposed equals for all the lines.
 // System.out.println("minBkg " + minBkg);
           for (int j = startingindex; j < finalindex; j++)
             fit[j] = 0.0f;
-          datafile.computeReflectionIntensity(asample, fullpeaklist, computeBroadening, fit,
+	        datafileset.computeReflectionIntensity(asample, fullpeaklist, computeBroadening, fit,
               Constants.ENTIRE_RANGE, Constants.COMPUTED, Constants.COMPUTED,
-              Constants.EXPERIMENTAL, false, null);
+              Constants.EXPERIMENTAL, false, null, datafile);
           computeBroadening = false;
           datafile.computeasymmetry(asample, fit);
           datafile.postComputation(asample, fit);
@@ -376,10 +377,10 @@ The PF's of peaks of the same family are imposed equals for all the lines.
             if (datafile.checkPeakInsideRange(phase, tpeaklist.elementAt(0).getOrderPosition(), rangefactor)) {
               for (int j = startingindex; j < finalindex; j++)
                 expfit[j] = 0.0f;
-              minmaxindex = datafile.computeReflectionIntensity(asample, tpeaklist, computeBroadening,
+              minmaxindex = datafileset.computeReflectionIntensity(asample, tpeaklist, computeBroadening,
                   expfit, rangefactor,
                   Constants.COMPUTED, Constants.COMPUTED,
-                  Constants.UNITARY, true, null);
+                  Constants.UNITARY, true, null, datafile);
               datafile.computeasymmetryandAddbkg(asample, expfit, minmaxindex[0], minmaxindex[1]);
               double expfitnorm = 0.0;
               double lebailfactor = 0.0;

@@ -33,7 +33,6 @@ import it.unitn.ing.rista.diffr.*;
 import it.unitn.ing.rista.util.*;
 
 import javax.swing.*;
-import javax.swing.table.AbstractTableModel;
 
 /**
  *  The XRFDetector is a class

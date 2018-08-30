@@ -3333,153 +3333,6 @@ public class DiffrDataFile extends XRDcat {
 		return angles;
 	}
 
-	public void computeSpectrum(Sample asample, Reflectivity refle, Fluorescence fluo) {
-/*		if (getFilePar().isComputingDerivate())
-      System.out.println("Derivative " + this.getLabel() + " " + refreshSpectraComputation + " " +
-		      getDataFileSet().getInstrument().getIntensity().getValueD());
-		else
-			System.out.println(this.getLabel() + " " + refreshSpectraComputation + " " +
-					getDataFileSet().getInstrument().getIntensity().getValueD());*/
-    if (refreshSpectraComputation) {
-      resetPhasesFit();
-      computeReflectionIntensity(asample);
-      refle.computeReflectivity(this);
-      fluo.computeFluorescence(this);
-      hasfit = true;
-      spectrumModified = true;
-      computeasymmetry(asample);
-      postComputation(asample);
-    }
-  }
-
-  public void computeReflectionIntensity(Sample asample) {
-    if (getFilePar().isComputingDerivate()) {
-//      System.out.println("refreshing derivative: " + this.toXRDcatString());
-      DataFileSet adataset = getDataFileSet();
-      for (int ij = 0; ij < getFilePar().getActiveSample().phasesNumber(); ij++) {
-      double expfit[] = new double[getTotalNumberOfData()];
-      int minmaxindex[] = computeReflectionIntensity(asample, adataset.getPeakList(), true,
-          expfit, Constants.ENTIRE_RANGE, Constants.COMPUTED,
-          Constants.COMPUTED, Constants.COMPUTED, false, getFilePar().getActiveSample().getPhase(ij));
-      for (int j = minmaxindex[0]; j < minmaxindex[1]; j++)
-        addtoPhasesFit(j, expfit[j]);
-      }
-    } else {
-//      System.out.println("refreshing: " + this.toXRDcatString());
-      DataFileSet adataset = getDataFileSet();
-      for (int ij = 0; ij < getFilePar().getActiveSample().phasesNumber(); ij++) {
-//        System.out.println("Phase: " + getFilePar().getActiveSample().getPhase(ij).toXRDcatString());
-        double expfit[] = new double[getTotalNumberOfData()];
-        int minmaxindex[] = computeReflectionIntensity(asample, adataset.getPeakList(), true,
-            expfit, Constants.ENTIRE_RANGE, Constants.COMPUTED,
-            Constants.COMPUTED, Constants.COMPUTED, false, getFilePar().getActiveSample().getPhase(ij));
-//        System.out.println("indices: " + minmaxindex[0] + " " + minmaxindex[1] + " " + expfit[1000]);
-        for (int j = minmaxindex[0]; j < minmaxindex[1]; j++)
-          addtoPhasesFit(j, expfit[j], ij);
-      }
-    }
-  }
-
-			public int[] computeReflectionIntensity(Sample asample, Vector<Peak> peaklist, boolean computeBroadening,
-																							double[] expfit, double rangefactor, int computeTexture,
-																							int computeStrain, int computeFhkl, boolean leBailExtraction,
-																							Phase phase) {
-
-				DataFileSet adataset = getDataFileSet();
-				Instrument ainstrument = adataset.getInstrument();
-				FilePar filepar = getFilePar();
-				OutputStream out = null;
-				boolean logOutput = false;
-				PrintStream printStream = null;
-				ByteArrayOutputStream baos = null;
-				if (filepar.logOutput() && filepar.fullResults()/* && phase == null*/ && !leBailExtraction) {
-      out = getFilePar().getResultStream();
-      logOutput = true;
-
-					try {
-						baos = new ByteArrayOutputStream();
-						printStream = new PrintStream(baos);
-/*        if (Constants.testing) {
-          printLine(out, "Conditions: computing rangefactor computeBroadening computeTexture computeStrain computeFhkl leBailExtraction phase");
-        printLine(out, getFilePar().isComputingDerivate() +  " " + rangefactor + " " + computeBroadening + " " + computeTexture + " " + computeStrain + " " +
-            computeFhkl + " " + leBailExtraction + " " + phase);
-        }*/
-						printStream.println("             Diffraction spectrum : " + toXRDcatString());
-						printStream.println("Peaks list : ");
-						printStream.print(" peak n,"
-								+ " rad. n,"
-								+ "             phase, "
-								+ " h,     "
-								+ " k,     "
-								+ " l,     "
-								+ "  dspace,   "
-								+ "  Fhkl_calc,"
-								+ "  Fhkl_exp, "
-								+ " position,  "
-								+ " strain,    "
-								+ " planar def,"
-								+ " intensity, "
-								+ " hwhm,      "
-								+ " gaussian,  "
-								+ " |Fhkl|^2*m,"
-								+ " incident I,"
-								+ " LP,        "
-								+ " texture,   "
-								+ " Abs*Vol/Vc,"
-								+ " rad. wt,   "
-								+ " phase scale");
-						printStream.print(Constants.lineSeparator);
-            printStream.flush();
-//						System.out.println("String length " + toPrint.length());
-      } catch (Exception io) {
-        io.printStackTrace();
-      }
-    }
-
-//    Instrument ainstrument = getDataFileSet().getInstrument();
-    double cutoff = getCutoffAngle() * rangefactor;
-    if (!increasingX()) {
-      cutoff = -cutoff;
-    }
-	  int[] tmpminmax = new int[2];
-	  int[] minmaxindex = new int[2];
-	  minmaxindex[0] = finalindex - 1;
-	  minmaxindex[1] = startingindex;
-    arraycopy(minmaxindex, 0, tmpminmax, 0, 2);
-
-//    System.out.println(peaklist.length);  // todo
-    for (int i = 0; i < peaklist.size(); i++) {
-      if (phase == null || peaklist.elementAt(i).getPhase() == phase) {
-        peaklist.elementAt(i).computePeak(this, expfit, asample, ainstrument, printStream, logOutput, cutoff,
-		        computeTexture, computeStrain, computeFhkl, leBailExtraction, tmpminmax,
-		        computeBroadening, !increasingX());
-	      if (i == 0)
-		      arraycopy(tmpminmax, 0, minmaxindex, 0, 2);
-        else if (!leBailExtraction) {
-          if (minmaxindex[0] > tmpminmax[0])
-            minmaxindex[0] = tmpminmax[0];
-          if (minmaxindex[1] < tmpminmax[1])
-            minmaxindex[1] = tmpminmax[1];
-        }
-      }
-    }
-
-    if (logOutput && baos != null) {
-      try {
-				synchronized (out) {
-					printLine(out, baos.toString());
-					newLine(out);
-					out.flush();
-				}
-      } catch (Exception io) {
-        io.printStackTrace();
-      }
-    }
-
-    return minmaxindex;
-
-  }
-
   public double[] getCoordinatesForDspacing(double d) {
     double[] position;
 	  RadiationType radType = getDataFileSet().getInstrument().getRadiationType();
@@ -3643,24 +3496,11 @@ public class DiffrDataFile extends XRDcat {
     return angBankNumber;
   }
 
-  public void computeasymmetry(Sample asample) {
-    computeasymmetry(asample, phasesfit, startingindex, finalindex - 1);
-    if (!getFilePar().isComputingDerivate()) {
-      for (int i = 0; i < phaseFit.size(); i++)
-        computeasymmetry(asample, (double[]) phaseFit.elementAt(i), startingindex, finalindex - 1);
-    }
-    refreshComputation = false;
-  }
-
   public void computeReflectivityBroadening(Sample asample) {
     computeReflectivityBroadening(asample, phasesfit, startingindex, finalindex - 1);
   }
 
-  public void computeasymmetry(Sample asample, double[] expfit) {
-    computeasymmetry(asample, expfit, startingindex, finalindex - 1);
-  }
-
-  public void postComputation(Sample asample) {
+	public void postComputation(Sample asample) {
     postComputation(asample, phasesfit, startingindex, finalindex - 1);
 /*    if (!getFilePar().isComputingDerivate()) {
       for (int i = 0; i < phaseFit.size(); i++)
@@ -3701,7 +3541,25 @@ public class DiffrDataFile extends XRDcat {
       expfit[j] += getBkgFit(j);
   }
 
-  public void computeBackground(int starti, int finali) {
+	public void computeasymmetry(Sample asample, double[] expfit) {
+		computeasymmetry(asample, expfit, startingindex, finalindex - 1);
+	}
+
+	public void computeasymmetry(Sample asample, double afit[], int min, int max) {
+
+		DataFileSet adataset = getDataFileSet();
+		Instrument ainstrument = adataset.getInstrument();
+
+		ainstrument.getInstrumentBroadening().computeAsymmetry(this, asample, afit, min, max);
+
+		for (int j = min; j < max; j++) {
+//      System.out.print("Before: " + afit[j]);
+			afit[j] *= computeAngularIntensityCorrection(asample, ainstrument, j);
+//      System.out.println(", after: " + afit[j]);
+		}
+	}
+
+	public void computeBackground(int starti, int finali) {
     int numbercoef = numberOfLoopParameters[getBackgroundID()];
     if (numbercoef != 0) {
       double backgcoef[] = getParameterLoopVector(getBackgroundID());
@@ -3733,20 +3591,6 @@ public class DiffrDataFile extends XRDcat {
     }
     refreshBkgComputation = false;
     spectrumModified = true;
-  }
-
-  public void computeasymmetry(Sample asample, double afit[], int min, int max) {
-
-    DataFileSet adataset = getDataFileSet();
-    Instrument ainstrument = adataset.getInstrument();
-
-    ainstrument.getInstrumentBroadening().computeAsymmetry(this, asample, afit, min, max);
-
-    for (int j = min; j < max; j++) {
-//      System.out.print("Before: " + afit[j]);
-      afit[j] *= computeAngularIntensityCorrection(asample, ainstrument, j);
-//      System.out.println(", after: " + afit[j]);
-    }
   }
 
   public void computeReflectivityBroadening(Sample asample, double afit[], int min, int max) {

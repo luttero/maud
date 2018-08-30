@@ -55,6 +55,7 @@ public class DataD extends myJFrame {
   JComboBox InstrumentC;
   JComboBox IntensityExtractorCB;
   JComboBox PositionExtractorCB;
+	JComboBox DiffractionCB;
   JComboBox ReflectivityCB;
   JComboBox FluorescenceCB;
   JTextField minTF;
@@ -331,7 +332,22 @@ public class DataD extends myJFrame {
     });
     p4.add(jb);
 
-    p4 = new JPanel();
+	  p4 = new JPanel();
+	  p4.setLayout(new FlowLayout(FlowLayout.RIGHT, 3, 3));
+	  p6.add(p4);
+	  p4.add(new JLabel("Diffraction model:"));
+	  DiffractionCB = new JComboBox();
+	  DiffractionCB.setToolTipText("Select the diffraction computation");
+	  p4.add(DiffractionCB);
+	  jb = new JIconButton("Eyeball.gif", "Options");
+	  jb.addActionListener(new ActionListener() {
+		  public void actionPerformed(ActionEvent event) {
+			  DiffractionOptions();
+		  }
+	  });
+	  p4.add(jb);
+
+	  p4 = new JPanel();
     p4.setLayout(new FlowLayout(FlowLayout.RIGHT, 3, 3));
     p6.add(p4);
     p4.add(new JLabel("Reflectivity model:"));
@@ -1001,10 +1017,14 @@ public class DataD extends myJFrame {
       PositionExtractorCB.addItem(thedata.getsubordIdentifier(thedata.getPositionExtractorID(), i));
     }
     PositionExtractorCB.setSelectedItem(thedata.getPositionExtractorMethod());
-    for (int i = 0; i < thedata.getsubordClassNumber(thedata.getReflectivityID()); i++) {
-      ReflectivityCB.addItem(thedata.getsubordIdentifier(thedata.getReflectivityID(), i));
+    for (int i = 0; i < thedata.getsubordClassNumber(thedata.getDiffractionID()); i++) {
+	    DiffractionCB.addItem(thedata.getsubordIdentifier(thedata.getDiffractionID(), i));
     }
-    ReflectivityCB.setSelectedItem(thedata.getReflectivityMethod());
+	  DiffractionCB.setSelectedItem(thedata.getDiffractionMethod());
+	  for (int i = 0; i < thedata.getsubordClassNumber(thedata.getReflectivityID()); i++) {
+		  ReflectivityCB.addItem(thedata.getsubordIdentifier(thedata.getReflectivityID(), i));
+	  }
+	  ReflectivityCB.setSelectedItem(thedata.getReflectivityMethod());
     for (int i = 0; i < thedata.getsubordClassNumber(thedata.getFluorescenceID()); i++) {
       FluorescenceCB.addItem(thedata.getsubordIdentifier(thedata.getFluorescenceID(), i));
     }
@@ -1068,6 +1088,7 @@ public class DataD extends myJFrame {
     thedata.setInstrument(InstrumentC.getSelectedItem().toString());
     thedata.setIntensityExtractor(IntensityExtractorCB.getSelectedItem().toString());
     thedata.setPositionExtractor(PositionExtractorCB.getSelectedItem().toString());
+	  thedata.setDiffraction(DiffractionCB.getSelectedItem().toString());
     thedata.setReflectivity(ReflectivityCB.getSelectedItem().toString());
     thedata.setFluorescence(FluorescenceCB.getSelectedItem().toString());
 
@@ -1680,7 +1701,14 @@ public class DataD extends myJFrame {
     thedata.getPositionExtractor().getOptionsDialog(this).setVisible(true);
   }
 
-  public void ReflectivityOptions() {
+	public void DiffractionOptions() {
+		String selectedDiffraction = DiffractionCB.getSelectedItem().toString();
+		if (!thedata.getDiffractionMethod().equals(selectedDiffraction))
+			thedata.setDiffraction(selectedDiffraction);
+		thedata.getDiffraction().getOptionsDialog(this).setVisible(true);
+	}
+
+	public void ReflectivityOptions() {
     String selectedReflectivity = ReflectivityCB.getSelectedItem().toString();
     if (!thedata.getReflectivityMethod().equals(selectedReflectivity))
       thedata.setReflectivity(selectedReflectivity);
@@ -1711,6 +1739,7 @@ public class DataD extends myJFrame {
     PositionExtractorCB.removeAllItems();
     IntensityExtractorCB.removeAllItems();
     InstrumentC.removeAllItems();
+	  DiffractionCB.removeAllItems();
     ReflectivityCB.removeAllItems();
     FluorescenceCB.removeAllItems();
     super.dispose();
