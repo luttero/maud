@@ -19,7 +19,7 @@
  */
 package it.unitn.ing.rista.diffr.fluorescence;
 
-import it.unitn.ing.rista.diffr.XRDcat;
+import it.unitn.ing.rista.diffr.*;
 
 /**
  * The TXRFluorescence is a class to calculate the total X-ray
@@ -31,7 +31,7 @@ import it.unitn.ing.rista.diffr.XRDcat;
  * @version $Revision: 1.00 $, $Date: Feb 21, 2013 8:27:36 PM $
  * @since JDK1.1
  */
-public class TXRFluorescence extends FluorescenceBase {
+public class TXRFluorescence extends Fluorescence {
 
 	public static String modelID = "TXRF";
 	public static String descriptionID = "Total X-Ray Fluorescence model, can be coupled with reflectivity matrix model";

@@ -3314,237 +3314,38 @@ public class DataFileSet extends XRDcat {
 
     indexesComputed = false;
 
-    int datafilenumber = activedatafilesnumber();
-
 	  final Diffraction diffr = getDiffraction();
-    final Reflectivity refle = getReflectivity();
-    final Fluorescence fluo = getFluorescence();
-    final Sample theSample = asample;
+	  final Reflectivity refle = getReflectivity();
+	  final Fluorescence fluo = getFluorescence();
 
-	  final int maxThreads = Math.min(Constants.maxNumberOfThreads, datafilenumber);
-    if (maxThreads > 1 && Constants.threadingGranularity >= Constants.MEDIUM_GRANULARITY) {
-      if (Constants.debugThreads)
-        out.println("Thread datafileset " + getLabel());
-      int i;
-      PersistentThread[] threads = new PersistentThread[maxThreads];
-      for (i = 0; i < maxThreads; i++) {
-        threads[i] = new PersistentThread(i) {
-          @Override
-          public void executeJob() {
-            int i1 = this.getJobNumberStart();
-            int i2 = this.getJobNumberEnd();
+    int datafilenumber = activedatafilesnumber();
+	  for (int k = 0; k < datafilenumber; k++) {
+		  DiffrDataFile datafile = getActiveDataFile(k);
+		  if (datafile.refreshSpectraComputation)
+			  datafile.resetPhasesFit();
+	  }
 
-            for (int j = i1; j < i2; j++) {
-              computeSpectrum(theSample, getActiveDataFile(j), diffr, refle, fluo);
-            }
-          }
-        };
-      }
-      i = 0;
-      int istep = (int) (0.9999 + datafilenumber / maxThreads);
-      for (int j = 0; j < maxThreads; j++) {
-        int is = i;
-        if (j < maxThreads - 1)
-          i = Math.min(i + istep, datafilenumber);
-        else
-          i = datafilenumber;
-        threads[j].setJobRange(is, i);
-        threads[j].start();
-      }
-      boolean running;
-      do {
-        running = false;
-        try {
-          Thread.sleep(Constants.timeToWaitThreadsEnding);
-        } catch (InterruptedException r) {
-        }
-        for (int h = 0; h < maxThreads; h++) {
-          if (!threads[h].isEnded())
-            running = true;
-        }
-      } while (running);
+	  diffr.computeDiffraction(asample,this);
+	  refle.computeReflectivity(asample, this);
+	  fluo.computeFluorescence(asample, this);
 
-    } else
-      for (int k = 0; k < datafilenumber; k++)
-        computeSpectrum(asample, getActiveDataFile(k), diffr, refle, fluo);
+	  for (int k = 0; k < datafilenumber; k++) {
+	  	DiffrDataFile datafile = getActiveDataFile(k);
+		  if (datafile.refreshSpectraComputation) {
+			  datafile.hasfit = true;
+			  datafile.spectrumModified = true;
+			  if (isBackgroundExperimental()) {
+				  datafile.addExperimentalBackground();
+			  }
+			  if (isBackgroundInterpolated()) {
+				  datafile.addInterpolatedBackgroundFromResiduals();
+			  } else
+				  datafile.resetBackgroundInterpolated();
+		  }
+
+	  }
 
   }
-
-	public void computeSpectrum(Sample asample, DiffrDataFile datafile, Diffraction diffr, Reflectivity refle, Fluorescence fluo) {
-/*		if (getFilePar().isComputingDerivate())
-      System.out.println("Derivative " + this.getLabel() + " " + refreshSpectraComputation + " " +
-		      getDataFileSet().getInstrument().getIntensity().getValueD());
-		else
-			System.out.println(this.getLabel() + " " + refreshSpectraComputation + " " +
-					getDataFileSet().getInstrument().getIntensity().getValueD());*/
-		if (datafile.refreshSpectraComputation) {
-			datafile.resetPhasesFit();
-			diffr.computeDiffraction(asample, datafile);
-//			computeReflectionIntensity(asample, datafile);
-			refle.computeReflectivity(datafile);
-			fluo.computeFluorescence(datafile);
-			datafile.hasfit = true;
-			datafile.spectrumModified = true;
-			computeasymmetry(asample, datafile);
-
-			if (isBackgroundExperimental()) {
-				datafile.addExperimentalBackground();
-			}
-			if (isBackgroundInterpolated()) {
-				datafile.addInterpolatedBackgroundFromResiduals();
-			} else
-				datafile.resetBackgroundInterpolated();
-		}
-	}
-
-/*	public void computeReflectionIntensity(Sample asample, DiffrDataFile datafile) {
-		if (getFilePar().isComputingDerivate()) {
-//      System.out.println("refreshing derivative: " + this.toXRDcatString());
-			for (int ij = 0; ij < getFilePar().getActiveSample().phasesNumber(); ij++) {
-				double expfit[] = new double[datafile.getTotalNumberOfData()];
-				int minmaxindex[] = computeReflectionIntensity(asample, getPeakList(), true,
-						expfit, Constants.ENTIRE_RANGE, Constants.COMPUTED,
-						Constants.COMPUTED, Constants.COMPUTED, false,
-						getFilePar().getActiveSample().getPhase(ij), datafile);
-				for (int j = minmaxindex[0]; j < minmaxindex[1]; j++)
-					datafile.addtoPhasesFit(j, expfit[j]);
-			}
-		} else {
-//      System.out.println("refreshing: " + this.toXRDcatString());
-			for (int ij = 0; ij < getFilePar().getActiveSample().phasesNumber(); ij++) {
-//        System.out.println("Phase: " + getFilePar().getActiveSample().getPhase(ij).toXRDcatString());
-				double expfit[] = new double[datafile.getTotalNumberOfData()];
-				int minmaxindex[] = computeReflectionIntensity(asample, getPeakList(), true,
-						expfit, Constants.ENTIRE_RANGE, Constants.COMPUTED,
-						Constants.COMPUTED, Constants.COMPUTED, false,
-						getFilePar().getActiveSample().getPhase(ij), datafile);
-//        System.out.println("indices: " + minmaxindex[0] + " " + minmaxindex[1] + " " + expfit[1000]);
-				for (int j = minmaxindex[0]; j < minmaxindex[1]; j++)
-					datafile.addtoPhasesFit(j, expfit[j], ij);
-			}
-		}
-	}
-*/
-	public int[] computeReflectionIntensity(Sample asample, Vector<Peak> peaklist, boolean computeBroadening,
-	                                        double[] expfit, double rangefactor, int computeTexture,
-	                                        int computeStrain, int computeFhkl, boolean leBailExtraction,
-	                                        Phase phase, DiffrDataFile datafile) {
-
-		Instrument ainstrument = getInstrument();
-		FilePar filepar = getFilePar();
-		OutputStream out = null;
-		boolean logOutput = false;
-		PrintStream printStream = null;
-		ByteArrayOutputStream baos = null;
-		if (filepar.logOutput() && filepar.fullResults()/* && phase == null*/ && !leBailExtraction) {
-			out = getFilePar().getResultStream();
-			logOutput = true;
-
-			try {
-				baos = new ByteArrayOutputStream();
-				printStream = new PrintStream(baos);
-/*        if (Constants.testing) {
-          printLine(out, "Conditions: computing rangefactor computeBroadening computeTexture computeStrain computeFhkl leBailExtraction phase");
-        printLine(out, getFilePar().isComputingDerivate() +  " " + rangefactor + " " + computeBroadening + " " + computeTexture + " " + computeStrain + " " +
-            computeFhkl + " " + leBailExtraction + " " + phase);
-        }*/
-				printStream.println("             Diffraction spectrum : " + datafile.toXRDcatString());
-				printStream.println("Peaks list : ");
-				printStream.print(" peak n,"
-						+ " rad. n,"
-						+ "             phase, "
-						+ " h,     "
-						+ " k,     "
-						+ " l,     "
-						+ "  dspace,   "
-						+ "  Fhkl_calc,"
-						+ "  Fhkl_exp, "
-						+ " position,  "
-						+ " strain,    "
-						+ " planar def,"
-						+ " intensity, "
-						+ " hwhm,      "
-						+ " gaussian,  "
-						+ " |Fhkl|^2*m,"
-						+ " incident I,"
-						+ " LP,        "
-						+ " texture,   "
-						+ " Abs*Vol/Vc,"
-						+ " rad. wt,   "
-						+ " phase scale");
-				printStream.print(Constants.lineSeparator);
-				printStream.flush();
-//						System.out.println("String length " + toPrint.length());
-			} catch (Exception io) {
-				io.printStackTrace();
-			}
-		}
-
-//    Instrument ainstrument = getDataFileSet().getInstrument();
-		double cutoff = getPeakCutoffD() * rangefactor;
-		if (!datafile.increasingX()) {
-			cutoff = -cutoff;
-		}
-		int[] tmpminmax = new int[2];
-		int[] minmaxindex = new int[2];
-		minmaxindex[0] = datafile.finalindex - 1;
-		minmaxindex[1] = datafile.startingindex;
-		arraycopy(minmaxindex, 0, tmpminmax, 0, 2);
-
-//    System.out.println(peaklist.length);  // todo
-		for (int i = 0; i < peaklist.size(); i++) {
-			if (phase == null || peaklist.elementAt(i).getPhase() == phase) {
-				peaklist.elementAt(i).computePeak(datafile, expfit, asample, ainstrument, printStream, logOutput, cutoff,
-						computeTexture, computeStrain, computeFhkl, leBailExtraction, tmpminmax,
-						computeBroadening, !datafile.increasingX());
-				if (i == 0)
-					arraycopy(tmpminmax, 0, minmaxindex, 0, 2);
-				else if (!leBailExtraction) {
-					if (minmaxindex[0] > tmpminmax[0])
-						minmaxindex[0] = tmpminmax[0];
-					if (minmaxindex[1] < tmpminmax[1])
-						minmaxindex[1] = tmpminmax[1];
-				}
-			}
-		}
-
-		if (logOutput && baos != null) {
-			try {
-				synchronized (out) {
-					printLine(out, baos.toString());
-					newLine(out);
-					out.flush();
-				}
-			} catch (Exception io) {
-				io.printStackTrace();
-			}
-		}
-
-		return minmaxindex;
-
-	}
-
-	public void computeasymmetry(Sample asample, DiffrDataFile datafile) {
-		computeasymmetry(asample, datafile, datafile.phasesfit, datafile.startingindex, datafile.finalindex - 1);
-		if (!getFilePar().isComputingDerivate()) {
-			for (int i = 0; i < datafile.phaseFit.size(); i++)
-				computeasymmetry(asample, datafile, (double[]) datafile.phaseFit.elementAt(i), datafile.startingindex, datafile.finalindex - 1);
-		}
-		refreshComputation = false;
-	}
-
-	public void computeasymmetry(Sample asample, DiffrDataFile datafile, double afit[], int min, int max) {
-
-		Instrument ainstrument = getInstrument();
-
-		ainstrument.getInstrumentBroadening().computeAsymmetry(datafile, asample, afit, min, max);
-
-		for (int j = min; j < max; j++) {
-//      System.out.print("Before: " + afit[j]);
-			afit[j] *= datafile.computeAngularIntensityCorrection(asample, ainstrument, j);
-//      System.out.println(", after: " + afit[j]);
-		}
-	}
 
 	public double meanAbsorptionScaleFactor = 1.0;
 

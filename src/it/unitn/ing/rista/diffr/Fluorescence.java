@@ -47,6 +47,9 @@ public class Fluorescence extends XRDcat {
   public Fluorescence() {
   }
 
+	public void computeFluorescence(Sample asample, DataFileSet adataset) {
+	}
+
 	/**
 	 * The method here do nothing, subclasses should overwrite it to compute the fluorescence pattern
 	 * for the <code>DiffrDataFile</code>. When the pattern is computed it should be add to the
@@ -56,7 +59,7 @@ public class Fluorescence extends XRDcat {
 	 * @param adatafile
 	 * @see DiffrDataFile#addtoFit
 	 */
-  public void computeFluorescence(DiffrDataFile adatafile) {
+  public void computeFluorescence(Sample asample, DiffrDataFile adatafile) {
   }
 
 	/**
@@ -72,7 +75,33 @@ public class Fluorescence extends XRDcat {
     return false;
   }
 
-  public JOptionsDialog getOptionsDialog(Frame parent) {
+	public double getIntensityCorrection(int atomNumber) {
+		return 1;
+	}
+
+	public void computeasymmetry(Sample asample, DiffrDataFile datafile) {
+		computeasymmetry(asample, datafile, datafile.phasesfit, datafile.startingindex, datafile.finalindex - 1);
+		if (!getFilePar().isComputingDerivate()) {
+			for (int i = 0; i < datafile.phaseFit.size(); i++)
+				computeasymmetry(asample, datafile, (double[]) datafile.phaseFit.elementAt(i), datafile.startingindex, datafile.finalindex - 1);
+		}
+		refreshComputation = false;
+	}
+
+	public void computeasymmetry(Sample asample, DiffrDataFile datafile, double afit[], int min, int max) {
+
+		Instrument ainstrument = datafile.getDataFileSet().getInstrument();
+
+		ainstrument.getInstrumentBroadening().computeAsymmetry(datafile, asample, afit, min, max);
+
+		for (int j = min; j < max; j++) {
+//      System.out.print("Before: " + afit[j]);
+			afit[j] *= datafile.computeAngularIntensityCorrection(asample, ainstrument, j);
+//      System.out.println(", after: " + afit[j]);
+		}
+	}
+
+	public JOptionsDialog getOptionsDialog(Frame parent) {
     JOptionsDialog adialog = new JFluorescenceOptionsD(parent, this);
     return adialog;
   }

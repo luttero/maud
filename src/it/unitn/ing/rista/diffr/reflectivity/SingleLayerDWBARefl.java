@@ -28,6 +28,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Vector;
 
+import static java.lang.System.out;
+
 /**
  *  The SingleLayerDWBARefl is a class to compute reflectivity using the
  *  DWBA method for single layer.
@@ -105,8 +107,63 @@ public class SingleLayerDWBARefl extends Reflectivity {
             ParameterPreferences.getDouble(getParameterString(0) + ".max", 10));
   }
 
-  public void computeReflectivity(DiffrDataFile adatafile) {
-	  Sample asample = adatafile.getDataFileSet().getSample();
+	public void computeReflectivity(Sample asample, DataFileSet adataset) {
+
+		int datafilenumber = adataset.activedatafilesnumber();
+
+		final Sample theSample = asample;
+		final DataFileSet theDataset = adataset;
+
+		final int maxThreads = Math.min(Constants.maxNumberOfThreads, datafilenumber);
+		if (maxThreads > 1 && Constants.threadingGranularity >= Constants.MEDIUM_GRANULARITY) {
+			if (Constants.debugThreads)
+				out.println("Thread datafileset " + getLabel());
+			int i;
+			PersistentThread[] threads = new PersistentThread[maxThreads];
+			for (i = 0; i < maxThreads; i++) {
+				threads[i] = new PersistentThread(i) {
+					@Override
+					public void executeJob() {
+						int i1 = this.getJobNumberStart();
+						int i2 = this.getJobNumberEnd();
+
+						for (int j = i1; j < i2; j++) {
+							computeReflectivity(theSample, theDataset.getActiveDataFile(j));
+						}
+					}
+				};
+			}
+			i = 0;
+			int istep = (int) (0.9999 + datafilenumber / maxThreads);
+			for (int j = 0; j < maxThreads; j++) {
+				int is = i;
+				if (j < maxThreads - 1)
+					i = Math.min(i + istep, datafilenumber);
+				else
+					i = datafilenumber;
+				threads[j].setJobRange(is, i);
+				threads[j].start();
+			}
+			boolean running;
+			do {
+				running = false;
+				try {
+					Thread.sleep(Constants.timeToWaitThreadsEnding);
+				} catch (InterruptedException r) {
+				}
+				for (int h = 0; h < maxThreads; h++) {
+					if (!threads[h].isEnded())
+						running = true;
+				}
+			} while (running);
+
+		} else
+			for (int k = 0; k < datafilenumber; k++)
+				computeReflectivity(theSample, theDataset.getActiveDataFile(k));
+
+	}
+
+	public void computeReflectivity(Sample asample, DiffrDataFile adatafile) {
 	  RadiationType rad = adatafile.getDataFileSet().getInstrument().getRadiationType();
 	  double lambda = rad.getMeanRadiationWavelength();
     double[] q = adatafile.getXrangeInQ();

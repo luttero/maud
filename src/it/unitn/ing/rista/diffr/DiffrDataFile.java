@@ -145,7 +145,7 @@ public class DiffrDataFile extends XRDcat {
   protected double[] x_image = null;
   protected double[] y_image = null;
   //	public double[] fit;
-  protected double[] phasesfit = null;
+  public double[] phasesfit = null;
   protected double[] bkgfit = null;
   protected double[] intbkgfit = null;
   public Vector phaseFit = null;
@@ -3528,7 +3528,7 @@ public class DiffrDataFile extends XRDcat {
 //    refreshSpectraComputation = false;
   }
 
-  public void computeasymmetryandbkg(Sample asample, double[] expfit, int min, int max) {
+/*  public void computeasymmetryandbkg(Sample asample, double[] expfit, int min, int max) {
     computeasymmetry(asample, expfit, min, max);
     postComputation(asample, expfit, min, max);
     for (int j = min; j < max; j++)
@@ -3558,6 +3558,7 @@ public class DiffrDataFile extends XRDcat {
 //      System.out.println(", after: " + afit[j]);
 		}
 	}
+*/
 
 	public void computeBackground(int starti, int finali) {
     int numbercoef = numberOfLoopParameters[getBackgroundID()];
