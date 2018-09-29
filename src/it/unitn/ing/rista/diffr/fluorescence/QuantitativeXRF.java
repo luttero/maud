@@ -174,7 +174,7 @@ public class QuantitativeXRF extends Fluorescence {
 		double sinPhid = Math.sin(incidentDiffracted[2]);
 
 		RadiationType radType = ainstrument.getRadiationType();
-		int rad_lines = radType.getLinesCountForFluorescence();
+		int rad_lines = radType.getLinesCount();
 		double[] energyInKeV = new double[rad_lines];
 		double[] energy_intensity = new double[rad_lines];
 

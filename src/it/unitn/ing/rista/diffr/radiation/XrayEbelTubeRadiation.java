@@ -705,7 +705,7 @@ public class XrayEbelTubeRadiation extends RadiationType {
 			retrieveParameters();
 			updateStringtoDoubleBuffering(false);
 			refreshComputation = true;
-			int lineCounts = getLinesCountForFluorescence();
+			int lineCounts = getLinesCount();
 			double[] x = new double[lineCounts];
 			double[] y = new double[lineCounts];
 			for (int i = 0; i < lineCounts; i++) {
@@ -715,7 +715,7 @@ public class XrayEbelTubeRadiation extends RadiationType {
 			(new PlotSimpleData(this, x, y, true)).setVisible(true);
 
 
-			lineCounts = getLinesCountForFluorescence() - characteristic_spectrum[0].length;
+			lineCounts = getLinesCount() - characteristic_spectrum[0].length;
 			x = new double[lineCounts];
 			y = new double[lineCounts];
 			for (int i = 0; i < lineCounts; i++) {

@@ -124,7 +124,7 @@ public class Strain extends XRDcat {
 
 	public void saveStrainValues(Phase aphase, Sample asample) {
 		FilePar aparFile = getFilePar();
-		if (Constants.sandboxEnabled || !aparFile.isStrainComputationPermitted() || !Constants.strainOutput)
+		if (!aparFile.isStrainComputationPermitted() || !Constants.strainOutput)
 			return;
 
 		String filename = new String(getFilePar().getDirectory() +

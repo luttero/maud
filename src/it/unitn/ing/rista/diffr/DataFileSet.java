@@ -1417,7 +1417,7 @@ public class DataFileSet extends XRDcat {
     String folder = folderAndName[0];
     filename = folderAndName[1];
 
-    if (Constants.sandboxEnabled && !filename.endsWith(".cif"))
+    if (!filename.endsWith(".cif"))
       filename += ".cif";
 //    int numberOfFilesTotal = 0;
     Vector datafiles = getSelectedDatafiles();
@@ -1948,7 +1948,7 @@ public class DataFileSet extends XRDcat {
     String folder = folderAndName[0];
     filename = folderAndName[1];
 
-    if (Constants.sandboxEnabled && !filename.endsWith(".cif"))
+    if (!filename.endsWith(".cif"))
       filename += ".cif";
 //    int numberOfFilesTotal = 0;
     Vector datafiles = getSelectedDatafiles();

@@ -88,7 +88,7 @@ public class Texture extends XRDcat {
 
   public void saveTextureFactor(Phase aphase, Sample asample) {
     FilePar aparFile = getFilePar();
-    if (Constants.sandboxEnabled || !aparFile.isTextureComputationPermitted() || !Constants.textureOutput)
+    if (!aparFile.isTextureComputationPermitted() || !Constants.textureOutput)
       return;
 
     String filename = new String(getFilePar().getDirectory() + aphase.toXRDcatString() + ".apf");

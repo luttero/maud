@@ -422,7 +422,7 @@ public class SpectraPlotWindow extends ImageWindow implements ActionListener, Cl
     String folder = folderAndName[0];
     filename = folderAndName[1];
 
-    if (Constants.sandboxEnabled && !filename.endsWith(".cif"))
+    if (!filename.endsWith(".cif"))
       filename = filename + ".cif";
 
     double xmin = 0.0;

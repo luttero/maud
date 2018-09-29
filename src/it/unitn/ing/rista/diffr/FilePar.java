@@ -259,7 +259,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
     setWeightingScheme(weights[0]);
     setMinimizeQuantity(minimizeQuantity[0]);
     stringField[19] = new String("0");
-    if (MaudPreferences.getBoolean("analysis_default.storeSpectraWithParameters", true) || Constants.sandboxEnabled)
+    if (MaudPreferences.getBoolean("analysis_default.storeSpectraWithParameters", true))
       stringField[20] = "true";
     else
       stringField[20] = "false";
@@ -1229,7 +1229,6 @@ public class FilePar extends XRDcat implements lFilePar, Function {
   }
 
   public void writeall(BufferedWriter out) {
-	  setStoreSpectraOption(true);
     if (themainframe != null)
       themainframe.retrieveParameters();
     try {
@@ -3158,13 +3157,11 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 	}
 
 	public String getLstNameToSave() {
-    if (Constants.sandboxEnabled)
-      return Constants.cachesDirectory + "lastAnalysis.lst";
     return getDirectory() + stringField[analysisNameID] + /*getFileNameVersionString() +*/ ".lst";
 	}
 
 /*	public String getFileNameVersionString() {
-		if (!Constants.sandboxEnabled && Integer.valueOf(getIncrementRefinementNumber()).intValue() > 0)
+		if (Integer.valueOf(getIncrementRefinementNumber()).intValue() > 0)
 			return "_" + getIncrementRefinementNumber() + "v";
 		return "";
 	}*/
@@ -3341,14 +3338,14 @@ public class FilePar extends XRDcat implements lFilePar, Function {
   }
 
   public void setStoreSpectraOption(boolean value) {
-    if (value || Constants.sandboxEnabled)
+    if (value)
       stringField[20] = "true";
     else
       stringField[20] = "false";
   }
 
   public boolean storeSpectraWithAnalysis() {
-    return stringField[20].equalsIgnoreCase("true");// || Constants.sandboxEnabled;
+    return stringField[20].equalsIgnoreCase("true");
   }
 
   public principalJFrame getMainFrame() {

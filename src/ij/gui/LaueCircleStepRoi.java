@@ -187,7 +187,7 @@ public class LaueCircleStepRoi extends LaueCircleRoi {
     filename = folderAndName[1];
 
     if (filename == null) return;
-    if (Constants.sandboxEnabled && !filename.endsWith(".esg"))
+    if (!filename.endsWith(".esg"))
       filename = filename + ".esg";
 
     IJ.wait(250);  // give system time to redraw ImageJ window
@@ -205,7 +205,7 @@ public class LaueCircleStepRoi extends LaueCircleRoi {
 	                double stepIntegration) {
 
 		if (filename == null) return;
-		if (Constants.sandboxEnabled && !filename.endsWith(".esg"))
+		if (!filename.endsWith(".esg"))
 			filename = filename + ".esg";
 
 		String title = "noTitle";

@@ -140,7 +140,7 @@ public class TubeSpectrumTransmission extends FluorescenceBase {
 		double[] fluorescence = new double[numberOfPoints];
 
 		RadiationType radType = ainstrument.getRadiationType();
-		int rad_lines = radType.getLinesCountForFluorescence();
+		int rad_lines = radType.getLinesCount();
 		double maxEnergyInKeV = xEnergy[numberOfPoints - 1] * 0.001 * 1.1;
 
 		Vector<FluorescenceLine> fluorescenceLines = new Vector<FluorescenceLine>(rad_lines, 10);

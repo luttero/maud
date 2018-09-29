@@ -128,7 +128,7 @@ public class LaueOvalRoi extends LaueOvalStepRoi {
     IJ.wait(250);  // give system time to redraw ImageJ window
     IJ.showStatus("Saving plot values...");
     if (filename == null) return;
-    if (Constants.sandboxEnabled && !filename.endsWith(".esg"))
+    if (!filename.endsWith(".esg"))
       filename = filename + ".esg";
     save(folder, filename, profile, startX, endX);
 

@@ -272,7 +272,7 @@ public class GIXRFModel extends Fluorescence {
 		double sinPhid = Math.sin(incidentDiffracted[1]);
 
 		RadiationType radType = ainstrument.getRadiationType();
-		int rad_lines = radType.getLinesCountForFluorescence();
+		int rad_lines = radType.getLinesCount();
 		int sub20 = radType.getSubdivision(); //MaudPreferences.getInteger("xrf_detector.energySubdivision", 20);
 
 		int initialContent = 100;

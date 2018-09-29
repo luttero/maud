@@ -57,6 +57,12 @@ public class DiffrDataFile extends XRDcat {
 	public static String pd_meas_scan_range_inc = "_pd_meas_2theta_range_inc";
 	public static String pd_meas_counts_total = "_pd_meas_counts_total";
 
+	public static int DATAFILE_OMEGA = 0;
+	public static int DATAFILE_CHI = 1;
+	public static int DATAFILE_PHI = 2;
+	public static int DATAFILE_ETA = 3;
+	public static int DATAFILE_THETA2 = 4;
+
 	public static String[] diclistc = {
       "_riet_meas_datafile_format",
       "_pd_meas_angle_omega",

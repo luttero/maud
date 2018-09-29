@@ -330,7 +330,7 @@ public class PseudoVoigtPeak extends basicPeak {
 
 //    diffrDataFile.computeLorentzPolarization(ainstrument, asample, actualPosition, intensity);
 // planar defects
-		aphase.getActiveTDSModel().computeTDS(diffrDataFile, expfit, this, intensity[0], Fhkl, actualPosition[0], minmaxindex);
+/*		aphase.getActiveTDSModel().computeTDS(diffrDataFile, expfit, this, intensity[0], Fhkl, actualPosition[0], minmaxindex);*/
 			computeFunctions(diffrDataFile.getXData(), expfit, minindex, maxindex,
 					intensity, eta, hwhm_i, actualPosition, const1, const2, wave,
 					diffrDataFile.dspacingbase, diffrDataFile.energyDispersive, diffrDataFile.increasingX(), planar_asymmetry,
@@ -341,7 +341,7 @@ public class PseudoVoigtPeak extends basicPeak {
 
 	}
 
-	public static void computeFunctions(double[] x, double[] f, int[] minindex, int[] maxindex,
+	public void computeFunctions(double[] x, double[] f, int[] minindex, int[] maxindex,
 	                                    double[][] intensity, double[] eta, double[] hwhm_i, double[][] position,
 	                                    double[] const1, double[] const2, double[] wave, boolean dspacingBase,
 	                                    boolean energyDispersive, boolean increasingX, double planar_asymmetry,

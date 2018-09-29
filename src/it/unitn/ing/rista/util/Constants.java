@@ -413,7 +413,6 @@ public class Constants {
   public static String applicationSupportDirectory = "";
 	public static String logsDirectory = "";
 	public static String startingLog = "startingLog";
-  public static boolean sandboxEnabled = false;
   public static String startingAppDirectory = "";
 
 	public static String refineIcon = "slot_machine_20.gif";
@@ -426,7 +425,7 @@ public class Constants {
     return maudReleaseBuilt;
   }
 
-	public static void initForMacOS(boolean sandboxed) {
+	public static void initForMacOS() {
 //		System.out.println("Init for OS X/macOS");
 		macosx = true;
 		osType = OsMac;
@@ -437,14 +436,11 @@ public class Constants {
 			applicationSupportDirectory = System.getProperty("ApplicationSupportDirectory") + fileSeparator;
 			logsDirectory = libraryDirectory + "Logs" + fileSeparator;
 			startingAppDirectory = System.getProperty("java.library.path") + fileSeparator;
-			if (sandboxed)
-				documentsDirectory = System.getProperty("DocumentsDirectory") + fileSeparator;
-			else
-				documentsDirectory = System.getProperty("DocumentsDirectory") + fileSeparator + "maud" + fileSeparator;
+			documentsDirectory = System.getProperty("DocumentsDirectory") + fileSeparator + "maud" + fileSeparator;
 		}
 	}
 
-	public static void initForWindows(boolean sandboxed) {
+	public static void initForWindows() {
 //		System.out.println("Init for Windows");
 		windoze = true;
 		startPath = "//";
@@ -459,7 +455,7 @@ public class Constants {
 		logsDirectory = libraryDirectory + "Logs" + fileSeparator;
 	}
 
-	public static void initForLinux(boolean sandboxed) {
+	public static void initForLinux() {
 ///		System.out.println("Init for linux");
 		osType = OsLinux;
 		startingLog = "startingLog";
@@ -471,8 +467,6 @@ public class Constants {
 	}
 
 	public static void initConstants() {
-		if (System.getProperty("SandboxEnabled") != null)
-			sandboxEnabled = false; // System.getProperty("SandboxEnabled").equalsIgnoreCase("true");// (the String "true" or "false")
 
 		maudReleaseBuilt = maudReleaseBuilt.substring(1, maudReleaseBuilt.length() - 1);
 		maudDateBuilt = maudDateBuilt.substring(1, maudDateBuilt.length() - 1);
@@ -495,13 +489,13 @@ public class Constants {
 //		System.out.println("System: " + osName);
 		osType = OsUnix;
 		if (osName != null && osName.indexOf("Mac OS X") != -1) {
-			initForMacOS(sandboxEnabled);
+			initForMacOS();
 		} else if (osName != null && osName.indexOf("Windows") != -1) {
-			initForWindows(sandboxEnabled);
+			initForWindows();
 		} else if (osName != null && osName.indexOf("Mac") != -1) {
-			initForMacOS(sandboxEnabled);
+			initForMacOS();
 		} else if (osName != null && osName.indexOf("Linux") != -1) {
-			initForLinux(sandboxEnabled);
+			initForLinux();
 		}
 
 		File appSupFile = new File(applicationSupportDirectory);
@@ -554,13 +548,7 @@ public class Constants {
 		  System.out.println(key + ": " + value);
 	  }
 
-	  if (sandboxEnabled) { // Sandboxing for the moment is for OS X
-		  System.out.println("Initialized sandboxing environment!");
-	  } else {
-		  System.out.println("No sandboxing!");
-	  }
-
-    String vers = System.getProperty("java.version");
+   String vers = System.getProperty("java.version");
 //	  String classnamesFile = "files/classnames.ins";
 	  pathToMaudJar = Misc.getPathToMaudJar("Maud.jar");
 	  maudJar = pathToMaudJar + fileSeparator + "Maud.jar";
@@ -590,9 +578,7 @@ public class Constants {
 			  cctbxNativeLibrary = nativeLibraryDirectory + "libcctbxForMaud.so";
 	  }
 
-/*	  String pathFile = pathToMaudJar + fileToLoad;
-    if (sandboxEnabled)
-      pathFile = applicationSupportDirectory + fileToLoad;*/
+//	  String pathFile = pathToMaudJar + fileToLoad;
 
     String full_build_number = "Maud_full_build.number";
 //    String reduced_build_number = new String("/Maud_reduced_build.number");
@@ -706,9 +692,6 @@ public class Constants {
 	      System.out.println("Need to initialize the program, first run");
         filesfolder = initializeMaud(pathToMaudJar, pathFile);
       } else {
-//        if (sandboxEnabled)
-//          filesfolder = fileSeparator + applicationSupportDirectory;
-//        else
         filesfolder = getUserPath(pathFile);
       }*/
 
