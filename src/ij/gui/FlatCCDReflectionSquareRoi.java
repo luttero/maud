@@ -402,7 +402,7 @@ public class FlatCCDReflectionSquareRoi extends LaueOvalRoi {
     filename = folderAndName[1];
 
     if (filename == null) return;
-    if (Constants.sandboxEnabled && !filename.endsWith(".esg"))
+    if (!filename.endsWith(".esg"))
       filename = filename + ".esg";
 
     IJ.wait(250);  // give system time to redraw ImageJ window

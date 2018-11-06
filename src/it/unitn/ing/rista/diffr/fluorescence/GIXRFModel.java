@@ -31,6 +31,8 @@ import it.unitn.ing.rista.util.*;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import static java.lang.System.out;
+
 /**
  * The GIXRFModel is a class to calculate the Grazing Incidence
  * fluorescence model by De Boer.
@@ -40,7 +42,7 @@ import java.util.Vector;
  * @version $Revision: 1.00 $, $Date: Feb 21, 2013 8:27:36 PM $
  * @since JDK1.1
  */
-public class GIXRFModel extends FluorescenceBase {
+public class GIXRFModel extends Fluorescence {
 
 	public static String[] diclistc = {
 			"_maud_gixrf_smoothing_points",
@@ -144,11 +146,71 @@ public class GIXRFModel extends FluorescenceBase {
 	double phiDelta = 0.0;
 	double phiStep = 0; // phiDelta / (phiIntegrationNumber - 1);
 
-	public void computeFluorescence(DiffrDataFile adatafile) {
+	public void computeFluorescence(Sample asample, DataFileSet adataset) {
+
+		int datafilenumber = adataset.activedatafilesnumber();
+
+		final Sample theSample = asample;
+		final DataFileSet theDataset = adataset;
+
+		final int maxThreads = Math.min(Constants.maxNumberOfThreads, datafilenumber);
+		if (maxThreads > 1 && Constants.threadingGranularity >= Constants.MEDIUM_GRANULARITY) {
+			if (Constants.debugThreads)
+				out.println("Thread datafileset " + getLabel());
+			int i;
+			PersistentThread[] threads = new PersistentThread[maxThreads];
+			for (i = 0; i < maxThreads; i++) {
+				threads[i] = new PersistentThread(i) {
+					@Override
+					public void executeJob() {
+						int i1 = this.getJobNumberStart();
+						int i2 = this.getJobNumberEnd();
+
+						for (int j = i1; j < i2; j++) {
+							DiffrDataFile datafile = theDataset.getActiveDataFile(j);
+							computeFluorescence(theSample, datafile);
+							computeasymmetry(theSample, datafile);
+						}
+					}
+				};
+			}
+			i = 0;
+			int istep = (int) (0.9999 + datafilenumber / maxThreads);
+			for (int j = 0; j < maxThreads; j++) {
+				int is = i;
+				if (j < maxThreads - 1)
+					i = Math.min(i + istep, datafilenumber);
+				else
+					i = datafilenumber;
+				threads[j].setJobRange(is, i);
+				threads[j].start();
+			}
+			boolean running;
+			do {
+				running = false;
+				try {
+					Thread.sleep(Constants.timeToWaitThreadsEnding);
+				} catch (InterruptedException r) {
+				}
+				for (int h = 0; h < maxThreads; h++) {
+					if (!threads[h].isEnded())
+						running = true;
+				}
+			} while (running);
+
+		} else
+			for (int k = 0; k < datafilenumber; k++) {
+				DiffrDataFile datafile = theDataset.getActiveDataFile(k);
+				computeFluorescence(theSample, datafile);
+				computeasymmetry(theSample, datafile);
+			}
+
+	}
+
+	public void computeFluorescence(Sample asample, DiffrDataFile adatafile) {
 
 		XRayDataSqLite.checkMinimumEnergy();
 
-		Sample asample = adatafile.getDataFileSet().getSample();
 		Instrument ainstrument = adatafile.getDataFileSet().getInstrument();
 		Detector detector = ainstrument.getDetector();
 		Geometry geometry = ainstrument.getGeometry();
@@ -210,7 +272,7 @@ public class GIXRFModel extends FluorescenceBase {
 		double sinPhid = Math.sin(incidentDiffracted[1]);
 
 		RadiationType radType = ainstrument.getRadiationType();
-		int rad_lines = radType.getLinesCountForFluorescence();
+		int rad_lines = radType.getLinesCount();
 		int sub20 = radType.getSubdivision(); //MaudPreferences.getInteger("xrf_detector.energySubdivision", 20);
 
 		int initialContent = 100;

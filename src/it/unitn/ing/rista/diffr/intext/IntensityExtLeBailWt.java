@@ -71,6 +71,7 @@ public class IntensityExtLeBailWt extends IntensityExtLeBail {
     Vector<Peak> tpeaklist;
     DiffrDataFile datafile = getDataFile();
     DataFileSet datafileset = datafile.getDataFileSet();
+	  Diffraction diffraction = datafileset.getDiffraction();
     Vector<Peak> fullpeaklist = datafileset.getPeakList();
     int numberofpeaks = datafileset.getNumberofPeaks();
 
@@ -127,9 +128,9 @@ public class IntensityExtLeBailWt extends IntensityExtLeBail {
     while (!convergence && iteration++ < maxiter) {
       for (int j = startingindex; j < finalindex; j++)
         fit[j] = 0.0f;
-      datafile.computeReflectionIntensity(asample, fullpeaklist, true, fit, Constants.ENTIRE_RANGE,
-              Constants.EXPERIMENTAL, Constants.COMPUTED, Constants.COMPUTED, false, null);
-      datafile.computeasymmetry(asample, fit);
+	    diffraction.computeReflectionIntensity(asample, fullpeaklist, true, fit, Constants.ENTIRE_RANGE,
+              Constants.EXPERIMENTAL, Constants.COMPUTED, Constants.COMPUTED, false, null, datafile);
+	    diffraction.computeasymmetry(asample, datafile, fit, startingindex, finalindex);
       datafile.postComputation(asample, fit);
       for (int j = startingindex; j < finalindex; j++)
         datafile.setPhasesFit(j, fit[j]);
@@ -156,10 +157,10 @@ public class IntensityExtLeBailWt extends IntensityExtLeBail {
           if (superOrder[n] < 0) {
             for (int j = minmaxindex[0]; j < minmaxindex[1]; j++)
               expfit[j] = 0.0f;
-            minmaxindex = datafile.computeReflectionIntensity(asample, tpeaklist, false,
+            minmaxindex = diffraction.computeReflectionIntensity(asample, tpeaklist, false,
                     expfit, rangefactor, Constants.UNITARY,
-                    Constants.COMPUTED, Constants.COMPUTED, true, null);
-            datafile.computeasymmetryandbkg(asample, expfit, minmaxindex[0], minmaxindex[1]);
+                    Constants.COMPUTED, Constants.COMPUTED, true, null, datafile);
+	          diffraction.computeasymmetry(asample, datafile, expfit, minmaxindex[0], minmaxindex[1]); // todo: interpolation and experimental background
             double expfitnorm = 0.0;
 						if (useBKG)
             for (int k = minmaxindex[0]; k < minmaxindex[1]; k++) {

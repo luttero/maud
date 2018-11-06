@@ -102,7 +102,6 @@ public class ExpHarmonicTexture extends HarmonicTexture {
 
     if (refreshODF) {
       refreshODF = false;
-      Misc.println("Compute ODF!");
     double vbg = 0.0, va = 0.0, hvg = 0., hvb = 0., a = 0., b = 0.;
     double fn = 0.0;
     normalizationFactor = 1.0;

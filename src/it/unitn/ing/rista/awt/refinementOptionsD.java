@@ -52,7 +52,7 @@ public class refinementOptionsD extends myJFrame {
   JComboBox minimizeCB;
   JComboBox weightsCB;
   JCheckBox addStatisticalErrorCB;
-//	JCheckBox storeSpectraCB;
+	JCheckBox storeSpectraCB;
 	JCheckBox storeStructureCB;
 	JCheckBox storeTextureCB;
 
@@ -237,12 +237,12 @@ public class refinementOptionsD extends myJFrame {
     addStatisticalErrorCB.setToolTipText("Add statistical error in intensity to the output fitting files");
     jPanel9.add(addStatisticalErrorCB);
 
-/*		jPanel9 = new JPanel();
+		jPanel9 = new JPanel();
 		jPanel9.setLayout(new FlowLayout(FlowLayout.RIGHT,6,6));
 		optionsP.add(jPanel9);
 		storeSpectraCB = new JCheckBox("Store spectra in the analysis file");
 		storeSpectraCB.setToolTipText("This will store the spectra inside the analysis file when saving (original datafiles not needed)");
-		jPanel9.add(storeSpectraCB);*/
+		jPanel9.add(storeSpectraCB);
 
 	  jPanel9 = new JPanel();
 	  jPanel9.setLayout(new FlowLayout(FlowLayout.RIGHT,6,6));
@@ -314,7 +314,7 @@ public class refinementOptionsD extends myJFrame {
     computationAlgorithmCB.setSelectedItem(parameterfile.getOptimizationAlgorithm().identifier);
 //    Removed also from preferences
 //		Constants.speedUp = MaudPreferences.getBoolean(MaudPreferences.speedupComp);
-//		storeSpectraCB.setSelected(parameterfile.storeSpectraWithAnalysis());
+    storeSpectraCB.setSelected(parameterfile.storeSpectraWithAnalysis());
 	  storeStructureCB.setSelected(!parameterfile.compactSavingStructureFactors());
 	  storeTextureCB.setSelected(!parameterfile.compactSavingTextureFactors());
   }
@@ -338,11 +338,11 @@ public class refinementOptionsD extends myJFrame {
     parameterfile.setWeightingScheme(weightsCB.getSelectedItem().toString());
     parameterfile.setTheoreticalWeightingScheme(theoreticalWeightCB.isSelected());
     parameterfile.addStatisticalError = addStatisticalErrorCB.isSelected();
-/*    boolean store = storeSpectraCB.isSelected() || Constants.sandboxEnabled;
+    boolean store = storeSpectraCB.isSelected();
     boolean oldstore = parameterfile.storeSpectraWithAnalysis();
     parameterfile.setStoreSpectraOption(store);
     if (oldstore != store) // only if the user makes a different choice
-      MaudPreferences.setPref("analysis_default.storeSpectraWithParameters", store);*/
+      MaudPreferences.setPref("analysis_default.storeSpectraWithParameters", store);
 	  parameterfile.setCompactSavingStructureFactors(!storeStructureCB.isSelected());
 	  parameterfile.setCompactSavingTextureFactors(!storeTextureCB.isSelected());
   }

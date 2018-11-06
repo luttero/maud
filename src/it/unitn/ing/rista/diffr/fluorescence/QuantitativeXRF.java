@@ -29,6 +29,8 @@ import it.unitn.ing.rista.util.*;
 
 import java.util.Vector;
 
+import static java.lang.System.out;
+
 /**
  * The QuantitativeXRF is a class to
  *
@@ -36,7 +38,7 @@ import java.util.Vector;
  * @version $Revision: 1.00 $, $Date: May 15, 2009 7:03:18 PM $
  * @since JDK1.1
  */
-public class QuantitativeXRF extends FluorescenceBase {
+public class QuantitativeXRF extends Fluorescence {
 
   public static String modelID = "Quantitative XRF";
   private static String descriptionID = "Perform quantitative fitting of XRF data";
@@ -58,6 +60,66 @@ public class QuantitativeXRF extends FluorescenceBase {
     description = descriptionID;
   }
 
+	public void computeFluorescence(Sample asample, DataFileSet adataset) {
+
+		int datafilenumber = adataset.activedatafilesnumber();
+
+		final Sample theSample = asample;
+		final DataFileSet theDataset = adataset;
+
+		final int maxThreads = Math.min(Constants.maxNumberOfThreads, datafilenumber);
+		if (maxThreads > 1 && Constants.threadingGranularity >= Constants.MEDIUM_GRANULARITY) {
+			if (Constants.debugThreads)
+				out.println("Thread datafileset " + getLabel());
+			int i;
+			PersistentThread[] threads = new PersistentThread[maxThreads];
+			for (i = 0; i < maxThreads; i++) {
+				threads[i] = new PersistentThread(i) {
+					@Override
+					public void executeJob() {
+						int i1 = this.getJobNumberStart();
+						int i2 = this.getJobNumberEnd();
+
+						for (int j = i1; j < i2; j++) {
+							DiffrDataFile datafile = theDataset.getActiveDataFile(j);
+							computeFluorescence(theSample, datafile);
+							computeasymmetry(theSample, datafile);
+						}
+					}
+				};
+			}
+			i = 0;
+			int istep = (int) (0.9999 + datafilenumber / maxThreads);
+			for (int j = 0; j < maxThreads; j++) {
+				int is = i;
+				if (j < maxThreads - 1)
+					i = Math.min(i + istep, datafilenumber);
+				else
+					i = datafilenumber;
+				threads[j].setJobRange(is, i);
+				threads[j].start();
+			}
+			boolean running;
+			do {
+				running = false;
+				try {
+					Thread.sleep(Constants.timeToWaitThreadsEnding);
+				} catch (InterruptedException r) {
+				}
+				for (int h = 0; h < maxThreads; h++) {
+					if (!threads[h].isEnded())
+						running = true;
+				}
+			} while (running);
+
+		} else
+			for (int k = 0; k < datafilenumber; k++) {
+			   DiffrDataFile datafile = theDataset.getActiveDataFile(k);
+				computeFluorescence(theSample, datafile);
+				computeasymmetry(theSample, datafile);
+			}
+
+	}
 
 	/**
 	 * The method compute the fluorescence pattern using the
@@ -70,12 +132,11 @@ public class QuantitativeXRF extends FluorescenceBase {
 	 * @see DiffrDataFile#addtoFit
 	 */
 
-	public void computeFluorescence(DiffrDataFile adatafile) {
+	public void computeFluorescence(Sample asample, DiffrDataFile adatafile) {
 
 		XRayDataSqLite.checkMinimumEnergy();
 
 //		boolean checkSensitivity = MaudPreferences.getBoolean("xrf.sensitivityNoEnergy", false);
-		Sample asample = adatafile.getDataFileSet().getSample();
 		Instrument ainstrument = adatafile.getDataFileSet().getInstrument();
 		XRFDetector detector = (XRFDetector) ainstrument.getDetector();
 		Geometry geometry = ainstrument.getGeometry();
@@ -113,7 +174,7 @@ public class QuantitativeXRF extends FluorescenceBase {
 		double sinPhid = Math.sin(incidentDiffracted[2]);
 
 		RadiationType radType = ainstrument.getRadiationType();
-		int rad_lines = radType.getLinesCountForFluorescence();
+		int rad_lines = radType.getLinesCount();
 		double[] energyInKeV = new double[rad_lines];
 		double[] energy_intensity = new double[rad_lines];
 

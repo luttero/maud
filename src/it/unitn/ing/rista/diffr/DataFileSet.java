@@ -72,7 +72,7 @@ public class DataFileSet extends XRDcat {
 		  "_riet_par_background_pol", "_riet_par_background_chi", "_riet_par_background_eta",
 
 		  "_riet_intensity_extraction", "_riet_position_extraction", "_reflectivity_model_type",
-		  "_diffrn_measurement_device", "_fluorescence_model_type",
+		  "_diffrn_measurement_device", "_fluorescence_model_type", "_diffraction_model_type",
 
 		  "_pd_proc_info_excluded_regions", "_riet_par_background_peak_id",
 		  "_riet_meas_datafile_name", "_original_diffraction_image"};
@@ -108,7 +108,7 @@ public class DataFileSet extends XRDcat {
 		  "background polynomial coeff ", "chi background coeff ", "eta background coeff",
 
 		  "_riet_intensity_extraction", "_riet_position_extraction", "_reflectivity_model_type",
-		  "_diffrn_measurement_device", "_fluorescence_model_type",
+		  "_diffrn_measurement_device", "_fluorescence_model_type", "_diffraction_model_type",
 
 		  "_pd_proc_info_excluded_regions", "_riet_par_background_peak_id",
 		  "_riet_meas_datafile_name", "_original_diffraction_image"};
@@ -124,7 +124,8 @@ public class DataFileSet extends XRDcat {
 		  "superclass:it.unitn.ing.rista.diffr.PositionExtractor",
 		  "superclass:it.unitn.ing.rista.diffr.Reflectivity",
 		  "superclass:it.unitn.ing.rista.diffr.Instrument",
-		  "superclass:it.unitn.ing.rista.diffr.Fluorescence"};
+		  "superclass:it.unitn.ing.rista.diffr.Fluorescence",
+		  "superclass:it.unitn.ing.rista.diffr.Diffraction"};
 
   public static String[] peakFunctionClass = new String[]{"PseudoVoigt"};
   public static boolean[] needDist = new boolean[]{false};
@@ -221,11 +222,12 @@ public class DataFileSet extends XRDcat {
     setMinRange("0");
     setIntensityExtractor("Le Bail");
     setPositionExtractor("none pe");
+	 setDiffraction("Basic diffraction");
     setReflectivity("none reflectivity");
     setFluorescence("none fluorescence");
     stringField[0] = "Date/time meas"; // to avoid the notify staff
     setRandomTexture("false");
-	    setNoStrain("false");
+    setNoStrain("false");
 	  setBackgroundInterpolationIterations(MaudPreferences.getInteger("backgroundSubtraction.iterations", 10));
 	  setString(datasetWeightFieldID, "1.0");
 	    for (int i = 0; i < Nparameter; i++)
@@ -245,7 +247,14 @@ public class DataFileSet extends XRDcat {
   int nchibckgpar, netabckgpar, npolbckgpar;
   Vector bkgDatafiles = new Vector(0, 1);
 
-    @Override
+	public void checkConsistencyForVersion(double version) {
+		if (version < 1.821) {
+			if (getFluorescenceMethod().startsWith("none") && getReflectivityMethod().startsWith("none"))
+				setDiffraction("Basic diffraction");
+		}
+	}
+
+	@Override
   public void updateParametertoDoubleBuffering(boolean firstLoading) {
 
     if (getFilePar().isLoadingFile() || !isAbilitatetoRefresh)
@@ -1408,7 +1417,7 @@ public class DataFileSet extends XRDcat {
     String folder = folderAndName[0];
     filename = folderAndName[1];
 
-    if (Constants.sandboxEnabled && !filename.endsWith(".cif"))
+    if (!filename.endsWith(".cif"))
       filename += ".cif";
 //    int numberOfFilesTotal = 0;
     Vector datafiles = getSelectedDatafiles();
@@ -1939,7 +1948,7 @@ public class DataFileSet extends XRDcat {
     String folder = folderAndName[0];
     filename = folderAndName[1];
 
-    if (Constants.sandboxEnabled && !filename.endsWith(".cif"))
+    if (!filename.endsWith(".cif"))
       filename += ".cif";
 //    int numberOfFilesTotal = 0;
     Vector datafiles = getSelectedDatafiles();
@@ -3305,62 +3314,40 @@ public class DataFileSet extends XRDcat {
 
     indexesComputed = false;
 
+	  final Diffraction diffr = getDiffraction();
+	  final Reflectivity refle = getReflectivity();
+	  final Fluorescence fluo = getFluorescence();
+
     int datafilenumber = activedatafilesnumber();
+	  for (int k = 0; k < datafilenumber; k++) {
+		  DiffrDataFile datafile = getActiveDataFile(k);
+		  if (datafile.refreshSpectraComputation)
+			  datafile.resetPhasesFit();
+	  }
 
-    final Reflectivity refle = getReflectivity();
-    final Fluorescence fluo = getFluorescence();
-    final Sample theSample = asample;
+	  diffr.computeDiffraction(asample,this);
+	  refle.computeReflectivity(asample, this);
+	  fluo.computeFluorescence(asample, this);
 
-	  final int maxThreads = Math.min(Constants.maxNumberOfThreads, datafilenumber);
-    if (maxThreads > 1 && Constants.threadingGranularity >= Constants.MEDIUM_GRANULARITY) {
-      if (Constants.debugThreads)
-        out.println("Thread datafileset " + getLabel());
-      int i;
-      PersistentThread[] threads = new PersistentThread[maxThreads];
-      for (i = 0; i < maxThreads; i++) {
-        threads[i] = new PersistentThread(i) {
-          @Override
-          public void executeJob() {
-            int i1 = this.getJobNumberStart();
-            int i2 = this.getJobNumberEnd();
+	  for (int k = 0; k < datafilenumber; k++) {
+	  	DiffrDataFile datafile = getActiveDataFile(k);
+		  if (datafile.refreshSpectraComputation) {
+			  datafile.hasfit = true;
+			  datafile.spectrumModified = true;
+			  if (isBackgroundExperimental()) {
+				  datafile.addExperimentalBackground();
+			  }
+			  if (isBackgroundInterpolated()) {
+				  datafile.addInterpolatedBackgroundFromResiduals();
+			  } else
+				  datafile.resetBackgroundInterpolated();
+		  }
 
-            for (int j = i1; j < i2; j++) {
-              getActiveDataFile(j).computeSpectrum(theSample, refle, fluo);
-            }
-          }
-        };
-      }
-      i = 0;
-      int istep = (int) (0.9999 + datafilenumber / maxThreads);
-      for (int j = 0; j < maxThreads; j++) {
-        int is = i;
-        if (j < maxThreads - 1)
-          i = Math.min(i + istep, datafilenumber);
-        else
-          i = datafilenumber;
-        threads[j].setJobRange(is, i);
-        threads[j].start();
-      }
-      boolean running;
-      do {
-        running = false;
-        try {
-          Thread.sleep(Constants.timeToWaitThreadsEnding);
-        } catch (InterruptedException r) {
-        }
-        for (int h = 0; h < maxThreads; h++) {
-          if (!threads[h].isEnded())
-            running = true;
-        }
-      } while (running);
-
-    } else
-      for (int k = 0; k < datafilenumber; k++)
-        getActiveDataFile(k).computeSpectrum(asample, refle, fluo);
+	  }
 
   }
 
-  public double meanAbsorptionScaleFactor = 1.0;
+	public double meanAbsorptionScaleFactor = 1.0;
 
   public void setMeanAbsorption(double value) {
     meanAbsorptionScaleFactor = value;
@@ -3601,11 +3588,35 @@ public class DataFileSet extends XRDcat {
     return getReflectivity().needReflectivityStatistic();
   }
 
-  public int getFluorescenceID() {
-    return 4;
+  public int getDiffractionID() {
+    return 5;
   }
 
-  public void setFluorescence(String value) {
+	public void setDiffraction(String value) {
+		if (subordinateField[getDiffractionID()] == null ||
+				!value.equals((subordinateField[getDiffractionID()]).identifier))
+			setsubordinateField(getDiffractionID(), value);
+	}
+
+	public void setDiffraction(int number) {
+		setFluorescence(getsubordIdentifier(getDiffractionID(), number));
+	}
+
+	public Diffraction getDiffraction() {
+		if (subordinateField[getDiffractionID()] == null)
+			setDiffraction(0);
+		return (Diffraction) subordinateField[getDiffractionID()];
+	}
+
+	public String getDiffractionMethod() {
+		return getDiffraction().identifier;
+	}
+
+	public int getFluorescenceID() {
+		return 4;
+	}
+
+	public void setFluorescence(String value) {
     if (subordinateField[getFluorescenceID()] == null ||
         !value.equals((subordinateField[getFluorescenceID()]).identifier))
       setsubordinateField(getFluorescenceID(), value);

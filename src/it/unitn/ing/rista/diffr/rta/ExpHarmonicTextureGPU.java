@@ -1195,7 +1195,6 @@ public class ExpHarmonicTextureGPU extends HarmonicTexture {
 							deltaV[index++] = SphericalHarmonics.deltaV[i][j][k];
 			}
 
-//      System.out.println("Compute ODF!");
 			double vbg, hvg, hvb, a = 0., b;
 			double[] va = new double[alphama * betaalphama];
 

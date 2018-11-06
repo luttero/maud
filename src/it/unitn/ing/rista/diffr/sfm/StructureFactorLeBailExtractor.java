@@ -254,6 +254,7 @@ The PF's of peaks of the same family are imposed equals for all the lines.
 
 	  for (int di = 0; di < numberdataset; di++) {
       DataFileSet dataset = asample.getActiveDataSet(di);
+		  Diffraction diffraction = dataset.getDiffraction();
       int datafilenumber = dataset.activedatafilesnumber();
       Vector<Peak> fullpeaklist = dataset.getPeakList();
       int numberofpeaks = dataset.getNumberofPeaks();
@@ -336,7 +337,8 @@ The PF's of peaks of the same family are imposed equals for all the lines.
           newexpfitnorm[in] = 0;
         }
         for (int ks = 0; ks < datafilenumber; ks++) {
-          DiffrDataFile datafile = asample.getActiveDataSet(di).getActiveDataFile(ks);
+        	DataFileSet datafileset = asample.getActiveDataSet(di);
+          DiffrDataFile datafile = datafileset.getActiveDataFile(ks);
           int datanumber = datafile.getTotalNumberOfData();
           double[] expfit = new double[datanumber];
           double[] fit = new double[datanumber];
@@ -356,11 +358,11 @@ The PF's of peaks of the same family are imposed equals for all the lines.
 // System.out.println("minBkg " + minBkg);
           for (int j = startingindex; j < finalindex; j++)
             fit[j] = 0.0f;
-          datafile.computeReflectionIntensity(asample, fullpeaklist, computeBroadening, fit,
+	        diffraction.computeReflectionIntensity(asample, fullpeaklist, computeBroadening, fit,
               Constants.ENTIRE_RANGE, Constants.COMPUTED, Constants.COMPUTED,
-              Constants.EXPERIMENTAL, false, null);
+              Constants.EXPERIMENTAL, false, null, datafile);
           computeBroadening = false;
-          datafile.computeasymmetry(asample, fit);
+	        diffraction.computeasymmetry(asample, datafile, fit, startingindex, finalindex);
           datafile.postComputation(asample, fit);
           for (int j = startingindex; j < finalindex; j++)
             datafile.setPhasesFit(j, fit[j]);
@@ -376,11 +378,11 @@ The PF's of peaks of the same family are imposed equals for all the lines.
             if (datafile.checkPeakInsideRange(phase, tpeaklist.elementAt(0).getOrderPosition(), rangefactor)) {
               for (int j = startingindex; j < finalindex; j++)
                 expfit[j] = 0.0f;
-              minmaxindex = datafile.computeReflectionIntensity(asample, tpeaklist, computeBroadening,
+              minmaxindex = diffraction.computeReflectionIntensity(asample, tpeaklist, computeBroadening,
                   expfit, rangefactor,
                   Constants.COMPUTED, Constants.COMPUTED,
-                  Constants.UNITARY, true, null);
-              datafile.computeasymmetryandAddbkg(asample, expfit, minmaxindex[0], minmaxindex[1]);
+                  Constants.UNITARY, true, null, datafile);
+	            diffraction.computeasymmetry(asample, datafile, expfit, minmaxindex[0], minmaxindex[1]); // todo: interpolation and experimental background
               double expfitnorm = 0.0;
               double lebailfactor = 0.0;
               if (useBKG)

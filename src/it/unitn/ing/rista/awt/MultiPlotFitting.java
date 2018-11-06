@@ -694,7 +694,7 @@ public class MultiPlotFitting extends PlotFitting {
 		String folder = folderAndName[0];
 		filename = folderAndName[1];
 
-		if (Constants.sandboxEnabled && !filename.endsWith(".cif"))
+		if (!filename.endsWith(".cif"))
 			filename = filename + ".cif";
 
 		if (filename != null) {
@@ -770,7 +770,7 @@ public class MultiPlotFitting extends PlotFitting {
 		String folder = folderAndName[0];
 		filename = folderAndName[1];
 
-		if (Constants.sandboxEnabled && !filename.endsWith(".cif"))
+		if (!filename.endsWith(".cif"))
 			filename = filename + ".cif";
 
 		if (filename != null) {
@@ -846,7 +846,7 @@ public class MultiPlotFitting extends PlotFitting {
 		filename = folderAndName[1];
 		int numberphases = datafile[0].getFilePar().getActiveSample().phasesNumber();
 
-		if (Constants.sandboxEnabled && !filename.endsWith(".cif"))
+		if (!filename.endsWith(".cif"))
 			filename = filename + ".cif";
 
 		if (filename != null) {

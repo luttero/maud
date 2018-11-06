@@ -386,8 +386,6 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 		boolean loadSuccessfull = false;
 //		AngularCalibration angcal = this;
 		String directory = mdatafile.getFolder(); //od.getDirectory();
-		if (Constants.sandboxEnabled)
-			directory = Constants.cachesDirectory;
 		String name = mdatafile.getLabel(); //od.getFileName();
 		ij.measure.Calibration cal = imp.getCalibration();
 
@@ -559,7 +557,7 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 		double etaStart = mineta * Constants.PITODEG;
 		int dotLocation = name.lastIndexOf(".");
 		String filename = name.substring(0, dotLocation) + ".esg";
-		if (!(Constants.sandboxEnabled && MaudPreferences.getBoolean("imageUnrolling.saveEsgFileInCachesDir", false))) {
+		if (!MaudPreferences.getBoolean("imageUnrolling.saveEsgFileInCachesDir", false)) {
 			System.out.println("Conversion to spectra done! Name to save: " + filename);
 			FlatCCDReflectionSquareRoi.saveAsText(profile, profile[0].length, 0, profile[0][0].length, xmin, theta2Step,
 					etaStart, coneInterval, directory, filename, "mm", detectorDistance, omega, chi, phi, detector2Theta,

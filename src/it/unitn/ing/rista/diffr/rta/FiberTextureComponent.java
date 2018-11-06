@@ -37,22 +37,6 @@ import it.unitn.ing.rista.util.ParameterPreferences;
 
 public class FiberTextureComponent extends XRDcat {
 
-/*
-C    EVERY SPHERICAL COMPONENT IS DESCRIBED BY
-C    ITS ORIENTATION (POSITION) G0 (ALPHA0,BETA0,GAMMA0) IN DEGREES
-C    AND THE PARAMETERS:
-C    IBST,BST (B,S OR T),HIN (TOTAL INTENSITY,0.LT.HIN.LE.1) AND IGL
-C    EVERY FIBRE COMPONENT IS DESCRIBED BY
-C    ITS AXIS (VECTOR Y REG.KA AND H REG.KB IN SPHER. KOORD.) IN DEGREES
-C    AND THE PARAMETERS:
-C    IBST,BST (B,S OR T),HIN (TOTAL INTENSITY,0.LT.HIN.LE.1) AND IGL
-C          IBST = 0 HALFWIDTH GIVEN BY S (0.LE.S.LT.INFINITE)
-C          IBST = 1 HALFWIDTH GIVEN BY B IN DEGREES (0.LT.B.LE.360)
-C          IBST =-1 HALFWIDTH GIVEN BY T (0.LE.T.LT.1)
-C          IGL  = 1 GAUSS-SHAPED CURVE (B OR S INPUT IS POSSIBLE)
-C          IGL  = 2 LORENTZ-SHAPED CURVE (B OR T INPUT IS POSSIBLE)
-*/
-
   protected static String[] diclistc = {"_texture_fiber_component_id",
                                         "_texture_fiber_component_intensity",
                                         "_texture_fiber_component_thetaY",

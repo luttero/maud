@@ -140,7 +140,7 @@ public class Utility {
   }
 
   public static String browseFilenameForAppend(String title, String folder_filename) {
-    if (Constants.sandboxEnabled) {
+  	if (Constants.macosx) {
       return browseFilename(null, title);
     }
     final String description = title;

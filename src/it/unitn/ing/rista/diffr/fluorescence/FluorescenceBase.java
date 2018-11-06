@@ -40,6 +40,7 @@ public class FluorescenceBase extends Fluorescence {
 
 	public FluorescenceBase(XRDcat aobj, String alabel) {
 		super(aobj, alabel);
+		identifier = "Disabled fluorescence model";
 	}
 
 	public FluorescenceBase(XRDcat aobj) {
@@ -47,10 +48,7 @@ public class FluorescenceBase extends Fluorescence {
 	}
 
 	public FluorescenceBase() {
-	}
-
-	public double getIntensityCorrection(int atomNumber) {
-		return 1;
+		identifier = "Disabled fluorescence model";
 	}
 
 }

@@ -135,10 +135,11 @@ public class AngularDisalignment extends AngularCalibration {
     updateParametertoDoubleBuffering(false);
     for (int i = 0; i < datanumber; i++) {
       double value = datafile.getXDataForCalibration(i);
+      double angcal = value;
       for (int j = 0; j < numberCoeff; j++) {
-        value += difc[j] * MoreMath.pow(value, j);
+	      angcal += difc[j] * MoreMath.pow(value, j);
       }
-      datafile.setCalibratedXDataOnly(i, value);
+      datafile.setCalibratedXDataOnly(i, angcal);
     }
   }
 
