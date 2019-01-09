@@ -179,7 +179,7 @@ public class PolarPlotData2D extends myJFrame {
         pfPanel.add(colorMap);
       } else {
         ccolorMap[i] =  new PoleFigureMap(grid, gridNumber, limits[0], limits[1], grayScale, label[i],
-              colrsNumber, editMenu, izoom, pixelsNumber, true);
+              colrsNumber, editMenu, izoom, pixelsNumber, true, 0);
         pfPanel.add(ccolorMap[i]);
       }
     }

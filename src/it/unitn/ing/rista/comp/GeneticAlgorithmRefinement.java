@@ -147,7 +147,7 @@ public class GeneticAlgorithmRefinement extends OptimizationAlgorithm implements
     super.initParameters();
     setPopulationSize("500");
     setGenerationsNumber("5");
-    setMutationProbability("0.01");
+    setMutationProbability("0.1");
     setCrossOverProbability("0.3");
     setCrossOverType(0);
     setNumberOfPopulations(1);
@@ -572,7 +572,7 @@ public class GeneticAlgorithmRefinement extends OptimizationAlgorithm implements
       wgt[i] *= wgt[i];
       fit[i] = fittingFunction.getFit(i);
     } */
-    defWSS = fittingFunction.getWSS();
+	  defWSS = fittingFunction.getWSS();
     nprm = fittingFunction.getNumberOfFreeParameters();
     defParams = new double[nprm];
     lbound = new double[nprm];
@@ -659,14 +659,18 @@ public class GeneticAlgorithmRefinement extends OptimizationAlgorithm implements
     if (bestWSS < defWSS) {
       fittingFunction.setFreeParameters(bestParams);
       fittingFunction.saveparameters();
-      double wss = fittingFunction.getWSS();
+      fittingFunction.computeFit();
+	    fittingFunction.getFit();
+	    double wss = fittingFunction.getWSS();
       if (fittingFunction instanceof FilePar)
         ((FilePar) fittingFunction).updatePlot();
       System.out.println("Final chi :" + wss);
     } else {
       fittingFunction.setFreeParameters(defParams);
       fittingFunction.saveparameters();
-      double wss = fittingFunction.getWSS();
+	    fittingFunction.computeFit();
+	    fittingFunction.getFit();
+	    double wss = fittingFunction.getWSS();
       if (fittingFunction instanceof FilePar)
         ((FilePar) fittingFunction).updatePlot();
       System.out.println("Final chi :" + wss);
@@ -681,6 +685,8 @@ public class GeneticAlgorithmRefinement extends OptimizationAlgorithm implements
 
   public double getFitness(double[] params) {
     fittingFunction.setFreeParameters(params);
+    fittingFunction.computeFit();
+    fittingFunction.getFit();
     double wss = fittingFunction.getWSS();
     if (outputframe != null)
       outputframe.increaseProgressBarValue();

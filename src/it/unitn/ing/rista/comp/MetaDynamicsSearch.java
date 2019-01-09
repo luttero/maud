@@ -614,8 +614,9 @@ public class MetaDynamicsSearch extends OptimizationAlgorithm {
                 fit[dataNumber - 1] = (double) Math.sqrt(getMetaDynamicWSS(parm, filler));
                 wss += fit[dataNumber - 1] * fit[dataNumber - 1];
               } else {
-                fittingFunction.computeFit();
                 wss = 0.0;
+                fittingFunction.computeFit();
+	              fittingFunction.getFit();
                 for (int i = 0; i < fitVector.size(); i++) {
                   SpectrumFitContainer spectrum = (SpectrumFitContainer) fitVector.elementAt(i);
                   spectrum.checkFit();
@@ -675,8 +676,7 @@ public class MetaDynamicsSearch extends OptimizationAlgorithm {
                 or_wss += twss;
             }
           } else {
-            fittingFunction.getFit();
-            for (int i = 0; i < dataNumber - 1; i++)
+             for (int i = 0; i < dataNumber - 1; i++)
               fit[i] = fittingFunction.getFit(i);
             wss = fittingFunction.getWSS();
             or_wss = wss;
@@ -743,10 +743,9 @@ public class MetaDynamicsSearch extends OptimizationAlgorithm {
               wss += spectrum.getWSS();
             }
           } else {
-            fittingFunction.getFit();
-            for (int i = 0; i < dataNumber - 1; i++)
+             for (int i = 0; i < dataNumber - 1; i++)
               fit[i] = fittingFunction.getFit(i);
-            wss = fittingFunction.getWSS();
+	          wss = fittingFunction.getWSS();
             fit[dataNumber - 1] = (double) Math.sqrt(getMetaDynamicWSS(parm, filler));
             wss += fit[dataNumber - 1] * fit[dataNumber - 1];
           }
@@ -773,7 +772,6 @@ public class MetaDynamicsSearch extends OptimizationAlgorithm {
           wss += spectrum.getWSS();
         }
       } else {
-        fittingFunction.getFit();
         for (int i = 0; i < dataNumber - 1; i++)
           fit[i] = fittingFunction.getFit(i);
         wss = fittingFunction.getWSS();

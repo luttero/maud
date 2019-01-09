@@ -28,6 +28,7 @@ import java.io.*;
 import java.awt.*;
 
 import it.unitn.ing.rista.chemistry.XRayDataSqLite;
+import it.unitn.ing.rista.diffr.instrument.DefaultInstrument;
 import it.unitn.ing.rista.io.cif.*;
 import it.unitn.ing.rista.util.*;
 import it.unitn.ing.rista.awt.*;
@@ -222,6 +223,7 @@ public class DataFileSet extends XRDcat {
     setMinRange("0");
     setIntensityExtractor("Le Bail");
     setPositionExtractor("none pe");
+    setInstrument(DefaultInstrument.modelID);
 	 setDiffraction("Basic diffraction");
     setReflectivity("none reflectivity");
     setFluorescence("none fluorescence");
@@ -2837,8 +2839,10 @@ public class DataFileSet extends XRDcat {
       int datafilenumber = datafilesnumber();
 //      System.out.println("Setting all bckg changed");
       if (reason == Constants.BKG_PARAMETER_CHANGED)
-        for (int i = 0; i < datafilenumber; i++)
-          getDataFile(i).refreshBkgComputation = true;
+	      for (int i = 0; i < datafilenumber; i++) {
+		      getDataFile(i).refreshBkgComputation = true;
+	         getDataFile(i).refreshSpectraComputation = true;
+         }
     } else {
       XRDcat sourceDatafile = source;
       while (sourceDatafile != null && (!(sourceDatafile instanceof FilePar) &&
@@ -2850,6 +2854,7 @@ public class DataFileSet extends XRDcat {
           if (getDataFile(i) == sourceDatafile) {
             if (reason == Constants.BKG_PARAMETER_CHANGED) {
               getDataFile(i).refreshBkgComputation = true;
+              getDataFile(i).refreshSpectraComputation = true;
 //            System.out.println("refreshing bkg "+sourceDatafile.toXRDcatString());
             } else {
 //              System.out.println("Setting parameter changed, " + sourceDatafile);

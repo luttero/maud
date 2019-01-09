@@ -43,6 +43,15 @@ from the older one.
 
 Maud Version notes:
 
+(07/01/2019):   2.90. The "Boring" release.
+                Revised the pole figure log plot, now the true values are
+                reported instead of the log values.
+                Added the d-space to the info panel displayable from the
+                plots.
+
+(07/12/2018):   2.83. The "Sleeping Cat" release.
+                Fixing the Lamarkian refinements.
+
 (31/07/2018):   2.82. The "Small Cat" release.
                 If you are a dog what would it be your best desire?
                 Angle-energy maps on the way.

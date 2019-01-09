@@ -275,7 +275,7 @@ public class Slices2DPlotPanel extends JPanel {
      * Create the layout without a Logo image and with the
      * ColorKey on a separate Pane object.
      */
-    rpl = new JPlotSpectraLayout(true, false, false, "Electron density Map", null, true);
+    rpl = new JPlotSpectraLayout(true, false, false, true, true, "Electron density Map", null, true);
     rpl.autoIntensityResize = false;
     rpl.setEditClasses(false);
     /*

@@ -264,13 +264,13 @@ public class Constants {
   public static String resultsFile = "results.txt";
   public static String userName = null;
   public static String startPath = "/";
-  public static String maudReleaseBuilt = "$Revision: 2.83 $";
-  public static String maudDateBuilt = "$Date: 2018/08/30 12:59:21 $";
+  public static String maudReleaseBuilt = "$Revision: 2.90 $";
+  public static String maudDateBuilt = "$Date: 2019/01/07 8:45:45 $";
 
   public static final double arg2PIover3 = PI2 / 3.;
   public static final double sinArg2PIover3 = Math.sin(arg2PIover3);
   public static final double cosArg2PIover3 = Math.cos(arg2PIover3);
-  public static double maud_version = 2.83;
+  public static double maud_version = 2.90;
   public static boolean useOpenCL = false;
   public static Vector<OpenCLDevice> openClDevices= null;
   public static OpenCLDevice openclDevice = null;
@@ -1386,9 +1386,17 @@ public class Constants {
     if (!f.exists()) {
       return;
     }
-    URL u = f.toURL();
+    URL u[] = new URL[1];
+    u[0] = f.toURI().toURL();
     Class[] parameters = new Class[]{URL.class};
-    URLClassLoader sysloader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+
+	  // Java 8
+   // URLClassLoader sysloader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+
+    // Java 9
+	  ClassLoader parent = ClassLoader.getPlatformClassLoader();
+	  URLClassLoader sysloader = new URLClassLoader(u, parent);
+
 //    ClassLoader aCL = Thread.currentThread().getContextClassLoader();
 //    URLClassLoader aUrlCL = new URLClassLoader(urls, sysloader);
     Class sysclass = URLClassLoader.class;
@@ -1396,7 +1404,7 @@ public class Constants {
     try {
       Method method = sysclass.getDeclaredMethod("addURL", parameters);
       method.setAccessible(true);
-      method.invoke(sysloader, new Object[]{u});
+      method.invoke(sysloader, new Object[]{u[0]});
     } catch (Throwable t) {
       t.printStackTrace();
       throw new IOException("Error, could not add URL to system classloader");
@@ -1408,9 +1416,17 @@ public class Constants {
     if (!f.exists()) {
       return;
     }
-    URL u = f.toURL();
+	  URL u[] = new URL[1];
+	  u[0] = f.toURI().toURL();
     Class[] parameters = new Class[]{URL.class};
-    URLClassLoader sysloader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+
+    // Java 8
+//    URLClassLoader sysloader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+
+	  // Java 9
+	  ClassLoader parent = ClassLoader.getPlatformClassLoader();
+	  URLClassLoader sysloader = new URLClassLoader(u, parent);
+
 //    ClassLoader aCL = Thread.currentThread().getContextClassLoader();
 //    URLClassLoader aUrlCL = new URLClassLoader(urls, sysloader);
     Class sysclass = URLClassLoader.class;
@@ -1418,7 +1434,7 @@ public class Constants {
     try {
       Method method = sysclass.getDeclaredMethod("addURL", parameters);
       method.setAccessible(true);
-      method.invoke(sysloader, new Object[]{u});
+      method.invoke(sysloader, new Object[]{u[0]});
     } catch (Throwable t) {
       t.printStackTrace();
       throw new IOException("Error, could not add URL to system classloader");

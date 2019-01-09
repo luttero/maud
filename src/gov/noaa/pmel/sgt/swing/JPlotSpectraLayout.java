@@ -35,10 +35,12 @@ import java.awt.*;
 
 public class JPlotSpectraLayout extends JPlotLayout {
 
-  public JPlotSpectraLayout(boolean isGrid, boolean isXTime,
-                        boolean isYTime, String id, Image img,
-                        boolean is_key_pane) {
-    super(isGrid, isXTime, isYTime, id, img, is_key_pane);
+  public JPlotSpectraLayout(boolean isGrid, boolean isXTime, boolean isYTime,
+                            boolean isLinearXAxis,
+                            boolean isLinearYAxis,
+                            String id, Image img,
+                            boolean is_key_pane) {
+    super(isGrid, isXTime, isYTime, isLinearXAxis, isLinearYAxis, id, img, is_key_pane);
 //    keyHeight_ = KEY_HEIGHT_ = 0.20;
   }
 

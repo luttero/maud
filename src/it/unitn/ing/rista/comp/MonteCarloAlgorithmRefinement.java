@@ -456,7 +456,7 @@ public class MonteCarloAlgorithmRefinement extends OptimizationAlgorithm {
       wgt[i] *= wgt[i];
       fit[i] = fittingFunction.getFit(i);
     } */
-    defWSS = fittingFunction.getWSS();
+	  defWSS = fittingFunction.getWSS();
     nprm = fittingFunction.getNumberOfFreeParameters();
     defParams = new double[nprm];
     lbound = new double[nprm];
@@ -523,6 +523,8 @@ public class MonteCarloAlgorithmRefinement extends OptimizationAlgorithm {
     if (bestWSS < defWSS) {
       fittingFunction.setFreeParameters(bestParams);
       fittingFunction.saveparameters();
+      fittingFunction.computeFit();
+	    fittingFunction.getFit();
       double wss = fittingFunction.getWSS();
       if (fittingFunction instanceof FilePar)
         ((FilePar) fittingFunction).updatePlot();
@@ -530,7 +532,9 @@ public class MonteCarloAlgorithmRefinement extends OptimizationAlgorithm {
     } else {
       fittingFunction.setFreeParameters(defParams);
       fittingFunction.saveparameters();
-      double wss = fittingFunction.getWSS();
+      fittingFunction.computeFit();
+	    fittingFunction.getFit();
+	    double wss = fittingFunction.getWSS();
       if (fittingFunction instanceof FilePar)
         ((FilePar) fittingFunction).updatePlot();
       System.out.println("Final chi :" + wss);
@@ -544,6 +548,8 @@ public class MonteCarloAlgorithmRefinement extends OptimizationAlgorithm {
 
   public double getFitness(double[] params) {
     fittingFunction.setFreeParameters(params);
+	  fittingFunction.computeFirstFit();
+	  fittingFunction.getFit();
     double wss = fittingFunction.getWSS();
     if (outputframe != null)
       outputframe.increaseProgressBarValue();

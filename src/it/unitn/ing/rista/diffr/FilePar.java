@@ -2804,8 +2804,8 @@ public class FilePar extends XRDcat implements lFilePar, Function {
     if (refreshFit) {
       computeFit();
       getFit();
-    }
 //    System.out.println("r fit: " + fit);
+    }
     return fit[index];
   }
 

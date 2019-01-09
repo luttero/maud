@@ -137,6 +137,10 @@ public class G2Dint extends Graph2D {
 
 	Vector<PeakInfo> peakInfosVector = null;
 
+	public static int DIFFRACTION_PLOT = 0, REFLECTIVITY_PLOT = 1, FLUORESCENCE_PLOT = 2;
+
+	public int plot_type = DIFFRACTION_PLOT;
+
   /**
    *    Create the graph canvas and add the mouse listeners
    */
@@ -756,7 +760,7 @@ public class G2Dint extends Graph2D {
 	      mi.addActionListener(new ActionListener() {
 		      public void actionPerformed(ActionEvent ae) {
 			      if (ppgin == null)
-				      ppgin = new PeakInfoFrame(infoDefaultLength);
+				      ppgin = new PeakInfoFrame(infoDefaultLength, plot_type);
 			      if (ppgin.isVisible())
 				      ppgin.setVisible(false);
 			      else {
@@ -934,19 +938,35 @@ public class G2Dint extends Graph2D {
 		/**
 		 * Instantiate the class
 		 */
-		public PeakInfoFrame(int size) {
+		public PeakInfoFrame(int size, int plotType) {
 
 			Container pane = getContentPane();
 			pane.setLayout(new GridLayout(0, 2));
 
-			pane.add(new JLabel("Info "));
-			pane.add(new JLabel("Position "));
+			switch (plotType) {
+				case 1:          // G2Dint.REFLECTIVITY_PLOT
+				case 2:          // G2Dint.FLUORESCENCE_PLOT
+					pane.add(new JLabel("Element Line Energy(KeV) Probability          "));
+					break;
+				default: {
+					pane.add(new JLabel("Phase     (h k l)        d-space "));
+				}
+			}
+			pane.add(new JLabel("    Position "));
 
 			infoLabel = new JLabel[size];
 			positionLabel = new JLabel[size];
 
 			for (int i = 0; i < size; i++) {
-				pane.add(infoLabel[i] = new JLabel("            "));
+				switch (plotType) {
+					case 1:          // G2Dint.REFLECTIVITY_PLOT
+					case 2:          // G2Dint.FLUORESCENCE_PLOT
+						pane.add(infoLabel[i] = new JLabel("                                 "));
+						break;
+					default: {
+						pane.add(infoLabel[i] = new JLabel("                                                                          "));
+					}
+				}
 				pane.add(positionLabel[i] = new JLabel("+######.##########"));
 			}
 			setTitle("Closest peaks:");

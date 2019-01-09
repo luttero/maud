@@ -4471,7 +4471,7 @@ public static final String getSpaceGroup(int index, int sgconv) {
   public void writeForCOD(BufferedWriter out) {
 
     try {
-      out.write("data_" + this.getLabel());
+      out.write("data_" + Misc.toStringDeleteBlankTabAndEOF(this.getLabel()));
       out.newLine();
       out.newLine();
     } catch (IOException e) {

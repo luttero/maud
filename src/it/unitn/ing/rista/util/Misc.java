@@ -467,6 +467,7 @@ public class Misc {
 		    in = Misc.getResourceReader(Constants.maudJar, "files/marker.txt");
 	    else {
 	      // Manual location
+	      System.out.println("File not loaded, select it manually: " + file.getName());
 	      String filename = Utility.openFileDialogForLoad("File not loaded, select it manually", "", file.getName());
 			if (filename != null) {
 				try {
@@ -512,6 +513,7 @@ public class Misc {
 //	  System.out.println("Filename to load: " + filename);
 	  if (in == null) {
 //		  System.out.println("Asking for a filename: " + filename);
+		  System.out.println("File not loaded, select it manually: " + filename);
 		  filename = Utility.openFileDialogForLoad("File not loaded, select it manually", "", filename);
 		  if (filename != null) {
 			  try {

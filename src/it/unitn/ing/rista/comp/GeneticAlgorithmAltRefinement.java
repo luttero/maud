@@ -709,6 +709,8 @@ public class GeneticAlgorithmAltRefinement extends OptimizationAlgorithm {
 //    Phase aphase = (Phase) getParent();
     fittingFunction.setFreeParameters(params);
     fittingFunction.saveparameters();
+    fittingFunction.computeFit();
+	    fittingFunction.getFit();
     double wss = fittingFunction.getWSS();
     if (fittingFunction instanceof FilePar)
       ((FilePar) fittingFunction).updatePlot();
@@ -727,6 +729,8 @@ public class GeneticAlgorithmAltRefinement extends OptimizationAlgorithm {
 
   public double getFitness(double[] params) {
     fittingFunction.setFreeParameters(params);
+	  fittingFunction.computeFirstFit();
+	  fittingFunction.getFit();
     double wss = fittingFunction.getWSS();
     if (outputframe != null)
       outputframe.increaseProgressBarValue();

@@ -48,6 +48,42 @@ public class PopaBalzarHarmonicStrainModel extends Strain {
 
   public static String[] diclistc = {"_rista_sample_symmetry",
                                      "_rista_harmonic_expansion_degree",
+		  "_rista_stiffness_11", // 1
+		  "_rista_stiffness_12", // 2
+		  "_rista_stiffness_13", // 3
+		  "_rista_stiffness_14", // 4
+		  "_rista_stiffness_15", // 5
+		  "_rista_stiffness_16", // 6
+//                                      "_rista_stiffness_21",
+		  "_rista_stiffness_22", // 7
+		  "_rista_stiffness_23", // 8
+		  "_rista_stiffness_24", // 9
+		  "_rista_stiffness_25", // 10
+		  "_rista_stiffness_26", // 11
+//                                      "_rista_stiffness_31",
+//                                      "_rista_stiffness_32",
+		  "_rista_stiffness_33", // 12
+		  "_rista_stiffness_34", // 13
+		  "_rista_stiffness_35", // 14
+		  "_rista_stiffness_36", // 15
+//                                      "_rista_stiffness_41",
+//                                      "_rista_stiffness_42",
+//                                      "_rista_stiffness_43",
+		  "_rista_stiffness_44", // 16
+		  "_rista_stiffness_45", // 17
+		  "_rista_stiffness_46", // 18
+//                                      "_rista_stiffness_51",
+//                                      "_rista_stiffness_52",
+//                                      "_rista_stiffness_53",
+//                                      "_rista_stiffness_54",
+		  "_rista_stiffness_55", // 19
+		  "_rista_stiffness_56", // 20
+//                                      "_rista_stiffness_61",
+//                                      "_rista_stiffness_62",
+//                                      "_rista_stiffness_63",
+//                                      "_rista_stiffness_64",
+//                                      "_rista_stiffness_65",
+		  "_rista_stiffness_66", // 21
 
                                      "_rista_harmonic_strain_11",
                                      "_rista_harmonic_strain_22",
@@ -58,6 +94,42 @@ public class PopaBalzarHarmonicStrainModel extends Strain {
   };
   public static String[] diclistcrm = {"_rista_sample_symmetry",
                                      "_rista_harmonic_expansion_degree",
+		  "stiffness_11 (arb)", // 1
+		  "stiffness_12 (arb)", // 2
+		  "stiffness_13 (arb)", // 3
+		  "stiffness_14 (arb)", // 4
+		  "stiffness_15 (arb)", // 5
+		  "stiffness_16 (arb)", // 6
+//                                      "_rista_stiffness_21",
+		  "stiffness_22 (arb)", // 7
+		  "stiffness_23 (arb)", // 8
+		  "stiffness_24 (arb)", // 9
+		  "stiffness_25 (arb)", // 10
+		  "stiffness_26 (arb)", // 11
+//                                      "_rista_stiffness_31",
+//                                      "_rista_stiffness_32",
+		  "stiffness_33 (arb)", // 12
+		  "stiffness_34 (arb)", // 13
+		  "stiffness_35 (arb)", // 14
+		  "stiffness_36 (arb)", // 15
+//                                      "_rista_stiffness_41",
+//                                      "_rista_stiffness_42",
+//                                      "_rista_stiffness_43",
+		  "stiffness_44 (arb)", // 16
+		  "stiffness_45 (arb)", // 17
+		  "stiffness_46 (arb)", // 18
+//                                      "_rista_stiffness_51",
+//                                      "_rista_stiffness_52",
+//                                      "_rista_stiffness_53",
+//                                      "_rista_stiffness_54",
+		  "stiffness_55 (arb)", // 19
+		  "stiffness_56 (arb)", // 20
+//                                      "_rista_stiffness_61",
+//                                      "_rista_stiffness_62",
+//                                      "_rista_stiffness_63",
+//                                      "_rista_stiffness_64",
+//                                      "_rista_stiffness_65",
+		  "stiffness_66 (arb)", // 21
 
                                      "strain_11",
                                      "strain_22",
@@ -121,7 +193,7 @@ public class PopaBalzarHarmonicStrainModel extends Strain {
   }
 
   public void initConstant() {
-    Nstring = 2;
+    Nstring = 23;
     Nstringloop = 0;
     Nparameter = 0;
     Nparameterloop = numberStrainParameters = 6;
@@ -144,6 +216,8 @@ public class PopaBalzarHarmonicStrainModel extends Strain {
 
     setSampleSymmetry(0);
     setHarmonicExpansion(4);
+    for (int i = 2; i < 23; i++)
+    	stringField[i] = "0";
 
 	  applySymmetryRules();
   }
@@ -1368,19 +1442,19 @@ public class PopaBalzarHarmonicStrainModel extends Strain {
     wijk[4][1][1] = 1./15.;
     wijk[5][1][1] = 1./15.;*/
 
-    wijk[0][2][0] = 2./3.;
-    wijk[0][1][1] = 1./15.;
-    wijk[2][2][1] = 4./15.;
-    wijk[0][2][1] = -2./15.;
-    wijk[1][2][1] = -2./15.;
-    wijk[2][0][1] = -2./15.;
-    wijk[2][1][1] = -2./15.;
-    wijk[4][0][2] = -(1./30.)*Math.sqrt(1.5);
-    wijk[4][1][2] = -(1./30.)*Math.sqrt(1.5);
-    wijk[4][2][2] = (1./15.)*Math.sqrt(1.5);
-    wijk[3][0][3] = -(1./30.)*Math.sqrt(1.5);
-    wijk[3][1][3] = -(1./30.)*Math.sqrt(1.5);
-    wijk[3][2][3] = (1./15.)*Math.sqrt(1.5);
+    wijk[0][2][0] = 1./3.;
+    wijk[0][1][1] = 1./30.;
+    wijk[2][2][1] = 2./15.;
+    wijk[0][2][1] = -1./15.;
+    wijk[1][2][1] = -1./15.;
+    wijk[2][0][1] = -1./15.;
+    wijk[2][1][1] = -1./15.;
+    wijk[4][0][2] = (1./30.)*Math.sqrt(1.5);
+    wijk[4][1][2] = (1./30.)*Math.sqrt(1.5);
+    wijk[4][2][2] = -(1./15.)*Math.sqrt(1.5);
+    wijk[3][0][3] = (1./30.)*Math.sqrt(1.5);
+    wijk[3][1][3] = (1./30.)*Math.sqrt(1.5);
+    wijk[3][2][3] = -(1./15.)*Math.sqrt(1.5);
     wijk[0][0][4] = -(1./30.)*Math.sqrt(1.5);
     wijk[0][1][4] = -(1./30.)*Math.sqrt(1.5);
     wijk[0][2][4] = (1./15.)*Math.sqrt(1.5);
@@ -1390,19 +1464,19 @@ public class PopaBalzarHarmonicStrainModel extends Strain {
     wijk[5][0][5] = -(1./30.)*Math.sqrt(1.5);
     wijk[5][1][5] = -(1./30.)*Math.sqrt(1.5);
     wijk[5][2][5] = (1./15.)*Math.sqrt(1.5);
-    wijk[5][0][6] = -(1./30.)*Math.sqrt(1.5);
-    wijk[5][1][6] = -(1./30.)*Math.sqrt(1.5);
-    wijk[5][2][6] = (1./15.)*Math.sqrt(1.5);
-    wijk[4][4][7] = 1./60.;
-    wijk[3][4][8] = 1./60.;
+    wijk[5][0][6] = -(1./15.)*Math.sqrt(1.5);
+    wijk[5][1][6] = -(1./15.)*Math.sqrt(1.5);
+    wijk[5][2][6] = (2./15.)*Math.sqrt(1.5);
+    wijk[4][4][7] = -1./10.;
+    wijk[3][4][8] = -1./10.;
     wijk[0][4][9] = 1./10.;
     wijk[1][4][9] = -1./10.;
     wijk[5][4][10] = 1./10.;
     wijk[0][3][11] = -(1./15.)*Math.sqrt(1.5);
     wijk[1][3][11] = -(1./15.)*Math.sqrt(1.5);
     wijk[2][3][11] = (2./15.)*Math.sqrt(1.5);
-    wijk[4][3][12] = 1./60.;
-    wijk[3][3][13] = 1./60.;
+    wijk[4][3][12] = -1./10.;
+    wijk[3][3][13] = -1./10.;
     wijk[0][3][14] = 1./10.;
     wijk[1][3][14] = -1./10.;
     wijk[5][3][15] = 1./10.;
@@ -1412,10 +1486,10 @@ public class PopaBalzarHarmonicStrainModel extends Strain {
     wijk[1][1][16] = (1./30.)*Math.sqrt(1.5);
     wijk[2][0][16] = (1./15.)*Math.sqrt(1.5);
     wijk[2][1][16] = -(1./15.)*Math.sqrt(1.5);
-    wijk[4][0][17] = 1./20.;
-    wijk[4][1][17] = -1./20.;
-    wijk[3][0][18] = 1./20.;
-    wijk[3][1][18] = -1./20.;
+    wijk[4][0][17] = -1./20.;
+    wijk[4][1][17] = 1./20.;
+    wijk[3][0][18] = -1./20.;
+    wijk[3][1][18] = 1./20.;
     wijk[0][0][19] = 1./20.;
     wijk[1][1][19] = 1./20.;
     wijk[0][1][19] = -1./20.;
@@ -1425,8 +1499,8 @@ public class PopaBalzarHarmonicStrainModel extends Strain {
     wijk[0][5][21] = -(1./15.)*Math.sqrt(1.5);
     wijk[1][5][21] = -(1./15.)*Math.sqrt(1.5);
     wijk[2][5][21] = (2./15.)*Math.sqrt(1.5);
-    wijk[4][5][22] = 1./10.;
-    wijk[3][5][23] = 1./10.;
+    wijk[4][5][22] = -1./10.;
+    wijk[3][5][23] = -1./10.;
     wijk[0][5][24] = 1./10.;
     wijk[1][5][24] = -1./10.;
     wijk[5][5][25] = 1./10.;
@@ -1468,7 +1542,30 @@ public class PopaBalzarHarmonicStrainModel extends Strain {
     return gjk;
   }
 
-  public double[] computeMacroStrain() {
+	public double[][] getTransformationMatrixGforMacrostress() {
+		double[][] gjk = getTransformationMatrixGforMacrostrain();
+		double[][] stiffness = getStiffnessMatrix();
+		double[][] gjk_prime = new double[6][26];
+		for (int i = 0; i < 6; i++) {
+			for (int k = 0; k < 26; k++) {
+				for (int l = 0; l < 6; l++) {
+					gjk_prime[i][k] += gjk[l][k] * stiffness[i][l];
+				}
+			}
+		}
+		return gjk_prime;
+	}
+
+	public double[][] getStiffnessMatrix() {
+  	   double[][] stiffness = new double[6][6];
+  	   int index = 2;
+  	   for (int i = 0; i < 6; i++)
+  	   	for (int j = i; j < 6; j++)
+		      stiffness[i][j] = Double.parseDouble(stringField[index++]);
+  	   return stiffness;
+	}
+
+	public double[] computeMacroStrain() {
 
     if (getFilePar().isComputingDerivate())
       return null;
@@ -1487,43 +1584,34 @@ public class PopaBalzarHarmonicStrainModel extends Strain {
       }
       System.out.println("Macrostrain" + strainchoice[i] + ": " + macrostrain[i]);
     }
-/*    double va = 0.0, b = 0.0;
-
-    double fnorm = 0.0;
-    double resolutionR = Constants.ODFresolution * Constants.DEGTOPI;
-
-    for (int i = 0; i < numberStrainParameters; i++)
-      macrostrain[i] = 0.0;
-
-    b = resolutionR / 2.0;
-
-    for (double gamma = b; gamma <= Constants.PI2; gamma += resolutionR) {
-
-      for (double beta = b; beta <= Constants.PI; beta += resolutionR) {
-
-        va = resolutionR * resolutionR * (Math.cos(beta - b) - Math.cos(beta + b));
-
-        for (double alpha = b; alpha <= Constants.PI2; alpha += resolutionR) {
-          double[] fn = Angles.trasformInSampleRefFrame(getODF(alpha, beta, gamma),
-                  alpha, beta, gamma);
-          for (int i = 0; i < numberStrainParameters; i++)
-            macrostrain[i] += fn[i] * va;
-        }
-      }
-    }
-    System.out.println("Phase: " + getParent().toXRDcatString());
-    for (int i = 0; i < numberStrainParameters; i++) {
-      macrostrain[i] /= (8.0 * Constants.PI * Constants.PI);
-
-      System.out.println("Macrostrain" + strainchoice[i] + ": " + macrostrain[i]);
-    }*/
-
-
 
     return macrostrain;
   }
 
-  public JOptionsDialog getOptionsDialog(Frame parent) {
+	public double[] computeMacroStress() {
+
+		if (getFilePar().isComputingDerivate())
+			return null;
+
+		double[] macrostress = new double[numberStrainParameters];
+
+		double[][] gjk_prime = getTransformationMatrixGforMacrostress();
+
+		// ei = sum j=1,6 (sum k=0,25 (wijk gjk))
+		for (int i = 0; i < 6; i++) {
+			macrostress[i] = 0.0;
+			for (int j = 0; j < 6; j++) {
+				for (int k = 0; k < 26; k++) {
+					macrostress[i] += wijk[i][j][k] * gjk_prime[j][k];
+				}
+			}
+			System.out.println("Macrostress" + strainchoice[i] + ": " + macrostress[i]);
+		}
+
+		return macrostress;
+	}
+
+	public JOptionsDialog getOptionsDialog(Frame parent) {
     JOptionsDialog adialog = new PopaBalzarHarmonicStrainModel.JHStrainOptionsD(parent, this);
     return adialog;
   }
@@ -1533,15 +1621,21 @@ public class PopaBalzarHarmonicStrainModel extends Strain {
     JComboBox symmetryCB;
     JComboBox strainCB;
     PopaBalzarHarmonicStrainModel.HarmonicPane harmonicCoefficientP;
+	  JTextField[] cijTF = null;
 
     public JHStrainOptionsD(Frame parent, XRDcat obj) {
 
       super(parent, obj);
 
       principalPanel.setLayout(new BorderLayout(6, 6));
+
+		JPanel harmonicPanel = new JPanel();
+		harmonicPanel.setLayout(new BorderLayout(6, 6));
+		principalPanel.add(BorderLayout.NORTH, harmonicPanel);
+
       JPanel jPanel8 = new JPanel();
       jPanel8.setLayout(new FlowLayout(FlowLayout.LEFT, 6, 6));
-      principalPanel.add(BorderLayout.NORTH, jPanel8);
+	    harmonicPanel.add(BorderLayout.NORTH, jPanel8);
       jPanel8.add(new JLabel("Sample symmetry: "));
       symmetryCB = new JComboBox();
       for (int i = 0; i < symmetrychoice.length; i++)
@@ -1554,7 +1648,7 @@ public class PopaBalzarHarmonicStrainModel extends Strain {
       jp3.setLayout(new BorderLayout());
       jp3.setBorder(new TitledBorder(
               new BevelBorder(BevelBorder.LOWERED), "Harmonic coefficients"));
-      principalPanel.add(BorderLayout.CENTER, jp3);
+      harmonicPanel.add(BorderLayout.CENTER, jp3);
       jp3.add("Center", harmonicCoefficientP);
 
       jPanel8 = new JPanel();
@@ -1571,7 +1665,7 @@ public class PopaBalzarHarmonicStrainModel extends Strain {
       jp1.setLayout(new BorderLayout());
       jp1.setBorder(new TitledBorder(
               new BevelBorder(BevelBorder.LOWERED), "Options"));
-      principalPanel.add(BorderLayout.SOUTH, jp1);
+      principalPanel.add(BorderLayout.CENTER, jp1);
 
       jp3 = new JPanel();
       jp3.setLayout(new FlowLayout());
@@ -1588,7 +1682,9 @@ public class PopaBalzarHarmonicStrainModel extends Strain {
       jp3.add(jb = new JButton("Compute macrostrain"));
       jb.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent event) {
-          computeMacroStrain();
+        	retrieveParameters();
+        	computeMacroStrain();
+        	computeMacroStress();
         }
       });
       jb.setToolTipText("Press this to compute the macrostrain, output in the console");
@@ -1605,7 +1701,26 @@ public class PopaBalzarHarmonicStrainModel extends Strain {
       });
       jb.setToolTipText("Press this to save the coefficients in the Beartex format");
 
-      setTitle("Harmonic strain options panel");
+	    jPanel8 = new JPanel();
+	    jPanel8.setBorder(new TitledBorder(
+			    new BevelBorder(BevelBorder.LOWERED), "Stiffness matrix"));
+	    jPanel8.setLayout(new GridLayout(0, 6, 1, 1));
+	    principalPanel.add(BorderLayout.SOUTH, jPanel8);
+
+	    cijTF = new JTextField[21];
+	    int ij = 0;
+	    for (int i = 0; i < 6; i++) {
+		    for (int j = 0; j < 6; j++) {
+			    if (i <= j) {
+				    cijTF[ij] = new JTextField(Constants.FLOAT_FIELD);
+				    cijTF[ij].setText("0");
+				    jPanel8.add(cijTF[ij++]);
+			    } else
+				    jPanel8.add(new JLabel("-"));
+		    }
+	    }
+
+	    setTitle("Harmonic strain options panel");
       initParameters();
       pack();
 
@@ -1632,11 +1747,21 @@ public class PopaBalzarHarmonicStrainModel extends Strain {
       strainCB.setSelectedItem(strainchoice[0]);
       harmonicCoefficientP.setExpansionSlider(0, 16);
       harmonicCoefficientP.setList(XRDparent, 0);
+	    for (int i = 0; i < 21; i++) {
+//        System.out.println(i + " " + cijTF[i] + " " + parameterField[i+1]);
+//        cijTF[i].setText(parameterField[i + 1].getValue());
+		    cijTF[i].setText(stringField[i + 2]);
+	    }
     }
 
     public void retrieveParameters() {
       setSampleSymmetry(symmetryCB.getSelectedItem().toString());
       harmonicCoefficientP.retrieveparlist();
+	    for (int i = 0; i < 21; i++) {
+//        System.out.println(i + " " + cijTF[i] + " " + parameterField[i+1]);
+//        cijTF[i].setText(parameterField[i + 1].getValue());
+		    stringField[i + 2] = cijTF[i].getText();
+	    }
     }
 
     public void changeHarmonicCoeff(int index) {

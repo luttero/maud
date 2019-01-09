@@ -108,7 +108,8 @@ public class MaximumEntropyFit extends Object {
     }
     wgtnorm /= dataNumber;
 
-    double wss = fittingFunction.getWSS();
+	  fittingFunction.getFit();
+	  double wss = fittingFunction.getWSS();
 
     // checking if the weighted sum of squares is not NaN or Infinity
 
@@ -202,6 +203,7 @@ public class MaximumEntropyFit extends Object {
             fittingFunction.setFreeParameters(parmn);
             fittingFunction.computeFit(parmn);
 //    				fit = fittingFunction.getFit();
+	          fittingFunction.getFit();
             wss = fittingFunction.getWSS();
             printf("Partial Wgt'd ssq = ", wss);
 
@@ -234,7 +236,8 @@ public class MaximumEntropyFit extends Object {
 
       fittingFunction.normalizeFit();
 //    	fit = fittingFunction.getFit();
-      wss = fittingFunction.getWSS();
+	    fittingFunction.getFit();
+	    wss = fittingFunction.getWSS();
       printf("Wgt'd ssq = ", wss);
       oldwss = wss;
 
@@ -341,6 +344,7 @@ public class MaximumEntropyFit extends Object {
     double wss;
 
     if (nprm > 0) {
+	    fittingFunction.getFit();
       wss = fittingFunction.getWSS();
 //		  double sig = Math.sqrt(wss / (dataNumber - nprm));
 //      printf("sig= ", sig);

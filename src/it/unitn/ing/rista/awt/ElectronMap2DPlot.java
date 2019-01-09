@@ -244,7 +244,7 @@ public class ElectronMap2DPlot extends myJFrame {
      * Create the layout without a Logo image and with the
      * ColorKey on a separate Pane object.
      */
-    rpl = new JPlotLayout(true, false, false, "2D Electron Map Sections", null, true);
+    rpl = new JPlotLayout(true, false, false, true, true, "2D Electron Map Sections", null, true);
     rpl.setEditClasses(false);
     /*
      * Create a GridAttribute for CONTOUR style.

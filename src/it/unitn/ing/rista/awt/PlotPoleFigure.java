@@ -111,8 +111,8 @@ public class PlotPoleFigure extends myJFrame {
 		}
 
 		String log = "";
-		if (logScale)
-			log = " (Log scale, contours in log units)";
+//		if (logScale)
+//			log = " (Log scale, contours in log units)";
 		Label title = new Label(first + log, Label.CENTER);
 		title.setFont(new Font("TimesRoman", Font.PLAIN, 12));
 		JPanel p1 = new JPanel(new FlowLayout(FlowLayout.CENTER, 6, 6));
@@ -207,33 +207,39 @@ public class PlotPoleFigure extends myJFrame {
 		double[] limits = confirmLimits(min, max);
 		if (limits[1] <= limits[0])
 			limits[1] = limits[0] + 1;
-		if (logScale) {
+/*		if (logScale) {
 			if (limits[0] <= 0)
 				limits[0] = 0.01;
 			if (limits[1] <= limits[0])
 				limits[1] = limits[0] + 1;
 			for (int j = 0; j < 2; j++)
 				limits[j] = MoreMath.log10(limits[j]);
-		}
+		}*/
 		PoleFigureMap[] ccolorMap = null;
 		if (editable)
 			ccolorMap = new PoleFigureMap[numberPoles];
 		for (int i = 0; i < numberPoles; i++) {
 			double[][] grid = (double[][]) listGrid[i];
-			if (logScale) {
+/*			if (logScale) {
 				for (int j = 0; j < gridNumber; j++)
 					for (int k = 0; k < gridNumber; k++)
 						if (grid[j][k] != ColorMap.DUMMY_VALUE && !Double.isNaN(grid[j][k]) && grid[j][k] > 0.0)
 							grid[j][k] = MoreMath.log10(grid[j][k]);
-			}
+			}*/
 
 			if (!editable) {
 				ColorMap colorMap = new ColorMap(grid, gridNumber, limits[0], limits[1],
 						grayScale, label[i], colrsNumber);
 				pfPanel.add(colorMap);
 			} else {
+				int scaleType = 0;
+				if (logScale) {
+//					meanValue = 0;
+//					unit = "Log(mrd)";
+					scaleType = 1;
+				}
 				ccolorMap[i] = new PoleFigureMap(grid, gridNumber, limits[0], limits[1], grayScale, label[i],
-						colrsNumber, editMenu, zoom, pixelsNumber, !inverse);
+						colrsNumber, editMenu, zoom, pixelsNumber, !inverse, scaleType);
 				pfPanel.add(ccolorMap[i]);
 			}
 		}
@@ -247,28 +253,46 @@ public class PlotPoleFigure extends myJFrame {
 				for (int j = 0; j < pheight; j++) {
 					legendGrid[j] = step * j + limits[0];
 				}
-				if (logScale)
-					meanValue = Math.log(1.0) / Math.log(10.0);
+//				if (logScale)
+//					meanValue = Math.log(1.0) / Math.log(10.0);
 
 				MapLegend mapLegend = new MapLegend(legendGrid, pwidth, pheight, limits[0], limits[1], grayScale,
 						logScale, meanValue, meanLabel, colrsNumber, decimals);
 				pfPanel.add(mapLegend);
 			} else {
 				double[][] legendGrid = new double[pwidth][pheight];
-				double step = (limits[1] - limits[0]) / pheight;
+				int scaleType = 0;
+				if (logScale) {
+					scaleType = 1;
+					double startx = limits[0];
+					double endx = limits[1];
+					limits[0] = MoreMath.log10(limits[0]);
+					limits[1] = MoreMath.log10(limits[1]);
+					double step = (limits[1] - limits[0]) / pheight;
 //			  System.out.println(step + " " + limits[1] + " " + limits[0] + " " + pheight);
-				for (int j = 0; j < pheight; j++) {
-					legendGrid[0][j] = step * j + limits[0];
-					for (int i = 1; i < pwidth; i++)
-						legendGrid[i][j] = legendGrid[0][j];
+					for (int j = 0; j < pheight; j++) {
+						legendGrid[0][j] = step * j + limits[0];
+						for (int i = 1; i < pwidth; i++)
+							legendGrid[i][j] = legendGrid[0][j];
+					}
+//					limits[0] = startx;
+//					limits[1] = endx;
+				} else {
+					double step = (limits[1] - limits[0]) / pheight;
+//			  System.out.println(step + " " + limits[1] + " " + limits[0] + " " + pheight);
+					for (int j = 0; j < pheight; j++) {
+						legendGrid[0][j] = step * j + limits[0];
+						for (int i = 1; i < pwidth; i++)
+							legendGrid[i][j] = legendGrid[0][j];
+					}
 				}
 				String unit = "mrd";
-				if (logScale) {
-					meanValue = 0;
-					unit = "Log(mrd)";
-				}
+//				if (logScale) {
+//					meanValue = 0;
+//					unit = "Log(mrd)";
+//				}
 				LegendPoleFigureMap mapLegend = new LegendPoleFigureMap(legendGrid, pwidth, pheight, limits[0], limits[1], grayScale, unit,
-						colrsNumber, editMenu, zoom, pixelsNumber, meanValue);
+							colrsNumber, editMenu, zoom, pixelsNumber, meanValue, scaleType);
 				pfPanel.add(mapLegend);
 			}
 		}

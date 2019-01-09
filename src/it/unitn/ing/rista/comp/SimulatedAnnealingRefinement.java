@@ -230,6 +230,8 @@ public class SimulatedAnnealingRefinement extends OptimizationAlgorithm {
         for (int np = 0; np < nParam; np++)
           smartParams[np] = randomGenerator(-delta / 2, delta / 2);
       fittingFunction.setFreeParameters(smartParams);
+      fittingFunction.computeFit();
+	    fittingFunction.getFit();
       fitnessValues[ns] = fittingFunction.getWSS();
 
     }
@@ -453,6 +455,8 @@ public class SimulatedAnnealingRefinement extends OptimizationAlgorithm {
 
   public double getFitness(double[] params) {
     fittingFunction.setFreeParameters(params);
+	  fittingFunction.computeFit();
+	  fittingFunction.getFit();
     double Fitness = fittingFunction.getWSS();
 
     if (outputframe != null)

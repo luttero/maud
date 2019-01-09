@@ -626,6 +626,7 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 				double energyInKeV = Constants.ENERGY_LAMBDA / dataset.getInstrument().getRadiationType().
 						getShortestWavelengthForFluorescence() * 0.001;
 				graph.attachPeaksInfos(getFluorescencePeakInfos(energyInKeV));
+				graph.plot_type = graph.FLUORESCENCE_PLOT;
 			}
 
 			if ((plotPeaks && numberofPeaks > 0) && datafit != null) {
@@ -692,17 +693,19 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 									if (tmpphase == phaselist[ij])
 										phaseindex = ij;
 
+								double dspace = 0;
 								if (ijn < dataset.getActiveDataFile(0).getPositions(tmpphase).length) {
 									double pos = dataset.getActiveDataFile(0).getPositions(tmpphase)[ijn][reflIndex][0];
 									datapeak[j] = dataset.getActiveDataFile(0).convertXDataForPlot(pos, wave, mode);
 									datapeak[j + 1] = (double) (phaseindex + 1);
+									dspace = dataset.getActiveDataFile(0).convertXToDspace(pos, wave);
 								}
 								if (ijn == 0) {
 									PeakInfo peakInfo = new PeakInfo();
 									Reflection refl = peak.getReflex();
 									peakInfo.info = tmpphase.getPhaseName() + " (" + Integer.toString(refl.getH()) + " " +
 											Integer.toString(refl.getK()) + " " +
-											Integer.toString(refl.getL()) + ")";
+											Integer.toString(refl.getL()) + ") " + Double.toString(dspace);
 									peakInfo.coordinate = datapeak[j];
 //		              System.out.println("Adding: " + peakInfo.coordinate + " " + peakInfo.info);
 									peaksInfos.add(peakInfo);
@@ -1357,6 +1360,7 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 				    }
 			    }
 			    graph.attachPeaksInfos(peaksInfoXRF);
+			    graph.plot_type = graph.FLUORESCENCE_PLOT;
 		    }
 
 		    if (((plotPeaks && numberofPeaks > 0) && datafile[0].hasfit()) || peaksLocated) {
@@ -1422,17 +1426,19 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 								    if (tmpphase == phaselist[ij])
 									    phaseindex = ij;
 
+							    double dspace = 0;
 							    if (ijn < datafile[0].getPositions(tmpphase).length) {
 								    double pos = datafile[0].getPositions(tmpphase)[ijn][reflIndex][0];
 								    datapeak[j] = datafile[0].convertXDataForPlot(pos, wave, mode);
 								    datapeak[j + 1] = (double) (phaseindex + 1);
+								    dspace = datafile[0].convertXToDspace(pos, wave);
 							    }
 							    if (ijn == 0) {
 								    PeakInfo peakInfo = new PeakInfo();
 								    Reflection refl = peak.getReflex();
 								    peakInfo.info = tmpphase.getPhaseName() + " (" + Integer.toString(refl.getH()) + " " +
 										    Integer.toString(refl.getK()) + " " +
-										    Integer.toString(refl.getL()) + ")";
+										    Integer.toString(refl.getL()) + ") " + Double.toString(dspace);
 								    peakInfo.coordinate = datapeak[j];
 //		              System.out.println("Adding: " + peakInfo.coordinate + " " + peakInfo.info);
 								    peaksInfos.add(peakInfo);
@@ -2020,6 +2026,7 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 			    }
 		    }
 		    graph.attachPeaksInfos(peaksInfoXRF);
+		    graph.plot_type = graph.FLUORESCENCE_PLOT;
 	    }
 
       if (((plotPeaks && numberofPeaks > 0) && afile.hasfit()) || peaksLocated) {
@@ -2085,13 +2092,14 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 								int reflIndex = tmpphase.getReflexIndex(peaklist.elementAt(i).getReflex());
                 double pos = adataset.getActiveDataFile(0).getPositions(tmpphase)[ijn][reflIndex][0];
                 datapeak[j] = afile.convertXDataForPlot(pos, wave, mode);
+                double dspace = adataset.getActiveDataFile(0).convertXToDspace(pos, wave);
                 datapeak[j + 1] = (double) (phaseindex + 1);
 	              if (ijn == 0) {
 		              PeakInfo peakInfo = new PeakInfo();
 		              Reflection refl = peaklist.elementAt(i).getReflex();
 		              peakInfo.info = tmpphase.getPhaseName() + " (" + Integer.toString(refl.getH()) + " " +
 				              Integer.toString(refl.getK()) + " " +
-				              Integer.toString(refl.getL()) + ")";
+				              Integer.toString(refl.getL()) + ") " + Double.toString(dspace);
 		              peakInfo.coordinate = datapeak[j];
 //		              System.out.println("Adding: " + peakInfo.coordinate + " " + peakInfo.info);
 		              peaksInfos.add(peakInfo);

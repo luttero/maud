@@ -878,8 +878,8 @@ public class LeastSquareFit extends OptimizationAlgorithm {
       double parm1 = parm[sp] + dparp;
 //      System.out.println("Setting (" + sp + ") = " + parm1);
       fittingFunction.setFreeParameter(sp, parm1);
+      fittingFunction.computeFit();
       if (newModel) {
-        fittingFunction.computeFit();
         for (int i1 = 0; i1 < fitVector.size(); i1++) {
           SpectrumFitContainer spectrum = (SpectrumFitContainer) fitVector.elementAt(i1);
           spectrum.checkDerivateFit();
@@ -891,8 +891,8 @@ public class LeastSquareFit extends OptimizationAlgorithm {
       if (doubleder) {
         parm1 = oldpar - dparp;
         fittingFunction.setFreeParameter(sp, parm1);
+        fittingFunction.computeFit();
         if (newModel) {
-          fittingFunction.computeFit();
           for (int i1 = 0; i1 < fitVector.size(); i1++) {
             SpectrumFitContainer spectrum = (SpectrumFitContainer) fitVector.elementAt(i1);
             spectrum.checkDerivate2Fit();

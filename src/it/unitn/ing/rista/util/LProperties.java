@@ -74,11 +74,11 @@ public class LProperties extends Hashtable {
    *               input stream.
    * @since   JDK1.0
    */
-  public synchronized void load(InputStream in) throws IOException {
-    /**
-     * Use char array to collect the key and val chars.  Use an initial
-     * size of 80 chars and double the array during expansion.
-     */
+/*  public synchronized void load(InputStream in) throws IOException {
+    //
+    // Use char array to collect the key and val chars.  Use an initial
+    // size of 80 chars and double the array during expansion.
+    //
     int buflen = 80;
     char[] buf = new char[buflen];
     int bufindx = 0;
@@ -106,13 +106,13 @@ public class LProperties extends Hashtable {
           continue;
       }
 
-      /* Read the key into buf */
+      // Read the key into buf
       bufindx = 0;
       while ((ch >= 0) && (ch != '=') && (ch != ':') &&
               (ch != ' ') && (ch != '\t') && (ch != '\n') && (ch != '\r')) {
-        /* append ch to buf */
+        // append ch to buf
         if (bufindx >= buflen) {
-          /* expand buf */
+          // expand buf
           buflen *= 2;
           char[] nbuf = new char[buflen];
           System.arraycopy(buf, 0, nbuf, 0, buf.length);
@@ -130,10 +130,10 @@ public class LProperties extends Hashtable {
       while ((ch == ' ') || (ch == '\t')) {
         ch = in.read();
       }
-      /* create the key */
+      // create the key
       String key = new String(buf, 0, bufindx);
 
-      /* Read the value into buf, reuse buf */
+      // Read the value into buf, reuse buf
       bufindx = 0;
       while ((ch >= 0) && (ch != '\n') && (ch != '\r')) {
         int next = 0;
@@ -211,9 +211,9 @@ public class LProperties extends Hashtable {
         } else {
           next = in.read();
         }
-        /* append ch to buf */
+        // append ch to buf
         if (bufindx >= buflen) {
-          /* expand buf */
+          // expand buf
           buflen *= 2;
           char[] nbuf = new char[buflen];
           System.arraycopy(buf, 0, nbuf, 0, buf.length);
@@ -222,12 +222,12 @@ public class LProperties extends Hashtable {
         buf[bufindx++] = (char) ch;
         ch = next;
       }
-      /* create the val */
+      // create the val
       String val = new String(buf, 0, bufindx);
 
       put(key, val);
     }
-  }
+  }*/
 
   /**
    * Stores this property list to the specified output stream. The
@@ -237,7 +237,7 @@ public class LProperties extends Hashtable {
    * @param   header   a description of the property list.
    * @since   JDK1.0
    */
-  public synchronized void save(OutputStream out, String header) {
+/*  public synchronized void save(OutputStream out, String header) {
     OutputStream localOut = Runtime.getRuntime().getLocalizedOutputStream(out);
     PrintStream prnt = new PrintStream(localOut, false);
     boolean localize = localOut != out;
@@ -300,7 +300,7 @@ public class LProperties extends Hashtable {
       for (int i = 0; i < lineSeparator.length(); i++)
         prnt.write(lineSeparator.charAt(i));
     }
-  }
+  }*/
 
   /**
    * Searches for the property with the specified key in this property list.

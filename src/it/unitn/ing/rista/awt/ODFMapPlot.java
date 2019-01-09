@@ -229,7 +229,7 @@ public class ODFMapPlot extends myJFrame {
      * Create the layout without a Logo image and with the
      * ColorKey on a separate Pane object.
      */
-    rpl = new JPlotLayout(true, false, false, title, null, true);
+    rpl = new JPlotLayout(true, false, false,  true, true,title, null, true);
     rpl.setEditClasses(false);
     /*
      * Create a GridAttribute for CONTOUR style.
