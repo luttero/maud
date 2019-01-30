@@ -3300,8 +3300,8 @@ public static final String getSpaceGroup(int index, int sgconv) {
 			  k = prefl.k[0];
 			  l = prefl.l[0];
 //			  System.out.println("Reflection: " + h + " " + k + " " + l + ", n = " + reflectionv.size());
-			  if (!((h == 0 && k == 0) && l == 0) && getActivePlanarDefects().acceptReflection(h, k, l)) {
-				  dpi = prefl.dspace;
+			  dpi = prefl.dspace;
+			  if (!((h == 0 && k == 0) && l == 0) && getActivePlanarDefects().acceptReflection(h, k, l, dpi)) {
 				  if (dpi >= dplanecut) {
 //        System.out.println("Checking " + h +" "+k+" "+l + " " +dpi);
 					  int found = -1;
@@ -3457,9 +3457,9 @@ public static final String getSpaceGroup(int index, int sgconv) {
 						if (sghkl.IsSysAbsent_hkl(h, k, l, null) == 0) {
 							if ((sghkl.IsHidden_hkl(friedelLaw, Minh[0], Mink[0], Minl[0],
 									Maxh, Maxk, Maxl, h, k, l)) == 0) {
-								if (!((h == 0 && k == 0) && l == 0) && getActivePlanarDefects().acceptReflection(h, k, l)) {
-									dpi = 1.0 / Math.sqrt(soVector[0] * h * h + soVector[1] * k * k + soVector[2] * l * l + 2.
-											* soVector[5] * h * k + 2. * soVector[3] * k * l + 2. * soVector[4] * h * l);
+								dpi = 1.0 / Math.sqrt(soVector[0] * h * h + soVector[1] * k * k + soVector[2] * l * l + 2.
+										* soVector[5] * h * k + 2. * soVector[3] * k * l + 2. * soVector[4] * h * l);
+								if (!((h == 0 && k == 0) && l == 0) && getActivePlanarDefects().acceptReflection(h, k, l, dpi)) {
 									if (dpi >= dplanecut && dpi <= dplanestart) {
 //        System.out.println("Checking " + h +" "+k+" "+l + " " +dpi);
 										int found = -1;

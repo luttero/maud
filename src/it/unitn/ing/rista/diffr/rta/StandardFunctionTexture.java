@@ -414,6 +414,10 @@ public class StandardFunctionTexture extends Texture {
 					    textF[j] = computeTextureFactor(refl.phi[0], refl.beta[0],
 							    texture_angles[0] * Constants.DEGTOPI,
 							    texture_angles[1] * Constants.DEGTOPI);
+/*		              System.out.println(positions[0][j][0] + " " +
+				              refl.phi[0] + " " + refl.beta[0] + " " +
+				              texture_angles[0] * Constants.DEGTOPI + " " +
+				              texture_angles[1] * Constants.DEGTOPI + " " + textF[j]);*/
 //						refl.setExpTextureFactor(adatafile.getIndex(), textF);
 				    }
 			    adatafile.setTextureFactors(aphase, textF);

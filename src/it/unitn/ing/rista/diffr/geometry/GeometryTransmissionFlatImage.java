@@ -57,6 +57,7 @@ public class GeometryTransmissionFlatImage extends GeometryDebyeScherrer {
     sintheta = Math.sin(position);
     costheta = Math.cos(position);
     cos2theta = Math.cos(2.0 * position);
+//    cos2theta *= cos2theta;
     return cos2theta / (costheta * sintheta * sintheta);
   }
 
