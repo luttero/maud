@@ -150,7 +150,7 @@ public class PlotPFCoverage extends GraphFrame {
 				    for (i = 0; i < adataset.activedatafilesnumber(); i++) {
 					    DiffrDataFile adatafile = adataset.getActiveDataFile(i);
 					    for (int ppp = 0; ppp < adatafile.positionsPerPattern; ppp++)
-						    if (adatafile.isInsideRange(adatafile.getPositions(aphase)[0][hklnumbersel][ppp])) {
+						    if (adatafile.isInsideRange(adatafile.getPositions(aphase)[hklnumbersel][ppp][0])) {
 							    j++;
 //todo            if (!Double.isNaN(reflex.getExpTextureFactor(i))) {
 							    double data[] = new double[2 * multi];
@@ -159,13 +159,13 @@ public class PlotPFCoverage extends GraphFrame {
 								    color_data[0] = adatafile.getMonitorCountsValue();
 							    } else {
 								    // todo modify for more peaks par pattern
-								    color_data[0] = adatafile.getShapeAbsFactors(aphase, hklnumbersel)[0];
+								    color_data[0] = adatafile.getShapeAbsFactors(aphase, hklnumbersel)[0][0];
 							    }
 							    if (color_data[0] < min)
 								    min = color_data[0];
 							    if (color_data[0] > max)
 								    max = color_data[0];
-							    double position = adatafile.getPositions(aphase)[0][hklnumbersel][ppp];
+							    double position = adatafile.getPositions(aphase)[hklnumbersel][ppp][0];
 							    if (plotAlternateCoverage)
 								    angles = adatafile.getAlternateTextureAngles(position);
 							    else
@@ -279,19 +279,19 @@ public class PlotPFCoverage extends GraphFrame {
 				    for (i = 0; i < adataset.activedatafilesnumber(); i++) {
 					    DiffrDataFile adatafile = adataset.getActiveDataFile(i);
 					    for (int ppp = 0; ppp < adatafile.positionsPerPattern; ppp++)
-						    if (adatafile.isInsideRange(adatafile.getPositions(aphase)[0][hklnumbersel][ppp])) {
+						    if (adatafile.isInsideRange(adatafile.getPositions(aphase)[hklnumbersel][ppp][0])) {
 //todo            if (!Double.isNaN(reflex.getExpTextureFactor(i))) {
 							    adatafile = adataset.getActiveDataFile(i);
 
 							    if (plotScaleFactors)
 								    color_data[i] = adatafile.getMonitorCountsValue();
 							    else
-								    color_data[i] = adatafile.getShapeAbsFactors(aphase, hklnumbersel)[0];
+								    color_data[i] = adatafile.getShapeAbsFactors(aphase, hklnumbersel)[0][0];
 							    if (color_data[i] < min)
 								    min = color_data[i];
 							    if (color_data[i] > max)
 								    max = color_data[i];
-							    double position = adatafile.getPositions(aphase)[0][hklnumbersel][ppp];
+							    double position = adatafile.getPositions(aphase)[hklnumbersel][ppp][0];
 							    angles = adatafile.getTextureAngles(position);
 							    double[] iangles = adatafile.getIncidentAndDiffractionAngles(position);
 

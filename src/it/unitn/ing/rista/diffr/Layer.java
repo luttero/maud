@@ -672,6 +672,23 @@ public class Layer extends XRDcat {
     return absorption[0];
   }
 
+	public double getLayerAbsorption(RadiationType rad, int index) {
+		if (rad == null)
+			return 1.0;
+		double[] absorption = new double[1];
+		absorption[0] = 0.0;
+//ll    if (layerAbsorption == null)
+//ll      resetTables();
+//ll    if (layerAbsorption.containsKey(rad))
+//ll      absorption = (double[]) layerAbsorption.get(rad);
+//ll    else {
+		absorption[0] = getThicknessValue() * getAbsorption(rad, index);
+//	    System.out.println(getThicknessValue() + " ----- " + getAbsorption(rad));
+//ll      layerAbsorption.put(rad, absorption);
+//ll    }
+		return absorption[0];
+	}
+
 	public double getOverLayerAbsorption(RadiationType rad) {
 		if (rad == null)
 			return 0.0;
@@ -776,6 +793,19 @@ public class Layer extends XRDcat {
     }
     return absorption;
   }
+
+	public double getAbsorption(RadiationType rad, int index) {
+		double absorption = 0.0;
+		int phasenumber = checkPhaseNumber();
+//    normalizePhaseQuantity(); // to be sure it's normalized
+		double[] quantity = getWeightedPhaseQuantity();
+		for (int i = 0; i < phasenumber; i++) {
+//			double quantity = getNormalizedPhaseQuantity(i);
+			Phase aphase = getSample().getPhase(i);
+			absorption += aphase.getAbsorption(rad, index) * quantity[i];
+		}
+		return absorption;
+	}
 
 	public double getAbsorption(double energyInKeV) {
 		double absorption = 0.0;

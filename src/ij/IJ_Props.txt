@@ -175,8 +175,8 @@ hyperstacks05="Channels Tool...[Z]",ij.plugin.frame.Channels
 transform01="Flip Horizontally",ij.plugin.filter.Transformer("fliph")
 transform02="Flip Vertically",ij.plugin.filter.Transformer("flipv")
 transform03="Flip Z",ij.plugin.StackReverser
-transform04="Rotate 90 Degrees anticlockwise",ij.plugin.filter.Transformer("right")
-transform05="Rotate 90 Degrees clockwise",ij.plugin.filter.Transformer("left")
+transform04="Rotate 90 Degrees clockwise",ij.plugin.filter.Transformer("right")
+transform05="Rotate 90 Degrees anticlockwise",ij.plugin.filter.Transformer("left")
 transform06="Rotate... ",ij.plugin.filter.Rotator
 transform07="Translate...",ij.plugin.filter.Translator
 transform08="Bin...",ij.plugin.Binner
@@ -357,6 +357,7 @@ maud_plugins10="Open Nonius .syn image",ij.plugin.SYNreaderNoniusKappa
 maud_plugins11="Open Bruker image",ij.plugin.BrukerImageReader
 maud_plugins12="Open Digital Micrograph DM3 image",ij.plugin.DM3_Reader
 maud_plugins13="Open D19 image (_LAMP)",ij.plugin.D19ImageReader
+#maud_plugins14="Prepare XFEL images",ij.plugin.XFELImagesManipulator
 
 # Plugins installed in the Plugins/Macros submenu
 # 'MACROS_MENU_COMMANDS' in MacroInstaller must be updated when items are added

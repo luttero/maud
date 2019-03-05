@@ -508,7 +508,78 @@ public class SampleShapeHarmonic extends SampleShape implements Shape3D {
     }
   }
 
-  public void freeAllShapeParameters() {
+	public void computeAbsorptionPath(double[][][] incidentAndDiffraction_angles, double[] absorption, double[][] position,
+	                                  double[][] intensity, double toLambda) {
+		double totalPath = 0.0;
+		double arg1[] = new double[absorption.length];
+		for (int i = 0; i < absorption.length; i++)
+			arg1[i] = 0.0;
+		boolean positionCorr = false;
+		if (velocityCorrection() && toLambda != 0.0f) {
+			for (int i = 0; i < absorption.length; i++)
+				absorption[i] *= toLambda;
+			positionCorr = true;
+		}
+		for (int i = 0; i < position.length; i++) {
+			for (int k = 0; k < absorption.length; k++) {
+				boolean asPrevious = true;
+				if (k == 0)
+					asPrevious = false;
+				else
+					for (int j = 0; j < 6; j++)
+						if (incidentAndDiffraction_angles[i][k][j] != incidentAndDiffraction_angles[i][k - 1][j])
+							asPrevious = false;
+				if (!asPrevious) {
+					double incidentPathLength = getShape(incidentAndDiffraction_angles[i][k][1],
+							incidentAndDiffraction_angles[i][k][0]);
+
+					double diffractedPathLength = getShape(incidentAndDiffraction_angles[i][k][3],
+							incidentAndDiffraction_angles[i][k][2]);
+
+					double normalPathLength = getShape(incidentAndDiffraction_angles[i][k][5],
+							incidentAndDiffraction_angles[i][k][4]);
+
+					double sin0 = Math.sin(incidentAndDiffraction_angles[i][k][0]);
+					double sin1 = Math.sin(incidentAndDiffraction_angles[i][k][1]);
+					double sin2 = Math.sin(incidentAndDiffraction_angles[i][k][2]);
+					double sin3 = Math.sin(incidentAndDiffraction_angles[i][k][3]);
+					double cos0 = Math.cos(incidentAndDiffraction_angles[i][k][0]);
+					double cos1 = Math.cos(incidentAndDiffraction_angles[i][k][1]);
+					double cos2 = Math.cos(incidentAndDiffraction_angles[i][k][2]);
+					double cos3 = Math.cos(incidentAndDiffraction_angles[i][k][3]);
+//    return incidentPathLength + diffractedPathLength;
+					double xdiff = incidentPathLength * cos1 * sin0 - diffractedPathLength * cos3 * sin2;
+					double ydiff = incidentPathLength * sin1 * sin0 - diffractedPathLength * sin3 * sin2;
+					double zdiff = incidentPathLength * cos0 - diffractedPathLength * cos2;
+					double xdiffs = cos1 * sin0 - cos3 * sin2;
+					double ydiffs = sin1 * sin0 - sin3 * sin2;
+					double zdiffs = cos0 - cos2;
+					xdiff *= xdiff;
+					ydiff *= ydiff;
+					zdiff *= zdiff;
+					xdiffs *= xdiffs;
+					ydiffs *= ydiffs;
+					zdiffs *= zdiffs;
+					totalPath = (1 - getParameterValue(3)) * (Math.sqrt(xdiff + ydiff + zdiff) -
+							getParameterValue(4) * Math.sqrt(xdiffs + ydiffs + zdiffs))
+							+ getParameterValue(3) * (normalPathLength - getParameterValue(4));
+				}
+//System.out.println(incidentPathLength + " " + incidentAndDiffraction_angles[0] + " " + incidentAndDiffraction_angles[1]
+//                   + " " + diffractedPathLength + " " + incidentAndDiffraction_angles[2] + " "
+//                   + incidentAndDiffraction_angles[3] + " " + totalPath);
+				if (positionCorr)
+					arg1[k] = absorption[k] * totalPath * position[i][k];// * Constants.LAMBDA_SPEED_NEUTRON_CONV_REC;
+				else
+					arg1[k] = absorption[k] * totalPath;
+				if (arg1[k] < 200.0)
+					intensity[i][k] *= Math.exp(-arg1[k]);
+				else
+					intensity[i][k] *= 0.0f;
+			}
+		}
+	}
+
+	public void freeAllShapeParameters() {
     int i, j;
 
     for (i = 0; i < Nparameter; i++)

@@ -1112,7 +1112,7 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 			int numberDta = getPointNumber(i);
 			for (int j = 0; j < numberDta; j++) {
 				DiffrDataFile datafile = getPointFromAll(j);
-				if (datafile.isInsideRange(datafile.getPositions(phase)[0][poleFigureIndex[i]][0])) {
+				if (datafile.isInsideRange(datafile.getPositions(phase)[poleFigureIndex[i]][0][0])) {
 					dta_fix[index] = getPoleIntensity(i, j);
 					wgt[index] = getWeight(i, j);
 				} else {
@@ -1523,7 +1523,7 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 		for (int i = 0; i < izoveri; i++) {
 			int reflexIndex = poleFigureIndex[pole] + i;
 //		 	int mult = reflex.multiplicity;
-			texturefactor += getPointFromAll(point).getExperimentalTextureFactors(phase, reflexIndex)[0] *
+			texturefactor += getPointFromAll(point).getExperimentalTextureFactors(phase, reflexIndex)[0][0] *            // todo: for all radiations?
 					phase.getReflex(reflexIndex).getOverlappedWeight(); // * mult;
 		}
 		return texturefactor;
@@ -1781,7 +1781,7 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 
 		if (!fromPF) {
 			DiffrDataFile diffrDataFile = sample.getActiveDataSet(datasetindex[dataindex]).getActiveDataFile(datafileindex[dataindex]);
-			checkIn = diffrDataFile.isInsideRange(diffrDataFile.getPositions(phase)[0][poleFigureIndex[pole]][0]);
+			checkIn = diffrDataFile.isInsideRange(diffrDataFile.getPositions(phase)[poleFigureIndex[pole]][0][0]);
 		}
 
 		if (checkIn) {
@@ -1965,7 +1965,7 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 
 		if (!fromPF) {
 			DiffrDataFile diffrDataFile = sample.getActiveDataSet(datasetindex[dataindex]).getActiveDataFile(datafileindex[dataindex]);
-			checkIn = diffrDataFile.isInsideRange(diffrDataFile.getPositions(phase)[0][poleFigureIndex[pole]][0]);
+			checkIn = diffrDataFile.isInsideRange(diffrDataFile.getPositions(phase)[poleFigureIndex[pole]][0][0]);
 		}
 
 		if (checkIn) {

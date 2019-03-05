@@ -808,7 +808,81 @@ public class SampleShapeIntegral extends SampleShape implements Shape3D, SimpleF
     }
   }
 
-  protected double computeDistance(double[] acell, double angle1, double angle2) {
+	public void computeAbsorptionPath(double[][][] incidentAndDiffraction_angles, double[] absorption, double[][] position,
+	                                  double[][] intensity, double toLambda) {
+
+		double dist1[] = new double[Ncell], dist2[] = new double[Ncell];
+		double arg1[] = new double[absorption.length];
+		for (int i = 0; i < absorption.length; i++)
+			arg1[i] = absorption[i];
+		double corrPath = 0.0;
+		boolean positionCorr = false;
+		if (velocityCorrection() && toLambda != 0.0f) {
+			for (int i = 0; i < absorption.length; i++)
+				absorption[i] *= toLambda;
+			positionCorr = true;
+		}
+//    System.out.println(position[0]);
+//    System.out.println(incidentAndDiffraction_angles[0][0] + " " + incidentAndDiffraction_angles[0][1]);
+//    System.out.println(incidentAndDiffraction_angles[0][2] + " " + incidentAndDiffraction_angles[0][3]);
+//    System.out.println(incidentAndDiffraction_angles[0][4] + " " + incidentAndDiffraction_angles[0][5]);
+		for (int i = 0; i < position.length; i++) {
+//      System.out.println("position " + i);
+//      System.out.flush();
+			for (int k = 0; k < absorption.length; k++) {
+				double totalPath = 0.0;
+				boolean asPrevious = true;
+				if (k == 0)
+					asPrevious = false;
+				else
+					for (int j = 0; j < 6; j++)
+						if (incidentAndDiffraction_angles[i][k][j] != incidentAndDiffraction_angles[i][k - 1][j])
+							asPrevious = false;
+				if (positionCorr)
+					arg1[k] = absorption[k] * position[i][k];// * Constants.LAMBDA_SPEED_NEUTRON_CONV_REC;
+
+				if (!asPrevious) {
+					double sin0 = Math.sin(incidentAndDiffraction_angles[i][k][0]);
+					double sin1 = Math.sin(incidentAndDiffraction_angles[i][k][1]);
+					double sin2 = Math.sin(incidentAndDiffraction_angles[i][k][2]);
+					double sin3 = Math.sin(incidentAndDiffraction_angles[i][k][3]);
+					double cos0 = Math.cos(incidentAndDiffraction_angles[i][k][0]);
+					double cos1 = Math.cos(incidentAndDiffraction_angles[i][k][1]);
+					double cos2 = Math.cos(incidentAndDiffraction_angles[i][k][2]);
+					double cos3 = Math.cos(incidentAndDiffraction_angles[i][k][3]);
+					double xdiffs = cos1 * sin0 - cos3 * sin2;
+					double ydiffs = sin1 * sin0 - sin3 * sin2;
+					double zdiffs = cos0 - cos2;
+					xdiffs *= xdiffs;
+					ydiffs *= ydiffs;
+					zdiffs *= zdiffs;
+					corrPath = ((1 - getParameterValue(3)) * Math.sqrt(xdiffs + ydiffs + zdiffs)
+							+ getParameterValue(3)) * getParameterValue(4);
+				}
+				for (int j = 0; j < Ncell; j++) {
+					if (!asPrevious) {
+						// incident ray
+						dist1[j] = computeDistance(cellList[j], incidentAndDiffraction_angles[i][k][1],
+								incidentAndDiffraction_angles[i][k][0]);
+						// diffracted ray
+						dist2[j] = computeDistance(cellList[j], incidentAndDiffraction_angles[i][k][3],
+								incidentAndDiffraction_angles[i][k][2]);
+					}
+
+					double arg2 = arg1[k] * (dist1[j] + dist2[j]);
+					if (arg2 < 200.0)
+						totalPath += Math.exp(-arg2) * cellList[j][4];
+				}
+				double arg3 = arg1[k] * corrPath;
+				if (arg3 < 200.0)
+					totalPath *= Math.exp(arg3);
+//System.out.println(i + " " + totalPath);
+				intensity[i][k] *= totalPath / Volume;
+			}
+		}
+	}
+
+	protected double computeDistance(double[] acell, double angle1, double angle2) {
     double distR = acell[3] / 2.0;
     double stepR = distR / 2.0;
     boolean inside = true;

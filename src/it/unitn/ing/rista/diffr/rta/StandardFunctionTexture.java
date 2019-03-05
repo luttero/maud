@@ -395,8 +395,8 @@ public class StandardFunctionTexture extends Texture {
 //			    for (int ppp = 0; ppp < adatafile.positionsPerPattern; ppp++) {
 				    for (int j = 0; j < hkln; j++) {
 					    Reflection refl = aphase.getReflex(j);
-					    double texture_angles[] = adatafile.getTextureAngles(positions[0][j][0]);
-					    double newBetaBroad = adataset.getInstrument().getInstrumentBroadening().getTextureBroadeningAt(positions[0][j][0]);
+					    double texture_angles[] = adatafile.getTextureAngles(positions[j][0][0]);
+					    double newBetaBroad = adataset.getInstrument().getInstrumentBroadening().getTextureBroadeningAt(positions[j][0][0]);
 //	            System.out.println(snumber + " " + betaBroad);
 					    if (betaBroad != newBetaBroad) {
 //		            System.out.println(snumber);

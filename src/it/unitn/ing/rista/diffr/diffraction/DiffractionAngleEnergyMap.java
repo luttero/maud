@@ -117,7 +117,7 @@ public class DiffractionAngleEnergyMap extends Diffraction {
 			for (int k = 0; k < datafilenumber; k++)
 				fit[k] = 0;
 			double energy_coord = datafile.getXData(i);
-			if (energy_coord >= energyInKeV[0] && energy_coord <= energyInKeV[rad_lines]) {
+			if (energy_coord >= energyInKeV[0] && energy_coord <= energyInKeV[rad_lines - 1]) {
 				int ej = 0;
 				while (energy_coord < energyInKeV[ej] && ej < rad_lines)
 					ej++;
@@ -136,10 +136,10 @@ public class DiffractionAngleEnergyMap extends Diffraction {
 					}
 					double overLayerAbsorptionForLine = 0;
 					for (int j2 = 0; j2 < j1; j2++) {
-						double actualLayerAbs = -asample.getlayer(j2).getAbsorption(lineEnergyKeV) * layerDensity[j2] / sinPhid;
+						double actualLayerAbs = -asample.getlayer(j2).getAbsorption(energy_coord) * layerDensity[j2] / sinPhid;
 						overLayerAbsorptionForLine += actualLayerAbs * layerThickness[j2];
 					}
-					double actualLayerAbsorption = -asample.getlayer(j1).getAbsorption(lineEnergyKeV) * layerDensity[j1] / sinPhid;
+					double actualLayerAbsorption = -asample.getlayer(j1).getAbsorption(energy_coord) * layerDensity[j1] / sinPhid;
 					double over_abs = overLayerAbsorptionForLine + overLayerAbsorption[j1][ej];
 					if (!Double.isNaN(over_abs)) {
 						if (over_abs > -Double.MAX_EXPONENT / 2 && over_abs < Double.MAX_EXPONENT / 2)

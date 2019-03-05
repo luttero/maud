@@ -528,7 +528,7 @@ public class WIMVTexture extends DiscreteODFTexture {
       wgtsum += wgt;
 	    int reflexIndex = poleFigureIndex[pole] + i;
 //		 	int mult = reflex.multiplicity;
-	    texturefactor += getPointFromAll(point).getExperimentalTextureFactors(phase, reflexIndex)[0] *
+	    texturefactor += getPointFromAll(point).getExperimentalTextureFactors(phase, reflexIndex)[0][0] *         // todo: for all radiations?
 			    wgt; // * mult;
     }
     return texturefactor / wgtsum;

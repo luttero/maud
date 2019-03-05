@@ -487,7 +487,63 @@ public class SampleShapePopa extends SampleShape implements Shape3D {
     }
   }
 
-  public void freeAllShapeParameters() {
+	public void computeAbsorptionPath(double[][][] incidentAndDiffraction_angles, double[] absorption, double[][] position,
+	                                  double[][] intensity, double toLambda) {
+		double totalPath = 0.0;
+		double arg1 = 0.0;
+		boolean positionCorr = false;
+		if (velocityCorrection() && toLambda != 0.0f) {
+			for (int i = 0; i < absorption.length; i++)
+				absorption[i] *= toLambda;
+			positionCorr = true;
+		}
+		for (int i = 0; i < position.length; i++) {
+			for (int k = 0; k < absorption.length; k++) {
+				boolean asPrevious = true;
+				if (k == 0)
+					asPrevious = false;
+				else
+					for (int j = 0; j < 6; j++)
+						if (incidentAndDiffraction_angles[i][k][j] != incidentAndDiffraction_angles[i][k - 1][j])
+							asPrevious = false;
+				if (!asPrevious) {
+					double incidentPathLength = getShape(incidentAndDiffraction_angles[i][k][1],
+							incidentAndDiffraction_angles[i][k][0]);
+
+					double diffractedPathLength = getShape(incidentAndDiffraction_angles[i][k][3],
+							incidentAndDiffraction_angles[i][k][2]);
+
+					double normalPathLength = getShape(incidentAndDiffraction_angles[i][k][5],
+							incidentAndDiffraction_angles[i][k][4]);
+
+					double sin0 = Math.sin(incidentAndDiffraction_angles[i][k][0]);
+					double sin2 = Math.sin(incidentAndDiffraction_angles[i][k][2]);
+//    return incidentPathLength + diffractedPathLength;
+					double xdiff = incidentPathLength * Math.cos(incidentAndDiffraction_angles[i][k][1]) * sin0 -
+							diffractedPathLength * Math.cos(incidentAndDiffraction_angles[i][k][3]) * sin2;
+					double ydiff = incidentPathLength * Math.sin(incidentAndDiffraction_angles[i][k][1]) * sin0 -
+							diffractedPathLength * Math.sin(incidentAndDiffraction_angles[i][k][3]) * sin2;
+					double zdiff = incidentPathLength * Math.cos(incidentAndDiffraction_angles[i][k][0]) -
+							diffractedPathLength * Math.cos(incidentAndDiffraction_angles[i][k][2]);
+					totalPath = (1 - getParameterValue(3)) * Math.sqrt(xdiff * xdiff + ydiff * ydiff + zdiff * zdiff)
+							+ getParameterValue(3) * normalPathLength;
+				}
+//System.out.println(incidentPathLength + " " + incidentAndDiffraction_angles[0] + " " + incidentAndDiffraction_angles[1]
+//                   + " " + diffractedPathLength + " " + incidentAndDiffraction_angles[2] + " "
+//                   + incidentAndDiffraction_angles[3] + " " + totalPath);
+				if (positionCorr)
+					arg1 = absorption[k] * (totalPath * position[i][k] - meanShapeCorr);// * Constants.LAMBDA_SPEED_NEUTRON_CONV_REC;
+				else
+					arg1 = absorption[k] * (totalPath - meanShapeCorr);
+				if (arg1 < 200.0)
+					intensity[i][k] *= Math.exp(-arg1);
+				else
+					intensity[i][k] *= 0.0f;
+			}
+		}
+	}
+
+	public void freeAllShapeParameters() {
     int i, j;
 
     for (i = 0; i < Nparameter; i++)

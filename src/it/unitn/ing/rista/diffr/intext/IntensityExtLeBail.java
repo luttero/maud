@@ -347,7 +347,7 @@ The PF's of peaks of the same family are imposed equals for all the lines.
               lebailfactor = 0.0001;
             for (int ij = 0; ij < ndelta; ij++) {
               double oldfactor = datafile.getExpTextureFactor(tpeaklist.elementAt(ij).getPhase(),
-		              tpeaklist.elementAt(ij))[0]; // todo we need the other points per pattern
+		              tpeaklist.elementAt(ij))[0][0]; // todo we need the other points per pattern and radiation index
               if (Double.isNaN(oldfactor))
                 oldfactor = 1.0;
               double newlebailfactor = lebailfactor * oldfactor;
@@ -365,7 +365,7 @@ The PF's of peaks of the same family are imposed equals for all the lines.
             }
           } else {
             lebailfactor = datafile.getExpTextureFactor(fullpeaklist.elementAt(superOrder[n]).getPhase(),
-		            fullpeaklist.elementAt(superOrder[n]))[0];
+		            fullpeaklist.elementAt(superOrder[n]))[0][0];
             if (Double.isNaN(lebailfactor))
               lebailfactor = 1.0;
             numberpeaktouse = 1;

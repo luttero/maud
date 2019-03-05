@@ -254,6 +254,7 @@ The PF's of peaks of the same family are imposed equals for all the lines.
 
 	  for (int di = 0; di < numberdataset; di++) {
       DataFileSet dataset = asample.getActiveDataSet(di);
+      int radCount = dataset.getInstrument().getRadiationType().getLinesCount();
 		  Diffraction diffraction = dataset.getDiffraction();
       int datafilenumber = dataset.activedatafilesnumber();
       Vector<Peak> fullpeaklist = dataset.getPeakList();
@@ -406,19 +407,21 @@ The PF's of peaks of the same family are imposed equals for all the lines.
                 lebailfactor /= expfitnorm;
 	            for (int ij = 0; ij < numberpeaktouse[reflectionListIndices[i]]; ij++) {
 		            for (int ik = 0; ik < datafile.positionsPerPattern; ik++) {
+			            for (int jk = 0; jk < radCount; jk++) {
 //			            System.out.println("Le Bail: " + phase.getPhaseName() + " " + i + " " +
 //					            numberpeaktouse[reflectionListIndices[i]] + " " + ij + " " + reflectionListIndices[i + ij]);
-			            double textureFactor = datafile.getTextureFactors(phase, i + ij)[ik];
-			            if (Double.isNaN(textureFactor))
-				            textureFactor = datafile.getExperimentalTextureFactors(phase, i + ij)[ik];
-			            if (Double.isNaN(textureFactor))
-				            textureFactor = 1.0;
-			            double sqrtTextureFactor = textureFactor; // * datafile.getShapeAbsFactors(phase,
-					           // fullpeaklist.elementAt(i + ij).getOrderPosition())[ik];
-			            if (sqrtTextureFactor > 0.0) {
-				            sqrtTextureFactor = MoreMath.sqrt_or_zero(sqrtTextureFactor);
-				            newlebailfactor[reflectionListIndices[i + ij]] += lebailfactor * sqrtTextureFactor;
-				            newexpfitnorm[reflectionListIndices[i + ij]] += sqrtTextureFactor;
+				            double textureFactor = datafile.getTextureFactors(phase, i + ij)[ik][jk];
+				            if (Double.isNaN(textureFactor))
+					            textureFactor = datafile.getExperimentalTextureFactors(phase, i + ij)[ik][jk];
+				            if (Double.isNaN(textureFactor))
+					            textureFactor = 1.0;
+				            double sqrtTextureFactor = textureFactor; // * datafile.getShapeAbsFactors(phase,
+				            // fullpeaklist.elementAt(i + ij).getOrderPosition())[ik];
+				            if (sqrtTextureFactor > 0.0) {
+					            sqrtTextureFactor = MoreMath.sqrt_or_zero(sqrtTextureFactor);
+					            newlebailfactor[reflectionListIndices[i + ij]] += lebailfactor * sqrtTextureFactor;
+					            newexpfitnorm[reflectionListIndices[i + ij]] += sqrtTextureFactor;
+				            }
 			            }
 		            }
               }

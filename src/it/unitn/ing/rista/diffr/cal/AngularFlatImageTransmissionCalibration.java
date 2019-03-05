@@ -126,6 +126,10 @@ public class AngularFlatImageTransmissionCalibration extends AngularCalibration 
     parameterField[0].setValue(value);
   }
 
+	public void setRadius(double value) {
+		parameterField[0].setValue(value);
+	}
+
 	public double getOriginalCenterX() {
 		return Double.parseDouble(stringField[0]);
 	}
@@ -142,7 +146,15 @@ public class AngularFlatImageTransmissionCalibration extends AngularCalibration 
     stringField[1] = value;
   }
 
-  public boolean freeAllBasicParameters() {
+	public void setOriginalCenterX(double value) {
+		stringField[0] = Double.toString(value);
+	}
+
+	public void setOriginalCenterY(double value) {
+		stringField[1] = Double.toString(value);
+	}
+
+	public boolean freeAllBasicParameters() {
     for (int i = 1; i < 3; i++)
       parameterField[i].setRefinableCheckBound();
     return true;

@@ -694,8 +694,8 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 										phaseindex = ij;
 
 								double dspace = 0;
-								if (ijn < dataset.getActiveDataFile(0).getPositions(tmpphase).length) {
-									double pos = dataset.getActiveDataFile(0).getPositions(tmpphase)[ijn][reflIndex][0];
+								if (ijn < dataset.getActiveDataFile(0).getPositions(tmpphase)[0][0].length) {
+									double pos = dataset.getActiveDataFile(0).getPositions(tmpphase)[reflIndex][0][ijn];
 									datapeak[j] = dataset.getActiveDataFile(0).convertXDataForPlot(pos, wave, mode);
 									datapeak[j + 1] = (double) (phaseindex + 1);
 									dspace = dataset.getActiveDataFile(0).convertXToDspace(pos, wave);
@@ -1427,8 +1427,8 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 									    phaseindex = ij;
 
 							    double dspace = 0;
-							    if (ijn < datafile[0].getPositions(tmpphase).length) {
-								    double pos = datafile[0].getPositions(tmpphase)[ijn][reflIndex][0];
+							    if (ijn < datafile[0].getPositions(tmpphase)[0][0].length) {
+								    double pos = datafile[0].getPositions(tmpphase)[reflIndex][0][ijn];
 								    datapeak[j] = datafile[0].convertXDataForPlot(pos, wave, mode);
 								    datapeak[j + 1] = (double) (phaseindex + 1);
 								    dspace = datafile[0].convertXToDspace(pos, wave);
@@ -2090,7 +2090,7 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
                   if (tmpphase == phaselist[ij])
                     phaseindex = ij;
 								int reflIndex = tmpphase.getReflexIndex(peaklist.elementAt(i).getReflex());
-                double pos = adataset.getActiveDataFile(0).getPositions(tmpphase)[ijn][reflIndex][0];
+                double pos = adataset.getActiveDataFile(0).getPositions(tmpphase)[reflIndex][0][ijn];
                 datapeak[j] = afile.convertXDataForPlot(pos, wave, mode);
                 double dspace = adataset.getActiveDataFile(0).convertXToDspace(pos, wave);
                 datapeak[j + 1] = (double) (phaseindex + 1);

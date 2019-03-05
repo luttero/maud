@@ -693,7 +693,6 @@ public class Geometry extends XRDcat {
     double[] newSampleAngles = new double[3];
     for (int i = 0; i < 3; i++)
       newSampleAngles[i] = sampleAngles[i] + addSampleAngles[i];
-
     double tilting_angles0 = tilting_angles[0];
     double tilting_angles1 = tilting_angles[1];
     double tilting_angles2 = tilting_angles[2];
@@ -717,14 +716,7 @@ public class Geometry extends XRDcat {
         textureAngles = getTextureAnglesR(tilting_angles0, tilting_angles1, tilting_angles2,
               tilting_angles3, position[j] / 2.0f, newSampleAngles, false);
 
-//        System.out.println("Angles incident: " + incidentAngles[0] + " " + incidentAngles[1]);
-//        System.out.println("Angles diffract: " + diffractionAngles[0] + " " + diffractionAngles[1]);
-//        System.out.println("Angles texture : " + textureAngles[0] + " " + textureAngles[1]);
-
       }
-//      oldTilt0 = tilting_angles0;
-//      oldTilt1 = tilting_angles1;
-//      oldTilt2 = tilting_angles2;
       oldTilt3 = tilting_angles3;
       for (int i = 0; i < 2; i++) {
         allAngles[j][i] = incidentAngles[i];
@@ -735,7 +727,51 @@ public class Geometry extends XRDcat {
     return allAngles;
   }
 
-  /**
+	public double[][][] getIncidentAndDiffractionAngles(DiffrDataFile datafile, double[] tilting_angles,
+	                                                  double[] sampleAngles, double[][] position) {
+
+		double[] addSampleAngles = datafile.getDataFileSet().getAdditionalSampleAngles();
+		double[] newSampleAngles = new double[3];
+		for (int i = 0; i < 3; i++)
+			newSampleAngles[i] = sampleAngles[i] + addSampleAngles[i];
+		double tilting_angles0 = tilting_angles[0];
+		double tilting_angles1 = tilting_angles[1];
+		double tilting_angles2 = tilting_angles[2];
+		double oldTilt0 = tilting_angles0 + 1.0f;
+		double oldTilt1 = tilting_angles1 + 1.0f;
+		double oldTilt2 = tilting_angles2 + 1.0f;
+		double oldTilt3 = - 90001.0f;
+		int numberPositions = position.length;
+		int nrad = position[0].length;
+		double[] incidentAngles = null, diffractionAngles = null, textureAngles = null;
+		double[][][] allAngles = new double[numberPositions][nrad][6];
+		for (int j = 0; j < numberPositions; j++) {
+			for (int k = 0; k < nrad; k++) {
+				double tilting_angles3 = tilting_angles[3] + getEtaDetector(datafile);
+				if (oldTilt0 != tilting_angles0 || (oldTilt1 != tilting_angles1 || (oldTilt2 != tilting_angles2 ||
+						(oldTilt3 != tilting_angles3)))) {
+					incidentAngles = getTextureAnglesR(tilting_angles0, tilting_angles1, tilting_angles2,
+							tilting_angles3, 90.0f, newSampleAngles, false);
+
+					diffractionAngles = getTextureAnglesR(tilting_angles0, tilting_angles1, tilting_angles2,
+							tilting_angles3, -90.0f + position[j][k], newSampleAngles, false);
+
+					textureAngles = getTextureAnglesR(tilting_angles0, tilting_angles1, tilting_angles2,
+							tilting_angles3, position[j][k] / 2.0f, newSampleAngles, false);
+
+				}
+				oldTilt3 = tilting_angles3;
+				for (int i = 0; i < 2; i++) {
+					allAngles[j][k][i] = incidentAngles[i];
+					allAngles[j][k][i + 2] = diffractionAngles[i];
+					allAngles[j][k][i + 4] = textureAngles[i];
+				}
+			}
+		}
+		return allAngles;
+	}
+
+	/**
    * Return an array of two floats containing the azimuthal and polar angles in pole
    * figure coordinates for the incident and  diffracted beam. To be used, for example,
    * for absorption correction.
@@ -860,16 +896,24 @@ public class Geometry extends XRDcat {
    * The dspacingbase actually should not be used, as its value should be equal to
    */
 
-  public void computeShapeAbsorptionCorrection(DiffrDataFile adatafile, Sample asample, double[] position,
-                                               boolean dspacingbase, boolean energyDispersive, double[] intensity, double toLambda) {
+  public void computeShapeAbsorptionCorrection(DiffrDataFile adatafile, Sample asample, double[][] position,
+                                               boolean dspacingbase, boolean energyDispersive, double[][] intensity, double toLambda) {
   }
 
-  public double getLayerAbsorption_new(Sample asample, RadiationType rad, int layerIndex, double[] incidentDiffractionAngles,
+  public double[] getLayerAbsorption_new(Sample asample, RadiationType rad, int layerIndex, double[][] incidentDiffractionAngles,
                                        DataFileSet adataset) {
-    return 1.0;
+	  double[] radAbs = new double[rad.getLinesCount()];
+		for (int i = 0; i < rad.getLinesCount(); i++)
+			radAbs[i] = 1.0;
+	  return radAbs;
   }
 
-  /**
+	public double getLayerAbsorption_new(Sample asample, double energyInKeV, int layerIndex, double[] incidentDiffractionAngles,
+	                                     DataFileSet adataset) {
+		return asample.getLayerAbsorption_new(energyInKeV, layerIndex, incidentDiffractionAngles, adataset);
+	}
+
+	/**
    * Return the position of the peak corrected for position, aberration, instrumental errors.
    * The basic method don't compute any correction and give back the same value.
    * @param asample  the sample for which should be computed.

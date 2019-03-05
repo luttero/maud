@@ -108,7 +108,11 @@ public class SampleShape extends XRDcat {
                                     double[] intensity, double toLambda) {
   }
 
-  public double getCorrectionForVelocity(DiffrDataFile adatafile, Instrument instrument,
+	public void computeAbsorptionPath(double[][][] incidentAndDiffraction_angles, double[] absorption, double[][] position,
+	                                  double[][] intensity, double toLambda) {
+	}
+
+	public double getCorrectionForVelocity(DiffrDataFile adatafile, Instrument instrument,
                                          double position, double toLambda) {
     return 1.0;
   }
