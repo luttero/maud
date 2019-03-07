@@ -2,6 +2,8 @@
   <component name="FileTypeManager" version="17">
     <extensionMap>
       <mapping ext="klib" type="ARCHIVE" />
+      <mapping ext="par" type="PLAIN_TEXT" />
+      <mapping ext="cif" type="PLAIN_TEXT" />
     </extensionMap>
   </component>
 </application>
