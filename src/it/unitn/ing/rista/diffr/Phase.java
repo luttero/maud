@@ -4166,6 +4166,23 @@ public static final String getSpaceGroup(int index, int sgconv) {
 		return getAbsorption(energyInKeV);
   }
 
+	public double getAbsorption(RadiationType rad, int index) {
+		if (rad.isElectron() || rad.isNeutron()) {
+			double absorption = 0.0;
+			double weight = 0.0;
+			for (int j = 0; j < getFullAtomList().size(); j++) {
+				absorption += getFullAtomList().get(j).getSiteAbsorption(rad);
+				weight += getFullAtomList().get(j).getSiteWeight();
+			}
+			if (weight == 0.0 || absorption == 0.0)
+				return 100.0;
+			return absorption / weight;
+		}
+		double lambda = rad.getRadiationWavelength(index);
+		double energyInKeV = Constants.ENERGY_LAMBDA / lambda * 0.001;
+		return getAbsorption(energyInKeV);
+	}
+
 	public double getAbsorption(double energyInKeV) {
 		double absorption = 0.0;
 		double totalNumber = 0.0;

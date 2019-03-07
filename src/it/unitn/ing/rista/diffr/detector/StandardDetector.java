@@ -47,21 +47,23 @@ public class StandardDetector extends Detector {
   public static String[] classlistc = {};
   public static String[] classlistcs = {};
 
+  public static String modelID = "Standard";
+
   public StandardDetector(XRDcat aobj, String alabel) {
     super(aobj, alabel);
     initXRD();
-    identifier = "Standard";
-    IDlabel = "Standard";
+    identifier = modelID;
+    IDlabel = modelID;
     description = "Standard detector";
   }
 
   public StandardDetector(XRDcat aobj) {
-    this(aobj, "Standard");
+    this(aobj, modelID);
   }
 
   public StandardDetector() {
-    identifier = "Standard";
-    IDlabel = "Standard";
+    identifier = modelID;
+    IDlabel = modelID;
     description = "Standard detector";
   }
 

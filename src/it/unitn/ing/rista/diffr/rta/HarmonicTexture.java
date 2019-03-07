@@ -393,7 +393,7 @@ public class HarmonicTexture extends Texture implements Function {
 //			    for (int ppp = 0; ppp < adatafile.positionsPerPattern; ppp++) {
 				    for (int j = 0; j < hkln; j++) {
 					    Reflection refl = aphase.getReflex(j);
-					    double texture_angles[] = adatafile.getTextureAngles(positions[0][j][0]);
+					    double texture_angles[] = adatafile.getTextureAngles(positions[j][0][0]);
 					    textF[j] = computeTextureFactor(refl.phi[0], refl.beta[0],
 							    texture_angles[0] * Constants.DEGTOPI,
 							    texture_angles[1] * Constants.DEGTOPI);

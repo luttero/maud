@@ -126,7 +126,7 @@ public class HIPPOWizard extends Wizard {
 	  double maxBankToleranceTheta = MaudPreferences.getDouble("hippoWizard.maxDelta2ThetaForBankGrouping", 2.0);
 	  int numberIndividualBackground = MaudPreferences.getInteger("hippoWizard.numberOfIndividualBackgroundParameters", 3);
 	  int numberBackground = MaudPreferences.getInteger("hippoWizard.numberOfGeneralBackgroundParameters", 0);
-//    analysis.setStoreSpectraOption(false);
+    analysis.setStoreSpectraOption(false);
     if (data.groupDatasetsByRotation) {
       for (int i = 0; i < data.mbank.size(); i++) {
         if (((HIPPOBank) data.mbank.elementAt(i)).enabled) {

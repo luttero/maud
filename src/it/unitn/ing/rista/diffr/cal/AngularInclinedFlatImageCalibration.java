@@ -78,11 +78,13 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 
   private int rotationInversion = 0;
 
-  public AngularInclinedFlatImageCalibration(XRDcat aobj, String alabel) {
+	public static String modelID = "Inclined Reflection Image";
+
+	public AngularInclinedFlatImageCalibration(XRDcat aobj, String alabel) {
     super(aobj, alabel);
     initXRD();
-    identifier = "Inclined Reflection Image";
-    IDlabel = "Inclined Reflection Image";
+    identifier = modelID;
+    IDlabel = modelID;
   }
 
   public AngularInclinedFlatImageCalibration(XRDcat aobj) {
@@ -90,8 +92,8 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
   }
 
   public AngularInclinedFlatImageCalibration() {
-    identifier = "Inclined Reflection Image";
-    IDlabel = "Inclined Reflection Image";
+    identifier = modelID;
+    IDlabel = modelID;
   }
 
   @Override
@@ -312,10 +314,10 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
     double zs = dataset.getZshift();
     double rx = dataset.getSample().getRadiusDimensionXD();
     double ry = dataset.getSample().getRadiusDimensionYD();
-	  double[] tiltingAngles = datafile.getTiltingAngle();
+    double[] tiltingAngles = datafile.getTiltingAngle();
     double omega = tiltingAngles[0];
 	  double chi = tiltingAngles[1];
-	  double detectorProper2Theta = detector2Theta + tiltingAngles[4];
+	  double detectorProper2Theta = detector2Theta;// + tiltingAngles[4];
 
 	  if (Math.abs(omega) > 1.0E-9)
       zs /= Math.cos((90.0 - omega) * Constants.DEGTOPI);

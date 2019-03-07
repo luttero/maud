@@ -75,20 +75,22 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
 	public static double minimumAsymmetryValue = MaudPreferences.getDouble(
 			"instrBroadening.minimumAsymmetryValue", 1);
 
+	public static String modelID = "Caglioti PV";
+
   public InstrumentBroadeningPVCaglioti(XRDcat afile, String alabel) {
     super(afile, alabel);
     initXRD();
-    identifier = "Caglioti PV";
-    IDlabel = "Caglioti PV";
+    identifier = modelID;
+    IDlabel = modelID;
   }
 
   public InstrumentBroadeningPVCaglioti(XRDcat afile) {
-    this(afile, "Caglioti PV");
+    this(afile, modelID);
   }
 
   public InstrumentBroadeningPVCaglioti() {
-    identifier = "Caglioti PV";
-    IDlabel = "Caglioti PV";
+    identifier = modelID;
+    IDlabel = modelID;
   }
 
   public void initConstant() {

@@ -184,7 +184,7 @@ public class IntensityExtLeBailWt extends IntensityExtLeBail {
               lebailfactor = 0.0001;
             for (int ij = 0; ij < ndelta; ij++) {
               double oldfactor = datafile.getExpTextureFactor(tpeaklist.elementAt(ij).getPhase(),
-		              tpeaklist.elementAt(ij))[0];
+		              tpeaklist.elementAt(ij))[0][0];
               if (Double.isNaN(oldfactor))
                 oldfactor = 1.0;
               double newlebailfactor = lebailfactor * oldfactor;
@@ -202,7 +202,7 @@ public class IntensityExtLeBailWt extends IntensityExtLeBail {
             }
           } else {
             lebailfactor = datafile.getExpTextureFactor(fullpeaklist.elementAt(superOrder[n]).getPhase(),
-		            fullpeaklist.elementAt(superOrder[n]))[0];
+		            fullpeaklist.elementAt(superOrder[n]))[0][0];
             if (Double.isNaN(lebailfactor))
               lebailfactor = 1.0;
             numberpeaktouse = 1;

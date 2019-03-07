@@ -1572,7 +1572,7 @@
   
 
   <target name="build_ImageJ" depends="compile_ImageJ" description="Build ImageJ.jar.">
-     <copy file="ImageJ/IJ_Props.txt" todir="${build_ant}" />
+     <copy file="${src}/ij/IJ_Props.txt" todir="${build_ant}" />
     <copy file="ImageJ/images/microscope.gif" tofile="${build_ant}/microscope.gif" />
     <copy file="ImageJ/images/about.jpg" tofile="${build_ant}/about.jpg" />
     <copy file="${buildnumber}/ImageJ_build.number" todir="${build_ant}" />
@@ -1593,6 +1593,7 @@
         <copy file="${build}/ij.jar" tofile="${installfulldirLinux64NJ}/lib/ij.jar"/>
         <copy file="${build}/ij.jar" tofile="${installfulldirWindowsNJ}/lib/ij.jar"/>
         <copy file="${build}/ij.jar" tofile="${installfulldirWin64NJ}/lib/ij.jar"/>
+        <copy file="${build}/ij.jar" todir="libs/current"/>
         <!--signjar jar="${mirrorreddir}/lib/ij.jar" alias="${myself}" storepass="${keypasswd}" keystore="${keystore}"/-->
         <!--		<exec dir="." executable="cmd" os="Windows NT"> -->
         <!--  		<arg line="/c test.bat"/> -->

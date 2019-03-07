@@ -160,11 +160,14 @@ public class Strain extends XRDcat {
 						int numberDataPoints = 0;
 						for (int i = 0; i < numberDatasets; i++) {
 							DataFileSet dataset = asample.getActiveDataSet(i);
+							int radCount = dataset.getInstrument().getRadiationType().getLinesCount();
 							for (int k = 0; k < dataset.activedatafilesnumber(); k++) {
 								DiffrDataFile datafile = dataset.getActiveDataFile(k);
 								for (int ppp = 0; ppp < datafile.positionsPerPattern; ppp++) {
-									double pf = datafile.getStrains(aphase, j)[ppp];
-									if (!Double.isNaN(pf)) numberDataPoints++;
+									for (int l = 0; l < radCount; l++) {
+										double pf = datafile.getStrains(aphase, j)[ppp][l];
+										if (!Double.isNaN(pf)) numberDataPoints++;
+									}
 								}
 							}
 						}
@@ -175,22 +178,25 @@ public class Strain extends XRDcat {
 						numberDataPoints = 0;
 						for (int i = 0; i < numberDatasets; i++) {
 							DataFileSet dataset = asample.getActiveDataSet(i);
+							int radCount = dataset.getInstrument().getRadiationType().getLinesCount();
 							for (int k = 0; k < dataset.activedatafilesnumber(); k++) {
 								DiffrDataFile datafile = dataset.getActiveDataFile(k);
 								for (int ppp = 0; ppp < datafile.positionsPerPattern; ppp++) {
-									double pf = datafile.getStrains(aphase, j)[ppp];
-									double position = datafile.getPositions(aphase)[0][j][ppp];
-									if (!Double.isNaN(pf)) {
-										numberDataPoints++;
-										double[] angles = datafile.getTextureAngles(position);
-										double[] mAngles = datafile.getTiltingAngle();
-										int bankNumber = datafile.getBankNumber() + 1;
-										double chi = angles[0];
-										double phi = angles[1];
-										PFwriter.write(chi + " " + phi + " " + pf + " " + wgt
-												+ " " + mAngles[0] + " " + mAngles[1] + " " + mAngles[2] + " " + mAngles[3]
-												+ " " + bankNumber);
-										PFwriter.write(Constants.lineSeparator);
+									for (int l = 0; l < radCount; l++) {
+										double pf = datafile.getStrains(aphase, j)[ppp][l];
+										double position = datafile.getPositions(aphase)[j][ppp][l];
+										if (!Double.isNaN(pf)) {
+											numberDataPoints++;
+											double[] angles = datafile.getTextureAngles(position);
+											double[] mAngles = datafile.getTiltingAngle();
+											int bankNumber = datafile.getBankNumber() + 1;
+											double chi = angles[0];
+											double phi = angles[1];
+											PFwriter.write(chi + " " + phi + " " + pf + " " + wgt
+													+ " " + mAngles[0] + " " + mAngles[1] + " " + mAngles[2] + " " + mAngles[3]
+													+ " " + bankNumber);
+											PFwriter.write(Constants.lineSeparator);
+										}
 									}
 								}
 							}

@@ -532,8 +532,8 @@ public class Reflection {
 	    DataFileSet dataset = asample.getActiveDataSet(i);
 	    for (int j = 0; j < dataset.activedatafilesnumber(); j++) {
 		    DiffrDataFile dataFile = dataset.getActiveDataFile(j);
-		    double position = dataFile.getPositions(aphase)[0][index][0];
-		    if (dataFile.isInsideRange(position) && !Double.isNaN(dataFile.getExperimentalTextureFactors(aphase, index)[0]))
+		    double position = dataFile.getPositions(aphase)[index][0][0];
+		    if (dataFile.isInsideRange(position) && !Double.isNaN(dataFile.getExperimentalTextureFactors(aphase, index)[0][0]))
           numberOfGoodPoints++;
 	    }
     }
@@ -546,9 +546,9 @@ public class Reflection {
 		  DataFileSet dataset = asample.getActiveDataSet(i);
 		  for (int j = 0; j < dataset.activedatafilesnumber(); j++) {
 			  DiffrDataFile dataFile = dataset.getActiveDataFile(j);
-			  double position = dataFile.getPositions(aphase)[0][index][0];
+			  double position = dataFile.getPositions(aphase)[index][0][0];
 			  if (dataFile.isInsideRange(position)) {
-				  double expTextureFactor = dataFile.getExperimentalTextureFactors(aphase, index)[0];
+				  double expTextureFactor = dataFile.getExperimentalTextureFactors(aphase, index)[0][0];
 					if (!Double.isNaN(expTextureFactor)) {
 				  double[] texture_angles = dataFile.getTextureAngles(position);
 				  expTFAndAngles[0][numberOfGoodPoints] = texture_angles[0];

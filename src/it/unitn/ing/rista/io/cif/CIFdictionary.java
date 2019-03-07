@@ -57,5 +57,7 @@ public class CIFdictionary {
 	public static final String texture_factor_calc = "_rita_texture_factor_calc";
 	public static final String texture_points_number = "_rita_texture_points_number";
 	public static final String texture_factor_point = "_rita_texture_point_index";
+	public static final String texture_radiations_number = "_rita_texture_radiations_number";
+	public static final String texture_radiation_point = "_rita_texture_radiation_index";
 
 }

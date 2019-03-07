@@ -147,37 +147,17 @@ public class FourierTransformPeak extends PseudoVoigtPeak {
 	  double[] radiationWeight = new double[totalLines];
 
 	  double[][][] positions = diffrDataFile.getPositions(aphase);
-	  double[][] absDetectorCorrection = new double[nrad][diffrDataFile.positionsPerPattern];
+	  double[][] absDetectorCorrection = new double[diffrDataFile.positionsPerPattern][nrad];
 	  int ipv = 0;
 	  for (int i = 0; i < nrad; i++) {
 		  double energy = Constants.ENERGY_LAMBDA / getRadiationWavelength(i) * 0.001;
 		  for (int j = 0; j < diffrDataFile.positionsPerPattern; j++) {
-			  finalposition[ipv++] = positions[i][getOrderPosition()][j];
-			  int pointIndex = diffrDataFile.getOldNearestPoint(positions[i][getOrderPosition()][j]);
-			  absDetectorCorrection[i][j] = ainstrument.getDetector().getAbsorptionCorrection(diffrDataFile, pointIndex, energy);
+			  finalposition[ipv++] = positions[getOrderPosition()][j][i];
+			  int pointIndex = diffrDataFile.getOldNearestPoint(positions[getOrderPosition()][j][i]);
+			  absDetectorCorrection[j][i] = ainstrument.getDetector().getAbsorptionCorrection(diffrDataFile, pointIndex, energy);
 		  }
 	  }
-	  double intensitySingle = getScaleFactor();
-	  double[] textureFactor;
 	  double Fhkl;
-
-	  switch (computeTexture) {
-		  case Constants.COMPUTED:
-			  textureFactor = diffrDataFile.getTextureFactors(aphase)[1][getOrderPosition()];
-			  break;
-		  case Constants.EXPERIMENTAL:
-			  textureFactor = diffrDataFile.getTextureFactors(aphase)[0][getOrderPosition()];
-			  break;
-		  case Constants.UNITARY:
-		  default:
-			  textureFactor = new double[diffrDataFile.positionsPerPattern];
-			  for (int i = 0; i < diffrDataFile.positionsPerPattern; i++)
-				  textureFactor[i] = 1.0;
-	  }
-	  for (int i = 0; i < diffrDataFile.positionsPerPattern; i++)
-		  if (Double.isNaN(textureFactor[i]))
-			  textureFactor[i] = 1.0;
-
 //	  System.out.println(computeFhkl + " " + refl.getStructureFactor(datasetIndex));
 	  switch (computeFhkl) {
 		  case Constants.COMPUTED:
@@ -193,7 +173,28 @@ public class FourierTransformPeak extends PseudoVoigtPeak {
 			  Fhkl = 1.0;
 	  }
 
-	  double[] shapeAbs = diffrDataFile.getShapeAbsFactors(aphase, getOrderPosition());
+	  double intensitySingle = getScaleFactor();
+	  double[][] textureFactor;
+	  switch (computeTexture) {
+		  case Constants.COMPUTED:
+			  textureFactor = diffrDataFile.getTextureFactors(aphase)[1][getOrderPosition()];
+			  break;
+		  case Constants.EXPERIMENTAL:
+			  textureFactor = diffrDataFile.getTextureFactors(aphase)[0][getOrderPosition()];
+			  break;
+		  case Constants.UNITARY:
+		  default:
+			  textureFactor = new double[diffrDataFile.positionsPerPattern][nrad];
+			  for (int i = 0; i < diffrDataFile.positionsPerPattern; i++)
+				  for (int j = 0; j < nrad; j++)
+				  	   textureFactor[i][j] = 1.0;
+	  }
+	  for (int i = 0; i < diffrDataFile.positionsPerPattern; i++)
+		  for (int j = 0; j < nrad; j++)
+			  if (Double.isNaN(textureFactor[i][j]))
+				  textureFactor[i][j] = 1.0;
+
+	  double[][] shapeAbs = diffrDataFile.getShapeAbsFactors(aphase, getOrderPosition());
 	  double asyConst1 = aphase.getActivePlanarDefects().getPlanarDefectAsymmetryConstant1(this.getReflex());
 	  double asyConst2 = aphase.getActivePlanarDefects().getPlanarDefectAsymmetryConstant2(this.getReflex());
 // not active, see reciprocal model			double planar_asymmetry = aphase.getActivePlanarDefects().getPlanarDefectAsymmetry(getReflex());
@@ -240,14 +241,14 @@ public class FourierTransformPeak extends PseudoVoigtPeak {
         / (wavelength[0] * Ldivision);
 //    System.out.println(step + " deltaL " + deltaL + ", Ldivision " + Ldivision);
 
-	  double[] lorentzPolarization = diffrDataFile.getLorentzPolarization(aphase, getOrderPosition());
+	  double[][] lorentzPolarization = diffrDataFile.getLorentzPolarization(aphase, getOrderPosition());
 	  ipv = 0;
 	  for (int i = 0; i < nrad; i++) {
 		  for (int j = 0; j < diffrDataFile.positionsPerPattern; j++) {
 			  Fhklist[j] = Fhkl;
       if (radiationWeight[j] > 0.0) {
-        intensity[ipv] = (intensitySingle * textureFactor[j] * shapeAbs[j] * Fhkl *
-		        radiationWeight[i] * aphase.getScaleFactor() * lorentzPolarization[j] * absDetectorCorrection[i][j]);
+        intensity[ipv] = (intensitySingle * textureFactor[j][i] * shapeAbs[j][i] * Fhkl *
+		        radiationWeight[i] * aphase.getScaleFactor() * lorentzPolarization[j][i] * absDetectorCorrection[j][i]);
 
 //        System.out.println(ipv + " 2theta, min " + (finalposition[j] - range) + ", max " + (finalposition[j] + range));
         minindex[ipv] = diffrDataFile.getOldNearestPoint(finalposition[j] - range);
@@ -339,7 +340,7 @@ public class FourierTransformPeak extends PseudoVoigtPeak {
 	          out.print(" ");
 	          out.print((float) actualPosition[j]);
 	          out.print(" ");
-	          out.print((float) diffrDataFile.getStrains(aphase, getOrderPosition())[j]);
+	          out.print((float) diffrDataFile.getStrains(aphase, getOrderPosition())[j][i]);
 	          out.print(" ");
 	          out.print((float) refl.getPlanarDefectDisplacement(1));
 	          out.print(" ");
@@ -353,11 +354,11 @@ public class FourierTransformPeak extends PseudoVoigtPeak {
 	          out.print(" ");
 	          out.print((float) intensitySingle);
 	          out.print(" ");
-	          out.print((float) lorentzPolarization[j]);
+	          out.print((float) lorentzPolarization[j][i]);
 	          out.print(" ");
-	          out.print((float) textureFactor[j]);
+	          out.print((float) textureFactor[j][i]);
 	          out.print(" ");
-	          out.print((float) shapeAbs[j]);
+	          out.print((float) shapeAbs[j][i]);
 	          out.print(" ");
 	          out.print((float) radiationWeight[i]);
 	          out.print(" ");
@@ -385,18 +386,18 @@ public class FourierTransformPeak extends PseudoVoigtPeak {
     }
 	  }
 
-	  double[][][] hwhm_eta = diffrDataFile.getBroadFactors(getPhase());
+	  double[][][][] hwhm_eta = diffrDataFile.getBroadFactors(getPhase());
 
 //	  for (int j = 0; j < diffrDataFile.positionsPerPattern; j++) {
-	  double[] thwhm = hwhm_eta[0][getOrderPosition()];
-	  double[] teta = hwhm_eta[1][getOrderPosition()];
+	  double[][] thwhm = hwhm_eta[0][getOrderPosition()];
+	  double[][] teta = hwhm_eta[1][getOrderPosition()];
 //	  }
 
 	  double[] hwet = new double[2];
 
 
-	  hwet[0] = thwhm[0];
-	  hwet[1] = teta[0];
+	  hwet[0] = thwhm[0][0];  // todo, the radiation should not only be the first
+	  hwet[1] = teta[0][0];
 	  prepareInstrument(diffrDataFile, finalposition, wave, hwet);
 //    diffrDataFile.computeLorentzPolarization(ainstrument, asample, actualPosition, intensity);
     aphase.getActiveTDSModel().computeTDS(diffrDataFile, expfit, this, intensity, Fhklist[0], actualPosition, minmaxindex);

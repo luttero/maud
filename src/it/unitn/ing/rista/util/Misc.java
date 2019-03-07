@@ -26,7 +26,6 @@ import it.unitn.ing.rista.io.StringNumber;
 
 import java.io.*;
 import java.net.URL;
-import java.net.MalformedURLException;
 import java.util.*;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
@@ -467,8 +466,8 @@ public class Misc {
 		    in = Misc.getResourceReader(Constants.maudJar, "files/marker.txt");
 	    else {
 	      // Manual location
-	      System.out.println("File not loaded, select it manually: " + file.getName());
-	      String filename = Utility.openFileDialogForLoad("File not loaded, select it manually", "", file.getName());
+	      System.out.println("File not loaded, select it manually: " + file.getAbsolutePath());
+	      String filename = Utility.openFileDialogForLoad("File not loaded, select it manually", "", file.getAbsolutePath());
 			if (filename != null) {
 				try {
 					in = new BufferedReader(new InputStreamReader(new FileInputStream(

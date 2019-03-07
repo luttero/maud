@@ -323,21 +323,23 @@ public class DiscreteODFTexture extends Texture {
 	      double structureFactor = adataset.getStructureFactors(aphase)[1][j];
 	      for (int i1 = 0; i1 < datafilenumber; i1++) {
           DiffrDataFile adatafile = adataset.getActiveDataFile(i1);
-		      double[] position = adatafile.getPositions(aphase)[0][j];
+		      double[][] position = adatafile.getPositions(aphase)[j];
 		      for (int k = 0; k < adatafile.positionsPerPattern; k++) {
-	        if (adatafile.xInsideRange(position[k])) {
-            double correction = /*adatafile.computeAbsorptionAndPhaseQuantity(ainstrument, asample, getPhase(), position[j]) */
-            adatafile.computeAngularIntensityCorrection(asample, ainstrument, position[k]) * adatafile.getShapeAbsFactors(aphase, j)[k] *
-		            adatafile.getLorentzPolarization(aphase, j)[k];
-            if (!Double.isNaN(correction)) {
-              intensity += structureFactor * correction; //Fhkl[j] *
-              number++;
-              if (!doneOnce) {
-                doneOnce = true;
-                datasetCounts[j]++;
-              }
-            }
-          }
+			      for (int l = 0; l < position[0].length; l++) {
+				      if (adatafile.xInsideRange(position[k][l])) {
+					      double correction = /*adatafile.computeAbsorptionAndPhaseQuantity(ainstrument, asample, getPhase(), position[j]) */
+							      adatafile.computeAngularIntensityCorrection(asample, ainstrument, position[k][l]) * adatafile.getShapeAbsFactors(aphase, j)[k][l] *
+									      adatafile.getLorentzPolarization(aphase, j)[k][l];
+					      if (!Double.isNaN(correction)) {
+						      intensity += structureFactor * correction; //Fhkl[j] *
+						      number++;
+						      if (!doneOnce) {
+							      doneOnce = true;
+							      datasetCounts[j]++;
+						      }
+					      }
+				      }
+			      }
 		      }
         }
         if (number > 0)
@@ -2566,9 +2568,9 @@ public class DiscreteODFTexture extends Texture {
 							  int datafilenumber = asample.getActiveDataSet(i).activedatafilesnumber();
 							  for (int ij1 = 0; ij1 < datafilenumber; ij1++) {
 								  DiffrDataFile adatafile = asample.getActiveDataSet(i).getActiveDataFile(ij1);
-								  double[][] positions = adatafile.getPositions(aphase)[0];
+								  double[][][] positions = adatafile.getPositions(aphase);
 //								  for (int ppp = 0; ppp < adatafile.positionsPerPattern; ppp++) {
-									  double texture_angles[] = adatafile.getTextureAngles(positions[ij][0]);
+									  double texture_angles[] = adatafile.getTextureAngles(positions[ij][0][0]);
 									  texAngle[0][idatafile] = (texture_angles[0] * Constants.DEGTOPI);
 									  texAngle[1][idatafile] = (texture_angles[1] * Constants.DEGTOPI);
 									  idatafile++;
@@ -2630,9 +2632,9 @@ public class DiscreteODFTexture extends Texture {
 				  int datafilenumber = asample.getActiveDataSet(i).activedatafilesnumber();
 				  for (int ij1 = 0; ij1 < datafilenumber; ij1++) {
 					  DiffrDataFile adatafile = asample.getActiveDataSet(i).getActiveDataFile(ij1);
-					  double[][] positions = adatafile.getPositions(aphase)[0];
+					  double[][][] positions = adatafile.getPositions(aphase);
 //					  for (int ppp = 0; ppp < adatafile.positionsPerPattern; ppp++) {
-						  double texture_angles[] = adatafile.getTextureAngles(positions[ij][0]);
+						  double texture_angles[] = adatafile.getTextureAngles(positions[ij][0][0]);
 						  texAngle[0][idatafile] = (texture_angles[0] * Constants.DEGTOPI);
 						  texAngle[1][idatafile] = (texture_angles[1] * Constants.DEGTOPI);
 						  idatafile++;
