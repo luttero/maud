@@ -519,6 +519,7 @@ public class HybridMonteCarloRefinement extends OptimizationAlgorithm {
 //      computation.hideIterationPanel();
     }
 
+	  nprm = fittingFunction.getNumberOfFreeParameters();
     dataNumber = fittingFunction.getNumberOfData();
     fittingFunction.computeFirstFit();
     fittingFunction.getFit();
@@ -532,6 +533,7 @@ public class HybridMonteCarloRefinement extends OptimizationAlgorithm {
       fit[i] = fittingFunction.getFit(i);
     }
 
+	  initializeMatrices(nprm, dataNumber);
 
 /*    dta = new double[dataNumber];
     wgt = new double[dataNumber];
@@ -548,7 +550,6 @@ public class HybridMonteCarloRefinement extends OptimizationAlgorithm {
       fit[i] = fittingFunction.getFit(i);
     } */
     defWSS = fittingFunction.getWSS();
-    nprm = fittingFunction.getNumberOfFreeParameters();
     defParams = new double[nprm];
     lbound = new double[nprm];
     ubound = new double[nprm];
@@ -616,13 +617,17 @@ public class HybridMonteCarloRefinement extends OptimizationAlgorithm {
     if (bestWSS < defWSS) {
       fittingFunction.setFreeParameters(bestParams);
       fittingFunction.saveparameters();
-      double wss = fittingFunction.getWSS();
+      fittingFunction.computeFit();
+	    fittingFunction.getFit();
+	    double wss = fittingFunction.getWSS();
       if (fittingFunction instanceof FilePar)
         ((FilePar) fittingFunction).updatePlot();
       System.out.println("Final chi :" + wss);
     } else {
       fittingFunction.setFreeParameters(defParams);
       fittingFunction.saveparameters();
+      fittingFunction.computeFit();
+	    fittingFunction.getFit();
       double wss = fittingFunction.getWSS();
       if (fittingFunction instanceof FilePar)
         ((FilePar) fittingFunction).updatePlot();
@@ -657,322 +662,322 @@ public class HybridMonteCarloRefinement extends OptimizationAlgorithm {
     return wss;
   }
 
-  // Least squares
+	// Least squares
 
-  public double solveLeastSquares() {
+	double[][] derivf;
+	double[] deriv, b, grad, c, parmn, parm, minSignificantValue;
+
+	public void initializeMatrices(int nprm1, int dataNumber1) {
+		parm = new double[nprm1];
+		minSignificantValue = new double[nprm1];
+
+		choleskyFlag = new int[nprm1];
+		parmn = new double[nprm1];
+
+		int mdi = (nprm1 + 1) * nprm1 / 2;
+
+		deriv = new double[nprm1];
+		b = new double[nprm1];
+		grad = new double[nprm1];
+		c = new double[mdi];
+
+		am = new double[mdi];
+		g = new double[nprm1];
+
+		derivf = new double[dataNumber1][nprm1];
+
+
+	}
+
+	public double solveLeastSquares() {
 
 //    fittingFunction = funtionTominimize;
 
-    int dataNumber = fittingFunction.getNumberOfData();
+		int dataNumber = fittingFunction.getNumberOfData();
 
-    fittingFunction.setDerivate(false);
+		fittingFunction.setDerivate(false);
 
-    fittingFunction.computeFirstFit();
+		fittingFunction.computeFirstFit();
+		fittingFunction.getRefinementIndexes();
 
-      fittingFunction.getFit();
-      for (int i = 0; i < dataNumber; i++) {
-        fit[i] = fittingFunction.getFit(i);
-      }
+		fittingFunction.getFit();
+		for (int i = 0; i < dataNumber; i++) {
+			fit[i] = fittingFunction.getFit(i);
+		}
 
-    int nprm = fittingFunction.getNumberOfFreeParameters();
-    double parm[] = new double[nprm];
-    double[] minSignificantValue = new double[nprm];
+		int nprm = fittingFunction.getNumberOfFreeParameters();
 
-    choleskyFlag = new int[nprm];
-    for (int i = 0; i < nprm; i++) {
-      parm[i] = fittingFunction.getFreeParameter(i);
-      minSignificantValue[i] = fittingFunction.getParameterMinSignificantValue(i);
-    }
-    double parmn[] = new double[nprm];
+		for (int i = 0; i < nprm; i++) {
+			parm[i] = fittingFunction.getFreeParameter(i);
+			minSignificantValue[i] = fittingFunction.getParameterMinSignificantValue(i);
+			choleskyFlag[i] = 0;
+			parmn[i] = parm[i];
+			b[i] = parm[i];
+		}
 
-    int check = 0; // if check != 0 the new wss can be sligthly greater than the old one
+		int check = 0; // if check != 0 the new wss can be sligthly greater than the old one
 
-    fittingFunction.setDerivate(true);
-    int mdi = (nprm + 1) * nprm / 2;
-
-/* Memory allocation */
-
-    final double deriv[] = new double[nprm];
-    final double b[] = new double[nprm];
-    final double grad[] = new double[nprm];
-    final double c[] = new double[mdi];
-
-    am = new double[mdi];
-    g = new double[nprm];
-
-    double[][] derivf = new double[dataNumber][nprm];
-
-/*   end memory allocation  */
-
-    for (int i = 0; i < nprm; i++)
-      b[i] = parm[i];
+		int mdi = (nprm + 1) * nprm / 2;
 
 // start least squares fitting
 
-    int conver = 0;
-    double lambda = 0.01;
-    double lmin = 1.0e+20;
-    double phi = 1.0;
-    niter = -1;
+		int conver = 0;
+		double lambda = 0.01;
+		double lmin = 1.0e+20;
+		double phi = 1.0;
+		niter = -1;
 
 
 //	  Assert.assert(derivf);
 
 
-    double wss = 0.0;
-      wss = fittingFunction.getWSS();
-    double oldwss = wss;
+		double wss = 0.0;
+//	  fittingFunction.computeFit();
+		fittingFunction.getRefinementIndexes();
+		wss = fittingFunction.getWSS();
+		double oldwss = wss;
 
-/*          next iteration      */
+		/*          next iteration      */
 
-    boolean flagfgl = (conver == 0);
-    while ((niter + 1 < getIterationsLeastSquares()) && flagfgl) {
-      ++niter;
-      if ((niter > 4) && (lambda < lmin))
-        lmin = lambda;
+		boolean flagfgl = (conver == 0);
+		while ((niter + 1 < getIterationsLeastSquares()) && flagfgl) {
+			++niter;
+			if ((niter > 4) && (lambda < lmin))
+				lmin = lambda;
 //           decrease lambda
-      lambda *= 0.31622777;
+			lambda *= 0.31622777;
 
-      computeDerivativeMatrix(dataNumber, nprm, parm, derivf, fit, minSignificantValue);
+			computeDerivativeMatrix(dataNumber, nprm, parm, derivf, fit, minSignificantValue);
 
-      for (int i = 0; i < mdi; i++)
-        am[i] = 0.0;
-      for (int i = 0; i < nprm; i++)
-        grad[i] = 0.0;
+			for (int i = 0; i < mdi; i++)
+				am[i] = 0.0;
+			for (int i = 0; i < nprm; i++)
+				grad[i] = 0.0;
 
-        for (int i = 0; i < dataNumber; i++) {
-          double fmm = (fit[i] - dta[i]) * wgt[i];
-          for (int sp = 0; sp < nprm; sp++) {
-            grad[sp] += derivf[i][sp] * fmm;
-            int l = (sp + 1) * sp / 2;
-            for (int kcs = 0; kcs <= sp; kcs++)
-              am[l + kcs] += derivf[i][sp] * derivf[i][kcs] * wgt[i];
-          }
-        }
+			for (int i = 0; i < dataNumber; i++) {
+				double fmm = (fit[i] - dta[i]) * wgt[i];
+				for (int sp = 0; sp < nprm; sp++) {
+					grad[sp] += derivf[i][sp] * fmm;
+					int l = (sp + 1) * sp / 2;
+					for (int kcs = 0; kcs <= sp; kcs++)
+						am[l + kcs] += derivf[i][sp] * derivf[i][kcs] * wgt[i];
+				}
+			}
 //           save "a" matrix and current parameter values "b"
-      for (int i = 0; i < mdi; i++)
-        c[i] = am[i];
-      for (int i = 0; i < nprm; i++)
-        deriv[i] = b[i];
-      do {
-        flg = 1;
-        while (flg != 0 && (conver == 0)) {
-          double da = phi * lambda;
-          for (int j = 0; j < nprm; j++) {
-            g[j] = -grad[j];
-            int l1 = (j + 1) * (j + 2) / 2 - 1;
-            am[l1] = c[l1] * (1.0 + lambda) + da;
-            for (int i = 0; i < j; i++)
-              am[l1 - i - 1] = c[l1 - i - 1];
-          }
-          flg = chodec(nprm); //    choleski decomposition
-          if (flg != 0) {
-            if (lambda < prcsn)
-              lambda = prcsn;
-            lambda *= 10.0;
-            if (lambda > 100000.0 * lmin)
-              conver = 1;
-          }
-        }
-        if (conver == 0) {
-          choback(nprm);
+			for (int i = 0; i < mdi; i++)
+				c[i] = am[i];
+			for (int i = 0; i < nprm; i++)
+				deriv[i] = b[i];
+			do {
+				flg = 1;
+				while (flg != 0 && (conver == 0)) {
+					double da = phi * lambda;
+					for (int j = 0; j < nprm; j++) {
+						g[j] = -grad[j];
+						int l1 = (j + 1) * (j + 2) / 2 - 1;
+						am[l1] = c[l1] * (1.0 + lambda) + da;
+						for (int i = 0; i < j; i++)
+							am[l1 - i - 1] = c[l1 - i - 1];
+					}
+					flg = chodec(nprm); //    choleski decomposition
+					if (flg != 0) {
+						if (lambda < prcsn)
+							lambda = prcsn;
+						lambda *= 10.0;
+						if (lambda > 100000.0 * lmin)
+							conver = 1;
+					}
+				}
+				if (conver == 0) {
+					choback(nprm);
 //         find new parameters b=d+g
 //        (no counts the  of zero elements in g)
-          n0 = 0;
-          for (int i = 0; i < nprm; i++) {
-            b[i] = deriv[i] + g[i];
-            if (Math.abs(g[i]) <= Math.abs(prcsn * deriv[i]))
-              ++n0;
-            parmn[i] = (double) b[i];
-          }
+					n0 = 0;
+					for (int i = 0; i < nprm; i++) {
+						b[i] = deriv[i] + g[i];
+						if (Math.abs(g[i]) <= Math.abs(prcsn * deriv[i]))
+							++n0;
+						parmn[i] = b[i];
+					}
 //          printout(parmn, nprm);
-        }
-        if (n0 == nprm)
-          conver = 1;
-        else {
-          boolean bounds = false;
-          for (int j = 0; j < nprm; j++)
-            bounds = (bounds || fittingFunction.checkBound(j, parmn[j]));
-          if (bounds) {
-            wss = oldwss * 1.01;
+				}
+				if (n0 == nprm)
+					conver = 1;
+				else {
+					boolean bounds = false;
+					for (int j = 0; j < nprm; j++)
+						bounds = (bounds || fittingFunction.checkBound(j, parmn[j]));
+					if (bounds) {
+						wss = oldwss * 1.01;
 //        		printf("At least one parameter out of bounds, recomputing...");
-          } else {
-            if (fittingFunction.singleFunctionComputing())
-              fittingFunction.setDerivate(false);
-            fittingFunction.setFreeParameters(parmn);
-              for (int i = 0; i < dataNumber; i++)
-                fit[i] = fittingFunction.getFit(i);
-              wss = fittingFunction.getWSS();
-            if (fittingFunction.singleFunctionComputing())
-              fittingFunction.setDerivate(true);
-          }
-          if (Double.isNaN(wss) || wss == 0.0) {
-            wss = oldwss * 1.01;
+					} else {
+						fittingFunction.setFreeParameters(parmn);
+						for (int i = 0; i < dataNumber; i++)
+							fit[i] = fittingFunction.getFit(i);
+						wss = fittingFunction.getWSS();
+					}
+					if (Double.isNaN(wss) || wss == 0.0) {
+						wss = oldwss * 1.01;
 //            printf("Wrong parameters, recomputing...");
-          }
-          if (wss < oldwss && wss > 0.0) {
-            oldwss = wss;
-          } else {
-            if (check != 0) {
-              oldwss = wss;
-              wss = oldwss * 1.01;
-            }
-            if (lambda < prcsn)
-              lambda = prcsn;
-            lambda *= 10.0;
-            if (lambda > 100000.0 * lmin) {
-              conver = 1;
-            }
-          }
-        }
-      } while ((wss > oldwss) && (conver == 0));
-      if (wss > oldwss) {
+					}
+					if (wss < oldwss && wss > 0.0) {
+						oldwss = wss;
+					} else {
+						if (check != 0) {
+							oldwss = wss;
+							wss = oldwss * 1.01;
+						}
+						if (lambda < prcsn)
+							lambda = prcsn;
+						lambda *= 10.0;
+						if (lambda > 100000.0 * lmin) {
+							conver = 1;
+						}
+					}
+				}
+			} while ((wss > oldwss) && (conver == 0));
+			if (wss > oldwss) {
 //        printf("No solution found, setting old values...");
-        fittingFunction.setFreeParameters(parm);
-      }
+				fittingFunction.setFreeParameters(parm);
+			}
 
-      fittingFunction.setDerivate(false);
-
-      // todo : this is only a hack to speed up, but not safe, uncomment it for safety
-      if (!fittingFunction.singleFunctionComputing()) {
-          fittingFunction.computeFirstFit();
-          double[] newFit = fittingFunction.getFit();
-          for (int i = 0; i < dataNumber; i++)
-            fit[i] = fittingFunction.getFit(i);
-          wss = fittingFunction.getWSS();
-      }
-      oldwss = wss;
-      fittingFunction.setDerivate(true);
-      flagfgl = (conver == 0);
-      if (conver == 0) {
-        for (int i = 0; i < nprm; i++) {
-          parm[i] = fittingFunction.getFreeParameter(i);
-          parmn[i] = parm[i];
-          b[i] = parm[i];
-        }
-      }
-    }       //   next iteration
-    fittingFunction.setDerivate(false);
-    if (conver == 0) {
-      if (niter + 1 >= getIterationsLeastSquares()) {
-        ++niter;
+//      fittingFunction.getFit();
+			for (int i = 0; i < dataNumber; i++)
+				fit[i] = fittingFunction.getFit(i);
+			wss = fittingFunction.getWSS();
+			oldwss = wss;
+			flagfgl = (conver == 0);
+			if (conver == 0) {
+				for (int i = 0; i < nprm; i++) {
+					parm[i] = fittingFunction.getFreeParameter(i);
+					parmn[i] = parm[i];
+					b[i] = parm[i];
+				}
+			}
+		}       //   next iteration
+		if (conver == 0) {
+			if (niter + 1 >= getIterationsLeastSquares()) {
+				++niter;
 //        printf(niter, ", iterations - pause ");
-      } else {
+			} else {
 //        printf("operator interrupt");
-        brkflg = 0;
-      }
-    } else {
+				brkflg = 0;
+			}
+		} else {
 //             convergen\ufffdce reached
-      double ri = lambda / lmin;
-      n0 = 0;
-    }
-    return wss;
-  }
+			double ri = lambda / lmin;
+			n0 = 0;
+		}
+		return wss;
+	}
 
-  public void computeDerivativeMatrix(int dataNumber, int nprm, double parm[],
-                                      double derivf[][], double fit[],
-                                      double[] minSignificantValue) {
-    //        compute matrix of derivative
+	public void computeDerivativeMatrix(int dataNumber, int nprm, double parm[],
+	                                    double derivf[][], double fit[],
+	                                    double[] minSignificantValue) {
+		//        compute matrix of derivative
 
-    double dparp;
-    //
+		double dparp;
+		//
 
-    double firstfit[] = new double[dataNumber];
-    double secondfit[] = null;
-    if (doubleder)
-      secondfit = new double[dataNumber];
-    for (int sp = 0; sp < nprm; sp++) {
-      if (parm[sp] == 0 && minSignificantValue[sp] == 0)
-        dparp = (double) derstep;
-      else if (Math.abs(parm[sp]) < Math.abs(minSignificantValue[sp]))
-        dparp = (double) (minSignificantValue[sp] * derstep);
-      else
-        dparp = parm[sp] * (double) derstep;
-      double dparp2 = dparp * 2.0f;
-      double oldpar = parm[sp];
-      double parm1 = parm[sp] + dparp;
-      fittingFunction.setFreeParameter(sp, parm1);
-        for (int i = 0; i < dataNumber; i++)
-          firstfit[i] = fittingFunction.getFit(i);
-      if (doubleder) {
-        parm1 = oldpar - dparp;
-        fittingFunction.setFreeParameter(sp, parm1);
-          for (int i = 0; i < dataNumber; i++)
-            secondfit[i] = fittingFunction.getFit(i);
-      }
+		fittingFunction.setDerivate(true);
+		double firstfit[] = new double[dataNumber];
+		double secondfit[] = null;
+		if (doubleder)
+			secondfit = new double[dataNumber];
+		for (int sp = 0; sp < nprm; sp++) {
+			if (parm[sp] == 0 && minSignificantValue[sp] == 0)
+				dparp = derstep;
+			else if (Math.abs(parm[sp]) < Math.abs(minSignificantValue[sp]))
+				dparp = (minSignificantValue[sp] * derstep);
+			else
+				dparp = parm[sp] * derstep;
+			double dparp2 = dparp * 2.0f;
+			double oldpar = parm[sp];
+			double parm1 = parm[sp] + dparp;
+			fittingFunction.setFreeParameter(sp, parm1);
+			for (int i = 0; i < dataNumber; i++)
+				firstfit[i] = fittingFunction.getFit(i);
+			if (doubleder) {
+				parm1 = oldpar - dparp;
+				fittingFunction.setFreeParameter(sp, parm1);
+				for (int i = 0; i < dataNumber; i++)
+					secondfit[i] = fittingFunction.getFit(i);
+			}
 
-        for (int i = 0; i < dataNumber; i++) {
-          if (doubleder)
-            derivf[i][sp] = ((firstfit[i] - secondfit[i]) / dparp2);
-          else
-            derivf[i][sp] = ((firstfit[i] - fit[i]) / dparp);
-        }
-      fittingFunction.setFreeParameter(sp, oldpar);
-    }
-  }
+			for (int i = 0; i < dataNumber; i++) {
+				if (doubleder)
+					derivf[i][sp] = ((firstfit[i] - secondfit[i]) / dparp2);
+				else
+					derivf[i][sp] = ((firstfit[i] - fit[i]) / dparp);
+//	        System.out.println(sp + " " + i + " " + firstfit[i] + " " + fit[i] + " " + dparp);
+			}
+			fittingFunction.setFreeParameter(sp, oldpar);
+		}
+		fittingFunction.setDerivate(false);
+	}
 
-  public void choback(int nfit1)
+	public void choback(int nfit1)
 
-/*        subroutine obtains cholesky backward solution of matrix a   */ {
-    int k1, i, j, l1, mdi1;
+		/*        subroutine obtains cholesky backward solution of matrix a   */ {
+		int k1, i, j, l1, mdi1;
 
-    g[0] /= am[0];
-    l1 = 0;
-    for (i = 1; i < nfit1; i++) {
-      for (j = 0; j < i; j++)
-        g[i] -= am[++l1] * g[j];
-      if (am[++l1] == 0.0)
-        am[l1] = 1.0;
-      g[i] /= am[l1];
-    }
-    mdi1 = nfit1 * (nfit1 + 1) / 2 - 1;
-    g[nfit1 - 1] /= am[mdi1];
-    for (k1 = 1; k1 < nfit1; k1++) {
-      i = nfit1 - k1;
-      l1 = i * (i + 1) / 2 - 1;
-      for (j = 0; j < i; j++)
-        g[j] -= g[i] * am[l1 + j + 1];
-      g[i - 1] /= am[l1];
-    }
-  }
+		g[0] /= am[0];
+		l1 = 0;
+		for (i = 1; i < nfit1; i++) {
+			for (j = 0; j < i; j++)
+				g[i] -= am[++l1] * g[j];
+			if (am[++l1] == 0.0)
+				am[l1] = 1.0;
+			g[i] /= am[l1];
+		}
+		mdi1 = nfit1 * (nfit1 + 1) / 2 - 1;
+		g[nfit1 - 1] /= am[mdi1];
+		for (k1 = 1; k1 < nfit1; k1++) {
+			i = nfit1 - k1;
+			l1 = i * (i + 1) / 2 - 1;
+			for (j = 0; j < i; j++)
+				g[j] -= g[i] * am[l1 + j + 1];
+			g[i - 1] /= am[l1];
+		}
+	}
 
-  public int chodec(int nfit1) {
-/*        subroutine to perform cholesky decomposition        */
+	public int chodec(int nfit1) {
+		/*        subroutine to perform cholesky decomposition        */
 
-    int i, j, k1, l1, k2, k;
-    double f;
+		int i, j, k1, l1, k2, k;
+		double f;
 
-    flg = 0;
-    for (j = 0; j < nfit1; j++) {
-      l1 = (j + 2) * (j + 1) / 2 - 1;
-      if (j > 0) {
-        for (i = j; i < nfit1; i++) {
-          k1 = i * (i + 1) / 2 + j;
-          f = am[k1];
-          for (k = 0; k < j; k++)
-            f -= am[k1 - k - 1] * am[l1 - k - 1];
-          am[k1] = f;
-        }
-      }
-      if (am[l1] > 0) {
-        f = Math.sqrt(am[l1]);
-        for (i = j; i < nfit1; i++) {
-          k2 = i * (i + 1) / 2 + j;
-          am[k2] /= f;
-        }
-        choleskyFlag[j] = 1;
-      } else {
-        flg = 1;
-        choleskyFlag[j] = -1;
+		flg = 0;
+		for (j = 0; j < nfit1; j++) {
+			l1 = (j + 2) * (j + 1) / 2 - 1;
+			if (j > 0) {
+				for (i = j; i < nfit1; i++) {
+					k1 = i * (i + 1) / 2 + j;
+					f = am[k1];
+					for (k = 0; k < j; k++)
+						f -= am[k1 - k - 1] * am[l1 - k - 1];
+					am[k1] = f;
+				}
+			}
+			if (am[l1] > 0) {
+				f = Math.sqrt(am[l1]);
+				for (i = j; i < nfit1; i++) {
+					k2 = i * (i + 1) / 2 + j;
+					am[k2] /= f;
+				}
+				choleskyFlag[j] = 1;
+			} else {
+				flg = 1;
+				choleskyFlag[j] = -1;
 //        if (outputEnabled)
 //          printf("cholesky negative diag j,l,a(l) : ", j, l1, am[l1]);
-      }
-    }
-    return flg;
-  }
+			}
+		}
+		return flg;
+	}
 
 
-  public JOptionsDialog getOptionsDialog(Frame parent) {
+	public JOptionsDialog getOptionsDialog(Frame parent) {
     return new JHMCSDPDOptionsD(parent, this);
   }
 

@@ -124,9 +124,9 @@ public class Native {
 	         cmd.add(EXECUTABLE_PATH + set.getExec());
             cmd.add(set.getParamFile().getAbsolutePath());
 
-            System.out.println(cmd);
+//            System.out.println(cmd);
             ProcessBuilder p = new ProcessBuilder(cmd);
-            System.out.println(p.toString());
+//            System.out.println(p.toString());
             Process process = p.start();
             int i = process.waitFor();
             if (i == 0) {
@@ -279,11 +279,11 @@ public class Native {
         }
 
         private void cleanup() {
-/*            paramFile.delete();
+            paramFile.delete();
 
             for (File f : tempFiles) {
                 f.delete();
-            }*/
+            }
 
         }
 

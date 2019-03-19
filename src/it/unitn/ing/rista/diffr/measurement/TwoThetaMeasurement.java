@@ -47,21 +47,23 @@ public class TwoThetaMeasurement extends Measurement {
   public static String[] classlistc = {};
   public static String[] classlistcs = {};
 
+  public static String modelID = "2Theta";
+
   public TwoThetaMeasurement(XRDcat aobj, String alabel) {
     super(aobj, alabel);
     initXRD();
-    identifier = "2Theta";
-    IDlabel = "2Theta";
+    identifier = modelID;
+    IDlabel = modelID;
     description = "2Theta measurement method";
   }
 
   public TwoThetaMeasurement(XRDcat aobj) {
-    this(aobj, "2Theta");
+    this(aobj, modelID);
   }
 
   public TwoThetaMeasurement() {
-    identifier = "2Theta";
-    IDlabel = "2Theta";
+    identifier = modelID;
+    IDlabel = modelID;
     description = "2Theta measurement method";
   }
 

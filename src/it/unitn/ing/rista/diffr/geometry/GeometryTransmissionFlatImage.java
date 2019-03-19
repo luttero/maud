@@ -34,10 +34,12 @@ import it.unitn.ing.rista.util.Constants;
 
 public class GeometryTransmissionFlatImage extends GeometryDebyeScherrer {
 
+	public static String modelID = "Image 2D";
+
   public GeometryTransmissionFlatImage(XRDcat obj, String alabel) {
     super(obj, alabel);
-    identifier = "Image 2D";
-    IDlabel = "Image 2D";
+    identifier = modelID;
+    IDlabel = modelID;
     description = "Image 2D instrument geometry";
   }
 
@@ -46,8 +48,8 @@ public class GeometryTransmissionFlatImage extends GeometryDebyeScherrer {
   }
 
   public GeometryTransmissionFlatImage() {
-    identifier = "Image 2D";
-    IDlabel = "Image 2D";
+    identifier = modelID;
+    IDlabel = modelID;
     description = "Image 2D instrument geometry";
   }
 
@@ -57,6 +59,7 @@ public class GeometryTransmissionFlatImage extends GeometryDebyeScherrer {
     sintheta = Math.sin(position);
     costheta = Math.cos(position);
     cos2theta = Math.cos(2.0 * position);
+//    cos2theta *= cos2theta;
     return cos2theta / (costheta * sintheta * sintheta);
   }
 

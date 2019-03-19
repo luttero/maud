@@ -229,7 +229,7 @@ public class ThreeDMapPlot extends myJFrame {
      * Create the layout without a Logo image and with the
      * ColorKey on a separate Pane object.
      */
-    rpl = new JPlotLayout(true, false, false, "3D Electron Map", null, true);
+    rpl = new JPlotLayout(true, false, false, true, true, "3D Electron Map", null, true);
     rpl.setEditClasses(false);
     /*
      * Create a GridAttribute for CONTOUR style.

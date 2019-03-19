@@ -78,7 +78,8 @@ public class MaximumEntropyFourierMap extends MaximumEntropyFit {
     for (int repetition = 0; repetition < repeatMax; repetition++) {
       printf("Cycle: " + repetition);
       fittingFunction.computeFit(parm);
-      double wss = fittingFunction.getWSS();
+	    fittingFunction.getFit();
+	    double wss = fittingFunction.getWSS();
 
       // checking if the weighted sum of squares is not NaN or Infinity
 
@@ -168,6 +169,7 @@ public class MaximumEntropyFourierMap extends MaximumEntropyFit {
               fittingFunction.setFreeParameters(parmn);
               fittingFunction.computeFit(parmn);
 //    				fit = fittingFunction.getFit();
+	            fittingFunction.getFit();
               wss = fittingFunction.getWSS();
               printf("Partial Wgt'd ssq = ", wss);
 
@@ -200,6 +202,7 @@ public class MaximumEntropyFourierMap extends MaximumEntropyFit {
 
         fittingFunction.normalizeFit();
 //    	fit = fittingFunction.getFit();
+	      fittingFunction.getFit();
         wss = fittingFunction.getWSS();
         printf("Wgt'd ssq = ", wss);
         oldwss = wss;

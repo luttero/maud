@@ -623,7 +623,7 @@ public class PlotFitting extends PlotDataFile {
 		String folder = folderAndName[0];
 		filename = folderAndName[1];
 
-		if (Constants.sandboxEnabled && !filename.endsWith(".cif"))
+		if (!filename.endsWith(".cif"))
 			filename = filename + ".cif";
 
 		if (filename != null) {
@@ -707,7 +707,7 @@ public class PlotFitting extends PlotDataFile {
     String folder = folderAndName[0];
     filename = folderAndName[1];
 
-    if (Constants.sandboxEnabled && !filename.endsWith(".cif"))
+    if (!filename.endsWith(".cif"))
       filename = filename + ".cif";
 
     if (filename != null) {
@@ -774,7 +774,7 @@ public class PlotFitting extends PlotDataFile {
 		String folder = folderAndName[0];
 		filename = folderAndName[1];
 
-		if (Constants.sandboxEnabled && !filename.endsWith(".prn"))
+		if (!filename.endsWith(".prn"))
 			filename = filename + ".prn";
 
 		if (filename != null) {
@@ -817,7 +817,7 @@ public class PlotFitting extends PlotDataFile {
     String folder = folderAndName[0];
     filename = folderAndName[1];
 
-    if (Constants.sandboxEnabled && !filename.endsWith(".cif"))
+    if (!filename.endsWith(".cif"))
       filename = filename + ".cif";
 
     if (filename != null) {
@@ -880,7 +880,7 @@ public class PlotFitting extends PlotDataFile {
     filename = folderAndName[1];
     int numberphases = thePlotPanel.datafile[0].getFilePar().getActiveSample().phasesNumber();
 
-    if (Constants.sandboxEnabled && !filename.endsWith(".cif"))
+    if (!filename.endsWith(".cif"))
       filename = filename + ".cif";
 
     if (filename != null) {
@@ -1112,7 +1112,7 @@ public class PlotFitting extends PlotDataFile {
                 if (tmpphase == phaselist[ij])
                   phaseindex = ij;
 	            // todo modify for more peaks par pattern
-	            double pos = adataset.getActiveDataFile(0).getPositions(tmpphase)[ijn][peaklist.elementAt(i).getOrderPosition()][0];
+	            double pos = adataset.getActiveDataFile(0).getPositions(tmpphase)[peaklist.elementAt(i).getOrderPosition()][0][ijn];
 	            datapeak[j] = thePlotPanel.datafile[0].convertXDataForPlot(pos, wave, mode);
 
               datapeak[j + 1] = (double) (phaseindex + 1);

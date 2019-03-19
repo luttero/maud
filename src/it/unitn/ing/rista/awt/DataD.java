@@ -55,6 +55,7 @@ public class DataD extends myJFrame {
   JComboBox InstrumentC;
   JComboBox IntensityExtractorCB;
   JComboBox PositionExtractorCB;
+	JComboBox DiffractionCB;
   JComboBox ReflectivityCB;
   JComboBox FluorescenceCB;
   JTextField minTF;
@@ -331,7 +332,22 @@ public class DataD extends myJFrame {
     });
     p4.add(jb);
 
-    p4 = new JPanel();
+	  p4 = new JPanel();
+	  p4.setLayout(new FlowLayout(FlowLayout.RIGHT, 3, 3));
+	  p6.add(p4);
+	  p4.add(new JLabel("Diffraction model:"));
+	  DiffractionCB = new JComboBox();
+	  DiffractionCB.setToolTipText("Select the diffraction computation");
+	  p4.add(DiffractionCB);
+	  jb = new JIconButton("Eyeball.gif", "Options");
+	  jb.addActionListener(new ActionListener() {
+		  public void actionPerformed(ActionEvent event) {
+			  DiffractionOptions();
+		  }
+	  });
+	  p4.add(jb);
+
+	  p4 = new JPanel();
     p4.setLayout(new FlowLayout(FlowLayout.RIGHT, 3, 3));
     p6.add(p4);
     p4.add(new JLabel("Reflectivity model:"));
@@ -653,14 +669,14 @@ public class DataD extends myJFrame {
     });
     sumB.setToolTipText("Disable or group together spectra by rules");
 
-	  sumB = new JButton("Set angles by time");
+	  sumB = new JButton("Set angles by time/index");
 	  p4.add(sumB);
 	  sumB.addActionListener(new ActionListener() {
 		  public void actionPerformed(ActionEvent event) {
 			  setAnglesByMeasurementTime();
 		  }
 	  });
-	  sumB.setToolTipText("Set the measurement angles based on measurement time");
+	  sumB.setToolTipText("Set the measurement angles based on measurement time or spectrum index");
 
 	  // Fields and options for the selected datafile
 
@@ -1001,10 +1017,14 @@ public class DataD extends myJFrame {
       PositionExtractorCB.addItem(thedata.getsubordIdentifier(thedata.getPositionExtractorID(), i));
     }
     PositionExtractorCB.setSelectedItem(thedata.getPositionExtractorMethod());
-    for (int i = 0; i < thedata.getsubordClassNumber(thedata.getReflectivityID()); i++) {
-      ReflectivityCB.addItem(thedata.getsubordIdentifier(thedata.getReflectivityID(), i));
+    for (int i = 0; i < thedata.getsubordClassNumber(thedata.getDiffractionID()); i++) {
+	    DiffractionCB.addItem(thedata.getsubordIdentifier(thedata.getDiffractionID(), i));
     }
-    ReflectivityCB.setSelectedItem(thedata.getReflectivityMethod());
+	  DiffractionCB.setSelectedItem(thedata.getDiffractionMethod());
+	  for (int i = 0; i < thedata.getsubordClassNumber(thedata.getReflectivityID()); i++) {
+		  ReflectivityCB.addItem(thedata.getsubordIdentifier(thedata.getReflectivityID(), i));
+	  }
+	  ReflectivityCB.setSelectedItem(thedata.getReflectivityMethod());
     for (int i = 0; i < thedata.getsubordClassNumber(thedata.getFluorescenceID()); i++) {
       FluorescenceCB.addItem(thedata.getsubordIdentifier(thedata.getFluorescenceID(), i));
     }
@@ -1068,6 +1088,7 @@ public class DataD extends myJFrame {
     thedata.setInstrument(InstrumentC.getSelectedItem().toString());
     thedata.setIntensityExtractor(IntensityExtractorCB.getSelectedItem().toString());
     thedata.setPositionExtractor(PositionExtractorCB.getSelectedItem().toString());
+	  thedata.setDiffraction(DiffractionCB.getSelectedItem().toString());
     thedata.setReflectivity(ReflectivityCB.getSelectedItem().toString());
     thedata.setFluorescence(FluorescenceCB.getSelectedItem().toString());
 
@@ -1680,7 +1701,14 @@ public class DataD extends myJFrame {
     thedata.getPositionExtractor().getOptionsDialog(this).setVisible(true);
   }
 
-  public void ReflectivityOptions() {
+	public void DiffractionOptions() {
+		String selectedDiffraction = DiffractionCB.getSelectedItem().toString();
+		if (!thedata.getDiffractionMethod().equals(selectedDiffraction))
+			thedata.setDiffraction(selectedDiffraction);
+		thedata.getDiffraction().getOptionsDialog(this).setVisible(true);
+	}
+
+	public void ReflectivityOptions() {
     String selectedReflectivity = ReflectivityCB.getSelectedItem().toString();
     if (!thedata.getReflectivityMethod().equals(selectedReflectivity))
       thedata.setReflectivity(selectedReflectivity);
@@ -1711,6 +1739,7 @@ public class DataD extends myJFrame {
     PositionExtractorCB.removeAllItems();
     IntensityExtractorCB.removeAllItems();
     InstrumentC.removeAllItems();
+	  DiffractionCB.removeAllItems();
     ReflectivityCB.removeAllItems();
     FluorescenceCB.removeAllItems();
     super.dispose();
@@ -1922,6 +1951,9 @@ public class DataD extends myJFrame {
 		JComboBox datafileCB = null;
 		JTextField angleOffsetTF = null;
 		JTextField angleStepTF = null;
+		JComboBox angle2CB = null;
+		JTextField angleOffset2TF = null;
+		JTextField angleStep2TF = null;
 
 		public SetAnglesByTimeFrame(DataD aframe) {
 
@@ -1932,9 +1964,10 @@ public class DataD extends myJFrame {
 			Container c1 = SetAnglesByTimeFrame.this.getContentPane();
 
 			c1.setLayout(new BorderLayout(3, 3));
+			JPanel panel2 = new JPanel(new BorderLayout(3, 3));
+			c1.add(BorderLayout.CENTER, panel2);
 			JPanel panel3 = new JPanel();
-			c1.add(BorderLayout.NORTH, panel3);
-
+			panel2.add(BorderLayout.NORTH, panel3);
 			panel3.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
 
 			panel3.add(new JLabel("Set angles of selected datafiles using a time formula and the measurement time in millisecs:"));
@@ -1980,7 +2013,7 @@ public class DataD extends myJFrame {
 
 			panel3 = new JPanel();
 			panel3.setLayout(new FlowLayout(FlowLayout.RIGHT, 6, 6));
-			c1.add(BorderLayout.SOUTH, panel3);
+			panel2.add(BorderLayout.SOUTH, panel3);
 
 			JButton stopD = new JCancelButton();
 			stopD.addActionListener(new ActionListener() {
@@ -2019,7 +2052,77 @@ public class DataD extends myJFrame {
 
 //			this.setHelpButton(panel3);
 
-			SetAnglesByTimeFrame.this.setTitle("Set angles by measurement time");
+			panel2 = new JPanel(new BorderLayout(3, 3));
+			c1.add(BorderLayout.SOUTH, panel2);
+			panel3 = new JPanel();
+			panel2.add(BorderLayout.NORTH, panel3);
+			panel3.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
+
+			panel3.add(new JLabel("Set angles of selected datafiles using a time formula and the measurement time in millisecs:"));
+
+			panel3 = new JPanel();
+			panel3.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
+			c1.add(BorderLayout.CENTER, panel3);
+
+			angle2CB = new JComboBox();
+			for (int i = 0; i < newLabels.length; i++)
+				angle2CB.addItem(newLabels[i]);
+			panel3.add(angle2CB);
+
+			panel3.add(new JLabel(" = "));
+
+			angleOffset2TF = new JTextField(12);
+			panel3.add(angleOffset2TF);
+			angleOffset2TF.setText("0");
+
+			panel3.add(new JLabel("(degs) + "));
+
+			angleStep2TF = new JTextField(12);
+			panel3.add(angleStep2TF);
+			angleStep2TF.setText("0.001");
+
+			panel3.add(new JLabel("(degs) * spectrum index"));
+
+			final DataFileSet adata1 = aframe.thedata;
+
+			panel3 = new JPanel();
+			panel3.setLayout(new FlowLayout(FlowLayout.RIGHT, 6, 6));
+			panel2.add(BorderLayout.SOUTH, panel3);
+
+			stopD = new JCancelButton();
+			stopD.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent event) {
+					SetAnglesByTimeFrame.this.setVisible(false);
+					SetAnglesByTimeFrame.this.dispose();
+				}
+			});
+			panel3.add(stopD);
+
+			startD = new JCloseButton();
+
+			startD.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent event) {
+					double offset = Double.valueOf(angleOffset2TF.getText()).doubleValue();
+					double step = Double.valueOf(angleStep2TF.getText()).doubleValue();
+					int angleIndex = angle2CB.getSelectedIndex();
+					DiffrDataFile[] selDatafiles = adata.getSelectedDataFiles();
+					for (int i = 0; i < selDatafiles.length; i++) {
+						double newAngle = offset + step * i;
+						selDatafiles[i].setAngleValue(angleIndex, newAngle);
+					}
+					DiffrDataFile datafile = adata.getSelectedDataFile();
+					if (datafile != null) {
+						for (int j = 0; j < DiffrDataFile.maxAngleNumber; j++)
+							anglesTF[j].setText(Misc.getFormattedValue(datafile.getAngleValue(j)));
+					}
+					SetAnglesByTimeFrame.this.setVisible(false);
+					SetAnglesByTimeFrame.this.dispose();
+				}
+			});
+			panel3.add(startD);
+
+
+			SetAnglesByTimeFrame.this.setTitle("Set angles by measurement time or spectrum index");
 
 			SetAnglesByTimeFrame.this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 

@@ -33,7 +33,6 @@ import it.unitn.ing.rista.diffr.*;
 import it.unitn.ing.rista.util.*;
 
 import javax.swing.*;
-import javax.swing.table.AbstractTableModel;
 
 /**
  *  The XRFDetector is a class
@@ -46,9 +45,7 @@ import javax.swing.table.AbstractTableModel;
 
 public class XRFDetector extends Detector {
 
-	public static String[] diclistc = {"_instrument_detector_2theta",
-			"_instrument_detector_eta",
-			"_instrument_detector_semiconductor_thickness",
+	public static String[] diclistc = {"_instrument_detector_semiconductor_thickness",
 			"_instrument_detector_semiconductor_density",
 			"_instrument_detector_window_area",
 			"_instrument_detector_area_correction_exp",
@@ -58,9 +55,7 @@ public class XRFDetector extends Detector {
 			"_instrument_detector_semiconductor_material",
 			"_instrument_filter_material"
 	};
-	public static String[] diclistcrm = {"_instrument_detector_2theta",
-			"_instrument_detector_eta",
-			"_instrument_detector_semiconductor_thickness",
+	public static String[] diclistcrm = {"_instrument_detector_semiconductor_thickness",
 			"_instrument_detector_semiconductor_density",
 			"_instrument_detector_window_area",
 			"_instrument_detector_area_correction_exp",
@@ -76,15 +71,13 @@ public class XRFDetector extends Detector {
 
 	public static String[] classlistcs = {};
 
-	private static int detector_2theta_id = 0;
-	private static int detector_eta_id = 1;
-	private static int semiconductor_thickness_id = 2;
-	private static int semiconductor_density_id = 3;
-	private static int window_area_id = 4;
-	private static int window_area_correction_id = 5;
-	private static int escape_peaks_id = 6;
-	private static int sum_peaks_id = 7;
-	private static int source_spectrum_id = 8;
+	private static int semiconductor_thickness_id = 0;
+	private static int semiconductor_density_id = 1;
+	private static int window_area_id = 2;
+	private static int window_area_correction_id = 3;
+	private static int escape_peaks_id = 4;
+	private static int sum_peaks_id = 5;
+	private static int source_spectrum_id = 6;
 	private static int semiconductor_composition_id = 0;
 	private static int filter_material_id = 1;
 	int integrationPointsNumber = 100;
@@ -112,7 +105,7 @@ public class XRFDetector extends Detector {
 	public void initConstant() {
 		Nstring = 0;
 		Nstringloop = 0;
-		Nparameter = 9;
+		Nparameter = 7;
 		Nparameterloop = 0;
 		Nsubordinate = 0;
 		Nsubordinateloop = 2;
@@ -130,16 +123,10 @@ public class XRFDetector extends Detector {
 
 	public void initParameters() {
 		super.initParameters();
-		parameterField[detector_2theta_id] = new Parameter(this, getParameterString(detector_2theta_id), 90.0,
-				ParameterPreferences.getDouble(getParameterString(detector_2theta_id) + ".min", 0.0),
-				ParameterPreferences.getDouble(getParameterString(detector_2theta_id) + ".max", 360.0));
-		parameterField[detector_eta_id] = new Parameter(this, getParameterString(detector_eta_id), 0.0,
-				ParameterPreferences.getDouble(getParameterString(detector_eta_id) + ".min", 0.0),
-				ParameterPreferences.getDouble(getParameterString(detector_eta_id) + ".max", 180.0));
 		parameterField[semiconductor_thickness_id] = new Parameter(this, getParameterString(semiconductor_thickness_id), 0.05,
 				ParameterPreferences.getDouble(getParameterString(semiconductor_thickness_id) + ".min", 0.01),
 				ParameterPreferences.getDouble(getParameterString(semiconductor_thickness_id) + ".max", 1));
-		parameterField[semiconductor_density_id] = new Parameter(this, getParameterString(semiconductor_density_id), 1.85,
+		parameterField[semiconductor_density_id] = new Parameter(this, getParameterString(semiconductor_density_id), 2.328,
 				ParameterPreferences.getDouble(getParameterString(semiconductor_density_id) + ".min", 1),
 				ParameterPreferences.getDouble(getParameterString(semiconductor_density_id) + ".max", 10));
 		parameterField[window_area_id] = new Parameter(this, getParameterString(window_area_id), 0.25,
@@ -177,18 +164,6 @@ public class XRFDetector extends Detector {
 			System.out.println("Warning: cenversion from old Maud version (< 2.72): escape peaks parameter reset to 1.0");
 			System.out.println("Warning: cenversion from old Maud version (< 2.72): pile-up parameter reset to 0.0");
 		}
-	}
-
-	public double getThetaDetector(DiffrDataFile datafile, double twotheta) {
-		return getThetaDetector() + datafile.get2ThetaValue();
-	}
-
-	public double getThetaDetector() {
-		return getParameterValue(detector_2theta_id);
-	}
-
-	public double getEtaDetector(DiffrDataFile datafile) {
-		return getParameterValue(detector_eta_id);
 	}
 
 	public double getSemiconductorThickness() {
@@ -505,8 +480,6 @@ public class XRFDetector extends Detector {
 
 	public class JXRFDetectorOptionsD extends JOptionsDialog {
 
-		JTextField theta2TF;
-		JTextField etaTF;
 		JTextField escapeIntensityTF;
 		JTextField sumIntensityTF;
 		JTextField semiconductorThicknessTF;
@@ -528,17 +501,9 @@ public class XRFDetector extends Detector {
 			JPanel jp1 = new JPanel();
 			principalPanel.add(BorderLayout.CENTER, jp1);
 			jp1.setLayout(new GridLayout(0, 2, 6, 6));
-			jp1.add(new JLabel("2Theta position (degrees):"));
-			theta2TF = new JTextField(Constants.FLOAT_FIELD);
-			theta2TF.setToolTipText("Insert the 2Theta position of the detector in degrees");
-			jp1.add(theta2TF);
-			jp1.add(new JLabel("Eta position (degrees):"));
-			etaTF = new JTextField(Constants.FLOAT_FIELD);
-			etaTF.setToolTipText("Insert the 2Theta position of the detector in degrees");
-			jp1.add(etaTF);
 			jp1.add(new JLabel("Intensity escape lines:"));
 			escapeIntensityTF = new JTextField(Constants.FLOAT_FIELD);
-			escapeIntensityTF.setToolTipText("Intensity/probability of the escape peaks");
+			escapeIntensityTF.setToolTipText("Intensity/probability of the escape peaks (leave 1.0 for theoretical computation)");
 			jp1.add(escapeIntensityTF);
 			jp1.add(new JLabel("Intensity pile-up lines:"));
 			sumIntensityTF = new JTextField(Constants.FLOAT_FIELD);
@@ -562,7 +527,7 @@ public class XRFDetector extends Detector {
 			jp1.add(windowGapTF);
 			jp1.add(new JLabel("Tube spectrum intensity:"));
 			spectrumIntensityTF = new JTextField(Constants.FLOAT_FIELD);
-			spectrumIntensityTF.setToolTipText("Insert the intensity of tube spectrum");
+			spectrumIntensityTF.setToolTipText("Insert the intensity of tube spectrum (to reproduce diffraction intensity)");
 			jp1.add(spectrumIntensityTF);
 
 			JTabbedPane jpT = new JTabbedPane();
@@ -606,10 +571,6 @@ public class XRFDetector extends Detector {
 		}
 
 		public void initParameters() {
-			theta2TF.setText(getParameterValueAsString(detector_2theta_id));
-			addComponenttolist(theta2TF, getParameter(detector_2theta_id));
-			etaTF.setText(getParameterValueAsString(detector_eta_id));
-			addComponenttolist(etaTF, getParameter(detector_eta_id));
 			escapeIntensityTF.setText(getParameterValueAsString(escape_peaks_id));
 			addComponenttolist(escapeIntensityTF, getParameter(escape_peaks_id));
 			sumIntensityTF.setText(getParameterValueAsString(sum_peaks_id));
@@ -632,8 +593,6 @@ public class XRFDetector extends Detector {
 		 * This method is automatically called when the user press the close button on the dialog.
 		 */
 		public void retrieveParameters() {
-			getParameter(detector_2theta_id).setValue(theta2TF.getText());
-			getParameter(detector_eta_id).setValue(etaTF.getText());
 			getParameter(escape_peaks_id).setValue(escapeIntensityTF.getText());
 			getParameter(sum_peaks_id).setValue(sumIntensityTF.getText());
 			getParameter(window_area_correction_id).setValue(windowGapTF.getText());
@@ -643,110 +602,5 @@ public class XRFDetector extends Detector {
 			getParameter(semiconductor_thickness_id).setValue(semiconductorThicknessTF.getText());
 		}
 	}
-
-/*	public class elementTableModel extends AbstractTableModel {
-
-		private String columns[] = {"Atom", "Quantity"};
-
-		private int numColumns = columns.length;
-
-		int subordinateListIndex = -1;
-
-		public elementTableModel(int listIndex) {
-			subordinateListIndex = listIndex;
-		}
-
-		public void add() {
-			int size = getRowCount();
-			CompositionElement element = new CompositionElement(XRFDetector.this);
-			element.setString(0, "Si");
-			addsubordinateloopField(subordinateListIndex, element);
-			fireTableRowsInserted(size, size);
-		}
-
-		public void remove(int index) {
-			if (index >= 0 && index < getRowCount()) {
-				subordinateloopField[subordinateListIndex].removeItemAt(index);
-				fireTableRowsDeleted(index, index);
-			}
-		}
-
-		public int getColumnCount() {
-			return numColumns;
-		}
-
-		public int getRowCount() {
-			return subordinateloopField[subordinateListIndex].size();
-		}
-
-		public Object getValueAt(int row, int column) {
-			switch (column) {
-				case 0:
-					return ((CompositionElement) subordinateloopField[subordinateListIndex].elementAt(row)).getString(0);
-				case 1:
-					return ((CompositionElement) subordinateloopField[subordinateListIndex].elementAt(row)).getParameter(0).getValue();
-				default:
-				{
-					return null;
-				}
-			}
-		}
-
-		public void setValueAt(Object aValue, int row, int column) {
-			switch (column) {
-				case 0:
-					((CompositionElement) subordinateloopField[subordinateListIndex].elementAt(row)).setString(0, (String) aValue);
-					break;
-				case 1:
-					String sValue = (String) aValue;
-					double dValue = Double.valueOf(sValue);
-					((CompositionElement) subordinateloopField[subordinateListIndex].elementAt(row)).getParameter(0).setValue(dValue);
-					break;
-				default:
-				{
-				}
-			}
-			fireTableCellUpdated(row, column);
-		}
-
-		public String getColumnName(int columnIndex) {
-			return columns[columnIndex];
-		}
-
-		// Types of the columns.
-//	public Class[] cTypes = {String.class, String.class};
-
-	//public Class getColumnClass(int column) {
-	//	return cTypes[column];
-	//}
-
-		public Class getColumnClass(int c) {
-			switch (c) {
-				case 0:
-					return String.class;
-				case 1:
-					return String.class;
-				default:
-				{
-				}
-			}
-			return null;
-		}
-
-		public boolean isCellEditable(int rowIndex, int columnIndex) {
-			switch (columnIndex) {
-				case 0:
-					return true;
-				case 1:
-					return true;
-				default:
-				{
-				}
-			}
-
-			return false;
-		}
-
-	}*/
 
 }

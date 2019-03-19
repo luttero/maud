@@ -27,7 +27,7 @@ import java.util.logging.Logger;
  *
  * @author hios
  */
-public class UnimodalComponent implements ODFComponent {
+public class UnimodalComponent extends ODFComponent {
 
     Symmetry cs, ss;
     double p;
@@ -199,7 +199,7 @@ public class UnimodalComponent implements ODFComponent {
 
     }
 
-    public static void main(String[] args) {
+/* Luca    public static void main(String[] args) {
         Quaternion qr = Quaternion.rand(100);
 
         Symmetry cs = new Symmetry("m-3m");
@@ -217,7 +217,7 @@ public class UnimodalComponent implements ODFComponent {
         System.out.println(odf.pdf(new Miller(0, 0, 1, cs), new Vec3(0, 0, 1)));
         System.out.println(fodf.pdf(new Miller(0, 0, 1, cs), new Vec3(0, 0, 1)));
 
-    }
+    } */
 
     @Override
     public double volume(Quaternion q, double radius) {

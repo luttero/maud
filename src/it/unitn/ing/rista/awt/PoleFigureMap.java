@@ -34,6 +34,7 @@ import java.util.Enumeration;
 
 import it.unitn.ing.jgraph.ThermalColorMap;
 import it.unitn.ing.rista.util.MaudPreferences;
+import it.unitn.ing.rista.util.MoreMath;
 
 import javax.swing.*;
 
@@ -63,7 +64,7 @@ public class PoleFigureMap extends JPanel {
 
   public PoleFigureMap(double[][] grid, int nslices, double scaleMin, double scaleMax,
                        boolean grayScale, String label, int colrsNumber, Object editMenu,
-                       double zoom, int defaultsize, boolean drawCircle) {
+                       double zoom, int defaultsize, boolean drawCircle, int scaleType) {
     this.nslices = nslices;
     this.colrsNumber = colrsNumber;
     this.scaleMin = scaleMin;
@@ -73,7 +74,7 @@ public class PoleFigureMap extends JPanel {
     this.zoom = zoom;
     defaultSize = defaultsize;
     setLayout(new BorderLayout());
-    rpl_data = makeGraph(grid, scaleMin, scaleMax, drawCircle);
+    rpl_data = makeGraph(grid, scaleMin, scaleMax, drawCircle, scaleType);
 
     rpl_data.setBatch(true);
     add(rpl_data, BorderLayout.CENTER);
@@ -95,7 +96,7 @@ public class PoleFigureMap extends JPanel {
   public static int inset = 6;
   int fontSize = 8;
 
-  JMapPlotLayout makeGraph(double[][] grid, double min, double max, boolean drawCircle) {
+  JMapPlotLayout makeGraph(double[][] grid, double min, double max, boolean drawCircle, int scaleType) {
     /*
      * This example uses a pre-created "Layout" for raster time
      * series to simplify the construction of a plot. The
@@ -154,21 +155,34 @@ public class PoleFigureMap extends JPanel {
      * Create the layout without a Logo image and with the
      * ColorKey on a separate Pane object.
      */
-    rpl = new JMapPlotLayout(true, false, false, "Pole figure", null, true);
+    rpl = new JMapPlotLayout(true, false, false,  true, true,"Pole figure", null, true);
     rpl.setEditClasses(false);
     /*
      * Create a GridAttribute for CONTOUR style.
      */
-    clevels = ContourLevels.getDefault(datar);
+	  if (scaleType == 0) {
+		  clevels = ContourLevels.getDefault(datar);
+	  } else {
+		  clevels = new ContourLevels();
+		  double logStart = MoreMath.log10(datar.start);
+		  double logEnd = MoreMath.log10(datar.end);
+		  double logDelta = ((logEnd - logStart) / 8);
+		  double val = logStart;
+		  while(val <= logEnd) {
+			  clevels.addLevel(Math.pow(10, val));
+			  val = val + logDelta;
+		  }
+	  }
     if (clevels != null) {
       DefaultContourLineAttribute d_attr = clevels.getDefaultContourLineAttribute();
       d_attr.setLabelHeightP(0.35);
+      d_attr.setSignificantDigits(MaudPreferences.getInteger("plotPF.significantDigits", 3));
     }
     GridAttribute gridAttr_ = new GridAttribute(clevels);
     /*
      * Create a ColorMap and change the style to RASTER.
      */
-    gov.noaa.pmel.sgt.ColorMap cmap = createColorMap(grayScale, min, max, colrsNumber);
+    gov.noaa.pmel.sgt.ColorMap cmap = createColorMap(grayScale, min, max, colrsNumber, scaleType);
     gridAttr_.setColorMap(cmap);
     boolean contour = MaudPreferences.getBoolean("plotPF.useContour", true);
     if (contour)
@@ -248,7 +262,8 @@ public class PoleFigureMap extends JPanel {
     return rpl;
   }
 
-  public static gov.noaa.pmel.sgt.ColorMap createColorMap(boolean grayScale, double min, double max, int colrsNumber) {
+  public static gov.noaa.pmel.sgt.ColorMap createColorMap(boolean grayScale, double min, double max, int colrsNumber,
+                                                          int scaleType) {
 //    int colrsNumber = 64;
     int[] red = new int[colrsNumber], green = new int[colrsNumber], blue = new int[colrsNumber];
     if (grayScale) {
@@ -337,7 +352,12 @@ public class PoleFigureMap extends JPanel {
     }
 
     IndexedColorMap cmap = new IndexedColorMap(red, green, blue);
-    cmap.setTransform(new LinearTransform(0.0, (double) red.length, min, max));
+	  AxisTransform trasform = null;
+	  if (scaleType == 1)
+		  trasform = new LogTransform(0.0, (double) red.length, min, max);
+	  else
+		  trasform = new LinearTransform(0.0, (double) red.length, min, max);
+	  cmap.setTransform(trasform);
     return cmap;
   }
 

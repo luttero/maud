@@ -276,8 +276,11 @@ public class StructureFactorStandardModel extends StructureFactorModel {
 				}
 				ato.trowException = false;
 			}
-			double structurefactor = (a1 * a1 + a2 * a2) * refl.multiplicity * factors;
-			if (phase.getFullAtomList().size() == 0)
+			double structurefactor = (a1 * a1 + a2 * a2) * refl.multiplicity;
+//		System.out.println(refl.getH() + " " + refl.getK() + " " + refl.getL() + " " + structurefactor + " "
+//		+ refl.d_space + " " + divideFactors[0] + " " + divideFactors[1] + " " + divideFactors[2] + " " + factors);
+		structurefactor *= factors;
+		if (phase.getFullAtomList().size() == 0)
 				structurefactor = (double) refl.multiplicity;
 		return structurefactor;
 	}

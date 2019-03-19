@@ -36,10 +36,12 @@ import java.awt.*;
 
 public class JMapPlotLayout extends JPlotLayout {
 
-  public JMapPlotLayout(boolean isGrid, boolean isXTime,
-                        boolean isYTime, String id, Image img,
+  public JMapPlotLayout(boolean isGrid, boolean isXTime, boolean isYTime,
+                        boolean isLinearXAxis,
+                        boolean isLinearYAxis,
+                        String id, Image img,
                         boolean is_key_pane) {
-    super(isGrid, isXTime, isYTime, id, img, is_key_pane);
+    super(isGrid, isXTime, isYTime, isLinearXAxis, isLinearYAxis, id, img, is_key_pane);
     Point2D.Double pt = new Point2D.Double(0, 0);
     setAxesOriginP(pt);
   }

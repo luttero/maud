@@ -41,10 +41,12 @@ import java.awt.event.*;
 
 public class XrayRadiation extends RadiationType {
 
+	public static String modelID = "X-ray";
+
   public XrayRadiation(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    identifier = "X-ray";
-    IDlabel = "X-ray";
+    identifier = modelID;
+    IDlabel = modelID;
     description = "X-ray radiation";
   }
 
@@ -53,8 +55,8 @@ public class XrayRadiation extends RadiationType {
   }
 
   public XrayRadiation() {
-    identifier = "X-ray";
-    IDlabel = "X-ray";
+    identifier = modelID;
+    IDlabel = modelID;
     description = "X-ray radiation";
   }
 

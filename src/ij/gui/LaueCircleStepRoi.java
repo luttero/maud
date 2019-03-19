@@ -187,7 +187,7 @@ public class LaueCircleStepRoi extends LaueCircleRoi {
     filename = folderAndName[1];
 
     if (filename == null) return;
-    if (Constants.sandboxEnabled && !filename.endsWith(".esg"))
+    if (!filename.endsWith(".esg"))
       filename = filename + ".esg";
 
     IJ.wait(250);  // give system time to redraw ImageJ window
@@ -205,7 +205,7 @@ public class LaueCircleStepRoi extends LaueCircleRoi {
 	                double stepIntegration) {
 
 		if (filename == null) return;
-		if (Constants.sandboxEnabled && !filename.endsWith(".esg"))
+		if (!filename.endsWith(".esg"))
 			filename = filename + ".esg";
 
 		String title = "noTitle";
@@ -298,7 +298,20 @@ public class LaueCircleStepRoi extends LaueCircleRoi {
 						// x = Math.atan((x - getX()) / radius) * Constants.PITODEG;
 					}
 					double intensity = profile[ij][i];
-					if (!Double.isNaN(intensity)) {
+					double intensity_1 = 1;
+					double intensity_2 = 1;
+					if (step > 0) {
+						if (i - step >= start)
+							intensity_1 = profile[ij][i - step];
+						if (i + step < end)
+							intensity_2 = profile[ij][i + step];
+					} else {
+						if (i - step <= start)
+							intensity_1 = profile[ij][i - step];
+						if (i + step > end)
+							intensity_2 = profile[ij][i + step];
+					}
+					if (!Double.isNaN(intensity) && intensity >= 0 && intensity_1 >= 0 && intensity_2 >= 0) {
 						output.write(" " + Fmt.format(x) + " " + Fmt.format(intensity));
 						output.newLine();
 					}

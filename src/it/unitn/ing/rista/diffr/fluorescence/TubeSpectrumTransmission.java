@@ -26,6 +26,8 @@ import it.unitn.ing.rista.diffr.radiation.XrayEbelTubeRadiation;
 import it.unitn.ing.rista.util.*;
 import java.util.*;
 
+import static java.lang.System.out;
+
 /**
  * The FluorescenceBase is a class to
  *
@@ -33,7 +35,7 @@ import java.util.*;
  * @version $Revision: 1.00 $, $Date: January 15, 2014 6:16:03 AM $
  * @since JDK1.1
  */
-public class TubeSpectrumTransmission extends Fluorescence {
+public class TubeSpectrumTransmission extends FluorescenceBase {
 
 	public static String modelID = "Tube Spectrum";
 	public static String descriptionID = "Perform quantitative fitting of tube spectrum";
@@ -55,6 +57,67 @@ public class TubeSpectrumTransmission extends Fluorescence {
 		description = descriptionID;
 	}
 
+	public void computeFluorescence(Sample asample, DataFileSet adataset) {
+
+		int datafilenumber = adataset.activedatafilesnumber();
+
+		final Sample theSample = asample;
+		final DataFileSet theDataset = adataset;
+
+		final int maxThreads = Math.min(Constants.maxNumberOfThreads, datafilenumber);
+		if (maxThreads > 1 && Constants.threadingGranularity >= Constants.MEDIUM_GRANULARITY) {
+			if (Constants.debugThreads)
+				out.println("Thread datafileset " + getLabel());
+			int i;
+			PersistentThread[] threads = new PersistentThread[maxThreads];
+			for (i = 0; i < maxThreads; i++) {
+				threads[i] = new PersistentThread(i) {
+					@Override
+					public void executeJob() {
+						int i1 = this.getJobNumberStart();
+						int i2 = this.getJobNumberEnd();
+
+						for (int j = i1; j < i2; j++) {
+							DiffrDataFile datafile = theDataset.getActiveDataFile(j);
+							computeFluorescence(theSample, datafile);
+							computeasymmetry(theSample, datafile);
+						}
+					}
+				};
+			}
+			i = 0;
+			int istep = (int) (0.9999 + datafilenumber / maxThreads);
+			for (int j = 0; j < maxThreads; j++) {
+				int is = i;
+				if (j < maxThreads - 1)
+					i = Math.min(i + istep, datafilenumber);
+				else
+					i = datafilenumber;
+				threads[j].setJobRange(is, i);
+				threads[j].start();
+			}
+			boolean running;
+			do {
+				running = false;
+				try {
+					Thread.sleep(Constants.timeToWaitThreadsEnding);
+				} catch (InterruptedException r) {
+				}
+				for (int h = 0; h < maxThreads; h++) {
+					if (!threads[h].isEnded())
+						running = true;
+				}
+			} while (running);
+
+		} else
+			for (int k = 0; k < datafilenumber; k++) {
+				DiffrDataFile datafile = theDataset.getActiveDataFile(k);
+				computeFluorescence(theSample, datafile);
+				computeasymmetry(theSample, datafile);
+			}
+
+	}
+
 	/**
 	 * The method compute the fluorescence pattern by a simple
 	 * transfer of the tube spactrum. Can be used to fit the tube spectrum
@@ -64,7 +127,7 @@ public class TubeSpectrumTransmission extends Fluorescence {
 	 * @see it.unitn.ing.rista.diffr.DiffrDataFile#addtoFit
 	 */
 
-	public void computeFluorescence(DiffrDataFile adatafile) {
+	public void computeFluorescence(Sample asample, DiffrDataFile adatafile) {
 
 		XRayDataSqLite.checkMinimumEnergy();
 
@@ -77,7 +140,7 @@ public class TubeSpectrumTransmission extends Fluorescence {
 		double[] fluorescence = new double[numberOfPoints];
 
 		RadiationType radType = ainstrument.getRadiationType();
-		int rad_lines = radType.getLinesCountForFluorescence();
+		int rad_lines = radType.getLinesCount();
 		double maxEnergyInKeV = xEnergy[numberOfPoints - 1] * 0.001 * 1.1;
 
 		Vector<FluorescenceLine> fluorescenceLines = new Vector<FluorescenceLine>(rad_lines, 10);
@@ -196,10 +259,6 @@ public class TubeSpectrumTransmission extends Fluorescence {
 			adatafile.addtoFit(i, fluorescence[i]);
 //        System.out.println("Point: " + xEnergy[i] + ", intensity: " + fluorescence[i]);
 		}
-	}
-
-	public double getIntensityCorrection(int atomNumber) {
-		return 1;
 	}
 
 }

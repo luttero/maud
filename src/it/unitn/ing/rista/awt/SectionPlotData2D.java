@@ -199,7 +199,7 @@ public class SectionPlotData2D extends myJFrame {
 		String folder = folderAndName[0];
 		filename = folderAndName[1];
 
-		if (Constants.sandboxEnabled && !filename.endsWith(".cif"))
+		if (!filename.endsWith(".cif"))
 			filename = filename + ".cif";
 
 		if (filename != null) {
@@ -259,7 +259,7 @@ public class SectionPlotData2D extends myJFrame {
 		String folder = folderAndName[0];
 		filename = folderAndName[1];
 
-		if (Constants.sandboxEnabled && !filename.endsWith(".cif"))
+		if (!filename.endsWith(".cif"))
 			filename = filename + ".cif";
 
 		if (filename != null) {
@@ -322,7 +322,7 @@ public class SectionPlotData2D extends myJFrame {
 		filename = folderAndName[1];
 		int numberphases = thePlotPanel.datafile[0].getFilePar().getActiveSample().phasesNumber();
 
-		if (Constants.sandboxEnabled && !filename.endsWith(".cif"))
+		if (!filename.endsWith(".cif"))
 			filename = filename + ".cif";
 
 		if (filename != null) {

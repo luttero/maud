@@ -228,7 +228,7 @@ public class JVectorDemo extends JApplet {
      * VectorKey on the graph Pane.
      */
     rpl = new JPlotLayout(JPlotLayout.VECTOR,
-                          false, false, "test layout", null, false);
+                          false, false, true, true, "test layout", null, false);
     rpl.setEditClasses(false);
     vectorAttr_ = new VectorAttribute(0.0075, Color.red);
     vectorAttr_.setHeadScale(0.5);

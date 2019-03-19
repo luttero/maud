@@ -126,7 +126,7 @@ public class HIPPOWizard extends Wizard {
 	  double maxBankToleranceTheta = MaudPreferences.getDouble("hippoWizard.maxDelta2ThetaForBankGrouping", 2.0);
 	  int numberIndividualBackground = MaudPreferences.getInteger("hippoWizard.numberOfIndividualBackgroundParameters", 3);
 	  int numberBackground = MaudPreferences.getInteger("hippoWizard.numberOfGeneralBackgroundParameters", 0);
-//    analysis.setStoreSpectraOption(false);
+    analysis.setStoreSpectraOption(false);
     if (data.groupDatasetsByRotation) {
       for (int i = 0; i < data.mbank.size(); i++) {
         if (((HIPPOBank) data.mbank.elementAt(i)).enabled) {
@@ -147,23 +147,25 @@ public class HIPPOWizard extends Wizard {
             inst.setMeasurement(TOFMeasurement.modelID);
             inst.setRadiationType(TOFNeutronRadiation.modelID);
 
-            inst.setInstrumentBroadening(InstrumentBroadeningGSAS1f.modelID);
-            InstrumentBroadeningGSAS1f instBroad = (InstrumentBroadeningGSAS1f) inst.getInstrumentBroadening();
-            instBroad.initializeAsNew();
-            instBroad.setFileName(data.calibrationFile);
-            instBroad.readall();
-
-            inst.setIntensityCalibration(HippoMultBankIntCalibration.modelID);
-            HippoMultBankIntCalibration instIntCal = (HippoMultBankIntCalibration) inst.getIntensityCalibration();
-            instIntCal.initializeAsNew();
-            instIntCal.setFileName(data.calibrationFile);
-            instIntCal.readall();
+	        int maxBanksNumber = 0;
 
             inst.setAngularCalibration(MultiBankCalibration.modelID);
             MultiBankCalibration instAngCal = (MultiBankCalibration) inst.getAngularCalibration();
             instAngCal.initializeAsNew();
             instAngCal.setFileName(data.calibrationFile);
-            instAngCal.readall();
+//            instAngCal.readall();
+
+            inst.setInstrumentBroadening(InstrumentBroadeningGSAS1f.modelID);
+            InstrumentBroadeningGSAS1f instBroad = (InstrumentBroadeningGSAS1f) inst.getInstrumentBroadening();
+            instBroad.initializeAsNew();
+            instBroad.setFileName(data.calibrationFile);
+//            instBroad.readall();
+
+	          inst.setIntensityCalibration(HippoMultBankIntCalibration.modelID);
+	          HippoMultBankIntCalibration instIntCal = (HippoMultBankIntCalibration) inst.getIntensityCalibration();
+	          instIntCal.initializeAsNew();
+	          instIntCal.setFileName(data.calibrationFile);
+//            instIntCal.readall();
 
             int startingBank = ((HIPPOBank) data.mbank.elementAt(i)).startBank;
             int endingBank = data.BANK_NUMBER;
@@ -173,6 +175,7 @@ public class HIPPOWizard extends Wizard {
               endingBank = instBroad.banknumbers() + 1;
             adataset.setMinRange(((HIPPOBank) data.mbank.elementAt(i)).dSpacingMin);
             adataset.setMaxRange(((HIPPOBank) data.mbank.elementAt(i)).dSpacingMax);
+	          analysis.loadingFile = false;
             for (int j = startingBank; j < endingBank; j++) {
               int actualdatanumber = adataset.datafilesnumber();
               String name = data.dataFiles.get(k).toString() + "(" + Integer.toString(j) + ")";
@@ -191,8 +194,9 @@ public class HIPPOWizard extends Wizard {
             }
 
             int lastLoadedBank = instBroad.banknumbers();
+	          analysis.loadingFile = true;
 
-            for (int j = lastLoadedBank; j >= endingBank; j--) {
+/*            for (int j = lastLoadedBank; j >= endingBank; j--) {
 //            Misc.println("Remove " + j);
               instBroad.removeBank(j);
               instIntCal.removeBank(j);
@@ -203,7 +207,7 @@ public class HIPPOWizard extends Wizard {
               instBroad.removeBank(j);
               instIntCal.removeBank(j);
               instAngCal.removeBank(j);
-            }
+            }*/
           }
         }
       }
@@ -230,11 +234,13 @@ public class HIPPOWizard extends Wizard {
 	        MultiBankCalibration instAngCal = (MultiBankCalibration) inst.getAngularCalibration();
 	        instAngCal.initializeAsNew();
 	        instAngCal.setFileName(data.calibrationFile);
+//            instAngCal.readall();
 
 	        inst.setInstrumentBroadening(InstrumentBroadeningGSAS1f.modelID);
           InstrumentBroadeningGSAS1f instBroad = (InstrumentBroadeningGSAS1f) inst.getInstrumentBroadening();
           instBroad.initializeAsNew();
           instBroad.setFileName(data.calibrationFile);
+//            instBroad.readall();
 
           inst.setIntensityCalibration(HippoMultBankIntCalibration.modelID);
           HippoMultBankIntCalibration instIntCal = (HippoMultBankIntCalibration) inst.getIntensityCalibration();

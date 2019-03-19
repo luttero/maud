@@ -164,7 +164,7 @@ public class BeartexPFPlot extends Frame implements ClipboardOwner, Printable {
       }
       if (newBehavior) {
         ccolorMap[i] = new PoleFigureMap(grid, gridNumber, limits[0], limits[1],
-              grayScale, label[i], colrsNumber, editMenu, zoom, pixelsNumber, true);
+              grayScale, label[i], colrsNumber, editMenu, zoom, pixelsNumber, true, 0);
       //   colorMap.addFocusListener(theFocusListener);
         pfPanel.add(ccolorMap[i]);
       } else {
@@ -206,7 +206,7 @@ public class BeartexPFPlot extends Frame implements ClipboardOwner, Printable {
 			    unit = "Log(mrd)";
 		    }
 		    LegendPoleFigureMap mapLegend =  new LegendPoleFigureMap(legendGrid, pwidth, pheight, limits[0], limits[1], grayScale, unit,
-				    colrsNumber, editMenu, zoom, pixelsNumber, meanValue);
+				    colrsNumber, editMenu, zoom, pixelsNumber, meanValue, 0);
 		    pfPanel.add(mapLegend);
 	    }
     }

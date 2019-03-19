@@ -54,6 +54,12 @@ public interface Peak {
                               int computeFhkl, boolean leBailExtraction, int[] minmaxindex,
                               boolean computeBroadening, boolean reverseX);
 
+	public void computeFunctions(double[] x, double[] f, int[] minindex, int[] maxindex,
+	                             double[][] intensity, double[] eta, double[] hwhm_i, double[][] position,
+	                             double[] const1, double[] const2, double[] wave, boolean dspacingBase,
+	                             boolean energyDispersive, boolean increasingX, double planar_asymmetry,
+	                             double[] deff);
+
   public Phase getPhase();
 
   public boolean intensityExtractionAllowed();

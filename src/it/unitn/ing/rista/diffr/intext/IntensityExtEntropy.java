@@ -259,6 +259,7 @@ The PF's of peaks of the same family are imposed equals for all the lines.
     Vector<Peak> tpeaklist;
     DiffrDataFile datafile = getDataFile();
     DataFileSet datafileset = datafile.getDataFileSet();
+    Diffraction diffraction = datafileset.getDiffraction();
     Vector<Peak> fullpeaklist = datafileset.getPeakList();
     int numberofpeaks = datafileset.getNumberofPeaks();
 
@@ -324,9 +325,9 @@ The PF's of peaks of the same family are imposed equals for all the lines.
         relax /= stepchange;
       for (int j = startingindex; j < finalindex; j++)
         fit[j] = 0.0f;
-      datafile.computeReflectionIntensity(asample, fullpeaklist, true, fit, Constants.ENTIRE_RANGE,
-              Constants.EXPERIMENTAL, Constants.COMPUTED, Constants.COMPUTED, false, null);
-      datafile.computeasymmetry(asample, fit);
+	    diffraction.computeReflectionIntensity(asample, fullpeaklist, true, fit, Constants.ENTIRE_RANGE,
+              Constants.EXPERIMENTAL, Constants.COMPUTED, Constants.COMPUTED, false, null, datafile);
+	    diffraction.computeasymmetry(asample, datafile, fit, startingindex, finalindex);
       datafile.postComputation(asample, fit);
       for (int j = startingindex; j < finalindex; j++)
         datafile.setPhasesFit(j, fit[j]);
@@ -354,9 +355,9 @@ The PF's of peaks of the same family are imposed equals for all the lines.
           if (superOrder[n] < 0) {
             for (int j = minmaxindex[0]; j < minmaxindex[1]; j++)
               expfit[j] = 0.0f;
-            minmaxindex = datafile.computeReflectionIntensity(asample, tpeaklist, false,
+            minmaxindex = diffraction.computeReflectionIntensity(asample, tpeaklist, false,
                     expfit, rangefactor, Constants.UNITARY,
-                    Constants.COMPUTED, Constants.COMPUTED, true, null);
+                    Constants.COMPUTED, Constants.COMPUTED, true, null, datafile);
             double maxexpfit = 0.0;
             for (int k = minmaxindex[0]; k < minmaxindex[1]; k++)
               if (Math.abs(expfit[k]) > Math.abs(maxexpfit))
@@ -370,7 +371,7 @@ The PF's of peaks of the same family are imposed equals for all the lines.
 						else
 							totalint = 1.0;*/
 //						System.out.println(maxexpfit);
-            datafile.computeasymmetryandbkg(asample, expfit, minmaxindex[0], minmaxindex[1]);
+	          diffraction.computeasymmetry(asample, datafile, expfit, minmaxindex[0], minmaxindex[1]); // todo: interpolation and experimental background
             double expfitnorm = 0.0;
             decrease = (minmaxindex[1] - minmaxindex[0]) * 10.0;
             if (maxexpfit != 0.0)
@@ -397,7 +398,7 @@ The PF's of peaks of the same family are imposed equals for all the lines.
               lebailfactor = 0.0001;
             for (int ij = 0; ij < ndelta; ij++) {
               double oldfactor = datafile.getExpTextureFactor(tpeaklist.elementAt(ij).getPhase(),
-		              tpeaklist.elementAt(ij))[0];
+		              tpeaklist.elementAt(ij))[0][0];
               if (Double.isNaN(oldfactor))
                 oldfactor = 1.0;
               double newlebailfactor = lebailfactor * oldfactor;
@@ -415,7 +416,7 @@ The PF's of peaks of the same family are imposed equals for all the lines.
             }
           } else {
             lebailfactor = datafile.getExpTextureFactor(fullpeaklist.elementAt(superOrder[n]).getPhase(),
-		            fullpeaklist.elementAt(superOrder[n]))[0];
+		            fullpeaklist.elementAt(superOrder[n]))[0][0];
             if (Double.isNaN(lebailfactor))
               lebailfactor = 1.0;
             numberpeaktouse = 1;

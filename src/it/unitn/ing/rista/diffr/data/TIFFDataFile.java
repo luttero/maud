@@ -96,7 +96,7 @@ public class TIFFDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
 	public boolean readReflectionImage(ImagePlus imp, double[] gonioAngles) {
 		boolean loadSuccessfull = false;
 		AngularCalibration angcal = getDataFileSet().getInstrument().getAngularCalibration();
-		String directory = Constants.cachesDirectory; // getFolder(); //od.getDirectory();
+		String directory = getFolder(); //od.getDirectory();
 		String name = getLabel(); //od.getFileName();
 
 		ij.measure.Calibration cal = imp.getCalibration();
@@ -293,7 +293,7 @@ public class TIFFDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
 	public boolean readCurvedReflectionImage(ImagePlus imp, double[] gonioAngles) { // todo
 		boolean loadSuccessfull = false;
 		AngularCalibration angcal = getDataFileSet().getInstrument().getAngularCalibration();
-		String directory = Constants.cachesDirectory; // getFolder(); //od.getDirectory();
+		String directory = getFolder(); //od.getDirectory();
 		String name = getLabel(); //od.getFileName();
 
 		ij.measure.Calibration cal = imp.getCalibration();
@@ -378,7 +378,7 @@ public class TIFFDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
 		double[][] profile = roi.getPixels();
 		int startX = MaudPreferences.getInteger("ovalROI.minX", 0);
 		int endX = MaudPreferences.getInteger("ovalROI.maxX", 10000);
-		String directory = Constants.cachesDirectory; // getFolder(); //od.getDirectory();
+		String directory = getFolder(); //od.getDirectory();
 		String name = getLabel(); //od.getFileName();
 		int dotLocation = name.lastIndexOf(".");
 		String filename = name.substring(0, dotLocation) + ".esg";
@@ -508,7 +508,7 @@ public class TIFFDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
 				profile[etaIndex][ix] = single_profile[0][ix];
 			}
 		}
-		String directory = Constants.cachesDirectory; // getFolder(); //od.getDirectory();
+		String directory = getFolder(); //od.getDirectory();
 		String name = getLabel(); //od.getFileName();
 		int dotLocation = name.lastIndexOf(".");
 		String filename = name.substring(0, dotLocation) + ".esg";

@@ -109,7 +109,7 @@ public class PlanarDefects extends XRDcat {
   public void checkhklListForPlanarDefects(Vector reflectionv, int cpType) {
   }
 
-  public boolean acceptReflection(int h, int k, int l) {
+  public boolean acceptReflection(int h, int k, int l, double dspace) {
     return true;
   }
 

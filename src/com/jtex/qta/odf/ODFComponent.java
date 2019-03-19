@@ -10,29 +10,53 @@ import com.jtex.arrays.Array1D;
 import com.jtex.geom.Miller;
 import com.jtex.geom.Quaternion;
 import com.jtex.geom.Vec3;
+import it.unitn.ing.rista.diffr.XRDcat;
 
 /**
  *
  * @author hios
  */
-public interface ODFComponent {
+public class ODFComponent extends XRDcat {
 
-    public double getPortion();
+    public double getPortion() {
+    	return 0;
+    }
 
-    public void setPortion(double p);
+    public void setPortion(double p) {}
 
-    public Array1D pdf(Miller h, Vec3 r);
+    public Array1D pdf(Miller h, Vec3 r) {
+    	return null;
+    }
 
-    public Array1D eval(Quaternion qr);
+    public Array1D eval(Quaternion qr) {
+    	return null;
+    }
 
-    public Array1C calcFourier(int L);
+    public Array1C calcFourier(int L) {
+    	return null;
+    }
 
-    public int bandwidth();
+    public int bandwidth() { return 0; }
 
-    public double volume(Quaternion q, double radius);
+    public double volume(Quaternion q, double radius) { return 0; }
 
-    public double fibreVolume(Miller h, Vec3 r, double radius);
+    public double fibreVolume(Miller h, Vec3 r, double radius) { return 0; }
 
-    public ODFComponent rotate(Quaternion q);
+    public ODFComponent rotate(Quaternion q) { return null; }
+
+
+    // interface for Maud by Luca Lutterotti
+
+
+	public ODFComponent(XRDcat aobj, String alabel) {
+		super(aobj, alabel);
+	}
+
+	public ODFComponent(XRDcat aobj) {
+		this(aobj, "Component x");
+	}
+
+	public ODFComponent() {
+	}
 
 }

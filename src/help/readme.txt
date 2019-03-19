@@ -43,6 +43,35 @@ from the older one.
 
 Maud Version notes:
 
+(07/01/2019):   2.91. The "Chopper" release.
+                The bigdog is running again.
+                Beta only release. Added wizard for LCLS images data.
+                Some big changes to add energy dispersive support. Need heavy debug.
+                Added to example a LCLS CeO2 calibration example. The initial
+                analysis file was prepared with the LCLS2 wizard using the config
+                file for LCLS available in the supporting files for Maud (extracted
+                in the same location as the default.par, marker.txt and xraydata.db
+                files are. To be used by the LCLS2 Wizard along with the calibration
+                files and directories provided by LCLS Mec beam line.
+
+(07/01/2019):   2.90. The "Boring" release.
+                Revised the pole figure log plot, now the true values are
+                reported instead of the log values.
+                Added the d-space to the info panel displayable from the
+                plots.
+
+(07/12/2018):   2.83. The "Sleeping Cat" release.
+                Fixing the Lamarkian refinements.
+
+(31/07/2018):   2.82. The "Small Cat" release.
+                If you are a dog what would it be your best desire?
+                Angle-energy maps on the way.
+
+(15/06/2018):   2.81. The "Beer" release.
+                What you think Beer is?.
+                Corrected a bug when treating rotation as separated datasets
+                in the Hippo Wizard. Other small bugs corrected.
+
 (11/01/2018):   2.80. The "Balilla" release.
                 Have you ever heard of the "Calcio Balilla" ?.
                 Improved import of esg file format for old files.

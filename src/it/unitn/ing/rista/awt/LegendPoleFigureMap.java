@@ -30,6 +30,7 @@ import gov.noaa.pmel.sgt.swing.prop.GridAttributeDialog;
 import gov.noaa.pmel.util.*;
 import it.unitn.ing.jgraph.ThermalColorMap;
 import it.unitn.ing.rista.util.MaudPreferences;
+import it.unitn.ing.rista.util.MoreMath;
 
 import javax.swing.*;
 import java.awt.*;
@@ -60,7 +61,7 @@ public class LegendPoleFigureMap extends JPanel {
 
 	public LegendPoleFigureMap(double[][] grid, int nslicesW, int nslicesH, double scaleMin, double scaleMax,
 	    boolean grayScale, String label, int colrsNumber, Object editMenu, double zoom, int defaultsize,
-	    double origin) {
+	    double origin, int scaleType) {
 		this.nslicesW = nslicesW;
 		this.nslicesH = nslicesH;
 		this.origin = new Point2D.Double(0, origin);
@@ -72,7 +73,7 @@ public class LegendPoleFigureMap extends JPanel {
 		this.zoom = zoom;
 		defaultSize = defaultsize;
 		setLayout(new BorderLayout());
-		rpl_data = makeGraph(grid, scaleMin, scaleMax);
+		rpl_data = makeGraph(grid, scaleMin, scaleMax, scaleType);
 
 		rpl_data.setBatch(true);
 		add(rpl_data, BorderLayout.CENTER);
@@ -93,7 +94,7 @@ public class LegendPoleFigureMap extends JPanel {
 
 	public static int inset = 6;
 
-	JMapPlotLayout makeGraph(double[][] grid, double min, double max) {
+	JMapPlotLayout makeGraph(double[][] grid, double min, double max, int scaleType) {
     /*
      * This example uses a pre-created "Layout" for raster time
      * series to simplify the construction of a plot. The
@@ -152,12 +153,25 @@ public class LegendPoleFigureMap extends JPanel {
      * Create the layout without a Logo image and with the
      * ColorKey on a separate Pane object.
      */
-		rpl = new JMapPlotLayout(true, false, false, "Pole figure", null, true);
+		rpl = new JMapPlotLayout(true, false, false, true, scaleType == 0,"Pole figure", null, true);
 		rpl.setEditClasses(false);
     /*
      * Create a GridAttribute for CONTOUR style.
      */
-		clevels = ContourLevels.getDefault(datar);
+
+//    if (scaleType == 0) {
+	    clevels = ContourLevels.getDefault(datar);
+/*    } else {
+	    clevels = new ContourLevels();
+	    double logStart = MoreMath.log10(datar.start);
+	    double logEnd = MoreMath.log10(datar.end);
+	    double logDelta = ((logEnd - logStart) / 8);
+	    double val = logStart;
+	    while(val <= logEnd) {
+		    clevels.addLevel(Math.pow(10, val));
+		    val = val + logDelta;
+	    }
+    }*/
 		if (clevels != null) {
 			DefaultContourLineAttribute d_attr = clevels.getDefaultContourLineAttribute();
 			d_attr.setLabelEnabled(false);
@@ -166,7 +180,7 @@ public class LegendPoleFigureMap extends JPanel {
     /*
      * Create a ColorMap and change the style to RASTER.
      */
-		gov.noaa.pmel.sgt.ColorMap cmap = createColorMap(grayScale, min, max, colrsNumber);
+		gov.noaa.pmel.sgt.ColorMap cmap = createColorMap(grayScale, scaleType, min, max, colrsNumber);
 		gridAttr_.setColorMap(cmap);
 		boolean contour = MaudPreferences.getBoolean("plotPF.useContourForLegend", false);
 		if (contour)
@@ -201,13 +215,23 @@ public class LegendPoleFigureMap extends JPanel {
 		CartesianGraph graph = (CartesianGraph) rpl.getFirstLayer().getGraph();
 		try {
 			graph.getXAxis("Bottom Axis").setVisible(false);
-			PlainAxis axis = (PlainAxis) graph.getYAxis("Left Axis");
-			axis.setLabelHeightP(0.4 * zoom);
+			if (scaleType == 1) {
+				PlainLogAxis axis = (PlainLogAxis) graph.getYAxis("Left Axis");
+				axis.setLabelHeightP(0.4 * zoom);
 
-			axis.getTitle().setHeightP(0.4 * zoom);
-			axis.setVisible(true);
+				axis.getTitle().setHeightP(0.4 * zoom);
+				axis.setVisible(true);
 //			axis.setRangeU(new Range2D(min, max));
-			axis.setLocationU(origin);
+				axis.setLocationU(origin);
+			} else {
+				PlainAxis axis = (PlainAxis) graph.getYAxis("Left Axis");
+				axis.setLabelHeightP(0.4 * zoom);
+
+				axis.getTitle().setHeightP(0.4 * zoom);
+				axis.setVisible(true);
+//			axis.setRangeU(new Range2D(min, max));
+				axis.setLocationU(origin);
+			}
 		} catch (AxisNotFoundException e) {
 		}
 		JComponent circleLayer = new JComponent() {
@@ -252,7 +276,7 @@ public class LegendPoleFigureMap extends JPanel {
 		return rpl;
 	}
 
-	public static gov.noaa.pmel.sgt.ColorMap createColorMap(boolean grayScale, double min, double max, int colrsNumber) {
+	public static gov.noaa.pmel.sgt.ColorMap createColorMap(boolean grayScale, int scaleType, double min, double max, int colrsNumber) {
 //    int colrsNumber = 64;
 		int[] red = new int[colrsNumber], green = new int[colrsNumber], blue = new int[colrsNumber];
 		if (grayScale) {
@@ -341,7 +365,12 @@ public class LegendPoleFigureMap extends JPanel {
 		}
 
 		IndexedColorMap cmap = new IndexedColorMap(red, green, blue);
-		cmap.setTransform(new LinearTransform(0.0, (double) red.length, min, max));
+		AxisTransform trasform = null;
+		if (scaleType == 1)
+			trasform = new LinearTransform(0.0, (double) red.length, min, max);
+		else
+			trasform = new LinearTransform(0.0, (double) red.length, min, max);
+		cmap.setTransform(trasform);
 		return cmap;
 	}
 

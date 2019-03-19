@@ -24,8 +24,12 @@ import java.lang.*;
 import java.awt.*;
 
 import it.unitn.ing.rista.awt.*;
+import it.unitn.ing.rista.util.Constants;
+import it.unitn.ing.rista.util.PersistentThread;
 
 import javax.swing.*;
+
+import static java.lang.System.out;
 
 
 /**
@@ -51,6 +55,9 @@ public class Reflectivity extends XRDcat {
   public Reflectivity() {
   }
 
+	public void computeReflectivity(Sample asample, DataFileSet adataset) {
+	}
+
 	/**
 	 * The method here do nothing, subclasses should overwrite it to compute the reflectivity pattern
 	 * for the <code>DiffrDataFile</code>. When the pattern is computed it should be add to the
@@ -60,7 +67,7 @@ public class Reflectivity extends XRDcat {
 	 * @param adatafile
 	 * @see DiffrDataFile#addtoFit
 	 */
-  public void computeReflectivity(DiffrDataFile adatafile) {
+  public void computeReflectivity(Sample asample, DiffrDataFile adatafile) {
   }
 
 	/**

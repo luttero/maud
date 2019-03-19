@@ -78,11 +78,13 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 
   private int rotationInversion = 0;
 
-  public AngularInclinedFlatImageCalibration(XRDcat aobj, String alabel) {
+	public static String modelID = "Inclined Reflection Image";
+
+	public AngularInclinedFlatImageCalibration(XRDcat aobj, String alabel) {
     super(aobj, alabel);
     initXRD();
-    identifier = "Inclined Reflection Image";
-    IDlabel = "Inclined Reflection Image";
+    identifier = modelID;
+    IDlabel = modelID;
   }
 
   public AngularInclinedFlatImageCalibration(XRDcat aobj) {
@@ -90,8 +92,8 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
   }
 
   public AngularInclinedFlatImageCalibration() {
-    identifier = "Inclined Reflection Image";
-    IDlabel = "Inclined Reflection Image";
+    identifier = modelID;
+    IDlabel = modelID;
   }
 
   @Override
@@ -275,8 +277,9 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 
 	@Override
   public boolean freeAllBasicParameters() {
-    for (int i = 1; i < 3; i++)
-      parameterField[i].setRefinableCheckBound();
+		if (((DataFileSet) getInstrument().getParent()).activedatafilesnumber() > 9)
+         for (int i = 1; i < 3; i++)
+            parameterField[i].setRefinableCheckBound();
     return true;
   }
 
@@ -312,7 +315,7 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
     double zs = dataset.getZshift();
     double rx = dataset.getSample().getRadiusDimensionXD();
     double ry = dataset.getSample().getRadiusDimensionYD();
-	  double[] tiltingAngles = datafile.getTiltingAngle();
+    double[] tiltingAngles = datafile.getTiltingAngle();
     double omega = tiltingAngles[0];
 	  double chi = tiltingAngles[1];
 	  double detectorProper2Theta = detector2Theta + tiltingAngles[4];
@@ -386,8 +389,6 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 		boolean loadSuccessfull = false;
 //		AngularCalibration angcal = this;
 		String directory = mdatafile.getFolder(); //od.getDirectory();
-		if (Constants.sandboxEnabled)
-			directory = Constants.cachesDirectory;
 		String name = mdatafile.getLabel(); //od.getFileName();
 		ij.measure.Calibration cal = imp.getCalibration();
 
@@ -559,7 +560,7 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 		double etaStart = mineta * Constants.PITODEG;
 		int dotLocation = name.lastIndexOf(".");
 		String filename = name.substring(0, dotLocation) + ".esg";
-		if (!(Constants.sandboxEnabled && MaudPreferences.getBoolean("imageUnrolling.saveEsgFileInCachesDir", false))) {
+		if (!MaudPreferences.getBoolean("imageUnrolling.saveEsgFileInCachesDir", false)) {
 			System.out.println("Conversion to spectra done! Name to save: " + filename);
 			FlatCCDReflectionSquareRoi.saveAsText(profile, profile[0].length, 0, profile[0][0].length, xmin, theta2Step,
 					etaStart, coneInterval, directory, filename, "mm", detectorDistance, omega, chi, phi, detector2Theta,

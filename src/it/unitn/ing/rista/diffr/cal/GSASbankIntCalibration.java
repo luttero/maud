@@ -326,6 +326,7 @@ public class GSASbankIntCalibration extends IntensityCalibration {
   }
 
   public void addType(String value) {
+//	  System.out.println("Adding function type " + value + " , tot: " + stringloopField[1].size());
     stringloopField[1].addItem(value);
   }
 
@@ -349,7 +350,9 @@ public class GSASbankIntCalibration extends IntensityCalibration {
   }
 
   public String getFunctionType(int index) {
+  	if (index > - 1 && index < stringloopField[1].size())
     return (String) stringloopField[1].elementAt(index);
+  	return functiontype[0];
   }
 
   public String getFunctionType(String bank) {
@@ -463,7 +466,7 @@ public class GSASbankIntCalibration extends IntensityCalibration {
               if (token.equalsIgnoreCase("ITYP")) {
                 addBank(GSASbankCalibration.bankPrefix + bankString);
                 addType(token = st.nextToken());
-//	              System.out.println("Bank ITYP " + bankString);
+//	              System.out.println("Bank ITYP " + token);
                 ncoeff = 0;
 //	              if (getTypeNumber(banknumber-1) != 10)
                 addCoeff(numberIncSpectrumCoefficients, banknumber, "1.0");
@@ -488,6 +491,9 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 	              chekNumberOfLoopParameters(banknumber - 1);
 	              String filename = st.nextToken();
 	              String[] folderAndFilename = Misc.getFolderandName(getFileName());
+
+//	              System.out.println("Checking Incident spectrum for bank: " + banknumber + " " +
+//	              ", number of functions: " + stringloopField[1].size());
 
 	              if (getTypeNumber(banknumber - 1) == 10) {
 		              try {

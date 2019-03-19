@@ -5,7 +5,7 @@
     <option name="LOCAL_VCS_PURGING_PERIOD" value="259200000" />
     <option name="SHOW_CHANGES_ONLY" value="false" />
   </component>
-  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_7" inherit-compiler-output="false">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_11">
     <output url="file://$MODULE_DIR$/build" />
     <javadoc-paths>
       <root url="file:///System/Library/Frameworks/JavaVM.framework/Home/docs" />

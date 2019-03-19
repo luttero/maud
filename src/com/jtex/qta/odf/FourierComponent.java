@@ -13,16 +13,18 @@ import com.jtex.geom.Symmetry;
 import com.jtex.geom.Quaternion;
 import com.jtex.geom.Vec3;
 import com.jtex.poly.SphericalHarmonics;
+import it.unitn.ing.rista.diffr.XRDcat;
+import it.unitn.ing.rista.util.Constants;
 
 /**
  *
  * @author flb
  */
-public class FourierComponent implements ODFComponent {
+public class FourierComponent extends ODFComponent {
 
     Array1C C;
-    Symmetry cs, ss;
-    double p;
+//    Symmetry cs, ss;
+    double weight;
 
     public static int deg2dim(int l) {
         return l * (2 * l - 1) * (2 * l + 1) / 3;
@@ -37,10 +39,12 @@ public class FourierComponent implements ODFComponent {
     }
 
     public FourierComponent(Array1C coef, Symmetry cs, Symmetry ss) {
-        this.C = coef;
-        this.cs = cs;
-        this.ss = ss;
-        this.p = 1D;
+        C = coef;
+//        this.cs = cs;
+//        this.ss = ss;
+        weight = 1;
+
+//        setFourierCoefficients(C);
     }
 
     @Override
@@ -90,19 +94,22 @@ public class FourierComponent implements ODFComponent {
 
     @Override
     public Array1C calcFourier(int L) {
-        if (FourierComponent.deg2dim(L) == C.size()) {
-            return C;
-        }
+	    if (FourierComponent.deg2dim(L) == C.size()) {
+		    return C;
+	    }
 
-        System.out.println("uhahadfadf" + FourierComponent.deg2dim(L) + "  " + C.size());
-        Array1C c_hat = Array1C.zeros(FourierComponent.deg2dim(L));
+//        System.out.println("uhahadfadf" + FourierComponent.deg2dim(L) + "  " + C.size());
+	    Array1C c_hat = Array1C.zeros(FourierComponent.deg2dim(L));
 
-        if (c_hat.size() > C.size()) {
-            c_hat = C.plus(c_hat);
-        } else {
-            c_hat = c_hat.plus(C);
-        }
-        return c_hat;
+	    if (c_hat.size() > C.size()) {
+		    c_hat = C.plus(c_hat);
+	    } else {
+		    c_hat = c_hat.plus(C);
+	    }
+	    C = c_hat; // Luca
+//	    setFourierCoefficients(C);
+
+	    return c_hat;
     }
 
     @Override
@@ -157,12 +164,93 @@ public class FourierComponent implements ODFComponent {
 
     @Override
     public double getPortion() {
-        return p;
+        return weight;
     }
 
     @Override
     public void setPortion(double p) {
-        this.p = p;
+	    setWeight(p);
     }
+
+    // Maud interface by Luca Lutterotti
+
+	public static String[] diclistc = {"_mtex_fourier_component_coefficients", "_mtex_fourier_component_weight"};
+	public static String[] diclistcrm = {"Fourier component coefficients", "Fourier component weight"};
+
+	public static String[] classlistcs = {};
+	public static String[] classlistc = {};
+
+	public static String modelID = "MTex Fourier Component";
+
+	public FourierComponent(XRDcat aobj, String alabel) {
+		super(aobj, alabel);
+		identifier = modelID;
+		IDlabel = modelID;
+		description = modelID;
+	}
+
+	public FourierComponent(XRDcat aobj) {
+		this(aobj, modelID);
+	}
+
+	public FourierComponent() {
+		identifier = modelID;
+		IDlabel = modelID;
+		description = modelID;
+	}
+
+	public void initConstant() {
+		Nstring = 6;
+		Nstringloop = 0;
+		Nparameter = 0;
+		Nparameterloop = 0;
+		Nsubordinate = 0;
+		Nsubordinateloop = 0;
+	}
+
+	public void initDictionary() {
+		System.arraycopy(diclistc, 0, diclist, 0, totsubordinateloop);
+		System.arraycopy(diclistcrm, 0, diclistRealMeaning, 0, totsubordinateloop);
+		System.arraycopy(classlistc, 0, classlist, 0, totsubordinateloop - totsubordinate);
+		System.arraycopy(classlistcs, 0, classlists, 0, totsubordinate - totparameterloop);
+	}
+
+	public void initParameters() {
+		super.initParameters();
+		setWeight(1.0);
+	}
+
+	public String getFourierCoefficients() {
+		return stringField[0];
+	}
+
+	public void setFourierCoefficients(Array1C value) {
+		stringField[1] = value.toSaveString();
+	}
+
+	public String getWeight() {
+		return stringField[1];
+	}
+
+	public void setWeight(double value) {
+		weight = value;
+		stringField[1] = Double.toString(value);
+	}
+
+	public void refreshForNotificationDown(XRDcat source, int reason) {
+		if (!getFilePar().isComputingDerivate() || (source == this ||
+				(reason == Constants.SAMPLE_ORIENTATION_CHANGED || (source == getParent() &&
+						(reason == Constants.STRAIN_CHANGED || reason == Constants.CELL_CHANGED))))) {
+			refreshComputation = true;
+			//     System.out.println("Reason " + reason + " Source " + source.toXRDcatString());
+		}
+	}
+
+	public void updateStringtoDoubleBuffering(boolean firstLoading) {
+		super.updateStringtoDoubleBuffering(false);
+		weight = Double.parseDouble(getWeight());
+		C = Array1C.parse(getFourierCoefficients());
+	}
+
 
 }

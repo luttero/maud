@@ -52,7 +52,7 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
       "_riet_par_asymmetry_value", "_riet_par_caglioti_value", "_riet_par_gaussian_value",
       "_riet_par_broadening_omega", "_riet_par_broadening_chi",
       "_riet_par_broadening_eta", "_riet_par_broadening_cos_sin_eta",
-		  "_riet_par_broadening_texture"};
+		  "_riet_par_broadening_texture", "_riet_par_asymmetry_exp"};
 
   protected static final String[] diclistcrm = {
       "_riet_caglioti_d_dep", "_riet_asymmetry_tan_dep",
@@ -63,7 +63,7 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
       "asymmetry coeff ", "caglioti coeff ", "gaussian coeff ",
       "omega broadening coeff ", "chi broadening coeff ",
       "eta broadening coeff ", "cos(eta)/sin(eta) broadening coeff ",
-		  "texture broadening coeff "};
+		  "texture broadening coeff ", "Exponent value of asymmetry function"};
 
   protected static final String[] classlistc = {};
 
@@ -75,27 +75,29 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
 	public static double minimumAsymmetryValue = MaudPreferences.getDouble(
 			"instrBroadening.minimumAsymmetryValue", 1);
 
+	public static String modelID = "Caglioti PV";
+
   public InstrumentBroadeningPVCaglioti(XRDcat afile, String alabel) {
     super(afile, alabel);
     initXRD();
-    identifier = "Caglioti PV";
-    IDlabel = "Caglioti PV";
+    identifier = modelID;
+    IDlabel = modelID;
   }
 
   public InstrumentBroadeningPVCaglioti(XRDcat afile) {
-    this(afile, "Caglioti PV");
+    this(afile, modelID);
   }
 
   public InstrumentBroadeningPVCaglioti() {
-    identifier = "Caglioti PV";
-    IDlabel = "Caglioti PV";
+    identifier = modelID;
+    IDlabel = modelID;
   }
 
   public void initConstant() {
     Nstring = 5;
     Nstringloop = 0;
     Nparameter = 0;
-    Nparameterloop = 8;
+    Nparameterloop = 9;
     Nsubordinate = 0;
     Nsubordinateloop = 0;
   }
@@ -114,7 +116,7 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
     setCagliotiTanDependent(true);
     setBroadeningConvoluted(false);
     setTruncationAngle("1.0");
-	  setAsymmetryReciprocal(false);
+    setAsymmetryReciprocal(false);
   }
 
 	public void readall(CIFtoken ciffile) {
@@ -158,6 +160,9 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
     addparameterloopField(3, new Parameter(this, getParameterString(3, 0), 0.0,
         ParameterPreferences.getDouble(getParameterString(3, 0) + ".min", -1),
         ParameterPreferences.getDouble(getParameterString(3, 0) + ".max", 1)));
+    addparameterloopField(8, new Parameter(this, getParameterString(8, 0), 0.0,
+				ParameterPreferences.getDouble(getParameterString(8, 0) + ".min", -0.9),
+				ParameterPreferences.getDouble(getParameterString(8, 0) + ".max", 2.0)));
   }
 
   public void notifyParameterChanged(Parameter source) {
@@ -320,7 +325,13 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
     return (Parameter) getAsymmetryList().elementAt(index);
   }
 
-  public static final int cagliotiID = 1;
+	public static final int asymmetryExpID = 8;
+
+	public ListVector getAsymmetryExpList() {
+		return parameterloopField[asymmetryExpID];
+	}
+
+	public static final int cagliotiID = 1;
 
   public ListVector getCagliotiList() {
     return parameterloopField[cagliotiID];
@@ -388,6 +399,8 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
 	boolean asymmetryReciprocal = false;
   double asymmetry[] = null;
   int asymmetryN = 0;
+	double asymmetryExp[] = null;
+	int asymmetryExpN = 0;
   double caglioti[] = null;
   int cagliotiN = 0;
   double gaussian[] = null;
@@ -425,6 +438,8 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
 
     asymmetry = getParameterLoopVector(asymmetryID);
     asymmetryN = numberOfLoopParameters[asymmetryID];
+	  asymmetryExp = getParameterLoopVector(asymmetryExpID);
+	  asymmetryExpN = numberOfLoopParameters[asymmetryExpID];
 //    if (MaudPreferences.getBoolean("CagliotiFirstParameter.forcePositive", true))
 //      checkCagliotiFirstParameter();
     caglioti = getParameterLoopVector(cagliotiID);
@@ -470,6 +485,17 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
 			output.newLine();
 			for (int i = 0; i < asymmetryN; i++) {
 				output.write(" " + Fmt.format(asymmetry[i]));
+				output.newLine();
+			}
+		}
+
+		if (asymmetryExpN > 0) {
+			output.write("loop_");
+			output.newLine();
+			output.write("_riet_par_asymmetry_exp");
+			output.newLine();
+			for (int i = 0; i < asymmetryExpN; i++) {
+				output.write(" " + Fmt.format(asymmetryExp[i]));
 				output.newLine();
 			}
 		}
@@ -636,7 +662,20 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
     return asy;
   }
 
-  public void computeAsymmetry(DiffrDataFile diffrDataFile, Sample asample, double[] afit, int min, int max) {
+	public double getInstrumentalAsymmetryExp(double x, DiffrDataFile diffrDataFile) {
+		double asy = 1.0;
+		if (asymmetryExpN > 0) {
+			double x1 = x;// = 0.0;
+			boolean inverseBehaviour = diffrDataFile.dspacingbase || !asymmetryTanDep;
+			if (diffrDataFile.dspacingbase)
+				x1 = 1.0 / x;
+			for (int i = 0; i < asymmetryExpN; i++)
+				asy += asymmetryExp[i] * MoreMath.pow(x1, i);
+		}
+		return asy;
+	}
+
+	public void computeAsymmetry(DiffrDataFile diffrDataFile, Sample asample, double[] afit, int min, int max) {
 
     Instrument ainstrument = getInstrument();
 
@@ -652,8 +691,8 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
 
       for (int j = min; j < max; j++) {
         double x = diffrDataFile.getXData(j);
-        double total_asymmetry =
-            ainstrument.getInstrumentalAsymmetry(x, diffrDataFile);
+        double total_asymmetry = getInstrumentalAsymmetry(x, diffrDataFile);
+	      double asymmetry_exponent = getInstrumentalAsymmetryExp(x, diffrDataFile);
         if (total_asymmetry == 0.0)
           newFit[j - min] = afit[j];
         else {
@@ -665,11 +704,12 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
           int ij = j + direction;
           if (diffrDataFile.insiderange(ij)) {
             double difference = Math.abs(diffrDataFile.getXData(ij) - x);
-            double expasymmetry = 1.0;
+             double expasymmetry = 1.0;
             for (; expasymmetry > 0.001 && difference < truncation_angle && diffrDataFile.insiderange(ij); ij += direction)
             {
-              difference = Math.abs(diffrDataFile.getXData(ij) - x);
-              expasymmetry = Math.exp(-difference * total_asymmetry);
+	            difference = Math.abs(diffrDataFile.getXData(ij) - x);
+	            double differenceExp = Math.pow(difference, asymmetry_exponent);
+	            expasymmetry = Math.exp(-differenceExp * total_asymmetry);
               function += afit[ij] * expasymmetry;
               normalization += expasymmetry;
             }
@@ -747,6 +787,7 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
   class JBankOptionsD extends JOptionsDialog {
 
     JParameterListPane AsymmetryPanel;
+	  JParameterListPane AsymmetryExpPanel;
     JParameterListPane HWHMPanel;
     JParameterListPane GaussianPanel;
     JParameterListPane OmegaPanel;
@@ -775,7 +816,7 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
           "Chi broad.",
           "Eta broad.",
 		      "Cos/Sin(Eta) broad.",
-          "Texture broad."};
+          "Texture broad.", "Asy. Exponent"};
       principalPanel.add(BorderLayout.CENTER, aberrationPanel);
       aberrationPanel.add(BorderLayout.CENTER, tabPanel1);
 
@@ -828,7 +869,10 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
 	    TexturePanel = new JParameterListPane(this, false, true);
 	    tabPanel1.addTab(tempString[7], null, TexturePanel);
 
-      JPanel convolutionPanel = new JPanel();
+	    AsymmetryExpPanel = new JParameterListPane(this, false, true);
+	    tabPanel1.addTab(tempString[asymmetryExpID], null, AsymmetryExpPanel);
+
+	    JPanel convolutionPanel = new JPanel();
       aberrationPanel.add(BorderLayout.SOUTH, convolutionPanel);
       broadeningConvolutedCB = new JCheckBox("Omega/Chi broadening square convolution");
       broadeningConvolutedCB.setToolTipText("Set this option to use the omega/chi broadening as a square convoluted; default is unchecked");
@@ -859,6 +903,7 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
       broadeningConvolutedCB.setSelected(isBroadeningConvoluted());
 	    asymmetryReciprocalCB.setSelected(isAsymmetryReciprocal());
       AsymmetryPanel.setList(InstrumentBroadeningPVCaglioti.this, 0);
+	    AsymmetryExpPanel.setList(InstrumentBroadeningPVCaglioti.this, asymmetryExpID);
       HWHMPanel.setList(InstrumentBroadeningPVCaglioti.this, 1);
       GaussianPanel.setList(InstrumentBroadeningPVCaglioti.this, 2);
       OmegaPanel.setList(InstrumentBroadeningPVCaglioti.this, 3);
@@ -873,7 +918,8 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
       super.retrieveParameters();
 
       AsymmetryPanel.retrieveparlist();
-      HWHMPanel.retrieveparlist();
+	    AsymmetryExpPanel.retrieveparlist();
+	    HWHMPanel.retrieveparlist();
       GaussianPanel.retrieveparlist();
       OmegaPanel.retrieveparlist();
       ChiPanel.retrieveparlist();
@@ -890,6 +936,7 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
 
     public void dispose() {
       AsymmetryPanel.dispose();
+	    AsymmetryExpPanel.dispose();
       HWHMPanel.dispose();
       GaussianPanel.dispose();
       OmegaPanel.dispose();

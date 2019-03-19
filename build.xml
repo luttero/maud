@@ -1572,7 +1572,7 @@
   
 
   <target name="build_ImageJ" depends="compile_ImageJ" description="Build ImageJ.jar.">
-     <copy file="ImageJ/IJ_Props.txt" todir="${build_ant}" />
+     <copy file="${src}/ij/IJ_Props.txt" todir="${build_ant}" />
     <copy file="ImageJ/images/microscope.gif" tofile="${build_ant}/microscope.gif" />
     <copy file="ImageJ/images/about.jpg" tofile="${build_ant}/about.jpg" />
     <copy file="${buildnumber}/ImageJ_build.number" todir="${build_ant}" />
@@ -1593,6 +1593,7 @@
         <copy file="${build}/ij.jar" tofile="${installfulldirLinux64NJ}/lib/ij.jar"/>
         <copy file="${build}/ij.jar" tofile="${installfulldirWindowsNJ}/lib/ij.jar"/>
         <copy file="${build}/ij.jar" tofile="${installfulldirWin64NJ}/lib/ij.jar"/>
+        <copy file="${build}/ij.jar" todir="libs/current"/>
         <!--signjar jar="${mirrorreddir}/lib/ij.jar" alias="${myself}" storepass="${keypasswd}" keystore="${keystore}"/-->
         <!--		<exec dir="." executable="cmd" os="Windows NT"> -->
         <!--  		<arg line="/c test.bat"/> -->
@@ -2035,10 +2036,10 @@
                    displayname="Maud"
                    identifier="com.radiographema.maud"
                    executableName="Maud"
-                   shortversion="2.78"
+                   shortversion="2.91"
                    icon="${inst}/maud.icns"
                    mainclassname="com.radiographema.Maud"
-                   copyright="Maud, for materials analysis, Copyright 1997-2017 Luca Lutterotti"
+                   copyright="Maud, for materials analysis, Copyright 1997-2019 Luca Lutterotti"
                    applicationCategory="public.app-category.productivity">
 
             <!-- The directory where your OpenJDK runtime is. -->
@@ -2098,14 +2099,14 @@
             <option value="-Dapple.awt.application.name=Maud"/>
             <option value="-Dcom.apple.smallTabs=true"/>
 
-            <option value="-Xmx8192M"/>
+            <option value="-Xmx16384M"/>
         </bundleapp>
 
         <mkdir dir="${app_osx}/Maud.app/Contents/Frameworks"/>
         <!--copy file="cctbxForMaud/build/Debug/libcctbxForMaud.dylib" tofile="${inst}/Maud_mac/Maud.app/Contents/Plugins/Home/jre/lib/libcctbxForMaud.dylib" /-->
         <!--copy file="cctbxForMaud/libcctbxForMaud.dylib"
               tofile="${app_osx}/Maud.app/Contents/Frameworks/libcctbxForMaud.dylib"/-->
-        <copy file="${inst}/Info.plist" tofile="${app_osx}/Maud.app/Contents/Plugins/"/>
+        <!--copy file="${inst}/Info.plist" tofile="${app_osx}/Maud.app/Contents/Plugins/"/-->
 
         <!--bundleapp outputdirectory="${inst}/Maud_mac/"
                    name="Maud"
@@ -2193,25 +2194,28 @@
                   <fileset file="${mirrorfulldir}/Maud.jar"/>
                 </ftp> -->
         <!--copy file="${inst}/Maud.entitlements" todir="${inst}/Maud_OSX/Maud.app/Contents" /-->
-        <exec executable="chmod">
+        <!--exec executable="chmod">
             <arg line=" -R +w ${app_osx}/Maud.app/Contents/PlugIns"/>
-        </exec>
-        <apply dir="${installerDir}" executable="codesign">
-            <arg line="-v -s &quot;Mac Developer: Luca Lutterotti (46BWEFAJP5)&quot; --entitlements Maud.entitlements"/>
+        </exec-->
+        <apply dir="${app_osx}" executable="codesign">
+            <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; "/>
             <fileset dir="${app_osx}/Maud.app/Contents/PlugIns" />
         </apply>
-        <apply dir="${installerDir}" executable="codesign">
-            <arg line="-v -s &quot;Mac Developer: Luca Lutterotti (46BWEFAJP5)&quot; "/>
-            <fileset dir="${app_osx}/Maud.app/Contents/Resources/Java" />
+        <apply dir="${app_osx}" executable="codesign">
+            <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; "/>
+            <fileset dir="${app_osx}/Maud.app/Contents/Java" />
         </apply>
-        <apply dir="${installerDir}" executable="codesign">
-            <arg line="-v -s &quot;Mac Developer: Luca Lutterotti (46BWEFAJP5)&quot; "/>
+        <apply dir="${app_osx}" executable="codesign">
+            <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; "/>
             <fileset dir="${app_osx}/Maud.app/Contents/MacOS/mtex" />
         </apply>
-        <exec dir="${installerDir}" executable="codesign" os="Mac OS X">
-            <arg line="-v -s &quot;Mac Developer: Luca Lutterotti (46BWEFAJP5)&quot; --entitlements Maud.entitlements ${app_osx}/Maud.app"/>
+        <exec dir="${app_osx}" executable="codesign" os="Mac OS X">
+            <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; ${app_osx}/Maud.app/Contents/PlugIns/Home/release"/>
         </exec>
-        <exec dir="${installerDir}" executable="codesign" os="Mac OS X">
+        <exec dir="${app_osx}" executable="codesign" os="Mac OS X">
+            <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; ${app_osx}/Maud.app"/>
+        </exec>
+        <exec dir="${app_osx}" executable="codesign" os="Mac OS X">
             <arg line="-d ${app_osx}/Maud.app"/>
         </exec>
         <!-- verify codesign -->
@@ -2219,12 +2223,13 @@
             <arg line="-vv Maud.app"/>
         </exec>
         <!-- verify gatekeeper -->
-        <!--exec executable="spctl" dir="${app_osx}" failonerror="true">
-            <arg line="-vv -a -t execute Maud.app"/>
-        </exec-->
-        <!--exec dir="${inst}/Maud_OSX/" executable="/Users/luca/bin/mkdmg.pl" os="Mac OS X">
-            <arg line="Maud.dmg.gz Maud"/>
-        </exec-->
+        <exec executable="spctl" dir="${app_osx}" failonerror="true">
+            <arg line="-vv --assess --type execute Maud.app"/>
+        </exec>
+        <copy file="${app_osx}/.DS_Store_default" tofile="${app_osx}/.DS_Store"/>
+        <exec dir="${app_osx}" executable="/Users/luca/bin/mkdmg.pl" os="Mac OS X">
+            <arg line="Maud.dmg.gz Maud.app .background .DS_Store"/>
+        </exec>
     </target>
 
     <!--target name="build_app_bundle" depends="bundle" description="Package the application for OSX" xmlns:fx="javafx:com.sun.javafx.tools.ant">
@@ -2254,7 +2259,7 @@
     </target-->
 
 
-    <target name="build_installers" depends="bundle"
+    <target name="build_installers" depends="build_installer_osx"
             description="Deploy the full build files to the web server.">
         <!--		<ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}" remotedir="${deployfulldir}">
   		<fileset file="${mirrorfulldir}/Maud.jar"/>
@@ -2269,21 +2274,21 @@
             <arg line="Maud.dmg.gz Maud.app"/>
         </exec>
         <copy file="${app_osx}/Maud.dmg.gz" tofile="${dropbox}/macosx64/Maud.dmg.gz"/>
-        <delete file="${dropbox}/unix/Maud.tar.gz"/>
-        <exec dir="${inst}/Maud_unix/" executable="tar" os="Mac OS X">
-            <arg line="cfz ${dropbox}/unix/Maud.tar.gz Maud"/>
-        </exec>
         <delete file="${dropbox}/linux64/Maud.tar.gz"/>
         <exec dir="${inst}/Maud_linux64/" executable="tar" os="Mac OS X">
             <arg line="cfz ${dropbox}/linux64/Maud.tar.gz Maud"/>
         </exec>
-        <delete file="${dropbox}/windows/Maud.zip"/>
-        <exec dir="${inst}/Maud_windows/" executable="zip" os="Mac OS X">
-            <arg line="-r ${dropbox}/windows/Maud.zip Maud"/>
-        </exec>
         <delete file="${dropbox}/windows64/Maud.zip"/>
         <exec dir="${inst}/Maud_windows64/" executable="zip" os="Mac OS X">
             <arg line="-r ${dropbox}/windows64/Maud.zip Maud"/>
+        </exec>
+        <!--delete file="${dropbox}/windows/Maud.zip"/>
+        <exec dir="${inst}/Maud_windows/" executable="zip" os="Mac OS X">
+            <arg line="-r ${dropbox}/windows/Maud.zip Maud"/>
+        </exec>
+        <delete file="${dropbox}/unix/Maud.tar.gz"/>
+        <exec dir="${inst}/Maud_unix/" executable="tar" os="Mac OS X">
+            <arg line="cfz ${dropbox}/unix/Maud.tar.gz Maud"/>
         </exec>
         <delete file="${dropbox}/unix_nj/Maud.tar.gz"/>
         <exec dir="${inst}/Maud_unix_nj/" executable="tar" os="Mac OS X">
@@ -2300,52 +2305,21 @@
         <delete file="${dropbox}/windows64_nj/Maud.zip"/>
         <exec dir="${inst}/Maud_windows64_nj/" executable="zip" os="Mac OS X">
             <arg line="-r ${dropbox}/windows64_nj/Maud.zip Maud"/>
-        </exec>
+        </exec-->
     </target>
 
     <target name="build_installers_only" description="build installers">
-        <!--		<ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}" remotedir="${deployfulldir}">
-  		<fileset file="${mirrorfulldir}/Maud.jar"/>
-		</ftp> -->
-        <!--delete file="${inst}/Maud_MacOSX/Maud.dmg.gz"/>
-        <exec dir="${inst}/Maud_MacOSX/" executable="/Users/luca/bin/mkdmg.pl" os="Mac OS X">
-            <arg line="Maud.dmg.gz Maud"/>
-        </exec-->
-        <delete file="${inst}/Maud_MacOSX64/Maud.dmg.gz"/>
-        <exec dir="${inst}/Maud_MacOSX64/" executable="/Users/luca/bin/mkdmg.pl" os="Mac OS X">
-            <arg line="Maud.dmg.gz Maud"/>
+        <delete file="${app_osx}/Maud.dmg.gz"/>
+        <exec dir="${app_osx}/" executable="/Users/luca/bin/mkdmg.pl" os="Mac OS X">
+            <arg line="Maud.dmg.gz Maud.app"/>
         </exec>
-        <delete file="${inst}/Maud_unix/Maud.tar.gz"/>
-        <exec dir="${inst}/Maud_unix/" executable="tar" os="Mac OS X">
-            <arg line="cfz Maud.tar.gz Maud"/>
-        </exec>
-        <delete file="${inst}/Maud_linux64/Maud.tar.gz"/>
+        <delete file="${inst}/linux64/Maud.tar.gz"/>
         <exec dir="${inst}/Maud_linux64/" executable="tar" os="Mac OS X">
-            <arg line="cfz Maud.tar.gz Maud"/>
+            <arg line="cfz ${inst}/linux64/Maud.tar.gz Maud"/>
         </exec>
-        <delete file="${inst}/Maud_windows/Maud.zip"/>
-        <exec dir="${inst}/Maud_windows/" executable="zip" os="Mac OS X">
-            <arg line="-r Maud.zip Maud"/>
-        </exec>
-        <delete file="${inst}/Maud_windows64/Maud.zip"/>
+        <delete file="${inst}/windows64/Maud.zip"/>
         <exec dir="${inst}/Maud_windows64/" executable="zip" os="Mac OS X">
-            <arg line="-r Maud.zip Maud"/>
-        </exec>
-        <delete file="${inst}/Maud_unix_nj/Maud.tar.gz"/>
-        <exec dir="${inst}/Maud_unix_nj/" executable="tar" os="Mac OS X">
-            <arg line="cfz Maud.tar.gz Maud"/>
-        </exec>
-        <delete file="${inst}/Maud_linux64_nj/Maud.tar.gz"/>
-        <exec dir="${inst}/Maud_linux64_nj/" executable="tar" os="Mac OS X">
-            <arg line="cfz Maud.tar.gz Maud"/>
-        </exec>
-        <delete file="${inst}/Maud_windows_nj/Maud.zip"/>
-        <exec dir="${inst}/Maud_windows_nj/" executable="zip" os="Mac OS X">
-            <arg line="-r Maud.zip Maud"/>
-        </exec>
-        <delete file="${inst}/Maud_windows64_nj/Maud.zip"/>
-        <exec dir="${inst}/Maud_windows64_nj/" executable="zip" os="Mac OS X">
-            <arg line="-r Maud.zip Maud"/>
+            <arg line="-r ${inst}/windows64/Maud.zip Maud"/>
         </exec>
     </target>
 

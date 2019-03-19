@@ -143,6 +143,8 @@ public class SimplexMethodRefinement extends OptimizationAlgorithm {
     }
     simplex.nelderMead(funtionTominimize, startParams, step, fTol, nTrial);
     fittingFunction.setFreeParameters(bestParams);
+	  fittingFunction.computeFit();
+	  fittingFunction.getFit();
     double wss = fittingFunction.getWSS();
     if (fittingFunction instanceof FilePar)
       ((FilePar) fittingFunction).updatePlot();
@@ -198,6 +200,8 @@ public class SimplexMethodRefinement extends OptimizationAlgorithm {
 
   public void updateSolution(double[] bestParm, double ynewlo) {
     fittingFunction.setFreeParameters(bestParm);
+	  fittingFunction.computeFit();
+	  fittingFunction.getFit();
     double wss = fittingFunction.getWSS();
     if (outputframe != null)
       outputframe.increaseProgressBarValue();

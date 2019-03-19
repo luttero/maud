@@ -330,7 +330,7 @@ public class PlotDataFile extends GraphFrame {
     String folder = folderAndName[0];
     filename = folderAndName[1];
 
-    if (Constants.sandboxEnabled && !filename.endsWith(".cif"))
+    if (!filename.endsWith(".cif"))
       filename = filename + ".cif";
 
     if (filename != null) {
@@ -386,7 +386,7 @@ public class PlotDataFile extends GraphFrame {
     String folder = folderAndName[0];
     filename = folderAndName[1];
 
-    if (Constants.sandboxEnabled && !filename.endsWith(".cif"))
+    if (!filename.endsWith(".cif"))
       filename = filename + ".cif";
 
     if (filename != null) {

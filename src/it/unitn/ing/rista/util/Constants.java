@@ -212,35 +212,35 @@ public class Constants {
    */
   public static final double PROTON_MOMENT = 1.41060761E-26;
 
-	public static final double E_SCAT_FACTOR = PLANCK * PLANCK / (2.0 * Math.PI * ELECTRON_MASS * CHARGE) *
+  public static final double E_SCAT_FACTOR = PLANCK * PLANCK / (2.0 * Math.PI * ELECTRON_MASS * CHARGE) *
 			1.0E20;
-	public static final double E_SCAT_FACTOR_PI = E_SCAT_FACTOR / Math.PI;
-	public static final double ENERGY_CONSTANT = 1.9569341E-6;
+  public static final double E_SCAT_FACTOR_PI = E_SCAT_FACTOR / Math.PI;
+  public static final double ENERGY_CONSTANT = 1.9569341E-6;
 	
-	public static final double ENERGY_LAMBDA = 12398.424121;
+  public static final double ENERGY_LAMBDA = 12398.424121;
   public static final double I_ENERGY_LAMBDA = 1.0 / 12398.424121;
 
 
   public static final int FLOAT_FIELD = 12;
   public static final double TOOLERANCE_COORD = 1.0E-3;
   public static final double PI = Math.PI;
-	public static final double PI_2 = PI / 2.0;
+  public static final double PI_2 = PI / 2.0;
   public static final double I_PI = 1.0 / Math.PI;
   public static final double PI2 = 2.0 * PI;
-	public static final double PI4 = 4.0 * Math.PI;
+  public static final double PI4 = 4.0 * Math.PI;
   public static final double PI_QUADRO = PI * PI;
   public static final double SQRTPI2 = Math.sqrt(PI2);
   public static final double DEGTOPI = PI / 180.0;
   public static final double PITODEG = 180.0 / PI;
   public static final double E_RADIUS = 2.81E-5;  // Angstrom
   public static final double LN2 = 6.9314718056E-01;
-	public static final double LN2_2 = 3.4657359027997E-01;
+  public static final double LN2_2 = 3.4657359027997E-01;
   public static final double sqrtln2pi = 4.6971863935E-01;
   public static final double SQRT_OF_PILN2 = 1.475664626635606;
   public static final double sqrt2ln2 = 1.177410022515475;
   public static final double one_sqrt2ln2 = 0.849321800288019;
   public static final double sqrt2 = 1.41421356237;
-	public static final double one_sqrt2 = 0.707106781186548;
+  public static final double one_sqrt2 = 0.707106781186548;
   public static final double sqrt3 = 1.73205080757;
   public static final double mstraintoetilde = 1.253314137316; // Math.sqrt(Math.PI/2)
   public static final double integrationStepPF = 1.0;
@@ -264,17 +264,17 @@ public class Constants {
   public static String resultsFile = "results.txt";
   public static String userName = null;
   public static String startPath = "/";
-  public static String maudReleaseBuilt = "$Revision: 2.80 $";
-  public static String maudDateBuilt = "$Date: 2018/01/11 19:33:00 $";
+  public static String maudReleaseBuilt = "$Revision: 2.91 $";
+  public static String maudDateBuilt = "$Date: 2019/03/06 8:45:45 $";
 
   public static final double arg2PIover3 = PI2 / 3.;
   public static final double sinArg2PIover3 = Math.sin(arg2PIover3);
   public static final double cosArg2PIover3 = Math.cos(arg2PIover3);
-  public static double maud_version = 2.80;
-	public static boolean useOpenCL = false;
-	public static Vector<OpenCLDevice> openClDevices= null;
-	public static OpenCLDevice openclDevice = null;
-	public static boolean nativeComputation = false;
+  public static double maud_version = 2.91;
+  public static boolean useOpenCL = false;
+  public static Vector<OpenCLDevice> openClDevices= null;
+  public static OpenCLDevice openclDevice = null;
+  public static boolean nativeComputation = false;
   public static boolean grayShaded = false;
   public static boolean checkCIFinputInConsole = true;
   public static String pathToMaudJar = "";
@@ -300,7 +300,7 @@ public class Constants {
 
   public static boolean useNewAbsorption = true;
 
-	public static boolean forceOverwrite = true;
+  public static boolean forceOverwrite = true;
 
   public static long tmpTime = 0l;
 
@@ -413,7 +413,6 @@ public class Constants {
   public static String applicationSupportDirectory = "";
 	public static String logsDirectory = "";
 	public static String startingLog = "startingLog";
-  public static boolean sandboxEnabled = false;
   public static String startingAppDirectory = "";
 
 	public static String refineIcon = "slot_machine_20.gif";
@@ -426,7 +425,7 @@ public class Constants {
     return maudReleaseBuilt;
   }
 
-	public static void initForMacOS(boolean sandboxed) {
+	public static void initForMacOS() {
 //		System.out.println("Init for OS X/macOS");
 		macosx = true;
 		osType = OsMac;
@@ -437,14 +436,11 @@ public class Constants {
 			applicationSupportDirectory = System.getProperty("ApplicationSupportDirectory") + fileSeparator;
 			logsDirectory = libraryDirectory + "Logs" + fileSeparator;
 			startingAppDirectory = System.getProperty("java.library.path") + fileSeparator;
-			if (sandboxed)
-				documentsDirectory = System.getProperty("DocumentsDirectory") + fileSeparator;
-			else
-				documentsDirectory = System.getProperty("DocumentsDirectory") + fileSeparator + "maud" + fileSeparator;
+			documentsDirectory = System.getProperty("DocumentsDirectory") + fileSeparator + "maud" + fileSeparator;
 		}
 	}
 
-	public static void initForWindows(boolean sandboxed) {
+	public static void initForWindows() {
 //		System.out.println("Init for Windows");
 		windoze = true;
 		startPath = "//";
@@ -459,7 +455,7 @@ public class Constants {
 		logsDirectory = libraryDirectory + "Logs" + fileSeparator;
 	}
 
-	public static void initForLinux(boolean sandboxed) {
+	public static void initForLinux() {
 ///		System.out.println("Init for linux");
 		osType = OsLinux;
 		startingLog = "startingLog";
@@ -471,8 +467,6 @@ public class Constants {
 	}
 
 	public static void initConstants() {
-		if (System.getProperty("SandboxEnabled") != null)
-			sandboxEnabled = false; // System.getProperty("SandboxEnabled").equalsIgnoreCase("true");// (the String "true" or "false")
 
 		maudReleaseBuilt = maudReleaseBuilt.substring(1, maudReleaseBuilt.length() - 1);
 		maudDateBuilt = maudDateBuilt.substring(1, maudDateBuilt.length() - 1);
@@ -495,13 +489,13 @@ public class Constants {
 //		System.out.println("System: " + osName);
 		osType = OsUnix;
 		if (osName != null && osName.indexOf("Mac OS X") != -1) {
-			initForMacOS(sandboxEnabled);
+			initForMacOS();
 		} else if (osName != null && osName.indexOf("Windows") != -1) {
-			initForWindows(sandboxEnabled);
+			initForWindows();
 		} else if (osName != null && osName.indexOf("Mac") != -1) {
-			initForMacOS(sandboxEnabled);
+			initForMacOS();
 		} else if (osName != null && osName.indexOf("Linux") != -1) {
-			initForLinux(sandboxEnabled);
+			initForLinux();
 		}
 
 		File appSupFile = new File(applicationSupportDirectory);
@@ -554,13 +548,7 @@ public class Constants {
 		  System.out.println(key + ": " + value);
 	  }
 
-	  if (sandboxEnabled) { // Sandboxing for the moment is for OS X
-		  System.out.println("Initialized sandboxing environment!");
-	  } else {
-		  System.out.println("No sandboxing!");
-	  }
-
-    String vers = System.getProperty("java.version");
+   String vers = System.getProperty("java.version");
 //	  String classnamesFile = "files/classnames.ins";
 	  pathToMaudJar = Misc.getPathToMaudJar("Maud.jar");
 	  maudJar = pathToMaudJar + fileSeparator + "Maud.jar";
@@ -590,9 +578,7 @@ public class Constants {
 			  cctbxNativeLibrary = nativeLibraryDirectory + "libcctbxForMaud.so";
 	  }
 
-/*	  String pathFile = pathToMaudJar + fileToLoad;
-    if (sandboxEnabled)
-      pathFile = applicationSupportDirectory + fileToLoad;*/
+//	  String pathFile = pathToMaudJar + fileToLoad;
 
     String full_build_number = "Maud_full_build.number";
 //    String reduced_build_number = new String("/Maud_reduced_build.number");
@@ -706,9 +692,6 @@ public class Constants {
 	      System.out.println("Need to initialize the program, first run");
         filesfolder = initializeMaud(pathToMaudJar, pathFile);
       } else {
-//        if (sandboxEnabled)
-//          filesfolder = fileSeparator + applicationSupportDirectory;
-//        else
         filesfolder = getUserPath(pathFile);
       }*/
 
@@ -1403,9 +1386,17 @@ public class Constants {
     if (!f.exists()) {
       return;
     }
-    URL u = f.toURL();
+    URL u[] = new URL[1];
+    u[0] = f.toURI().toURL();
     Class[] parameters = new Class[]{URL.class};
-    URLClassLoader sysloader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+
+	  // Java 8
+   // URLClassLoader sysloader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+
+    // Java 9
+	  ClassLoader parent = ClassLoader.getPlatformClassLoader();
+	  URLClassLoader sysloader = new URLClassLoader(u, parent);
+
 //    ClassLoader aCL = Thread.currentThread().getContextClassLoader();
 //    URLClassLoader aUrlCL = new URLClassLoader(urls, sysloader);
     Class sysclass = URLClassLoader.class;
@@ -1413,7 +1404,7 @@ public class Constants {
     try {
       Method method = sysclass.getDeclaredMethod("addURL", parameters);
       method.setAccessible(true);
-      method.invoke(sysloader, new Object[]{u});
+      method.invoke(sysloader, new Object[]{u[0]});
     } catch (Throwable t) {
       t.printStackTrace();
       throw new IOException("Error, could not add URL to system classloader");
@@ -1425,9 +1416,17 @@ public class Constants {
     if (!f.exists()) {
       return;
     }
-    URL u = f.toURL();
+	  URL u[] = new URL[1];
+	  u[0] = f.toURI().toURL();
     Class[] parameters = new Class[]{URL.class};
-    URLClassLoader sysloader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+
+    // Java 8
+//    URLClassLoader sysloader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+
+	  // Java 9
+	  ClassLoader parent = ClassLoader.getPlatformClassLoader();
+	  URLClassLoader sysloader = new URLClassLoader(u, parent);
+
 //    ClassLoader aCL = Thread.currentThread().getContextClassLoader();
 //    URLClassLoader aUrlCL = new URLClassLoader(urls, sysloader);
     Class sysclass = URLClassLoader.class;
@@ -1435,7 +1434,7 @@ public class Constants {
     try {
       Method method = sysclass.getDeclaredMethod("addURL", parameters);
       method.setAccessible(true);
-      method.invoke(sysloader, new Object[]{u});
+      method.invoke(sysloader, new Object[]{u[0]});
     } catch (Throwable t) {
       t.printStackTrace();
       throw new IOException("Error, could not add URL to system classloader");

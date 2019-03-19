@@ -45,7 +45,8 @@ public class PlanarDefectsSingleLayerModel extends PlanarDefects {
   public static String[] diclistc = {"_riet_stacking_layers_number", "_riet_stacking_layers_axis",
 
                                      "_riet_crystallite_factor",
-                                     "_riet_microstrain_factor"
+                                     "_riet_microstrain_factor",
+		                               "_maud_minimum_d_space"
   };
 
   // this are the corresponding labels that will appear in the GUI in the parameter list window etc.
@@ -53,7 +54,8 @@ public class PlanarDefectsSingleLayerModel extends PlanarDefects {
                                         "crystal axis normal to the stacking sequence",
 
                                      "crystallite size increase normal to the stacking",
-                                     "microstrain decrease normal to the stacking"
+                                     "microstrain decrease normal to the stacking",
+		  "minimum dspace for disordering"
   };
 
   // this model does not have subobjects, so the class list for subobjects is empty
@@ -70,6 +72,8 @@ public class PlanarDefectsSingleLayerModel extends PlanarDefects {
 
   int axisIndex = 2, layersNumber = 10;
 	double reciprocal_factor = .1;
+
+	int dmin_index = 2;
 
   // Constructors, and init methods do not change the code between the two stars lines
   // **********************************************************************************
@@ -108,7 +112,7 @@ public class PlanarDefectsSingleLayerModel extends PlanarDefects {
   public void initConstant() {
     Nstring = 2;    // number of options, treated as strings only, in this case only the first
     Nstringloop = 0;  // no vectors of strings for options
-    Nparameter = 2;   // 2 parameters refinables in the model
+    Nparameter = 3;   // 2 parameters refinables in the model
     Nparameterloop = 0;  // no parameter vectors in this model, to be used when the number of parameters may
                          // change in the model and/or is defined by other options
     Nsubordinate = 0;    // no subobjects or subordinate objects
@@ -129,6 +133,9 @@ public class PlanarDefectsSingleLayerModel extends PlanarDefects {
     parameterField[1] = new Parameter(this, getParameterString(1), 1,
             ParameterPreferences.getDouble(getParameterString(1) + ".min", 0.01),
             ParameterPreferences.getDouble(getParameterString(1) + ".max", 100));
+	  parameterField[2] = new Parameter(this, getParameterString(2), 0,
+			  ParameterPreferences.getDouble(getParameterString(2) + ".min", 0),
+			  ParameterPreferences.getDouble(getParameterString(2) + ".max", 10));
 
     refreshComputation = true; // we specify the computation need to be refreshed (it has never done up to now)
   }
@@ -244,6 +251,7 @@ public class PlanarDefectsSingleLayerModel extends PlanarDefects {
 		int[] jllist;
 		T_Eq_hkl Eq_hkl = new T_Eq_hkl();
 		int friedelLaw = 1;
+		double dmin = getParameterValue(dmin_index);
 
 		double[] soVector = aphase.getSoVector();
 
@@ -401,7 +409,8 @@ public class PlanarDefectsSingleLayerModel extends PlanarDefects {
 
 
       String[] labels = {"Crystallite factor: ",
-                         "Microstrain factor: "};
+                         "Microstrain factor: ",
+      "d min: "};
       pars = new JTextField[labels.length];
 
       for (int i = 0; i < labels.length; i++) {

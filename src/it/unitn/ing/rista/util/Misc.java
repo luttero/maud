@@ -26,7 +26,6 @@ import it.unitn.ing.rista.io.StringNumber;
 
 import java.io.*;
 import java.net.URL;
-import java.net.MalformedURLException;
 import java.util.*;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
@@ -467,19 +466,22 @@ public class Misc {
 		    in = Misc.getResourceReader(Constants.maudJar, "files/marker.txt");
 	    else {
 	      // Manual location
-	      String filename = Utility.openFileDialogForLoad("File not loaded, select it manually", "", file.getName());
-			if (filename != null) {
-				try {
-					in = new BufferedReader(new InputStreamReader(new FileInputStream(
-							new File(filename)), "UTF8"));
-				} catch (IOException ie) {
-					System.out.println("File not loaded: " + filename);
-					ie.printStackTrace();
-				}
-			} else {
-				System.out.println("File not found: " + file.getName());
-				e.printStackTrace();
-			}
+	      if (MaudPreferences.getBoolean("fileNotFound.selectManually", false)) {
+		      System.out.println("File not loaded, select it manually: " + file.getAbsolutePath());
+		      String filename = Utility.openFileDialogForLoad("File not loaded, select it manually", "", file.getAbsolutePath());
+		      if (filename != null) {
+			      try {
+				      in = new BufferedReader(new InputStreamReader(new FileInputStream(
+						      new File(filename)), "UTF8"));
+			      } catch (IOException ie) {
+				      System.out.println("File not loaded: " + filename);
+				      ie.printStackTrace();
+			      }
+		      } else {
+			      System.out.println("File not found: " + file.getName());
+			      e.printStackTrace();
+		      }
+	      }
       }
 
     }
@@ -512,6 +514,7 @@ public class Misc {
 //	  System.out.println("Filename to load: " + filename);
 	  if (in == null) {
 //		  System.out.println("Asking for a filename: " + filename);
+		  System.out.println("File not loaded, select it manually: " + filename);
 		  filename = Utility.openFileDialogForLoad("File not loaded, select it manually", "", filename);
 		  if (filename != null) {
 			  try {

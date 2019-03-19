@@ -167,10 +167,6 @@ public class RadiationType extends XRDcat {
     return 0.0;
   }
 
-	public int getLinesCountForFluorescence() {
-		return getLinesCount();
-	}
-
 	public double getRadiationWavelengthForFluorescence(int index) {
 		return getRadiationWavelength(index);
 	}

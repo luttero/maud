@@ -5,10 +5,10 @@
  */
 package com.jtex.geom;
 
+import com.jtex.arrays.Array1C;
 import com.jtex.arrays.Array1D;
-import java.util.Arrays;
-import java.util.Formatter;
-import java.util.Locale;
+
+import java.util.*;
 
 /**
  *
@@ -417,7 +417,40 @@ public class Vec2 {
         return str;
     }
 
-    public Vec2 toRadians() {
+	public String toSaveString() { // Luca
+		String saveStr = "";
+		for (int i = 0; i < this.size(); i++) {
+			saveStr += this.x[i] + " " + this.y[i];
+			if (i < size() - 1)
+				saveStr += " ";
+		}
+		return saveStr;
+	}
+
+	public static Vec2 parse(String inputString) {
+
+		Vector<Double> myRe = new Vector(100, 100);
+		Vector<Double> myIm = new Vector(100, 100);
+		Scanner ss = new Scanner(inputString);
+		ss.useDelimiter(" ");
+		while (ss.hasNext()) {
+			myRe.add(Double.parseDouble(ss.next()));
+			myIm.add(Double.parseDouble(ss.next()));
+		}
+
+		int size = Math.min(myRe.size(), myIm.size());
+
+		double[] mre = new double[size];
+		double[] mim = new double[size];
+		for (int i = 0; i < size; i++) {
+			mre[i] = myRe.elementAt(i);
+			mim[i] = myIm.elementAt(i);
+		}
+		Vec2 array = new Vec2(mre, mim);
+		return array;
+	}
+
+	public Vec2 toRadians() {
         return multiply(Math.PI / 180);
     }
 

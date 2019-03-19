@@ -402,7 +402,7 @@ public class FlatCCDReflectionSquareRoi extends LaueOvalRoi {
     filename = folderAndName[1];
 
     if (filename == null) return;
-    if (Constants.sandboxEnabled && !filename.endsWith(".esg"))
+    if (!filename.endsWith(".esg"))
       filename = filename + ".esg";
 
     IJ.wait(250);  // give system time to redraw ImageJ window
@@ -457,7 +457,7 @@ public class FlatCCDReflectionSquareRoi extends LaueOvalRoi {
           output.newLine();
           output.write("_pd_meas_angle_phi " + Fmt.format(phi));
           output.newLine();
-	        output.write("_pd_meas_orientation_2theta " + Fmt.format(theta2));
+	        output.write("_pd_meas_orientation_2theta " + "0");
 	        output.newLine();
           output.write("_riet_par_spec_displac_x 0");
           output.newLine();

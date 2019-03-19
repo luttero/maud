@@ -12,40 +12,8 @@
 
 package  gov.noaa.pmel.sgt.swing;
 
-import gov.noaa.pmel.sgt.LineKey;
-import gov.noaa.pmel.sgt.PointCollectionKey;
-import gov.noaa.pmel.sgt.ColorKey;
-import gov.noaa.pmel.sgt.VectorKey;
-import gov.noaa.pmel.sgt.Layer;
+import gov.noaa.pmel.sgt.*;
 import gov.noaa.pmel.sgt.CartesianGraph;
-import gov.noaa.pmel.sgt.CartesianRenderer;
-import gov.noaa.pmel.sgt.LineCartesianRenderer;
-import gov.noaa.pmel.sgt.PointCartesianRenderer;
-import gov.noaa.pmel.sgt.GridCartesianRenderer;
-import gov.noaa.pmel.sgt.VectorCartesianRenderer;
-import gov.noaa.pmel.sgt.LinearTransform;
-import gov.noaa.pmel.sgt.PlainAxis;
-import gov.noaa.pmel.sgt.Axis;
-import gov.noaa.pmel.sgt.JPane;
-import gov.noaa.pmel.sgt.Logo;
-import gov.noaa.pmel.sgt.SGLabel;
-import gov.noaa.pmel.sgt.LayerNotFoundException;
-import gov.noaa.pmel.sgt.Attribute;
-import gov.noaa.pmel.sgt.LineAttribute;
-import gov.noaa.pmel.sgt.GridAttribute;
-import gov.noaa.pmel.sgt.PointAttribute;
-import gov.noaa.pmel.sgt.VectorAttribute;
-import gov.noaa.pmel.sgt.Graph;
-import gov.noaa.pmel.sgt.AxisNotFoundException;
-import gov.noaa.pmel.sgt.CartesianGraph;
-import gov.noaa.pmel.sgt.SGException;
-import gov.noaa.pmel.sgt.StackedLayout;
-import gov.noaa.pmel.sgt.TimeAxis;
-import gov.noaa.pmel.sgt.ColorMap;
-import gov.noaa.pmel.sgt.IndexedColorMap;
-import gov.noaa.pmel.sgt.TransformAccess;
-import gov.noaa.pmel.sgt.DataNotFoundException;
-import gov.noaa.pmel.sgt.AttributeChangeEvent;
 
 import gov.noaa.pmel.util.Debug;
 import gov.noaa.pmel.util.SoTValue;
@@ -159,6 +127,10 @@ public class JPlotLayout extends JGraphicLayout
   //
   private boolean isXTime_ = false;
   private boolean isYTime_ = false;
+
+	private boolean isLinearXAxis_ = false;
+	private boolean isLinearYAxis_ = false;
+
   //
   // constants
   //
@@ -229,7 +201,7 @@ public class JPlotLayout extends JGraphicLayout
                      boolean is_key_pane) {
     this(dataset instanceof SGTGrid? GRID:
          (dataset instanceof PointCollection? POINTS: (dataset instanceof SGTVector? VECTOR: LINE)),
-         dataset.isXTime(), dataset.isYTime(), id, img, is_key_pane);
+         dataset.isXTime(), dataset.isYTime(), true, true, id, img, is_key_pane);
   }
   /**
    * <code>JPlotLayout</code> constructor.  This constructor is
@@ -242,11 +214,13 @@ public class JPlotLayout extends JGraphicLayout
    * @param img Logo image
    * @param is_key_pane if true LineKey is in separate pane
    */
-  public JPlotLayout(boolean isGrid, boolean isXTime,
-                     boolean isYTime, String id, Image img,
+  public JPlotLayout(boolean isGrid, boolean isXTime, boolean isYTime,
+                     boolean isLinearXAxis,
+                     boolean isLinearYAxis,
+                     String id, Image img,
                      boolean is_key_pane) {
     this(isGrid? GRID: LINE,
-         isXTime, isYTime, id, img, is_key_pane);
+         isXTime, isYTime, isLinearXAxis, isLinearYAxis, id, img, is_key_pane);
   }
   /**
    * <code>JPlotLayout</code> constructor.  This constructor is
@@ -260,10 +234,13 @@ public class JPlotLayout extends JGraphicLayout
    * @param is_key_pane if true LineKey is in separate pane
    */
   public JPlotLayout(boolean isGrid, boolean isXTime,
-                     boolean isYTime, String id, Image img,
+                     boolean isYTime,
+                     boolean isLinearXAxis,
+                     boolean isLinearYAxis,
+                     String id, Image img,
                      boolean is_key_pane, int xDim, int yDim) {
     this(isGrid? GRID: LINE,
-         isXTime, isYTime, id, img, is_key_pane, xDim, yDim);
+         isXTime, isYTime, isLinearXAxis, isLinearYAxis, id, img, is_key_pane, xDim, yDim);
   }
   /**
    * <code>JPlotLayout</code> constructor.  All other constructors
@@ -283,11 +260,13 @@ public class JPlotLayout extends JGraphicLayout
                      boolean isPoints,
                      boolean isXTime,
                      boolean isYTime,
+                     boolean isLinearXAxis,
+                     boolean isLinearYAxis,
                      String id,
                      Image img,
                      boolean is_key_pane) {
     this(isGrid? GRID:(isPoints? POINTS: LINE),
-         isXTime, isYTime, id, img, is_key_pane);
+         isXTime, isYTime, isLinearXAxis, isLinearYAxis, id, img, is_key_pane);
   }
 
   /**
@@ -308,12 +287,15 @@ public class JPlotLayout extends JGraphicLayout
                      boolean isPoints,
                      boolean isXTime,
                      boolean isYTime,
+                     boolean isLinearXAxis,
+                     boolean isLinearYAxis,
                      String id,
                      Image img,
                      boolean is_key_pane,
                      int xDim, int yDim) {
     this(isGrid? GRID:(isPoints? POINTS: LINE),
-         isXTime, isYTime, id, img, is_key_pane, xDim, yDim);
+         isXTime, isYTime, isLinearXAxis, isLinearYAxis,
+	      id, img, is_key_pane, xDim, yDim);
   }
 
   /**
@@ -332,10 +314,13 @@ public class JPlotLayout extends JGraphicLayout
   public JPlotLayout(int type,
                      boolean isXTime,
                      boolean isYTime,
+                     boolean isLinearXAxis,
+                     boolean isLinearYAxis,
                      String id,
                      Image img,
                      boolean is_key_pane) {
-    this(type,isXTime, isYTime, id, img, is_key_pane, 400, 300);
+    this(type,isXTime, isYTime, isLinearXAxis, isLinearYAxis,
+	  id, img, is_key_pane, 400, 300);
   }
 
   /**
@@ -354,6 +339,8 @@ public class JPlotLayout extends JGraphicLayout
   public JPlotLayout(int type,
                      boolean isXTime,
                      boolean isYTime,
+                     boolean isLinearXAxis,
+                     boolean isLinearYAxis,
                      String id,
                      Image img,
                      boolean is_key_pane,
@@ -362,8 +349,8 @@ public class JPlotLayout extends JGraphicLayout
     Layer layer, key_layer;
     CartesianGraph graph;
     LinearTransform xt, yt;
-    PlainAxis xbot = null;
-    PlainAxis yleft = null;
+	  SpaceAxis xbot = null;
+	  SpaceAxis yleft = null;
     TimeAxis tbot = null;
     TimeAxis tleft = null;
     double xpos, ypos;
@@ -403,6 +390,8 @@ public class JPlotLayout extends JGraphicLayout
     //
     isXTime_ = isXTime;
     isYTime_ = isYTime;
+    isLinearXAxis_ = isLinearXAxis;
+    isLinearYAxis_ = isLinearYAxis;
     plotType_ = type;
     //
     // create Pane and descendants for the LineProfile layout
@@ -610,7 +599,7 @@ public class JPlotLayout extends JGraphicLayout
       tbot.setLocationU(origin);
       tbot.setLabelFont(axfont);
       graph.addXAxis(tbot);
-    } else {
+    } else if (isLinearXAxis_) {
       xbot = new PlainAxis(BOTTOM_AXIS);
       xbot.setRangeU(xRange);
       xbot.setNumberSmallTics(0);
@@ -618,6 +607,14 @@ public class JPlotLayout extends JGraphicLayout
       xbot.setLabelHeightP(labelHeight_);
       xbot.setLabelFont(axfont);
       graph.addXAxis(xbot);
+    } else {
+	    xbot = new PlainLogAxis(BOTTOM_AXIS);
+	    xbot.setRangeU(xRange);
+	    xbot.setNumberSmallTics(0);
+	    xbot.setLocationU(origin);
+	    xbot.setLabelHeightP(labelHeight_);
+	    xbot.setLabelFont(axfont);
+	    graph.addXAxis(xbot);
     }
     if(isYTime_) {
       tleft = new TimeAxis(LEFT_AXIS, TimeAxis.AUTO);
@@ -626,7 +623,7 @@ public class JPlotLayout extends JGraphicLayout
       tleft.setLocationU(origin);
       tleft.setLabelFont(axfont);
       graph.addYAxis(tleft);
-    } else {
+    } else if (isLinearYAxis_) {
       yleft = new PlainAxis(LEFT_AXIS);
       yleft.setRangeU(yRange);
       yleft.setNumberSmallTics(0);
@@ -634,6 +631,14 @@ public class JPlotLayout extends JGraphicLayout
       yleft.setLocationU(origin);
       yleft.setLabelFont(axfont);
       graph.addYAxis(yleft);
+    } else {
+	    yleft = new PlainLogAxis(LEFT_AXIS);
+	    yleft.setRangeU(yRange);
+	    yleft.setNumberSmallTics(0);
+	    yleft.setLabelHeightP(labelHeight_);
+	    yleft.setLocationU(origin);
+	    yleft.setLabelFont(axfont);
+	    graph.addYAxis(yleft);
     }
     if(plotType_ == GRID) {
       //

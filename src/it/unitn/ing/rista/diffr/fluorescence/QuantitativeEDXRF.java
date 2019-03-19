@@ -30,6 +30,8 @@ import it.unitn.ing.rista.util.*;
 
 import java.util.Vector;
 
+import static java.lang.System.out;
+
 /**
  * The QuantitativeEDXRF is a class to
  *
@@ -59,6 +61,67 @@ public class QuantitativeEDXRF extends QuantitativeXRF {
     description = descriptionID;
   }
 
+	public void computeFluorescence(Sample asample, DataFileSet adataset) {
+
+		int datafilenumber = adataset.activedatafilesnumber();
+
+		final Sample theSample = asample;
+		final DataFileSet theDataset = adataset;
+
+		final int maxThreads = Math.min(Constants.maxNumberOfThreads, datafilenumber);
+		if (maxThreads > 1 && Constants.threadingGranularity >= Constants.MEDIUM_GRANULARITY) {
+			if (Constants.debugThreads)
+				out.println("Thread datafileset " + getLabel());
+			int i;
+			PersistentThread[] threads = new PersistentThread[maxThreads];
+			for (i = 0; i < maxThreads; i++) {
+				threads[i] = new PersistentThread(i) {
+					@Override
+					public void executeJob() {
+						int i1 = this.getJobNumberStart();
+						int i2 = this.getJobNumberEnd();
+
+						for (int j = i1; j < i2; j++) {
+							DiffrDataFile datafile = theDataset.getActiveDataFile(j);
+							computeFluorescence(theSample, datafile);
+							computeasymmetry(theSample, datafile);
+						}
+					}
+				};
+			}
+			i = 0;
+			int istep = (int) (0.9999 + datafilenumber / maxThreads);
+			for (int j = 0; j < maxThreads; j++) {
+				int is = i;
+				if (j < maxThreads - 1)
+					i = Math.min(i + istep, datafilenumber);
+				else
+					i = datafilenumber;
+				threads[j].setJobRange(is, i);
+				threads[j].start();
+			}
+			boolean running;
+			do {
+				running = false;
+				try {
+					Thread.sleep(Constants.timeToWaitThreadsEnding);
+				} catch (InterruptedException r) {
+				}
+				for (int h = 0; h < maxThreads; h++) {
+					if (!threads[h].isEnded())
+						running = true;
+				}
+			} while (running);
+
+		} else
+			for (int k = 0; k < datafilenumber; k++) {
+				DiffrDataFile datafile = theDataset.getActiveDataFile(k);
+				computeFluorescence(theSample, datafile);
+				computeasymmetry(theSample, datafile);
+			}
+
+	}
+
 	/**
 	 * The method compute the fluorescence pattern using the
 	 * fluorescence model by De Boer.
@@ -70,8 +133,8 @@ public class QuantitativeEDXRF extends QuantitativeXRF {
 	 * @see DiffrDataFile#addtoFit
 	 */
 
-	public void computeFluorescence(DiffrDataFile adatafile) {
-		super.computeFluorescence(adatafile);
+	public void computeFluorescence(Sample asample, DiffrDataFile adatafile) {
+		super.computeFluorescence(asample, adatafile);
 /*
 		Sample asample = adatafile.getDataFileSet().getSample();
 		Instrument ainstrument = adatafile.getDataFileSet().getInstrument();

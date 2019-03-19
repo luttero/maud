@@ -39,7 +39,7 @@ public class EDXRFAngularCalibration extends AngularCalibration {
   public static String descriptionID = "Channel calibration of the XRF/EDXRF detector";
 
   public static String[] diclistc = {"_inst_channel_calibration_zero", "_inst_channel_calibration_gain"};
-  public static String[] diclistcrm = {"Energy of channel zero ", "Gain in KeV per channel "};
+  public static String[] diclistcrm = {"Energy of channel zero ", "Gain in eV per channel "};
 
   public static String[] classlistc = {};
   public static String[] classlistcs = {};
@@ -169,8 +169,8 @@ public class EDXRFAngularCalibration extends AngularCalibration {
 
       principalPanel.setLayout(new GridLayout(0, 2, 3, 3));
 
-      addParField(principalPanel, "Zero channel (KeV): ", parameterField[0]);
-      addParField(principalPanel, "Gain (KeV/channel): ", parameterField[1]);
+      addParField(principalPanel, "Zero channel (eV): ", parameterField[0]);
+      addParField(principalPanel, "Gain (eV/channel): ", parameterField[1]);
 
       setTitle("Energy channel calibration");
       initParameters();

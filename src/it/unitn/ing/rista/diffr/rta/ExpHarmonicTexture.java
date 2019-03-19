@@ -102,7 +102,6 @@ public class ExpHarmonicTexture extends HarmonicTexture {
 
     if (refreshODF) {
       refreshODF = false;
-      Misc.println("Compute ODF!");
     double vbg = 0.0, va = 0.0, hvg = 0., hvb = 0., a = 0., b = 0.;
     double fn = 0.0;
     normalizationFactor = 1.0;
@@ -389,9 +388,9 @@ public class ExpHarmonicTexture extends HarmonicTexture {
 								int datafilenumber = asample.getActiveDataSet(i).activedatafilesnumber();
 								for (int ij1 = 0; ij1 < datafilenumber; ij1++) {
 									DiffrDataFile adatafile = asample.getActiveDataSet(i).getActiveDataFile(ij1);
-									double[][] positions = adatafile.getPositions(aphase)[0];
+									double[][][] positions = adatafile.getPositions(aphase);
 //								  for (int ppp = 0; ppp < adatafile.positionsPerPattern; ppp++) {
-									double texture_angles[] = adatafile.getTextureAngles(positions[ij][0]);
+									double texture_angles[] = adatafile.getTextureAngles(positions[ij][0][0]);
 									texAngle[0][idatafile] = (texture_angles[0] * Constants.DEGTOPI);
 									texAngle[1][idatafile] = (texture_angles[1] * Constants.DEGTOPI);
 									idatafile++;
@@ -453,9 +452,9 @@ public class ExpHarmonicTexture extends HarmonicTexture {
 					int datafilenumber = asample.getActiveDataSet(i).activedatafilesnumber();
 					for (int ij1 = 0; ij1 < datafilenumber; ij1++) {
 						DiffrDataFile adatafile = asample.getActiveDataSet(i).getActiveDataFile(ij1);
-						double[][] positions = adatafile.getPositions(aphase)[0];
+						double[][][] positions = adatafile.getPositions(aphase);
 //					  for (int ppp = 0; ppp < adatafile.positionsPerPattern; ppp++) {
-						double texture_angles[] = adatafile.getTextureAngles(positions[ij][0]);
+						double texture_angles[] = adatafile.getTextureAngles(positions[ij][0][0]);
 						texAngle[0][idatafile] = (texture_angles[0] * Constants.DEGTOPI);
 						texAngle[1][idatafile] = (texture_angles[1] * Constants.DEGTOPI);
 						idatafile++;

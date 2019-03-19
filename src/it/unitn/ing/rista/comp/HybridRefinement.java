@@ -669,6 +669,8 @@ public class HybridRefinement extends OptimizationAlgorithm implements GAProblem
       wgt[i] *= wgt[i];
       fit[i] = fittingFunction.getFit(i);
     } */
+	  fittingFunction.computeFit();
+	  fittingFunction.getFit();
     defWSS = fittingFunction.getWSS();
     defParams = new double[nprm];
     lbound = new double[nprm];
@@ -759,13 +761,17 @@ public class HybridRefinement extends OptimizationAlgorithm implements GAProblem
     if (bestWSS < defWSS) {
       fittingFunction.setFreeParameters(bestParams);
       fittingFunction.saveparameters();
-      double wss = fittingFunction.getWSS();
+	    fittingFunction.computeFit();
+	    fittingFunction.getFit();
+	    double wss = fittingFunction.getWSS();
       if (fittingFunction instanceof FilePar)
         ((FilePar) fittingFunction).updatePlot();
       System.out.println("Final chi :" + wss);
     } else {
       fittingFunction.setFreeParameters(defParams);
       fittingFunction.saveparameters();
+	    fittingFunction.computeFit();
+	    fittingFunction.getFit();
       double wss = fittingFunction.getWSS();
       if (fittingFunction instanceof FilePar)
         ((FilePar) fittingFunction).updatePlot();
@@ -834,9 +840,10 @@ public class HybridRefinement extends OptimizationAlgorithm implements GAProblem
 
     int dataNumber = fittingFunction.getNumberOfData();
 
-//    fittingFunction.setDerivate(false);
+    fittingFunction.setDerivate(false);
 
-//    fittingFunction.computeFirstFit();
+    fittingFunction.computeFirstFit();
+	  fittingFunction.getRefinementIndexes();
 
       fittingFunction.getFit();
       for (int i = 0; i < dataNumber; i++) {
@@ -855,7 +862,6 @@ public class HybridRefinement extends OptimizationAlgorithm implements GAProblem
 
     int check = 0; // if check != 0 the new wss can be sligthly greater than the old one
 
-    fittingFunction.setDerivate(true);
     int mdi = (nprm + 1) * nprm / 2;
 
 // start least squares fitting
@@ -871,7 +877,9 @@ public class HybridRefinement extends OptimizationAlgorithm implements GAProblem
 
 
     double wss = 0.0;
-      wss = fittingFunction.getWSS();
+//	  fittingFunction.computeFit();
+	  fittingFunction.getRefinementIndexes();
+	  wss = fittingFunction.getWSS();
     double oldwss = wss;
 
 /*          next iteration      */
@@ -934,7 +942,7 @@ public class HybridRefinement extends OptimizationAlgorithm implements GAProblem
             b[i] = deriv[i] + g[i];
             if (Math.abs(g[i]) <= Math.abs(prcsn * deriv[i]))
               ++n0;
-            parmn[i] = (double) b[i];
+            parmn[i] = b[i];
           }
 //          printout(parmn, nprm);
         }
@@ -951,7 +959,7 @@ public class HybridRefinement extends OptimizationAlgorithm implements GAProblem
             fittingFunction.setFreeParameters(parmn);
               for (int i = 0; i < dataNumber; i++)
                 fit[i] = fittingFunction.getFit(i);
-              wss = fittingFunction.getWSS();
+	          wss = fittingFunction.getWSS();
           }
           if (Double.isNaN(wss) || wss == 0.0) {
             wss = oldwss * 1.01;
@@ -978,7 +986,7 @@ public class HybridRefinement extends OptimizationAlgorithm implements GAProblem
         fittingFunction.setFreeParameters(parm);
       }
 
-          fittingFunction.getFit();
+//      fittingFunction.getFit();
           for (int i = 0; i < dataNumber; i++)
             fit[i] = fittingFunction.getFit(i);
           wss = fittingFunction.getWSS();
@@ -1016,17 +1024,18 @@ public class HybridRefinement extends OptimizationAlgorithm implements GAProblem
     double dparp;
     //
 
+	  fittingFunction.setDerivate(true);
     double firstfit[] = new double[dataNumber];
     double secondfit[] = null;
     if (doubleder)
       secondfit = new double[dataNumber];
     for (int sp = 0; sp < nprm; sp++) {
       if (parm[sp] == 0 && minSignificantValue[sp] == 0)
-        dparp = (double) derstep;
+        dparp = derstep;
       else if (Math.abs(parm[sp]) < Math.abs(minSignificantValue[sp]))
-        dparp = (double) (minSignificantValue[sp] * derstep);
+        dparp = (minSignificantValue[sp] * derstep);
       else
-        dparp = parm[sp] * (double) derstep;
+        dparp = parm[sp] * derstep;
       double dparp2 = dparp * 2.0f;
       double oldpar = parm[sp];
       double parm1 = parm[sp] + dparp;
@@ -1045,9 +1054,11 @@ public class HybridRefinement extends OptimizationAlgorithm implements GAProblem
             derivf[i][sp] = ((firstfit[i] - secondfit[i]) / dparp2);
           else
             derivf[i][sp] = ((firstfit[i] - fit[i]) / dparp);
+//	        System.out.println(sp + " " + i + " " + firstfit[i] + " " + fit[i] + " " + dparp);
         }
       fittingFunction.setFreeParameter(sp, oldpar);
     }
+	  fittingFunction.setDerivate(false);
   }
 
   public void choback(int nfit1)

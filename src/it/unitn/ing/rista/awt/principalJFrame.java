@@ -61,7 +61,7 @@ public class principalJFrame extends myJFrame {
 	public static String plotScale = "plot.scale";
 	public static String showProgressFrame = "shows.floatingProgressWindow";
 	public static String swingLF = "swing.defaultL&F";
-	JTextField titleField = null;
+	public JTextField titleField = null;
 
   public principalJFrame() {
     super(null);
@@ -215,7 +215,7 @@ public class principalJFrame extends myJFrame {
     String folderAndName[] = null;
     if (filename == null) {
       filename = "default.par";
-      boolean loadLastAnalysisFile = (!Constants.sandboxEnabled && MaudPreferences.getBoolean("analysis.loadLastAnalysisAtStart", false));
+      boolean loadLastAnalysisFile = MaudPreferences.getBoolean("analysis.loadLastAnalysisAtStart", false);
       if (pcontrol != null && loadLastAnalysisFile)
         filename = MaudPreferences.getPref(FilePar.analysisFile, filename);
       String dir = Constants.documentsDirectory;

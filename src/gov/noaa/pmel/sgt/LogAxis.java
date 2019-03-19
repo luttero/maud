@@ -173,7 +173,7 @@ public class LogAxis extends SpaceAxis implements Cloneable {
         xt = graph_.getXUtoP(j)-LABEL_RATIO*labelHeight_*0.25;
         //xt = graph_.getXUtoP(j);
         //System.out.println("affich["+j+"]: 10e"+Math.round( Math.log(j)/Math.log(10) ));
-        labelText = "10e"+Math.round(Math.log(j)/Math.log(10));
+	      labelText = format.form(graph_.getXUtoP(j)); //"10e"+Math.round(Math.log(j)/Math.log(10));
         label = new SGLabel("coordinate", labelText, new Point2D.Double(xt, yt));
         label.setAlign(vertalign, horzalign);
         label.setOrientation(SGLabel.HORIZONTAL);
@@ -271,6 +271,7 @@ public class LogAxis extends SpaceAxis implements Cloneable {
       if (l!=null) {
         for(j=min; j <= max; j*=jump) {
           labelText = "10e"+Math.round(Math.log(j)/Math.log(10));
+	        labelText = format.form(graph_.getXUtoP(j)); //"10e"+Math.round(Math.log(j)/Math.log(10));
           //get Y Label size in Device unit
           //widthP = l.getXDtoP(l.getFontMetrics(labelFont_).stringWidth(labelText));
           label = new SGLabel("coordinate", labelText.trim(), new Point2D.Double(0, yt));
@@ -312,6 +313,7 @@ public class LogAxis extends SpaceAxis implements Cloneable {
         yt = graph_.getYUtoP(j);//-LABEL_RATIO*labelHeight_*0.25;
         //System.out.println("affich["+j+"]: 10e"+Math.round( Math.log(j)/Math.log(10) ));
         labelText = "10e"+Math.round(Math.log(j)/Math.log(10));
+	      labelText = format.form(j); //"10e"+Math.round(Math.log(j)/Math.log(10));
         label = new SGLabel("coordinate", labelText, new Point2D.Double(xt, yt));
         label.setAlign(SGLabel.CENTER, horzalign);
         label.setOrientation(SGLabel.HORIZONTAL);

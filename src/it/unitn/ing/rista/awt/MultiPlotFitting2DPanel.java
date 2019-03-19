@@ -409,7 +409,7 @@ public class MultiPlotFitting2DPanel extends CopyPrintablePanel {
      * Create the layout without a Logo image and with the
      * ColorKey on a separate Pane object.
      */
-    rpl = new JPlotSpectraLayout(true, false, false, "Intensity Map", null, true);
+    rpl = new JPlotSpectraLayout(true, false, false, true, true, "Intensity Map", null, true);
     rpl.setEditClasses(false);
     /*
      * Create a GridAttribute for CONTOUR style.

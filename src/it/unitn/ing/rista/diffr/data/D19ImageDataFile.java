@@ -292,7 +292,7 @@ public class D19ImageDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile
     filename = folderAndName[1];
 
     if (filename == null) return null;
-    if (Constants.sandboxEnabled && !filename.endsWith(".esg"))
+    if (!filename.endsWith(".esg"))
       filename = filename + ".esg";
 
     int nprofiles = profile[0].length;

@@ -558,9 +558,9 @@ public class InstrumentBroadeningGSAS1f extends InstrumentBroadening {
 
     double newFit[];
 
-    double total_asymmetrymin = ainstrument.getInstrumentalAsymmetry(diffrDataFile.getXData(min), diffrDataFile);
+    double total_asymmetrymin = getInstrumentalAsymmetry(diffrDataFile.getXData(min), diffrDataFile);
     total_asymmetrymin = Math.abs(total_asymmetrymin);
-    double total_asymmetrymax = ainstrument.getInstrumentalAsymmetry(diffrDataFile.getXData(max), diffrDataFile);
+    double total_asymmetrymax = getInstrumentalAsymmetry(diffrDataFile.getXData(max), diffrDataFile);
     total_asymmetrymax = Math.abs(total_asymmetrymax);
 //    System.out.println(total_asymmetrymax + " " + total_asymmetrymin);
     if (Math.min(total_asymmetrymax, total_asymmetrymin) < 1 && max > min) {
@@ -569,7 +569,7 @@ public class InstrumentBroadeningGSAS1f extends InstrumentBroadening {
       for (int j = min; j < max; j++) {
         int absdirection = convolutionStep;  // increasing step
         double x = diffrDataFile.getXDataForCalibration(j);
-        double total_asymmetry = ainstrument.getInstrumentalAsymmetry(diffrDataFile.getXData(j), diffrDataFile);
+        double total_asymmetry = getInstrumentalAsymmetry(diffrDataFile.getXData(j), diffrDataFile);
 //      System.out.println(total_asymmetry);
         if (total_asymmetry == 0.0)
           newFit[j - min] = afit[j];
