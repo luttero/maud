@@ -5,10 +5,7 @@
  */
 package com.jtex.arrays;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Formatter;
-import java.util.Locale;
+import java.util.*;
 
 /**
  *
@@ -1119,7 +1116,36 @@ public class Array1D {
         return str;
     }
 
-    public double dot(Array1D b) {
+	public String toSaveString() { // Luca
+		String saveStr = "";
+		for (int i = 0; i < this.size(); i++) {
+			saveStr += Double.toString(this.a[i]);
+			if (i < size() - 1)
+				saveStr += " ";
+		}
+		return saveStr;
+	}
+
+	public static Array1D parse(String inputString) {
+
+		Vector<Double> myRe = new Vector(100, 100);
+		Scanner ss = new Scanner(inputString);
+		ss.useDelimiter(" ");
+		while (ss.hasNext()) {
+			myRe.add(Double.parseDouble(ss.next()));
+		}
+
+		int size = myRe.size();
+
+		double[] mre = new double[size];
+		for (int i = 0; i < size; i++) {
+			mre[i] = myRe.elementAt(i);
+		}
+		Array1D array = new Array1D(mre);
+		return array;
+	}
+
+	public double dot(Array1D b) {
         double c = 0;
         for (int i = 0; i < a.length; i++) {
             c += a[i] * b.a[i];

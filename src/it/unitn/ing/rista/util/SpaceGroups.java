@@ -65,7 +65,21 @@ public class SpaceGroups {
       "9, m3, T, 23",
       "10, m3m, O, 423"
   };
-/*      SYMMETRY GROUP  : O   T  D4  C4  D2  C2  C1  D6  C6  D3  C3 */
+
+	public static final String[] laueGroupOnly = {
+			"-1",
+			"2/m",
+			"2/mmm",
+			"4/m",
+			"4/mmm",
+			"-3",
+			"-3m",
+			"6/m",
+			"6/mmm",
+			"m3",
+			"m3m"
+	};
+	/*      SYMMETRY GROUP  : O   T  D4  C4  D2  C2  C1  D6  C6  D3  C3 */
 /*                       432 23  422  4  222  2   1  622  6  322  3 */
 
 /*      CODE NUMBER     : 7   6   5   4   3   2   1  11  10   9   8 */

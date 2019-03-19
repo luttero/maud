@@ -45,6 +45,11 @@ public class LCLS2ConfigData {
 		return MaudPreferences.getInteger("LCLS2Wizard." + property, defaultvalue);
 	}
 
+	public static double getPropertyValue(String property, double defaultvalue) {
+		property = Misc.toStringNoBlank(property);
+		return MaudPreferences.getDouble("LCLS2Wizard." + property, defaultvalue);
+	}
+
 	public static void setPropertyValue(String property, int value) {
 		property = Misc.toStringNoBlank(property);
 		MaudPreferences.setPref("LCLS2Wizard." + property, value);
@@ -206,7 +211,8 @@ public class LCLS2ConfigData {
 	public static double radiationKeV = 10.217;
 	public static double omega = 72.7;
 	public static String calibrationDirectory = "";
-	public static String filenameToSave = "";
+	public static String filenameToSave = getPropertyValue("UnrolledImagesDatafile", "Filename for saving unrolled images datafiles....");
+	public static String filenameTemplate = getPropertyValue("LCLSdefaultTemplate", "Template file for analysis....");
 	public static int version = 0;
 
 	public static Vector<LCLSDetectorPanel> detectorPanels = null;

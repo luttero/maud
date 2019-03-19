@@ -20,8 +20,10 @@ public class ImagesPanel extends JPanel {
 	private JTextField energyInKeVTF;
 	private JTextField calibrationDirectoryTF;
 	private JTextField filenameToSaveTF;
+	private JTextField filenameTemplateTF;
 	private JTextField[] corrImagePanelTF;
 	private JTextField[] uncorrImagePanelTF;
+	private JCheckBox newFileParCB;
 	int panelsNumber;
 
 	LCLS2data data;
@@ -48,23 +50,29 @@ public class ImagesPanel extends JPanel {
 
 		JPanel oneRow = new JPanel(new FlowLayout());
 		oneRow.add(new JLabel("Sample name"));
-		textSampleName = new JTextField(15);
+		textSampleName = new JTextField(10);
 		textSampleName.setText("Sample x");
 		oneRow.add(textSampleName);
 		panelSampleName.add(oneRow);
 
 		oneRow = new JPanel(new FlowLayout());
 		oneRow.add(new JLabel("Sample omega"));
-		omegaTF = new JTextField(12);
+		omegaTF = new JTextField(10);
 		omegaTF.setText("0");
 		oneRow.add(omegaTF);
 		panelSampleName.add(oneRow);
 
 		oneRow = new JPanel(new FlowLayout());
 		oneRow.add(new JLabel("Radiation energy (KeV)"));
-		energyInKeVTF = new JTextField(12);
+		energyInKeVTF = new JTextField(10);
 		energyInKeVTF.setText("10.217");
 		oneRow.add(energyInKeVTF);
+		panelSampleName.add(oneRow);
+
+		oneRow = new JPanel(new FlowLayout());
+		newFileParCB = new JCheckBox("New file parameter");
+		newFileParCB.setSelected(false);
+		oneRow.add(newFileParCB);
 		panelSampleName.add(oneRow);
 
 		final JPanel panelSampleName1 = new JPanel(new GridLayout(0, 1, 3, 3));
@@ -74,8 +82,8 @@ public class ImagesPanel extends JPanel {
 		JButton browseCalibrationButton = createBrowseButtonToLoad("Directory for Cspad calibration files", false);
 //    browseCalibrationButton2.setPreferredSize(new Dimension(100, 30));
 		oneRow.add(browseCalibrationButton);
-		calibrationDirectoryTF = new JTextField(40);
-		calibrationDirectoryTF.setText("Directory with Cspad calibration files....");
+		calibrationDirectoryTF = new JTextField(36);
+		calibrationDirectoryTF.setText("Cspad calibration files dir (not used)");
 		oneRow.add(calibrationDirectoryTF);
 		panelSampleName1.add(oneRow);
 
@@ -91,21 +99,30 @@ public class ImagesPanel extends JPanel {
 			filename_cf += " (Not found, select it)";
 		}
 		oneRow = new JPanel(new FlowLayout());
-		browseCalibrationButton = createBrowseButton("Load config file");
+		browseCalibrationButton = createBrowseButton("Detector config file...");
 //    browseCalibrationButton2.setPreferredSize(new Dimension(100, 30));
 		oneRow.add(browseCalibrationButton);
-		textCalibrationDatafile = new JTextField(40);
+		textCalibrationDatafile = new JTextField(36);
 		textCalibrationDatafile.setText(filename_cf);
 		oneRow.add(textCalibrationDatafile);
 		panelSampleName1.add(oneRow);
 
 		oneRow = new JPanel(new FlowLayout());
-		browseCalibrationButton = createBrowseButtonToLoad("Filename to save", true);
+		browseCalibrationButton = createBrowseButtonToLoad("Unrolled images file...", true);
 //    browseCalibrationButton2.setPreferredSize(new Dimension(100, 30));
 		oneRow.add(browseCalibrationButton);
-		filenameToSaveTF = new JTextField(40);
-		filenameToSaveTF.setText("Filename for saving unrolled images datafile....");
+		filenameToSaveTF = new JTextField(36);
+		filenameToSaveTF.setText(LCLS2ConfigData.filenameToSave);
 		oneRow.add(filenameToSaveTF);
+		panelSampleName1.add(oneRow);
+
+		oneRow = new JPanel(new FlowLayout());
+		browseCalibrationButton = createBrowseButtonForTemplate("Analysis template file...");
+//    browseCalibrationButton2.setPreferredSize(new Dimension(100, 30));
+		oneRow.add(browseCalibrationButton);
+		filenameTemplateTF = new JTextField(36);
+		filenameTemplateTF.setText(LCLS2ConfigData.filenameTemplate);
+		oneRow.add(filenameTemplateTF);
 		panelSampleName1.add(oneRow);
 
 		panelsNumber = data.panelsNumber;
@@ -113,7 +130,10 @@ public class ImagesPanel extends JPanel {
 		uncorrImagePanelTF = new JTextField[panelsNumber];
 		final JPanel imagePanels = new JPanel(new GridLayout(0, 1, 3, 3));
 		for (int i = 0; i < panelsNumber; i++) {
-			final JPanel panelCalibration = createImagePanel("Cspad." + i, i);
+			String prefix = "Cspad";
+			if (i > 0)
+				prefix = prefix + "2x2";
+			final JPanel panelCalibration = createImagePanel(prefix + "." + i, i);
 			imagePanels.add(panelCalibration);
 		}
 		add(imagePanels, BorderLayout.CENTER);
@@ -130,7 +150,7 @@ public class ImagesPanel extends JPanel {
 		JPanel panel_1 = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 3));
 		rightPanel.add(panel_1);
 		panel_1.add(new JLabel("Original image: "));
-		uncorrImagePanelTF[index] = new JTextField(64);
+		uncorrImagePanelTF[index] = new JTextField(54);
 		panel_1.add(uncorrImagePanelTF[index]);
 		String property = imagePanelID + "_uncorrected_image";
 		String filename_or = "Select uncorrected image....";
@@ -139,11 +159,24 @@ public class ImagesPanel extends JPanel {
 		JButton browseCalibrationButton = createBrowseButton("Load original uncorrected image", uncorrImagePanelTF[index], property);
 //    browseCalibrationButton.setPreferredSize(new Dimension(100, 30));
 		panel_1.add(browseCalibrationButton);
+		if (index == 0) {
+			JButton guessButton = new JButton("Guess the others");
+			guessButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					String filename = uncorrImagePanelTF[0].getText();
+					if (Misc.checkForFile(filename)) {
+						for (int j = 1; j < 5; j++)
+							uncorrImagePanelTF[j].setText(filename.replaceFirst("Cspad-0", "Cspad2x2-" + j));
+					}
+				}
+			});
+			panel_1.add(guessButton);
+		}
 
 		JPanel panel_2 = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 3));
 		rightPanel.add(panel_2);
 		panel_2.add(new JLabel("Dark image file: "));
-		corrImagePanelTF[index] = new JTextField(64);
+		corrImagePanelTF[index] = new JTextField(54);
 		panel_2.add(corrImagePanelTF[index]);
 		String property1 = imagePanelID + "_dark_current_image";
 		String filename_dark = "Select dark current image....";
@@ -152,6 +185,20 @@ public class ImagesPanel extends JPanel {
 		JButton browseCalibrationButton2 = createBrowseButton("Load pedestals file", corrImagePanelTF[index], property1);
 //    browseCalibrationButton2.setPreferredSize(new Dimension(100, 30));
 		panel_2.add(browseCalibrationButton2);
+		if (index == 0) {
+			JButton guessButton = new JButton("Guess the others");
+			guessButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					String filename = corrImagePanelTF[0].getText();
+					if (Misc.checkForFile(filename)) {
+						filename = filename.replaceFirst("CsPad_", "CsPad2x2_");
+						for (int j = 1; j < 5; j++)
+							corrImagePanelTF[j].setText(filename.replaceFirst("Cspad.0", "Cspad2x2." + j));
+					}
+				}
+			});
+			panel_2.add(guessButton);
+		}
 
 		panelCalibration.add(rightPanel, BorderLayout.CENTER);
 
@@ -175,7 +222,7 @@ public class ImagesPanel extends JPanel {
 				}
 			}
 		});
-		browseCalibrationButton.setText("Browse ...");
+		browseCalibrationButton.setText(title);
 		return browseCalibrationButton;
 	}
 
@@ -195,7 +242,22 @@ public class ImagesPanel extends JPanel {
 				}
 			}
 		});
-		browseCalibrationButton.setText("Browse ...");
+		browseCalibrationButton.setText(title);
+		return browseCalibrationButton;
+	}
+
+	public JButton createBrowseButtonForTemplate(String title) {
+		JButton browseCalibrationButton = new JButton();
+		browseCalibrationButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String templateFile = Utility.browseFilename(null, title);
+				if (templateFile != null) {
+						filenameTemplateTF.setText(templateFile);
+						propertyChangeSupport.firePropertyChange("FILENAME_TEMPLATE_SET", "", filenameTemplateTF);
+				}
+			}
+		});
+		browseCalibrationButton.setText(title);
 		return browseCalibrationButton;
 	}
 
@@ -206,22 +268,35 @@ public class ImagesPanel extends JPanel {
 				String imageFile = Utility.browseFilename(null, title);
 				if (imageFile != null) {
 					textField.setText(imageFile);
-					LCLS2ConfigData.setPropertyValue(filenamePrefKey, imageFile);
 					propertyChangeSupport.firePropertyChange("IMAGE_FILE_SET", "", imageFile);
 				}
 			}
 		});
-		browseCalibrationButton.setText("Browse ...");
+		browseCalibrationButton.setText("Browse...");
 		return browseCalibrationButton;
 	}
 
 	public void saveData() {
 		LCLS2ConfigData.filenameToSave = filenameToSaveTF.getText();
+		LCLS2ConfigData.setPropertyValue("UnrolledImagesDatafile", LCLS2ConfigData.filenameToSave);
+		LCLS2ConfigData.filenameTemplate = filenameTemplateTF.getText();
+		LCLS2ConfigData.setPropertyValue("LCLSdefaultTemplate", LCLS2ConfigData.filenameTemplate);
+		data.useTempletaFile = !newFileParCB.isSelected();
 		data.sampleName = textSampleName.getText();
 		data.omega = Double.parseDouble(omegaTF.getText());
 		data.wavelength = ENERGY_LAMBDA / (Double.parseDouble(energyInKeVTF.getText()) * 1000);
-		for (int i = 0; i < panelsNumber; i++)
-			data.addImagePanel(i, corrImagePanelTF[i].getText(), uncorrImagePanelTF[i].getText());
+		for (int i = 0; i < panelsNumber; i++) {
+			String prefix = "Cspad";
+			if (i > 0)
+				prefix = prefix + "2x2";
+			String property1 = prefix + "." + i + "_uncorrected_image";
+			String property2 = prefix + "." + i + "_dark_current_image";
+			String file1 = uncorrImagePanelTF[i].getText();
+			String file2 = corrImagePanelTF[i].getText();
+			LCLS2ConfigData.setPropertyValue(property1, file1);
+			LCLS2ConfigData.setPropertyValue(property2, file2);
+			data.addImagePanel(i, file2, file1);
+		}
 	}
 
 	public boolean enabledToContinue() {

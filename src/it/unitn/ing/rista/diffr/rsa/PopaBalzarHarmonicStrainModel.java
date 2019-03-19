@@ -861,7 +861,7 @@ public class PopaBalzarHarmonicStrainModel extends Strain {
   }*/
 
   public int getLGnumber() {
-    return ((Phase) getPhase()).getLaueGroup();
+    return getPhase().getLaueGroup();
   }
 
   public int getPGnumber() {

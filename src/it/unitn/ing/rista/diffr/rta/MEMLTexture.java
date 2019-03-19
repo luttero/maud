@@ -149,7 +149,7 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 		stringField[3] = MaudPreferences.getPref(prefs[7], prefVal[7]);
 		setMinimumIntensity(MaudPreferences.getPref("ewimv.minimumPFIntensity", "0.001"));
 		setTubeWeight(MaudPreferences.getPref("ewimv.tubeWeightExponentValue", "0.5"));
-		stringField[5] = MaudPreferences.getPref("ewimv.defaultCellValue", "15.0");
+		setResolution(MaudPreferences.getPref("ewimv.defaultCellValue", "15.0"));
 		setResolution(MaudPreferences.getPref(prefs[0], prefVal[0]));
 		useTubeProjection(MaudPreferences.getPref(prefs[4], prefVal[4]));
 		storeConversion(MaudPreferences.getPref(prefs[6], prefVal[6]));

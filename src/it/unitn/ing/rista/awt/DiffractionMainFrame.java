@@ -1567,22 +1567,8 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
   }
 
 	public void lcls2Wizard() {
-		if (parameterfile != null) {
-			parameterfile.dispose(); // If we don't call this no finalization will occur!!
-			parameterfile = null;
-		}
+		LCLS2Wizard.startWizard(this);
 
-		// check file existing
-		String[] folderAndName = new String[2];
-		folderAndName[0] = Constants.documentsDirectory;
-		folderAndName[1] = "noname.par";
-
-		parameterfile = new FilePar(folderAndName[1], this);
-		parameterfile.setDirectory(folderAndName[0]);
-
-		LCLS2Wizard.startWizard(parameterfile);
-
-		initParameters();
 	}
 
 	class DiffractionMenuAction implements ActionListener {

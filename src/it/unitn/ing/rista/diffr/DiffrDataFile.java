@@ -562,16 +562,14 @@ public class DiffrDataFile extends XRDcat {
         out.write("_pd_meas_position_x _pd_meas_position_y _pd_meas_intensity_total _pd_meas_intensity_sigma");
         out.newLine();
         for (int ng = 0; ng < datanumber; ng++) {
-          out.write(" " + Float.toString((float)x_image[ng]) + " " + Float.toString((float)y_image[ng]) + " " +
-              Float.toString((float)intensity[ng]) + " " + Float.toString((float)weight[ng]));
+          out.write(" " + x_image[ng] + " " + y_image[ng] + " " + intensity[ng] + " " + weight[ng]);
           out.newLine();
         }
       } else {
         out.write("_pd_meas_position _pd_meas_intensity_total _pd_meas_intensity_sigma");
         out.newLine();
         for (int ng = 0; ng < datanumber; ng++) {
-          out.write(" " + Float.toString((float)twothetaOriginal[ng]) + " " + Float.toString((float)intensity[ng])
-              + " " + Float.toString((float)weight[ng]));
+          out.write(" " + twothetaOriginal[ng] + " " + intensity[ng] + " " + weight[ng]);
           out.newLine();
         }
       }
@@ -593,7 +591,7 @@ public class DiffrDataFile extends XRDcat {
     }
 	  Sample asample = getFilePar().getActiveSample();
 	  radiationsNumber = getDataFileSet().getInstrument().getRadiationType().getLinesCount();
-	  if (!getFilePar().compactSavingTextureFactors()) { // we do not save the texture factors in compact saving
+	  if (!getFilePar().compactSavingTextureFactors() && radiationsNumber < 5) { // we do not save the texture factors in compact saving
 		  try {
 			  out.newLine();
 			  out.write("#custom_object_" + "texture_factors");
@@ -6163,6 +6161,19 @@ public class DiffrDataFile extends XRDcat {
 					for (int k = 0; k < textF[i].length; k++)
 						for (int l = 0; l < textF[0][0].length; l++)
 							textF[i][k][l] = textureValues[i];
+			}
+		}
+	}
+
+	public void setTextureFactors(Phase aphase, int i, double[] textureValues) {
+		if (!getDataFileSet().hasRandomTexture()) {
+			synchronized (this) {
+				double[][][] textF = getTextureFactors(aphase)[1];
+				int index = 0;
+				for (int k = 0; k < textF[0].length; k++)
+					for (int l = 0; l < textF[0][0].length; l++) {
+						textF[i][k][l] = textureValues[index++];
+					}
 			}
 		}
 	}

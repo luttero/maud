@@ -3875,9 +3875,12 @@ public class DataFileSet extends XRDcat {
 		int total = 0;
 		for (int i = 0; i < activedatafilesnumber(); i++) {
 			DiffrDataFile adatafile = getActiveDataFile(i);
-			for (int j = 0; j < adatafile.positionsPerPattern; j++)
-				if (adatafile.isInsideRange(adatafile.getPositions(aphase)[hklnumbersel][j][0]))
+			for (int j = 0; j < adatafile.positionsPerPattern; j++) {
+				boolean goodPoint = adatafile.isInsideRange(adatafile.getPositions(aphase)[hklnumbersel][j][0]);
+//				System.out.println(goodPoint);
+				if (goodPoint)
 					total++;
+			}
 		}
 		return total;
 	}

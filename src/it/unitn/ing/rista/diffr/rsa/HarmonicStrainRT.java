@@ -276,7 +276,7 @@ public class HarmonicStrainRT extends Strain {
   }
 
   public int getLGnumber() {
-    return ((Phase) getPhase()).getLaueGroup();
+    return getPhase().getLaueGroup();
   }
 
   public int getPGnumber() {

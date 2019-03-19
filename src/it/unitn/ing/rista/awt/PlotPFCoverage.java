@@ -118,7 +118,7 @@ public class PlotPFCoverage extends GraphFrame {
         asample.getlayer(j1).setIndex(j1);
 
       boolean plotScaleFactors = MaudPreferences.getBoolean("plotCoverage.useScaleFactors", true);
-      boolean plotScaleFactorsBW = MaudPreferences.getBoolean("plotCoverage.useScaleFactorsBW", false);
+      boolean plotScaleFactorsBW = MaudPreferences.getBoolean("plotCoverage.useScaleFactorsBW", true);
       boolean plotIncidentAndDiffraction = MaudPreferences.getBoolean("plotCoverage.plotIncidentAndDiffraction", false);
       double plotScaleFactorsBWZoom = MaudPreferences.getDouble("plotCoverage.useScaleFactorsBWZoom", 3.0);
       boolean forceNameDataset = MaudPreferences.getBoolean("plotCoverage.useAlwaysDatasetNames", false);
@@ -136,6 +136,7 @@ public class PlotPFCoverage extends GraphFrame {
 		    DataFileSet adataset = asample.getActiveDataSet(n);
 		    np += adataset.getNumberOfTexturePoints(aphase, hklnumbersel);
 	    }
+
 	    if (np > 0) {
 
 		    np = 0;
@@ -201,13 +202,14 @@ public class PlotPFCoverage extends GraphFrame {
 
 //          System.out.println("Data loaded");
 
-							    data1 = lgraph.loadDataSet(data, multi);
-							    data1.linestyle = 0;
-							    data1.marker = 3;
-							    if (plotScaleFactorsBW)
-								    data1.markerscale = plotScaleFactorsBWZoom * Math.pow(color_data[0], plotScaleFactorsBWZoom) / 2.0;
-							    else
-								    data1.markerscale = plotScaleFactorsBWZoom * 0.5;
+							    if (multi > 0) {
+								    data1 = lgraph.loadDataSet(data, multi);
+								    data1.linestyle = 0;
+								    data1.marker = 3;
+								    if (plotScaleFactorsBW)
+									    data1.markerscale = plotScaleFactorsBWZoom * Math.pow(color_data[0], plotScaleFactorsBWZoom) / 2.0;
+								    else
+									    data1.markerscale = plotScaleFactorsBWZoom * 0.5;
               /*           ThermalColorMap thermalMap = null;
       if (plotScaleFactorsBW)
         thermalMap = new ThermalColorMap(1, 1, 32, false);
@@ -218,49 +220,50 @@ public class PlotPFCoverage extends GraphFrame {
 
 //            data1.setColorMap(thermalMap);
 //            data1.setColorData(color_data);
-							    data1.markercolor = Color.black;
-							    if (adataset.toXRDcatString().length() > 4)
-								    data1.legend(1, n * 20 + 30, "#" + (n + 1)/*adataset.toXRDcatString()*/);
-							    else
-								    data1.legend(1, n * 20 + 30, adataset.toXRDcatString());
-							    data1.legendColor(Color.black);
-              /*
-              **      Attach data sets to the Xaxis
-              */
+								    data1.markercolor = Color.black;
+								    if (adataset.toXRDcatString().length() > 4)
+									    data1.legend(1, n * 20 + 30, "#" + (n + 1)/*adataset.toXRDcatString()*/);
+								    else
+									    data1.legend(1, n * 20 + 30, adataset.toXRDcatString());
+								    data1.legendColor(Color.black);
+								    /*
+								     **      Attach data sets to the Xaxis
+								     */
 //          System.out.println("Attaching X-axis....");
 
-							    if (xaxis == null) {
-								    xaxis = lgraph.createXAxis();
-								    xaxis.setTitleText("");
-								    xaxis.setTitleFont(new Font("TimesRoman", Font.BOLD, 14));
-								    xaxis.setLabelFont(new Font("Helvetica", Font.PLAIN, 12));
-								    xaxis.setTitleColor(Color.white);
-								    xaxis.setLabelColor(Color.white);
-								    xaxis.drawLine = false;
+								    if (xaxis == null) {
+									    xaxis = lgraph.createXAxis();
+									    xaxis.setTitleText("");
+									    xaxis.setTitleFont(new Font("TimesRoman", Font.BOLD, 14));
+									    xaxis.setLabelFont(new Font("Helvetica", Font.PLAIN, 12));
+									    xaxis.setTitleColor(Color.white);
+									    xaxis.setLabelColor(Color.white);
+									    xaxis.drawLine = false;
                 /* axiscolor = Color.white;
          xaxis.minor_tic_size = 0;
          xaxis.major_tic_size = 0;     */
-							    }
-							    if (yaxis == null) {
-								    yaxis = lgraph.createYAxis();
-								    yaxis.setTitleText("");
-								    yaxis.setTitleFont(new Font("TimesRoman", Font.BOLD, 24));
-								    yaxis.setLabelFont(new Font("Helvetica", Font.PLAIN, 12));
-								    yaxis.setTitleColor(Color.white);
-								    yaxis.setLabelColor(Color.white);
-								    yaxis.drawLine = false;
+								    }
+								    if (yaxis == null) {
+									    yaxis = lgraph.createYAxis();
+									    yaxis.setTitleText("");
+									    yaxis.setTitleFont(new Font("TimesRoman", Font.BOLD, 24));
+									    yaxis.setLabelFont(new Font("Helvetica", Font.PLAIN, 12));
+									    yaxis.setTitleColor(Color.white);
+									    yaxis.setLabelColor(Color.white);
+									    yaxis.drawLine = false;
                 /* yaxis.axiscolor = Color.white;
            yaxis.minor_tic_size = 0;
            yaxis.major_tic_size = 0;   */
-							    }
+								    }
 
-							    xaxis.attachDataSet(data1);
-							    yaxis.attachDataSet(data1);
-							    xaxis.minimum = -1.0;
-							    xaxis.maximum = 1.0;
-							    yaxis.minimum = -1.0;
-							    yaxis.maximum = 1.0;
-							    j += 2;
+								    xaxis.attachDataSet(data1);
+								    yaxis.attachDataSet(data1);
+								    xaxis.minimum = -1.0;
+								    xaxis.maximum = 1.0;
+								    yaxis.minimum = -1.0;
+								    yaxis.maximum = 1.0;
+								    j += 2;
+							    }
 						    }
 					    //todo }
 				    }
@@ -272,6 +275,7 @@ public class PlotPFCoverage extends GraphFrame {
 				    np = adataset.getNumberOfTexturePoints(aphase, hklnumbersel);
 				    double[] angles = null;
 				    double data[] = new double[2 * np * multi];
+				    System.out.println(data.length);
 				    double color_data[] = new double[adataset.activedatafilesnumber()];
 				    double min = 1.0E150;
 				    double max = -1.0E150;
@@ -327,63 +331,62 @@ public class PlotPFCoverage extends GraphFrame {
 //todo            }
 				    }
 
-//          System.out.println("Data loaded");
-
-
-				    data1 = lgraph.loadDataSet(data, totalPlotting * multi);
-				    data1.linestyle = 0;
-				    data1.marker = n + 1;
-				    if (nd == 1) data1.marker = 10; //large points
-				    data1.markerscale = plotScaleFactorsBWZoom * 0.5;
-				    ThermalColorMap thermalMap = new ThermalColorMap(min, max, 32, false);
+				    if (totalPlotting > 0) {
+					    data1 = lgraph.loadDataSet(data, totalPlotting * multi);
+					    data1.linestyle = 0;
+					    data1.marker = n + 1;
+					    if (nd == 1) data1.marker = 10; //large points
+					    data1.markerscale = plotScaleFactorsBWZoom * 0.5;
+					    ThermalColorMap thermalMap = new ThermalColorMap(min, max, 32, false);
 
 //          System.out.println("Max & min for plotting: " + min + ", " + max);
 
 
-				    data1.setColorMap(thermalMap);
-				    data1.setColorData(color_data);
-				    data1.markercolor = new Color(0, 0, 0);
-				    if (adataset.toXRDcatString().length() > 4 && !forceNameDataset)
-					    data1.legend(1, n * 20 + 30, "#" + (n + 1)/*adataset.toXRDcatString()*/);
-				    else
-					    data1.legend(1, n * 20 + 30, adataset.toXRDcatString());
-				    data1.legendColor(Color.black);
-/*
-**      Attach data sets to the Xaxis
-*/
+					    data1.setColorMap(thermalMap);
+					    data1.setColorData(color_data);
+					    data1.markercolor = new Color(0, 0, 0);
+					    if (adataset.toXRDcatString().length() > 4 && !forceNameDataset)
+						    data1.legend(1, n * 20 + 30, "#" + (n + 1)/*adataset.toXRDcatString()*/);
+					    else
+						    data1.legend(1, n * 20 + 30, adataset.toXRDcatString());
+					    data1.legendColor(Color.black);
+					    /*
+					     **      Attach data sets to the Xaxis
+					     */
 //          System.out.println("Attaching X-axis....");
 
-				    if (xaxis == null) {
-					    xaxis = lgraph.createXAxis();
-					    xaxis.setTitleText("");
-					    xaxis.setTitleFont(new Font("TimesRoman", Font.BOLD, 14));
-					    xaxis.setLabelFont(new Font("Helvetica", Font.PLAIN, 12));
-					    xaxis.setTitleColor(Color.white);
-					    xaxis.setLabelColor(Color.white);
-					    xaxis.drawLine = false;
+					    if (xaxis == null) {
+						    xaxis = lgraph.createXAxis();
+						    xaxis.setTitleText("");
+						    xaxis.setTitleFont(new Font("TimesRoman", Font.BOLD, 14));
+						    xaxis.setLabelFont(new Font("Helvetica", Font.PLAIN, 12));
+						    xaxis.setTitleColor(Color.white);
+						    xaxis.setLabelColor(Color.white);
+						    xaxis.drawLine = false;
             /* axiscolor = Color.white;
             xaxis.minor_tic_size = 0;
             xaxis.major_tic_size = 0;     */
-				    }
-				    if (yaxis == null) {
-					    yaxis = lgraph.createYAxis();
-					    yaxis.setTitleText("");
-					    yaxis.setTitleFont(new Font("TimesRoman", Font.BOLD, 24));
-					    yaxis.setLabelFont(new Font("Helvetica", Font.PLAIN, 12));
-					    yaxis.setTitleColor(Color.white);
-					    yaxis.setLabelColor(Color.white);
-					    yaxis.drawLine = false;
+					    }
+					    if (yaxis == null) {
+						    yaxis = lgraph.createYAxis();
+						    yaxis.setTitleText("");
+						    yaxis.setTitleFont(new Font("TimesRoman", Font.BOLD, 24));
+						    yaxis.setLabelFont(new Font("Helvetica", Font.PLAIN, 12));
+						    yaxis.setTitleColor(Color.white);
+						    yaxis.setLabelColor(Color.white);
+						    yaxis.drawLine = false;
             /* yaxis.axiscolor = Color.white;
             yaxis.minor_tic_size = 0;
             yaxis.major_tic_size = 0;   */
-				    }
+					    }
 
-				    xaxis.attachDataSet(data1);
-				    yaxis.attachDataSet(data1);
-				    xaxis.minimum = -1.0;
-				    xaxis.maximum = 1.0;
-				    yaxis.minimum = -1.0;
-				    yaxis.maximum = 1.0;
+					    xaxis.attachDataSet(data1);
+					    yaxis.attachDataSet(data1);
+					    xaxis.minimum = -1.0;
+					    xaxis.maximum = 1.0;
+					    yaxis.minimum = -1.0;
+					    yaxis.maximum = 1.0;
+				    }
 			    }
 		    }
 	    } else {

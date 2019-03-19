@@ -20,9 +20,11 @@ public class LCLS2data {
 	public double omega;
 	public double chi;
 	public double phi;
-	public double step2theta = 0.015;
-	public double coneInterval = 5.0;
+	public double step2theta = LCLS2ConfigData.getPropertyValue("generated2thetaStep", 0.015);
+	public double coneInterval = LCLS2ConfigData.getPropertyValue("etaStepForIntegration", 5.0);
 	public double wavelength;
+
+	public boolean useTempletaFile = true;
 //	public String sampleDesc = "Sample description";
 
 //	public double something = MaudPreferences.getDouble("LCLS2.something", 0.0);;
@@ -143,7 +145,7 @@ public class LCLS2data {
 				image.omegaDN = panel.panel_omegaDN;
 				image.phiDA = panel.panel_tilting;
 
-				if (MaudPreferences.getBoolean("LCLS2Wizard.saveIntermediateImages", false)) {
+				if (MaudPreferences.getBoolean("LCLS2Wizard.saveFinalImages", false)) {
 					ImagePlus imp1 = image.getImagePlus();
 					IJ.saveAsTiff(imp1, filename + "_final.tiff");
 				}

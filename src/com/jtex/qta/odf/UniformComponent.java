@@ -16,14 +16,14 @@ import com.jtex.geom.Vec3;
  *
  * @author hios
  */
-public class UniformComponent implements ODFComponent {
+public class UniformComponent extends ODFComponent {
 
-    Symmetry cs, ss;
+//    Symmetry cs, ss;
     double p;
 
     public UniformComponent(Symmetry cs, Symmetry ss) {
-        this.cs = cs;
-        this.ss = ss;
+//        this.cs = cs;
+//        this.ss = ss;
         this.p = 1D;
     }
 

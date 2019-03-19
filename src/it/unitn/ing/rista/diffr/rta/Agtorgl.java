@@ -257,7 +257,7 @@ public class Agtorgl {
 /*                                                     Pole figure loop */
 
     Phase thephase = (Phase) ((XRDcat) interpolation.getParent()).getParent();
-    FilePar aparFile = (FilePar) thephase.getFilePar();
+//    FilePar aparFile = (FilePar) thephase.getFilePar();
     BufferedWriter PFwriter = Misc.getWriter(((FilePar) thephase.getFilePar()).getDirectory() +
             thephase.toXRDcatString() + ".xpe");
 

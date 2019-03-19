@@ -61,7 +61,213 @@ public class DiffractionAngleEnergyMap extends Diffraction {
 		description = identifier;
 	}
 
-/*	public void computeDiffraction(Sample asample, DataFileSet adataset) {
+	public void computeDiffraction(Sample asample, DataFileSet adataset) {
+
+		int datafilenumber = adataset.activedatafilesnumber();
+
+		final Sample theSample = asample;
+		final DataFileSet theDataset = adataset;
+
+		final int maxThreads = Math.min(Constants.maxNumberOfThreads, datafilenumber);
+		if (maxThreads > 1 && Constants.threadingGranularity >= Constants.MEDIUM_GRANULARITY) {
+			if (Constants.debugThreads)
+				out.println("Thread datafileset " + getLabel());
+			int i;
+			PersistentThread[] threads = new PersistentThread[maxThreads];
+			for (i = 0; i < maxThreads; i++) {
+				threads[i] = new PersistentThread(i) {
+					@Override
+					public void executeJob() {
+						int i1 = this.getJobNumberStart();
+						int i2 = this.getJobNumberEnd();
+
+						for (int j = i1; j < i2; j++) {
+							DiffrDataFile datafile = theDataset.getActiveDataFile(j);
+							computeDiffraction(theSample, datafile);
+							computeasymmetry(theSample, datafile);
+						}
+					}
+				};
+			}
+			i = 0;
+			int istep = (int) (0.9999 + datafilenumber / maxThreads);
+			for (int j = 0; j < maxThreads; j++) {
+				int is = i;
+				if (j < maxThreads - 1)
+					i = Math.min(i + istep, datafilenumber);
+				else
+					i = datafilenumber;
+				threads[j].setJobRange(is, i);
+				threads[j].start();
+			}
+			boolean running;
+			do {
+				running = false;
+				try {
+					Thread.sleep(Constants.timeToWaitThreadsEnding);
+				} catch (InterruptedException r) {
+				}
+				for (int h = 0; h < maxThreads; h++) {
+					if (!threads[h].isEnded())
+						running = true;
+				}
+			} while (running);
+
+		} else
+			for (int k = 0; k < datafilenumber; k++) {
+				DiffrDataFile datafile = theDataset.getActiveDataFile(k);
+				computeDiffraction(theSample, datafile);
+				computeasymmetry(theSample, datafile);
+			}
+	}
+
+	public void computeDiffraction(Sample asample, DiffrDataFile datafile) {
+		DataFileSet datafileset = datafile.getDataFileSet();
+		if (getFilePar().isComputingDerivate()) {
+//      System.out.println("refreshing derivative: " + this.toXRDcatString());
+			for (int ij = 0; ij < getFilePar().getActiveSample().phasesNumber(); ij++) {
+				double expfit[] = new double[datafile.getTotalNumberOfData()];
+				int minmaxindex[] = computeReflectionIntensity(asample, datafile.getDataFileSet().getPeakList(), true,
+						expfit, Constants.ENTIRE_RANGE, Constants.COMPUTED,
+						Constants.COMPUTED, Constants.COMPUTED, false,
+						getFilePar().getActiveSample().getPhase(ij), datafile);
+				for (int j = minmaxindex[0]; j < minmaxindex[1]; j++)
+					datafile.addtoPhasesFit(j, expfit[j]);
+			}
+		} else {
+//      System.out.println("refreshing: " + this.toXRDcatString());
+			for (int ij = 0; ij < getFilePar().getActiveSample().phasesNumber(); ij++) {
+//        System.out.println("Phase: " + getFilePar().getActiveSample().getPhase(ij).toXRDcatString());
+				double expfit[] = new double[datafile.getTotalNumberOfData()];
+				int minmaxindex[] = computeReflectionIntensity(asample, datafile.getDataFileSet().getPeakList(), true,
+						expfit, Constants.ENTIRE_RANGE, Constants.COMPUTED,
+						Constants.COMPUTED, Constants.COMPUTED, false,
+						getFilePar().getActiveSample().getPhase(ij), datafile);
+//        System.out.println("indices: " + minmaxindex[0] + " " + minmaxindex[1] + " " + expfit[1000]);
+				for (int j = minmaxindex[0]; j < minmaxindex[1]; j++)
+					datafile.addtoPhasesFit(j, expfit[j], ij);
+			}
+		}
+	}
+
+	public int[] computeReflectionIntensity(Sample asample, Vector<Peak> peaklist, boolean computeBroadening,
+	                                        double[] expfit, double rangefactor, int computeTexture,
+	                                        int computeStrain, int computeFhkl, boolean leBailExtraction,
+	                                        Phase phase, DiffrDataFile datafile) {
+
+		Instrument ainstrument = datafile.getDataFileSet().getInstrument();
+		FilePar filepar = getFilePar();
+		OutputStream out = null;
+		boolean logOutput = false;
+		PrintStream printStream = null;
+		ByteArrayOutputStream baos = null;
+		if (filepar.logOutput() && filepar.fullResults() && !leBailExtraction) {
+			out = getFilePar().getResultStream();
+			logOutput = true;
+
+			try {
+				baos = new ByteArrayOutputStream();
+				printStream = new PrintStream(baos);
+				printStream.println("             Diffraction spectrum : " + datafile.toXRDcatString());
+				printStream.println("Peaks list : ");
+				printStream.print(" peak n,"
+						+ " rad. n,"
+						+ "             phase, "
+						+ " h,     "
+						+ " k,     "
+						+ " l,     "
+						+ "  dspace,   "
+						+ "  Fhkl_calc,"
+						+ "  Fhkl_exp, "
+						+ " position,  "
+						+ " strain,    "
+						+ " planar def,"
+						+ " intensity, "
+						+ " hwhm,      "
+						+ " gaussian,  "
+						+ " |Fhkl|^2*m,"
+						+ " incident I,"
+						+ " LP,        "
+						+ " texture,   "
+						+ " Abs*Vol/Vc,"
+						+ " rad. wt,   "
+						+ " phase scale");
+				printStream.print(Constants.lineSeparator);
+				printStream.flush();
+//						System.out.println("String length " + toPrint.length());
+			} catch (Exception io) {
+				io.printStackTrace();
+			}
+		}
+
+//    Instrument ainstrument = getDataFileSet().getInstrument();
+		double cutoff = datafile.getDataFileSet().getPeakCutoffD() * rangefactor;
+		if (!datafile.increasingX()) {
+			cutoff = -cutoff;
+		}
+		int[] tmpminmax = new int[2];
+		int[] minmaxindex = new int[2];
+		minmaxindex[0] = datafile.finalindex - 1;
+		minmaxindex[1] = datafile.startingindex;
+		arraycopy(minmaxindex, 0, tmpminmax, 0, 2);
+
+//    System.out.println(peaklist.length);  // todo
+		for (int i = 0; i < peaklist.size(); i++) {
+			if (phase == null || peaklist.elementAt(i).getPhase() == phase) {
+				peaklist.elementAt(i).computePeak(datafile, expfit, asample, ainstrument, printStream, logOutput, cutoff,
+						computeTexture, computeStrain, computeFhkl, leBailExtraction, tmpminmax,
+						computeBroadening, !datafile.increasingX());
+				if (i == 0)
+					arraycopy(tmpminmax, 0, minmaxindex, 0, 2);
+				else if (!leBailExtraction) {
+					if (minmaxindex[0] > tmpminmax[0])
+						minmaxindex[0] = tmpminmax[0];
+					if (minmaxindex[1] < tmpminmax[1])
+						minmaxindex[1] = tmpminmax[1];
+				}
+			}
+		}
+
+		if (logOutput && baos != null) {
+			try {
+				synchronized (out) {
+					printLine(out, baos.toString());
+					newLine(out);
+					out.flush();
+				}
+			} catch (Exception io) {
+				io.printStackTrace();
+			}
+		}
+
+		return minmaxindex;
+
+	}
+
+	public void computeasymmetry(Sample asample, DiffrDataFile datafile) {
+		computeasymmetry(asample, datafile, datafile.phasesfit, datafile.startingindex, datafile.finalindex - 1);
+		if (!getFilePar().isComputingDerivate()) {
+			for (int i = 0; i < datafile.phaseFit.size(); i++)
+				computeasymmetry(asample, datafile, (double[]) datafile.phaseFit.elementAt(i), datafile.startingindex, datafile.finalindex - 1);
+		}
+		refreshComputation = false;
+	}
+
+	public void computeasymmetry(Sample asample, DiffrDataFile datafile, double afit[], int min, int max) {
+
+		Instrument ainstrument = datafile.getDataFileSet().getInstrument();
+
+		ainstrument.getInstrumentBroadening().computeAsymmetry(datafile, asample, afit, min, max);
+
+		for (int j = min; j < max; j++) {
+//      System.out.print("Before: " + afit[j]);
+			afit[j] *= datafile.computeAngularIntensityCorrection(asample, ainstrument, j);
+//      System.out.println(", after: " + afit[j]);
+		}
+	}
+
+/*
+	public void computeDiffraction(Sample asample, DataFileSet adataset) {
 
 		int datafilenumber = adataset.activedatafilesnumber();
 		if (datafilenumber == 0)
@@ -114,126 +320,37 @@ public class DiffractionAngleEnergyMap extends Diffraction {
 		}
 		for (int i = 0; i < datanumber; i++) {
 
-			for (int k = 0; k < datafilenumber; k++)
-				fit[k] = 0;
 			double energy_coord = datafile.getXData(i);
 			if (energy_coord >= energyInKeV[0] && energy_coord <= energyInKeV[rad_lines - 1]) {
-				int ej = 0;
+				int ej = 1;
 				while (energy_coord < energyInKeV[ej] && ej < rad_lines)
 					ej++;
 
 				double energyIntensity = energy_intensity[ej - 1] + (energy_intensity[ej] - energy_intensity[ej - 1]) *
 						(energy_coord - energyInKeV[ej - 1]) / (energyInKeV[ej] - energyInKeV[ej - 1]);
 
-				for (int k = 0; k < datafilenumber; k++) {
-
-					layerAbsorption[0][ej] = -asample.getlayer(0).getAbsorption(energyInKeV[ej]) * layerDensity[0] / sinPhii[k];
-					overLayerAbsorption[0][ej] = 0;
-					for (int j1 = 1; j1 < layersNumber; j1++) {
-						layerAbsorption[j1][ej] = -asample.getlayer(j1).getAbsorption(energyInKeV[ej]) * layerDensity[j1] / sinPhii[k];
-						overLayerAbsorption[j1][ej] = overLayerAbsorption[j1 - 1][ej] + layerAbsorption[j1 - 1][ej] * layerThickness[j1 - 1];
-//				System.out.println(overLayerAbsorption[j1][ej]);
-					}
-					double overLayerAbsorptionForLine = 0;
-					for (int j2 = 0; j2 < j1; j2++) {
-						double actualLayerAbs = -asample.getlayer(j2).getAbsorption(energy_coord) * layerDensity[j2] / sinPhid;
-						overLayerAbsorptionForLine += actualLayerAbs * layerThickness[j2];
-					}
-					double actualLayerAbsorption = -asample.getlayer(j1).getAbsorption(energy_coord) * layerDensity[j1] / sinPhid;
-					double over_abs = overLayerAbsorptionForLine + overLayerAbsorption[j1][ej];
-					if (!Double.isNaN(over_abs)) {
-						if (over_abs > -Double.MAX_EXPONENT / 2 && over_abs < Double.MAX_EXPONENT / 2)
-							over_abs = Math.exp(over_abs);
-						else if (over_abs > 0)
-							over_abs = Double.MAX_VALUE / 2;
-						else
-							over_abs = 0;
-					} else
-						over_abs = 0;
-
-					double ab = (actualLayerAbsorption + layerAbsorption[j1][ej]);
-					double abs = ab * layerThickness[j1];
-					if (!Double.isNaN(abs) && abs != 0) {
-						if (abs > -Double.MAX_EXPONENT / 2 && abs < Double.MAX_EXPONENT / 2)
-							abs = -(1.0 - Math.exp(abs)) / ab;
-						else
-							abs = -1.0 / ab;
-					} else
-						abs = 0;
-
-					double total_abs = over_abs * abs;
-				}
-			}
-
-
-
-
-			if (getFilePar().isComputingDerivate()) {
+//				if (getFilePar().isComputingDerivate()) {
 //      System.out.println("refreshing derivative: " + this.toXRDcatString());
-				for (int ij = 0; ij < getFilePar().getActiveSample().phasesNumber(); ij++) {
-					double expfit[] = new double[datafile.getTotalNumberOfData()];
-					int minmaxindex[] = computeReflectionIntensity(asample, datafileset, true,
-							expfit, Constants.ENTIRE_RANGE, Constants.COMPUTED,
-							Constants.COMPUTED, Constants.COMPUTED, false,
-							getFilePar().getActiveSample().getPhase(ij), datafile);
-					for (int j = minmaxindex[0]; j < minmaxindex[1]; j++)
-						datafile.addtoPhasesFit(j, expfit[j]);
-				}
-			} else {
-//      System.out.println("refreshing: " + this.toXRDcatString());
-				for (int ij = 0; ij < getFilePar().getActiveSample().phasesNumber(); ij++) {
-//        System.out.println("Phase: " + getFilePar().getActiveSample().getPhase(ij).toXRDcatString());
-					double expfit[] = new double[datafile.getTotalNumberOfData()];
-					int minmaxindex[] = computeReflectionIntensity(asample, datafileset, true,
-							expfit, Constants.ENTIRE_RANGE, Constants.COMPUTED,
-							Constants.COMPUTED, Constants.COMPUTED, false,
-							getFilePar().getActiveSample().getPhase(ij), datafile);
-//        System.out.println("indices: " + minmaxindex[0] + " " + minmaxindex[1] + " " + expfit[1000]);
-					for (int j = minmaxindex[0]; j < minmaxindex[1]; j++)
-						datafile.addtoPhasesFit(j, expfit[j], ij);
-				}
+					for (int ij = 0; ij < getFilePar().getActiveSample().phasesNumber(); ij++) {
+						for (int k = 0; k < datafilenumber; k++)
+							fit[k] = 0;
+						int minmaxindex[] = computeReflectionIntensity(x[DiffrDataFile.DATAFILE_THETA2], fit, asample, theDataset, true,
+								Constants.ENTIRE_RANGE, Constants.COMPUTED, Constants.COMPUTED, Constants.COMPUTED, false,
+								getFilePar().getActiveSample().getPhase(ij), energyIntensity, energy_coord, i);
+						for (int k = minmaxindex[0]; k < minmaxindex[1]; k++)
+							theDataset.getActiveDataFile(k).addtoPhasesFit(i, fit[k], ij);
+					}
 			}
-			for (int k = 0; k < datafilenumber; k++) {
-				DiffrDataFile datafile = theDataset.getActiveDataFile(k);
-				computeDiffraction(theSample, datafile);
-				computeasymmetry(theSample, datafile);
-			}
+
+
 		}
 	}
 
-	public void computeDiffraction(Sample asample, DiffrDataFile datafile) {
-		DataFileSet datafileset = datafile.getDataFileSet();
-		if (getFilePar().isComputingDerivate()) {
-//      System.out.println("refreshing derivative: " + this.toXRDcatString());
-			for (int ij = 0; ij < getFilePar().getActiveSample().phasesNumber(); ij++) {
-				double expfit[] = new double[datafile.getTotalNumberOfData()];
-				int minmaxindex[] = computeReflectionIntensity(asample, datafileset, true,
-						expfit, Constants.ENTIRE_RANGE, Constants.COMPUTED,
-						Constants.COMPUTED, Constants.COMPUTED, false,
-						getFilePar().getActiveSample().getPhase(ij), datafile);
-				for (int j = minmaxindex[0]; j < minmaxindex[1]; j++)
-					datafile.addtoPhasesFit(j, expfit[j]);
-			}
-		} else {
-//      System.out.println("refreshing: " + this.toXRDcatString());
-			for (int ij = 0; ij < getFilePar().getActiveSample().phasesNumber(); ij++) {
-//        System.out.println("Phase: " + getFilePar().getActiveSample().getPhase(ij).toXRDcatString());
-				double expfit[] = new double[datafile.getTotalNumberOfData()];
-				int minmaxindex[] = computeReflectionIntensity(asample, datafileset, true,
-						expfit, Constants.ENTIRE_RANGE, Constants.COMPUTED,
-						Constants.COMPUTED, Constants.COMPUTED, false,
-						getFilePar().getActiveSample().getPhase(ij), datafile);
-//        System.out.println("indices: " + minmaxindex[0] + " " + minmaxindex[1] + " " + expfit[1000]);
-				for (int j = minmaxindex[0]; j < minmaxindex[1]; j++)
-					datafile.addtoPhasesFit(j, expfit[j], ij);
-			}
-		}
-	}
+
 
 	public int[] computeReflectionIntensity(double[] x, double[] expfit, Sample asample, DataFileSet datafileset, boolean computeBroadening,
-	                                        double rangefactor, int computeTexture,
-	                                        int computeStrain, int computeFhkl, boolean leBailExtraction,
-	                                        Phase aphase, DiffrDataFile datafile) {
+	                                        double rangefactor, int computeTexture, int computeStrain, int computeFhkl, boolean leBailExtraction,
+	                                        Phase aphase, double energyIntensity, double energy_coord, int datafileIndex) {
 
 		Vector<Peak> peaklist = datafileset.getPeakList();
 		Instrument ainstrument = datafileset.getInstrument();
@@ -244,19 +361,21 @@ public class DiffractionAngleEnergyMap extends Diffraction {
 		ByteArrayOutputStream baos = null;
 //    Instrument ainstrument = getDataFileSet().getInstrument();
 		double cutoff = datafileset.getPeakCutoffD() * rangefactor;
-		if (!datafile.increasingX()) {
-			cutoff = -cutoff;
-		}
+//		if (!datafile.increasingX()) {
+//			cutoff = -cutoff;
+//		}
 		int[] tmpminmax = new int[2];
 		int[] minmaxindex = new int[2];
-		minmaxindex[0] = datafile.finalindex - 1;
-		minmaxindex[1] = datafile.startingindex;
+		minmaxindex[0] = 0;
+		minmaxindex[1] = x.length;
 		arraycopy(minmaxindex, 0, tmpminmax, 0, 2);
+		DiffrDataFile diffrDataFile = datafileset.getDataFile(datafileIndex);
 
 		for (int i = 0; i < peaklist.size(); i++) {
 			if (aphase == null || peaklist.elementAt(i).getPhase() == aphase) {
 
-				double[] hwhm_i, eta, const1, const2, wave, thwhm, teta;
+				double[] hwhm_i, eta, const1, const2, wave;
+				double[][] thwhm, teta;
 				int[] minindex, maxindex;
 				Reflection refl = peaklist.elementAt(i).getReflex();
 
@@ -271,7 +390,7 @@ public class DiffractionAngleEnergyMap extends Diffraction {
 //        addInstrumentalBroadening(ainstrument.getInstrumentalBroadeningAt(getMeanPosition(), diffrDataFile));
 //      addInstrumentalBroadening(refl.getInstBroadFactor(dataindex));
 
-				int nrad = ainstrument.getRadiationType().getLinesCount();
+				int nrad = 1;  // only one energy
 				int totalLines = diffrDataFile.positionsPerPattern * nrad;
 				double[] finalposition = new double[totalLines];
 				double[][] intensity = new double[3][totalLines];
@@ -284,53 +403,53 @@ public class DiffractionAngleEnergyMap extends Diffraction {
 				minindex = new int[totalLines];
 				maxindex = new int[totalLines];
 
+				int orderPosition = peaklist.elementAt(i).getOrderPosition();
+
 				double[][][] positions = diffrDataFile.getPositions(aphase);
 				double[][] absDetectorCorrection = new double[nrad][diffrDataFile.positionsPerPattern];
 				int ipv = 0;
-				for (int i = 0; i < nrad; i++) {
-					double energy = Constants.ENERGY_LAMBDA / getRadiationWavelength(i) * 0.001;
-					for (int j = 0; j < diffrDataFile.positionsPerPattern; j++) {
-						finalposition[ipv++] = positions[i][getOrderPosition()][j];
-//						int pointIndex = diffrDataFile.getOldNearestPoint(positions[i][getOrderPosition()][j]);
-//						absDetectorCorrection[i][j] = ainstrument.getDetector().getAbsorptionCorrection(diffrDataFile, pointIndex, energy);
-					}
+				double energy = energy_coord;
+				for (int j = 0; j < diffrDataFile.positionsPerPattern; j++) {
+					finalposition[ipv++] = positions[i][orderPosition][j];
+					int pointIndex = diffrDataFile.getOldNearestPoint(positions[i][orderPosition][j]);
+					absDetectorCorrection[i][j] = ainstrument.getDetector().getAbsorptionCorrection(diffrDataFile, pointIndex, energy);
 				}
 
-				double[][][] hwhm_eta = diffrDataFile.getBroadFactors(aphase);
-				double[] deff = diffrDataFile.getCrystallitesMicrostrains(aphase)[0][getOrderPosition()];
+				double[][][][] hwhm_eta = diffrDataFile.getBroadFactors(aphase);
+				double[][] deff = diffrDataFile.getCrystallitesMicrostrains(aphase)[0][orderPosition];
 
 //	  for (int j = 0; j < diffrDataFile.positionsPerPattern; j++) {
-				thwhm = hwhm_eta[0][getOrderPosition()];
-				teta = hwhm_eta[1][getOrderPosition()];
+				thwhm = hwhm_eta[0][orderPosition];
+				teta = hwhm_eta[1][orderPosition];
 //	  }
-				double intensitySingle = getScaleFactor();
-				double[] textureFactor;
+				double intensitySingle = ((basicPeak) peaklist.elementAt(i)).getScaleFactor();
+				double[][] textureFactor;
 				double Fhkl;
 
 				switch (computeTexture) {
 					case Constants.COMPUTED:
-						textureFactor = diffrDataFile.getTextureFactors(aphase)[1][getOrderPosition()];
+						textureFactor = diffrDataFile.getTextureFactors(aphase)[1][orderPosition];
 						break;
 					case Constants.EXPERIMENTAL:
-						textureFactor = diffrDataFile.getTextureFactors(aphase)[0][getOrderPosition()];
+						textureFactor = diffrDataFile.getTextureFactors(aphase)[0][orderPosition];
 						break;
 					case Constants.UNITARY:
 					default:
-						textureFactor = new double[diffrDataFile.positionsPerPattern];
+						textureFactor = new double[diffrDataFile.positionsPerPattern][nrad];
 						for (int i = 0; i < diffrDataFile.positionsPerPattern; i++)
-							textureFactor[i] = 1.0;
+							textureFactor[i][0] = 1.0;
 				}
 				for (int i = 0; i < diffrDataFile.positionsPerPattern; i++)
-					if (Double.isNaN(textureFactor[i]))
-						textureFactor[i] = 1.0;
+					if (Double.isNaN(textureFactor[i][0]))
+						textureFactor[i][0] = 1.0;
 //		if (getOrderPosition() == 2)
 //	    System.out.println(diffrDataFile.getLabel() + ", texture factor: " + textureFactor[0]);
 				switch (computeFhkl) {
 					case Constants.COMPUTED:
-						Fhkl = diffrDataFile.getDataFileSet().getStructureFactors(aphase)[1][getOrderPosition()];
+						Fhkl = diffrDataFile.getDataFileSet().getStructureFactors(aphase)[1][orderPosition];
 						break;
 					case Constants.EXPERIMENTAL:
-						Fhkl = diffrDataFile.getDataFileSet().getStructureFactors(aphase)[0][getOrderPosition()];
+						Fhkl = diffrDataFile.getDataFileSet().getStructureFactors(aphase)[0][orderPosition];
 						break;
 					case Constants.UNITARY:
 						Fhkl = 99.0;
@@ -339,10 +458,10 @@ public class DiffractionAngleEnergyMap extends Diffraction {
 						Fhkl = 88.0;
 				}
 
-				double[] shapeAbs = diffrDataFile.getShapeAbsFactors(aphase, getOrderPosition());
-				double asyConst1 = aphase.getActivePlanarDefects().getPlanarDefectAsymmetryConstant1(getReflex());
-				double asyConst2 = aphase.getActivePlanarDefects().getPlanarDefectAsymmetryConstant2(getReflex());
-				double planar_asymmetry = aphase.getActivePlanarDefects().getPlanarDefectAsymmetry(getReflex());
+				double[][] shapeAbs = diffrDataFile.getShapeAbsFactors(aphase, orderPosition);
+				double asyConst1 = aphase.getActivePlanarDefects().getPlanarDefectAsymmetryConstant1(refl);
+				double asyConst2 = aphase.getActivePlanarDefects().getPlanarDefectAsymmetryConstant2(refl);
+				double planar_asymmetry = aphase.getActivePlanarDefects().getPlanarDefectAsymmetry(refl);
 
 //	  System.out.println(" Total " + diffrDataFile.startingindex + " " + diffrDataFile.finalindex);
 //	  System.out.println(" Range " + diffrDataFile.getXData(diffrDataFile.startingindex) + " " +
@@ -351,33 +470,26 @@ public class DiffractionAngleEnergyMap extends Diffraction {
 //    Fhklist = new double[totalLines];
 				double[] radiationWeight = new double[nrad];
 				int principalRad = 0;
-				radiationWeight[0] = getRadiationWeight(0);
+				radiationWeight[0] = energyIntensity;
 				double weight = radiationWeight[0];
-				for (int i1 = 1; i1 < nrad; i1++) {
-					radiationWeight[i1] = getRadiationWeight(i1);
-					if (leBailExtraction && weight < radiationWeight[i1]) {
-						weight = radiationWeight[i1];
-						principalRad = i1;
-					}
-				}
-				double[] lorentzPolarization = diffrDataFile.getLorentzPolarization(aphase, getOrderPosition());
+				double[][] lorentzPolarization = diffrDataFile.getLorentzPolarization(aphase, orderPosition);
 				ipv = 0;
-				for (int i = 0; i < nrad; i++) {
+//				for (int i = 0; i < nrad; i++) {
 					for (int j = 0; j < diffrDataFile.positionsPerPattern; j++) {
-						if (radiationWeight[i] > 0.0) {
-							double tmpIntensity = (intensitySingle * textureFactor[j] * shapeAbs[j] * Fhkl *
-									radiationWeight[i] * aphase.getScaleFactor() * lorentzPolarization[j] * absDetectorCorrection[i][j]);
+						if (radiationWeight[0] > 0.0) {
+							double tmpIntensity = (intensitySingle * textureFactor[j][0] * shapeAbs[j][0] * Fhkl *
+									radiationWeight[0] * aphase.getScaleFactor() * lorentzPolarization[j][0] * absDetectorCorrection[i][j]);
 							if (const2[ipv] != 0.0) {
 								for (int index = 0; index < 3; index++)
-									intensity[index][ipv] = tmpIntensity * getReflex().pd_deltaIndex[index];
+									intensity[index][ipv] = tmpIntensity * refl.pd_deltaIndex[index];
 							} else {
 								intensity[0][ipv] = tmpIntensity;
 							}
-							hwhm_i[ipv] = 1.0 / thwhm[j];
-							eta[ipv] = teta[j];
+							hwhm_i[ipv] = 1.0 / thwhm[j][0];
+							eta[ipv] = teta[j][0];
 
-							minindex[ipv] = diffrDataFile.getOldNearestPoint(finalposition[ipv] - thwhm[j] * cutoff);
-							maxindex[ipv] = diffrDataFile.getOldNearestPoint(finalposition[ipv] + thwhm[j] * cutoff) + 1;
+							minindex[ipv] = diffrDataFile.getOldNearestPoint(finalposition[ipv] - thwhm[j][0] * cutoff);
+							maxindex[ipv] = diffrDataFile.getOldNearestPoint(finalposition[ipv] + thwhm[j][0] * cutoff) + 1;
 
 							if (!leBailExtraction || (leBailExtraction && i == principalRad)) {
 								if (minmaxindex[0] > minindex[ipv])
@@ -388,7 +500,7 @@ public class DiffractionAngleEnergyMap extends Diffraction {
 
 							const1[ipv] = asyConst1;
 							const2[ipv] = asyConst2;
-							wave[i] = getRadiationWavelength(i);
+							wave[i] = energy ;
 
 							if (const2[ipv] != 0.0) {
 								for (int index = 0; index < 3; index++)
@@ -410,7 +522,7 @@ public class DiffractionAngleEnergyMap extends Diffraction {
 						}
 						ipv++;
 					}
-				}
+//				}
 
 //    diffrDataFile.computeLorentzPolarization(ainstrument, asample, actualPosition, intensity);
 // planar defects
@@ -447,7 +559,7 @@ public class DiffractionAngleEnergyMap extends Diffraction {
 
 		return minmaxindex;
 
-	}*/
+	}
 
 	public void computeasymmetry(Sample asample, DiffrDataFile datafile) {
 		computeasymmetry(asample, datafile, datafile.phasesfit, datafile.startingindex, datafile.finalindex - 1);
@@ -469,6 +581,6 @@ public class DiffractionAngleEnergyMap extends Diffraction {
 			afit[j] *= datafile.computeAngularIntensityCorrection(asample, ainstrument, j);
 //      System.out.println(", after: " + afit[j]);
 		}
-	}
+	}*/
 
 }

@@ -5,9 +5,8 @@
  */
 package com.jtex.arrays;
 
-import java.util.Arrays;
-import java.util.Formatter;
-import java.util.Locale;
+import java.io.BufferedInputStream;
+import java.util.*;
 
 /**
  *
@@ -208,16 +207,49 @@ public class Array1C {
     }
 
     private String paramString() {
-        Formatter formatter = new Formatter(Locale.US);
-        boolean trunkate = this.size() > 50;
-        int s = (trunkate) ? 50 : this.size();
-        for (int i = 0; i < s; i++) {
-            formatter.format("%.4f %s %.4fi%s", this.re[i], this.im[i] > 0 ? "+" : "-", Math.abs(this.im[i]), (i < s - 1) ? "," : (trunkate) ? ",..." : "");
-        }
-        String str = "size=" + size();
-        str += ",data=(" + formatter.toString() + ")";
-        return str;
+	    Formatter formatter = new Formatter(Locale.US);
+	    boolean trunkate = this.size() > 50;
+	    int s = (trunkate) ? 50 : this.size();
+	    for (int i = 0; i < s; i++) {
+		    formatter.format("%.4f %s %.4fi%s", this.re[i], this.im[i] > 0 ? "+" : "-", Math.abs(this.im[i]), (i < s - 1) ? "," : (trunkate) ? ",..." : "");
+	    }
+	    String str = "size=" + size();
+	    str += ",data=(" + formatter.toString() + ")";
+	    return str;
     }
+
+	public String toSaveString() { // Luca
+		String saveStr = "";
+		for (int i = 0; i < this.size(); i++) {
+			saveStr += this.re[i] + " " + this.im[i];
+			if (i < size() - 1)
+				saveStr += " ";
+		}
+		return saveStr;
+	}
+
+	public static Array1C parse(String inputString) {
+
+    	Vector<Double> myRe = new Vector(100, 100);
+		Vector<Double> myIm = new Vector(100, 100);
+		Scanner ss = new Scanner(inputString);
+		ss.useDelimiter(" ");
+		while (ss.hasNext()) {
+			myRe.add(Double.parseDouble(ss.next()));
+			myIm.add(Double.parseDouble(ss.next()));
+		}
+
+		int size = Math.min(myRe.size(), myIm.size());
+
+		double[] mre = new double[size];
+		double[] mim = new double[size];
+		for (int i = 0; i < size; i++) {
+			mre[i] = myRe.elementAt(i);
+			mim[i] = myIm.elementAt(i);
+		}
+    	Array1C array = new Array1C(mre, mim);
+    	return array;
+	}
 
     public int size() {
         return this.re.length;
