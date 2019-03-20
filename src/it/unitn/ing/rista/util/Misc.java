@@ -466,20 +466,22 @@ public class Misc {
 		    in = Misc.getResourceReader(Constants.maudJar, "files/marker.txt");
 	    else {
 	      // Manual location
-	      System.out.println("File not loaded, select it manually: " + file.getAbsolutePath());
-	      String filename = Utility.openFileDialogForLoad("File not loaded, select it manually", "", file.getAbsolutePath());
-			if (filename != null) {
-				try {
-					in = new BufferedReader(new InputStreamReader(new FileInputStream(
-							new File(filename)), "UTF8"));
-				} catch (IOException ie) {
-					System.out.println("File not loaded: " + filename);
-					ie.printStackTrace();
-				}
-			} else {
-				System.out.println("File not found: " + file.getName());
-				e.printStackTrace();
-			}
+	      if (MaudPreferences.getBoolean("fileNotFound.selectManually", false)) {
+		      System.out.println("File not loaded, select it manually: " + file.getAbsolutePath());
+		      String filename = Utility.openFileDialogForLoad("File not loaded, select it manually", "", file.getAbsolutePath());
+		      if (filename != null) {
+			      try {
+				      in = new BufferedReader(new InputStreamReader(new FileInputStream(
+						      new File(filename)), "UTF8"));
+			      } catch (IOException ie) {
+				      System.out.println("File not loaded: " + filename);
+				      ie.printStackTrace();
+			      }
+		      } else {
+			      System.out.println("File not found: " + file.getName());
+			      e.printStackTrace();
+		      }
+	      }
       }
 
     }

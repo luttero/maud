@@ -1,0 +1,26 @@
+data_LCLS_config_data_for_Maud
+
+_radiation_energy_KeV 10.217
+_pd_spec_orientation_omega 72.7
+_calibration_data_directory "/Users/luca/tmp/lanl/calib/"
+
+loop_
+_panel_name _panel_type _detectors_number _pedestals_file _pixels_status_file _panel_rotation _pixel_size_mm_x _pixel_size_mm_y _panel_distance _center_x _center_y _panel_tilting _panel_2theta _panel_omegaDN
+Cspad-0 4x4 8 "CsPad_CalibV1/MecTargetChamber.0_Cspad.0/pedestals/222-372.data" "CsPad_CalibV1/MecTargetChamber.0_Cspad.0/pixel_status/1-end.data" 90.0 0.10992 0.10992 73.85186 27.3156189 75.7095259 -26.89236 5.5672197 2.7764
+Cspad2x2-1 2x2 2 "CsPad2x2_CalibV1/MecTargetChamber.0_Cspad2x2.1/pedestals/222-372.data" "CsPad2x2_CalibV1/MecTargetChamber.0_Cspad2x2.1/pixel_status/1-end.data" 0 0.10992 0.10992 66.976 47.6619 -0.5039 -0.1116 -29.546 1.4668
+Cspad2x2-2 2x2 2 "CsPad2x2_CalibV1/MecTargetChamber.0_Cspad2x2.2/pedestals/222-372.data" "CsPad2x2_CalibV1/MecTargetChamber.0_Cspad2x2.2/pixel_status/1-end.data" 0 0.10992 0.10992 66.4837 48.21165 46.407 -0.4436 -28.802395 0.2087
+Cspad2x2-3 2x2 2 "CsPad2x2_CalibV1/MecTargetChamber.0_Cspad2x2.3/pedestals/222-372.data" "CsPad2x2_CalibV1/MecTargetChamber.0_Cspad2x2.3/pixel_status/1-end.data" 180 0.10992 0.10992 84.29 12.2259 -31.563495 0.1249 2.004 0.6431
+Cspad2x2-4 2x2 2 "CsPad2x2_CalibV1/MecTargetChamber.0_Cspad2x2.4/pedestals/222-372.data" "CsPad2x2_CalibV1/MecTargetChamber.0_Cspad2x2.4/pixel_status/1-end.data" 180 0.10992 0.10992 84.29 -17.8 18.25 0 3 0.0
+
+loop_
+_panel_type _detector_number _origin_x _origin_y _detector_width _detector_height _pedestal_number _pedestal_rotation _pedestal_shift_x _pedestal_shift_y
+4x4 0 0 673 392 185 3 0 4 0
+4x4 1 1 460 392 185 2 0 4 0
+4x4 2 421 469 185 392 0 -90 0 4
+4x4 3 634 470 185 392 1 -90 0 4
+4x4 4 3 40 185 392 5 90 0 4
+4x4 5 215 40 185 392 4 90 0 4
+4x4 6 427 268 392 185 7 0 4 0
+4x4 7 427 56 392 185 6 0 4 0
+2x2 0 0 0 185 392 0 0 0 4
+2x2 1 212 0 185 392 1 0 0 4

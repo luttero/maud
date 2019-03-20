@@ -27,92 +27,7 @@ import java.util.Locale;
  *
  * @author flb
  */
-public class ODF implements ODFComponent {
-
-    public static ODF estimate(PoleFigure pf) {
-        return ODF.estimate(pf, 10);
-    }
-
-    public static ODF estimate(PoleFigure pf, double dghalfwidth) {
-        double halfwidth = Math.toRadians(dghalfwidth);
-        return estimate(pf, new ODFOptions(pf.getCS(), pf.getSS(), halfwidth, new DeLaValleePoussin(halfwidth)));
-    }
-
-    public static ODF estimate(PoleFigure pf, ODFOptions options) {
-
-        Symmetry cs = options.getCS();
-        Symmetry ss = options.getSS();
-
-        Quaternion q = options.getGrid().toQuat();
-
-        Quaternion sgrid = q.inverse().prod(ss.inverse()).inverse().prod(cs);
-
-        Miller h = pf.getH();
-        Array1D[] ghRhoTheta = new Array1D[h.size()];
-        for (int i = 0; i < h.size(); i++) {
-            Vec3 gh = sgrid.rotate(h.get(i));
-            ghRhoTheta[i] = gh.getRhoTheta();
-        }
-        Array1D gh = Array1D.concat(ghRhoTheta);
-        sgrid = null;
-
-        Array1D r = pf.getRhoTheta();
-        Array1D P = pf.getData();
-        Array1D lP = pf.getGridSize();
-        Array1D lh = pf.getMultiplicity();
-        Array1D refl = pf.getSuperposition();
-
-        // todooooo
-        Array1D w = pf.getQuadratureWeights(options.getPsi());
-
-        Array1D A = options.getPsi().A();
-        A.set(Array1D.linspace(1, A.size() - 1, 2).toIntArray(), 0);
-        Array1D RM = new Array1D(0, 0, 0, 0);
-
-        double[] result = MTEX.pf2odf(lP.toIntArray(), lh.toIntArray(), refl.toDoubleArray(), options.getIterMax(), options.getIterMin(), options.getFlags(),
-                P.toDoubleArray(), r.toDoubleArray(), gh.toDoubleArray(),
-                A.toDoubleArray(), options.getC0().toDoubleArray(), w.toDoubleArray(), RM.toDoubleArray(), 0, 0);
-
-        UnimodalComponent cmp = new UnimodalComponent(q, new Array1D(result), options.getPsi(), cs, ss);
-
-        ODF odf = new ODF(cs, ss, pf);
-        odf.add(cmp);
-
-        if (!options.doGhostCorrection) {
-            return odf;
-        } else {
-            double phon = 1D;
-            Array1D[] alpha = new Array1D[pf.size()];
-
-            for (int i = 0; i < pf.size(); i++) {
-                PoleFigure pfi = pf.get(i);
-                PoleFigure cpf = odf.calcPoleFigure(pfi.getH(), pfi.getR());
-                double alph = pfi.getData().norm() / cpf.getData().norm();
-
-                phon = Math.min(phon, pfi.getData().quantile(0.01) / alph);
-
-                alpha[i] = Array1D.fill(pfi.getData().size(), alph);
-            }
-            Array1D alphas = Array1D.concat(alpha);
-
-            if (phon > 0.1) {
-                odf.remove(cmp);
-
-                System.out.println("APPLYING GHOSTCORRECTION (phon:" + phon + ")");
-
-                // correct intensities
-                Array1D Pc = P.minus(alphas.multiplyd(phon)).max(0);
-
-                double[] ghresult = MTEX.pf2odf(lP.toIntArray(), lh.toIntArray(), refl.toDoubleArray(), options.getIterMax(), options.getIterMin(), options.getFlags(),
-                        Pc.toDoubleArray(), r.toDoubleArray(), gh.toDoubleArray(),
-                        A.toDoubleArray(), options.getC0().toDoubleArray(), w.toDoubleArray(), RM.toDoubleArray(), 0, 0);
-
-                odf.add(phon, new UniformComponent(cs, ss));
-                odf.add(1D - phon, new UnimodalComponent(q, new Array1D(ghresult), options.getPsi(), cs, ss));
-            }
-        }
-        return odf;
-    }
+public class ODF extends ODFComponent {
 
     protected final PoleFigure pfsource;
     protected Symmetry cs;
@@ -145,6 +60,10 @@ public class ODF implements ODFComponent {
         this.odfs.remove(ndx);
     }
 
+    public int componentsNumber() {
+    	return odfs.size();
+    }
+
     @Override
     public String toString() {
         return getClass().getName() + "[" + paramString() + "]";
@@ -171,7 +90,92 @@ public class ODF implements ODFComponent {
         return pfsource;
     }
 
-// 
+	public static ODF estimate(PoleFigure pf) {
+		return ODF.estimate(pf, 10);
+	}
+
+	public static ODF estimate(PoleFigure pf, double dghalfwidth) {
+		double halfwidth = Math.toRadians(dghalfwidth);
+		return estimate(pf, new ODFOptions(pf.getCS(), pf.getSS(), halfwidth, new DeLaValleePoussin(halfwidth)));
+	}
+
+	public static ODF estimate(PoleFigure pf, ODFOptions options) {
+
+		Symmetry cs = options.getCS();
+		Symmetry ss = options.getSS();
+
+		Quaternion q = options.getGrid().toQuat();
+
+		Quaternion sgrid = q.inverse().prod(ss.inverse()).inverse().prod(cs);
+
+		Miller h = pf.getH();
+		Array1D[] ghRhoTheta = new Array1D[h.size()];
+		for (int i = 0; i < h.size(); i++) {
+			Vec3 gh = sgrid.rotate(h.get(i));
+			ghRhoTheta[i] = gh.getRhoTheta();
+		}
+		Array1D gh = Array1D.concat(ghRhoTheta);
+		sgrid = null;
+
+		Array1D r = pf.getRhoTheta();
+		Array1D P = pf.getData();
+		Array1D lP = pf.getGridSize();
+		Array1D lh = pf.getMultiplicity();
+		Array1D refl = pf.getSuperposition();
+
+		// todooooo
+		Array1D w = pf.getQuadratureWeights(options.getPsi());
+
+		Array1D A = options.getPsi().A();
+		A.set(Array1D.linspace(1, A.size() - 1, 2).toIntArray(), 0);
+		Array1D RM = new Array1D(0, 0, 0, 0);
+
+		double[] result = MTEX.pf2odf(lP.toIntArray(), lh.toIntArray(), refl.toDoubleArray(), options.getIterMax(), options.getIterMin(), options.getFlags(),
+				P.toDoubleArray(), r.toDoubleArray(), gh.toDoubleArray(),
+				A.toDoubleArray(), options.getC0().toDoubleArray(), w.toDoubleArray(), RM.toDoubleArray(), 0, 0);
+
+		UnimodalComponent cmp = new UnimodalComponent(q, new Array1D(result), options.getPsi(), cs, ss);
+
+		ODF odf = new ODF(cs, ss, pf);
+		odf.add(cmp);
+
+		if (!options.doGhostCorrection) {
+			return odf;
+		} else {
+			double phon = 1D;
+			Array1D[] alpha = new Array1D[pf.size()];
+
+			for (int i = 0; i < pf.size(); i++) {
+				PoleFigure pfi = pf.get(i);
+				PoleFigure cpf = odf.calcPoleFigure(pfi.getH(), pfi.getR());
+				double alph = pfi.getData().norm() / cpf.getData().norm();
+
+				phon = Math.min(phon, pfi.getData().quantile(0.01) / alph);
+
+				alpha[i] = Array1D.fill(pfi.getData().size(), alph);
+			}
+			Array1D alphas = Array1D.concat(alpha);
+
+			if (phon > 0.1) {
+				odf.remove(cmp);
+
+				System.out.println("APPLYING GHOSTCORRECTION (phon:" + phon + ")");
+
+				// correct intensities
+				Array1D Pc = P.minus(alphas.multiplyd(phon)).max(0);
+
+				double[] ghresult = MTEX.pf2odf(lP.toIntArray(), lh.toIntArray(), refl.toDoubleArray(), options.getIterMax(), options.getIterMin(), options.getFlags(),
+						Pc.toDoubleArray(), r.toDoubleArray(), gh.toDoubleArray(),
+						A.toDoubleArray(), options.getC0().toDoubleArray(), w.toDoubleArray(), RM.toDoubleArray(), 0, 0);
+
+				odf.add(phon, new UniformComponent(cs, ss));
+				odf.add(1D - phon, new UnimodalComponent(q, new Array1D(ghresult), options.getPsi(), cs, ss));
+			}
+		}
+		return odf;
+	}
+
+	//
 //
     public double textureindex() {
         return textureindex(Math.toRadians(2.5));
@@ -215,7 +219,6 @@ public class ODF implements ODFComponent {
     }
 
     public PoleFigure calcPoleFigure(Miller h, Vec3 r) {
-
         PoleFigure pf = new PoleFigure();
         pf.setCS(cs);
         pf.setSS(ss);
@@ -489,7 +492,7 @@ public class ODF implements ODFComponent {
 
     }
 
-    public static void main(String args[]) {
+/*Luca    public static void main(String args[]) {
         Quaternion q = Quaternion.rotZXZ(1, 2, 3);
 
         Symmetry cs = new Symmetry("m-3m", 4, 4, 4);
@@ -512,6 +515,6 @@ public class ODF implements ODFComponent {
 //        System.out.println("entropy " + odf.entropy());
 //        
 //        System.out.println("vol(h,r)" + odf.fibreVolume(h, new Vec3(0,0,1), Math.toRadians(10)));
-    }
+    }*/
 
 }

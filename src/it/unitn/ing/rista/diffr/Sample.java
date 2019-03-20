@@ -1134,7 +1134,7 @@ public class Sample extends Maincat {
 	  computeFinalPositions();
 
 	  computeLorentzPolarization(positionRefreshed);
-    computeScatteringFactors(positionRefreshed);
+     computeScatteringFactors(positionRefreshed);
 
 	  for (int ip = 0; ip < numberOfPhases; ip++) {
 		  Phase aphase = getPhase(ip);

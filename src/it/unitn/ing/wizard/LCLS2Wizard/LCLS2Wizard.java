@@ -3,6 +3,8 @@ package it.unitn.ing.wizard.LCLS2Wizard;
 import ij.ImagePlus;
 import ij.gui.FlatCCDReflectionSquareRoi;
 import ij.process.ImageProcessor;
+import it.unitn.ing.rista.awt.DiffractionMainFrame;
+import it.unitn.ing.rista.awt.principalJFrame;
 import it.unitn.ing.rista.diffr.*;
 import it.unitn.ing.rista.diffr.cal.*;
 import it.unitn.ing.rista.diffr.detector.StandardDetector;
@@ -21,14 +23,14 @@ import java.awt.event.WindowEvent;
 
 public class LCLS2Wizard extends Wizard {
 	private JFrame frame;
-	private FilePar analysis = null;
+	private principalJFrame mainFrame = null;
 	LCLS2data data;
 
 	/**
 	 * Create the application
 	 */
-	public LCLS2Wizard(FilePar parameters, LCLS2data data) {
-		analysis = parameters;
+	public LCLS2Wizard(principalJFrame mainFrame, LCLS2data data) {
+		this.mainFrame = mainFrame;
 		this.data = data;
 		wizardModel = new WizardModel();
 		wizardModel.addPropertyChangeListener(this);
@@ -42,7 +44,7 @@ public class LCLS2Wizard extends Wizard {
 		frame.getContentPane().setName("tabPane");
 		frame.setResizable(true);
 		frame.getContentPane().setLayout(new BorderLayout());
-		frame.setSize(new Dimension(1024, 500));
+		frame.setSize(new Dimension(1124, 600));
 		frame.setTitle("LCLS2 Wizard");
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -96,9 +98,9 @@ public class LCLS2Wizard extends Wizard {
 		returnCode = code;
 		if (code == FINISH_RETURN_CODE) {
 			getModel().getCurrentPanelDescriptor().aboutToHidePanel();
-			setupTheAnalysis(analysis, data);
+			setupTheAnalysis(mainFrame, data);
 //			ConfigData.writeConfig();
-			analysis.getMainFrame().updateDataFilePlot(false);
+			mainFrame.updateDataFilePlot(false);
 		}
 
 
@@ -106,87 +108,141 @@ public class LCLS2Wizard extends Wizard {
 //		System.exit(0);
 	}
 
-	public static void setupTheAnalysis(FilePar analysis, LCLS2data data) {
-		int max_nbkg = LCLS2ConfigData.getPropertyValue("background_parameters_to_add", 2);
-		analysis.removesample();
-		analysis.loadingFile = true;
-		Sample asample;
-		DataFileSet adataset;
-		if ((asample = analysis.getActiveSample()) == null)
-			asample = analysis.newsample();
-		asample.setLabel(data.sampleName);
-		asample.initializeAsNew();
-		asample.setPhaseRefinementBehaviour(2);
+	public static void setupTheAnalysis(principalJFrame mainFrame, LCLS2data data) {
+//		int max_nbkg = LCLS2ConfigData.getPropertyValue("background_parameters_to_add", 2);
+
+		if (data.useTempletaFile)  {
+			String[] folderAndName = Misc.getFolderandName(LCLS2ConfigData.filenameTemplate);
+			java.io.Reader in = null;
+			try {
+				if (mainFrame.parameterfile != null) {
+					mainFrame.parameterfile.dispose(); // If we don't call this no finalization will occur!!
+					mainFrame.parameterfile = null;
+				}
+				mainFrame.parameterfile = new FilePar(folderAndName[1], mainFrame);
+				in = Misc.getReader(folderAndName[0], folderAndName[1]);
+				mainFrame.parameterfile.readall(in, null);
+				mainFrame.parameterfile.setFileName("noname.par", false);
+				mainFrame.parameterfile.setDirectory(folderAndName[0]);
+				if (mainFrame.titleField != null) {
+					mainFrame.titleField.setText(mainFrame.parameterfile.getTitleField());
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else {
+			if (mainFrame.parameterfile != null) {
+				mainFrame.parameterfile.dispose(); // If we don't call this no finalization will occur!!
+				mainFrame.parameterfile = null;
+			}
+
+			// check file existing
+			String[] folderAndName = new String[2];
+			folderAndName[0] = Constants.documentsDirectory;
+			folderAndName[1] = "noname.par";
+
+			mainFrame.parameterfile = new FilePar(folderAndName[1], mainFrame);
+			mainFrame.parameterfile.setDirectory(folderAndName[0]);
+
+		}
+		DataFileSet adataset = null;
+		Sample asample = null;
+		int numberBackground = 3;
+		if (!data.useTempletaFile) {
+			mainFrame.parameterfile.removesample();
+			mainFrame.parameterfile.loadingFile = true;
+			if ((asample = mainFrame.parameterfile.getActiveSample()) == null)
+				asample = mainFrame.parameterfile.newsample();
+			asample.setLabel(data.sampleName);
+			asample.initializeAsNew();
+			asample.setPhaseRefinementBehaviour(2);
 //		boolean original = analysis.storeSpectraWithAnalysis();
 //		int numberIndividualBackground = MaudPreferences.getInteger("lcls2Wizard.numberOfIndividualBackgroundParameters", 3);
-		int numberBackground = LCLS2ConfigData.getPropertyValue("lcls2Wizard.numberOfGeneralBackgroundParameters", 3);
-      analysis.setStoreSpectraOption(true);
+			numberBackground = LCLS2ConfigData.getPropertyValue("lcls2Wizard.numberOfGeneralBackgroundParameters", 3);
+		}
+		asample = mainFrame.parameterfile.getActiveSample();
+		mainFrame.parameterfile.setStoreSpectraOption(true);
 
+		int indexDataset = 0;
 		for (int i = 0; i < data.panels.size(); i++) {
 			Cspad panel = data.panels.elementAt(i);
 			if (panel.enabled) {
 				for (int j = 0; j < panel.detectors.size(); j++) {
 					SensorImage sensor = panel.detectors.elementAt(j);
 					if (sensor.enabled) {
-						if (i == 0 && j == 0)
-							adataset = asample.getDataSet(0);
-						else
-							adataset = asample.newData(numberBackground);
-						adataset.initializeAsNew();
-						adataset.setLabel(sensor.name);
-						adataset.setInstrument(DefaultInstrument.modelID);
-						Instrument inst = adataset.getInstrument();
-						inst.setDetector(StandardDetector.modelID);
-						inst.setGeometry(GeometryTransmissionFlatImage.modelID);
-						inst.setInstrumentID("LCLS MEC XFEL");
-						inst.setMeasurement(TwoThetaMeasurement.modelID);
-						inst.setRadiationType(XrayRadiation.modelID);
-						inst.getRadiationType().addRadiation("XFEL");
-						inst.getRadiationType().getRadiation(0).getWavelength().setValue(data.wavelength);
+						if (!data.useTempletaFile) {
+							if (i == 0 && j == 0)
+								adataset = asample.getDataSet(0);
+							else
+								adataset = asample.newData(numberBackground);
+							adataset.initializeAsNew();
+							adataset.setLabel(sensor.name);
+							adataset.setInstrument(DefaultInstrument.modelID);
+							Instrument inst = adataset.getInstrument();
+							inst.setDetector(StandardDetector.modelID);
+							inst.setGeometry(GeometryTransmissionFlatImage.modelID);
+							inst.setInstrumentID("LCLS MEC XFEL");
+							inst.setMeasurement(TwoThetaMeasurement.modelID);
+							inst.setRadiationType(XrayRadiation.modelID);
+							inst.getRadiationType().addRadiation("XFEL");
+							inst.getRadiationType().getRadiation(0).getWavelength().setValue(data.wavelength);
 
-						inst.setAngularCalibration(AngularInclinedFlatImageCalibration.modelID);
-						AngularInclinedFlatImageCalibration angcal =
-								(AngularInclinedFlatImageCalibration) adataset.getInstrument().getAngularCalibration();
-						angcal.setOriginal2Theta(sensor.theta2);
-						angcal.setOriginalCenterX(sensor.centerX);
-						angcal.setOriginalCenterY(sensor.centerY);
-						angcal.setOriginalDistance(sensor.distance);
-						angcal.setOriginalEtaDA(sensor.etaDA);
-						angcal.setOriginalOmegaDN(sensor.omegaDN);
-						angcal.setOriginalPhiDA(sensor.phiDA);
-						angcal.setDetector2Theta(sensor.theta2);
-						angcal.setDetectorCenterX(0);
-						angcal.setDetectorCenterY(0);
-						angcal.setDetectorDistance(sensor.distance);
-						angcal.setDetectorEtaDA(sensor.etaDA);
-						angcal.setDetectorOmegaDN(sensor.omegaDN);
-						angcal.setDetectorPhiDA(sensor.phiDA);
+							inst.setAngularCalibration(AngularInclinedFlatImageCalibration.modelID);
+							AngularInclinedFlatImageCalibration angcal =
+									(AngularInclinedFlatImageCalibration) adataset.getInstrument().getAngularCalibration();
+							angcal.setOriginal2Theta(sensor.theta2);
+							angcal.setOriginalCenterX(sensor.centerX);
+							angcal.setOriginalCenterY(sensor.centerY);
+							angcal.setOriginalDistance(sensor.distance);
+							angcal.setOriginalEtaDA(sensor.etaDA);
+							angcal.setOriginalOmegaDN(sensor.omegaDN);
+							angcal.setOriginalPhiDA(sensor.phiDA);
+							angcal.setDetector2Theta(sensor.theta2);
+							angcal.setDetectorCenterX(0);
+							angcal.setDetectorCenterY(0);
+							angcal.setDetectorDistance(sensor.distance);
+							angcal.setDetectorEtaDA(sensor.etaDA);
+							angcal.setDetectorOmegaDN(sensor.omegaDN);
+							angcal.setDetectorPhiDA(sensor.phiDA);
 
-						analysis.loadingFile = false;
-						inst.setInstrumentBroadening(InstrumentBroadeningPVCaglioti.modelID);
-						InstrumentBroadeningPVCaglioti instBroad = (InstrumentBroadeningPVCaglioti) inst.getInstrumentBroadening();
-						instBroad.initializeAsNew();
-						for (int ia = 0; ia < instBroad.getasymmetrynumber(); ia++)
-							instBroad.getAsymmetry(ia).setValue(0);
+							mainFrame.parameterfile.loadingFile = false;
+							inst.setInstrumentBroadening(InstrumentBroadeningPVCaglioti.modelID);
+							InstrumentBroadeningPVCaglioti instBroad = (InstrumentBroadeningPVCaglioti) inst.getInstrumentBroadening();
+							instBroad.initializeAsNew();
+							for (int ia = 0; ia < instBroad.getasymmetrynumber(); ia++)
+								instBroad.getAsymmetry(ia).setValue(0);
+						} else {
+							if (asample != null && asample.datasetsNumber() > indexDataset)
+								adataset = asample.getDataSet(indexDataset++);
+						}
 
-						int dotLocation = LCLS2ConfigData.filenameToSave.lastIndexOf(".");
-						String filename = LCLS2ConfigData.filenameToSave.substring(0, dotLocation);
+						String filename = LCLS2ConfigData.filenameToSave;
+						int dotLocation = filename.lastIndexOf(".");
+						if (dotLocation >=0 )
+							filename = filename.substring(0, dotLocation);
 						filename += sensor.name;
 
 						System.out.flush();
 
+						if (adataset.activedatafilesnumber() > 0)
+							adataset.removeAllFiles();
+
 						integrateImage(sensor, adataset, data, filename + ".esg");
 
-						analysis.loadingFile = true;
+						adataset.removeAllDisabledFiles();
+
+						mainFrame.parameterfile.loadingFile = true;
 					}
 
 				}
 			}
 		}
 
-		analysis.loadingFile = false;
+		mainFrame.parameterfile.loadingFile = false;
 //		analysis.setStoreSpectraOption(original);
-		analysis.refreshAll(false);
+		mainFrame.parameterfile.refreshAll(false);
+
+		mainFrame.initParameters();
 
 	}
 
@@ -208,10 +264,10 @@ public class LCLS2Wizard extends Wizard {
 		returnCode = CANCEL_RETURN_CODE;
 	}
 
-	public static void startWizard(FilePar analysis) {
+	public static void startWizard(principalJFrame mainFrame) {
 
 		LCLS2data data = new LCLS2data("analysis x");
-		LCLS2Wizard wizard = new LCLS2Wizard(analysis, data);
+		LCLS2Wizard wizard = new LCLS2Wizard(mainFrame, data);
 
 		WizardPanelDescriptor descriptor1 = new ImageDataPanelDescriptor(data);
 		wizard.registerWizardPanel(ImageDataPanelDescriptor.IDENTIFIER, descriptor1);
@@ -332,7 +388,7 @@ public class LCLS2Wizard extends Wizard {
 			datafile.setAngleValue(1, chi);
 			datafile.setAngleValue(2, phi);
 			datafile.setAngleValue(3, etaStart + spectrumIndex * coneInterval);
-			datafile.setAngleValue(4, detector2Theta);
+			datafile.setAngleValue(4, 0.0);
 
 /*            datafile.setField("_riet_meas_datafile_calibrated", "true", "0", "0", "0", false, null, null, null, null,
                 false);

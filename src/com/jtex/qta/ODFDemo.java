@@ -76,11 +76,13 @@ public class ODFDemo {
 
         Plotter.show(Plotter.plot(pf));
         ODF rec = ODF.estimate(pf, 5);
+	    System.out.println("SanteFe ODF1 components number: " + rec.componentsNumber());
 
         ODF.ODFOptions odfOptions = new ODF.ODFOptions(pf, Math.toRadians(5), new VonMisesFisher(Math.toRadians(5)));
         odfOptions.setGhostCorrection(false);
 
         ODF rec2 = ODF.estimate(pf, odfOptions);
+	    System.out.println("SanteFe ODF2 components number: " + rec2.componentsNumber());
 
         Plotter.show(Plotter.plotpdf(rec2, h));
         Plotter.show(Plotter.plotpdf(rec, h));
@@ -101,6 +103,7 @@ public class ODFDemo {
         PoleFigure pf = BrukerGpolLoader.loadExample();
 
         ODF odf = ODF.estimate(pf, 4);
+	     System.out.println("BrukerGPol ODF components number: " + odf.componentsNumber());
         Plotter.show(Plotter.plot(pf));
 
         Plotter.show(Plotter.plotpdf(odf, pf.getH()));
@@ -119,6 +122,8 @@ public class ODFDemo {
         Plotter.show(Plotter.plot(pf));
 
         ODF odf = ODF.estimate(pf);
+
+	     System.out.println("Dubna ODF components number: " + odf.componentsNumber());
 
         Plotter.show(Plotter.plotpdf(odf, pf.getH()));
 

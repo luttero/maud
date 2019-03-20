@@ -277,8 +277,9 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 
 	@Override
   public boolean freeAllBasicParameters() {
-    for (int i = 1; i < 3; i++)
-      parameterField[i].setRefinableCheckBound();
+		if (((DataFileSet) getInstrument().getParent()).activedatafilesnumber() > 9)
+         for (int i = 1; i < 3; i++)
+            parameterField[i].setRefinableCheckBound();
     return true;
   }
 
@@ -317,7 +318,7 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
     double[] tiltingAngles = datafile.getTiltingAngle();
     double omega = tiltingAngles[0];
 	  double chi = tiltingAngles[1];
-	  double detectorProper2Theta = detector2Theta;// + tiltingAngles[4];
+	  double detectorProper2Theta = detector2Theta + tiltingAngles[4];
 
 	  if (Math.abs(omega) > 1.0E-9)
       zs /= Math.cos((90.0 - omega) * Constants.DEGTOPI);
