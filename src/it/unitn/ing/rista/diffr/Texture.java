@@ -121,12 +121,10 @@ public class Texture extends XRDcat {
 	            DataFileSet dataset = asample.getActiveDataSet(i);
 	            int radCount = dataset.getInstrument().getRadiationType().getLinesCount();
               for (int k = 0; k < dataset.activedatafilesnumber(); k++) {
-	              DiffrDataFile datafile = dataset.getActiveDataFile(k);
-	              for (int ppp = 0; ppp < datafile.positionsPerPattern; ppp++) {
-		              for (int l = 0; l < radCount; l++) {
-			              double pf = datafile.getExperimentalTextureFactors(aphase, j)[ppp][l];
-			              if (!Double.isNaN(pf)) numberDataPoints++;
-		              }
+              	 DiffrDataFile datafile = dataset.getActiveDataFile(k);
+	              for (int l = 0; l < radCount; l++) {
+	              	 double pf = datafile.getExperimentalTextureFactor(aphase, j, l);
+	              	 if (!Double.isNaN(pf)) numberDataPoints++;
 	              }
               }
             }
@@ -140,27 +138,25 @@ public class Texture extends XRDcat {
 		          int radCount = dataset.getInstrument().getRadiationType().getLinesCount();
 		          for (int k = 0; k < dataset.activedatafilesnumber(); k++) {
 			          DiffrDataFile datafile = dataset.getActiveDataFile(k);
-			          for (int ppp = 0; ppp < datafile.positionsPerPattern; ppp++) {
-				          for (int l = 0; l < radCount; l++) {
-					          double pf = datafile.getExperimentalTextureFactors(aphase, j)[ppp][l];
-					          double pfc = datafile.getTextureFactors(aphase, j)[ppp][l];
-					          double position = datafile.getPositions(aphase)[j][ppp][l];
-					          if (!Double.isNaN(pf)) {
-						          numberDataPoints++;
-						          double[] angles = datafile.getTextureAngles(position);
-						          double[] mAngles = datafile.getTiltingAngle();
-						          int bankNumber = datafile.getBankNumber() + 1;
-						          double chi = angles[0];
-						          double phi = angles[1];
-						          PFwriter.write(chi + " " + phi + " " + pf + " " + pfc + " " + numberDataPoints + " " + wgt
-								          + " " + mAngles[0] + " " + mAngles[1] + " " + mAngles[2] + " " + mAngles[3]
-								          + " " + bankNumber);
-						          PFwriter.write(Constants.lineSeparator);
-					          }
+			          for (int l = 0; l < radCount; l++) {
+				          double pf = datafile.getExperimentalTextureFactor(aphase, j, l);
+				          double pfc = datafile.getTextureFactor(aphase, j, l);
+				          double position = datafile.getPosition(aphase, j, l);
+				          if (!Double.isNaN(pf)) {
+					          numberDataPoints++;
+					          double[] angles = datafile.getTextureAngles(position);
+					          double[] mAngles = datafile.getTiltingAngle();
+					          int bankNumber = datafile.getBankNumber() + 1;
+					          double chi = angles[0];
+					          double phi = angles[1];
+					          PFwriter.write(chi + " " + phi + " " + pf + " " + pfc + " " + numberDataPoints + " " + wgt
+							          + " " + mAngles[0] + " " + mAngles[1] + " " + mAngles[2] + " " + mAngles[3]
+							          + " " + bankNumber);
+					          PFwriter.write(Constants.lineSeparator);
 				          }
 			          }
-              }
-            }
+                }
+             }
           }
         }
         PFwriter.flush();
@@ -187,10 +183,6 @@ public class Texture extends XRDcat {
     return numberPoleFigures;
   }
 
-/*  public Reflection getReflectionAll(int pole) {
-    return getPhase().reflectionv.elementAt(pole);
-  }*/
-
   public double getMinimumIntensityD() {
     return 0.0;
   }
@@ -207,7 +199,7 @@ public class Texture extends XRDcat {
       return;
 	  for (int j = 0; j < asample.activeDatasetsNumber(); j++)
 		  for (int k = 0; k < asample.getActiveDataSet(j).activedatafilesnumber(); k++)
-			  asample.getActiveDataSet(j).getActiveDataFile(k).randomToTextureFactors(aphase);
+			  asample.getActiveDataSet(j).getActiveDataFile(k).resetForRandomTexture(aphase);
     refreshComputation = false;
   }
 

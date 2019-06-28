@@ -59,7 +59,7 @@ public class ModulatedTurbostraticModel extends PlanarDefects {
 
 	// this are the corresponding labels that will appear in the GUI in the parameter list window etc.
 	public static String[] diclistcrm = {"number of layers for the disordered model",
-			"crystal axis normal to the stacking sequence", "minimum dspace for disordering",
+			"crystal axis normal to the stacking sequence", "minimum energy for disordering",
 			"indices of the first modulation axis", "period of the first modulation", "constant of the first modulation", "first turbostratic order",
 			"indices of the second modulation axis","period of the second modulation", "constant of the second modulation", "second turbostratic order",
 

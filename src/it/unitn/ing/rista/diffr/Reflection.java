@@ -70,6 +70,7 @@ public class Reflection {
   public int broadened = 0;
   public double[] phi = null, beta = null;
 	public double idNumber = 0;
+	public double tmp_position; // do not use it, only for temp storage, it can change between datasets
 
 	private double structureModifier = 1.0;
 	private double[] dividers = {1.0, 1.0, 1.0};
@@ -532,9 +533,8 @@ public class Reflection {
 	    DataFileSet dataset = asample.getActiveDataSet(i);
 	    for (int j = 0; j < dataset.activedatafilesnumber(); j++) {
 		    DiffrDataFile dataFile = dataset.getActiveDataFile(j);
-		    double position = dataFile.getPositions(aphase)[index][0][0];
-		    if (dataFile.isInsideRange(position) && !Double.isNaN(dataFile.getExperimentalTextureFactors(aphase, index)[0][0]))
-          numberOfGoodPoints++;
+		      if (dataFile.isPeakInsideRange(aphase, index) && !Double.isNaN(dataFile.getExperimentalTextureFactor(aphase, index, 0))) // todo v3.0 : only radnumber 0 ??
+               numberOfGoodPoints++;
 	    }
     }
     if(numberOfGoodPoints <= 0)
@@ -546,11 +546,10 @@ public class Reflection {
 		  DataFileSet dataset = asample.getActiveDataSet(i);
 		  for (int j = 0; j < dataset.activedatafilesnumber(); j++) {
 			  DiffrDataFile dataFile = dataset.getActiveDataFile(j);
-			  double position = dataFile.getPositions(aphase)[index][0][0];
-			  if (dataFile.isInsideRange(position)) {
-				  double expTextureFactor = dataFile.getExperimentalTextureFactors(aphase, index)[0][0];
+			  if (dataFile.isPeakInsideRange(aphase, index)) {
+				  double expTextureFactor = dataFile.getExperimentalTextureFactor(aphase, index, 0); // todo v3.0 : only radnumber 0 ??
 					if (!Double.isNaN(expTextureFactor)) {
-				  double[] texture_angles = dataFile.getTextureAngles(position);
+				  double[] texture_angles = dataFile.getTextureAngles(dataFile.getPosition(aphase, index, 0)); // todo v3.0 : only radnumber 0 ??
 				  expTFAndAngles[0][numberOfGoodPoints] = texture_angles[0];
 				  expTFAndAngles[1][numberOfGoodPoints] = texture_angles[1];
 				  expTFAndAngles[2][numberOfGoodPoints++] = expTextureFactor;

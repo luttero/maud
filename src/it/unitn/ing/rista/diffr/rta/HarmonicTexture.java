@@ -383,24 +383,26 @@ public class HarmonicTexture extends Texture implements Function {
 //			setSharpness(computeAndGetSharpness());
       refreshComputation = false;
 	    int hkln = aphase.gethklNumber();
-			double[] textF = new double[hkln];
 	    for (int i = 0; i < asample.activeDatasetsNumber(); i++) {
 		    DataFileSet adataset = asample.getActiveDataSet(i);
 		    int datafilenumber = adataset.activedatafilesnumber();
+		    int radNumber = asample.getActiveDataSet(i).getInstrument().getRadiationType().getLinesCount();
+		    double[] textF = new double[radNumber];
 		    for (int i1 = 0; i1 < datafilenumber; i1++) {
 			    DiffrDataFile adatafile = adataset.getActiveDataFile(i1);
-			    double[][][] positions = adatafile.getPositions(aphase);
-//			    for (int ppp = 0; ppp < adatafile.positionsPerPattern; ppp++) {
-				    for (int j = 0; j < hkln; j++) {
+//			    double[][] positions = adatafile.getPositions(aphase);
+			    for (int j = 0; j < hkln; j++) {
+			    	for (int ppp = 0; ppp < radNumber; ppp++) {
 					    Reflection refl = aphase.getReflex(j);
-					    double texture_angles[] = adatafile.getTextureAngles(positions[j][0][0]);
-					    textF[j] = computeTextureFactor(refl.phi[0], refl.beta[0],
+					    double position = adatafile.getPosition(aphase, j, ppp);
+					    double texture_angles[] = adatafile.getTextureAngles(position);
+					    textF[ppp] = computeTextureFactor(refl.phi[0], refl.beta[0],
 							    texture_angles[0] * Constants.DEGTOPI,
 							    texture_angles[1] * Constants.DEGTOPI);
 //						refl.setExpTextureFactor(adatafile.getIndex(), textF);
 				    }
-				    adatafile.setTextureFactors(aphase, textF);
-//			    }
+				    adatafile.setTextureFactors(aphase, j, textF);
+			    }
 		    }
 	    }
     }

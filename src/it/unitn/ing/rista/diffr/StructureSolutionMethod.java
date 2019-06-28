@@ -79,27 +79,29 @@ public class StructureSolutionMethod extends StructureFactorModel {
 		phase.refreshFhklcompv();
 //		Vector<AtomSite> atomList = phase.getFullAtomList();
 		int hkln = phase.gethklNumber();
-		final double[] fhkl = new double[hkln];
+		final double[][] fhkl = new double[hkln][rad1.getLinesCount()];
+		double[] structureFactor = new double[rad1.getLinesCount()];
 //		double volume = phase.getCellVolume();
 			for (int i = 0; i < hkln; i++) {
 				Reflection refl = phase.getReflex(i);
 				int multiplicity = refl.multiplicity;
 				double dspacing = refl.d_space;
 //				double[][][] scatFactors = adataset.getScatteringFactor(phase);
-				double structureFactor = computeStructureFactor(refl.getH(), refl.getK(), refl.getL(), multiplicity, dspacing, rad1,
-						defaultFactor);
-				fhkl[i] = structureFactor;
+				computeStructureFactor(refl.getH(), refl.getK(), refl.getL(), multiplicity, dspacing, rad1,
+						defaultFactor, structureFactor);
+				for (int k = 0; k < rad1.getLinesCount(); k++)
+					fhkl[i][k] = structureFactor[k];
 			}
 
 		adataset.storeComputedStructureFactors(phase, fhkl);
 	}
 
-	public double computeStructureFactor(int h, int k, int l, int multiplicity, double dspacing, RadiationType radType,
-	                                     double defaultFactor) {
+	public void computeStructureFactor(int h, int k, int l, int multiplicity, double dspacing, RadiationType radType,
+	                                     double defaultFactor, double[] structureFactor) {
 //    int h = refl.h, k = refl.k, l = refl.l, int multiplicity = refl.multiplicity;
 //    double dspacing = refl.d_space;
-
-    return defaultFactor;
+		for (int i = 0; i < structureFactor.length; i++)
+			structureFactor[i] = defaultFactor;
   }
 
 }

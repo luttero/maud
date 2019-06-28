@@ -4189,8 +4189,8 @@ public static final String getSpaceGroup(int index, int sgconv) {
 		for (int j = 0; j < getFullAtomList().size(); j++) {
 			absorption += getFullAtomList().elementAt(j).getSiteAbsorption(energyInKeV);
 			totalNumber += getFullAtomList().elementAt(j).getSiteWeight();
-//			System.out.println(absorption + " ++++++ " + totalNumber);
 		}
+//			System.out.println(absorption + " ++++++ " + totalNumber);
 		absorption /= totalNumber;
 //		System.out.println("Absorption of " + toString() + ": " + absorption);
 		return absorption;

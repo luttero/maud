@@ -689,6 +689,28 @@ public class Layer extends XRDcat {
 		return absorption[0];
 	}
 
+	public double getOverLayerAbsorption(RadiationType rad, int rad_index) {
+		if (rad == null)
+			return 0.0;
+		double[] totalthick = new double[1];
+		totalthick[0] = 0.0;
+//ll		if (overlayerAbsorption.containsKey(rad))
+//ll			totalthick = (double[]) overlayerAbsorption.get(rad);
+//ll		else {
+		Sample asample = (Sample) getParent();
+		boolean mustStop = false;
+		for (int j = 0; j < asample.layersnumber() && !mustStop; j++) {
+			Layer alayer = asample.getlayer(j);
+			if (alayer != this)
+				totalthick[0] += alayer.getLayerAbsorption(rad, rad_index);
+			else
+				mustStop = true;
+		}
+//ll			overlayerAbsorption.put(rad, totalthick);
+//ll		}
+		return totalthick[0];
+	}
+
 	public double getOverLayerAbsorption(RadiationType rad) {
 		if (rad == null)
 			return 0.0;

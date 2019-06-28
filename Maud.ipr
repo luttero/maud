@@ -7,7 +7,6 @@
         <entry path="file://$PROJECT_DIR$/libs/commons-net-3.3.jar" />
         <entry path="file://$PROJECT_DIR$/Installers/infinitekind-appbundler-last/appbundler/bin/appbundler-1.0.jar" />
       </additionalClassPath>
-      <customJdkName value="11" />
       <maximumHeapSize value="1024" />
     </buildFile>
   </component>
@@ -123,7 +122,7 @@
     <option name="ADDITIONAL_OPTIONS_STRING" value="" />
     <option name="MAXIMUM_HEAP_SIZE" value="128" />
   </component>
-  <component name="Encoding" addBOMForNewFiles="with NO BOM">
+  <component name="Encoding">
     <file url="PROJECT" charset="UTF-8" />
   </component>
   <component name="ExportToHTMLSettings">
@@ -328,11 +327,11 @@
       </XML>
       <codeStyleSettings language="JAVA">
         <indentOptions>
-          <option name="INDENT_SIZE" value="3" />
-          <option name="CONTINUATION_INDENT_SIZE" value="6" />
-          <option name="TAB_SIZE" value="3" />
-          <option name="USE_TAB_CHARACTER" value="true" />
+          <option name="INDENT_SIZE" value="2" />
+          <option name="CONTINUATION_INDENT_SIZE" value="4" />
+          <option name="TAB_SIZE" value="2" />
           <option name="SMART_TABS" value="true" />
+          <option name="KEEP_INDENTS_ON_EMPTY_LINES" value="true" />
         </indentOptions>
       </codeStyleSettings>
     </code_scheme>

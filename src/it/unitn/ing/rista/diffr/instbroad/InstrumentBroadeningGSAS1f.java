@@ -521,7 +521,7 @@ public class InstrumentBroadeningGSAS1f extends InstrumentBroadening {
     double x2 = ainstrument.getAngularCalibration().calibrateX(diffrDataFile, xo + sigma);
 //	  System.out.println(x + " " + sigma + " " + xo + " " + (xo - sigma) + " " + (xo + sigma));
     sigma = x2 - x1;
-    return new double[][]{{0.0, Math.max(sigma, InstrumentBroadeningPVCaglioti.minimumHWHMvalue)}};
+    return new double[][]{{Math.max(sigma, InstrumentBroadeningPVCaglioti.minimumHWHMvalue), 0.0}};
   }
 
 /*  public double getConvolutedBroadening(double x, double[] tilting_angles, boolean dspacingbase) {

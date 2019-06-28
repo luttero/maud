@@ -104,6 +104,11 @@ public class SampleShape extends XRDcat {
 //    System.out.println("SampleShape down: " + refreshComputation);
   }
 
+	public double computeAbsorptionPath(double[] incidentAndDiffraction_angles, double absorption, double position,
+	                                    double toLambda) {
+  	   return 1.0;
+	}
+
   public void computeAbsorptionPath(double[][] incidentAndDiffraction_angles, double absorption, double[] position,
                                     double[] intensity, double toLambda) {
   }

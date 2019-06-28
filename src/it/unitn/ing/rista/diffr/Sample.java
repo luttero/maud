@@ -985,10 +985,10 @@ public class Sample extends Maincat {
 			for (int j = 0; j < adataset.activedatafilesnumber(); j++) {
 				DiffrDataFile datafile = adataset.getActiveDataFile(j);
 				if (totnumber == index) {
-					double position = datafile.getPositions(phase)[reflIndex][0][0];
+					double position = datafile.getPosition(phase, reflIndex, 0);
 					return datafile.getTextureAngles(position);
 				}
-				totnumber++; // todo positionsPerPattern
+				totnumber++; // todo positions per radiation
 			}
 		}
 		return null;
@@ -1059,18 +1059,12 @@ public class Sample extends Maincat {
       }
     }
 
-    for (int nd = 0; nd < activeDatasetsNumber(); nd++) {
+    for (int nd = 0; nd < activeDatasetsNumber(); nd++) {    // checking radiation is set
       getActiveDataSet(nd).setMeanAbsorption(getMeanAbsorption(
 		      getActiveDataSet(nd).getInstrument().getRadiationType()));
-//      getActiveDataSet(nd).setTotalLayerAbsorption(getTotalLayerAbsorption(
-//		      getActiveDataSet(nd).getInstrument().getRadiationType()));
     }
 
-	  for (int i = 0; i < phasesNumber(); i++) {
-		  getPhase(i).refreshIndices(this);
-	  }
-
-	  long previousTime = Constants.tmpTime;
+    long previousTime = Constants.tmpTime;
     if (Constants.testtime)
       System.out.println("Sample preparation: " +
           (-previousTime + (previousTime = System.currentTimeMillis())) + " millisecs.");
@@ -1115,9 +1109,13 @@ public class Sample extends Maincat {
         }
       }
 
+	  for (int i = 0; i < phasesNumber(); i++) {
+		  getPhase(i).refreshIndices(this);
+	  }
+
 	  boolean[] positionRefreshed = computeReflectionsPosition();
-	  for (int ph = 0; ph < numberOfPhases; ph++)
-		  getPhase(ph).checkReflectionsInRange();
+//	  for (int ph = 0; ph < numberOfPhases; ph++)
+//		  getPhase(ph).checkReflectionsInRange();
 
 	  for (int ip = 0; ip < numberOfPhases; ip++) {
 		  double totQuantity = 0.0;
@@ -1421,7 +1419,50 @@ public class Sample extends Maincat {
 		  return 1.0;
   }
 
-  public double[] getLayerAbsorption_new(RadiationType rad, int layerIndex, double[][] incidentDiffractionAngles,
+	public double getLayerAbsorption_new(RadiationType rad, int rad_index, int layerIndex, double[] incidentDiffractionAngles,
+	                                     DataFileSet adataset) {
+
+		// todo what about Debye-Scherrer
+		double expTransmission = 0.0;
+		double expAbsorption = 1.0;
+		Layer alayer = getlayer(layerIndex);
+
+		double radAbs = 1.0;
+/*    System.out.println(incidentDiffractionAngles[0] * Constants.PITODEG
+        + " " + incidentDiffractionAngles[2] * Constants.PITODEG);*/
+			if (incidentDiffractionAngles[0] < 1.0E-5 || incidentDiffractionAngles[2] < 1.0E-5)
+				radAbs = 0;
+			else {
+				double sinIncAngle = Math.abs(Math.sin(incidentDiffractionAngles[0]));
+				double sinDiffAngle = Math.abs(Math.sin(incidentDiffractionAngles[2]));
+				double factor = 1.0 / sinIncAngle + 1.0 / sinDiffAngle;
+				double absorption = alayer.getLayerAbsorption(rad, rad_index);
+				double absorptionLayer = factor * absorption;
+				// alayer.getLayerAbsorption(rad, sinIncAngle, sinDiffAngle);
+				if (incidentDiffractionAngles[2] > 0.0) {
+					double transmission = alayer.getOverLayerAbsorption(rad, rad_index) * factor;
+//    System.out.println("transmission: " + transmission + " layer " + layerIndex);
+					if (transmission < 200)
+						expTransmission = Math.exp(-transmission);
+					if (absorptionLayer < 200)
+						expAbsorption = 1.0 - Math.exp(-absorptionLayer);
+				}
+
+//	  System.out.println("Layer: " + alayer.toString() + " " + absorption);
+				if (absorption >= 0.0) {
+//      System.out.println("abs = " + sinDiffAngle + " * " + alayer.getThicknessValue() + " / (" + absorption +
+//          " * (" + sinIncAngle + " + " + sinDiffAngle + " )) * " +
+//          expTransmission + " * " + expAbsorption);
+					radAbs = 2.0 * sinDiffAngle * alayer.getThicknessValue() / (absorption * (sinIncAngle + sinDiffAngle)) *
+							expTransmission * expAbsorption * adataset.getMeanAbsorption();
+				} else
+					radAbs = 1.0;
+			}
+
+		return radAbs;
+	}
+
+	public double[] getLayerAbsorption_new(RadiationType rad, int layerIndex, double[][] incidentDiffractionAngles,
                                        DataFileSet adataset) {
 
     // todo what about Debye-Scherrer
@@ -1508,6 +1549,23 @@ public class Sample extends Maincat {
 
     return absorption;
   }
+
+	public double getAbsorption(RadiationType rad, int rad_index) {
+		double absorption = 0.0;
+		double thickness = 0.0;
+
+		int numberoflayers = layersnumber();
+		for (int j = 0; j < numberoflayers; j++) {
+			Layer alayer = getlayer(j);
+			thickness += alayer.getThicknessValue();
+			absorption += alayer.getLayerAbsorption(rad, rad_index);
+//	    System.out.println("Thickness: " + thickness + " absorption " + absorption);
+		}
+		if (thickness != 0.0)
+			absorption /= thickness;
+
+		return absorption;
+	}
 
 	public double[] getAbsorption(RadiationType rad) {
 		int radCount = rad.getLinesCount();
@@ -1729,6 +1787,14 @@ public class Sample extends Maincat {
 
 	}
 
+	public double computeAbsorptionTroughPath(RadiationType rad, int rad_index, double[] angles, double position,
+	                                          double toLambda) {
+
+		double absorption = getAbsorption(rad, rad_index);
+		SampleShape sampleShape = (SampleShape) getActiveSubordinateModel(sampleShapeID);
+		return sampleShape.computeAbsorptionPath(angles, absorption, position, toLambda);
+	}
+
 	public double getAbsorptionTroughPath(RadiationType rad, double[][] incidentAndDiffraction_angles, double[] position,
                                         double toLambda) {
     double[] intensity = new double[1];
@@ -1769,18 +1835,14 @@ public class Sample extends Maincat {
 
     double[][] PFreconstructed = new double[numberofPoints][numberofPoints];
     double tilting_angles[] = new double[4];
-    if (dspacingbase) {  // don't know what to do
-      position[0] = refl.d_space;
+	  position[0] = adataset.getDataFile(0).getPositionFromDspace(refl.d_space, 0);
+    if (dspacingbase)  // don't know what to do
       tilting_angles[0] = ageometry.getThetaDetector(adataset.getDataFile(0), position[0]) / 2.0f;
-    } else {
-      position[0] = adataset.getDataFile(0).computeposition(refl.d_space, rad.getRadiationWavelength(0));
-      position[0] = adataset.getDataFile(0).getCorrectedPosition(this, position[0], tilting_angles);
+    else
       tilting_angles[0] = position[0] / 2;
-
-    }
     double toLambda = 0.0f;
     if (isTOF) {
-      toLambda = (double) (2.0 * MoreMath.sind(Math.abs(tilting_angles[0])));
+      toLambda = (2.0 * MoreMath.sind(Math.abs(tilting_angles[0])));
     }
 
     double x, y, r;

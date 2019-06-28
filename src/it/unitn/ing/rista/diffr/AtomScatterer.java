@@ -270,6 +270,7 @@ public class AtomScatterer extends Scatterer {
 	}
 
 	public double getSiteAbsorption(double energyInKeV) {
+//	  System.out.println("Atom: " + getAtomicNumber() + ", absorption: " + XRayDataSqLite.getTotalAbsorptionForAtomAndEnergy(getAtomicNumber(), energyInKeV));
 		return getSiteWeight() * XRayDataSqLite.getTotalAbsorptionForAtomAndEnergy(getAtomicNumber(), energyInKeV);
 	}
 

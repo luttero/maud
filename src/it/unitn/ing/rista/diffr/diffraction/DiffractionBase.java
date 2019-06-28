@@ -121,7 +121,7 @@ public class DiffractionBase extends Diffraction {
 	}
 
 	public void computeDiffraction(Sample asample, DiffrDataFile datafile) {
-		DataFileSet datafileset = datafile.getDataFileSet();
+//		DataFileSet datafileset = datafile.getDataFileSet();
 		if (getFilePar().isComputingDerivate()) {
 //      System.out.println("refreshing derivative: " + this.toXRDcatString());
 			for (int ij = 0; ij < getFilePar().getActiveSample().phasesNumber(); ij++) {
@@ -171,11 +171,11 @@ public class DiffractionBase extends Diffraction {
 				printStream.println("Peaks list : ");
 				printStream.print(" peak n,"
 						+ " rad. n,"
-						+ "             phase, "
-						+ " h,     "
-						+ " k,     "
-						+ " l,     "
-						+ "  dspace,   "
+						+ " phase, "
+						+ " h,  "
+						+ " k,  "
+						+ " l,  "
+						+ "  d_space,   "
 						+ "  Fhkl_calc,"
 						+ "  Fhkl_exp, "
 						+ " position,  "
@@ -190,7 +190,9 @@ public class DiffractionBase extends Diffraction {
 						+ " texture,   "
 						+ " Abs*Vol/Vc,"
 						+ " rad. wt,   "
-						+ " phase scale");
+						+ " phase scale"
+						+ " detector absorption"
+				);
 				printStream.print(Constants.lineSeparator);
 				printStream.flush();
 //						System.out.println("String length " + toPrint.length());

@@ -146,7 +146,7 @@ Hi Luca,
 I hope your travel back gone well.
 >From a scan I have here, the angle positions in the TTX files are:
 ?  theta  2theta  chi  ?  ?  ?
-I'll fix the phi, I thinl it in front
+I'll fix the phi, I think it is in front
 
 Date: Mon, 09 Nov 1998 14:40:09 +0100
 To: Luca.Lutterotti@ing.unitn.it

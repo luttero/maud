@@ -1128,7 +1128,7 @@ public class LeastSquareFit extends OptimizationAlgorithm {
           g[z] = 1.0;
           choback(nprm);
           if (choleskyFlag[z] > 0 && !Double.isNaN(g[z]))
-            dparm[z] = (double) (Math.sqrt(Math.abs(g[z])) * sig);
+            dparm[z] = Math.sqrt(Math.abs(g[z])) * sig;
           else
             dparm[z] = choleskyFlag[z];
 //          printf(z, dparm[z]);

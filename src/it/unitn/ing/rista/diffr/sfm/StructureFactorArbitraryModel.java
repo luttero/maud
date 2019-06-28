@@ -79,7 +79,7 @@ public class StructureFactorArbitraryModel extends StructureFactorModel {
 
   public void loadStructureFactors(String filename) {
 
-	  // todo fix this
+	  // todo: v3.0 fix this, input not for each dataset
 //    notLoaded = false;
     FilePar aparFile = getFilePar();
     Phase aphase = (Phase) getParent();
@@ -94,6 +94,8 @@ public class StructureFactorArbitraryModel extends StructureFactorModel {
     boolean endoffile = false;
     String datasetEntry = CIFdictionary.dataDecl + "dataset_";
     int datasetLength = datasetEntry.length();
+    Vector<double[][]> allFhkl = new Vector<>();
+	  int datasetindex = -1;
     if (PFreader != null) {
       try {
         String line = PFreader.readLine();
@@ -107,7 +109,6 @@ public class StructureFactorArbitraryModel extends StructureFactorModel {
             endoffile = true;
           else {
 // dataset entry
-            int datasetindex = -1;
 
             if (hasValidDataSet > 0) {
               String datasetName = line.substring(datasetLength);
@@ -176,6 +177,7 @@ public class StructureFactorArbitraryModel extends StructureFactorModel {
 
 	            int[][] hklm = new int[3][elementsNumber];
 	            double[][] Fhkl = new double[3][elementsNumber];
+	            allFhkl.add(Fhkl);
 
 // set structure factors
               for (int i = 0; i < elementsNumber; i++) {
@@ -265,25 +267,6 @@ public class StructureFactorArbitraryModel extends StructureFactorModel {
                 }
               }
 
-	            for (int dataindex = 0; dataindex < asample.activeDatasetsNumber(); dataindex++) {
-		            DataFileSet dataset = asample.getActiveDataSet(dataindex);
-		            int datafilenumber = dataset.activedatafilesnumber();
-		            Vector<Peak> fullpeaklist = dataset.getPeakList();
-		            int numberofpeaks = dataset.getNumberofPeaks();
-//		  System.out.println("Number of peaks: " + numberofpeaks + " " + fullpeaklist.size());
-//llll		            int[] reflectionListIndices = new int[numberReflections];
-//      double[] esdfactors = new double[numberofpeaks];
-
-		            double[][] datasetSFactors = dataset.getStructureFactors((Phase) getParent());
-
-		            for (int np = 0; np < numberofpeaks; np++) {
-			            int peakNumber = fullpeaklist.elementAt(np).getOrderPosition();
-				          datasetSFactors[0][peakNumber] = Fhkl[0][peakNumber];
-			            datasetSFactors[1][peakNumber] = Fhkl[1][peakNumber];
-		            }
-	            }
-
-
             }
             if (hasValidDataSet == 0)
               datasetindex = asample.datasetsNumber();
@@ -300,6 +283,31 @@ public class StructureFactorArbitraryModel extends StructureFactorModel {
       } catch (IOException io) {
       }
     }
+    if (allFhkl.size() > 0) {
+	    for (int dataindex = 0; dataindex < asample.activeDatasetsNumber() && dataindex < allFhkl.size(); dataindex++) {
+		    DataFileSet dataset = asample.getActiveDataSet(dataindex);
+		    int datafilenumber = dataset.activedatafilesnumber();
+		    int radCount = dataset.getInstrument().getRadiationType().getLinesCount();
+		    Vector<Peak> fullpeaklist = dataset.getPeakList();
+		    int numberofpeaks = dataset.getNumberofPeaks();
+//		  System.out.println("Number of peaks: " + numberofpeaks + " " + fullpeaklist.size());
+//llll		            int[] reflectionListIndices = new int[numberReflections];
+//      double[] esdfactors = new double[numberofpeaks];
+
+		    double[][][] datasetSFactors = dataset.getStructureFactors((Phase) getParent());
+		    double[][] Fhkl = allFhkl.elementAt(dataindex);
+
+		    for (int np = 0; np < numberofpeaks; np++) {
+			    int peakNumber = fullpeaklist.elementAt(np).getOrderPosition();
+			    for (int n = 0; n < radCount; n++) {
+				    datasetSFactors[0][peakNumber][n] = Fhkl[0][peakNumber];
+				    datasetSFactors[1][peakNumber][n] = Fhkl[1][peakNumber];
+			    }
+		    }
+	    }
+    }
+
+
 //    notLoaded = false;
 /*
     BufferedReader PFreader = Misc.getReader(filename);

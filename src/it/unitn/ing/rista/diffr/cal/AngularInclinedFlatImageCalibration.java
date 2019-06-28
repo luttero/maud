@@ -392,7 +392,7 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 		String name = mdatafile.getLabel(); //od.getFileName();
 		ij.measure.Calibration cal = imp.getCalibration();
 
-//		System.out.println("Opening tiff: "+ imp.getBitDepth());
+		System.out.println("Opening tiff: "+ imp.getBitDepth());
 		if (imp.getBitDepth() == 32) {
 
 		}
@@ -412,30 +412,32 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 		}
 
 		ImageProcessor ip = imp.getChannelProcessor();
+		
+		System.out.println("Before rotation: " + ip.getWidth() + " " + ip.getHeight());
 
 		rotationInversion = getOriginalRotoInversionOperation();
 
 		switch (rotationInversion) {
 			case 2: // rotation 180 clockwise
-				ip.rotateRight();
+        ip = ip.rotateRight();
 //				System.out.println("Rotate right image!");
 			case 1: // rotation 90 clockwise
-//				System.out.println("Rotate right image!");
-				ip.rotateRight();
+				System.out.println("Rotate right image!");
+				ip = ip.rotateRight();
 				break;
 			case 4: // rotation 180 anticlockwise
 //				System.out.println("Rotate left image!");
-				ip.rotateLeft();
+        ip = ip.rotateLeft();
 			case 3: // rotation 90 anticlockwise
 //				System.out.println("Rotate left image!");
-				ip.rotateLeft();
+        ip = ip.rotateLeft();
 				break;
 			case 7: // flip both
 //				System.out.println("Flip vertical image!");
-				ip.flipVertical();
+        ip.flipVertical();
 			case 5: // flip horizontal
 //				System.out.println("Flip horizontal image!");
-				ip.flipHorizontal();
+        ip.flipHorizontal();
 				break;
 			case 6: // flip vertical
 //				System.out.println("Flip vertical image!");
@@ -443,7 +445,8 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 				break;
 			default: {}
 		}
-
+    
+    System.out.println("After rotation: " + ip.getWidth() + " " + ip.getHeight());
 		int width = ip.getWidth();
 		int height = ip.getHeight();
 		double[] buffer = new double[width * height];

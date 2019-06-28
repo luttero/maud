@@ -176,7 +176,7 @@ public class DiffractionAngleEnergyMap extends Diffraction {
 						+ " h,     "
 						+ " k,     "
 						+ " l,     "
-						+ "  dspace,   "
+						+ "  energy,   "
 						+ "  Fhkl_calc,"
 						+ "  Fhkl_exp, "
 						+ " position,  "

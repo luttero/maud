@@ -2036,7 +2036,7 @@
                    displayname="Maud"
                    identifier="com.radiographema.maud"
                    executableName="Maud"
-                   shortversion="2.91"
+                   shortversion="3.00"
                    icon="${inst}/maud.icns"
                    mainclassname="com.radiographema.Maud"
                    copyright="Maud, for materials analysis, Copyright 1997-2019 Luca Lutterotti"
