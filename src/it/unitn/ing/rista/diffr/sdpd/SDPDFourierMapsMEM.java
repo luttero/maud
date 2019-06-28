@@ -661,25 +661,22 @@ public class SDPDFourierMapsMEM extends StructureFactorSolveCrystalStructure imp
     needFirstFit = false;
   }
 
-  public double computeStructureFactor(int h, int k, int l, int multiplicity, double dspacing, RadiationType radType,
-                                       double defaultFactor) {
+  public void computeStructureFactor(int h, int k, int l, int multiplicity, double dspacing, RadiationType radType,
+                                       double defaultFactor, double[] structureFactor) {
 //    int h = refl.h, k = refl.k, l = refl.l, int multiplicity = refl.multiplicity;
 //    double dspacing = refl.d_space;
 
     if (atomMap == null)
       resetMAP();
-    if (fitNotInitialized)
-      return defaultFactor;
-//    Phase aphase = (Phase) getParent();
-    double Fhkls; // = -1.0; // refl.getStructureFactor(adataset.getIndex());
-//    if (Fhkls == -1.0) {
-    double[] Fhkl = Fhklcomp(h, k, l, atomMap, aSlices, bSlices, cSlices);
-    Fhkls = (Fhkl[0] * Fhkl[0] + Fhkl[1] * Fhkl[1]) * multiplicity;
-//    refl.setStructureFactor(adatasetIndex, Fhkls);
-//    }
-//    System.out.println("Computed: " + h + " " + k + " " + l + " " + Fhkls);
-
-    return Fhkls;
+    if (fitNotInitialized) {
+	    for (int i = 0; i < structureFactor.length; i++)
+		    structureFactor[i] = Constants.STARTING_STRUCTURE_FACTOR * Constants.STARTING_STRUCTURE_FACTOR;
+    } else {
+	    double[] Fhkl = Fhklcomp(h, k, l, atomMap, aSlices, bSlices, cSlices);
+	    double Fhkls = (Fhkl[0] * Fhkl[0] + Fhkl[1] * Fhkl[1]) * multiplicity;
+	    for (int i = 0; i < structureFactor.length; i++)
+		    structureFactor[i] = Fhkls;
+    }
   }
 
   public void computeFit() {

@@ -50,15 +50,12 @@ public class StartingAboutD extends Window {
     JLabel abutton = new JLabel("");
 //		abutton.setBorder(new BevelBorder(BevelBorder.LOWERED));
     boolean third = Misc.isThirdMinute();
-/*    if (Constants.ITS)
-      abutton.setIcon(new ImageIcon(Misc.getResource(Constants.imagefolder + "MaudIcon_ITS.jpg")));
-    else */
     if (third && !Constants.testing)
       abutton.setIcon(new ImageIcon(Misc.getResourceURL(Constants.imagesJar, Constants.imagefolder + "Peaks.jpg")));
     else if (!third && Constants.testing) {
       abutton.setIcon(new ImageIcon(Misc.getResourceURL(Constants.imagesJar, Constants.imagefolder + "Peaksleos.jpg")));
     } else {
-	    abutton.setIcon(new ImageIcon(Misc.getResourceURL(Constants.imagesJar, Constants.imagefolder + "maud_logo.gif")));
+	    abutton.setIcon(new ImageIcon(Misc.getResourceURL(Constants.imagesJar, Constants.imagefolder + "Maud_ladybug2_full512.jpg")));
 	    Constants.refineIcon = "Hammer.gif";
     }
 
@@ -73,7 +70,7 @@ public class StartingAboutD extends Window {
     JLabel jl = new JLabel("by Luca Lutterotti, " + Constants.maudReleaseBuilt);
     jl.setFont(jlfont);
     borderPanel1.add(jl);
-    jl = new JLabel("see the about Maud menu item for more");
+    jl = new JLabel("version " + Constants.getVersion());
     jl.setFont(jlfont);
     borderPanel1.add(jl);
     c1.add(borderPanel1, BorderLayout.CENTER);

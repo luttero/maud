@@ -107,21 +107,12 @@ public class FluorescenceLine {
 	public double getCoreShellEnergy() { return coreShellEnergy; }
 
   public void setShape(double[][] broad) {
-		double energy = getEnergy();
+		// double energy = getEnergy();
 	  hwhm = broad[0][0];
-	  eta = broad[1][0];
-	  for (int i = 1; i < broad[0].length; i++) {
-	  	hwhm += broad[0][i] * MoreMath.pow(energy, i - 1);
-		  eta += broad[1][i] * MoreMath.pow(energy, i - 1);
-	  }
-	  hwhm = Math.sqrt(Math.abs(hwhm));
+	  eta = broad[0][1];
 
-	  fS = broad[2][0];
-		double beta = broad[3][0];
-	  for (int i = 1; i < broad[0].length; i++) {
-		  fS += broad[2][i] * MoreMath.pow(energy, i - 1);
-		  beta += broad[3][i] * MoreMath.pow(energy, i - 1);
-	  }
+	  fS = broad[0][2];
+	  double beta = broad[0][3];
 	  fS *= mhuDet;
 
 	  if (beta > 0)
@@ -131,13 +122,13 @@ public class FluorescenceLine {
 
 	  if (coreShellID != -1) {
 	  	if (transitionID.toUpperCase().startsWith("KL")) { // Kalpha
-		   fT = broad[4][0];
-		   for (int i = 1; i < broad[0].length; i++)
-			   fT += broad[4][i] * MoreMath.pow(mhuDet, i - 1);
+		   fT = broad[0][4];
+		   for (int i = 1; i < broad.length; i++)
+			   fT += broad[i][4] * MoreMath.pow(mhuDet, i - 1);
 	   } else /*if (transitionID.toUpperCase().startsWith("KM"))*/ {
-		   fT = broad[5][0];
-		   for (int i = 1; i < broad[0].length; i++)
-			   fT += broad[5][i] * MoreMath.pow(mhuDet, i - 1);
+		   fT = broad[0][5];
+		   for (int i = 1; i < broad.length; i++)
+			   fT += broad[i][5] * MoreMath.pow(mhuDet, i - 1);
 	   }
 	  }
 

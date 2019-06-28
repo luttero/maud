@@ -27,7 +27,6 @@ import it.unitn.ing.rista.diffr.cal.*;
 import it.unitn.ing.rista.diffr.measurement.Theta2ThetaMeasurement;
 import it.unitn.ing.rista.io.cif.*;
 import it.unitn.ing.rista.util.*;
-import it.unitn.ing.rista.interfaces.Peak;
 //import it.unitn.maud.JNIAltivec;
 
 import javax.swing.*;
@@ -50,6 +49,8 @@ import static java.lang.System.*;
 
 
 public class DiffrDataFile extends XRDcat {
+
+	public static final double PI_TO_2DEG = Constants.PITODEG * 2.0;
 
 	public static String pd_meas_scan_method = "_pd_meas_scan_method";
 	public static String pd_meas_scan_range_min = "_pd_meas_2theta_range_min";
@@ -241,32 +242,17 @@ public class DiffrDataFile extends XRDcat {
   boolean theta2thetaMeasurement = true;
 //	boolean resetManualInterpolationWithRangeChange = false;
 
-	public int positionsPerPattern = 1;
 	public int radiationsNumber = 1;
 	int instrumentBroadeningParNumber = 5;
 
 	boolean[] needRestore = null;
 	Vector overallVector = null;
 
-	// phaseLorentzPolarization[number of reflection][number of points per pattern]
-	private Map<Phase, double[][][]> phaseLorentzPolarization = new Hashtable<>();
-	// phaseShapeAbsFactors[number of reflection][number of points per pattern]
-	private Map<Phase, double[][][]> phaseShapeAbsFactors = new Hashtable<>();
-
-	// phaseTextureFactors[2(meas,calc)][number of reflection][number of points per pattern]
-	private Map<Phase, int[]> phaseReflectionIDs = new Hashtable<>();
-	private Map<Phase, double[][][][]> phaseTextureFactors = new Hashtable<>();
-	private Map<Phase, double[][][][]> phaseStrainFactors = new Hashtable<>();
-	private Map<Phase, double[][][][]> phaseCrystallitesMicrostrains = new Hashtable<>();
-	private Map<Phase, double[][][][]> phaseInstBroadFactors = new Hashtable<>();
-	private Map<Phase, double[][][][]> phaseBroadFactors = new Hashtable<>();
-	// phasePositions[radnumber][number of reflection][number of points per pattern]
-	private Map<Phase, double[][][]> phasePositions = new Hashtable<>();
-	private Map<Phase, int[][][][]> phaseMinMaxIndices = new Hashtable<>();
 	static final int dateTimeFieldID = maxAngleNumber + 12;
 	static final int datafileWeightFieldID = maxAngleNumber + 13;
 	static final int scaleFactorDiffractionFluoID = 3;
-//	private String measurementDate;
+
+	//	private String measurementDate;
 //	private String measurementTime;
 
 	public DiffrDataFile(XRDcat aobj, String alabel) {
@@ -591,12 +577,13 @@ public class DiffrDataFile extends XRDcat {
     }
 	  Sample asample = getFilePar().getActiveSample();
 	  radiationsNumber = getDataFileSet().getInstrument().getRadiationType().getLinesCount();
-	  if (!getFilePar().compactSavingTextureFactors() && radiationsNumber < 5) { // we do not save the texture factors in compact saving
+/*	  if (!getFilePar().compactSavingTextureFactors()) { // we do not save the texture factors in compact saving
 		  try {
+
+		  	// todo: v3.0
 			  out.newLine();
 			  out.write("#custom_object_" + "texture_factors");
 			  out.newLine();
-			  out.write(CIFdictionary.texture_points_number + " " + positionsPerPattern);
 			  out.write(CIFdictionary.texture_radiations_number + " " + radiationsNumber);
 			  out.newLine();
 			  for (int i = 0; i < asample.phasesNumber(); i++) {
@@ -616,15 +603,14 @@ public class DiffrDataFile extends XRDcat {
 				  out.newLine();
 //				String waveS = Fmt.format(wave[i]);
 
-				  double[][][][] textureFactors = getTextureFactors(phase);
+				  double[][][] textureFactors = getTextureFactors(phase);
 				  int reflNumber = phase.gethklNumber();
 				  for (int j = 0; j < reflNumber && j < textureFactors[0].length; j++) {
 					  Reflection refl = phase.getReflex(j);
-					  for (int ppp = 0; ppp < positionsPerPattern; ppp++)
-					  for (int ij = 0; ij < radiationsNumber && ij < textureFactors[0][0][0].length; ij++) {
+					  for (int ij = 0; ij < radiationsNumber && ij < textureFactors[0][0].length; ij++) {
 						  if (refl != null && textureFactors != null) {
-							  out.write(refl.getH() + " " + refl.getK() + " " + refl.getL() + " " + Fmt.format(textureFactors[0][j][ppp][ij]) +
-									  " " + Fmt.format(textureFactors[1][j][ppp][ij]) + " " + ppp + " " + ij);
+							  out.write(refl.getH() + " " + refl.getK() + " " + refl.getL() + " " + Fmt.format(textureFactors[0][j][ij]) +
+									  " " + Fmt.format(textureFactors[1][j][ij]) + " " + ij);
 							  out.newLine();
 						  }
 					  }
@@ -646,7 +632,7 @@ public class DiffrDataFile extends XRDcat {
 				  e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
 			  }
 		  }
-	  }
+	  }*/
 
   }
 
@@ -812,125 +798,127 @@ public class DiffrDataFile extends XRDcat {
       }
     } else if (ciffile.thestring.indexOf("texture_factors") > 0) {
 
-	  int tokentype;
-//		XRDcat theobj = null;
-	  boolean endofInput = false;
-	  int cifentry = 0, tmpVindex = 0;
-	  int[] cifindex = new int[6];
-	  Vector cifVector = new Vector(0, 1);
-	  Vector[] tmpVector = null;
-	  overallVector = new Vector(0, 1);
-	  boolean newLoop = false;
-	  boolean startLoop = false;
-	  int maxCIFentries = 7;
-	  radiationsNumber = 1;
+	    // todo: v3.0
+//	    System.out.println("Reading texture factors from parameter file version: " + getFilePar().getVersion());
 
-	  try {
-		  do {
-			  tokentype = ciffile.nextToken();
-			  switch (tokentype) {
-				  case CIFtoken.TT_DATA:
-				  case CIFtoken.TT_PHASE:
-					  if (tmpVector != null) {
-						  overallVector.addElement(tmpVector);
-					  }
+	    if (getFilePar().getVersion() < 3.0) {
+
+		    int tokentype;
+//		XRDcat theobj = null;
+		    boolean endofInput = false;
+		    int cifentry = 0, tmpVindex = 0;
+		    int[] cifindex = new int[6];
+		    Vector cifVector = new Vector(0, 1);
+		    Vector[] tmpVector = null;
+		    overallVector = new Vector(0, 1);
+		    boolean newLoop = false;
+		    boolean startLoop = false;
+		    int maxCIFentries = 7;
+		    radiationsNumber = 1;
+
+		    try {
+			    do {
+				    tokentype = ciffile.nextToken();
+				    switch (tokentype) {
+					    case CIFtoken.TT_DATA:
+					    case CIFtoken.TT_PHASE:
+						    if (tmpVector != null) {
+							    overallVector.addElement(tmpVector);
+						    }
 //					  System.out.println("Reading texture factors for phase: " + overallVector.size());
 //						phaseindex++;
-					  tmpVindex = 0;
-					  tmpVector = null;
-					  cifVector = new Vector(0, 1);
-					  cifentry = 0;
-					  newLoop = false;
-					  break;
-				  case CIFtoken.TT_CIFE:
-					  // CIF item
-					  String thecife = ciffile.thestring;
-					  if (thecife.equalsIgnoreCase(CIFdictionary.texture_points_number)) {
-						  int newtoken = ciffile.nextToken();
-						  if (newtoken == CIFtoken.TT_NUMBER)
-							  positionsPerPattern = Integer.parseInt(ciffile.thestring);
-					  } else if (thecife.equalsIgnoreCase(CIFdictionary.texture_radiations_number)) {
-					   int newtoken = ciffile.nextToken();
-					   if (newtoken == CIFtoken.TT_NUMBER)
-						  radiationsNumber = Integer.parseInt(ciffile.thestring);
-				      } else
-						  cifVector.addElement(thecife);
-					  break;
-				  case CIFtoken.TT_LOOP:
-					  // start the loop for the values here
-					  newLoop = true;
-					  startLoop = true;
-					  break;
-				  case CIFtoken.TT_NUMBER:
-					  if (!newLoop)
-						  break;
-					  if (startLoop) {
-						  cifindex = new int[cifVector.size()];
-						  tmpVindex = 0;
-						  for (int i = 0; i < cifVector.size(); i++) {
-							  thecife = (String) cifVector.elementAt(i);
-							  if (thecife.equalsIgnoreCase(CIFdictionary.refln_h)) {
-								  cifindex[i] = 0;
-								  tmpVindex++;
-							  } else if (thecife.equalsIgnoreCase(CIFdictionary.refln_k)) {
-								  cifindex[i] = 1;
-								  tmpVindex++;
-							  } else if (thecife.equalsIgnoreCase(CIFdictionary.refln_l)) {
-								  cifindex[i] = 2;
-								  tmpVindex++;
-							  } else if (thecife.equalsIgnoreCase(CIFdictionary.texture_factor_meas)) {
-								  cifindex[i] = 3;
-								  tmpVindex++;
-							  } else if (thecife.equalsIgnoreCase(CIFdictionary.texture_factor_calc)) {
-								  cifindex[i] = 4;
-								  tmpVindex++;
-							  } else if (thecife.equalsIgnoreCase(CIFdictionary.texture_factor_point)) {
-								  cifindex[i] = 5;
-								  tmpVindex++;
-							  } else if (thecife.equalsIgnoreCase(CIFdictionary.texture_radiation_point)) {
-								  cifindex[i] = 6;
-								  tmpVindex++;
-							  } else
-								  cifindex[i] = -1;
-						  }
-						  startLoop = false;
-						  cifVector.removeAllElements();
-					  }
-					  if (tmpVector == null) {
-						  tmpVector = new Vector[maxCIFentries];
-						  for (int i = 0; i < maxCIFentries; i++)
-							  tmpVector[i] = new Vector(0, 10);
-					  }
-					  if (cifindex[cifentry] >= 0) {
-						  double[] value = new double[1];
-						  value[0] = ciffile.thevalue;
-						  tmpVector[cifindex[cifentry]].addElement(value);
-					  }
-					  cifentry++;
-					  if (cifentry == tmpVindex)
-						  cifentry = 0;
-					  break;
-				  case CIFtoken.TT_CUSTOM_END:
-					  if (tmpVector != null) {
-						  overallVector.addElement(tmpVector);
-					  }
-					  endofInput = true;
-					  break;
-				  default: {
-				  }
-			  }
-		  } while (tokentype != CIFtoken.TT_EOF && !endofInput);
+						    tmpVindex = 0;
+						    tmpVector = null;
+						    cifVector = new Vector(0, 1);
+						    cifentry = 0;
+						    newLoop = false;
+						    break;
+					    case CIFtoken.TT_CIFE:
+						    // CIF item
+						    String thecife = ciffile.thestring;
+						    if (thecife.equalsIgnoreCase(CIFdictionary.texture_radiations_number)) {
+							    int newtoken = ciffile.nextToken();
+							    if (newtoken == CIFtoken.TT_NUMBER)
+								    radiationsNumber = Integer.parseInt(ciffile.thestring);
+						    } else
+							    cifVector.addElement(thecife);
+						    break;
+					    case CIFtoken.TT_LOOP:
+						    // start the loop for the values here
+						    newLoop = true;
+						    startLoop = true;
+						    break;
+					    case CIFtoken.TT_NUMBER:
+						    if (!newLoop)
+							    break;
+						    if (startLoop) {
+							    cifindex = new int[cifVector.size()];
+							    tmpVindex = 0;
+							    for (int i = 0; i < cifVector.size(); i++) {
+								    thecife = (String) cifVector.elementAt(i);
+								    if (thecife.equalsIgnoreCase(CIFdictionary.refln_h)) {
+									    cifindex[i] = 0;
+									    tmpVindex++;
+								    } else if (thecife.equalsIgnoreCase(CIFdictionary.refln_k)) {
+									    cifindex[i] = 1;
+									    tmpVindex++;
+								    } else if (thecife.equalsIgnoreCase(CIFdictionary.refln_l)) {
+									    cifindex[i] = 2;
+									    tmpVindex++;
+								    } else if (thecife.equalsIgnoreCase(CIFdictionary.texture_factor_meas)) {
+									    cifindex[i] = 3;
+									    tmpVindex++;
+								    } else if (thecife.equalsIgnoreCase(CIFdictionary.texture_factor_calc)) {
+									    cifindex[i] = 4;
+									    tmpVindex++;
+								    } else if (thecife.equalsIgnoreCase(CIFdictionary.texture_factor_point)) {
+									    cifindex[i] = 5;
+									    tmpVindex++;
+								    } else if (thecife.equalsIgnoreCase(CIFdictionary.texture_radiation_point)) {
+									    cifindex[i] = 6;
+									    tmpVindex++;
+								    } else
+									    cifindex[i] = -1;
+							    }
+							    startLoop = false;
+							    cifVector.removeAllElements();
+						    }
+						    if (tmpVector == null) {
+							    tmpVector = new Vector[maxCIFentries];
+							    for (int i = 0; i < maxCIFentries; i++)
+								    tmpVector[i] = new Vector(0, 10);
+						    }
+						    if (cifindex[cifentry] >= 0) {
+							    double[] value = new double[1];
+							    value[0] = ciffile.thevalue;
+							    tmpVector[cifindex[cifentry]].addElement(value);
+						    }
+						    cifentry++;
+						    if (cifentry == tmpVindex)
+							    cifentry = 0;
+						    break;
+					    case CIFtoken.TT_CUSTOM_END:
+						    if (tmpVector != null) {
+							    overallVector.addElement(tmpVector);
+						    }
+						    endofInput = true;
+						    break;
+					    default: {
+					    }
+				    }
+			    } while (tokentype != CIFtoken.TT_EOF && !endofInput);
 //      System.out.println("Custom object loaded!");
-		  if (overallVector.size() > 0) {
-		    needRestore = new boolean[overallVector.size()];
-		    for (int i = 0; i < overallVector.size(); i++)
-			    needRestore[i] = true;
-	    } else
-			  needRestore = null;
+			    if (overallVector.size() > 0) {
+				    needRestore = new boolean[overallVector.size()];
+				    for (int i = 0; i < overallVector.size(); i++)
+					    needRestore[i] = true;
+			    } else
+				    needRestore = null;
 //			notLoaded = false;
-	  } catch (IOException ioe) {
-		  out.println("IO exception in custom object for " + toXRDcatString());
-	  }
+		    } catch (IOException ioe) {
+			    out.println("IO exception in custom object for " + toXRDcatString());
+		    }
+	    }
     }
 
   }
@@ -1070,7 +1058,7 @@ public class DiffrDataFile extends XRDcat {
     checkGroupCount();
     checkStep();
     theta2thetaMeasurement = ainstrument.getMeasurement() instanceof Theta2ThetaMeasurement;
-	  datafileWeight = Double.parseDouble(getString(datafileWeightFieldID));
+    datafileWeight = Double.parseDouble(getString(datafileWeightFieldID));
   }
 
 	public double getDatafileWeight() {
@@ -1399,107 +1387,6 @@ public class DiffrDataFile extends XRDcat {
 	public double getValueEnergyInKeV() {
 		return corrected_tilting_angles[5];
 	}
- /* public void setOmega(String angle) {
-    setString(1, angle);
-  }
-
-  public void setOmega(double angle) {
-    setOmega(Double.toString(angle));
-  }
-
-  public String getOmega() {
-    return getString(1);
-  }
-
-  public String getFormattedOmega() {
-    float omega = (float) Double.valueOf(getString(1)).doubleValue();
-    return Float.toString(omega);
-  }
-
-  public void setChi(String angle) {
-    setString(2, angle);
-  }
-
-  public void setChi(double angle) {
-    setChi(Double.toString(angle));
-  }
-
-  public String getChi() {
-    return getString(2);
-  }
-
-  public String getFormattedChi() {
-    float chi = (float) Double.valueOf(getString(2)).doubleValue();
-    return Float.toString(chi);
-  }
-
-  public void setPhi(String angle) {
-    setString(3, angle);
-  }
-
-  public void setPhi(double angle) {
-    setPhi(Double.toString(angle));
-  }
-
-  public String getPhi() {
-    return getString(3);
-  }
-
-  public String getFormattedPhi() {
-    float phi = (float) Double.valueOf(getString(3)).doubleValue();
-    return Float.toString(phi);
-  }
-
-  public void setEta(String angle) {
-    setString(4, angle);
-  }
-
-  public void setEta(double angle) {
-    setEta(Double.toString(angle));
-  }
-
-  public String getEta() {
-    return getString(4);
-  }
-
-  public String getFormattedEta() {
-    float eta = (float) Double.valueOf(getString(4)).doubleValue();
-    return Float.toString(eta);
-  }
-
-	public void set2Theta(String angle) {
-		setString(5, angle);
-	}
-
-	public void set2Theta(double angle) {
-		set2Theta(Double.toString(angle));
-	}
-
-	public String get2Theta() {
-		return getString(5);
-	}
-
-	public String getFormatted2Theta() {
-		return Float.toString((float) Double.valueOf(getString(5)).doubleValue());
-	}
-
-	public void setEnergyInKeV(String energy) {
-		setString(6, energy);
-	}
-
-	public void setEnergyInKeV(double energy) {
-		setEnergyInKeV(Double.toString(energy));
-	}
-
-	public String getEnergyInKeV() {
-		return getString(6);
-	}
-
-	public String getFormattedEnergyInKeV() {
-		return Float.toString((float) Double.valueOf(getString(6)).doubleValue());
-	}
-
-	*/
 
 	public void setNewAngles(int[] mult, double[] offset) {
     updateStringtoDoubleBuffering(false);
@@ -1642,26 +1529,6 @@ public class DiffrDataFile extends XRDcat {
 
   }
 
-/*  public static String getAxisYLegend2D() {
-    switch (PlotDataFile.getScaleMode()) {
-      case 1:
-        return "Intensity (Count)";
-      case 2:
-        return "Log10[Intensity] (Log10[Count])";
-      case 3:
-        return "Log10(Intensity) * Q";
-      case 4:
-        return "Log10(Intensity) * Q^2";
-      case 5:
-        return "Log10(Intensity) * Q^4";
-      case 0:
-      default: {
-        return "Intensity{^1/2} (Count{^1/2})";
-      }
-    }
-
-  }*/
-
   public double getXData(int index) {
     if (!calibrated) {
       calibrateX();
@@ -1776,7 +1643,7 @@ public class DiffrDataFile extends XRDcat {
     if (dspacingbase || !calibrated)
       return x;
     if (energyDispersive)
-      return 12398.424121 / x;
+      return Constants.ENERGY_LAMBDA / x;
     double wave = getMeanRadiationWavelength();
     if (wave == 0.0)
       return x;
@@ -1820,7 +1687,7 @@ public class DiffrDataFile extends XRDcat {
     if (dspacingbase || !calibrated)
       return xdata;
     if (energyDispersive)
-      return 12398.424121 / xdata;
+      return Constants.ENERGY_LAMBDA / xdata;
     double wave = getMeanRadiationWavelength();
     if (wave == 0.0)
       return xdata;
@@ -1829,9 +1696,9 @@ public class DiffrDataFile extends XRDcat {
 
   public double getXfromDspace(double value) {
     if (dspacingbase || !calibrated)
-      return (double) value;
+      return value;
     if (energyDispersive)
-      return 12398.424121 / value;
+      return Constants.ENERGY_LAMBDA / value;
     double wave = getMeanRadiationWavelength();
     if (wave == 0.0)
       return value;
@@ -1842,7 +1709,7 @@ public class DiffrDataFile extends XRDcat {
     double wave = getMeanRadiationWavelength();
     if (wave == 0.0)
       return value;
-    return 2.0 * MoreMath.asind(wave * value / (12398.424121 * 2.0));
+    return 2.0 * MoreMath.asind(wave * value / (Constants.ENERGY_LAMBDA * 2.0));
   }
 
   public double get2ThetaFromDSpace(double value) {
@@ -1863,14 +1730,14 @@ public class DiffrDataFile extends XRDcat {
     double wave = getMeanRadiationWavelength();
     if (wave == 0.0)
       return value;
-    return 12398.424121 * 2.0 / (wave / MoreMath.sind(value / 2.0));
+    return Constants.ENERGY_LAMBDA * 2.0 / (wave / MoreMath.sind(value / 2.0));
   }
 
   public double convertXToDspace(double xdata, double wave) {
     if (dspacingbase || !calibrated)
       return xdata;
     if (energyDispersive)
-      return 12398.424121 / xdata;
+      return Constants.ENERGY_LAMBDA / xdata;
     if (wave == 0.0)
       return xdata;
     return wave / 2.0 / MoreMath.sind(xdata / 2.0);
@@ -2040,105 +1907,10 @@ public class DiffrDataFile extends XRDcat {
           break;
       }
       return yint;
-/*    if (reflectivityStats) {
-      if (yint > 0.0)
-        return (double) MoreMath.log10(yint);
-      else
-        return (double) 1.0E-79;
-    } else
-      return getYData(index);*/
-/*    double corr = (double) Math.sqrt(getCountTimeValue());
-    double yint = 0.0;
-    switch (getFilePar().getWeightingSchemeSwitch()) {
-      case 6:
-        if (getYData(index) > 0.0) {
-          double x = getXData(index);
-          return (double) MoreMath.log10(getYData(index) * MoreMath.pow(getXInQ(x), 4));
-        } else
-          return (double) 1.0E-79;
-      case 3: // log10
-        if (getYData(index) > 0.0)
-          return (double) MoreMath.log10(getYData(index));
-        else
-          return (double) 1.0E-79;
-      case 8:
-        double value = Math.sqrt(Math.abs(getYData(index)));
-        value *= Math.abs(getXInQ(getXData(index)));
-        if (value != 0.0)
-          yint = corr / value;
-        return (double) yint;
-      case 9:
-        value = Math.sqrt(Math.abs(getYData(index)));
-        value *= MoreMath.pow(getXInQ(getXData(index)), 2);
-        if (value != 0.0)
-          yint = corr / value;
-        return (double) yint;
-      case 10:
-        value = Math.sqrt(Math.abs(getYData(index)));
-        value *= MoreMath.pow(getXInQ(getXData(index)), 4);
-        if (value != 0.0)
-          yint = corr / value;
-        return (double) yint;
-      case 11:
-        value = Math.sqrt(Math.abs(getYData(index) - getBkgFit(index)));
-        value *= Math.abs(getXInQ(getXData(index)));
-        if (value != 0.0)
-          yint = corr / value;
-        return (double) yint;
-      case 12:
-        value = Math.sqrt(Math.abs(getYData(index) - getBkgFit(index)));
-        value *= MoreMath.pow(getXInQ(getXData(index)), 2);
-        if (value != 0.0)
-          yint = corr / value;
-        return (double) yint;
-      case 13:
-        value = Math.sqrt(Math.abs(getYData(index) - getBkgFit(index)));
-        value *= MoreMath.pow(getXInQ(getXData(index)), 4);
-        if (value != 0.0)
-          yint = corr / value;
-        return (double) yint;
-      case 4:
-      case 5:
-      case 0: // default
-      case 1: // sqrt
-      case 2: // linear
-      default: {
-        return (double) getYData(index);
-      }
-    }*/
   }
 
   public void setYData(int index, double value) {
-
-/*		if (tobeloaded) {
-		  tobeloaded = false;
-			boolean notut = true;
-			if (value == 49 && toXRDcatString().equalsIgnoreCase("alzrc.dat"))
-				notut = false;
-			else if (value == 142 && toXRDcatString().equalsIgnoreCase("bbm48bis.dat"))
-				notut = false;
-			else if (value == 70 && toXRDcatString().equalsIgnoreCase("sio250.raw"))
-				notut = false;
-			else if (toXRDcatString().startsWith("gtial1.F1B") && title.startsWith("13-JUL-98"))
-				notut = false;
-			else if (toXRDcatString().startsWith("GPPD69") && title.startsWith("Limestone"))
-				notut = false;
-
-			if (notut)
-				Constants.datareset();
-			else
-				Constants.datatutorial();
-		}*/
-
-// To be paranoid we check also for negative intensity
-
-//    if (value < 0.0) // we will not accept it, we suppose is an error
-//      value = 0.0;
-
-
-    intensity[index] = (double) value;
-
-//    System.out.println(intensity[index]);
+   	intensity[index] = value;
   }
 
   public double getFit(int index) {
@@ -2172,6 +1944,7 @@ public class DiffrDataFile extends XRDcat {
         return 1.0E-79;
     }
 
+    // todo: v3.0   check!!
     double corr = 1; // getCountTimeValue();
       int weightSwitch = getFilePar().getWeightingSchemeSwitch();
       double yint = getFit(index) * corr;
@@ -2296,6 +2069,8 @@ public class DiffrDataFile extends XRDcat {
     if (reflectivityStats) {
       return MoreMath.log10(getBkgFit(index));
     }
+
+	  // todo: v3.0   check!!
 
     double corr = 1; // getCountTimeValue();
       int weightSwitch = getFilePar().getWeightingSchemeSwitch();
@@ -2523,33 +2298,6 @@ public class DiffrDataFile extends XRDcat {
     }
     return sum;
   }
-
-/*  public double getTheoreticalWeight(int index) {
-    Region aregion;
-    DataFileSet dataset = getDataFileSet();
-    int totregions = dataset.excludedRegionsNumber();
-
-    double x = getXData(index);
-
-    for (int i = 0; i < totregions; i++) {
-      aregion = dataset.getExcludedRegion(i);
-      double maxX = aregion.getMaximum();
-      double minX = aregion.getMinimum();
-      if (x < maxX && x > minX)
-        return 0.0f;
-    }
-
-    if (getDataFileSet().getInstrument().getIntensityCalibration().validX(this, x, index)) {
-      double fitting = getFit(index);
-      if (fitting == 0)
-        return weight[index];
-      if (fitting > 0)
-        return (double) (1.0 / Math.sqrt(fitting));
-      else
-        return (double) (1.0 / Math.sqrt(-fitting));
-    } else
-      return 0.0f;
-  }*/
 
   public void setWeight(int index, double value) {
     weight[index] = (double) value;
@@ -3356,28 +3104,15 @@ public class DiffrDataFile extends XRDcat {
     if (dspacingbase || radType.getLinesCount() <= 0) {
       position = new double[1];
       position[0] = d;
-    } else if (energyDispersive) {
-      position = new double[1];
-      position[0] = Constants.ENERGY_LAMBDA / d;  // todo may be more lines for each atom?
     } else {
       int radNumber = radType.getLinesCount();
       position = new double[radNumber];
       for (int i = 0; i < radNumber; i++) {
-        position[i] = computeposition(d, radType.getRadiationWavelength(i));
+        position[i] = getPositionFromDspace(d, i);
       }
     }
     return position;
   }
-
-	public static final double TWO_DEGTOPI = 2.0 / Constants.DEGTOPI;
-
-	public static double computeposition(double dspace, double wavelength) {
-		double ratioposition = wavelength / (2.0 * dspace);
-		double position = 180.0;
-		if (ratioposition < 1.0)
-			position = TWO_DEGTOPI * Math.asin(ratioposition);
-		return position;
-	}
 
 	public boolean xInsideRange(double position) {
     Region aregion;
@@ -3420,7 +3155,7 @@ public class DiffrDataFile extends XRDcat {
   public boolean computeExpTextureFactor(Sample asample) {
     DataFileSet dataset = getDataFileSet();
     if (dataset.isTextureFactorsExtractionPermitted()) {
-	    storeComputedOverExperimentalTextureFactors();
+    	storeComputedOverExperimentalTextureFactors();
       IntensityExtractor intExt = dataset.getIntensityExtractor();
       intExt.setDataFile(this);
       intExt.extractIntensities(asample);
@@ -3545,38 +3280,6 @@ public class DiffrDataFile extends XRDcat {
 //    refreshSpectraComputation = false;
   }
 
-/*  public void computeasymmetryandbkg(Sample asample, double[] expfit, int min, int max) {
-    computeasymmetry(asample, expfit, min, max);
-    postComputation(asample, expfit, min, max);
-    for (int j = min; j < max; j++)
-      expfit[j] += getBkgFit(j);
-  }
-
-  public void computeasymmetryandAddbkg(Sample asample, double[] expfit, int min, int max) {
-    computeasymmetry(asample, expfit, min, max);
-    for (int j = min; j < max; j++)
-      expfit[j] += getBkgFit(j);
-  }
-
-	public void computeasymmetry(Sample asample, double[] expfit) {
-		computeasymmetry(asample, expfit, startingindex, finalindex - 1);
-	}
-
-	public void computeasymmetry(Sample asample, double afit[], int min, int max) {
-
-		DataFileSet adataset = getDataFileSet();
-		Instrument ainstrument = adataset.getInstrument();
-
-		ainstrument.getInstrumentBroadening().computeAsymmetry(this, asample, afit, min, max);
-
-		for (int j = min; j < max; j++) {
-//      System.out.print("Before: " + afit[j]);
-			afit[j] *= computeAngularIntensityCorrection(asample, ainstrument, j);
-//      System.out.println(", after: " + afit[j]);
-		}
-	}
-*/
-
 	public void computeBackground(int starti, int finali) {
     int numbercoef = numberOfLoopParameters[getBackgroundID()];
     if (numbercoef != 0) {
@@ -3639,6 +3342,45 @@ public class DiffrDataFile extends XRDcat {
     return (index >= startingindex && index < finalindex);
   }
 
+	public boolean isPeakInsideRange(Phase aphase, int reflIndex) {
+		double x;
+		Vector<Vector<ReflectionPeak>> peaks = getReflections(aphase);
+		boolean incrX = increasingX();
+//		System.out.println(peaks.size());
+		for (int i = 0; i < peaks.size(); i++) {
+			Vector<ReflectionPeak> refl_rad = peaks.elementAt(i);
+			int index = reflIndex - baseReflectionNumber[i];
+			if (index >= 0 && index < refl_rad.size()) {
+				if (energyDispersive || dspacingbase)
+					x = refl_rad.elementAt(index).energy;
+				else
+					x = refl_rad.elementAt(index).position;
+				if ((incrX && (x >= startingX && x <= finalX)) ||
+						(!incrX && (x <= startingX && x >= finalX))) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public boolean isDspaceInsideRange(double dspace) {
+		boolean incrX = increasingX();
+
+		double x = 0;
+		RadiationType rad = getDataFileSet().getInstrument().getRadiationType();
+		int numberRad = rad.getLinesCount();
+		for (int i = 0; i < numberRad; i++) {
+			x = getPositionFromDspace(dspace, i);
+//		System.out.println(incrX + " " + x + " " + startingX + " " + finalX);
+			if ((incrX && (x >= startingX && x <= finalX)) ||
+					(!incrX && (x <= startingX && x >= finalX))) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public boolean isInsideRange(double x) {
 		boolean incrX = increasingX();
 //		System.out.println(incrX + " " + x + " " + startingX + " " + finalX);
@@ -3648,7 +3390,28 @@ public class DiffrDataFile extends XRDcat {
 		}
 		return false;
 	}
-
+  
+  public boolean isInsideRangeWithMargin(double x) {
+    boolean incrX = increasingX();
+    double cutoff = getCutoffAngle();
+    if (dspacingbase)
+      cutoff *= 0.01;
+    else
+      cutoff *= 0.1;
+    int sign = 1;
+    if (!incrX)
+      sign = -1;
+    
+    double startingX1 = startingX - cutoff * sign;
+    double finalX1 = finalX + cutoff * sign;
+//    System.out.println(cutoff + " " + x + " " + startingX + " " + finalX);
+    if ((incrX && (x >= startingX1 && x <= finalX1)) ||
+        (!incrX && (x <= startingX1 && x >= finalX1))) {
+      return true;
+    }
+    return false;
+  }
+  
   public void setStartingPointForTools(boolean setData) {
     if (!dspacingbase) {
       int dtanumber = computeDataNumber();
@@ -5089,310 +4852,509 @@ public class DiffrDataFile extends XRDcat {
     getMonitorCounts().setNotRefinableCheckBound();
   }
 
-	public void refreshIndices(Phase phase) {
-		int numberOfReflections = phase.gethklNumber();
-		int radNumber = getDataFileSet().getInstrument().getRadiationType().getLinesCount();
-//		System.out.println("Diffraction datafile: " + this.getLabel() + ", refresh indices: " + numberOfReflections);
-		int[] reflectionsIDs = getReflectionIDs(phase);
-		boolean reflectionsChanged = false;
-		int[] indices = null;
-		if (reflectionsIDs == null) {
-			reflectionsIDs = new int[numberOfReflections];
-			phaseReflectionIDs.put(phase, reflectionsIDs);
-			initReflectionIDs(phase, reflectionsIDs);
+  // storing temporary data
+
+	/*
+	private Hashtable<Phase, int[]> phaseReflectionIDs = new Hashtable<>();
+	private Hashtable<Phase, Vector<double[]>[]> phaseLorentzPolarization = new Hashtable<>();
+	private Hashtable<Phase, Vector<double[]>[]> phaseShapeAbsFactors = new Hashtable<>();
+	private Hashtable<Phase, Vector<double[][]>[]> phasePositions = new Hashtable<>();
+	private Hashtable<Phase, Vector<double[]>[]> phaseTextureFactors = new Hashtable<>();
+	private Hashtable<Phase, Vector<double[]>[]> phaseStrainFactors = new Hashtable<>();
+	private Hashtable<Phase, Vector<double[]>[]> phaseCrystallitesMicrostrains = new Hashtable<>();
+	private Hashtable<Phase, Vector<double[]>[]> phaseInstBroadFactors = new Hashtable<>();
+	private Hashtable<Phase, Vector<double[]>[]> phaseBroadFactors = new Hashtable<>();
+	private Hashtable<Phase, Vector<int[]>[]> phaseMinMaxIndices = new Hashtable<>();
+	private Hashtable<Phase, int[][]> reflectionMinMaxIndices = new Hashtable<>();
+	*/
+
+	private Hashtable<Phase, Vector<Vector<ReflectionPeak>>> phaseReflections = new Hashtable<>();
+	public int[] baseReflectionNumber = null;
+	public int baseRadiationNumber = 0;
+
+	public double getPositionFromDspace(double d_space, int radIndex) {
+		double position = 0;
+		if (dspacingbase) {
+			position = d_space;
 		} else {
-			reflectionsChanged = checkReflectionsList(phase, reflectionsIDs);
-			if (reflectionsChanged) {
-				int[] newReflectionsIDs = new int[numberOfReflections];
-				initReflectionIDs(phase, newReflectionsIDs);
-				indices = updateIndicesFromTo(reflectionsIDs, newReflectionsIDs);
-				phaseReflectionIDs.remove(phase);
-				phaseReflectionIDs.put(phase, newReflectionsIDs);
+			double wavelength = getDataFileSet().getInstrument().getRadiationType().getRadiationWavelength(radIndex + baseRadiationNumber);
+			double ratioposition = wavelength / (2.0 * d_space);
+			position = 180.0;
+			if (ratioposition < 1.0)
+				position = PI_TO_2DEG * Math.asin(ratioposition);
+
+		}
+		return position;
+	}
+
+	public void refreshIndices(Phase phase) {
+
+		DataFileSet dataset = getDataFileSet();
+		int numberOfReflections = phase.gethklNumber();
+		int radNumber = dataset.getInstrument().getRadiationType().getLinesCount();
+
+		Vector<Vector<ReflectionPeak>> reflections = getReflections(phase);
+		if (reflections.size() != radNumber)
+			reflections.setSize(radNumber);
+		if (baseReflectionNumber == null)
+			baseReflectionNumber = new int[radNumber];
+//		System.out.println("Datafile: " + getLabel() + ", refresh indices: " + numberOfReflections + " - " + radNumber);
+
+		for (int i = 0; i < radNumber; i++) {
+			int minRefl = 0;
+			int maxRefl = 0;
+			Vector<ReflectionPeak> refl_vector = reflections.elementAt(i);
+			if (refl_vector == null) {
+				refl_vector = new Vector<>();
+				reflections.setElementAt(refl_vector, i);
 			}
-		}
+			for (int k = 0; k < numberOfReflections; k++) {
+				Reflection refl = phase.getReflex(k);
+				double position = getPositionFromDspace(refl.d_space, i);
+				refl.tmp_position = position;
+				if (isInsideRangeWithMargin(position))
+					maxRefl = k + 1;
+				else if (maxRefl == 0)
+					minRefl = k;
+			}
+			if (maxRefl != 0) {
+				int peaksNumber = maxRefl - minRefl;
+				if (baseReflectionNumber[i] != minRefl || peaksNumber != refl_vector.size()) {
+					baseReflectionNumber[i] = minRefl;
+					refl_vector.setSize(peaksNumber);
+					int index = 0;
+					for (int k = minRefl; k < maxRefl; k++, index++) {
+						ReflectionPeak peak = new ReflectionPeak();
+						Reflection refl = phase.getReflex(k);
+						peak.position = refl.tmp_position;
+						refl_vector.setElementAt(peak, index);
+					}
+				}
+			} else {
+				baseReflectionNumber[i] = 0;
+				refl_vector.setSize(0);
+			}
+//			System.out.println("Radiation " + i + ": " + baseReflectionNumber[i] + " - " + refl_vector.size());
 
-		double[][][][] textureFactors = phaseTextureFactors.get(phase);
-		if (textureFactors == null) {
-			textureFactors = new double[2][numberOfReflections][positionsPerPattern][radNumber];
-			phaseTextureFactors.put(phase, textureFactors);
-			resetTextureFactors(phase);
-		} else if (reflectionsChanged || textureFactors[0].length != numberOfReflections || textureFactors[0][0].length != positionsPerPattern || textureFactors[0][0][0].length != radNumber) {
-			double[][][][] newTextureFactors = new double[2][numberOfReflections][positionsPerPattern][radNumber];
-			phaseTextureFactors.remove(phase);
-			phaseTextureFactors.put(phase, newTextureFactors);
-			resetTextureFactors(phase);
-			updateTextureFactors(textureFactors, newTextureFactors, indices);
-		}
-
-		double[][][][] strainFactors = phaseStrainFactors.get(phase);
-		if (strainFactors == null) {
-			strainFactors = new double[2][numberOfReflections][positionsPerPattern][radNumber];
-			phaseStrainFactors.put(phase, strainFactors);
-		} else if (reflectionsChanged || strainFactors[0].length != numberOfReflections || strainFactors[0][0].length != positionsPerPattern || strainFactors[0][0][0].length != radNumber) {
-			double[][][][] newStrainFactors = new double[2][numberOfReflections][positionsPerPattern][radNumber];
-			phaseStrainFactors.remove(phase);
-			phaseStrainFactors.put(phase, newStrainFactors);
-			resetStrainFactors(phase);
-			updateStrainFactors(strainFactors, newStrainFactors, indices);
-		}
-
-		double[][][] positions = phasePositions.get(phase);
-		if (positions == null) {
-			positions = new double[numberOfReflections][positionsPerPattern][radNumber];
-			phasePositions.put(phase, positions);
-		} else if (reflectionsChanged || positions.length != numberOfReflections || positions[0].length != positionsPerPattern || positions[0][0].length != radNumber) {
-			double[][][] newPositions = new double[numberOfReflections][positionsPerPattern][radNumber];
-			phasePositions.remove(phase);
-			phasePositions.put(phase, newPositions);
-			resetPositions(phase);
-			updatePositions(positions, newPositions, indices);
-		}
-
-		int[][][][] minmaxIndices = phaseMinMaxIndices.get(phase);
-		if (minmaxIndices == null) {
-			minmaxIndices = new int[2][numberOfReflections][positionsPerPattern][radNumber];
-			phaseMinMaxIndices.put(phase, minmaxIndices);
-		} else if (reflectionsChanged || minmaxIndices[0].length != numberOfReflections || minmaxIndices[0][0].length != positionsPerPattern || minmaxIndices[0][0][0].length != radNumber) {
-			int[][][][] newMinmaxIndices = new int[2][numberOfReflections][positionsPerPattern][radNumber];
-			phaseMinMaxIndices.remove(phase);
-			phaseMinMaxIndices.put(phase, newMinmaxIndices);
-			resetMinMaxIndices(phase);
-			updateMinMaxIndices(minmaxIndices, newMinmaxIndices, indices);
-		}
-
-		double[][][] lorentzPolarizations = phaseLorentzPolarization.get(phase);
-		if (lorentzPolarizations == null) {
-			lorentzPolarizations = new double[numberOfReflections][positionsPerPattern][radNumber];
-			phaseLorentzPolarization.put(phase, lorentzPolarizations);
-		} else if (reflectionsChanged || positions.length != numberOfReflections || positions[0].length != positionsPerPattern || positions[0][0].length != radNumber) {
-			double[][][] newLorentzPolarizations = new double[numberOfReflections][positionsPerPattern][radNumber];
-			phaseLorentzPolarization.remove(phase);
-			phaseLorentzPolarization.put(phase, newLorentzPolarizations);
-			resetLorentzPolarization(phase);
-			updateLorentzPolarization(lorentzPolarizations, newLorentzPolarizations, indices);
 
 		}
+		
+		
+		/*
+						ReflectionPeak peak = peaks_rad.elementAt(index);
+				if (energyDispersive)
+					pos = peak.energy;
+				else
+					pos = peak.position;
+				if (energyDispersive) {
+					hwhm = Math.abs(peak.broadFactorHWHM_ang * rangeFactor * getCutoffAngle());
+					double th = peak.position * Constants.DEGTOPI;
+					double sintheta2 = Math.sin(th);
+					sintheta2 *= sintheta2;
+					double costheta = Math.cos(th) / sintheta2;
+					hwhm *= Constants.ENERGY_LAMBDA / (2000.0 * refl.d_space) * costheta;
+				} else
+					hwhm = Math.abs(peak.broadFactorHWHM_ang * rangeFactor * getCutoffAngle());
+				if (xInsideRange(pos) || xInsideRange(pos + hwhm) || xInsideRange(pos - hwhm))
+					isIn = true;
 
-		double[][][] shapeAbsorption = phaseShapeAbsFactors.get(phase);
-		if (shapeAbsorption == null) {
-			shapeAbsorption = new double[numberOfReflections][positionsPerPattern][radNumber];
-			phaseShapeAbsFactors.put(phase, shapeAbsorption);
-		} else if (reflectionsChanged || shapeAbsorption.length != numberOfReflections || shapeAbsorption[0].length != positionsPerPattern || shapeAbsorption[0][0].length != radNumber) {
-			double[][][] newShapeAbsorption = new double[numberOfReflections][positionsPerPattern][radNumber];
-			phaseShapeAbsFactors.remove(phase);
-			phaseShapeAbsFactors.put(phase, newShapeAbsorption);
-			resetShapeAbsFactors(phase);
-			updateShapeAbsFactors(shapeAbsorption, newShapeAbsorption, indices);
-
-		}
-
-		double[][][][] crystallitesMicrostrains = phaseCrystallitesMicrostrains.get(phase);
-		int numberCrystStrains = phase.getNumberOfSizeStrainCoefficients();
-		if (crystallitesMicrostrains == null) {
-			crystallitesMicrostrains = new double[numberCrystStrains][numberOfReflections][positionsPerPattern][radNumber];
-			phaseCrystallitesMicrostrains.put(phase, crystallitesMicrostrains);
-		} else if (reflectionsChanged || crystallitesMicrostrains[0].length != numberOfReflections || crystallitesMicrostrains[0][0].length != positionsPerPattern || crystallitesMicrostrains[0][0][0].length != radNumber) {
-			double[][][][] newCrystallitesMicrostrains = new double[numberCrystStrains][numberOfReflections][positionsPerPattern][radNumber];
-			phaseCrystallitesMicrostrains.remove(phase);
-			phaseCrystallitesMicrostrains.put(phase, newCrystallitesMicrostrains);
-			resetCrystallitesMicrostrains(phase);
-			updateCrystallitesMicrostrains(crystallitesMicrostrains, newCrystallitesMicrostrains, indices);
-		}
-
-		double[][][][] instrumentBroadening = phaseInstBroadFactors.get(phase);
-		if (instrumentBroadening == null) {
-			instrumentBroadening = new double[instrumentBroadeningParNumber][numberOfReflections][positionsPerPattern][radNumber];
-			phaseInstBroadFactors.put(phase, instrumentBroadening);
-		} else if (reflectionsChanged || instrumentBroadening[0].length != numberOfReflections || instrumentBroadening[0][0].length != positionsPerPattern || instrumentBroadening[0][0][0].length != radNumber) {
-			double[][][][] newInstrumentBroadening = new double[instrumentBroadeningParNumber][numberOfReflections][positionsPerPattern][radNumber];
-			phaseInstBroadFactors.remove(phase);
-			phaseInstBroadFactors.put(phase, newInstrumentBroadening);
-			resetInstBroadFactors(phase);
-			updateInstBroadFactors(instrumentBroadening, newInstrumentBroadening, indices);
-		}
-
-		double[][][][] phaseBroadening = phaseBroadFactors.get(phase);
-		if (phaseBroadening == null) {
-			phaseBroadening = new double[2][numberOfReflections][positionsPerPattern][radNumber];
-			phaseBroadFactors.put(phase, phaseBroadening);
-		} else if (reflectionsChanged || phaseBroadening[0].length != numberOfReflections || phaseBroadening[0][0].length != positionsPerPattern || phaseBroadening[0][0][0].length != radNumber) {
-			double[][][][] newPhaseBroadening = new double[2][numberOfReflections][positionsPerPattern][radNumber];
-			phaseBroadFactors.remove(phase);
-			phaseBroadFactors.put(phase, newPhaseBroadening);
-			resetBroadFactors(phase);
-			updateBroadFactors(phaseBroadening, newPhaseBroadening, indices);
-		}
+		 */
 
 	}
 
+	public Vector<Vector<ReflectionPeak>> getReflections(Phase phase) {
+		Vector<Vector<ReflectionPeak>> temp = phaseReflections.get(phase);
+		if (temp == null) {
+			int radNumber = getDataFileSet().getInstrument().getRadiationType().getLinesCount();
+			temp = new Vector<>(radNumber, 1);
+			phaseReflections.put(phase, temp);
+		}
+		return temp;
+	}
+
+	public Vector<ReflectionPeak> getReflectionPeaks(Phase phase, int radNumber) {
+		int index = radNumber - baseRadiationNumber;
+		Vector<Vector<ReflectionPeak>> peaks = getReflections(phase);
+		if (index < 0 || index >= peaks.size()) {
+			System.out.println("Datafile: " + getLabel() + ", peaks vector for radiation, index out of bounds: " + index + ", rad number: " + radNumber);
+			return null;
+		}
+		return peaks.elementAt(index);
+	}
+
+	public ReflectionPeak getReflectionPeak(Phase phase, int reflNumber, int radNumber) {
+		int index = reflNumber - baseReflectionNumber[radNumber];
+		Vector<ReflectionPeak> peaks = getReflectionPeaks(phase, radNumber);
+		if (peaks == null || index < 0 || index >= peaks.size()) {
+			return null;
+		}
+		return peaks.elementAt(index);
+	}
+
+	public double getPosition(Phase phase, int reflNumber, int radNumber) {
+		ReflectionPeak peak = getReflectionPeak(phase, reflNumber, radNumber);
+		if (peak != null)
+			return peak.position;
+		else {
+//      System.out.println("Position: " + getLabel() + ", reflection index out of bounds: " + reflNumber + ", rad number: " + radNumber + ", base: " + baseReflectionNumber[radNumber]);
+      return 0.0;
+    }
+	}
+
+	public double getExperimentalTextureFactor(Phase phase, int reflNumber, int radNumber) {
+		ReflectionPeak peak = getReflectionPeak(phase, reflNumber, radNumber);
+		if (peak != null)
+			return peak.expTextureFactor;
+		else {
+//      System.out.println("ExpTexture: " + getLabel() + ", reflection index out of bounds: " + reflNumber + ", rad number: " + radNumber + ", base: " + baseReflectionNumber[radNumber]);
+      return -1.0;
+    }
+	}
+
+	public void setExperimentalTextureFactor(Phase phase, int reflNumber, int radNumber, double value) {
+		ReflectionPeak peak = getReflectionPeak(phase, reflNumber, radNumber);
+		if (peak != null)
+			peak.expTextureFactor = value;
+	}
+
+	public double getTextureFactor(Phase phase, int reflNumber, int radNumber) {
+		ReflectionPeak peak = getReflectionPeak(phase, reflNumber, radNumber);
+		if (peak != null)
+			return peak.calcTextureFactor;
+		else {
+//      System.out.println("CalcTexture: " + getLabel() + ", reflection index out of bounds: " + reflNumber + ", rad number: " + radNumber + ", base: " + baseReflectionNumber[radNumber]);
+      return -1.0;
+    }
+	}
+
+	public double getExperimentalStrainFactor(Phase phase, int reflNumber, int radNumber) {
+		ReflectionPeak peak = getReflectionPeak(phase, reflNumber, radNumber);
+		if (peak != null)
+			return peak.expStrainFactor;
+		else {
+//      System.out.println("ExpStrain: " + getLabel() + ", reflection index out of bounds: " + reflNumber + ", rad number: " + radNumber + ", base: " + baseReflectionNumber[radNumber]);
+      return 0.0;
+    }
+	}
+
+	public double getStrainFactor(Phase phase, int reflNumber, int radNumber) {
+		ReflectionPeak peak = getReflectionPeak(phase, reflNumber, radNumber);
+		if (peak != null)
+			return peak.calcStrainFactor;
+		else {
+//      System.out.println("CalcStrain: " + getLabel() + ", reflection index out of bounds: " + reflNumber + ", rad number: " + radNumber + ", base: " + baseReflectionNumber[radNumber]);
+      return 0.0;
+    }
+	}
+
+	public double getShapeAbsFactor(Phase phase, int reflNumber, int radNumber) {
+		ReflectionPeak peak = getReflectionPeak(phase, reflNumber, radNumber);
+		if (peak != null)
+			return peak.absShapeFactor;
+		else {
+//      System.out.println("AbsShapeFactor: " + getLabel() + ", reflection index out of bounds: " + reflNumber + ", rad number: " + radNumber + ", base: " + baseReflectionNumber[radNumber]);
+      return 0.0;
+    }
+	}
+
+	public double getLorentzPolarizationFactor(Phase phase, int reflNumber, int radNumber) {
+		ReflectionPeak peak = getReflectionPeak(phase, reflNumber, radNumber);
+		if (peak != null)
+			return peak.lorentzPolarization;
+		else {
+//      System.out.println("LP factor: " + getLabel() + ", reflection index out of bounds: " + reflNumber + ", rad number: " + radNumber + ", base: " + baseReflectionNumber[radNumber]);
+      return 0.0;
+    }
+	}
+
+	public double getBroadFactorHWHM(Phase phase, int reflNumber, int radNumber) {
+		ReflectionPeak peak = getReflectionPeak(phase, reflNumber, radNumber);
+		if (peak != null)
+			return peak.broadFactorHWHM_ang;
+		else {
+//      System.out.println("BroadFactor hwhm: " + getLabel() + ", reflection index out of bounds: " + reflNumber + ", rad number: " + radNumber + ", base: " + baseReflectionNumber[radNumber]);
+      return 0.001;
+    }
+	}
+
+	public double getBroadFactorEta(Phase phase, int reflNumber, int radNumber) {
+		ReflectionPeak peak = getReflectionPeak(phase, reflNumber, radNumber);
+		if (peak != null)
+			return peak.broadFactorEta_ang;
+		else {
+//      System.out.println("BroadFactor eta: " + getLabel() + ", reflection index out of bounds: " + reflNumber + ", rad number: " + radNumber + ", base: " + baseReflectionNumber[radNumber]);
+      return 0.0;
+    }
+	}
+
+	public double[] getCrystallitesMicrostrains(Phase phase, int reflNumber, int radNumber) {
+		ReflectionPeak peak = getReflectionPeak(phase, reflNumber, radNumber);
+		if (peak != null)
+			return peak.sizestrain;
+		else {
+//      System.out.println("SizeStrain: " + getLabel() + ", reflection index out of bounds: " + reflNumber + ", rad number: " + radNumber + ", base: " + baseReflectionNumber[radNumber]);
+      return new double[2];
+    }
+	}
+
+	public boolean checkPeakInsideRange(Phase phase, int reflIndex, double rangeFactor) {
+		boolean isIn = false;
+		double pos;
+		double hwhm;
+		Reflection refl = phase.getReflex(reflIndex);
+		Vector<Vector<ReflectionPeak>> peaks = getReflections(phase);
+		for (int i = 0; i < peaks.size(); i++) {
+			Vector<ReflectionPeak> peaks_rad = peaks.elementAt(i);
+			int index = reflIndex - baseReflectionNumber[i + baseRadiationNumber];
+			if (index >= 0 && index < peaks_rad.size()) {
+				ReflectionPeak peak = peaks_rad.elementAt(index);
+				if (energyDispersive)
+					pos = peak.energy;
+				else
+					pos = peak.position;
+				if (energyDispersive) {
+					hwhm = Math.abs(peak.broadFactorHWHM_ang * rangeFactor * getCutoffAngle());
+					double th = peak.position * Constants.DEGTOPI;
+					double sintheta2 = Math.sin(th);
+					sintheta2 *= sintheta2;
+					double costheta = Math.cos(th) / sintheta2;
+					hwhm *= Constants.ENERGY_LAMBDA / (2000.0 * refl.d_space) * costheta;
+				} else
+					hwhm = Math.abs(peak.broadFactorHWHM_ang * rangeFactor * getCutoffAngle());
+				if (xInsideRange(pos) || xInsideRange(pos + hwhm) || xInsideRange(pos - hwhm))
+					isIn = true;
+			}
+		}
+		return isIn;
+	}
+
+	public boolean checkinRangeandIntensity(Phase phase, int reflIndex) {
+		boolean isIn = false;
+		Vector<Vector<ReflectionPeak>> peaks = getReflections(phase);
+		for (int i = 0; i < peaks.size(); i++) {
+			Vector<ReflectionPeak> peaks_rad = peaks.elementAt(i);
+			int index = reflIndex - baseReflectionNumber[i + baseRadiationNumber];
+			if (index >= 0 && index < peaks_rad.size() && xInsideRange(peaks_rad.elementAt(index).position))
+				isIn = true;
+		}
+		return isIn;
+	}
+
+	public void setTextureFactors(Phase phase, int reflIndex, double[] textureValues) {
+		if (!getDataFileSet().hasRandomTexture()) {
+			synchronized (this) {
+				Vector<Vector<ReflectionPeak>> peaks = getReflections(phase);
+				for (int i = 0; i < peaks.size(); i++) {
+					Vector<ReflectionPeak> peaks_rad = peaks.elementAt(i);
+					int index = reflIndex - baseReflectionNumber[i + baseRadiationNumber];
+					if (index >= 0 && index < peaks_rad.size())
+						peaks_rad.elementAt(index).calcTextureFactor = textureValues[i + baseRadiationNumber];
+				}
+			}
+		}
+	}
+
+	public void storeComputedOverExperimentalTextureFactors() {
+		Sample sample = getDataFileSet().getSample();
+		for (int i = 0; i < sample.numberOfPhases; i++)
+			storeComputedOverExperimentalTextureFactors(sample.getPhase(i));
+	}
+
+	public void storeComputedOverExperimentalTextureFactors(Phase phase) {
+		Vector<Vector<ReflectionPeak>> reflections = getReflections(phase);
+		for (int i = 0; i < reflections.size(); i++) {
+			Vector<ReflectionPeak> peaks = reflections.elementAt(i);
+			for (int i1 = 0; i1 < peaks.size(); i1++) {
+				peaks.elementAt(i1).storeComputedOverExperimentalTextureFactors();
+			}
+		}
+	}
+
+	public void storeExperimentalOverComputedTextureFactors(Phase phase) {
+		Vector<Vector<ReflectionPeak>> reflections = getReflections(phase);
+		for (int i = 0; i < reflections.size(); i++) {
+			Vector<ReflectionPeak> peaks = reflections.elementAt(i);
+			for (int i1 = 0; i1 < peaks.size(); i1++) {
+				peaks.elementAt(i1).storeExperimentalOverComputedTextureFactors();
+			}
+		}
+	}
+
+	public void resetForRandomTexture(Phase phase) {
+		Vector<Vector<ReflectionPeak>> reflections = getReflections(phase);
+		for (int i = 0; i < reflections.size(); i++) {
+			Vector<ReflectionPeak> peaks = reflections.elementAt(i);
+			for (int i1 = 0; i1 < peaks.size(); i1++) {
+				ReflectionPeak peak = peaks.elementAt(i1);
+				peak.calcTextureFactor = peak.expTextureFactor = 1.0;
+			}
+		}
+	}
+
+	public void resetForNoStrain(Phase phase) {
+		Vector<Vector<ReflectionPeak>> reflections = getReflections(phase);
+		for (int i = 0; i < reflections.size(); i++) {
+			Vector<ReflectionPeak> peaks = reflections.elementAt(i);
+			for (int i1 = 0; i1 < peaks.size(); i1++) {
+				ReflectionPeak peak = peaks.elementAt(i1);
+				peak.calcStrainFactor = peak.expStrainFactor = 0.0;
+			}
+		}
+	}
+
+/*
 	private void resetPositions(Phase phase) {
-		double[][][] positions = getPositions(phase);
+		double[][] positions = getPositions(phase);
 		if (positions != null) {
 			for (int i = 0; i < positions.length; i++)
 				for (int j = 0; j < positions[0].length; j++)
-					for (int k = 0; k < positions[0][0].length; k++)
-						positions[i][j][k] = 180.0;
+					positions[i][j] = 180.0;
 		}
 	}
 
-	private void updatePositions(double[][][] positions, double[][][] newPositions, int[] indices) {
+	private void updatePositions(double[][] positions, double[][] newPositions, int[] indices) {
 		if (indices != null) {
 		for (int j = 0; j < indices.length; j++)
 			if (indices[j] >= 0 && j < newPositions.length && indices[j] < positions.length)
 				for (int i = 0; i < newPositions[0].length && i < positions[0].length; i++)
-					for (int k = 0; k < newPositions[0][0].length && k < positions[0][0].length; k++)
-						newPositions[j][i][k] = positions[indices[j]][i][k];
+					newPositions[j][i] = positions[indices[j]][i];
 		}
 	}
 
 	private void resetMinMaxIndices(Phase phase) {
-		int[][][][] minMaxIndices = getMinMaxIndices(phase);
+		int[][][] minMaxIndices = getMinMaxIndices(phase);
 		if (minMaxIndices != null) {
 			for (int i = 0; i < minMaxIndices[0].length; i++)
-				for (int j = 0; j < minMaxIndices[0][0].length; j++)
-					for (int k = 0; k < minMaxIndices[0][0][0].length; k++) {
-						minMaxIndices[0][i][j][k] = startingindex;
-						minMaxIndices[1][i][j][k] = finalindex;
-					}
+				for (int j = 0; j < minMaxIndices[0][0].length; j++) {
+					minMaxIndices[0][i][j] = startingindex;
+					minMaxIndices[1][i][j] = finalindex;
+				}
 		}
 	}
 
-	private void updateMinMaxIndices(int[][][][] minmaxIndices, int[][][][] newMinmaxIndices, int[] indices) {
+	private void updateMinMaxIndices(int[][][] minmaxIndices, int[][][] newMinmaxIndices, int[] indices) {
 		if (indices != null)
 		for (int j = 0; j < indices.length; j++) {
 			if (indices[j] >= 0 && j < newMinmaxIndices[0].length && indices[j] < minmaxIndices[0].length)
 				for (int i = 0; i < newMinmaxIndices.length && i < minmaxIndices.length; i++)
 					for (int l = 0; l < newMinmaxIndices[0][0].length && l < minmaxIndices[0][0].length; l++)
-						for (int k = 0; k < newMinmaxIndices[0][0][0].length && k < minmaxIndices[0][0][0].length; k++)
-							newMinmaxIndices[i][j][l][k] = minmaxIndices[i][indices[j]][l][k];
+							newMinmaxIndices[i][j][l] = minmaxIndices[i][indices[j]][l];
 		}
 	}
 
 	private void resetLorentzPolarization(Phase phase) {
-		double[][][] lorentzPolarization = getLorentzPolarization(phase);
+		double[][] lorentzPolarization = getLorentzPolarization(phase);
 		if (lorentzPolarization != null) {
 			for (int i = 0; i < lorentzPolarization.length; i++)
 				for (int j = 0; j < lorentzPolarization[i].length; j++)
-					for (int k = 0; k < lorentzPolarization[i][j].length; k++)
-						lorentzPolarization[i][j][k] = 1.0;
+						lorentzPolarization[i][j] = 1.0;
 		}
 	}
 
-	private void updateLorentzPolarization(double[][][] lorentzPolarizations, double[][][] newLorentzPolarizations, int[] indices) {
+	private void updateLorentzPolarization(double[][] lorentzPolarizations, double[][] newLorentzPolarizations, int[] indices) {
 		if (indices != null)
 		for (int j = 0; j < indices.length; j++) {
 			if (indices[j] >= 0 && j < newLorentzPolarizations.length && indices[j] < lorentzPolarizations.length)
 				for (int i = 0; i < newLorentzPolarizations[0].length && i < lorentzPolarizations[0].length; i++)
-					for (int k = 0; k < newLorentzPolarizations[0][0].length && k < lorentzPolarizations[0][0].length; k++)
-						newLorentzPolarizations[j][i][k] = lorentzPolarizations[indices[j]][i][k];
+						newLorentzPolarizations[j][i] = lorentzPolarizations[indices[j]][i];
 		}
 	}
 
 	private void resetShapeAbsFactors(Phase phase) {
-		double[][][] shapeAbsFactors = getShapeAbsFactors(phase);
+		double[][] shapeAbsFactors = getShapeAbsFactors(phase);
 		if (shapeAbsFactors != null) {
 			for (int i = 0; i < shapeAbsFactors.length; i++)
 				for (int j = 0; j < shapeAbsFactors[0].length; j++)
-					for (int k = 0; k < shapeAbsFactors[0][0].length; k++)
-						shapeAbsFactors[i][j][k] = 1.0;
+						shapeAbsFactors[i][j] = 1.0;
 		}
 	}
 
-	private void updateShapeAbsFactors(double[][][] shapeAbsorption, double[][][] newShapeAbsorption, int[] indices) {
+	private void updateShapeAbsFactors(double[][] shapeAbsorption, double[][] newShapeAbsorption, int[] indices) {
 		if (indices != null)
 		for (int j = 0; j < indices.length; j++) {
 			if (indices[j] >= 0 && j < newShapeAbsorption.length && indices[j] < shapeAbsorption.length)
 				for (int i = 0; i < newShapeAbsorption[0].length && i < shapeAbsorption[0].length; i++)
-					for (int k = 0; k < shapeAbsorption[0][0].length && k < newShapeAbsorption[0][0].length; k++)
-						newShapeAbsorption[j][i][k] = shapeAbsorption[indices[j]][i][k];
+						newShapeAbsorption[j][i] = shapeAbsorption[indices[j]][i];
 		}
 	}
 
 	private void resetCrystallitesMicrostrains(Phase phase) {
-		double[][][][] crystallitesMicrostrains = getCrystallitesMicrostrains(phase);
+		double[][][] crystallitesMicrostrains = getCrystallitesMicrostrains(phase);
 		if (crystallitesMicrostrains != null) {
 			for (int i = 0; i < crystallitesMicrostrains.length; i++)
 				for (int j = 0; j < crystallitesMicrostrains[0].length; j++)
 					for (int k = 0; k < crystallitesMicrostrains[0][0].length; k++)
-						for (int l = 0; l < crystallitesMicrostrains[0][0][0].length; l++)
-						crystallitesMicrostrains[i][j][k][l] = 0.0;
+						crystallitesMicrostrains[i][j][k] = 0.0;
 		}
 	}
 
-	private void updateCrystallitesMicrostrains(double[][][][] crystallitesMicrostrains, double[][][][] newCrystallitesMicrostrains, int[] indices) {
+	private void updateCrystallitesMicrostrains(double[][][] crystallitesMicrostrains, double[][][] newCrystallitesMicrostrains, int[] indices) {
 		if (indices != null)
 		for (int j = 0; j < indices.length; j++) {
 			if (indices[j] >= 0 && j < newCrystallitesMicrostrains[0].length && indices[j] < crystallitesMicrostrains[0].length)
 				for (int i = 0; i < newCrystallitesMicrostrains.length && i < crystallitesMicrostrains.length; i++)
 					for (int k = 0; k < newCrystallitesMicrostrains[0][0].length && k < crystallitesMicrostrains[0][0].length; k++)
-						for (int l = 0; l < crystallitesMicrostrains[0][0][0].length; l++)
-							newCrystallitesMicrostrains[i][j][k][l] = crystallitesMicrostrains[i][indices[j]][k][l];
+							newCrystallitesMicrostrains[i][j][k] = crystallitesMicrostrains[i][indices[j]][k];
 		}
 	}
 
 	private void resetInstBroadFactors(Phase phase) {
-		double[][][][] instBroadFactors = getInstBroadFactors(phase);
+		double[][][] instBroadFactors = getInstBroadFactors(phase);
 		if (instBroadFactors != null) {
 			for (int i = 0; i < instBroadFactors.length; i++)
 				for (int j = 0; j < instBroadFactors[0].length; j++)
 					for (int k = 0; k < instBroadFactors[0][0].length; k++)
-						for (int l = 0; l < instBroadFactors[0][0][0].length; l++)
-							instBroadFactors[i][j][k][l] = 0.0;
+							instBroadFactors[i][j][k] = 0.0;
 		}
 	}
 
-	private void updateInstBroadFactors(double[][][][] instrumentBroadening, double[][][][] newInstrumentBroadening, int[] indices) {
+	private void updateInstBroadFactors(double[][][] instrumentBroadening, double[][][] newInstrumentBroadening, int[] indices) {
 		if (indices != null)
 		for (int j = 0; j < indices.length; j++) {
 			if (indices[j] >= 0 && j < newInstrumentBroadening[0].length && indices[j] < instrumentBroadening[0].length)
 				for (int i = 0; i < newInstrumentBroadening.length && i < instrumentBroadening.length; i++)
 					for (int k = 0; k < newInstrumentBroadening[0][0].length && k < instrumentBroadening[0][0].length; k++)
-						for (int l = 0; l < newInstrumentBroadening[0][0][0].length && l < instrumentBroadening[0][0][0].length; l++)
-							newInstrumentBroadening[i][j][k][l] = instrumentBroadening[i][indices[j]][k][l];
+						newInstrumentBroadening[i][j][k] = instrumentBroadening[i][indices[j]][k];
 		}
 	}
 
 	private void resetBroadFactors(Phase phase) {
-		double[][][][] broadFactors = getBroadFactors(phase);
+		double[][][] broadFactors = getBroadFactors(phase);
 		if (broadFactors != null) {
 			for (int i = 0; i < broadFactors.length; i++)
 				for (int j = 0; j < broadFactors[0].length; j++)
 					for (int k = 0; k < broadFactors[0][0].length; k++)
-						for (int l = 0; l < broadFactors[0][0][0].length; l++)
-							broadFactors[i][j][k][l] = 0.0;
+							broadFactors[i][j][k] = 0.0;
 		}
 	}
 
-	private void updateBroadFactors(double[][][][] phaseBroadening, double[][][][] newPhaseBroadening, int[] indices) {
+	private void updateBroadFactors(double[][][] phaseBroadening, double[][][] newPhaseBroadening, int[] indices) {
 		if (indices != null)
 		for (int j = 0; j < indices.length; j++) {
 			if (indices[j] >= 0 && j < newPhaseBroadening[0].length && indices[j] < phaseBroadening[0].length)
 				for (int i = 0; i < phaseBroadening.length &&  i < newPhaseBroadening.length; i++)
 					for (int k = 0; k < phaseBroadening[0][0].length && k < newPhaseBroadening[0][0].length; k++)
-						for (int l = 0; l < phaseBroadening[0][0][0].length && l < newPhaseBroadening[0][0][0].length; l++)
-							newPhaseBroadening[i][j][k][l] = phaseBroadening[i][indices[j]][k][l];
+							newPhaseBroadening[i][j][k] = phaseBroadening[i][indices[j]][k];
 		}
 	}
 
 	private void resetStrainFactors(Phase phase) {
-		double[][][][] strainsFactors = getStrainFactors(phase);
+		double[][][] strainsFactors = getStrainFactors(phase);
 		if (strainsFactors != null) {
 			for (int i = 0; i < strainsFactors.length; i++)
 				for (int j = 0; j < strainsFactors[0].length; j++)
 					for (int k = 0; k < strainsFactors[0][0].length; k++)
-						for (int l = 0; l < strainsFactors[0][0][0].length; l++)
-							strainsFactors[i][j][k][l] = 0.0;
+							strainsFactors[i][j][k] = 0.0;
 		}
 	}
 
-	private void updateStrainFactors(double[][][][] strainFactors, double[][][][] newStrainFactors, int[] indices) {
+	private void updateStrainFactors(double[][][] strainFactors, double[][][] newStrainFactors, int[] indices) {
 		if (indices != null)
 		for (int j = 0; j < indices.length; j++) {
 			if (indices[j] >= 0 && j < newStrainFactors[0].length && indices[j] < strainFactors[0].length)
 				for (int i = 0; i < strainFactors.length && i < newStrainFactors.length; i++)
 					for (int k = 0; k < strainFactors[0][0].length && k < newStrainFactors[0][0].length; k++)
-						for (int l = 0; l < strainFactors[0][0][0].length && l < newStrainFactors[0][0][0].length; l++)
-					newStrainFactors[i][j][k][l] = strainFactors[i][indices[j]][k][l];
+						newStrainFactors[i][j][k] = strainFactors[i][indices[j]][k];
 		}
 	}
 
@@ -5403,7 +5365,7 @@ public class DiffrDataFile extends XRDcat {
 			int reflID = Reflection.getUniqueIdFor(refl.getH(), refl.getK(), refl.getL());
 			reflectionsIDs[i] = reflID;
 		}
-	}
+	}*/
 
 	private boolean checkReflectionsList(Phase phase, int[] reflectionsIDs) {
 		boolean changed = false;
@@ -5456,10 +5418,10 @@ public class DiffrDataFile extends XRDcat {
 
 	static boolean checkHKL = true;
 
-
+/*
 	private void resetTextureFactors(Phase phase) {
 //		System.out.println("Reset texture factors for phase: " + phase.getPhaseName());
-		double[][][][] textureFactors = getTextureFactors(phase);
+		double[][][] textureFactors = getTextureFactors(phase);
 		if (textureFactors != null && textureFactors.length > 0) {
 			int phaseIndex = getDataFileSet().getSample().getPhaseIndex(phase);
 //			System.out.println("Need restore: " + needRestore[phaseIndex]);
@@ -5468,10 +5430,8 @@ public class DiffrDataFile extends XRDcat {
 			if (needRestore != null && needRestore.length > phaseIndex && needRestore[phaseIndex]) {
 				for (int i1 = 0; i1 < textureFactors[0].length; i1++) {
 					for (int j = 0; j < textureFactors[0][i1].length; j++) {
-						for (int j1 = 0; j1 < textureFactors[0][i1][j].length; j1++) {
-							textureFactors[0][i1][j][j1] = 1.0;
-							textureFactors[1][i1][j][j1] = 1.0;
-						}
+							textureFactors[0][i1][j] = 1.0;
+							textureFactors[1][i1][j] = 1.0;
 					}
 				}
 				int h, k, l;
@@ -5479,19 +5439,18 @@ public class DiffrDataFile extends XRDcat {
 					Vector[] tmpVector = (Vector[]) overallVector.elementAt(phaseIndex);
 					int hklNumber = Math.min(tmpVector[0].size(), phase.getReflectionVector().size());
 					for (int j = 0; j < hklNumber; j++) {
-						for (int cp = 0; cp < positionsPerPattern; cp++)
 						for (int r = 0; r < radiationsNumber; r++) {
 							boolean check = true;
 							int index = j;
 							Reflection refl = phase.getReflectionVector().elementAt(j);
 							if (checkHKL) {
-								h = (int) ((double[]) tmpVector[0].elementAt(r * positionsPerPattern * hklNumber + cp * hklNumber + j))[0];
+								h = (int) ((double[]) tmpVector[0].elementAt(r * hklNumber + j))[0];
 								if (refl.getH() != h)
 									check = false;
-								k = (int) ((double[]) tmpVector[1].elementAt(r * positionsPerPattern * hklNumber + cp * hklNumber + j))[0];
+								k = (int) ((double[]) tmpVector[1].elementAt(r * hklNumber + j))[0];
 								if (refl.getK() != k)
 									check = false;
-								l = (int) ((double[]) tmpVector[2].elementAt(r * positionsPerPattern * hklNumber + cp * hklNumber + j))[0];
+								l = (int) ((double[]) tmpVector[2].elementAt(r * hklNumber + j))[0];
 								if (refl.getL() != l)
 									check = false;
 							}
@@ -5501,26 +5460,26 @@ public class DiffrDataFile extends XRDcat {
 									if ((j - delta) >= 0) {
 										check = true;
 										index = j - delta;
-										h = (int) ((double[]) tmpVector[0].elementAt(r * positionsPerPattern * hklNumber + cp * hklNumber + index))[0];
+										h = (int) ((double[]) tmpVector[0].elementAt(r * hklNumber + index))[0];
 										if (refl.getH() != h)
 											check = false;
-										k = (int) ((double[]) tmpVector[1].elementAt(r * positionsPerPattern * hklNumber + cp * hklNumber + index))[0];
+										k = (int) ((double[]) tmpVector[1].elementAt(r * hklNumber + index))[0];
 										if (refl.getK() != k)
 											check = false;
-										l = (int) ((double[]) tmpVector[2].elementAt(r * positionsPerPattern * hklNumber + cp * hklNumber + index))[0];
+										l = (int) ((double[]) tmpVector[2].elementAt(r * hklNumber + index))[0];
 										if (refl.getL() != l)
 											check = false;
 									}
 									if (!check && (j + delta) < hklNumber) {
 										check = true;
 										index = j + delta;
-										h = (int) ((double[]) tmpVector[0].elementAt(r * positionsPerPattern * hklNumber + cp * hklNumber + index))[0];
+										h = (int) ((double[]) tmpVector[0].elementAt(r * hklNumber + index))[0];
 										if (refl.getH() != h)
 											check = false;
-										k = (int) ((double[]) tmpVector[1].elementAt(r * positionsPerPattern * hklNumber + cp * hklNumber + index))[0];
+										k = (int) ((double[]) tmpVector[1].elementAt(r * hklNumber + index))[0];
 										if (refl.getK() != k)
 											check = false;
-										l = (int) ((double[]) tmpVector[2].elementAt(r * positionsPerPattern * hklNumber + cp * hklNumber + index))[0];
+										l = (int) ((double[]) tmpVector[2].elementAt(r * hklNumber + index))[0];
 										if (refl.getL() != l)
 											check = false;
 									}
@@ -5528,10 +5487,10 @@ public class DiffrDataFile extends XRDcat {
 								}
 							}
 							if (check) {
-								if (index * positionsPerPattern < tmpVector[3].size())
-									textureFactors[0][j][cp][r] = ((double[]) tmpVector[3].elementAt(r * positionsPerPattern * hklNumber + cp * hklNumber + index))[0];
-								if (index * positionsPerPattern < tmpVector[4].size())
-									textureFactors[1][j][cp][r] = ((double[]) tmpVector[4].elementAt(r * positionsPerPattern * hklNumber + cp * hklNumber + index))[0];
+								if (index < tmpVector[3].size())
+									textureFactors[0][j][r] = ((double[]) tmpVector[3].elementAt(r * hklNumber + index))[0];
+								if (index < tmpVector[4].size())
+									textureFactors[1][j][r] = ((double[]) tmpVector[4].elementAt(r * hklNumber + index))[0];
 							}
 						}
 					}
@@ -5540,241 +5499,74 @@ public class DiffrDataFile extends XRDcat {
 			} else {
 				for (int i1 = 0; i1 < textureFactors[0].length; i1++) {
 					for (int j = 0; j < textureFactors[0][i1].length; j++) {
-						for (int j1 = 0; j1 < textureFactors[0][0][0].length; j1++) {
-							textureFactors[0][i1][j][j1] = 1.0;
-							textureFactors[1][i1][j][j1] = 1.0;
-						}
+						textureFactors[0][i1][j] = 1.0;
+						textureFactors[1][i1][j] = 1.0;
 					}
 				}
 			}
 		}
 	}
 
-	private void updateTextureFactors(double[][][][] textureFactors, double[][][][] newTextureFactors, int[] indices) {
+	private void updateTextureFactors(double[][][] textureFactors, double[][][] newTextureFactors, int[] indices) {
 		for (int j = 0; j < indices.length; j++) {
 			if (indices[j] >= 0 && indices[j] < textureFactors[0].length)
 				for (int i = 0; i < 2; i++)
-					for (int k = 0; k < positionsPerPattern && k < textureFactors[0][0].length && k < newTextureFactors[0][0].length; k++)
-						for (int l = 0; l < textureFactors[0][0][0].length && l < newTextureFactors[0][0][0].length; l++)
-							newTextureFactors[i][j][k][l] = textureFactors[i][indices[j]][k][l];
+					for (int l = 0; l < textureFactors[0][0].length && l < newTextureFactors[0][0].length; l++)
+						newTextureFactors[i][j][l] = textureFactors[i][indices[j]][l];
 		}
 	}
 
-	public void storeComputedTextureFactors(Phase phase, double[][][] thkl) {
-		double[][][][] textureFactors = getTextureFactors(phase);
+	public void storeComputedTextureFactors(Phase phase, double[][] thkl) {
+		double[][][] textureFactors = getTextureFactors(phase);
 		for (int i = 0; i < textureFactors[0].length &&  i < thkl.length; i++)
 			for (int i1 = 0; i1 < textureFactors[0][0].length && i1 < thkl[0].length; i1++)
-				for (int i2 = 0; i2 < textureFactors[0][0][0].length && i2 < thkl[0][0].length; i2++)
-					textureFactors[1][i][i1][i2] = thkl[i][i1][i2];
+					textureFactors[1][i][i1] = thkl[i][i1];
 	}
 
-	public void storeExperimentalTextureFactors(Phase phase, double[][][] thkl) {
-		double[][][][] textureFactors = getTextureFactors(phase);
+	public void storeExperimentalTextureFactors(Phase phase, double[][] thkl) {
+		double[][][] textureFactors = getTextureFactors(phase);
 		for (int i = 0; i < textureFactors[0].length &&  i < thkl.length; i++)
 			for (int i1 = 0; i1 < textureFactors[0][0].length &&  i1 < thkl[0].length; i1++)
-				for (int i2 = 0; i2 < textureFactors[0][0][0].length; i2++)
-					textureFactors[0][i][i1][i2] = thkl[i][i1][i2];
+					textureFactors[0][i][i1] = thkl[i][i1];
 	}
+	*/
 
-	public void storeComputedOverExperimentalTextureFactors() {
-		Sample sample = getDataFileSet().getSample();
-		for (int i = 0; i < sample.numberOfPhases; i++)
-			storeComputedOverExperimentalTextureFactors(sample.getPhase(i));
-	}
-
-	public void storeComputedOverExperimentalTextureFactors(Phase phase) {
-		double[][][][] textureFactors = getTextureFactors(phase);
-		for (int i = 0; i < textureFactors[0].length; i++)
-			for (int i1 = 0; i1 < textureFactors[0][0].length; i1++)
-				for (int i2 = 0; i2 < textureFactors[0][0][0].length; i2++)
-					textureFactors[0][i][i1][i2] = textureFactors[1][i][i1][i2];
-	}
-
-	public void storeExperimentalOverComputedTextureFactors() {
-		Sample sample = getDataFileSet().getSample();
-		for (int i = 0; i < sample.numberOfPhases; i++)
-			storeExperimentalOverComputedTextureFactors(sample.getPhase(i));
-	}
-
-	public void storeExperimentalOverComputedTextureFactors(Phase phase) {
-		synchronized(this) {
-		double[][][][] textureFactors = getTextureFactors(phase);
-		for (int i = 0; i < textureFactors[0].length; i++)
-			for (int i1 = 0; i1 < textureFactors[0][0].length; i1++)
-				for (int i2 = 0; i2 < textureFactors[0][0][0].length; i2++)
-					textureFactors[1][i][i1][i2] = textureFactors[0][i][i1][i2];
-		}
-	}
-
-	public double[][][][] getTextureFactors(Phase phase) {
-		double[][][][] temp = phaseTextureFactors.get(phase);
-		if (temp == null) {
-			int radNumber = getDataFileSet().getInstrument().getRadiationType().getLinesCount();
-			temp = new double[2][phase.gethklNumber()][positionsPerPattern][radNumber];
-			phaseTextureFactors.put(phase, temp);
-			resetTextureFactors(phase);
-		}
-		return temp;
-	}
-
-	public double[][][][] getStrainFactors(Phase phase) {
-		double[][][][] temp = phaseStrainFactors.get(phase);
-		if (temp == null) {
-			int radNumber = getDataFileSet().getInstrument().getRadiationType().getLinesCount();
-			temp = new double[2][phase.gethklNumber()][positionsPerPattern][radNumber];
-			phaseStrainFactors.put(phase, temp);
-			resetStrainFactors(phase);
-		}
-		return temp;
-	}
-
-	public double[][][][] getBroadFactors(Phase phase) {
-		double[][][][] temp = phaseBroadFactors.get(phase);
-		if (temp == null) {
-			int radNumber = getDataFileSet().getInstrument().getRadiationType().getLinesCount();
-			temp = new double[2][phase.gethklNumber()][positionsPerPattern][radNumber];
-			phaseBroadFactors.put(phase, temp);
-			resetBroadFactors(phase);
-		}
-		return temp;
-	}
-
-	public double[][][][] getInstBroadFactors(Phase phase) {
-		double[][][][] temp = phaseInstBroadFactors.get(phase);
-		if (temp == null) {
-			int radNumber = getDataFileSet().getInstrument().getRadiationType().getLinesCount();
-			temp = new double[instrumentBroadeningParNumber][phase.gethklNumber()][positionsPerPattern][radNumber];
-			phaseInstBroadFactors.put(phase, temp);
-			resetInstBroadFactors(phase);
-		}
-		return temp;
-	}
-
-	public double[][][][] getCrystallitesMicrostrains(Phase phase) {
-		double[][][][] temp = phaseCrystallitesMicrostrains.get(phase);
-		if (temp == null) {
-			int numberCrystStrains = phase.getNumberOfSizeStrainCoefficients();
-			int radNumber = getDataFileSet().getInstrument().getRadiationType().getLinesCount();
-			temp = new double[numberCrystStrains][phase.gethklNumber()][positionsPerPattern][radNumber];
-			phaseCrystallitesMicrostrains.put(phase, temp);
-			resetCrystallitesMicrostrains(phase);
-		}
-		return temp;
-	}
-
-	public double[][][] getPositions(Phase phase) {
-		double[][][] temp = phasePositions.get(phase);
-		if (temp == null) {
-			int radNumber = getDataFileSet().getInstrument().getRadiationType().getLinesCount();
-			temp = new double[phase.gethklNumber()][positionsPerPattern][radNumber];
-			phasePositions.put(phase, temp);
-			resetPositions(phase);
-		}
-		return temp;
-	}
-
-	public double[][][] getShapeAbsFactors(Phase phase) {
-		double[][][] temp = phaseShapeAbsFactors.get(phase);
-		if (temp == null) {
-			int radNumber = getDataFileSet().getInstrument().getRadiationType().getLinesCount();
-			temp = new double[phase.gethklNumber()][positionsPerPattern][radNumber];
-			phaseShapeAbsFactors.put(phase, temp);
-			resetShapeAbsFactors(phase);
-		}
-		return temp;
-	}
-
-	public double[][][] getLorentzPolarization(Phase phase) {
-		double[][][] temp = phaseLorentzPolarization.get(phase);
-		if (temp == null) {
-			int radNumber = getDataFileSet().getInstrument().getRadiationType().getLinesCount();
-			temp = new double[phase.gethklNumber()][positionsPerPattern][radNumber];
-			phaseLorentzPolarization.put(phase, temp);
-			resetLorentzPolarization(phase);
-		}
-		return temp;
-	}
-
-	public int[][][][] getMinMaxIndices(Phase phase) {
-		int[][][][] temp = phaseMinMaxIndices.get(phase);
-		if (temp == null) {
-			int radNumber = getDataFileSet().getInstrument().getRadiationType().getLinesCount();
-			temp = new int[2][phase.gethklNumber()][positionsPerPattern][radNumber];
-			phaseMinMaxIndices.put(phase, temp);
-			resetMinMaxIndices(phase);
-		}
-		return temp;
-	}
-
-	public int[] getReflectionIDs(Phase phase) {
-		int[] temp = phaseReflectionIDs.get(phase);
-		if (temp == null) {
-			temp = new int[phase.gethklNumber()];
-			phaseReflectionIDs.put(phase, temp);
-		}
-		return temp;
-	}
-
-	public int[][][] getMinIndex(Phase phase) {
-		return getMinMaxIndices(phase)[0];
-	}
-
-	public int[][][] getMaxIndex(Phase phase) {
-		return getMinMaxIndices(phase)[1];
+	public static double compute2ThetaPosition(double dspace, double wavelength) {
+		double ratioposition = wavelength / (2.0 * dspace);
+		double position = 180.0;
+		if (ratioposition < 1.0)
+			position = PI_TO_2DEG * Math.asin(ratioposition);
+		return position;
 	}
 
 	public void computePosition(Phase aphase) { // no errors correction applied
-		double PI_TO_2DEG = Constants.PITODEG * 2.0;
-		int radNumber = getDataFileSet().getInstrument().getRadiationType().getLinesCount();
-		double[][][] positions = phasePositions.get(aphase);
-//		Sample sample = aphase.getSample();
-
-		int reflNumber = aphase.gethklNumber();
-		if (dspacingbase || energyDispersive) {
-			for (int i = 0; i < reflNumber &&  i < positions.length; i++) {
-				Reflection refl = aphase.getReflex(i);
-				for (int j = 0; j < positionsPerPattern && j < positions[0].length; j++)
-					for (int rad = 0; rad < radNumber && rad < positions[0][0].length; rad++)
-						positions[i][j][rad] = refl.d_space;
-			}
-		} else {
-			for (int i = 0; i < reflNumber && i < positions.length; i++) {
-				Reflection refl = aphase.getReflex(i);
-				for (int rad = 0; rad < radNumber && rad < positions[0][0].length; rad++) {
-					double wavelength = getDataFileSet().getInstrument().getRadiationType().getRadiationWavelength(rad);
-					for (int j = 0; j < positionsPerPattern && j < positions[0].length; j++) {
-						double ratioposition = wavelength / (2.0 * refl.d_space);
-						positions[i][j][rad] = 180.0;
-						if (ratioposition < 1.0)
-							positions[i][j][rad] = PI_TO_2DEG * Math.asin(ratioposition);
-					}
+		Vector<Vector<ReflectionPeak>> peaks = getReflections(aphase);
+		for (int i = 0; i < peaks.size(); i++) {
+			Vector<ReflectionPeak> peaksR = peaks.elementAt(i);
+			for (int j = 0; j < peaksR.size(); j++) {
+				Reflection refl = aphase.getReflex(j + baseReflectionNumber[i + baseRadiationNumber]);
+				ReflectionPeak peak = peaksR.elementAt(j);
+				peak.position = getPositionFromDspace(refl.d_space, i);
+				if (!dspacingbase) {
+					double wavelength = getDataFileSet().getInstrument().getRadiationType().getRadiationWavelength(i + baseRadiationNumber);
+					peak.energy = Constants.ENERGY_LAMBDA / (1000.0 * wavelength);
 				}
 			}
 		}
 	}
 
 	public void computePositionForStrained(Phase aphase) {
-//		double PI_TO_2DEG = Constants.PITODEG * 2.0;
-		int radNumber = getDataFileSet().getInstrument().getRadiationType().getLinesCount();
-		double[][][] positions = phasePositions.get(aphase);
-		double[][][][] strain = getStrainFactors(aphase);
 		Sample sample = aphase.getSample();
 
-		int reflNumber = aphase.gethklNumber();
-		if (dspacingbase || energyDispersive) {
-			for (int i = 0; i < reflNumber && i < positions.length; i++) {
-				Reflection refl = aphase.getReflex(i);
-				for (int j = 0; j < positionsPerPattern && j < positions[0].length; j++)
-					for (int rad = 0; rad < radNumber && rad < positions[0][0].length; rad++)
-						positions[i][j][rad] = computeFinalPosition(sample, refl, strain[0][i][j][rad], positions[i][j][rad]);
-			}
-		} else {
-			for (int i = 0; i < reflNumber && i < positions.length; i++) {
-				Reflection refl = aphase.getReflex(i);
-				for (int j = 0; j < positionsPerPattern && j < positions[0][0].length; j++)
-					for (int rad = 0; rad < radNumber && rad < positions[0].length; rad++)
-						if (positions[i][j][rad] != 180)
-							positions[i][j][rad] = computeFinalPosition(sample, refl, strain[0][i][j][rad], positions[i][j][rad]);
+		Vector<Vector<ReflectionPeak>> peaks = getReflections(aphase);
+		for (int i = 0; i < peaks.size(); i++) {
+			Vector<ReflectionPeak> peaksR = peaks.elementAt(i);
+			for (int j = 0; j < peaksR.size(); j++) {
+				Reflection refl = aphase.getReflex(j + baseReflectionNumber[i + baseRadiationNumber]);
+				ReflectionPeak peak = peaksR.elementAt(j);
+				if (dspacingbase || energyDispersive || (peak.position > 0 && peak.position < 180.0)) {
+					peak.position = computeFinalPosition(sample, refl, peak.calcStrainFactor, peak.position);
+				}
 			}
 		}
 	}
@@ -5866,95 +5658,88 @@ public class DiffrDataFile extends XRDcat {
 
 
 	public void computeLorentzPolarization(Phase aphase) {
-		double[][][] positions = phasePositions.get(aphase);
-		double[][][] lorentzPolarization = phaseLorentzPolarization.get(aphase);
-		Sample asample = getDataFileSet().getSample();
 		Instrument ainstrument = getDataFileSet().getInstrument();
-		int radNumber = ainstrument.getRadiationType().getLinesCount();
+		Sample asample = getDataFileSet().getSample();
 
-		int reflNumber = aphase.getReflectionVector().size();
-		for (int j = 0; j < positionsPerPattern; j++) {
-			for (int i = 0; i < reflNumber; i++) {
-				for (int k = 0; k < radNumber; k++)
-					lorentzPolarization[i][j][k] = ainstrument.LorentzPolarization(this, asample, positions[i][j][k],
-							                                  dspacingbase, energyDispersive);
+		Vector<Vector<ReflectionPeak>> peaks = getReflections(aphase);
+		for (int i = 0; i < peaks.size(); i++) {
+			Vector<ReflectionPeak> peaksR = peaks.elementAt(i);
+			for (int j = 0; j < peaksR.size(); j++) {
+				ReflectionPeak peak = peaksR.elementAt(j);
+				if (dspacingbase || energyDispersive || (peak.position > 0 && peak.position < 180.0)) {
+					peak.lorentzPolarization = ainstrument.LorentzPolarization(this, asample, peak.position,
+							dspacingbase, energyDispersive);
+				}
 			}
 		}
-
 	}
 
 	public void computeShapeAbsorptionCorrection(Phase aphase) {
-		Sample asample = getDataFileSet().getSample();
 		Instrument ainstrument = getDataFileSet().getInstrument();
-		int radNumber = ainstrument.getRadiationType().getLinesCount();
-		double[][][] positions = phasePositions.get(aphase);
-
-		double[][][] shapeAbsorption = phaseShapeAbsFactors.get(aphase);
-		double[][] intensity = new double[positionsPerPattern][radNumber];
-
-			int reflNumber = aphase.gethklNumber();
-			for (int i = 0; i < reflNumber; i++) {
-				for (int j = 0; j < positionsPerPattern; j++)
-					for (int k = 0; k < radNumber; k++)
-					intensity[j][k] = 1.0f;
+		Vector<Vector<ReflectionPeak>> peaks = getReflections(aphase);
+		for (int i = 0; i < peaks.size(); i++) {
+			int rad_index = i + baseRadiationNumber;
+			Vector<ReflectionPeak> peaksR = peaks.elementAt(i);
+			for (int j = 0; j < peaksR.size(); j++) {
+				ReflectionPeak peak = peaksR.elementAt(j);
+				peak.absShapeFactor = ainstrument.getAbsorptionCorrection(this, aphase, peak.position, rad_index);
+/*
 				ainstrument.computeShapeAbsorptionCorrection(this, asample, positions[i],
 						dspacingbase, energyDispersive, intensity);
-				for (int j = 0; j < positionsPerPattern; j++) {
-					double[] layer_abs = ainstrument.PhaseAndLayerAbsorption(this, asample, aphase, positions[i][j]);
-							// computeAbsorptionAndPhaseQuantity(ainstrument, aphase.getSample(), aphase, positions[0][i][j]);
+
+				double[] layer_abs = ainstrument.PhaseAndLayerAbsorption(this, asample, aphase, positions[i][j]);
+				// computeAbsorptionAndPhaseQuantity(ainstrument, aphase.getSample(), aphase, positions[0][i][j]);
 //					System.out.println(i + " " + intensity[j][0] + " " + layer_abs[0]);
-					for (int a = 0; a < layer_abs.length; a++) {
-						shapeAbsorption[i][j][a] = intensity[j][a] * layer_abs[a];
-					}
+				for (int a = 0; a < layer_abs.length; a++) {
+					shapeAbsorption[i][j][a] = intensity[j][a] * layer_abs[a];
+				}
+				if (dspacingbase || energyDispersive || (peak.position > 0 && peak.position < 180.0)) {
+					peak.lorentzPolarization = ainstrument.LorentzPolarization(this, asample, peak.position,
+							dspacingbase, energyDispersive);
+				}*/
 			}
 		}
 	}
 
 	public void computeInstBroadFactor(Phase aphase) {
-		double[][][] positions = phasePositions.get(aphase);
-		double[][][][] instrumentBroadening = phaseInstBroadFactors.get(aphase);
 		Instrument ainstrument = getDataFileSet().getInstrument();
 
-		for (int j = 0; j < positionsPerPattern; j++) {
-			int reflNumber = aphase.getReflectionVector().size();
-			for (int i = 0; i < reflNumber; i++) {
-				for (int rad = 0; rad < positions[0][0].length; rad++) {
-					double[][] broad = ainstrument.getInstrumentalBroadeningAt(positions[i][j][rad], this);
-					for (int b = 0; b < broad[0].length; b++)
-						instrumentBroadening[b][i][j][rad] = broad[0][b];
+		Vector<Vector<ReflectionPeak>> peaks = getReflections(aphase);
+		for (int i = 0; i < peaks.size(); i++) {
+			Vector<ReflectionPeak> peaksR = peaks.elementAt(i);
+			for (int j = 0; j < peaksR.size(); j++) {
+				ReflectionPeak peak = peaksR.elementAt(j);
+				if (dspacingbase || energyDispersive || (peak.position > 0 && peak.position < 180.0)) {
+					peak.instBroadFactor = ainstrument.getInstrumentalBroadeningAt(peak.position, this);
 				}
 			}
 		}
-
 	}
 
 	public void computeSizeStrainBroadening(Phase aphase) {
-
-		double[][][][] sizeStrains = phaseCrystallitesMicrostrains.get(aphase);
-
-		double[][][] positions = getPositions(aphase);
-		int reflNumber = aphase.getReflectionVector().size();
-		for (int i = 0; i < reflNumber; i++) {
-			double crst[] = aphase.getCrystalliteMicrostrain(aphase.getReflex(i), getTextureAngles(positions[i][0][0]));
-			for (int b = 0; b < crst.length; b++) {
-				for (int l = 0; l < sizeStrains[0][0].length; l++)
-					for (int k = 0; k < sizeStrains[0][0][0].length; k++)
-						sizeStrains[b][i][l][k] = crst[b];
+		Vector<Vector<ReflectionPeak>> peaks = getReflections(aphase);
+		for (int i = 0; i < peaks.size(); i++) {
+			Vector<ReflectionPeak> peaksR = peaks.elementAt(i);
+			for (int j = 0; j < peaksR.size(); j++) {
+				Reflection refl = aphase.getReflex(j + baseReflectionNumber[i + baseRadiationNumber]);
+				ReflectionPeak peak = peaksR.elementAt(j);
+				if (dspacingbase || energyDispersive || (peak.position > 0 && peak.position < 180.0)) {
+					peak.sizestrain = aphase.getCrystalliteMicrostrain(refl, getTextureAngles(peak.position));
+				}
 			}
 		}
-
 	}
 
 	public void computeStrain(Phase aphase) {
 		if (!getDataFileSet().hasNoStrain()) {
-			double[][][][] strains = getStrainFactors(aphase);
-			double[][][] positions = getPositions(aphase);
-			int reflNumber = aphase.gethklNumber();
-			for (int i = 0; i < reflNumber; i++) {
-				for (int l = 0; l < strains[0][0].length; l++) {
-					for (int k = 0; k < strains[0][0][0].length; k++) {
-						double strain = aphase.getActiveStrain().computeStrain(aphase.getReflex(i), getTextureAngles(positions[i][l][k]));
-						strains[1][i][l][k] = strain;
+			Vector<Vector<ReflectionPeak>> peaks = getReflections(aphase);
+			for (int i = 0; i < peaks.size(); i++) {
+				Vector<ReflectionPeak> peaksR = peaks.elementAt(i);
+				for (int j = 0; j < peaksR.size(); j++) {
+					Reflection refl = aphase.getReflex(j + baseReflectionNumber[i + baseRadiationNumber]);
+					ReflectionPeak peak = peaksR.elementAt(j);
+					if (dspacingbase || energyDispersive || (peak.position > 0 && peak.position < 180.0)) {
+						peak.calcStrainFactor = aphase.getActiveStrain().computeStrain(refl, getTextureAngles(peak.position));
 					}
 				}
 			}
@@ -5963,88 +5748,65 @@ public class DiffrDataFile extends XRDcat {
 
 	public void computeSampleBroadening(Phase aphase, double wave) {
  		double[] betaf = new double[]{0,0};
-		int numberofpeaks = aphase.gethklNumber();
-		double[][][][] sizeStrains = getCrystallitesMicrostrains(aphase);
-		double[][][] positions = getPositions(aphase);
-		double[][][][] instBroadening = getInstBroadFactors(aphase);
-		double[][][][] phaseBroadening = getBroadFactors(aphase);
 
-		double[] broadInst = new double[instrumentBroadeningParNumber];
-		for (int i = 0; i < positionsPerPattern; i++) {
-			for (int kj = 0; kj < numberofpeaks; kj++) {
-				Reflection refl = aphase.getReflex(kj);
-				for (int k = 0; k < sizeStrains[0][0][0].length; k++) {
-					betaf[0] = aphase.getActiveSizeStrain().getBetaChauchy(refl.d_space, sizeStrains[0][kj][i][k],
-							sizeStrains[1][kj][i][k]); // / 2.0;
-					betaf[1] = aphase.getActiveSizeStrain().getBetaGauss(refl.d_space, sizeStrains[0][kj][i][k],
-							sizeStrains[1][kj][i][k]); // / 2.0;
-					if (!dspacingbase && !energyDispersive) {
-						double position = positions[kj][i][0] / 2 * Constants.DEGTOPI;
-						double sintheta = Math.sin(position);
-						sintheta *= sintheta;
-						double costheta = Math.cos(position);
-						double corr = 4.0 * sintheta / (wave * costheta) * Constants.PITODEG;
-						betaf[0] *= corr;
-						betaf[1] *= corr;
-					}
-					for (int j = 0; j < instrumentBroadeningParNumber; j++)
-						broadInst[j] = instBroadening[j][kj][i][k];
-					double[] hwhm_eta = PseudoVoigtPeak.getHwhmEtaFromIntegralBeta(betaf, broadInst);
-/*	            System.out.println("Refreshing " + hwhm_eta[0] + " " + hwhm_eta[1]
-			            + " " + broadInst[0] + " " + broadInst[1]
-			            + " " + betaf[0] + " " + betaf[1]);*/
-					for (int j = 0; j < hwhm_eta.length; j++)
-						phaseBroadening[j][kj][i][k] = hwhm_eta[j];
-//				for (int j = hwhm_eta.length; j < broadInst.length; j++)
-//					phaseBroadening[j][kj][i] = broadInst[j];  // asymmetry
+//		double[] broadInst = new double[instrumentBroadeningParNumber];
+		Vector<Vector<ReflectionPeak>> peaks = getReflections(aphase);
+		for (int i = 0; i < peaks.size(); i++) {
+			Vector<ReflectionPeak> peaksR = peaks.elementAt(i);
+			for (int j = 0; j < peaksR.size(); j++) {
+				Reflection refl = aphase.getReflex(j + baseReflectionNumber[i + baseRadiationNumber]);
+				ReflectionPeak peak = peaksR.elementAt(j);
+				betaf[0] = aphase.getActiveSizeStrain().getBetaChauchy(refl.d_space, peak.sizestrain[0],
+							peak.sizestrain[1]); // / 2.0;
+				betaf[1] = aphase.getActiveSizeStrain().getBetaGauss(refl.d_space, peak.sizestrain[0],
+						peak.sizestrain[1]); // / 2.0;
+				if (!dspacingbase && !energyDispersive) {
+					double position = peak.position / 2 * Constants.DEGTOPI;
+					double sintheta = Math.sin(position);
+					sintheta *= sintheta;
+					double costheta = Math.cos(position);
+					double corr = 4.0 * sintheta / (wave * costheta) * Constants.PITODEG;
+					betaf[0] *= corr;
+					betaf[1] *= corr;
 				}
+				peak.broadFactorTotal = PseudoVoigtPeak.getHwhmEtaFromIntegralBeta(betaf, peak.instBroadFactor);
+				peak.broadFactorHWHM_ang = peak.broadFactorTotal[0];
+				peak.broadFactorEta_ang = peak.broadFactorTotal[1];
 			}
 		}
 	}
 
 	public void removingPhase(Phase phase) {
-		phaseLorentzPolarization.remove(phase);
-		phaseBroadFactors.remove(phase);
-		phaseInstBroadFactors.remove(phase);
-		phaseShapeAbsFactors.remove(phase);
-		phaseStrainFactors.remove(phase);
-		phaseCrystallitesMicrostrains.remove(phase);
-		phaseMinMaxIndices.remove(phase);
-		phasePositions.remove(phase);
-		phaseTextureFactors.remove(phase);
+		phaseReflections.remove(phase);
 	}
 
+	/*
 	public void resetForRandomTexture(Phase phase) {
-		double[][][][] textureFactors = getTextureFactors(phase);
+		double[][][] textureFactors = getTextureFactors(phase);
 		if (textureFactors != null) {
 			for (int i1 = 0; i1 < textureFactors[0].length; i1++) {
 				for (int j = 0; j < textureFactors[0][0].length; j++) {
-					for (int k = 0; k < textureFactors[0][0][0].length; k++)
-						textureFactors[0][i1][j][k] = textureFactors[1][i1][j][k] = 1.0;
+						textureFactors[0][i1][j] = textureFactors[1][i1][j] = 1.0;
 				}
 			}
 		}
 	}
 
 	public void resetForNoStrain(Phase phase) {
-		double[][][][] strainFactors = getStrainFactors(phase);
+		double[][][] strainFactors = getStrainFactors(phase);
 		if (strainFactors != null) {
-			for (int i1 = 0; i1 < strainFactors[0].length; i1++) {
-				for (int j = 0; j < strainFactors[0][0].length; j++) {
-					for (int k = 0; k < strainFactors[0][0][0].length; k++) {
-						for (int i = 0; i < strainFactors.length; i++)
-							strainFactors[i][i1][j][k] = 0.0;
-					}
-				}
-			}
+			for (int i1 = 0; i1 < strainFactors.length; i1++)
+				for (int j = 0; j < strainFactors[0].length; j++)
+					for (int k = 0; k < strainFactors[0][0].length; k++)
+							strainFactors[i1][j][k] = 0.0;
 		}
 	}
 
 	public void computedToExperimentalTextureFactors(Phase phase) {
-		double[][][][] textureFactors = getTextureFactors(phase);
+		double[][][] textureFactors = getTextureFactors(phase);
 		if (textureFactors != null) {
 			for (int i1 = 0; i1 < textureFactors[0].length; i1++) {
-				for (int j = 0; j < textureFactors[0][i1].length; j++) {
+				for (int j = 0; j < textureFactors[0][0].length; j++) {
 					textureFactors[0][i1][j] = textureFactors[1][i1][j];
 				}
 			}
@@ -6052,49 +5814,26 @@ public class DiffrDataFile extends XRDcat {
 	}
 
 	public void randomToTextureFactors(Phase phase) {
-		double[][][][] textureFactors = getTextureFactors(phase);
+		double[][][] textureFactors = getTextureFactors(phase);
 		if (textureFactors != null) {
-			for (int i1 = 0; i1 < textureFactors[0].length; i1++) {
-				for (int j = 0; j < textureFactors[0][0].length; j++) {
-					for (int k = 0; k < textureFactors[0][0][0].length; k++)
-						textureFactors[0][i1][j][k] = textureFactors[1][i1][j][k];
-				}
-			}
+			for (int i1 = 0; i1 < textureFactors[0].length; i1++)
+				for (int j = 0; j < textureFactors[0][0].length; j++)
+						textureFactors[0][i1][j] = textureFactors[1][i1][j];
 		}
-	}
-
-	public boolean checkinRangeandIntensity(Phase aphase, int k) {
-		boolean isIn = false;
-		for (int i = 0; i < positionsPerPattern; i++) {
-//			if (!getFilePar().isComputingDerivate())
-//				System.out.println("position " + getPositions(aphase)[0][k][i]);
-			if (xInsideRange(getPositions(aphase)[k][i][0]))
-				isIn = true;
-		}
-		return isIn;
 	}
 
 	public boolean checkPeakInsideRange(Phase phase, int reflIndex) {
 		boolean isIn = false;
-		for (int i = 0; i < positionsPerPattern; i++) {
-			if (xInsideRange(getPositions(phase)[reflIndex][i][0]))
+		double[] position = getPositions(phase)[reflIndex];
+		for (int i = 0; i < position.length; i++) {
+			if (xInsideRange(position[i]))
 				isIn = true;
 		}
 		return isIn;
 	}
-
-	public boolean checkPeakInsideRange(Phase phase, int reflIndex, double rangeFactor) {
-		boolean isIn = false;
-		for (int i = 0; i < positionsPerPattern; i++) {
-			double pos = getPositions(phase)[reflIndex][i][0];
-			double hwhm = Math.abs(getBroadFactors(phase)[0][reflIndex][i][0] * rangeFactor * getCutoffAngle());
-			if (xInsideRange(pos) || xInsideRange(pos + hwhm) || xInsideRange(pos - hwhm))
-				isIn = true;
-		}
-		return isIn;
-	}
-
-	public double[][] getShapeAbsFactors(Phase aphase, int j) {
+*/
+/*
+	public double[] getShapeAbsFactors(Phase aphase, int j) {
 		//To change body of created methods use File | Settings | File Templates.
 		if (j < getShapeAbsFactors(aphase).length)
 			return getShapeAbsFactors(aphase)[j];
@@ -6103,88 +5842,43 @@ public class DiffrDataFile extends XRDcat {
 		return getShapeAbsFactors(aphase)[getShapeAbsFactors(aphase).length - 1];
 	}
 
-	public double[][] getLorentzPolarization(Phase aphase, int j) {
-		//To change body of created methods use File | Settings | File Templates.
+	public double[] getLorentzPolarization(Phase aphase, int j) {
 		return getLorentzPolarization(aphase)[j];
 	}
 
-	public double[][] getExperimentalTextureFactors(Phase aphase, int j) {
-		return getTextureFactors(aphase)[0][j];  //To change body of created methods use File | Settings | File Templates.
+	public double[] getExperimentalTextureFactors(Phase aphase, int j) {
+		return getTextureFactors(aphase)[0][j];
 	}
 
-	public double[][] getTextureFactors(Phase aphase, int j) {
+	public double[] getTextureFactors(Phase aphase, int j) {
 		if (j > getTextureFactors(aphase)[1].length)
-			out.println(aphase.getPhaseName() + " " + aphase.gethklNumber() + " " + j + " " + getTextureFactors(aphase)[1].length);
-		return getTextureFactors(aphase)[1][j];  //To change body of created methods use File | Settings | File Templates.
+			System.out.println(aphase.getPhaseName() + " " + aphase.gethklNumber() + " " + j + " " + getTextureFactors(aphase)[1].length);
+		return getTextureFactors(aphase)[1][j];
 	}
 
-	public double[][] getStrains(Phase aphase, int j) {
-		return getStrainFactors(aphase)[1][j];  //To change body of created methods use File | Settings | File Templates.
+	public double[] getStrains(Phase aphase, int j) {
+		return getStrainFactors(aphase)[1][j];
 	}
 
-/*no more	public void setStrain(Phase aphase, int j, double value) {
-		double[][] strain = getStrainFactors(aphase);  //To change body of created methods use File | Settings | File Templates.
-// todo add also for more points par pattern
-		strain[j][0] = value;
-	}*/
-
-	public double[][] getExpTextureFactor(Phase phase, Peak peak) {
+	public double[] getExpTextureFactor(Phase phase, Peak peak) {
 //		return peak.getReflex().getExpTextureFactor(getIndex(), peak.getLayer().getIndex());
 		return getExperimentalTextureFactors(phase, peak.getOrderPosition());
 	}
 
 	public void setExpTextureFactor(Phase phase, Peak peak, int pointNumber, double value) {
 //		peak.getReflex().setExpTextureFactor(getIndex(), peak.getLayer().getIndex(), value);
-		double[] expValues = getExperimentalTextureFactors(phase, peak.getOrderPosition())[pointNumber];
+		double[] expValues = getExperimentalTextureFactors(phase, peak.getOrderPosition());
 		for (int i = 0; i < expValues.length; i++)
 			expValues[i] = value;
 	}
 
-	public void setTextureFactor(Phase phase, Peak peak, int pointNumber, double value) {
-//		peak.getReflex().setTextureFactor(getIndex(), peak.getLayer().getIndex(), value);
-		setTextureFactor(phase, peak.getOrderPosition(), pointNumber, value);
-	}
-
-	public void setTextureFactor(Phase phase, int reflIndex, int pointNumber, double value) {
-//		peak.getReflex().setTextureFactor(getIndex(), peak.getLayer().getIndex(), value);
-		double[] calcValues = getTextureFactors(phase, reflIndex)[pointNumber];
-		for (int i = 0; i < calcValues.length; i++)
-			calcValues[i] = value;
-	}
-
-	public void setTextureFactors(Phase aphase, double[] textureValues) {
-		if (!getDataFileSet().hasRandomTexture()) {
-			synchronized (this) {
-				double[][][] textF = getTextureFactors(aphase)[1];
-				int hkln = aphase.gethklNumber();
-				for (int i = 0; i < hkln; i++)
-					for (int k = 0; k < textF[i].length; k++)
-						for (int l = 0; l < textF[0][0].length; l++)
-							textF[i][k][l] = textureValues[i];
-			}
-		}
-	}
-
-	public void setTextureFactors(Phase aphase, int i, double[] textureValues) {
-		if (!getDataFileSet().hasRandomTexture()) {
-			synchronized (this) {
-				double[][][] textF = getTextureFactors(aphase)[1];
-				int index = 0;
-				for (int k = 0; k < textF[0].length; k++)
-					for (int l = 0; l < textF[0][0].length; l++) {
-						textF[i][k][l] = textureValues[index++];
-					}
-			}
-		}
-	}
-
-	public void setStrain(Phase phase, Peak peak, int pointNumber, double value) {
+	public void setStrain(Phase phase, Peak peak, double[] value) {
 		//		peak.getReflex().setStrain(getIndex(), peak.getLayer().getIndex(), value);
-		double[] expValues = getStrains(phase, peak.getOrderPosition())[pointNumber];
+		double[] expValues = getStrains(phase, peak.getOrderPosition());
 		for (int i = 0; i < expValues.length; i++)
-			expValues[i] = value;
+			expValues[i] = value[i];
 	}
-
+*/
 	@Override
 	protected void finalize() throws Throwable {
 		intensity = null;
@@ -6201,15 +5895,7 @@ public class DiffrDataFile extends XRDcat {
 		classlistcs = null;
 		tilting_angles = null;
 		corrected_tilting_angles = null;
-		phaseLorentzPolarization = null;
-		phaseBroadFactors = null;
-		phaseInstBroadFactors = null;
-		phaseShapeAbsFactors = null;
-		phaseStrainFactors = null;
-		phaseCrystallitesMicrostrains = null;
-		phaseMinMaxIndices = null;
-		phasePositions = null;
-		phaseTextureFactors = null;
+		phaseReflections = null;
 		super.finalize();
 	}
 
@@ -6518,3 +6204,4 @@ public class DiffrDataFile extends XRDcat {
   }
 
 }
+

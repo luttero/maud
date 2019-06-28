@@ -1367,7 +1367,7 @@ public class TexturePlot extends myJFrame {
 				DataFileSet dataset = asample.getActiveDataSet(i);
 	      for (int j = 0; j < dataset.activedatafilesnumber(); j++) {
 		      DiffrDataFile adatafile = dataset.getActiveDataFile(j);
-          angles = adatafile.getTextureAngles(adatafile.getPositions(aphase)[hklnumbersel][0][0]);
+          angles = adatafile.getTextureAngles(adatafile.getPosition(aphase, hklnumbersel, 0));  // todo: v3.0 for all radiations?
 
           datax[index] = angles[0] * Math.cos(angles[1] * Constants.DEGTOPI);
           datay[index] = angles[0] * Math.sin(angles[1] * Constants.DEGTOPI);

@@ -346,8 +346,8 @@ The PF's of peaks of the same family are imposed equals for all the lines.
             if (lebailfactor < 0.0001)
               lebailfactor = 0.0001;
             for (int ij = 0; ij < ndelta; ij++) {
-              double oldfactor = datafile.getExpTextureFactor(tpeaklist.elementAt(ij).getPhase(),
-		              tpeaklist.elementAt(ij))[0][0]; // todo we need the other points per pattern and radiation index
+              double oldfactor = datafile.getExperimentalTextureFactor(tpeaklist.elementAt(ij).getPhase(),
+		              tpeaklist.elementAt(ij).getOrderPosition(), 0); // todo: v3.0  we need the radiation index
               if (Double.isNaN(oldfactor))
                 oldfactor = 1.0;
               double newlebailfactor = lebailfactor * oldfactor;
@@ -361,17 +361,19 @@ The PF's of peaks of the same family are imposed equals for all the lines.
                 diff[n + ij] = Math.abs((newlebailfactor - oldfactor) / oldfactor);
               if (diff[n + ij] > getErrorMax())
                 convergence = false;
-              datafile.setExpTextureFactor(tpeaklist.elementAt(ij).getPhase(), tpeaklist.elementAt(ij), 0, newlebailfactor);
+              datafile.setExperimentalTextureFactor(tpeaklist.elementAt(ij).getPhase(),
+		              tpeaklist.elementAt(ij).getOrderPosition(), 0, newlebailfactor);
             }
           } else {
-            lebailfactor = datafile.getExpTextureFactor(fullpeaklist.elementAt(superOrder[n]).getPhase(),
-		            fullpeaklist.elementAt(superOrder[n]))[0][0];
+            lebailfactor = datafile.getExperimentalTextureFactor(fullpeaklist.elementAt(superOrder[n]).getPhase(),
+		            fullpeaklist.elementAt(superOrder[n]).getOrderPosition(), 0); // todo: v3.0  we need the radiation index
             if (Double.isNaN(lebailfactor))
               lebailfactor = 1.0;
             numberpeaktouse = 1;
             ndelta = 1;
             for (int k = 0; k < numberpeaktouse; k++)
-              datafile.setExpTextureFactor(tpeaklist.elementAt(k).getPhase(), tpeaklist.elementAt(k), 0, lebailfactor);
+              datafile.setExperimentalTextureFactor(tpeaklist.elementAt(k).getPhase(),
+		              tpeaklist.elementAt(k).getOrderPosition(), 0, lebailfactor);
           }
         }
         i += numberpeaktouse;

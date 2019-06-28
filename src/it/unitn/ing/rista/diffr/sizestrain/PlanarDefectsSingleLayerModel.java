@@ -55,7 +55,7 @@ public class PlanarDefectsSingleLayerModel extends PlanarDefects {
 
                                      "crystallite size increase normal to the stacking",
                                      "microstrain decrease normal to the stacking",
-		  "minimum dspace for disordering"
+		  "minimum energy for disordering"
   };
 
   // this model does not have subobjects, so the class list for subobjects is empty

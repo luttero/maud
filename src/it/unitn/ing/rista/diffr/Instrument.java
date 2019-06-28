@@ -565,62 +565,47 @@ public class Instrument extends XRDcat {
     return getInstrumentBroadening().identifier;
   }
 
-  public double[] PhaseAndLayerAbsorption(DiffrDataFile adatafile, Sample asample,
-                                        Phase aphase, double[] x) {
+	public double getAbsorptionCorrection(DiffrDataFile adatafile, Phase aphase, double position, int rad_index) {
+  	   return getGeometry().computeAbsorptionCorrection(adatafile, aphase, position, rad_index,
+		      getLambdaForTOF(adatafile, position));
+	}
 
-	  RadiationType rad = getRadiationType();
-    int phaseindex = asample.getPhase(aphase);
-    int radNumber = rad.getLinesCount();
-	  double[][] incidentDiffractionangles = new double[radNumber][4];
-    double[] correction = new double[radNumber]; //, sintheta = 1.0;
-    double[] tiltingAngles = adatafile.getTiltingAngle();
-    double omega = tiltingAngles[0];
-    for (int radi = 0; radi < radNumber; radi++) {
-	    tiltingAngles[0] = getMeasurement().getOmega(omega, x[radi]);
-//	    System.out.println(tiltingAngles[0]);
-	    double[] incidentDiffr = getGeometry().getIncidentAndDiffractionAngles(adatafile, tiltingAngles,
-			    asample.getSampleAngles(), x[radi]);
-	    for (int j = 0; j < 4; j++)
-		    incidentDiffractionangles[radi][j] = incidentDiffr[j];
-    }
-    DataFileSet adataset = adatafile.getDataFileSet();
-    int datasetIndex = adataset.getDataFileSetIndex();
-    for (int i = 0; i < asample.numberOfLayers; i++) {
-      double quantity = asample.phaseQuantity[i][phaseindex][datasetIndex];
-      if (quantity >= 0.0) {
-      	double[] absCorrection = getGeometry().getLayerAbsorption_new(asample, rad, i, incidentDiffractionangles, adataset);
-      	for (int a = 0; a < radNumber; a++)
-	         correction[a] += quantity * absCorrection[a];
-      }
-     }
-    return correction;
-  }
+	public double[] PhaseAndLayerAbsorption(DiffrDataFile adatafile, Sample asample,
+	                                        Phase aphase, double[] x) {
 
-/*	public double PhaseAndLayerAbsorption(DiffrDataFile adatafile, Sample asample, Phase aphase,
-	                                      double x, double[] energyInKeV) {
-
-		double correction = 0.0;
+		RadiationType rad = getRadiationType();
 		int phaseindex = asample.getPhase(aphase);
+		int radNumber = rad.getLinesCount();
+		double[][] incidentDiffractionangles = new double[radNumber][4];
+		double[] correction = new double[radNumber]; //, sintheta = 1.0;
 		double[] tiltingAngles = adatafile.getTiltingAngle();
-		tiltingAngles[0] = getMeasurement().getOmega(tiltingAngles[0], x);
-		double[] incidentDiffractionangles = getGeometry().getIncidentAndDiffractionAngles(adatafile, tiltingAngles,
-				asample.getSampleAngles(), x);
+		double omega = tiltingAngles[0];
+		for (int radi = 0; radi < radNumber; radi++) {
+			tiltingAngles[0] = getMeasurement().getOmega(omega, x[radi]);
+//	    System.out.println(tiltingAngles[0]);
+			double[] incidentDiffr = getGeometry().getIncidentAndDiffractionAngles(adatafile, tiltingAngles,
+					asample.getSampleAngles(), x[radi]);
+			for (int j = 0; j < 4; j++)
+				incidentDiffractionangles[radi][j] = incidentDiffr[j];
+		}
 		DataFileSet adataset = adatafile.getDataFileSet();
 		int datasetIndex = adataset.getDataFileSetIndex();
 		for (int i = 0; i < asample.numberOfLayers; i++) {
 			double quantity = asample.phaseQuantity[i][phaseindex][datasetIndex];
-			if (quantity >= 0.0)
-				correction += quantity * getGeometry().getLayerAbsorption_new(asample, energyInKeV,
-						i, incidentDiffractionangles, adataset);
+			if (quantity >= 0.0) {
+				double[] absCorrection = getGeometry().getLayerAbsorption_new(asample, rad, i, incidentDiffractionangles, adataset);
+				for (int a = 0; a < radNumber; a++)
+					correction[a] += quantity * absCorrection[a];
+			}
 		}
 		return correction;
-	}*/
+	}
 
 	public void computeShapeAbsorptionCorrection(DiffrDataFile adatafile, Sample asample,
-                                               double[][] position, boolean dspacingbase, boolean energyDispersive, double[][] intensity) {
+                                               double[] position, boolean dspacingbase, boolean energyDispersive, double[] intensity) {
     if (position != null && position.length > 0) // not reflectivity
       getGeometry().computeShapeAbsorptionCorrection(adatafile, asample, position, dspacingbase, energyDispersive, intensity,
-              getLambdaForTOF(adatafile, position[0][0]));
+              getLambdaForTOF(adatafile, position[0]));
   }
 
   public double getLambdaForTOF(DiffrDataFile adatafile, double position) {

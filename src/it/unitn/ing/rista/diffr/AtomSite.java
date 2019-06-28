@@ -1438,14 +1438,14 @@ public class AtomSite extends XRDcat {
 		  absorption = getSiteAbsorption(rad.getRadiationEnergy());*/
 	  for (int i = 0; i < getNumberOfScatterers(); i++)
 		  absorption += getAtomScatterer(i).getSiteAbsorption(rad);
-	  return absorption * getOccupancyValue();
+	  return getSiteMultiplicity() * absorption * getOccupancyValue();
   }
 
 	public double getSiteAbsorption(double energyInKeV) {
 		double absorption = 0;
 		for (int i = 0; i < getNumberOfScatterers(); i++)
 			absorption += getAtomScatterer(i).getSiteAbsorption(energyInKeV);
-		return absorption * getOccupancyValue();
+		return getSiteMultiplicity() * absorption * getOccupancyValue();
 	}
 
 	/**

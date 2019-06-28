@@ -140,15 +140,18 @@ public class StructureFactorPawleyMethod extends StructureFactorExtractor implem
       DataFileSet dataset = asample.getActiveDataSet(di);
       Vector<Peak> fullpeaklist = dataset.getPeakList();
       int numberofpeaks = dataset.getNumberofPeaks();
-		  double[][] structureFactors = dataset.getStructureFactors(phase);
+		  double[][][] structureFactors = dataset.getStructureFactors(phase);
       for (int np = 0; np < numberofpeaks; np++) {
         if (fullpeaklist.elementAt(np).getReflex().getParent() == phase) {
           Reflection reflex = fullpeaklist.elementAt(np).getReflex();
+          int nrefl = fullpeaklist.elementAt(np).getOrderPosition();
           double[] value = getIntensityForPeak(reflex.getH(), reflex.getK(), reflex.getL(),
-		          structureFactors[1][fullpeaklist.elementAt(np).getOrderPosition()]);
-          structureFactors[0][fullpeaklist.elementAt(np).getOrderPosition()] =  value[0];
-	        structureFactors[1][fullpeaklist.elementAt(np).getOrderPosition()] = value[0];
-	        structureFactors[2][fullpeaklist.elementAt(np).getOrderPosition()] = value[1];
+		          structureFactors[1][nrefl][0]);
+          for (int n = 0; n < structureFactors[0][nrefl].length; n++) {
+	          structureFactors[0][nrefl][n] = value[0];
+	          structureFactors[1][nrefl][n] = value[0];
+	          structureFactors[2][nrefl][n] = value[1];
+          }
         }
       }
     }
@@ -168,15 +171,17 @@ public class StructureFactorPawleyMethod extends StructureFactorExtractor implem
 	  int hklLocalNumber = parameterloopField[0].size();
 	  if (hklLocalNumber == 0) {
 		  Sample sample = aPhase.getSample();
-		  DataFileSet dataset = sample.getActiveDataSet(0);
-		  if (dataset != null && dataset.getStructureFactors(aPhase) != null)
-			  for (int i = 0; i < hklNumber; i++) {
-				  Reflection reflex = aPhase.getReflex(i);
-				  int h = reflex.getH();
-				  int k = reflex.getK();
-				  int l = reflex.getL();
-				  addReflectionAt(h, k, l, i, Math.abs(dataset.getStructureFactors(aPhase)[1][i]));  // todo not from only the first dataset
-			  }
+		  for (int di = 0; di < sample.activeDatasetsNumber(); di++) {
+			  DataFileSet dataset = sample.getActiveDataSet(di);  // todo: v3.0  what about different dataset (X-ray, neutrons)
+			  if (dataset != null && dataset.getStructureFactors(aPhase) != null)
+				  for (int i = 0; i < hklNumber; i++) {
+					  Reflection reflex = aPhase.getReflex(i);
+					  int h = reflex.getH();
+					  int k = reflex.getK();
+					  int l = reflex.getL();
+					  addReflectionAt(h, k, l, i, Math.abs(dataset.getStructureFactors(aPhase)[1][i][0]));
+				  }
+		  }
 	  } else {
 		  for (int i = 0; i < hklNumber; i++) {
 			  Reflection reflex = aPhase.getReflex(i);

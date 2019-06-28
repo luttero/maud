@@ -57,7 +57,7 @@ public class EDXRFInstrumentBroadening extends InstrumentBroadening {
   protected static final String[] classlistcs = {};
 
   public static double minimumHWHMvalue = MaudPreferences.getDouble(
-      "instrBroadening.minimumHWHMvalue", 0.0000001);
+      "instrBroadening_EDXRF.minimumHWHMvalue", 0.001);
 
 	public EDXRFInstrumentBroadening(XRDcat obj, String alabel) {
     super(obj, alabel);
@@ -218,26 +218,34 @@ public class EDXRFInstrumentBroadening extends InstrumentBroadening {
 		 if (numb > maxNumber)
 		 	maxNumber = numb;
 	 }
-    double broad[][] = new double[6][maxNumber];
+    double broad[][] = new double[maxNumber][6];
 
-	 for (int i = 0; i < parameterloopField.length; i++) {
-		 double[] par = getParameterLoopVector(i);
-		for (int j = 0; j < par.length; j++)
-			broad[i][j] = par[j];
+	  double[] par = getParameterLoopVector(0);
+	  broad[0][0] = 0.0;
+	  for (int i = 0; i < par.length; i++)
+		  broad[0][0] += par[i] * MoreMath.pow(x, i);
+	  if (broad[0][0] <= 0)
+		  broad[0][0] = minimumHWHMvalue;
+	  else
+		  broad[0][0] = Math.sqrt(broad[0][0]);
+
+	  par = getParameterLoopVector(1);
+	  broad[0][1] = 0.0;
+	  for (int i = 0; i < par.length; i++)
+		  broad[0][1] += par[i] * MoreMath.pow(x, i);
+	  if (broad[0][1] < 0.0)
+		  broad[0][1] = 0.0;
+	  if (broad[0][1] > 1.0)
+		  broad[0][1] = 1.0;
+
+	  for (int i = 2; i < parameterloopField.length; i++) {
+		 par = getParameterLoopVector(i);
+		 for (int j = 0; j < par.length; j++)
+			broad[j][i] = par[j];
 	 }
 
     return broad;
   }
-
-  /**
-   * Return the instrumental asymmetry for the convolution with the profile function.
-   * The method here is called by Instrument and should not be modify in general.
-   *
-   * @param x             the 2-theta or d-spacing (if the spectrum is in d-spacing) of the
-   *                      point for which the broadening should be computed.
-   * @param diffrDataFile the spectrum
-   * @return asymmetry parameter value
-   */
 
   public void computeAsymmetry(DiffrDataFile diffrDataFile, Sample asample, double[] afit, int min, int max) {
 

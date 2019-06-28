@@ -68,12 +68,14 @@ public class StructureFactorStandardModel extends StructureFactorModel {
 	  final double thermalS = phase.getThermalStrainCached();
 	  phase.refreshFhklcompv();
 	  int hkln = phase.gethklNumber();
-	  final double[] fhkl = new double[hkln];
+	  final int nlines = adataset.getInstrument().getRadiationType().getLinesCount();
+	  final double[][] fhkl = new double[hkln][nlines];
 	  final boolean useAnisotropicCrystallites =
 			  adataset.getInstrument().getRadiationType().useCrystallitesForDynamicalCorrection();
 	  if (phase.getNumberOfCustomPeaks() > 0) {
 		  for (int i = 0; i < hkln; i++)
-		    fhkl[i] = phase.getReflex(i).structureFactor;
+		  	 for (int n = 0; n < nlines; n++)
+		      fhkl[i][n] = phase.getReflex(i).structureFactor;
 	  } else {
 	  Instrument ainstrument = adataset.getInstrument();
 	  final Radiation rad1 = ainstrument.getRadiationType().getRadiation(0);
@@ -104,8 +106,8 @@ public class StructureFactorStandardModel extends StructureFactorModel {
 			constV = Constants.E_SCAT_FACTOR_PI * t_corr / k * Math.PI;
 /*		  if (Constants.testing && !phase.getFilePar().isOptimizing())
 		    System.out.println("U0: " + constV + " " + k + " " + K02 + " " + U0 + " " + t + " " + t_corr);*/
-		}
-		final double meanCrystallite_corr = phase.getMeanCrystallite() * thermalS + t;
+	  }
+	  final double meanCrystallite_corr = phase.getMeanCrystallite() * thermalS + t;
 
 	  final int maxThreads = Math.min(Constants.maxNumberOfThreads, hkln / 10);
 	  if ((hkln * atomList.size()) > 1000 && maxThreads > 1 && Constants.threadingGranularity >= Constants.MEDIUM_GRANULARITY) {
@@ -125,32 +127,34 @@ public class StructureFactorStandardModel extends StructureFactorModel {
 					  int i1 = this.getJobNumberStart();
 					  int i2 = this.getJobNumberEnd();
 
-					  double[] fhkl_t = new double[i2 - i1];
+					  double[][] fhkl_t = new double[i2 - i1][nlines];
 
 					  double[][][][] scatFactors = dataset.getScatteringFactor(phase);
 					  for (int j = i1; j < i2; j++) {
 						  Reflection refl = phase.getReflex(j);
-						  // todo, should be modified to compute scatfactors for each rad line
-						  double structureFactor = Fhklcomp(phase, refl, scatFactors[j + 1][0]);
-						  if (rad1.isDynamical()) {
-							  double crystCorr = 1.0;
-							  if (useAnisotropicCrystallites)
-								  crystCorr = (phase.getCrystallite(j) * thermalS + thickness) / thickness_corr;
-							  double Fhkl = Math.sqrt(structureFactor) / volumeCell;
-							  double A = Fhkl * volumeCorrection * crystCorr;
+						  for (int n = 0; n < nlines; n++) {
+							  double structureFactor = Fhklcomp(phase, refl, scatFactors[j + 1][n]);
+							  if (rad1.isDynamical()) {
+								  double crystCorr = 1.0;
+								  if (useAnisotropicCrystallites)
+									  crystCorr = (phase.getCrystallite(j) * thermalS + thickness) / thickness_corr;
+								  double Fhkl = Math.sqrt(structureFactor) / volumeCell;
+								  double A = Fhkl * volumeCorrection * crystCorr;
 //							  if (A > cuttingThreshold)
-							  double _intA = IntegratedBesselJ0.averageIntegralBesselUpTo(A);
-								structureFactor *= _intA / meanCrystallite_corr;
+								  double _intA = IntegratedBesselJ0.averageIntegralBesselUpTo(A);
+								  structureFactor *= _intA / meanCrystallite_corr;
 //							  else
 //								  structureFactor = 1.207107;
 //								structureFactor *= volumeCorrection / thickness_corr; // we eliminate the thickness
+							  }
+							  fhkl_t[j - i1][n] = structureFactor;
 						  }
-						  fhkl_t[j - i1] = structureFactor;
 					  }
 
 					  synchronized(phase) {
 						  for (int j = i1; j < i2; j++)
-							  fhkl[j] = fhkl_t[j - i1];
+							  for (int n = 0; n < nlines; n++)
+							   fhkl[j][n] = fhkl_t[j - i1][n];
 					  }
 				  }
 			  };
@@ -180,38 +184,22 @@ public class StructureFactorStandardModel extends StructureFactorModel {
 		  } while (running);
 
 	  } else {
-//		  boolean testingBfactors = false;
-//		  if (Constants.testing)
-//			  testingBfactors = MaudPreferences.getBoolean("testing.anisotropicBfactors", false);
 		  double[][][][] scatFactors = adataset.getScatteringFactor(phase);
 		  for (int i = 0; i < hkln; i++) {
 			  Reflection refl = phase.getReflex(i);
-			  // todo, should be modified to compute scatfactors for each rad line
-//			  if (!testingBfactors)
-			    structureFactor = Fhklcomp(phase, refl, scatFactors[i + 1][0]);
-//			  else
-//			    structureFactor = Fhklcomp(phase, refl.hlist, refl.klist, refl.llist, multiplicity, dspacing,
-//					    scatFactors[i + 1][0]);
-			  if (rad1.isDynamical()) {
-				  double crystCorrection = 1.0;
-				  if (useAnisotropicCrystallites)
-					  crystCorrection = (phase.getCrystallite(i) * thermalS + t) / t_corr;
-				  double Fhkl = Math.sqrt(structureFactor) / volume;
-				  double A = Fhkl * constV * crystCorrection;
-//				  if (A > cuttingThreshold)
-				  intA = IntegratedBesselJ0.averageIntegralBesselUpTo(A);
-					structureFactor *= intA / meanCrystallite_corr;
-//				  else
-//				    structureFactor *= 1.207107;
-/*				  if (useAnisotropicCrystallites)
-				    structureFactor *= constV / t_corr; // we eliminate the thickness;
-				  else
-					  structureFactor *= constV / t_corr;*/
-/*				  if (Constants.testing && !phase.getFilePar().isOptimizing())
-				    System.out.println(refl.getH() + " " + refl.getK() + " " + refl.getL() + " " + Fhkl + " " + A + ", IntA/A " + intA +
-				        " " + newCorrection + " " + structureFactor + " " + constV + " " + meanCrystallite + " " + t);*/
+			  for (int n = 0; n < nlines; n++) {
+				  structureFactor = Fhklcomp(phase, refl, scatFactors[i + 1][n]);
+				  if (rad1.isDynamical()) {
+					  double crystCorrection = 1.0;
+					  if (useAnisotropicCrystallites)
+						  crystCorrection = (phase.getCrystallite(i) * thermalS + t) / t_corr;
+					  double Fhkl = Math.sqrt(structureFactor) / volume;
+					  double A = Fhkl * constV * crystCorrection;
+					  intA = IntegratedBesselJ0.averageIntegralBesselUpTo(A);
+					  structureFactor *= intA / meanCrystallite_corr;
+				  }
+				  fhkl[i][n] = structureFactor;
 			  }
-			  fhkl[i] = structureFactor;
 		  }
 	  }
   }

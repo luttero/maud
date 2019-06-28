@@ -61,13 +61,18 @@ public class GeometryDebyeScherrer extends GeometryDiffractometer {
     return lp;
   }
 
-  public void computeShapeAbsorptionCorrection(DiffrDataFile adatafile, Sample asample, double[][] position,
-                                               boolean dspacingbase, boolean energyDispersive, double[][] intensity, double toLambda) {
+	public double computeShapeAbsorptionCorrection(Sample asample, RadiationType rad, int rad_index, double[] angles, double position,
+	                                               double toLambda) {
+		return asample.computeAbsorptionTroughPath(rad, rad_index, angles, position, toLambda);
+	}
+
+	public void computeShapeAbsorptionCorrection(DiffrDataFile adatafile, Sample asample, double[] position,
+                                               boolean dspacingbase, boolean energyDispersive, double[] intensity, double toLambda) {
 
     double[] sampleAngles = asample.getSampleAngles();
     double[] tilting_angles = adatafile.getTiltingAngle();
 
-    double[][][] angles = getIncidentAndDiffractionAngles(adatafile, tilting_angles, sampleAngles, position);
+    double[][] angles = getIncidentAndDiffractionAngles(adatafile, tilting_angles, sampleAngles, position);
 
     RadiationType rad = ((Instrument) getParent()).getRadiationType();
 

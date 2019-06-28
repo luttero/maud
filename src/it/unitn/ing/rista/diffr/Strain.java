@@ -163,11 +163,9 @@ public class Strain extends XRDcat {
 							int radCount = dataset.getInstrument().getRadiationType().getLinesCount();
 							for (int k = 0; k < dataset.activedatafilesnumber(); k++) {
 								DiffrDataFile datafile = dataset.getActiveDataFile(k);
-								for (int ppp = 0; ppp < datafile.positionsPerPattern; ppp++) {
-									for (int l = 0; l < radCount; l++) {
-										double pf = datafile.getStrains(aphase, j)[ppp][l];
-										if (!Double.isNaN(pf)) numberDataPoints++;
-									}
+								for (int l = 0; l < radCount; l++) {
+									double pf = datafile.getStrainFactor(aphase, j, l);
+									if (!Double.isNaN(pf)) numberDataPoints++;
 								}
 							}
 						}
@@ -181,10 +179,9 @@ public class Strain extends XRDcat {
 							int radCount = dataset.getInstrument().getRadiationType().getLinesCount();
 							for (int k = 0; k < dataset.activedatafilesnumber(); k++) {
 								DiffrDataFile datafile = dataset.getActiveDataFile(k);
-								for (int ppp = 0; ppp < datafile.positionsPerPattern; ppp++) {
 									for (int l = 0; l < radCount; l++) {
-										double pf = datafile.getStrains(aphase, j)[ppp][l];
-										double position = datafile.getPositions(aphase)[j][ppp][l];
+										double pf = datafile.getStrainFactor(aphase, j, l);
+										double position = datafile.getPosition(aphase, j, l);
 										if (!Double.isNaN(pf)) {
 											numberDataPoints++;
 											double[] angles = datafile.getTextureAngles(position);
@@ -198,7 +195,6 @@ public class Strain extends XRDcat {
 											PFwriter.write(Constants.lineSeparator);
 										}
 									}
-								}
 							}
 						}
 					}
