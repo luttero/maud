@@ -93,14 +93,16 @@ public class MCADatafile extends DiffrDataFile {
 			      } else if (line.startsWith("START_TIME")) {
 				      st = new StringTokenizer(line, " -\t\r\n");
 				      token = st.nextToken();
-				      String startingDate = st.nextToken();
-				      String startingTime = st.nextToken();
-				      StringTokenizer dt = new StringTokenizer(startingDate, "/");
-				      String month = dt.nextToken();
-				      String day = dt.nextToken();
-				      String year = dt.nextToken();
-				      setMeasurementDate(year + "-" + month + "-" + day);
-				      setMeasurementTime(startingTime);
+				      if (st.hasMoreTokens()) {
+					      String startingDate = st.nextToken();
+					      String startingTime = st.nextToken();
+					      StringTokenizer dt = new StringTokenizer(startingDate, "/");
+					      String month = dt.nextToken();
+					      String day = dt.nextToken();
+					      String year = dt.nextToken();
+					      setMeasurementDate(year + "-" + month + "-" + day);
+					      setMeasurementTime(startingTime);
+				      }
 			      }
 			      line = reader.readLine();
 		      }

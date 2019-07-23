@@ -417,18 +417,18 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 
 		switch (rotationInversion) {
 			case 2: // rotation 180 clockwise
-				ip.rotateRight();
+				ip = ip.rotateRight();
 //				System.out.println("Rotate right image!");
 			case 1: // rotation 90 clockwise
 //				System.out.println("Rotate right image!");
-				ip.rotateRight();
+				ip = ip.rotateRight();
 				break;
 			case 4: // rotation 180 anticlockwise
 //				System.out.println("Rotate left image!");
-				ip.rotateLeft();
+				ip = ip.rotateLeft();
 			case 3: // rotation 90 anticlockwise
 //				System.out.println("Rotate left image!");
-				ip.rotateLeft();
+				ip = ip.rotateLeft();
 				break;
 			case 7: // flip both
 //				System.out.println("Flip vertical image!");

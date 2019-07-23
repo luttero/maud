@@ -290,7 +290,17 @@ public class Sample extends Maincat {
     phaseRemovedAt(index);
   }
 
-  public void removePhase(Phase aphase) {
+	public void removeAllPhases() {
+		for (int i = getPhasesList().size() - 1; i >= 0; i--) {
+			Phase aphase = (Phase) getPhasesList().elementAt(i);
+				for (int j = 0; j < datasetsNumber(); j++)
+					getDataSet(j).removingPhase(aphase);
+				getPhasesList().removeItemAt(i);
+				phaseRemovedAt(i);
+			}
+	}
+
+	public void removePhase(Phase aphase) {
     for (int i = 0; i < getPhasesList().size(); i++)
       if (getPhasesList().elementAt(i) == aphase) {
 	      for (int j = 0; j < datasetsNumber(); j++)

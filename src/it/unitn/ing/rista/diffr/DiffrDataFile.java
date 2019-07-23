@@ -2693,8 +2693,12 @@ public class DiffrDataFile extends XRDcat {
     fit[index] = value;
   }
 
-  protected void setBkgFit(int index, double value) {
-    bkgfit[index] = value;
+  protected boolean setBkgFit(int index, double value) {
+	  if (index >= 0 && index < bkgfit.length) {
+		  bkgfit[index] = value;
+		  return true;
+	  }
+	  return false;
   }
 
   public boolean hasfit() {
@@ -2715,8 +2719,12 @@ public class DiffrDataFile extends XRDcat {
     addtoPhasesFit(index + startingindex, value);
   }
 
-  public void addtoBkgFit(int index, double value) {
-    bkgfit[index] += value;
+  public boolean addtoBkgFit(int index, double value) {
+  	if (index >= 0 && index < bkgfit.length) {
+	   bkgfit[index] += value;
+	   return true;
+   }
+  	return false;
   }
 
   public double[] getXrangeInEnergy() {
@@ -3209,11 +3217,12 @@ public class DiffrDataFile extends XRDcat {
       return 0;
 
     int i = 0;
+    int datan1 = datanumb - 1;
     if (increasingX()) {
-      while (i < datanumb && getXData(i) < min)
+      while (i < datan1 && getXData(i) < min)
 	      i++;
     } else {
-      while (i < datanumb && getXData(i) > max)
+      while (i < datan1 && getXData(i) > max)
 	      i++;
     }
 
@@ -3833,7 +3842,7 @@ public class DiffrDataFile extends XRDcat {
 	    }
 	    if (sampledPointsNumber <= 1)
 		    sampledPointsNumber = 2;
-      out.println("Points " + pointsToInterpolate + " " + sampledPointsNumber + " " + pointToSmooth);
+//      out.println("Points " + pointsToInterpolate + " " + sampledPointsNumber + " " + pointToSmooth);
 
       sampledPoints = new int[sampledPointsNumber];
 	    double[] sampledIntensity = new double[sampledPointsNumber];

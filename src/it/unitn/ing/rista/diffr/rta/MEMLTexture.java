@@ -261,7 +261,7 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 		try {
 			res = Double.parseDouble(stringField[5]);
 		} catch (Exception e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 		if (value != null && Double.parseDouble(value) != res) {
 			stringField[5] = value;

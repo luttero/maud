@@ -281,7 +281,7 @@ public class ImagesPanel extends JPanel {
 		LCLS2ConfigData.setPropertyValue("UnrolledImagesDatafile", LCLS2ConfigData.filenameToSave);
 		LCLS2ConfigData.filenameTemplate = filenameTemplateTF.getText();
 		LCLS2ConfigData.setPropertyValue("LCLSdefaultTemplate", LCLS2ConfigData.filenameTemplate);
-		data.useTempletaFile = !newFileParCB.isSelected();
+		data.useTemplateFile = !newFileParCB.isSelected();
 		data.sampleName = textSampleName.getText();
 		data.omega = Double.parseDouble(omegaTF.getText());
 		data.wavelength = ENERGY_LAMBDA / (Double.parseDouble(energyInKeVTF.getText()) * 1000);
