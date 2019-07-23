@@ -826,6 +826,7 @@ public class Layer extends XRDcat {
 			Phase aphase = getSample().getPhase(i);
 			absorption += aphase.getAbsorption(rad, index) * quantity[i];
 		}
+//    System.out.println("Absorption of " + toString() + ": " + absorption);
 		return absorption;
 	}
 

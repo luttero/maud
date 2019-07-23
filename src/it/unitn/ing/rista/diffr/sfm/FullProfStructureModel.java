@@ -152,7 +152,6 @@ public class FullProfStructureModel extends StructureFactorModel {
     Phase aphase = (Phase) getParent();
     Instrument ainstrument = adataset.getInstrument();
     int radCount = ainstrument.getRadiationType().getLinesCount();
-    Radiation rad1 = ainstrument.getRadiationType().getRadiation(0);
 //    aphase.Fhklcompv(rad1.getRadiationIDNumber(), rad1.tubeNumber, adataset.getIndex(), false);
 
     programName = MaudPreferences.getPref("fullprof.executable_name", programName);

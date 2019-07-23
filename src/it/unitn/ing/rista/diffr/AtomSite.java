@@ -1429,13 +1429,8 @@ public class AtomSite extends XRDcat {
    * @return the total absorption of this atom site.
    */
   public double getSiteAbsorption(RadiationType rad) {
+    // only neutron or electron
 	  double absorption = 0;
-/*	  if (rad.isNeutron())
-		  absorption = getSiteWeight() * rad.getRadiation(0).neutronAbs[getAtomicListNumber()];
-	  else if (rad.isElectron())
-		  absorption = getSiteWeight() * rad.getRadiation(0).electronAbs[getAtomicListNumber()];
-	  else
-		  absorption = getSiteAbsorption(rad.getRadiationEnergy());*/
 	  for (int i = 0; i < getNumberOfScatterers(); i++)
 		  absorption += getAtomScatterer(i).getSiteAbsorption(rad);
 	  return getSiteMultiplicity() * absorption * getOccupancyValue();
@@ -1607,6 +1602,19 @@ public class AtomSite extends XRDcat {
 		  for (int j = 0; j < fu.length; j++)
 			  fu[j] += addFu[j] * ato.getOccupancy();
 	  }
+    return fu;
+  }
+  
+  public double[] scatfactor(double dspacing, double energyInKeV) {
+    
+    double[] fu = new double[2]; // = localScatfactorNoDispersion(dspacing, rad);
+//	  double totalOccupancy = getOccupancyValue();
+    for (int i = 0; i < getNumberOfScatterers(); i++) {
+      AtomScatterer ato = getAtomScatterer(i);
+      double[] addFu = ato.scatfactor(dspacing, energyInKeV);
+      for (int j = 0; j < fu.length; j++)
+        fu[j] += addFu[j] * ato.getOccupancy();
+    }
     return fu;
   }
 

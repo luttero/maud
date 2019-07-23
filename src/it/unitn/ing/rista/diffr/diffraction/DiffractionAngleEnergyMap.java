@@ -127,7 +127,7 @@ public class DiffractionAngleEnergyMap extends Diffraction {
 //      System.out.println("refreshing derivative: " + this.toXRDcatString());
 			for (int ij = 0; ij < getFilePar().getActiveSample().phasesNumber(); ij++) {
 				double expfit[] = new double[datafile.getTotalNumberOfData()];
-				int minmaxindex[] = computeReflectionIntensity(asample, datafile.getDataFileSet().getPeakList(), true,
+				int minmaxindex[] = computeReflectionIntensity(asample, datafileset.getPeakList(), true,
 						expfit, Constants.ENTIRE_RANGE, Constants.COMPUTED,
 						Constants.COMPUTED, Constants.COMPUTED, false,
 						getFilePar().getActiveSample().getPhase(ij), datafile);
@@ -139,7 +139,7 @@ public class DiffractionAngleEnergyMap extends Diffraction {
 			for (int ij = 0; ij < getFilePar().getActiveSample().phasesNumber(); ij++) {
 //        System.out.println("Phase: " + getFilePar().getActiveSample().getPhase(ij).toXRDcatString());
 				double expfit[] = new double[datafile.getTotalNumberOfData()];
-				int minmaxindex[] = computeReflectionIntensity(asample, datafile.getDataFileSet().getPeakList(), true,
+				int minmaxindex[] = computeReflectionIntensity(asample, datafileset.getPeakList(), true,
 						expfit, Constants.ENTIRE_RANGE, Constants.COMPUTED,
 						Constants.COMPUTED, Constants.COMPUTED, false,
 						getFilePar().getActiveSample().getPhase(ij), datafile);
@@ -211,7 +211,7 @@ public class DiffractionAngleEnergyMap extends Diffraction {
 		minmaxindex[1] = datafile.startingindex;
 		arraycopy(minmaxindex, 0, tmpminmax, 0, 2);
 
-//    System.out.println(peaklist.length);  // todo
+//    System.out.println(peaklist.size());  // todo
 		for (int i = 0; i < peaklist.size(); i++) {
 			if (phase == null || peaklist.elementAt(i).getPhase() == phase) {
 				peaklist.elementAt(i).computePeak(datafile, expfit, asample, ainstrument, printStream, logOutput, cutoff,

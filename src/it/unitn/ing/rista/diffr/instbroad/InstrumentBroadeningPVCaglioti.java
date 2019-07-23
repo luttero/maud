@@ -52,6 +52,7 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
       "_riet_par_asymmetry_value", "_riet_par_caglioti_value", "_riet_par_gaussian_value",
       "_riet_par_broadening_omega", "_riet_par_broadening_chi",
       "_riet_par_broadening_eta", "_riet_par_broadening_cos_sin_eta",
+		  "_riet_par_broadening_cos_sin_eta_theta", "_riet_par_broadening_omega_theta",
 		  "_riet_par_broadening_texture", "_riet_par_asymmetry_exp"};
 
   protected static final String[] diclistcrm = {
@@ -63,6 +64,7 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
       "asymmetry coeff ", "caglioti coeff ", "gaussian coeff ",
       "omega broadening coeff ", "chi broadening coeff ",
       "eta broadening coeff ", "cos(eta)/sin(eta) broadening coeff ",
+		  "theta * cos(eta)/sin(eta) broadening coeff ", "sin(theta-omega) broadening coeff ",
 		  "texture broadening coeff ", "Exponent value of asymmetry function"};
 
   protected static final String[] classlistc = {};
@@ -97,7 +99,7 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
     Nstring = 5;
     Nstringloop = 0;
     Nparameter = 0;
-    Nparameterloop = 9;
+    Nparameterloop = 11;
     Nsubordinate = 0;
     Nsubordinateloop = 0;
   }
@@ -160,9 +162,9 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
     addparameterloopField(3, new Parameter(this, getParameterString(3, 0), 0.0,
         ParameterPreferences.getDouble(getParameterString(3, 0) + ".min", -1),
         ParameterPreferences.getDouble(getParameterString(3, 0) + ".max", 1)));
-    addparameterloopField(8, new Parameter(this, getParameterString(8, 0), 0.0,
-				ParameterPreferences.getDouble(getParameterString(8, 0) + ".min", -0.9),
-				ParameterPreferences.getDouble(getParameterString(8, 0) + ".max", 2.0)));
+    addparameterloopField(10, new Parameter(this, getParameterString(10, 0), 0.0,
+				ParameterPreferences.getDouble(getParameterString(10, 0) + ".min", -0.9),
+				ParameterPreferences.getDouble(getParameterString(10, 0) + ".max", 2.0)));
   }
 
   public void notifyParameterChanged(Parameter source) {
@@ -325,7 +327,7 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
     return (Parameter) getAsymmetryList().elementAt(index);
   }
 
-	public static final int asymmetryExpID = 8;
+	public static final int asymmetryExpID = 10;
 
 	public ListVector getAsymmetryExpList() {
 		return parameterloopField[asymmetryExpID];
@@ -391,7 +393,28 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
 		return (Parameter) getBroadeningCosEtaList().elementAt(index);
 	}
 
-	public static final int broadeningTextureID = 7;
+
+	public static final int broadeningThetaSinEtaID = 7;
+
+	public ListVector getBroadeningThetaSinEtaList() {
+		return parameterloopField[broadeningThetaSinEtaID];
+	}
+
+	public Parameter getBroadeningThetaSinEta(int index) {
+		return (Parameter) getBroadeningThetaSinEtaList().elementAt(index);
+	}
+
+	public static final int broadeningSinThetaOmegaID = 8;
+
+	public ListVector getBroadeningSinThetaOmegaList() {
+		return parameterloopField[broadeningSinThetaOmegaID];
+	}
+
+	public Parameter getBroadeningSinThetaOmega(int index) {
+		return (Parameter) getBroadeningSinThetaOmegaList().elementAt(index);
+	}
+
+	public static final int broadeningTextureID = 9;
 
   boolean asymmetryTanDep = true;
   boolean cagliotiTanDep = false;
@@ -413,6 +436,10 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
   int broadeningEtaN = 0;
 	double broadeningCosEta[] = null;
 	int broadeningCosEtaN = 0;
+	double broadeningThetaSinEta[] = null;
+	int broadeningThetaSinEtaN = 0;
+	double broadeningSinThetaOmega[] = null;
+	int broadeningSinThetaOmegaN = 0;
   double truncationAngle = 0.4;
 
   public void updateStringtoDoubleBuffering(boolean firstLoading) {
@@ -454,6 +481,10 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
     broadeningEtaN = numberOfLoopParameters[broadeningEtaID];
 	  broadeningCosEta = getParameterLoopVector(broadeningCosEtaID);
 	  broadeningCosEtaN = numberOfLoopParameters[broadeningCosEtaID];
+	  broadeningThetaSinEta = getParameterLoopVector(broadeningThetaSinEtaID);
+	  broadeningThetaSinEtaN = numberOfLoopParameters[broadeningThetaSinEtaID];
+	  broadeningSinThetaOmega = getParameterLoopVector(broadeningSinThetaOmegaID);
+	  broadeningSinThetaOmegaN = numberOfLoopParameters[broadeningSinThetaOmegaID];
   }
 
 /*  private void checkCagliotiFirstParameter() {
@@ -597,7 +628,29 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
 
 	  }
 
-    if (broad[0][0] < minimumHWHMvalue || Double.isNaN(broad[0][0]))
+		if (broadeningThetaSinEtaN > 0) {
+			double cosx = 1.0;
+			if (!diffrDataFile.dspacingbase)
+				cosx += Math.abs(Math.cos(x * Constants.DEGTOPI));
+			double tane = 2.0 * tilting_angles[3] * Constants.DEGTOPI;
+			for (int i = 0; i <broadeningThetaSinEtaN; i++) {
+				broad[0][0] += broadeningThetaSinEta[i] * Math.cos((i + 1) * tane) * cosx;
+			}
+
+		}
+
+		if (broadeningSinThetaOmegaN > 2) {
+			domega = Math.abs(domega + broadeningSinThetaOmega[0]) * Constants.DEGTOPI;
+			double cosx = 1.0;
+			if (!diffrDataFile.dspacingbase)
+				cosx = 1.0 + broadeningSinThetaOmega[1] * Math.abs(Math.cos(x * Constants.DEGTOPI));
+			for (int i = 2; i < broadeningSinThetaOmegaN; i++) {
+				broad[0][0] += broadeningSinThetaOmega[i] * Math.sin(i * domega) * cosx;
+			}
+
+		}
+
+		if (broad[0][0] < minimumHWHMvalue || Double.isNaN(broad[0][0]))
       broad[0][0] = minimumHWHMvalue;
 
     return broad;
@@ -799,6 +852,8 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
     JParameterListPane EtaPanel;
 	  JParameterListPane CosEtaPanel;
 	  JParameterListPane TexturePanel;
+	  JParameterListPane ThetaSinEtaPanel;
+	  JParameterListPane SinThetaOmegaPanel;
     JCheckBox asymmetryTanDepCB;
 	  JCheckBox asymmetryReciprocalCB;
     JCheckBox cagliotiTanDepCB;
@@ -820,7 +875,10 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
           "Chi broad.",
           "Eta broad.",
 		      "Cos/Sin(Eta) broad.",
-          "Texture broad.", "Asy. Exponent"};
+		      "Theta*sin(Eta) broad.",
+		      "Sin(theta-Omega) broad.",
+          "Texture broad.",
+		      "Asy. Exponent"};
       principalPanel.add(BorderLayout.CENTER, aberrationPanel);
       aberrationPanel.add(BorderLayout.CENTER, tabPanel1);
 
@@ -870,8 +928,14 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
 	    CosEtaPanel = new JParameterListPane(this, false, true);
 	    tabPanel1.addTab(tempString[6], null, CosEtaPanel);
 
+	    ThetaSinEtaPanel = new JParameterListPane(this, false, true);
+	    tabPanel1.addTab(tempString[7], null, ThetaSinEtaPanel);
+
+	    SinThetaOmegaPanel = new JParameterListPane(this, false, true);
+	    tabPanel1.addTab(tempString[8], null, SinThetaOmegaPanel);
+
 	    TexturePanel = new JParameterListPane(this, false, true);
-	    tabPanel1.addTab(tempString[7], null, TexturePanel);
+	    tabPanel1.addTab(tempString[9], null, TexturePanel);
 
 	    AsymmetryExpPanel = new JParameterListPane(this, false, true);
 	    tabPanel1.addTab(tempString[asymmetryExpID], null, AsymmetryExpPanel);
@@ -914,7 +978,9 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
       ChiPanel.setList(InstrumentBroadeningPVCaglioti.this, 4);
       EtaPanel.setList(InstrumentBroadeningPVCaglioti.this, 5);
 	    CosEtaPanel.setList(InstrumentBroadeningPVCaglioti.this, 6);
-	    TexturePanel.setList(InstrumentBroadeningPVCaglioti.this, 7);
+	    ThetaSinEtaPanel.setList(InstrumentBroadeningPVCaglioti.this, 7);
+	    SinThetaOmegaPanel.setList(InstrumentBroadeningPVCaglioti.this, 8);
+	    TexturePanel.setList(InstrumentBroadeningPVCaglioti.this, 9);
       truncationTF.setText(getTruncationAngleString());
     }
 
@@ -929,6 +995,8 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
       ChiPanel.retrieveparlist();
 	    EtaPanel.retrieveparlist();
 	    CosEtaPanel.retrieveparlist();
+	    ThetaSinEtaPanel.retrieveparlist();
+	    SinThetaOmegaPanel.retrieveparlist();
 	    TexturePanel.retrieveparlist();
 
       setTruncationAngle(truncationTF.getText());
@@ -947,6 +1015,8 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
       ChiPanel.dispose();
       EtaPanel.dispose();
 	    CosEtaPanel.dispose();
+	    ThetaSinEtaPanel.dispose();
+	    SinThetaOmegaPanel.dispose();
 	    TexturePanel.dispose();
 
       super.dispose();

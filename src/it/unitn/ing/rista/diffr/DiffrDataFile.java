@@ -2463,8 +2463,12 @@ public class DiffrDataFile extends XRDcat {
     addtoPhasesFit(index + startingindex, value);
   }
 
-  public void addtoBkgFit(int index, double value) {
-    bkgfit[index] += value;
+  public boolean addtoBkgFit(int index, double value) {
+    if (index >= 0 && index < bkgfit.length) {
+      bkgfit[index] += value;
+      return true;
+    }
+    return false;
   }
 
   public double[] getXrangeInEnergy() {
@@ -2957,11 +2961,12 @@ public class DiffrDataFile extends XRDcat {
       return 0;
 
     int i = 0;
+    int datan1 = datanumb - 1;
     if (increasingX()) {
-      while (i < datanumb && getXData(i) < min)
+      while (i < datan1 && getXData(i) < min)
 	      i++;
     } else {
-      while (i < datanumb && getXData(i) > max)
+      while (i < datan1 && getXData(i) > max)
 	      i++;
     }
 
@@ -3372,6 +3377,11 @@ public class DiffrDataFile extends XRDcat {
 		int numberRad = rad.getLinesCount();
 		for (int i = 0; i < numberRad; i++) {
 			x = getPositionFromDspace(dspace, i);
+			if (energyDispersive) {
+			  double angle = get2ThetaValue();
+			  if (angle * 1.2 > x && angle * 0.8 < x) // todo: use cutoff
+			    return true;
+      }
 //		System.out.println(incrX + " " + x + " " + startingX + " " + finalX);
 			if ((incrX && (x >= startingX && x <= finalX)) ||
 					(!incrX && (x <= startingX && x >= finalX))) {
@@ -3596,7 +3606,7 @@ public class DiffrDataFile extends XRDcat {
 	    }
 	    if (sampledPointsNumber <= 1)
 		    sampledPointsNumber = 2;
-      out.println("Points " + pointsToInterpolate + " " + sampledPointsNumber + " " + pointToSmooth);
+//      out.println("Points " + pointsToInterpolate + " " + sampledPointsNumber + " " + pointToSmooth);
 
       sampledPoints = new int[sampledPointsNumber];
 	    double[] sampledIntensity = new double[sampledPointsNumber];
@@ -4877,13 +4887,13 @@ public class DiffrDataFile extends XRDcat {
 		if (dspacingbase) {
 			position = d_space;
 		} else {
-			double wavelength = getDataFileSet().getInstrument().getRadiationType().getRadiationWavelength(radIndex + baseRadiationNumber);
-			double ratioposition = wavelength / (2.0 * d_space);
-			position = 180.0;
-			if (ratioposition < 1.0)
-				position = PI_TO_2DEG * Math.asin(ratioposition);
-
-		}
+      double wavelength = getDataFileSet().getInstrument().getRadiationType().getRadiationWavelength(radIndex + baseRadiationNumber);
+      double ratioposition = wavelength / (2.0 * d_space);
+      position = 180.0;
+      if (ratioposition < 1.0)
+        position = PI_TO_2DEG * Math.asin(ratioposition);
+      
+    }
 		return position;
 	}
 

@@ -238,8 +238,11 @@ public class XrayEbelTubeRadiation extends RadiationType {
 	public Radiation getRadiation(int index) {
 		if (subordinateloopField[0].size() > index && index >= 0)
 			return (Radiation) subordinateloopField[0].elementAt(index);
-		else
-			return null;
+		else {
+		  System.out.println("This should not happen, index of radiation: " + index + " (max number of radiations: " +
+          subordinateloopField[0].size() + ")");
+      return null;
+    }
 	}
 
 	public double getRadiationWavelength(int index) {

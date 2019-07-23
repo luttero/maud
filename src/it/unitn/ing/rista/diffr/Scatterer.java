@@ -58,8 +58,8 @@ public class Scatterer extends XRDcat {
 	 * @param rad the Radiation kind for which the absorption must be computed.
 	 * @return the total absorption of this scatterer.
 	 */
-	public double getSiteAbsorption(RadiationType rad) {
+/*	public double getSiteAbsorption(RadiationType rad) {
 		return 0;
-	}
+	}*/
 
 }

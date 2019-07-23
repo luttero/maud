@@ -266,7 +266,7 @@ public class AtomScatterer extends Scatterer {
 		else if (rad.isElectron())
 			return getSiteWeight() * rad.getRadiation(0).electronAbs[getAtomicListNumber()];
 		else
-			return getSiteAbsorption(rad.getRadiationEnergy());
+			return 0.0;
 	}
 
 	public double getSiteAbsorption(double energyInKeV) {
@@ -333,24 +333,29 @@ public class AtomScatterer extends Scatterer {
 			// neutron radiation
 			fu[0] = Radiation.neutronSF[getIsotopicListNumber()];
 			fu[1] = 0;
-		} else {
-			// x-ray radiation
-			int atomNumber = getAtomicNumber();
-			fu = XRayDataSqLite.getF1F2FromHenkeForAtomAndEnergy(atomNumber, 12.398424 / rad.getWavelengthValue());
-			fu[0] -= atomNumber;
-			fu[0] += Radiation.xraySF[atomicListNumber][8];
-			if (dspacing == 0)
-				for (int j = 0; j < 4; j++)
-					fu[0] += Radiation.xraySF[atomicListNumber][j];
-			else
-				for (int j = 0; j < 4; j++)
-					fu[0] += Radiation.xraySF[atomicListNumber][j] * Math.exp(-Radiation.xraySF[atomicListNumber][j + 4] /
-							(4 * dspacing * dspacing));
 		}
 		return fu;
 	}
-
-	/**
+  
+  public double[] scatfactor(double dspacing, double energyInKeV) {
+    
+    int atomicListNumber = getAtomicListNumber();
+      // x-ray radiation
+      int atomNumber = getAtomicNumber();
+    double[] fu = XRayDataSqLite.getF1F2FromHenkeForAtomAndEnergy(atomNumber, energyInKeV);
+      fu[0] -= atomNumber;
+      fu[0] += Radiation.xraySF[atomicListNumber][8];
+      if (dspacing == 0)
+        for (int j = 0; j < 4; j++)
+          fu[0] += Radiation.xraySF[atomicListNumber][j];
+      else
+        for (int j = 0; j < 4; j++)
+          fu[0] += Radiation.xraySF[atomicListNumber][j] * Math.exp(-Radiation.xraySF[atomicListNumber][j + 4] /
+              (4 * dspacing * dspacing));
+    return fu;
+  }
+  
+  /**
 	 * Gets the X-ray scattering factor at zero deg or the number of electrons of this atom
 	 * equal to: atomNumber - oxidation number
 	 *

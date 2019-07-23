@@ -1216,26 +1216,45 @@ public class DataFileSet extends XRDcat {
 			phaseScatFactors.put(phase, scatFactors);
 		}
 		double[] fu = new double[2];
-//		boolean isXray = !rad1.isElectron() && !rad1.isNeutron();
-		for (int j = 0; j < linesCount; j++) {
-			Radiation rad1 = getInstrument().getRadiationType().getRadiation(j);
-//			double lambda = getInstrument().getRadiationType().getRadiationWavelength(j);
-//			double energyInKeV = Constants.ENERGY_LAMBDA / lambda * 0.001;
-			fu[0] = 0;
-			fu[1] = 0;
-			for (int ato = 0; ato < atomsNumber; ato++) {
-				AtomSite atom = atoms.elementAt(ato);
-				double[] scatteringFactors = atom.scatfactor(0, rad1);
-				scatFactors[0][j][ato][0] = scatteringFactors[0] + fu[0];
-				scatFactors[0][j][ato][1] = fu[1];
-				for (int kj = 1; kj < numberofpeaks; kj++) {
-					Reflection refl = phase.getReflex(kj - 1);
-					scatteringFactors = atom.scatfactor(refl.d_space, rad1);
-					scatFactors[kj][j][ato][0] = scatteringFactors[0] + fu[0];
-					scatFactors[kj][j][ato][1] = fu[1];
-				}
-			}
-		}
+		boolean isXray = !getInstrument().getRadiationType().isElectron() &&
+        !getInstrument().getRadiationType().isNeutron();
+		if (isXray) {
+      for (int j = 0; j < linesCount; j++) {
+			  double energyInKeV = getInstrument().getRadiationType().getRadiationEnergy(j);
+        fu[0] = 0;
+        fu[1] = 0;
+        for (int ato = 0; ato < atomsNumber; ato++) {
+          AtomSite atom = atoms.elementAt(ato);
+          double[] scatteringFactors = atom.scatfactor(0, energyInKeV);
+          scatFactors[0][j][ato][0] = scatteringFactors[0] + fu[0];
+          scatFactors[0][j][ato][1] = fu[1];
+          for (int kj = 1; kj < numberofpeaks; kj++) {
+            Reflection refl = phase.getReflex(kj - 1);
+            scatteringFactors = atom.scatfactor(refl.d_space, energyInKeV);
+            scatFactors[kj][j][ato][0] = scatteringFactors[0] + fu[0];
+            scatFactors[kj][j][ato][1] = fu[1];
+          }
+        }
+      }
+    } else {
+      for (int j = 0; j < linesCount; j++) {
+        Radiation rad1 = getInstrument().getRadiationType().getRadiation(j);
+        fu[0] = 0;
+        fu[1] = 0;
+        for (int ato = 0; ato < atomsNumber; ato++) {
+          AtomSite atom = atoms.elementAt(ato);
+          double[] scatteringFactors = atom.scatfactor(0, rad1);
+          scatFactors[0][j][ato][0] = scatteringFactors[0] + fu[0];
+          scatFactors[0][j][ato][1] = fu[1];
+          for (int kj = 1; kj < numberofpeaks; kj++) {
+            Reflection refl = phase.getReflex(kj - 1);
+            scatteringFactors = atom.scatfactor(refl.d_space, rad1);
+            scatFactors[kj][j][ato][0] = scatteringFactors[0] + fu[0];
+            scatFactors[kj][j][ato][1] = fu[1];
+          }
+        }
+      }
+    }
 	}
 
 	public double[][][][] getScatteringFactor(Phase phase) {
@@ -3292,7 +3311,9 @@ public class DataFileSet extends XRDcat {
 					  datafiletmp.energyDispersive, wavelength, radweight, refl, i);
 			  hklpeak.setIntensity(Rhkl);
 			  thepeaklist.addElement(hklpeak);
-		  }
+		  } else {
+//		    System.out.println("Reflection not valid, reason: " + refl.d_space);
+      }
 	  }
   }
 
