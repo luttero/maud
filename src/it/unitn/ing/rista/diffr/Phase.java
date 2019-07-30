@@ -822,7 +822,9 @@ public class Phase extends XRDcat {
     }
 
     if (isImportingFromCIF && (index == mineralNameID || index == systematicNameID || index == 0)) {
-    	if (!getString(index).replaceAll(" ", "").isEmpty())
+    	String curatedName = getString(index).replaceAll(" ", "");
+    	if (!curatedName.isEmpty() && !curatedName.equalsIgnoreCase("unknown") &&
+		      !curatedName.equalsIgnoreCase("?"))
 	    setLabel(getString(index));
     }
 

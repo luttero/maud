@@ -112,7 +112,7 @@ public class HIPPOWizard extends Wizard {
   }
 
   public static void setupTheAnalysis(FilePar analysis, HIPPOdata data) {
-	  int max_nbkg = MaudPreferences.getInteger("hippoWizard.background_parameters_to_add", 2);
+//	  int max_nbkg = MaudPreferences.getInteger("hippoWizard.background_parameters_to_add", 2);
 	  analysis.removesample();
     analysis.loadingFile = true;
     Sample asample;
@@ -308,9 +308,9 @@ public class HIPPOWizard extends Wizard {
 					            adatafile[ij].setAngleValue(0, Double.parseDouble(adatafile[ij].getString(1)) +
 							            ((HIPPODataFile) data.dataFiles.get(k)).omegaAngle +
 							            data.omegaOffset);
-					            for (int nbkg = 0; nbkg < max_nbkg; nbkg++) {
+					            for (int nbkg = 0; nbkg < numberIndividualBackground; nbkg++) {
 						            adatafile[ij].addBackgroundParameter();
-						            adatafile[ij].addBackgroundParameter();
+//						            adatafile[ij].addBackgroundParameter();
 					            }
 //					            System.out.println(adatafile[ij].toString() + " " + adatafile[ij].getBankID());
 				            }

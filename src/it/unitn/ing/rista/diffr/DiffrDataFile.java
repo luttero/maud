@@ -959,7 +959,34 @@ public class DiffrDataFile extends XRDcat {
         -0.1, 0.1, false, 0.01));
   }
 
-  @Override
+/*	public void notifyParameterChanged(Parameter source) {
+		FilePar filepar = getFilePar();
+		if ((filepar != null && !filepar.isLoadingFile()) && isAbilitatetoRefresh) {
+			for (int j = 0; j < numberofelementPL(0); j++) {
+				Parameter apar = (Parameter) parameterloopField[0].elementAt(j);
+				if (apar == source) {
+					notifyParameterChanged(source, Constants.BKG_PARAMETER_CHANGED);
+					return;
+				}
+			}
+			for (int i = 1; i < Nparameterloop; i++) {
+				for (int j = 0; j < numberofelementPL(i); j++) {
+					Parameter apar = (Parameter) parameterloopField[i].elementAt(j);
+					if (apar == source) {
+						notifyParameterChanged(source, Constants.PARAMETER_CHANGED);
+						return;
+					}
+				}
+			}
+			if (getAsBackgroundPermission() && parameterField[0] == source) {
+				notifyParameterChanged(source, Constants.BKG_FILE_CHANGED);
+				return;
+			}
+			super.notifyParameterChanged(source);
+		}
+	}*/
+
+@Override
   public void notifyParameterChanged(Parameter source) {
     FilePar filepar = getFilePar();
     if ((filepar != null && !filepar.isLoadingFile()) && isAbilitatetoRefresh) {
@@ -967,10 +994,12 @@ public class DiffrDataFile extends XRDcat {
         for (int j = 0; j < numberofelementPL(i); j++) {
           Parameter apar = (Parameter) parameterloopField[i].elementAt(j);
           if (apar == source) {
-            if (i == 0 || i == 2) {
+            if (i == 0) {
               notifyParameterChanged(source, Constants.BKG_PARAMETER_CHANGED);
-              notifyParameterChanged(source, Constants.BKG_FILE_CHANGED);
               return;
+            } else if (i == 2) {
+	            notifyParameterChanged(source, Constants.BKG_FILE_CHANGED);
+	            return;
             } else {
               notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED);
 	            notifyParameterChanged(source, Constants.ANGULAR_CALIBRATION);
@@ -3172,7 +3201,7 @@ public class DiffrDataFile extends XRDcat {
   public void setMinMaxIndices(int min, int max) {
     startingindex = min;
     finalindex = max;
-//	System.out.println("Starting range " + min);
+//	System.out.println("Setting range " + min + " " + max);
     startingX = getXData(startingindex);
 //	System.out.println("Final range " + max);
     finalX = getXData(finalindex - 1);

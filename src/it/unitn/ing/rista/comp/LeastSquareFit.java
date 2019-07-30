@@ -63,7 +63,7 @@ public class LeastSquareFit extends OptimizationAlgorithm {
   int niter = 0;
   int ipflg = 0;
   int brkflg = 0;
-  double derstep = 0.001;
+  double derstep = 0.0001;
   boolean doubleder = false;
   double prcsn = 0.00000001;
   int n0 = 0;
@@ -72,6 +72,7 @@ public class LeastSquareFit extends OptimizationAlgorithm {
   double g[] = null;
   int[] choleskyFlag = null;
 	double lambdaStart = 0.01;
+	boolean threading = true;
 
   public boolean simplifyForm = false;
 
@@ -118,8 +119,8 @@ public class LeastSquareFit extends OptimizationAlgorithm {
   public void initParameters() {
     super.initParameters();
     stringField[0] = MaudPreferences.getPref(iterations, "3");
-    stringField[2] = MaudPreferences.getPref("leastSquares.derivateStep", "0.001");
-    stringField[4] = MaudPreferences.getPref("leastSquares.doubleDerivate", "false");
+    stringField[2] = MaudPreferences.getPref("leastSquares.derivativeStep", "0.0001");
+    stringField[4] = MaudPreferences.getPref("leastSquares.doubleDerivative", "false");
     stringField[1] = MaudPreferences.getPref("leastSquares.precision", "0.00000001");
 	  stringField[3] = MaudPreferences.getPref("leastSquares.lambda", "0.01");
   }
@@ -392,149 +393,7 @@ public class LeastSquareFit extends OptimizationAlgorithm {
         grad[i] = 0.0;
 
       if (newModel) {
-/*
-        for (int i1 = 0; i1 < fitVector.size(); i1++) {
-          SpectrumFitContainer spectrum = (SpectrumFitContainer) fitVector.elementAt(i1);
-          for (int i2 = 0; i2 < spectrum.dataNumber; i2++) {
-            double fmm = (spectrum.fit[i2] - spectrum.dta[i2]) * spectrum.wgt2[i2];
-            for (int sp = 0; sp < nprm; sp++) {
-              double[] derivr = spectrum.getDerivate(sp);
-              if (derivr.length > 0) {
-                grad[sp] += derivr[i2] * fmm;
-                int l = (sp + 1) * sp / 2;
-                for (int kcs = 0; kcs <= sp; kcs++) {
-                  double[] derivs = spectrum.getDerivate(kcs);
-                  if (derivs.length > 0)
-                    am[l + kcs] += derivr[i2] * derivs[i2] * spectrum.wgt2[i2];
-                }
-              }
-            }
-          }
-        }*/
-	      final int maxThreads = Constants.maxNumberOfThreads; // Math.min(Constants.maxNumberOfThreads, fitVector.size());
-	      if (maxThreads > 1 && Constants.threadingGranularity >= Constants.MEDIUM_GRANULARITY) {
-		      if (Constants.debugThreads)
-			      System.out.println("Thread datafileset " + getLabel());
-		      int i;
-		      final double[][] gradf = new double[maxThreads][nprm];
-		      final double[][] amf = new double[maxThreads][mdi];
-		      PersistentThread[] threads = new PersistentThread[maxThreads];
-
-		      if (maxThreads >= fitVector.size()) {
-			      for (i = 0; i < maxThreads; i++) {
-				      final int nprmf = nprm;
-				      final Vector fitVectorf = fitVector;
-				      threads[i] = new PersistentThread(i) {
-					      @Override
-					      public void executeJob() {
-						      int istart = this.getJobNumberStart();
-						      int iend = this.getJobNumberEnd();
-
-						      for (int j = istart; j < iend; j++) {
-							      SpectrumFitContainer spectrum = (SpectrumFitContainer) fitVectorf.elementAt(j);
-							      for (int i2 = 0; i2 < spectrum.dataNumber; i2++) {
-								      double fmm = (spectrum.fit[i2] - spectrum.dta[i2]) * spectrum.wgt2[i2];
-								      for (int sp = 0; sp < nprmf; sp++) {
-									      double[] derivr = spectrum.getDerivate(sp);
-									      if (derivr.length > 0) {
-										      gradf[this.threadNumber][sp] += derivr[i2] * fmm;
-										      int l = (sp + 1) * sp / 2;
-										      for (int kcs = 0; kcs <= sp; kcs++) {
-											      double[] derivs = spectrum.getDerivate(kcs);
-											      if (derivs.length > 0)
-												      amf[this.threadNumber][l + kcs] += derivr[i2] * derivs[i2] * spectrum.wgt2[i2];
-										      }
-									      }
-								      }
-							      }
-						      }
-					      }
-				      };
-			      }
-			      i = 0;
-			      int istep = (int) (0.9999 + fitVector.size() / maxThreads);
-			      for (int j = 0; j < maxThreads; j++) {
-				      int is = i;
-				      if (j < maxThreads - 1)
-					      i = Math.min(i + istep, fitVector.size());
-				      else
-					      i = fitVector.size();
-				      threads[j].setJobRange(is, i);
-				      threads[j].start();
-			      }
-		      } else {
-			      int maxDataNumber = 0;
-			      for (int i1 = 0; i1 < fitVector.size(); i1++) {
-				      SpectrumFitContainer spectrum = (SpectrumFitContainer) fitVector.elementAt(i1);
-				      int dataNumber1 = spectrum.dataNumber;
-				      if (maxDataNumber < dataNumber1)
-					      maxDataNumber = dataNumber1;
-			      }
-			      for (i = 0; i < maxThreads; i++) {
-				      final int nprmf = nprm;
-				      final Vector fitVectorf = fitVector;
-				      threads[i] = new PersistentThread(i) {
-					      @Override
-					      public void executeJob() {
-						      int istart = this.getJobNumberStart();
-						      int iend = this.getJobNumberEnd();
-
-						      for (int j = 0; j < fitVectorf.size(); j++) {
-							      SpectrumFitContainer spectrum = (SpectrumFitContainer) fitVectorf.elementAt(j);
-							      if (istart < spectrum.dataNumber) {
-								      int iendn = Math.min(iend, spectrum.dataNumber);
-								      for (int i2 = istart; i2 < iendn; i2++) {
-									      double fmm = (spectrum.fit[i2] - spectrum.dta[i2]) * spectrum.wgt2[i2];
-									      for (int sp = 0; sp < nprmf; sp++) {
-										      double[] derivr = spectrum.getDerivate(sp);
-										      if (derivr.length > 0) {
-											      gradf[this.threadNumber][sp] += derivr[i2] * fmm;
-											      int l = (sp + 1) * sp / 2;
-											      for (int kcs = 0; kcs <= sp; kcs++) {
-												      double[] derivs = spectrum.getDerivate(kcs);
-												      if (derivs.length > 0)
-													      amf[this.threadNumber][l + kcs] += derivr[i2] * derivs[i2] * spectrum.wgt2[i2];
-											      }
-										      }
-									      }
-								      }
-							      }
-						      }
-					      }
-				      };
-			      }
-			      i = 0;
-			      int istep = (int) (0.9999 + maxDataNumber / maxThreads);
-			      for (int j = 0; j < maxThreads; j++) {
-				      int is = i;
-				      if (j < maxThreads - 1)
-					      i = Math.min(i + istep, maxDataNumber);
-				      else
-					      i = maxDataNumber;
-				      threads[j].setJobRange(is, i);
-				      threads[j].start();
-			      }
-		      }
-
-		      boolean running;
-		      do {
-			      running = false;
-			      try {
-				      Thread.sleep(Constants.timeToWaitThreadsEnding);
-			      } catch (InterruptedException r) {
-			      }
-			      for (int h = 0; h < maxThreads; h++) {
-				      if (!threads[h].isEnded())
-					      running = true;
-			      }
-		      } while (running);
-		      for (i = 0; i < maxThreads; i++) {
-			      for (int j = 0; j < nprm; j++)
-				      grad[j] += gradf[i][j];
-			      for (int j = 0; j < mdi; j++)
-				      am[j] += amf[i][j];
-		      }
-	      } else
+      	if (!threading) {
 		      for (int i1 = 0; i1 < fitVector.size(); i1++) {
 			      SpectrumFitContainer spectrum = (SpectrumFitContainer) fitVector.elementAt(i1);
 			      for (int i2 = 0; i2 < spectrum.dataNumber; i2++) {
@@ -553,85 +412,152 @@ public class LeastSquareFit extends OptimizationAlgorithm {
 				      }
 			      }
 		      }
-      } else {
-/*        for (int i = 0; i < dataNumber; i++) {
-          double fmm = (fit[i] - dta[i]) * wgt[i];
-          for (int sp = 0; sp < nprm; sp++) {
-            grad[sp] += derivf[i][sp] * fmm;
-            int l = (sp + 1) * sp / 2;
-            for (int kcs = 0; kcs <= sp; kcs++)
-              am[l + kcs] += derivf[i][sp] * derivf[i][kcs] * wgt[i];
-          }
-        }*/
+	      } else {
+		      final int maxThreads = Constants.maxNumberOfThreads; // Math.min(Constants.maxNumberOfThreads, fitVector.size());
+		      if (maxThreads > 1 && Constants.threadingGranularity >= Constants.MEDIUM_GRANULARITY) {
+			      if (Constants.debugThreads)
+				      System.out.println("Thread datafileset " + getLabel());
+			      int i;
+			      final double[][] gradf = new double[maxThreads][nprm];
+			      final double[][] amf = new double[maxThreads][mdi];
+			      PersistentThread[] threads = new PersistentThread[maxThreads];
 
-	      final int maxThreads = Math.min(Constants.maxNumberOfThreads, dataNumber / 10);
-	      if (maxThreads > 1 && Constants.threadingGranularity >= Constants.MEDIUM_GRANULARITY) {
-		      if (Constants.debugThreads)
-			      System.out.println("Thread datafileset " + getLabel());
-		      int i;
-		      final double[][] gradf = new double[maxThreads][nprm];
-		      final double[][] amf = new double[maxThreads][mdi];
-		      PersistentThread[] threads = new PersistentThread[maxThreads];
-		      for (i = 0; i < maxThreads; i++) {
-			      final int nprmf = nprm;
-			      final double[] fitf = fit;
-			      final double[] dtaf = dta;
-			      final double[] wgtf = wgt;
-			      final double[][] derivff = derivf;
-			      threads[i] = new PersistentThread(i) {
-				      @Override
-				      public void executeJob() {
-					      int i1 = this.getJobNumberStart();
-					      int i2 = this.getJobNumberEnd();
+			      if (maxThreads >= fitVector.size()) {
+				      for (i = 0; i < maxThreads; i++) {
+					      final int nprmf = nprm;
+					      final Vector fitVectorf = fitVector;
+					      threads[i] = new PersistentThread(i) {
+						      @Override
+						      public void executeJob() {
+							      int istart = this.getJobNumberStart();
+							      int iend = this.getJobNumberEnd();
 
-					      for (int j = i1; j < i2; j++) {
-						      double fmm = (fitf[j] - dtaf[j]) * wgtf[j];
-						      for (int sp = 0; sp < nprmf; sp++) {
-							      gradf[this.threadNumber][sp] += derivff[j][sp] * fmm;
+							      for (int j = istart; j < iend; j++) {
+								      SpectrumFitContainer spectrum = (SpectrumFitContainer) fitVectorf.elementAt(j);
+								      for (int i2 = 0; i2 < spectrum.dataNumber; i2++) {
+									      double fmm = (spectrum.fit[i2] - spectrum.dta[i2]) * spectrum.wgt2[i2];
+									      for (int sp = 0; sp < nprmf; sp++) {
+										      double[] derivr = spectrum.getDerivate(sp);
+										      if (derivr.length > 0) {
+											      gradf[this.threadNumber][sp] += derivr[i2] * fmm;
+											      int l = (sp + 1) * sp / 2;
+											      for (int kcs = 0; kcs <= sp; kcs++) {
+												      double[] derivs = spectrum.getDerivate(kcs);
+												      if (derivs.length > 0)
+													      amf[this.threadNumber][l + kcs] += derivr[i2] * derivs[i2] * spectrum.wgt2[i2];
+											      }
+										      }
+									      }
+								      }
+							      }
+						      }
+					      };
+				      }
+				      i = 0;
+				      int istep = (int) (0.9999 + fitVector.size() / maxThreads);
+				      for (int j = 0; j < maxThreads; j++) {
+					      int is = i;
+					      if (j < maxThreads - 1)
+						      i = Math.min(i + istep, fitVector.size());
+					      else
+						      i = fitVector.size();
+					      threads[j].setJobRange(is, i);
+					      threads[j].start();
+				      }
+			      } else {
+				      int maxDataNumber = 0;
+				      for (int i1 = 0; i1 < fitVector.size(); i1++) {
+					      SpectrumFitContainer spectrum = (SpectrumFitContainer) fitVector.elementAt(i1);
+					      int dataNumber1 = spectrum.dataNumber;
+					      if (maxDataNumber < dataNumber1)
+						      maxDataNumber = dataNumber1;
+				      }
+				      for (i = 0; i < maxThreads; i++) {
+					      final int nprmf = nprm;
+					      final Vector fitVectorf = fitVector;
+					      threads[i] = new PersistentThread(i) {
+						      @Override
+						      public void executeJob() {
+							      int istart = this.getJobNumberStart();
+							      int iend = this.getJobNumberEnd();
+
+							      for (int j = 0; j < fitVectorf.size(); j++) {
+								      SpectrumFitContainer spectrum = (SpectrumFitContainer) fitVectorf.elementAt(j);
+								      if (istart < spectrum.dataNumber) {
+									      int iendn = Math.min(iend, spectrum.dataNumber);
+									      for (int i2 = istart; i2 < iendn; i2++) {
+										      double fmm = (spectrum.fit[i2] - spectrum.dta[i2]) * spectrum.wgt2[i2];
+										      for (int sp = 0; sp < nprmf; sp++) {
+											      double[] derivr = spectrum.getDerivate(sp);
+											      if (derivr.length > 0) {
+												      gradf[this.threadNumber][sp] += derivr[i2] * fmm;
+												      int l = (sp + 1) * sp / 2;
+												      for (int kcs = 0; kcs <= sp; kcs++) {
+													      double[] derivs = spectrum.getDerivate(kcs);
+													      if (derivs.length > 0)
+														      amf[this.threadNumber][l + kcs] += derivr[i2] * derivs[i2] * spectrum.wgt2[i2];
+												      }
+											      }
+										      }
+									      }
+								      }
+							      }
+						      }
+					      };
+				      }
+				      i = 0;
+				      int istep = (int) (0.9999 + maxDataNumber / maxThreads);
+				      for (int j = 0; j < maxThreads; j++) {
+					      int is = i;
+					      if (j < maxThreads - 1)
+						      i = Math.min(i + istep, maxDataNumber);
+					      else
+						      i = maxDataNumber;
+					      threads[j].setJobRange(is, i);
+					      threads[j].start();
+				      }
+			      }
+
+			      boolean running;
+			      do {
+				      running = false;
+				      try {
+					      Thread.sleep(Constants.timeToWaitThreadsEnding);
+				      } catch (InterruptedException r) {
+				      }
+				      for (int h = 0; h < maxThreads; h++) {
+					      if (!threads[h].isEnded())
+						      running = true;
+				      }
+			      } while (running);
+			      for (i = 0; i < maxThreads; i++) {
+				      for (int j = 0; j < nprm; j++)
+					      grad[j] += gradf[i][j];
+				      for (int j = 0; j < mdi; j++)
+					      am[j] += amf[i][j];
+			      }
+		      } else
+			      for (int i1 = 0; i1 < fitVector.size(); i1++) {
+				      SpectrumFitContainer spectrum = (SpectrumFitContainer) fitVector.elementAt(i1);
+				      for (int i2 = 0; i2 < spectrum.dataNumber; i2++) {
+					      double fmm = (spectrum.fit[i2] - spectrum.dta[i2]) * spectrum.wgt2[i2];
+					      for (int sp = 0; sp < nprm; sp++) {
+						      double[] derivr = spectrum.getDerivate(sp);
+						      if (derivr.length > 0) {
+							      grad[sp] += derivr[i2] * fmm;
 							      int l = (sp + 1) * sp / 2;
-							      for (int kcs = 0; kcs <= sp; kcs++)
-								      amf[this.threadNumber][l + kcs] += derivff[j][sp] * derivff[j][kcs] * wgtf[j];
+							      for (int kcs = 0; kcs <= sp; kcs++) {
+								      double[] derivs = spectrum.getDerivate(kcs);
+								      if (derivs.length > 0)
+									      am[l + kcs] += derivr[i2] * derivs[i2] * spectrum.wgt2[i2];
+							      }
 						      }
 					      }
 				      }
-			      };
-		      }
-		      i = 0;
-		      int istep = (int) (0.9999 + dataNumber / maxThreads);
-		      for (int j = 0; j < maxThreads; j++) {
-			      int is = i;
-			      if (j < maxThreads - 1)
-				      i = Math.min(i + istep, dataNumber);
-			      else
-				      i = dataNumber;
-//			      if (Constants.debugThreads)
-//				      System.out.println("Thread indices " + getLabel() + " from: " + is + " to: " + i);
-			      threads[j].setJobRange(is, i);
-			      threads[j].start();
-		      }
-		      boolean running;
-		      do {
-			      running = false;
-			      try {
-				      Thread.sleep(Constants.timeToWaitThreadsEnding);
-			      } catch (InterruptedException r) {
 			      }
-			      for (int h = 0; h < maxThreads; h++) {
-				      if (!threads[h].isEnded())
-					      running = true;
-			      }
-		      } while (running);
-		      for (int j = 0; j < nprm; j++)
-			      grad[j] = gradf[0][j];
-		      for (int j = 0; j < mdi; j++)
-			      am[j] = amf[0][j];
-		      for (i = 1; i < maxThreads; i++) {
-		        for (int j = 0; j < nprm; j++)
-			        grad[j] += gradf[i][j];
-			      for (int j = 0; j < mdi; j++)
-				      am[j] += amf[i][j];
-		      }
-	      } else
+	      }
+      } else {
+	      if (!threading) {
 		      for (int i = 0; i < dataNumber; i++) {
 			      double fmm = (fit[i] - dta[i]) * wgt[i];
 			      for (int sp = 0; sp < nprm; sp++) {
@@ -641,6 +567,86 @@ public class LeastSquareFit extends OptimizationAlgorithm {
 					      am[l + kcs] += derivf[i][sp] * derivf[i][kcs] * wgt[i];
 			      }
 		      }
+	      } else {
+
+		      final int maxThreads = Math.min(Constants.maxNumberOfThreads, dataNumber / 10);
+		      if (maxThreads > 1 && Constants.threadingGranularity >= Constants.MEDIUM_GRANULARITY) {
+			      if (Constants.debugThreads)
+				      System.out.println("Thread datafileset " + getLabel());
+			      int i;
+			      final double[][] gradf = new double[maxThreads][nprm];
+			      final double[][] amf = new double[maxThreads][mdi];
+			      PersistentThread[] threads = new PersistentThread[maxThreads];
+			      for (i = 0; i < maxThreads; i++) {
+				      final int nprmf = nprm;
+				      final double[] fitf = fit;
+				      final double[] dtaf = dta;
+				      final double[] wgtf = wgt;
+				      final double[][] derivff = derivf;
+				      threads[i] = new PersistentThread(i) {
+					      @Override
+					      public void executeJob() {
+						      int i1 = this.getJobNumberStart();
+						      int i2 = this.getJobNumberEnd();
+
+						      for (int j = i1; j < i2; j++) {
+							      double fmm = (fitf[j] - dtaf[j]) * wgtf[j];
+							      for (int sp = 0; sp < nprmf; sp++) {
+								      gradf[this.threadNumber][sp] += derivff[j][sp] * fmm;
+								      int l = (sp + 1) * sp / 2;
+								      for (int kcs = 0; kcs <= sp; kcs++)
+									      amf[this.threadNumber][l + kcs] += derivff[j][sp] * derivff[j][kcs] * wgtf[j];
+							      }
+						      }
+					      }
+				      };
+			      }
+			      i = 0;
+			      int istep = (int) (0.9999 + dataNumber / maxThreads);
+			      for (int j = 0; j < maxThreads; j++) {
+				      int is = i;
+				      if (j < maxThreads - 1)
+					      i = Math.min(i + istep, dataNumber);
+				      else
+					      i = dataNumber;
+//			      if (Constants.debugThreads)
+//				      System.out.println("Thread indices " + getLabel() + " from: " + is + " to: " + i);
+				      threads[j].setJobRange(is, i);
+				      threads[j].start();
+			      }
+			      boolean running;
+			      do {
+				      running = false;
+				      try {
+					      Thread.sleep(Constants.timeToWaitThreadsEnding);
+				      } catch (InterruptedException r) {
+				      }
+				      for (int h = 0; h < maxThreads; h++) {
+					      if (!threads[h].isEnded())
+						      running = true;
+				      }
+			      } while (running);
+			      for (int j = 0; j < nprm; j++)
+				      grad[j] = gradf[0][j];
+			      for (int j = 0; j < mdi; j++)
+				      am[j] = amf[0][j];
+			      for (i = 1; i < maxThreads; i++) {
+				      for (int j = 0; j < nprm; j++)
+					      grad[j] += gradf[i][j];
+				      for (int j = 0; j < mdi; j++)
+					      am[j] += amf[i][j];
+			      }
+		      } else
+			      for (int i = 0; i < dataNumber; i++) {
+				      double fmm = (fit[i] - dta[i]) * wgt[i];
+				      for (int sp = 0; sp < nprm; sp++) {
+					      grad[sp] += derivf[i][sp] * fmm;
+					      int l = (sp + 1) * sp / 2;
+					      for (int kcs = 0; kcs <= sp; kcs++)
+						      am[l + kcs] += derivf[i][sp] * derivf[i][kcs] * wgt[i];
+				      }
+			      }
+	      }
       }
 //           save "a" matrix and current parameter values "b"
       for (int i = 0; i < mdi; i++)

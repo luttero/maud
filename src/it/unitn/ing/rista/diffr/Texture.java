@@ -25,8 +25,10 @@ import it.unitn.ing.rista.util.*;
 import it.unitn.ing.rista.render3d.*;
 import it.unitn.ing.jgraph.ColorMap;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 
 /*import fr.ensicaen.odfplot.engine.Controller;
@@ -410,6 +412,85 @@ public class Texture extends XRDcat {
   }*/
 
 // End 3D plot
+
+	static String gridResString = "texturePlot.gridResolution";
+	static String zoomString = "texturePlot.zoomFactor";
+	static String maxAngleString = "texturePlot.maxAzimuthalAngle";
+	static String logTexturePlotString = "texturePlot.logScale";
+	static String numberofColors = "texturePlot.colorsNumber";
+	public static int lastResolution = MaudPreferences.getInteger(gridResString, 101);
+	public static double zoom = MaudPreferences.getDouble(zoomString, 1); // must be a power of 2
+	public static double filterWidth = MaudPreferences.getDouble("texturePlot.gaussFilterWidth", 0.0);
+
+
+	public void savePoleFiguresToFile(BufferedImage concatImage, String filename) {
+		try {
+			ImageIO.write(concatImage, "png", new File(filename));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public BufferedImage getPoleFigureBufferedImage(int w, int h, gov.noaa.pmel.sgt.ColorMap colorMap, Reflection pole,
+	                                                int mode, int resolutionPoints, double maxAngle, int zoom) {
+		BufferedImage bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+
+		Graphics2D g = bi.createGraphics();
+
+		PlotPoleFigure.createGrid(getFilePar().getSample(0), pole, mode, resolutionPoints,
+			maxAngle, zoom, filterWidth);
+
+
+		// drawing the circle around
+		Stroke stroke = g.getStroke();
+		g.setColor(Color.black);
+		g.setStroke(new BasicStroke(1));
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g.drawOval(0, 0, w - 1, h - 1);
+		g.setStroke(stroke);
+
+		g.dispose();
+
+		return bi;
+	}
+
+	public BufferedImage concatenateAllPoleFiguresImages(BufferedImage[] pfImages) {
+
+		int imagesNumber = pfImages.length;
+		int rowsNumber = 1;
+		int colsNumber = imagesNumber;
+		if (imagesNumber > 4) { // put in more rows
+			rowsNumber = (int) Math.sqrt(imagesNumber);
+			colsNumber = (imagesNumber + rowsNumber - 1) / rowsNumber;
+		}
+
+		int heightTotal = 0;
+		for(int j = 0; j < imagesNumber; j += colsNumber) {
+			heightTotal += pfImages[j].getHeight();
+		}
+		int widthTotal = 0;
+		for(int j = 0; j < colsNumber; j++) {
+			widthTotal += pfImages[j].getWidth();
+		}
+
+		BufferedImage concatImage = new BufferedImage(widthTotal, heightTotal, BufferedImage.TYPE_INT_RGB);
+		Graphics2D g2d = concatImage.createGraphics();
+		int heightCurr = 0;
+		int widthCurr = 0;
+		int index = 0;
+		for(int j = 0; j < pfImages.length; j++) {
+			if (index >= colsNumber) {
+				index = 0;
+				widthCurr = 0;
+				heightCurr += pfImages[j - 1].getHeight();
+			}
+			g2d.drawImage(pfImages[j], widthCurr, heightCurr, null);
+			widthCurr += pfImages[j].getWidth();
+			index++;
+		}
+		g2d.dispose();
+		return concatImage;
+	}
 
   public boolean needIntensityExtractor() {
     return false;

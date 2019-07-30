@@ -61,7 +61,8 @@ public class batchProcess {
                              "_maud_output_plot_filename", "_maud_remove_all_datafiles",
 		                       "_maud_remove_all_phases", "_maud_import_phase",
 		                       "_maud_LCLS2_Cspad0_original_image", "_maud_LCLS2_Cspad0_dark_image",
-		                       "_maud_export_pole_figures", "_maud_output_plot2D_filename"
+		                       "_maud_export_pole_figures_png", "_maud_output_plot2D_filename",
+		                       "_maud_LCLS2_detector_config_file"
   };
 
   public batchProcess(String insFileName) {
@@ -204,6 +205,7 @@ public class batchProcess {
 
     String token;
     int wizardindex = -1;
+    String detectorConfigFile = null;
 
     if (loopitem > 0) {
       boolean automaticBackground = false;
@@ -297,50 +299,54 @@ public class batchProcess {
  //         if (analysis != null) {
             plotOutputFileName = item.thestring;
 //          }
-//          avector.removeElementAt(i);
-//          loopitem--;
+          avector.removeElementAt(i);
+          loopitem--;
         } else if (index == 10) { // "_maud_remove_all_datafiles"
 	        if (analysis != null && item.thestring.equalsIgnoreCase("true")) {
 	        	 Sample asample = analysis.getSample(0);
 	        	 for (int j = 0; j < asample.activeDatasetsNumber(); j++)
 		         asample.getDataSet(j).removeAllFiles();
 	        }
-//	        avector.removeElementAt(i);
-//	        loopitem--;
+	        avector.removeElementAt(i);
+	        loopitem--;
         } else if (index == 11) { // "_maud_remove_all_phases"
 	        if (analysis != null && item.thestring.equalsIgnoreCase("true")) {
 		        analysis.getSample(0).removeAllPhases();
 	        }
-//	        avector.removeElementAt(i);
-//	        loopitem--;
+	        avector.removeElementAt(i);
+	        loopitem--;
         } else if (index == 12) { // "_maud_import_phase"
 	        if (analysis != null) {
 	        	  if (!item.thestring.isEmpty()) {
 		           analysis.getSample(0).loadPhase(item.thestring, false);
 	           }
 	        }
-//	        avector.removeElementAt(i);
-//	        loopitem--;
+	        avector.removeElementAt(i);
+	        loopitem--;
         } else if (index == 13) { // "_maud_LCLS2_original_image"
         	  original_image = item.thestring;
-//	        avector.removeElementAt(i);
-//	        loopitem--;
+	        avector.removeElementAt(i);
+	        loopitem--;
         } else if (index == 14) { // "_maud_LCLS2_dark_image"
 	        dark_image = item.thestring;
-//	        avector.removeElementAt(i);
-//	        loopitem--;
+	        avector.removeElementAt(i);
+	        loopitem--;
         } else if (index == 15) { // "_maud_export_pole_figures"
 	        if (analysis != null) {
 //		        analysis.getSample(0).getDataSet(0).addDataFileforName(item.thestring, false);
 	        }
-//	        avector.removeElementAt(i);
-//	        loopitem--;
+	        avector.removeElementAt(i);
+	        loopitem--;
         } else if (index == 16) { // "_maud_output_plot2D_filename"
 	        if (analysis != null) {
 //		        analysis.getSample(0).getDataSet(0).addDataFileforName(item.thestring, false);
 	        }
-//	        avector.removeElementAt(i);
-//	        loopitem--;
+	        avector.removeElementAt(i);
+	        loopitem--;
+        } else if (index == 17) {
+	        detectorConfigFile = item.thestring;
+	        avector.removeElementAt(i);
+	        loopitem--;
         } else
           i++;
       } // end of while (i < loopitem)
@@ -351,7 +357,7 @@ public class batchProcess {
       }
       if (original_image != null && dark_image != null) {
 	      LCLS2data data = new LCLS2data("analysis x");
-	      data.setupDataFrom(original_image, dark_image);
+	      data.setupDataFrom(detectorConfigFile, original_image, dark_image);
 	      LCLS2Wizard.setupTheAnalysis(analysis, data);
       }
       processAnalysis(analysis, wizardindex);

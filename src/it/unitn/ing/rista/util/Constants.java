@@ -265,7 +265,7 @@ public class Constants {
   public static String userName = null;
   public static String startPath = "/";
   public static String maudReleaseBuilt = "$Revision: 2.92 $";
-  public static String maudDateBuilt = "$Date: 2019/07/23 14:41:17 $";
+  public static String maudDateBuilt = "$Date: 2019/07/29 21:22:00 $";
 
   public static final double arg2PIover3 = PI2 / 3.;
   public static final double sinArg2PIover3 = Math.sin(arg2PIover3);

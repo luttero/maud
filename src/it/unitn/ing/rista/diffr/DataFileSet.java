@@ -3187,8 +3187,11 @@ public class DataFileSet extends XRDcat {
       if (tmpDatafile.refreshBkgComputation) {
 //        System.out.println("Refreshing backg: " + tmpDatafile.toXRDcatString());
 //        System.out.println("Min, max: " + minindex[i] + " " + maxindex[i]);
+//        System.out.println("Max: " + tmpDatafile.twothetacalibrated.length);
+//	      System.out.println("Start-end: " + tmpDatafile.startingindex + " " + tmpDatafile.finalindex);
         tmpDatafile.resetBkg();
-        tmpDatafile.computeBackground(minindex[i], maxindex[i]);
+//        tmpDatafile.computeBackground(minindex[i], maxindex[i]);
+	      tmpDatafile.computeBackground(tmpDatafile.startingindex, tmpDatafile.finalindex);
 
         double tbackgroundChi = 0.0;
         double[] chieta = tmpDatafile.getTiltingAngle();
@@ -3202,7 +3205,8 @@ public class DataFileSet extends XRDcat {
         }
 //        System.out.println("Next min, max: " + minindex[i] + " " + maxindex[i]);
 
-        for (int j = minindex[i]; j < maxindex[i]; j++) {
+//	      for (int j = minindex[i]; j < maxindex[i]; j++) {
+        for (int j = tmpDatafile.startingindex; j < tmpDatafile.finalindex; j++) {
           double thetaord = tmpDatafile.getXData(j);
           double background = tbackgroundChi;
           for (int k = 0; k < npolbckgpar; k++)
