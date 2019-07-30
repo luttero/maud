@@ -206,7 +206,7 @@ public class MetaDynamicsSearch extends OptimizationAlgorithm {
     stringField[cyclesIndex] = MaudPreferences.getPref("metaDynamics.cycles", "50");
     stringField[iterationsIndex] = MaudPreferences.getPref("metaDynamics.iterations", "5");
     stringField[precisionIndex] = MaudPreferences.getPref("metaDynamics.precision", "0.00000001");
-    stringField[derivateStepIndex] = MaudPreferences.getPref("leastSquares.derivateStep", "0.0001");
+    stringField[derivateStepIndex] = MaudPreferences.getPref("leastSquares.derivativeStep", "0.0001");
     stringField[solutionsNumberIndex] = MaudPreferences.getPref("metaDynamics.numberOfSolutions", "20");
     stringField[HWHMnormIndex] = MaudPreferences.getPref("metaDynamics.GaussianHWHMnormalized", "1.0");
     stringField[intensityIndex] = MaudPreferences.getPref("metaDynamics.GaussianIntensityStart", "1.0");

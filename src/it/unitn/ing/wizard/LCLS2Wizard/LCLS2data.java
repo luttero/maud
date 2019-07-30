@@ -341,16 +341,18 @@ public class LCLS2data {
 
 	}
 
-	public void setupDataFrom(String original_image, String dark_image) {
+	public void setupDataFrom(String detectorConfigFile, String original_image, String dark_image) {
 
 		double energyInKeV = 10.217;
 		omega = 0;
 		String property = "detector_config_file";
-		String filename_cf = "LCLS2_config_data.cif";
 		String calibrationDirectory = "";
-		filename_cf = LCLS2ConfigData.getPropertyValue(property, filename_cf);
-		if (Misc.checkForFile(filename_cf)) {
-			LCLS2ConfigData.readLCLSConfigDataFromFile(filename_cf);
+    if (detectorConfigFile == null || detectorConfigFile.isEmpty() || !Misc.checkForFile(detectorConfigFile))
+      detectorConfigFile = LCLS2ConfigData.getPropertyValue(property, detectorConfigFile);
+    else
+      LCLS2ConfigData.setPropertyValue(property, detectorConfigFile);
+		if (Misc.checkForFile(detectorConfigFile)) {
+			LCLS2ConfigData.readLCLSConfigDataFromFile(detectorConfigFile);
 			omega = LCLS2ConfigData.omega;
 			energyInKeV = LCLS2ConfigData.radiationKeV;
 			calibrationDirectory = LCLS2ConfigData.calibrationDirectory;

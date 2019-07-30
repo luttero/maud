@@ -277,7 +277,8 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 
 	@Override
   public boolean freeAllBasicParameters() {
-		if (((DataFileSet) getInstrument().getParent()).activedatafilesnumber() > 9)
+		if (((DataFileSet) getInstrument().getParent()).isEnabled() &&
+		      ((DataFileSet) getInstrument().getParent()).activedatafilesnumber() > 9)
          for (int i = 1; i < 3; i++)
             parameterField[i].setRefinableCheckBound();
     return true;

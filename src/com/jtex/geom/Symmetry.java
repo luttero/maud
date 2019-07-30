@@ -301,6 +301,12 @@ public class Symmetry extends Quaternion {
             case Oh:
                 rot = Axis(lllaxis, 3).prod(Axis(ll0axis, 2).prod(Axis(c, 4)));
                 break;
+	         case Fi:
+		         rot = Axis(c, 72);
+		        break;
+	        case Fib:
+		        rot = Axis(a, 2).prod(Axis(c, 72));
+		        break;
         }
         return rot;
     }
@@ -332,7 +338,7 @@ public class Symmetry extends Quaternion {
     public double rotangle_max_y(boolean antipodal) {
 
         double theta = Math.PI;
-        if (schoen.isLaue("-1", "-3", "4/m", "6/m")) {
+        if (schoen.isLaue("-1", "-3", "4/m", "6/m", "72/m")) {
             theta = 2 * Math.PI / (antipodal ? 2 : 1);
         } /*else if (schoen.isLaue("mmm", "-3m", "4/mmm", "m-3m", "6/mmm", "m-3")) {
          theta = Math.PI;
@@ -373,6 +379,8 @@ public class Symmetry extends Quaternion {
             rho /= 2.0;
         } else if (schoen.isLaue("6/m", "6/mmm")) {
             rho /= 3.0;
+        } else if (schoen.isLaue("72/m", "72/mmm")) {
+	        rho /= 36.0;
         }
         return rho;
     }
@@ -380,9 +388,9 @@ public class Symmetry extends Quaternion {
     public Quaternion rotation_special() {
         if (schoen.isLaue("-1", "2/m")) {
             return this;
-        } else if (schoen.isLaue("mmm", "-3m", "4/mmm", "6/mmm")) {
+        } else if (schoen.isLaue("mmm", "-3m", "4/mmm", "6/mmm", "72/mmm")) {
             return get(0, 1);
-        } else if (schoen.isLaue("-3", "4/m", "6/m")) {
+        } else if (schoen.isLaue("-3", "4/m", "6/m", "72/m")) {
             return get(0);
         } else if (schoen.isLaue("m-3", "m-3m")) {
             return get(0, 1, 2, 3, 4, 5);
@@ -399,6 +407,8 @@ public class Symmetry extends Quaternion {
             return 4;
         } else if (schoen.isLaue("6/m", "6/mmm")) {
             return 6;
+        } else if (schoen.isLaue("72/m", "72/mmm")) {
+	        return 72;
         } else {
             return 1;
         }
@@ -489,7 +499,7 @@ public class Symmetry extends Quaternion {
     }
 
     public Alignment[] getAlignment() {
-        if (this.schoen.isLaue("-1", "2/m", "-3", "-3m", "6/m", "6/mmm")) {
+        if (this.schoen.isLaue("-1", "2/m", "-3", "-3m", "6/m", "6/mmm", "72/m", "72/mmm")) {
             Vec3 base = Vec3.concat(basis(), basisStar()).normalize();
             double eps = 1 - 1e-5;
 

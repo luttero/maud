@@ -243,7 +243,7 @@ public class PlotPoleFigure extends myJFrame {
 				pfPanel.add(ccolorMap[i]);
 			}
 		}
-		if (limits[0] != limits[1]) {
+		if (limits[0] < limits[1]) {
 			int legendHeight = gridNumber;
 			int pwidth = legendHeight / 5;
 			int pheight = legendHeight;
