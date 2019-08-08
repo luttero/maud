@@ -63,7 +63,7 @@ public class LeastSquareFit extends OptimizationAlgorithm {
   int niter = 0;
   int ipflg = 0;
   int brkflg = 0;
-  double derstep = 0.001;
+  double derstep = 0.0001;
   boolean doubleder = false;
   double prcsn = 0.00000001;
   int n0 = 0;
@@ -72,6 +72,7 @@ public class LeastSquareFit extends OptimizationAlgorithm {
   double g[] = null;
   int[] choleskyFlag = null;
 	double lambdaStart = 0.01;
+	boolean threading = true;
 
   public boolean simplifyForm = false;
 
@@ -118,8 +119,8 @@ public class LeastSquareFit extends OptimizationAlgorithm {
   public void initParameters() {
     super.initParameters();
     stringField[0] = MaudPreferences.getPref(iterations, "3");
-    stringField[2] = MaudPreferences.getPref("leastSquares.derivateStep", "0.001");
-    stringField[4] = MaudPreferences.getPref("leastSquares.doubleDerivate", "false");
+    stringField[2] = MaudPreferences.getPref("leastSquares.derivativeStep", "0.0001");
+    stringField[4] = MaudPreferences.getPref("leastSquares.doubleDerivative", "false");
     stringField[1] = MaudPreferences.getPref("leastSquares.precision", "0.00000001");
 	  stringField[3] = MaudPreferences.getPref("leastSquares.lambda", "0.01");
   }
@@ -392,25 +393,26 @@ public class LeastSquareFit extends OptimizationAlgorithm {
         grad[i] = 0.0;
 
       if (newModel) {
-/*
-        for (int i1 = 0; i1 < fitVector.size(); i1++) {
-          SpectrumFitContainer spectrum = (SpectrumFitContainer) fitVector.elementAt(i1);
-          for (int i2 = 0; i2 < spectrum.dataNumber; i2++) {
-            double fmm = (spectrum.fit[i2] - spectrum.dta[i2]) * spectrum.wgt2[i2];
-            for (int sp = 0; sp < nprm; sp++) {
-              double[] derivr = spectrum.getDerivate(sp);
-              if (derivr.length > 0) {
-                grad[sp] += derivr[i2] * fmm;
-                int l = (sp + 1) * sp / 2;
-                for (int kcs = 0; kcs <= sp; kcs++) {
-                  double[] derivs = spectrum.getDerivate(kcs);
-                  if (derivs.length > 0)
-                    am[l + kcs] += derivr[i2] * derivs[i2] * spectrum.wgt2[i2];
-                }
-              }
-            }
-          }
-        }*/
+      	if (!threading) {
+		      for (int i1 = 0; i1 < fitVector.size(); i1++) {
+			      SpectrumFitContainer spectrum = (SpectrumFitContainer) fitVector.elementAt(i1);
+			      for (int i2 = 0; i2 < spectrum.dataNumber; i2++) {
+				      double fmm = (spectrum.fit[i2] - spectrum.dta[i2]) * spectrum.wgt2[i2];
+				      for (int sp = 0; sp < nprm; sp++) {
+					      double[] derivr = spectrum.getDerivate(sp);
+					      if (derivr.length > 0) {
+						      grad[sp] += derivr[i2] * fmm;
+						      int l = (sp + 1) * sp / 2;
+						      for (int kcs = 0; kcs <= sp; kcs++) {
+							      double[] derivs = spectrum.getDerivate(kcs);
+							      if (derivs.length > 0)
+								      am[l + kcs] += derivr[i2] * derivs[i2] * spectrum.wgt2[i2];
+						      }
+					      }
+				      }
+			      }
+		      }
+	      } else {
 	      final int maxThreads = Constants.maxNumberOfThreads; // Math.min(Constants.maxNumberOfThreads, fitVector.size());
 	      if (maxThreads > 1 && Constants.threadingGranularity >= Constants.MEDIUM_GRANULARITY) {
 		      if (Constants.debugThreads)
@@ -553,8 +555,10 @@ public class LeastSquareFit extends OptimizationAlgorithm {
 				      }
 			      }
 		      }
+		  }
       } else {
-/*        for (int i = 0; i < dataNumber; i++) {
+        if (!threading) {
+        for (int i = 0; i < dataNumber; i++) {
           double fmm = (fit[i] - dta[i]) * wgt[i];
           for (int sp = 0; sp < nprm; sp++) {
             grad[sp] += derivf[i][sp] * fmm;
@@ -562,7 +566,8 @@ public class LeastSquareFit extends OptimizationAlgorithm {
             for (int kcs = 0; kcs <= sp; kcs++)
               am[l + kcs] += derivf[i][sp] * derivf[i][kcs] * wgt[i];
           }
-        }*/
+        }
+        } else {
 
 	      final int maxThreads = Math.min(Constants.maxNumberOfThreads, dataNumber / 10);
 	      if (maxThreads > 1 && Constants.threadingGranularity >= Constants.MEDIUM_GRANULARITY) {
@@ -641,6 +646,7 @@ public class LeastSquareFit extends OptimizationAlgorithm {
 					      am[l + kcs] += derivf[i][sp] * derivf[i][kcs] * wgt[i];
 			      }
 		      }
+		  }
       }
 //           save "a" matrix and current parameter values "b"
       for (int i = 0; i < mdi; i++)

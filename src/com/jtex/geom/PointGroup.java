@@ -46,7 +46,9 @@ public enum PointGroup {
     Th("cubic", "Th", "m-3", "m-3", "23"),
     O("cubic", "O", "432", "m-3m", "432"),
     Td("cubic", "Td", "-43m", "m-3m", "432"),
-    Oh("cubic", "Oh", "m-3m", "m-3m", "432");
+    Oh("cubic", "Oh", "m-3m", "m-3m", "432"),
+    Fi("fiber", "C72h", "72/m", "72/m", "72"),
+	 Fib("fiber", "D72h", "72/mmm", "72/mmm", "7222");
 
     String system;
     String schoenflies;

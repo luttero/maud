@@ -146,8 +146,9 @@ public class SimpleMenu extends JMenuBar {
                 opt.setVisible(true);
 
                 if (!opt.wasCanceled()) {
-                    ODF estimate = ODF.estimate(data.getPf(), opt.getODFPoptions());
-                    data.setOdf(estimate);
+	                com.jtex.qta.ODF estimate = new com.jtex.qta.ODF();
+	                estimate = estimate.estimate(data.getPf(), opt.getODFPoptions());
+	                data.setOdf(estimate);
                 }
 
             }

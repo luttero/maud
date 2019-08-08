@@ -287,10 +287,10 @@ public class PoleFigure {
         for (int i = 0; i < size(); i++) {
             Array1D w = get(i).getQuadratureWeights();
 
-            System.out.println(data.get(i).size());
-            System.out.println(w.size());
+//            System.out.println(data.get(i).size());
+//            System.out.println(w.size());
 
-            System.out.println(pf2.data.get(i).size());
+//            System.out.println(pf2.data.get(i).size());
 
             alpha[i] = data.get(i).max(0).dot(w) / pf2.data.get(i).max(0).dot(w);
         }
@@ -339,7 +339,7 @@ public class PoleFigure {
         }
     }
 
-    void setSS(Symmetry ss) {
+    public void setSS(Symmetry ss) {
         this.ss = ss;
     }
 

@@ -207,7 +207,7 @@ public class SimpleODFOptionsDialog extends javax.swing.JDialog {
     private javax.swing.JTextField jTextField2;
     // End of variables declaration//GEN-END:variables
 
-    public ODF.ODFOptions getODFPoptions() {
+    public com.jtex.qta.ODFOptions getODFPoptions() {
 
         double hw = Double.parseDouble(jTextField1.getText());
         double res = Double.parseDouble(jTextField2.getText());
@@ -223,7 +223,7 @@ public class SimpleODFOptionsDialog extends javax.swing.JDialog {
                 break;
         }
 
-        ODF.ODFOptions opts = new ODF.ODFOptions(pf, Math.toRadians(res), psi);
+	    com.jtex.qta.ODFOptions opts = new com.jtex.qta.ODFOptions(pf, Math.toRadians(res), psi);
         opts.setGhostCorrection(jCheckBox1.isSelected());
 
         return opts;

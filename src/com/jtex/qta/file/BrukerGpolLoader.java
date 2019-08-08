@@ -37,8 +37,6 @@ public class BrukerGpolLoader implements PoleFigureLoader {
         Plotter.show(plot);
     }
     
-    
-
     public PoleFigure load(InputStream input) throws IOException {
 
         BufferedInputStream in = new BufferedInputStream(input);

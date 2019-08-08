@@ -129,15 +129,15 @@ public class LCLS2Wizard extends Wizard {
 		parameterfile.setStoreSpectraOption(true);
 
 		int indexDataset = 0;
-		System.out.println("Data panels: " + data.panels.size());
+//		System.out.println("Data panels: " + data.panels.size());
 		for (int i = 0; i < data.panels.size(); i++) {
 			Cspad panel = data.panels.elementAt(i);
-			System.out.println("Panel: " + i + " " + panel.enabled);
+//			System.out.println("Panel: " + i + " " + panel.enabled);
 			if (panel.enabled) {
-				System.out.println("Sensors: " + panel.detectors.size());
+//				System.out.println("Sensors: " + panel.detectors.size());
 				for (int j = 0; j < panel.detectors.size(); j++) {
 					SensorImage sensor = panel.detectors.elementAt(j);
-					System.out.println("Sensor: " + j + " " + sensor.enabled);
+//					System.out.println("Sensor: " + j + " " + sensor.enabled);
 					if (sensor.enabled) {
 						if (!data.useTemplateFile) {
 							if (i == 0 && j == 0)
