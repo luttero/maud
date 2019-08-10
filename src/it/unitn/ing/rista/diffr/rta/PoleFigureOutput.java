@@ -22,6 +22,7 @@ package it.unitn.ing.rista.diffr.rta;
 
 import java.lang.*;
 import java.io.*;
+import java.util.Vector;
 
 import it.unitn.ing.rista.util.*;
 import it.unitn.ing.rista.diffr.*;
@@ -149,9 +150,9 @@ public class PoleFigureOutput {
     }
   }
 
-  public void computeAndWrite(Reflection reflex, Texture textureModel) {
+	public void computeAndWrite(Reflection reflex, Texture textureModel) {
 
-    double[] polf = new double[old1387max];
+    double[] polf;
     double[][] alphabeta = new double[2][old1387max];
     int old19 = 19;
 
@@ -159,8 +160,8 @@ public class PoleFigureOutput {
     for (int i = 0; i < old19; i++) {
       for (int j = 0; j < alphamax; j++) {
 
-        alphabeta[0][ij] = i * (double) (resolution * Constants.DEGTOPI);
-        alphabeta[1][ij++] = j * (double) (resolution * Constants.DEGTOPI);
+        alphabeta[0][ij] = i * resolution * Constants.DEGTOPI;
+        alphabeta[1][ij++] = j * resolution * Constants.DEGTOPI;
       }
     }
     polf = textureModel.computeTextureFactor(phase, alphabeta, reflex);
@@ -196,7 +197,16 @@ public class PoleFigureOutput {
     closeOutput();
   }
 
-  public void printf(String message, ProgressFrame prF) {
+	public void computeAndWrite(Vector<Reflection> reflList) {
+		openOutput();
+		Texture textureModel = phase.getActiveTexture();
+		int hklnumber = reflList.size();
+		for (int i = 0; i < hklnumber; i++)
+			computeAndWrite(reflList.elementAt(i), textureModel);
+		closeOutput();
+	}
+
+	public void printf(String message, ProgressFrame prF) {
     if (prF != null)
       prF.setProgressText(message);
     else

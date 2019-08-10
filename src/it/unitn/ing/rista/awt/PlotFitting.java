@@ -59,8 +59,9 @@ public class PlotFitting extends PlotDataFile {
   JLiveOptionsD livedialog = null;
   double[][] peaksList = null;
   double[] secondDerivative = null;
-  SpectrumPlotPanel thePlotPanel = null;
+  public SpectrumPlotPanel thePlotPanel = null;
   DiffrDataFile[] datafile;
+  boolean createMenuBar = true;
 
   boolean toolUsed = true;
 
@@ -76,12 +77,19 @@ public class PlotFitting extends PlotDataFile {
 
   }
 
-  public PlotFitting(Frame parent, DiffrDataFile[] afile, double[][] peaks,
+	public PlotFitting(Frame parent, DiffrDataFile[] afile, boolean menuBar) {
+
+		this(parent, afile, null, null, menuBar);
+
+	}
+
+	public PlotFitting(Frame parent, DiffrDataFile[] afile, double[][] peaks,
                      double[] derivative2) {
 
     this(parent);
 
-    createDefaultMenuBar();
+    if (createMenuBar)
+      createDefaultMenuBar();
 
     Container p1 = getContentPane();
     p1.setLayout(new BorderLayout());
@@ -98,7 +106,32 @@ public class PlotFitting extends PlotDataFile {
 
   }
 
-  public void showOptionsDialog() {
+	public PlotFitting(Frame parent, DiffrDataFile[] afile, double[][] peaks,
+	                   double[] derivative2, boolean menuBar) {
+
+		this(parent);
+
+		createMenuBar = menuBar;
+
+		if (createMenuBar)
+			createDefaultMenuBar();
+
+		Container p1 = getContentPane();
+		p1.setLayout(new BorderLayout());
+		p1.setBackground(Color.white);
+		peaksList = peaks;
+		secondDerivative = derivative2;
+		datafile = afile;
+		thePlotPanel = new SpectrumPlotPanel(afile, peaks, derivative2);
+		if (thePlotPanel != null) {
+			p1.add(thePlotPanel, BorderLayout.CENTER);
+			setComponentToPrint(thePlotPanel.getComponentToPrint());
+		}
+//    thePlotPanel.getComponentToPrint().setBackground(Color.white);
+
+	}
+
+	public void showOptionsDialog() {
     thePlotPanel.showOptionsDialog();
   }
 

@@ -1070,8 +1070,7 @@ public class Sample extends Maincat {
     }
 
     for (int nd = 0; nd < activeDatasetsNumber(); nd++) {
-      getActiveDataSet(nd).setMeanAbsorption(getMeanAbsorption(
-		      getActiveDataSet(nd).getInstrument().getRadiationType()));
+      getActiveDataSet(nd).setMeanAbsorption(getMeanAbsorption(getActiveDataSet(nd).getInstrument().getRadiationType()));
 //      getActiveDataSet(nd).setTotalLayerAbsorption(getTotalLayerAbsorption(
 //		      getActiveDataSet(nd).getInstrument().getRadiationType()));
     }
@@ -1617,7 +1616,7 @@ public class Sample extends Maincat {
         if (getActiveDataSet(i) != null && getActiveDataSet(i).getFluorescence().identifier == "none fluorescence") { // todo now only for diffraction
 //          Instrument ainstrument = getActiveDataSet(i).getInstrument();
           for (int j = 0; j < getActiveDataSet(i).activedatafilesnumber(); j++) {
-            DiffrDataFile adatafile = getActiveDataSet(i).getActiveDataFile(j);
+             DiffrDataFile adatafile = getActiveDataSet(i).getActiveDataFile(j);
 	          for (int p = 0; p < phasesNumber(); p++) {
 	          adatafile.computeShapeAbsorptionCorrection(getPhase(p));
 //            int datafileIndex = adatafile.getIndex();

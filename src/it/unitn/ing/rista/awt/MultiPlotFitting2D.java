@@ -51,7 +51,7 @@ import java.awt.event.KeyEvent;
 
 public class MultiPlotFitting2D extends myJFrame {
 
-  Panel fullGraphPanel;
+  public Panel fullGraphPanel;
   String title = null;
   public JPlotLayout rpl_data;
 //  public JPlotLayout rpl_fit;

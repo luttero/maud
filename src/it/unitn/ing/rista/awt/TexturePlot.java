@@ -419,7 +419,7 @@ public class TexturePlot extends myJFrame {
 
         new BeartexPFPlot(trialPole, hklPF, numberPoleFiguresPF, lastResolution, 0, lastResolution,
                 zoom, logScale, maxAngle, min, max, filterWidth,
-                grayShadedCB.isSelected(), colrsNumber, "Experimental pole figures", false);
+                grayShadedCB.isSelected(), colrsNumber, "Pole figures", false);
       }
     }
   }
@@ -996,7 +996,7 @@ public class TexturePlot extends myJFrame {
             }
             expPF = new Vector(0, 1);
             for (int i = 0; i < numberPoleFiguresPF; i++) {
-              int[][] hkl = (int[][]) allPFs.elementAt(i * 3);
+              int[] hkl = (int[]) allPFs.elementAt(i * 3);
               double[][] pfInt = new double[3][numberOfPFPoint[i]];
               Vector poleFig = (Vector) allPFs.elementAt(i * 3 + 2);
               for (int j = 0; j < numberOfPFPoint[i]; j++) {

@@ -62,6 +62,7 @@ public class LegendPoleFigureMap extends JPanel {
 	public LegendPoleFigureMap(double[][] grid, int nslicesW, int nslicesH, double scaleMin, double scaleMax,
 	    boolean grayScale, String label, int colrsNumber, Object editMenu, double zoom, int defaultsize,
 	    double origin, int scaleType) {
+
 		this.nslicesW = nslicesW;
 		this.nslicesH = nslicesH;
 		this.origin = new Point2D.Double(0, origin);

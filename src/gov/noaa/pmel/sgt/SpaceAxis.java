@@ -329,7 +329,7 @@ public abstract class SpaceAxis extends Axis {
   /**
    * Set the origin in user units of the axis.
    *
-   * @param upt origin in user units
+   * @param uptt origin in user units
    **/
   public void setLocationU(TimePoint uptt) {
     if(tLocation_ == null || !tLocation_.equals(uptt)) {

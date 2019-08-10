@@ -154,9 +154,12 @@ public class PseudoVoigtPeak extends basicPeak {
 			for (int i = 0; i < nrad; i++) {
 				double energy = Constants.ENERGY_LAMBDA / getRadiationWavelength(i) * 0.001;
 				for (int j = 0; j < diffrDataFile.positionsPerPattern; j++) {
-					finalposition[ipv++] = positions[getOrderPosition()][j][i];
-					int pointIndex = diffrDataFile.getOldNearestPoint(positions[getOrderPosition()][j][i]);
+					double localPosition = positions[getOrderPosition()][j][i];
+//					double strain = diffrDataFile.getStrains(aphase, getOrderPosition())[j][i];
+//					localPosition = diffrDataFile.getPositionForStrained(localPosition, strain);
+					int pointIndex = diffrDataFile.getOldNearestPoint(localPosition);
 					absDetectorCorrection[j][i] = ainstrument.getDetector().getAbsorptionCorrection(diffrDataFile, pointIndex, energy);
+					finalposition[ipv++] = localPosition;
 				}
 			}
 
