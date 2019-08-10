@@ -75,6 +75,12 @@ public class Reflection {
 	private double structureModifier = 1.0;
 	private double[] dividers = {1.0, 1.0, 1.0};
 
+	public Reflection(int h, int k, int l) {
+		this.h = h;
+		this.k = k;
+		this.l = l;
+	}
+
   private Reflection(Phase aphase, int h, int k, int l, int multi, double d_space, int b_h, int b_k, int b_l) {
 	  phase = aphase;
 	  multiplicity = multi;

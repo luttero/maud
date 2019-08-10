@@ -1365,7 +1365,7 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
       return;
     }
 
-    String filename = Utility.openFileDialog(this, "Select the CIF database", FileDialog.LOAD,
+    String filename = Utility.openFileDialog(this, "Select the CIF database", FileDialog.SAVE,
         MaudPreferences.getPref(databasePath, Constants.documentsDirectory),
         null, Constants.documentsDirectory + FilePar.database[index]);
     if (filename != null) {

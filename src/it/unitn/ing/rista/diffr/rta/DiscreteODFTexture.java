@@ -1443,8 +1443,8 @@ public class DiscreteODFTexture extends Texture {
     int countIncluded = 0;
     for (int i = 0; i < numberofPoints; i++)
       for (int j = 0; j < numberofPoints; j++) {
-        x = (j + 0.5) * dxy - maxAngle;
-        y = (i + 0.5) * dxy - maxAngle;
+        x = (0.5 + j) * dxy - maxAngle;
+        y = (0.5 + i) * dxy - maxAngle;
         r = Math.sqrt(x * x + y * y);
         if (r == 0.0) {
           texture_angles[0][countIncluded] = 0.0f;
@@ -1461,7 +1461,7 @@ public class DiscreteODFTexture extends Texture {
             while (phaseAng >= Constants.PI2)
               phaseAng -= Constants.PI2;
           }
-          texture_angles[1][countIncluded++] = (double) phaseAng;
+          texture_angles[1][countIncluded++] = phaseAng;
           included[count++] = true;
 //          System.out.println(texture_angles[0] + " " + texture_angles[1]);
 
