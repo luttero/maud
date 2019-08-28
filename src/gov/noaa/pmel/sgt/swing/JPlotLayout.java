@@ -208,7 +208,7 @@ public class JPlotLayout extends JGraphicLayout
    * retained for backward compatability.
    *
    * @param isGrid if true data is grid
-   * @param isXtime if true x coordinate is time
+   * @param isXTime if true x coordinate is time
    * @param isYTime if true y coordinate is time
    * @param id identifier
    * @param img Logo image
@@ -227,7 +227,7 @@ public class JPlotLayout extends JGraphicLayout
    * retained for backward compatability.
    *
    * @param isGrid if true data is grid
-   * @param isXtime if true x coordinate is time
+   * @param isXTime if true x coordinate is time
    * @param isYTime if true y coordinate is time
    * @param id identifier
    * @param img Logo image
@@ -250,7 +250,7 @@ public class JPlotLayout extends JGraphicLayout
    *
    * @param isGrid if true data is grid
    * @param isPoints if true data is points
-   * @param isXtime if true x coordinate is time
+   * @param isXTime if true x coordinate is time
    * @param isYTime if true y coordinate is time
    * @param id identifier
    * @param img Logo image
@@ -277,7 +277,7 @@ public class JPlotLayout extends JGraphicLayout
    *
    * @param isGrid if true data is grid
    * @param isPoints if true data is points
-   * @param isXtime if true x coordinate is time
+   * @param isXTime if true x coordinate is time
    * @param isYTime if true y coordinate is time
    * @param id identifier
    * @param img Logo image
@@ -305,7 +305,7 @@ public class JPlotLayout extends JGraphicLayout
    * method must be called to associated data with this object.
    *
    * @param type type of plot , POINT, GRID, LINE, or VECTOR
-   * @param isXtime if true x coordinate is time
+   * @param isXTime if true x coordinate is time
    * @param isYTime if true y coordinate is time
    * @param id identifier
    * @param img Logo image
@@ -330,7 +330,7 @@ public class JPlotLayout extends JGraphicLayout
    * method must be called to associated data with this object.
    *
    * @param type type of plot , POINT, GRID, LINE, or VECTOR
-   * @param isXtime if true x coordinate is time
+   * @param isXTime if true x coordinate is time
    * @param isYTime if true y coordinate is time
    * @param id identifier
    * @param img Logo image
@@ -711,7 +711,7 @@ public class JPlotLayout extends JGraphicLayout
    * Add data to the layout. LineKey descriptor will be
    * taken from the dependent variable name.
    *
-   * @param data datum data to be added
+   * @param datum data to be added
    */
   public void addData(SGTData datum) {
     if(Debug.DEBUG) System.out.println("JPlotLayout.addData(SGTData)");
@@ -721,7 +721,7 @@ public class JPlotLayout extends JGraphicLayout
    * Add data to the layout. LineKey descriptor will be
    * taken from the dependent variable name.
    *
-   * @param data datum data to be added
+   * @param datum data to be added
    * @param attr attribute for graphics
    */
   public void addData(SGTData datum, Attribute attr) {
@@ -1511,7 +1511,6 @@ public class JPlotLayout extends JGraphicLayout
   /**
    * Set the x and y range of the domain.
    *
-   * @param reversed the y axis data is reversed
    */
   public void setRange(SoTDomain std)
     throws PropertyVetoException {
@@ -1551,7 +1550,6 @@ public class JPlotLayout extends JGraphicLayout
    * Set the x and y range of the domain.
    * <BR><B>Property Change:</B> <code>domainRange</code>.
    *
-   * @param reversed y axis data is reversed
    */
   public void setRange(Domain domain) throws PropertyVetoException {
     Domain oldRange = getRange();

@@ -205,6 +205,8 @@ public class PlotPoleFigure extends myJFrame {
 		}
 
 		double[] limits = confirmLimits(min, max);
+		if (limits[0] <= 0)
+			limits[0] = 0.01;
 		if (limits[1] <= limits[0])
 			limits[1] = limits[0] + 1;
 /*		if (logScale) {
@@ -264,22 +266,16 @@ public class PlotPoleFigure extends myJFrame {
 				int scaleType = 0;
 				if (logScale) {
 					scaleType = 1;
-					double startx = limits[0];
-					double endx = limits[1];
 					limits[0] = MoreMath.log10(limits[0]);
 					limits[1] = MoreMath.log10(limits[1]);
 					double step = (limits[1] - limits[0]) / pheight;
-//			  System.out.println(step + " " + limits[1] + " " + limits[0] + " " + pheight);
 					for (int j = 0; j < pheight; j++) {
 						legendGrid[0][j] = step * j + limits[0];
 						for (int i = 1; i < pwidth; i++)
 							legendGrid[i][j] = legendGrid[0][j];
 					}
-//					limits[0] = startx;
-//					limits[1] = endx;
 				} else {
 					double step = (limits[1] - limits[0]) / pheight;
-//			  System.out.println(step + " " + limits[1] + " " + limits[0] + " " + pheight);
 					for (int j = 0; j < pheight; j++) {
 						legendGrid[0][j] = step * j + limits[0];
 						for (int i = 1; i < pwidth; i++)
@@ -287,10 +283,6 @@ public class PlotPoleFigure extends myJFrame {
 					}
 				}
 				String unit = "mrd";
-//				if (logScale) {
-//					meanValue = 0;
-//					unit = "Log(mrd)";
-//				}
 				LegendPoleFigureMap mapLegend = new LegendPoleFigureMap(legendGrid, pwidth, pheight, limits[0], limits[1], grayScale, unit,
 							colrsNumber, editMenu, zoom, pixelsNumber, meanValue, scaleType);
 				pfPanel.add(mapLegend);

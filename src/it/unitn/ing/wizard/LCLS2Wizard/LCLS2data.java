@@ -48,6 +48,8 @@ public class LCLS2data {
 		LCLSDetectorType panelType = LCLS2ConfigData.getDetectorType(panel.panelType);
 
 		String[] folderAndName = Misc.getFolderandName(uncorrImageFile);
+		System.out.println("Opening image: " + folderAndName[1]);
+
 		ImagePlus imp = (new Opener()).openImage(folderAndName[0], folderAndName[1]);
 		ImageProcessor ip = imp.getChannelProcessor();
 		int width = ip.getWidth();
@@ -347,20 +349,23 @@ public class LCLS2data {
 		omega = 0;
 		String property = "detector_config_file";
 		String calibrationDirectory = "";
-    if (detectorConfigFile == null || detectorConfigFile.isEmpty() || !Misc.checkForFile(detectorConfigFile))
+		if (detectorConfigFile == null || detectorConfigFile.isEmpty() || !Misc.checkForFile(detectorConfigFile)) {
+			System.out.println("Detector config file not found: " + detectorConfigFile + ", use the one in the preferences!");
       detectorConfigFile = LCLS2ConfigData.getPropertyValue(property, detectorConfigFile);
-    else
+		} else
       LCLS2ConfigData.setPropertyValue(property, detectorConfigFile);
 		if (Misc.checkForFile(detectorConfigFile)) {
 			LCLS2ConfigData.readLCLSConfigDataFromFile(detectorConfigFile);
 			omega = LCLS2ConfigData.omega;
 			energyInKeV = LCLS2ConfigData.radiationKeV;
 			calibrationDirectory = LCLS2ConfigData.calibrationDirectory;
+		} else {
+			System.out.println("No detector config file!");
 		}
 		int position = original_image.lastIndexOf(".");
 		LCLS2ConfigData.filenameToSave = original_image.substring(0, position) + ".esg";
 		LCLS2ConfigData.setPropertyValue("UnrolledImagesDatafile", LCLS2ConfigData.filenameToSave);
-//		System.out.println("UnrolledImagesDatafile: " + LCLS2ConfigData.filenameToSave);
+		System.out.println("Unrolled Images Datafile: " + LCLS2ConfigData.filenameToSave);
 //		LCLS2ConfigData.filenameTemplate = filenameTemplateTF.getText();
 //		LCLS2ConfigData.setPropertyValue("LCLSdefaultTemplate", LCLS2ConfigData.filenameTemplate);
 		useTemplateFile = true;

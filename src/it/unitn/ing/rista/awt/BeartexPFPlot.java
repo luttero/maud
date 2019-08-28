@@ -21,17 +21,22 @@
 package it.unitn.ing.rista.awt;
 
 import it.unitn.ing.jgraph.*;
+import it.unitn.ing.rista.diffr.*;
+import it.unitn.ing.rista.diffr.rta.PoleFigureOutput;
 import it.unitn.ing.rista.util.*;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.awt.print.Printable;
 import java.awt.print.PrinterJob;
 import java.awt.print.PageFormat;
 import java.awt.print.PrinterException;
 import java.awt.event.*;
 import java.awt.datatransfer.*;
-import java.io.BufferedReader;
+import java.io.*;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  *  The BeartexPFPlot is a class to plot pole figures from Beartex.
@@ -49,6 +54,7 @@ public class BeartexPFPlot extends Frame implements ClipboardOwner, Printable {
   static boolean newBehavior = true;
   Menu editMenu = null;
   PoleFigureMap[] ccolorMap = null;
+  public boolean askForLimits = false;
 
   public BeartexPFPlot(double[][][] pole, int hkl[][], int numberPoleFigures,
                        int numberofPoints, int mode, int pixelsNumber, double zoom,
@@ -143,28 +149,33 @@ public class BeartexPFPlot extends Frame implements ClipboardOwner, Printable {
           }
         }
     }
-    double[] limits = confirmLimits(min, max);
+    double[] limits = new double[2];
+    limits[0] = min;
+    limits[1] = max;
+
+    if (askForLimits)
+    	limits = confirmLimits(min, max);
 	  if (limits[0] <= 0)
 		  limits[0] = 0.01;
 	  if (limits[1] <= limits[0])
 		  limits[1] = limits[0] + 1;
-	  if (logScale)
-      for (int j = 0; j < 2; j++)
-        limits[j] = MoreMath.log10(limits[j]);
     if (newBehavior)
       ccolorMap = new PoleFigureMap[numberPoles];
     for (int i = 0; i < numberPoles; i++) {
       double[][] grid = (double[][]) listGrid[i];
-      if (logScale) {
+ /*     if (logScale) {
         for (int j = 0; j < gridNumber; j++)
           for (int k = 0; k < gridNumber; k++) {
             if (grid[j][k] != ColorMap.DUMMY_VALUE && !Double.isNaN(grid[j][k]) && grid[j][k] > 0.0)
               grid[j][k] = MoreMath.log10(grid[j][k]);
           }
-      }
+      }*/
       if (newBehavior) {
+	      int scaleType = 0;
+	      if (logScale)
+		      scaleType = 1;
         ccolorMap[i] = new PoleFigureMap(grid, gridNumber, limits[0], limits[1],
-              grayScale, label[i], colrsNumber, editMenu, zoom, pixelsNumber, true, 0);
+              grayScale, label[i], colrsNumber, editMenu, zoom, pixelsNumber, true, scaleType);
       //   colorMap.addFocusListener(theFocusListener);
         pfPanel.add(ccolorMap[i]);
       } else {
@@ -180,6 +191,10 @@ public class BeartexPFPlot extends Frame implements ClipboardOwner, Printable {
 	    int pheight = legendHeight;
 	    if (!newBehavior) {
 		    double[] legendGrid = new double[pheight];
+		    if (logScale)
+		      for (int j = 0; j < 2; j++)
+			    limits[j] = MoreMath.log10(limits[j]);
+
 		    double step = (limits[1] - limits[0]) / pheight;
 		    for (int j = 0; j < pheight; j++) {
 			    legendGrid[j] = step * j + limits[0];
@@ -193,20 +208,28 @@ public class BeartexPFPlot extends Frame implements ClipboardOwner, Printable {
 		    pfPanel.add(mapLegend);
 	    } else {
 		    double[][] legendGrid = new double[pwidth][pheight];
-		    double step = (limits[1] - limits[0]) / pheight;
-//			  System.out.println(step + " " + limits[1] + " " + limits[0] + " " + pheight);
-		    for (int j = 0; j < pheight; j++) {
-			    legendGrid[0][j] = step * j + limits[0];
-			    for (int i = 1; i < pwidth; i++)
-				    legendGrid[i][j] = legendGrid[0][j];
+		    int scaleType = 0;
+		    if (logScale) {
+			    scaleType = 1;
+			    for (int j = 0; j < 2; j++)
+			    	limits[j] = MoreMath.log10(limits[j]);
+			    double step = (limits[1] - limits[0]) / pheight;
+			    for (int j = 0; j < pheight; j++) {
+				    legendGrid[0][j] = step * j + limits[0];
+				    for (int i = 1; i < pwidth; i++)
+					    legendGrid[i][j] = legendGrid[0][j];
+			    }
+		    } else {
+			    double step = (limits[1] - limits[0]) / pheight;
+			    for (int j = 0; j < pheight; j++) {
+				    legendGrid[0][j] = step * j + limits[0];
+				    for (int i = 1; i < pwidth; i++)
+					    legendGrid[i][j] = legendGrid[0][j];
+			    }
 		    }
 		    String unit = "mrd";
-		    if (logScale) {
-			    meanValue = 0;
-			    unit = "Log(mrd)";
-		    }
 		    LegendPoleFigureMap mapLegend =  new LegendPoleFigureMap(legendGrid, pwidth, pheight, limits[0], limits[1], grayScale, unit,
-				    colrsNumber, editMenu, zoom, pixelsNumber, meanValue, 0);
+				    colrsNumber, editMenu, zoom, pixelsNumber, meanValue, scaleType);
 		    pfPanel.add(mapLegend);
 	    }
     }
@@ -397,7 +420,139 @@ public class BeartexPFPlot extends Frame implements ClipboardOwner, Printable {
     return PlotPoleFigure.enlargeGrid(PF, numberofPoints, zoom, smooth);
   }
 
-  class LimitsDialog extends Dialog {
+	static int alphamax = 73;
+	static int old1387max = 1387;
+	static double stepResolution = 5.0;
+
+	public static void computePFsAndOutput(Phase aphase, Vector<Reflection> reflList, String poleFiguresFilename) {
+		int resolution = MaudPreferences.getInteger(TexturePlot.gridResString, 101);
+		double zoom = MaudPreferences.getDouble(TexturePlot.zoomString, 1);
+		double filterWidth = MaudPreferences.getDouble("texturePlot.gaussFilterWidth", 0.0);
+		double maxAngle = MaudPreferences.getDouble(TexturePlot.maxAngleString, 90.0);
+		maxAngle = Constants.sqrt2 * Math.sin(maxAngle * Constants.DEGTOPI / 2.0);
+		boolean logScale = MaudPreferences.getBoolean(TexturePlot.logTexturePlotString, false);
+		boolean grayShaded = Constants.grayShaded;
+		int colrsNumber = MaudPreferences.getInteger(TexturePlot.numberofColors, 64);
+
+		boolean xpcOutput = poleFiguresFilename != null && !poleFiguresFilename.isEmpty();
+		PoleFigureOutput pfOutput = null;
+		if (xpcOutput) {
+			String xpcFilename = poleFiguresFilename + aphase.getPhaseName() + ".xpc";
+			pfOutput = new PoleFigureOutput(xpcFilename, aphase);
+			pfOutput.openOutput();
+		}
+		Texture textureModel = aphase.getActiveTexture();
+		int hklnumber = reflList.size();
+		double max = 0.0;
+		double min = 10000.0;
+		double[][][] trialPole = new double[hklnumber][resolution][resolution];
+		int[][] hklPF = new int[hklnumber][3];
+		for (int k = 0; k < hklnumber; k++) {
+			Reflection reflex = reflList.elementAt(k);
+			hklPF[k][0] = reflex.getH();
+			hklPF[k][1] = reflex.getK();
+			hklPF[k][2] = reflex.getL();
+			double[] polf;
+			double[][] alphabeta = new double[3][old1387max];
+			int old19 = 19;
+
+			int ij = 0;
+			for (int i = 0; i < old19; i++) {
+				for (int j = 0; j < alphamax; j++) {
+
+					alphabeta[0][ij] = i * stepResolution * Constants.DEGTOPI;
+					alphabeta[1][ij++] = j * stepResolution * Constants.DEGTOPI;
+				}
+			}
+			polf = textureModel.computeTextureFactor(aphase, alphabeta, reflex);
+			ij = 0;
+			for (int i = 0; i < old19; i++) {
+				for (int j = 0; j < alphamax; j++) {
+					alphabeta[0][ij] = i * stepResolution;
+					alphabeta[1][ij] = j * stepResolution;
+					alphabeta[2][ij] = polf[ij];
+					ij++;
+				}
+			}
+			if (xpcOutput)
+				pfOutput.write(reflex.getH(), reflex.getK(), reflex.getL(), polf, false);
+
+			double[][] poleFigures = PlotPoleFigure.getExpPoleFigureGrid(alphabeta,
+						resolution, maxAngle);
+			for (int i = 0; i < resolution; i++)
+				for (int j = 0; j < resolution; j++) {
+						trialPole[k][i][j] = poleFigures[i][j];
+						if (poleFigures[i][j] > max)
+							max = poleFigures[i][j];
+						if (poleFigures[i][j] < min)
+							min = poleFigures[i][j];
+				}
+			if (min < 0.0)
+				min = 0.0;
+
+		}
+		if (xpcOutput) {
+			pfOutput.closeOutput();
+		}
+		BeartexPFPlot plotPFs = new BeartexPFPlot(trialPole, hklPF, hklnumber, resolution, 0, resolution,
+				zoom, logScale, maxAngle, min, max, filterWidth,
+				grayShaded, colrsNumber, "Pole figures", false);
+
+		Component comp = plotPFs.componentToPrint;
+		if (comp != null) {
+			(new Thread() {
+				public void run() {
+//          setBatch(true);
+					try {
+						TimeUnit.MILLISECONDS.sleep(3000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+
+					Rectangle rect = comp.getBounds();
+					Image fileImage =
+							plotPFs.createImage(rect.width, rect.height);
+					Graphics g = fileImage.getGraphics();
+
+					//write to the image
+					((CopyPrintPanel) comp).clearComponent(g);
+					((CopyPrintPanel) comp).paintComponent(g, comp);
+					comp.print(g);
+					// write it out in the format you want
+					savePic(fileImage, "png", poleFiguresFilename + aphase.getPhaseName() + ".png", comp);
+					//dispose of the graphics content
+					try {
+						TimeUnit.MILLISECONDS.sleep(3000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+
+					g.dispose();
+					//        setBatch(false);
+		         plotPFs.setVisible(false);
+		         plotPFs.dispose();
+
+				}
+			}).start();
+		}
+
+	}
+
+	public static void savePic(Image image, String type, String dst, Component plot){
+		int width = image.getWidth(plot);
+		int height = image.getHeight(plot);
+		BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		Graphics g = bi.getGraphics();
+		try {
+			g.drawImage(image, 0, 0, null);
+			ImageIO.write(bi, type, new File(dst));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	class LimitsDialog extends Dialog {
 
     private TextField yminText = null;
     private TextField ymaxText = null;

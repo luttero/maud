@@ -93,6 +93,7 @@ public class DiffrDataFile extends XRDcat {
       "_riet_par_spec_displac_x_2R",
       "_riet_par_spec_displac_z_2R",
 			"_riet_par_fluo_diffr_scale",
+			"_rita_shape_abs_velocity_corr_factor",
 
       "_riet_par_background_pol",
       "_riet_par_2-theta_offset",
@@ -130,6 +131,7 @@ public class DiffrDataFile extends XRDcat {
       "sample displacement x/2R",
       "sample displacement z/2R",
 		  "scale factor for diffraction in XRF",
+			"_rita_shape_abs_velocity_corr_factor",
 
       "background polynomial additional coeff ",
       "2-theta or d-spacing offset additional coeff ",
@@ -251,6 +253,7 @@ public class DiffrDataFile extends XRDcat {
 	static final int dateTimeFieldID = maxAngleNumber + 12;
 	static final int datafileWeightFieldID = maxAngleNumber + 13;
 	static final int scaleFactorDiffractionFluoID = 3;
+	static final int absorptionFactorID = 4;
 
 	//	private String measurementDate;
 //	private String measurementTime;
@@ -307,7 +310,7 @@ public class DiffrDataFile extends XRDcat {
   public void initConstant() {
     Nstring = 22;
     Nstringloop = 0;
-    Nparameter = 4;
+    Nparameter = 5;
     Nparameterloop = 3;
     Nsubordinate = 0;
     Nsubordinateloop = 1;
@@ -335,6 +338,7 @@ public class DiffrDataFile extends XRDcat {
     initializeParameter(sampleDisplacementYID, 0.0, -10.0, 10.0);
     initializeParameter(sampleDisplacementZID, 0.0, -10.0, 10.0);
 	  initializeParameter(scaleFactorDiffractionFluoID, 1.0, 0.0, 100.0);
+	  initializeParameter(absorptionFactorID, 0.0, 0.0, 10000.0);
     setCountTime("1.0");
 	  useCountTimeToScale(false);
     setIntensityUnit(meas_intensity_unit[0]);
@@ -1024,6 +1028,8 @@ public class DiffrDataFile extends XRDcat {
   @Override
   public void updateStringtoDoubleBuffering(boolean firstLoading) {
     super.updateStringtoDoubleBuffering(firstLoading);
+	  DataFileSet dataset = getDataFileSet(); //(DataFileSet) getParent();
+	  Instrument ainstrument = dataset.getInstrument();
     generatePlotfile = getPlotfileString().equalsIgnoreCase("true");
 //    asBackground = getAsBackgroundString().equalsIgnoreCase("true");
     manualBkgInterpolation = getManualBkgInterpolationString().equalsIgnoreCase("true");
@@ -1032,7 +1038,6 @@ public class DiffrDataFile extends XRDcat {
 //  computeSpectrum = !getAsBackgroundString().equalsIgnoreCase("true") && getComputeString().equalsIgnoreCase("true");
     dataType = Integer.parseInt(getDataType());
 
-    DataFileSet dataset = getDataFileSet(); //(DataFileSet) getParent();
 //    dataset.updateStringtoDoubleBuffering();
 	  for (int i = 0; i < maxAngleNumber; i++)
 		  tilting_angles[i] = Double.parseDouble(getString(i + 1));
@@ -1088,6 +1093,10 @@ public class DiffrDataFile extends XRDcat {
     checkStep();
     theta2thetaMeasurement = ainstrument.getMeasurement() instanceof Theta2ThetaMeasurement;
     datafileWeight = Double.parseDouble(getString(datafileWeightFieldID));
+
+	  if (ainstrument.isTOF() && corrected_tilting_angles[4] == 0) {
+		  corrected_tilting_angles[4] = ainstrument.getDetector().getThetaDetector(this, 0);
+	  }
   }
 
 	public double getDatafileWeight() {
@@ -1761,6 +1770,10 @@ public class DiffrDataFile extends XRDcat {
       return value;
     return Constants.ENERGY_LAMBDA * 2.0 / (wave / MoreMath.sind(value / 2.0));
   }
+
+	public double getWavelengthFromDSpace(double value) {
+		return 2.0 * value * MoreMath.sind(get2ThetaValue() / 2.0);
+	}
 
   public double convertXToDspace(double xdata, double wave) {
     if (dspacingbase || !calibrated)
@@ -2470,8 +2483,12 @@ public class DiffrDataFile extends XRDcat {
     fit[index] = value;
   }
 
-  protected void setBkgFit(int index, double value) {
+  protected boolean setBkgFit(int index, double value) {
+	  if (index >= 0 && index < bkgfit.length) {
     bkgfit[index] = value;
+		  return true;
+	  }
+	  return false;
   }
 
   public boolean hasfit() {
@@ -5714,7 +5731,9 @@ public class DiffrDataFile extends XRDcat {
 	}
 
 	public void computeShapeAbsorptionCorrection(Phase aphase) {
+ 	   double abs = getParameter(absorptionFactorID).getValueD();
 		Instrument ainstrument = getDataFileSet().getInstrument();
+		boolean isTOF = ainstrument.isTOF();
 		Vector<Vector<ReflectionPeak>> peaks = getReflections(aphase);
 		for (int i = 0; i < peaks.size(); i++) {
 			int rad_index = i + baseRadiationNumber;
@@ -5723,19 +5742,33 @@ public class DiffrDataFile extends XRDcat {
 				ReflectionPeak peak = peaksR.elementAt(j);
 				peak.absShapeFactor = ainstrument.getAbsorptionCorrection(this, aphase, peak.position, rad_index);
 /*
+				for (int j = 0; j < positionsPerPattern; j++)
+					for (int k = 0; k < radNumber; k++)
+					intensity[j][k] = 1.0f;
 				ainstrument.computeShapeAbsorptionCorrection(this, asample, positions[i],
 						dspacingbase, energyDispersive, intensity);
-
-				double[] layer_abs = ainstrument.PhaseAndLayerAbsorption(this, asample, aphase, positions[i][j]);
-				// computeAbsorptionAndPhaseQuantity(ainstrument, aphase.getSample(), aphase, positions[0][i][j]);
+				for (int j = 0; j < positionsPerPattern; j++) {
+					double[] layer_abs = ainstrument.PhaseAndLayerAbsorption(this, asample, aphase, positions[i][j]);
+					// computeAbsorptionAndPhaseQuantity(ainstrument, aphase.getSample(), aphase, positions[0][i][j]);
 //					System.out.println(i + " " + intensity[j][0] + " " + layer_abs[0]);
-				for (int a = 0; a < layer_abs.length; a++) {
-					shapeAbsorption[i][j][a] = intensity[j][a] * layer_abs[a];
+					double linearCorrection = 1.0;
+					if (isTOF) { // dspacingbase
+							double arg1 = abs * getWavelengthFromDSpace(positions[i][j][0]);
+							if (arg1 != 0.0) {
+//								System.out.println(abs + " " + positions[i][j][0] + " " + getWavelengthFromDSpace(positions[i][j][0]));
+								if (arg1 < 200.0)
+									arg1 = Math.exp(-arg1);
+								else
+									arg1 = 0.0f;
+								linearCorrection = arg1;
+							}
+					}
+
+					for (int a = 0; a < layer_abs.length; a++) {
+						shapeAbsorption[i][j][a] = intensity[j][a] * layer_abs[a] * linearCorrection;
+					}
 				}
-				if (dspacingbase || energyDispersive || (peak.position > 0 && peak.position < 180.0)) {
-					peak.lorentzPolarization = ainstrument.LorentzPolarization(this, asample, peak.position,
-							dspacingbase, energyDispersive);
-				}*/
+				*/
 			}
 		}
 	}
@@ -6102,6 +6135,7 @@ public class DiffrDataFile extends XRDcat {
     JParameterListPane[] polynomialP;
     JTextField displacementZTF = null;
     JTextField displacementYTF = null;
+    JTextField absorptionFactorTF = null;
 
     public JDataFileOptionsD(Frame parent, XRDcat obj) {
 
@@ -6112,7 +6146,7 @@ public class DiffrDataFile extends XRDcat {
       JTabbedPane p1 = new JTabbedPane();
       principalPanel.add(p1, BorderLayout.CENTER);
       String p1String[] = {"Background pol.",
-          "Error position pol.", "Sample displ."};
+          "Error position pol.", "As bkg counts", "Sample par."};
 
       polynomialP = new JParameterListPane[Nparameterloop];
       for (int i = 0; i < Nparameterloop; i++) {
@@ -6121,7 +6155,7 @@ public class DiffrDataFile extends XRDcat {
       }
 
       JPanel samplePanel = new JPanel(new GridLayout(0, 1, 3, 3));
-      p1.addTab(p1String[2], null, samplePanel);
+      p1.addTab(p1String[3], null, samplePanel);
 
       JPanel jp1 = new JPanel(new FlowLayout());
       jp1.add(new JLabel("Sample displacement y/2R:"));
@@ -6133,6 +6167,12 @@ public class DiffrDataFile extends XRDcat {
       displacementZTF = new JTextField(Constants.FLOAT_FIELD);
       jp1.add(displacementZTF);
       samplePanel.add(jp1);
+
+	    jp1 = new JPanel(new FlowLayout());
+	    jp1.add(new JLabel("Absorption factor:"));
+	    absorptionFactorTF = new JTextField(Constants.FLOAT_FIELD);
+	    jp1.add(absorptionFactorTF);
+	    samplePanel.add(jp1);
 
       setTitle("Additional parameters for datafile: " + this.toString());
       initParameters();
@@ -6147,6 +6187,8 @@ public class DiffrDataFile extends XRDcat {
       addComponenttolist(displacementYTF, getParameter(sampleDisplacementYID));
       displacementZTF.setText(getParameter(sampleDisplacementZID).getValue());
       addComponenttolist(displacementZTF, getParameter(sampleDisplacementZID));
+	    absorptionFactorTF.setText(getParameter(absorptionFactorID).getValue());
+	    addComponenttolist(absorptionFactorTF, getParameter(absorptionFactorID));
     }
 
     @Override
@@ -6157,6 +6199,8 @@ public class DiffrDataFile extends XRDcat {
       removeComponentfromlist(displacementYTF);
       getParameter(sampleDisplacementZID).setValue(displacementZTF.getText());
       removeComponentfromlist(displacementZTF);
+	    getParameter(absorptionFactorID).setValue(absorptionFactorTF.getText());
+	    removeComponentfromlist(absorptionFactorTF);
 
     }
 
@@ -6167,6 +6211,7 @@ public class DiffrDataFile extends XRDcat {
       polynomialP = null;
       displacementYTF = null;
       displacementZTF = null;
+	    absorptionFactorTF = null;
 
 //			theDataFileSet = null;
       super.dispose();

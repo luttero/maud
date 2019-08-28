@@ -1637,6 +1637,36 @@ public class FilePar extends XRDcat implements lFilePar, Function {
     }
   }
 
+	public void freeAllLinearAbsorption() {
+		for (int i = 0; i < samplesNumber(); i++) {
+			Sample asample = getSample(i);
+			for (int j = 0; j < asample.datasetsNumber(); j++) {
+				DataFileSet adataset = asample.getDataSet(j);
+				if (adataset.isEnabled()) {
+					for (int k = 0; k < adataset.activedatanumber; k++) {
+						DiffrDataFile data = adataset.getActiveDataFile(k);
+						data.getParameter(data.absorptionFactorID).setRefinableCheckBound();
+					}
+				}
+			}
+		}
+	}
+
+	public void fixAllLinearAbsorptionPreserveBound() {
+		for (int i = 0; i < samplesNumber(); i++) {
+			Sample asample = getSample(i);
+			for (int j = 0; j < asample.datasetsNumber(); j++) {
+				DataFileSet adataset = asample.getDataSet(j);
+				if (adataset.isEnabled()) {
+					for (int k = 0; k < adataset.activedatanumber; k++) {
+						DiffrDataFile data = adataset.getActiveDataFile(k);
+						data.getParameter(data.absorptionFactorID).setNotRefinableCheckBound();
+					}
+				}
+			}
+		}
+	}
+
   public void boundAllBankCoefficients() {
     for (int k = 0; k < samplesNumber(); k++) {
       Sample asample = getSample(k);
@@ -3299,9 +3329,9 @@ public class FilePar extends XRDcat implements lFilePar, Function {
     if (!Constants.textonly)
       themainframe.retrieveParameters();
     DiffrDataFile datafile = getDatafile(0);
-    if (datafile != null)
-      out.write(datafile.getLabel());
-    else
+//    if (datafile != null)
+//      out.write(datafile.getLabel());
+//    else
       out.write(getTitleField());
     out.write("\t");
     double[] indexes = getRefinementIndexes();

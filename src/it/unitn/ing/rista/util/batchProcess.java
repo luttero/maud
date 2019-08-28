@@ -20,13 +20,17 @@
 
 package it.unitn.ing.rista.util;
 
+import java.awt.*;
 import java.lang.*;
 
+import it.unitn.ing.rista.awt.BeartexPFPlot;
+import it.unitn.ing.rista.awt.MultiPlotFitting2D;
 import it.unitn.ing.rista.diffr.*;
 
 import java.io.*;
 import java.util.*;
 
+import it.unitn.ing.rista.diffr.rta.PoleFigureOutput;
 import it.unitn.ing.rista.io.cif.*;
 import it.unitn.ing.wizard.LCLS2Wizard.LCLS2Wizard;
 import it.unitn.ing.wizard.LCLS2Wizard.LCLS2data;
@@ -50,8 +54,14 @@ public class batchProcess {
   String simpleResultFileName = null;
   String resultFileName = null;
   String plotOutputFileName = null;
+  String plotOutput2DFileName = null;
   String original_image = null;
   String dark_image = null;
+  String poleFiguresFilename = null;
+  String poleFiguresPngOptions = null;
+  String poleFiguresPng = null;
+  String poleFiguresXpc = null;
+  String titleField = null;
 
   public String[] diclist = {"_riet_analysis_file",
                              "_riet_analysis_iteration_number", "_riet_analysis_wizard_index",
@@ -61,8 +71,9 @@ public class batchProcess {
                              "_maud_output_plot_filename", "_maud_remove_all_datafiles",
 		                       "_maud_remove_all_phases", "_maud_import_phase",
 		                       "_maud_LCLS2_Cspad0_original_image", "_maud_LCLS2_Cspad0_dark_image",
-		                       "_maud_export_pole_figures_png", "_maud_output_plot2D_filename",
-		                       "_maud_LCLS2_detector_config_file"
+		                       "_maud_export_pole_figures_filename", "_maud_export_pole_figures_options",
+		                       "_maud_export_pole_figures", "_maud_output_plot2D_filename",
+		                       "_maud_LCLS2_detector_config_file", "_publ_section_title"
   };
 
   public batchProcess(String insFileName) {
@@ -106,8 +117,8 @@ public class batchProcess {
                 break;
               case CIFtoken.TT_LOOP:
                 // data loop
-                Vector itemlistv = new Vector(0, 1);
-                Vector cifelistv = new Vector(0, 1);
+                Vector itemlistv = new Vector(50, 1);
+                Vector cifelistv = new Vector(50, 1);
                 newtoken = ciffile.nextToken();
 //							System.out.println(ciffile.thestring);
                 while (newtoken == CIFtoken.TT_CIFE) {
@@ -212,16 +223,24 @@ public class batchProcess {
       while (i < loopitem) {
         item = (CIFItem) avector.elementAt(i);
         index = ciftonumber(item.cif);
-//	      System.out.println(index + " " + item.cif + " " + index + " " + item.thestring);
+	      System.out.println(index + " " + item.cif + " " + index + " " + item.thestring);
         if (index == 0) {
           if (analysis != null) {
+          	if (titleField != null)
+          		analysis.setTitleField(titleField);
             if (automaticBackground) {
               analysis.checkOwnPolynomial();
               analysis.freeAllBackgroundParameters();
             }
+	          if (original_image != null && dark_image != null) {
+		          LCLS2data data = new LCLS2data("analysis x");
+		          System.out.println("Reading images starting with: " + original_image);
+		          data.setupDataFrom(detectorConfigFile, original_image, dark_image);
+		          LCLS2Wizard.setupTheAnalysis(analysis, data);
+	          }
             processAnalysis(analysis, wizardindex);
           }
-          wizardindex = -1;
+          wizardindex = -2;
 
           token = item.thestring;
           String[] newfolderandname = Misc.getFolderandName(/*folderandname[0] + */token);
@@ -331,32 +350,43 @@ public class batchProcess {
 	        dark_image = item.thestring;
 	        avector.removeElementAt(i);
 	        loopitem--;
-        } else if (index == 15) { // "_maud_export_pole_figures"
-	        if (analysis != null) {
-//		        analysis.getSample(0).getDataSet(0).addDataFileforName(item.thestring, false);
-	        }
+        } else if (index == 15) { // "_maud_export_pole_figures_filename"
+	        poleFiguresFilename = item.thestring;
 	        avector.removeElementAt(i);
 	        loopitem--;
-        } else if (index == 16) { // "_maud_output_plot2D_filename"
-	        if (analysis != null) {
-//		        analysis.getSample(0).getDataSet(0).addDataFileforName(item.thestring, false);
-	        }
+        } else if (index == 16) { // "_maud_export_pole_figures_options"
+	        poleFiguresPngOptions = item.thestring;
 	        avector.removeElementAt(i);
 	        loopitem--;
-        } else if (index == 17) {
+        } else if (index == 17) { // "_maud_export_pole_figures"
+	        poleFiguresXpc = item.thestring;
+	        avector.removeElementAt(i);
+	        loopitem--;
+        } else if (index == 18) { // "_maud_output_plot2D_filename"
+	        plotOutput2DFileName = item.thestring;
+	        avector.removeElementAt(i);
+	        loopitem--;
+        } else if (index == 19) {
           detectorConfigFile = item.thestring;
           avector.removeElementAt(i);
           loopitem--;
+        } else if (index == 20) {
+	        titleField = item.thestring;
+	        avector.removeElementAt(i);
+	        loopitem--;
         } else
           i++;
       } // end of while (i < loopitem)
 
+	    if (titleField != null)
+		    analysis.setTitleField(titleField);
       if (automaticBackground) {
         analysis.checkOwnPolynomial();
         analysis.freeAllBackgroundParameters();
       }
       if (original_image != null && dark_image != null) {
 	      LCLS2data data = new LCLS2data("analysis x");
+	      System.out.println("Reading images starting with: " + original_image);
 	      data.setupDataFrom(detectorConfigFile, original_image, dark_image);
 	      LCLS2Wizard.setupTheAnalysis(analysis, data);
       }
@@ -476,18 +506,88 @@ public class batchProcess {
       }
       if (simpleResultFileName != null) {
         String[] folderAndName = Misc.getFolderandName(simpleResultFileName);
-        analysis.appendResultsTo(folderandname[0] + folderAndName[0], folderAndName[1], true);
+        analysis.appendResultsTo(folderAndName[0], folderAndName[1], true);
       }
       if (resultFileName != null) {
         String[] folderAndName = Misc.getFolderandName(resultFileName);
-        analysis.appendResultsTo(folderandname[0] + folderAndName[0], folderAndName[1], false);
+        analysis.appendResultsTo(folderAndName[0], folderAndName[1], false);
       }
       if (plotOutputFileName != null) {
-        String[] folderAndName = Misc.getFolderandName(plotOutputFileName);
-        exportExperimentalComputedData(analysis, folderandname[0] + folderAndName[0], folderAndName[1]);
+	      Sample asample = analysis.getSample(0);
+
+	      for (int i = 0; i < asample.activeDatasetsNumber(); i++) {
+		      DataFileSet dataset = asample.getActiveDataSet(i);
+		      dataset.plotAndExportPng(plotOutputFileName);
+	      }
+      }
+		  if (plotOutput2DFileName != null) {
+			  Sample asample = analysis.getSample(0);
+
+			  for (int i = 0; i < asample.activeDatasetsNumber(); i++) {
+
+				  DataFileSet dataset = asample.getActiveDataSet(i);
+				  dataset.plot2DandExportPng(plotOutput2DFileName);
+
+			  }
+		  }
+      if (poleFiguresFilename != null && !poleFiguresFilename.isEmpty()) {
+	      if (poleFiguresXpc != null && !poleFiguresXpc.isEmpty()) {
+	      	Vector<String> phasePF = separateInPhases(poleFiguresXpc);
+	      	for (int ij = 0; ij < phasePF.size(); ij++) {
+			      String pfs = phasePF.elementAt(ij);
+			      int phaseNumber = -1;
+			      Vector<Reflection> reflList = new Vector<>();
+			      StringTokenizer st = new StringTokenizer(pfs, " /t");
+			      try {
+				      String token1 = "";
+				      if (st.hasMoreTokens()) {
+					      token1 = st.nextToken();
+					      phaseNumber = Integer.parseInt(token1);
+				      }
+				      if (phaseNumber >= 0) {
+				      	int hkl_index = 0;
+				      	int[] hkl = new int[3];
+					      while (st.hasMoreTokens()) {
+						      token1 = st.nextToken();
+						      hkl[hkl_index++] = Integer.parseInt(token1);
+						      if (hkl_index == 3) {
+							      hkl_index = 0;
+							      Reflection refl = new Reflection(hkl[0], hkl[1], hkl[2]);
+							      reflList.addElement(refl);
       }
     }
   }
+			      } catch (Exception ge) {
+//              System.out.println("Something happen reading: " + xpcAll);
+			      }
+			      if (phaseNumber >= 0 && reflList.size() > 0) {
+			      	Phase phase = analysis.getSample(0).getPhase(phaseNumber);
+				      BeartexPFPlot.computePFsAndOutput(phase, reflList, poleFiguresFilename);
+			      }
+
+		      }
+	      }
+      }
+    }
+  }
+
+	public Vector<String> separateInPhases(String xpcAll) {
+		Vector<String> allPhases = new Vector<>();
+		StringTokenizer st = new StringTokenizer(xpcAll, "pP");
+
+		try {
+			String token1 = "";
+			while (st.hasMoreTokens()) {
+				token1 = st.nextToken();
+				if (!Misc.toStringDeleteBlankTabAndEOF(token1).isEmpty())
+					allPhases.addElement(token1);
+			}
+		} catch (Exception ge) {
+//              System.out.println("Something happen reading: " + xpcAll);
+		}
+
+		return allPhases;
+	}
 
   public void exportExperimentalComputedData(FilePar analysis, String folder, String afilename) {
 

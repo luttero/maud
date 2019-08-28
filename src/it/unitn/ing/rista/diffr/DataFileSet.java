@@ -26,6 +26,7 @@ import static java.lang.System.*;
 import static java.util.Collections.sort;
 import java.io.*;
 import java.awt.*;
+import java.util.concurrent.TimeUnit;
 
 import it.unitn.ing.rista.diffr.instrument.DefaultInstrument;
 import it.unitn.ing.rista.io.cif.*;
@@ -2706,6 +2707,102 @@ public class DataFileSet extends XRDcat {
       }
     }).start();
   }
+
+
+	public void plot2DandExportPng(String plotOutput2DFileName) {
+		int datafilenumber = activedatafilesnumber();
+
+		final DiffrDataFile[] adfile = new DiffrDataFile[datafilenumber];
+		for (int i = 0; i < datafilenumber; i++) {
+			adfile[i] = getActiveDataFile(i);
+		}
+		final String label = DataFileSet.this.toXRDcatString();
+		MultiPlotFitting2D plot = new MultiPlotFitting2D(null, adfile, label);
+		(new PersistentThread() {
+			@Override
+			public void executeJob() {
+
+				try {
+					TimeUnit.MILLISECONDS.sleep(3000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+
+				Component comp = plot.fullGraphPanel;
+				if (comp != null) {
+					Rectangle rect = comp.getBounds();
+					Image fileImage =
+							plot.createImage(rect.width, rect.height);
+					Graphics g = fileImage.getGraphics();
+
+					//write to the image
+					g.clearRect(0, 0, comp.getWidth(), comp.getHeight());
+					comp.paint(g);
+					// write it out in the format you want
+					BeartexPFPlot.savePic(fileImage, "png", plotOutput2DFileName + label + ".png", comp);
+
+					try {
+						TimeUnit.MILLISECONDS.sleep(3000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+
+					//dispose of the graphics content
+					g.dispose();
+					plot.setVisible(false);
+					plot.dispose();
+				}
+			}
+		}).start();
+	}
+
+	public void plotAndExportPng(String plotOutputFileName) {
+		int datafilenumber = activedatafilesnumber();
+
+		final DiffrDataFile[] adfile = new DiffrDataFile[datafilenumber];
+		for (int i = 0; i < datafilenumber; i++) {
+			adfile[i] = getActiveDataFile(i);
+		}
+		final String label = DataFileSet.this.toXRDcatString();
+		PlotFitting plot = new PlotFitting(null, adfile, false);
+		plot.setVisible(true);
+		(new PersistentThread() {
+			@Override
+			public void executeJob() {
+
+				try {
+					TimeUnit.MILLISECONDS.sleep(3000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+
+				Component comp = plot.thePlotPanel.getComponentToPrint();
+				if (comp != null) {
+					Rectangle rect = comp.getBounds();
+					Image fileImage =
+							plot.createImage(rect.width, rect.height);
+					Graphics g = fileImage.getGraphics();
+
+					//write to the image
+					g.clearRect(0, 0, comp.getWidth(), comp.getHeight());
+					comp.paint(g);
+					// write it out in the format you want
+					BeartexPFPlot.savePic(fileImage, "png", plotOutputFileName + label + ".png", comp);
+
+					try {
+						TimeUnit.MILLISECONDS.sleep(3000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+
+					//dispose of the graphics content
+					g.dispose();
+					plot.setVisible(false);
+					plot.dispose();
+				}
+			}
+		}).start();
+	}
 
   public void polarPlot2D(Frame aframe) {
     final Frame newFrame = aframe;
