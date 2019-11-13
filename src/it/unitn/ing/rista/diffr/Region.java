@@ -46,6 +46,8 @@ public class Region extends XRDcat {
     this(afile, "Region x");
   }
 
+	public Region() {}
+
   public void initConstant() {
     Nstring = 2;
     Nstringloop = 0;

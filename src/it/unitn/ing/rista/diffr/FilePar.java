@@ -199,6 +199,8 @@ public class FilePar extends XRDcat implements lFilePar, Function {
     themainframe = aframe;
   }
 
+	public FilePar() {}
+
   public URL getCodeBase() {
     return null;
   }
@@ -1028,6 +1030,8 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 		  }
 	  }
 	  checkForVersion(getVersion());
+
+	  stringField[1] = new String("Maud version " + Double.toString(Constants.maud_version));
 
 	  if (Constants.testing)
 		  System.out.println("End refresh");

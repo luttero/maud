@@ -60,6 +60,8 @@ public class Bound extends Maincat {
     setConstant(constant);
   }
 
+  public Bound() {}
+
   public void initConstant() {
     Nstring = 4;
     Nstringloop = 0;

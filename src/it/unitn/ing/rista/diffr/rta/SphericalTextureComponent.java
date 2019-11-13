@@ -94,6 +94,8 @@ C          IGL  = 2 LORENTZ-SHAPED CURVE (B OR T INPUT IS POSSIBLE)
     this(afile, "SphericalTextureComponent x");
   }
 
+	public SphericalTextureComponent() {}
+
   public void initConstant() {
     Nstring = 1;
     Nstringloop = 0;

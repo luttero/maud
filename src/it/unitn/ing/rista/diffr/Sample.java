@@ -115,6 +115,8 @@ public class Sample extends Maincat {
     this(afile, "Sample_x");
   }
 
+	public Sample() {}
+
   public void initConstant() {
     Nstring = 3;
     Nstringloop = 0;

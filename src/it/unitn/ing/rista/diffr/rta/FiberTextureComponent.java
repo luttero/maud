@@ -77,6 +77,8 @@ public class FiberTextureComponent extends XRDcat {
     this(afile, "FiberTextureComponent x");
   }
 
+	public FiberTextureComponent() {}
+
   public void initConstant() {
     Nstring = 1;
     Nstringloop = 0;
@@ -207,6 +209,7 @@ public class FiberTextureComponent extends XRDcat {
 	  StandardFunctionTexture sft = (StandardFunctionTexture) getParent();
     double[] xyzY = VECTOR(position[0], position[1]);
     double[] xyzH = VECTOR(position[2], position[3]);
+//    System.out.println(position[2] + " " + position[3] + " " + xyzH[0] + " " + xyzH[1] + " " + xyzH[2]);
     PARFP(betag);
     double[][] FXYZ;
     if (sft.IGB < 8)
@@ -308,6 +311,7 @@ public class FiberTextureComponent extends XRDcat {
       P1 = Math.exp(ARG1);
     if (ARG2 > -80.)
       P2 = Math.exp(ARG2);
+//    System.out.println(P1 + " " + P2 + " " + SphericalTextureComponent.Bessel(SF * WW, 0));
     return SphericalTextureComponent.Bessel(SF * WW, 0) * (P1 + P2);
   }
 

@@ -257,6 +257,7 @@ public class StructureFactorStandardModel extends StructureFactorModel {
 			double i_4dspace2 = 0.25 / (refl.d_space * refl.d_space);
 			Vector<AtomSite> atomList = phase.getFullAtomList();
 			int atomNumber = atomList.size();
+//		System.out.println(refl.getH() + " " + refl.getK() + " " + refl.getL() + ":");
 			for (int j = 0; j < atomNumber; j++) {
 				AtomSite ato = atomList.get(j);
 				double[][] x = ato.getQuickAtomCoordinates();
@@ -266,7 +267,9 @@ public class StructureFactorStandardModel extends StructureFactorModel {
 					//ato.DebyeWaller(h, k, l, dspacing) * ato.getOccupancyValue();
 					scatf1 = scatf[j][0] * scatFactor;
 					scatf2 = scatf[j][1] * scatFactor;
+//					System.out.println(j + ": " + scatf1 + " " + scatf2);
 					for (int ix = 0; ix < ato.getQuickAtomCoordinatesNumber(); ix++) {
+//						System.out.println(j + " " + ix + " " + x[ix][0] + " " + x[ix][1] + " " + x[ix][2]);
 						double arg = h1 * x[ix][0] + k1 * x[ix][1] + l1 * x[ix][2];
 						double w1 = Math.cos(arg);
 						double w2 = Math.sin(arg);
@@ -277,7 +280,7 @@ public class StructureFactorStandardModel extends StructureFactorModel {
 				ato.trowException = false;
 			}
 			double structurefactor = (a1 * a1 + a2 * a2) * refl.multiplicity;
-//		System.out.println(refl.getH() + " " + refl.getK() + " " + refl.getL() + " " + structurefactor + " "
+//		System.out.println(refl.getH() + " " + refl.getK() + " " + refl.getL() + " " + structurefactor + " " + refl.multiplicity + " "
 //		+ refl.d_space + " " + divideFactors[0] + " " + divideFactors[1] + " " + divideFactors[2] + " " + factors);
 		structurefactor *= factors;
 		if (phase.getFullAtomList().size() == 0)

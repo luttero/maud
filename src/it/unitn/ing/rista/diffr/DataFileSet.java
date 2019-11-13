@@ -192,6 +192,8 @@ public class DataFileSet extends XRDcat {
     this(afile, "DataFileSet_x");
   }
 
+	public DataFileSet() {}
+
   @Override
   public void initConstant() {
     Nstring = 21;
@@ -1212,12 +1214,12 @@ public class DataFileSet extends XRDcat {
 				AtomSite atom = atoms.elementAt(ato);
 				double[] scatteringFactors = atom.scatfactor(0, rad1);
 				scatFactors[0][j][ato][0] = scatteringFactors[0] + fu[0];
-				scatFactors[0][j][ato][1] = fu[1];
+				scatFactors[0][j][ato][1] = scatteringFactors[1] + fu[1];
 				for (int kj = 1; kj < numberofpeaks; kj++) {
 					Reflection refl = phase.getReflex(kj - 1);
 					scatteringFactors = atom.scatfactor(refl.d_space, rad1);
 					scatFactors[kj][j][ato][0] = scatteringFactors[0] + fu[0];
-					scatFactors[kj][j][ato][1] = fu[1];
+					scatFactors[kj][j][ato][1] = scatteringFactors[1] + fu[1];
 				}
 			}
 		}

@@ -56,6 +56,8 @@ public class PoleFigure extends XRDcat {
     this(afile, "Pole figure x");
   }
 
+	public PoleFigure() {}
+
   public void initConstant() {
     Nstring = 0;
     Nstringloop = 0;

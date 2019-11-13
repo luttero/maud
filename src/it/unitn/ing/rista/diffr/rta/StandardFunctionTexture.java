@@ -414,10 +414,8 @@ public class StandardFunctionTexture extends Texture {
 					    textF[j] = computeTextureFactor(refl.phi[0], refl.beta[0],
 							    texture_angles[0] * Constants.DEGTOPI,
 							    texture_angles[1] * Constants.DEGTOPI);
-/*		              System.out.println(positions[0][j][0] + " " +
-				              refl.phi[0] + " " + refl.beta[0] + " " +
-				              texture_angles[0] * Constants.DEGTOPI + " " +
-				              texture_angles[1] * Constants.DEGTOPI + " " + textF[j]);*/
+//		              System.out.println(positions[j][0][0] + " " + refl.getH() + " " + refl.getK() + " " + refl.getL() + " " +
+//				              refl.phi[0] * Constants.PITODEG + " " + refl.beta[0] * Constants.PITODEG + " " + texture_angles[0] + " " + texture_angles[1] + " " + textF[j]);
 //						refl.setExpTextureFactor(adatafile.getIndex(), textF);
 				    }
 			    adatafile.setTextureFactors(aphase, textF);
@@ -551,10 +549,10 @@ public class StandardFunctionTexture extends Texture {
 					PSUML += FiberTextureComponent.PSLF(ZZ, WW, fiberComp.EPT2, fiberComp.ZT);
 				}
 			}
+//			System.out.println(IZGB + " " + IZGA + " " + PSUMG + " " + fiberComp.HNFUKG + " " + PSUML + " " + fiberComp.HNFUKL);
 			poleIntensity += PSUMG * fiberComp.HNFUKG + PSUML * fiberComp.HNFUKL;
 
 		}
-
 		return poleIntensity;
 	}
 

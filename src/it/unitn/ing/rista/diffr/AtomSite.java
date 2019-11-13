@@ -175,6 +175,8 @@ public class AtomSite extends XRDcat {
     this(parent, "Site_x");
   }
 
+  public AtomSite() {}
+
   /**
    * Init the default fields of this object, see XRDcat for this.
    */

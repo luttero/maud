@@ -257,6 +257,8 @@ public class Phase extends XRDcat {
     this(afile, "Phase_x");
   }
 
+	public Phase() {}
+
   public void initConstant() {
     Nstring = 15;
     Nstringloop = 1;

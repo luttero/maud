@@ -220,7 +220,6 @@ public class Constants {
   public static final double ENERGY_LAMBDA = 12398.424121;
   public static final double I_ENERGY_LAMBDA = 1.0 / 12398.424121;
 
-
   public static final int FLOAT_FIELD = 12;
   public static final double TOOLERANCE_COORD = 1.0E-3;
   public static final double PI = Math.PI;
@@ -264,13 +263,13 @@ public class Constants {
   public static String resultsFile = "results.txt";
   public static String userName = null;
   public static String startPath = "/";
-  public static String maudReleaseBuilt = "$Revision: 2.92 $";
-  public static String maudDateBuilt = "$Date: 2019/07/29 21:22:00 $";
+  public static String maudReleaseBuilt = "$Revision: 2.93 $";
+  public static String maudDateBuilt = "$Date: 2019/11/13 18:36:41 $";
 
   public static final double arg2PIover3 = PI2 / 3.;
   public static final double sinArg2PIover3 = Math.sin(arg2PIover3);
   public static final double cosArg2PIover3 = Math.cos(arg2PIover3);
-  public static double maud_version = 2.92;
+  public static double maud_version = 2.93;
   public static boolean useOpenCL = false;
   public static Vector<OpenCLDevice> openClDevices= null;
   public static OpenCLDevice openclDevice = null;
@@ -310,6 +309,7 @@ public class Constants {
   public static String identifier[] = null;
   public static String classname[] = null;
   public static int numberofclasstype = 0;
+	public static URLClassLoader maudClassLoader = null;
 
 //  public static final int ANGULAR_CALIBRATION_S = 21;
 //  public static final int INTENSITY_CALIBRATION_S = 22;
@@ -453,6 +453,7 @@ public class Constants {
 		documentsDirectory = applicationSupportDirectory + "doc" + fileSeparator;
 		cachesDirectory = applicationSupportDirectory + "caches" + fileSeparator;
 		logsDirectory = libraryDirectory + "Logs" + fileSeparator;
+		startingAppDirectory = userDirectory;
 	}
 
 	public static void initForLinux() {
@@ -552,13 +553,6 @@ public class Constants {
 //	  String classnamesFile = "files/classnames.ins";
 	  pathToMaudJar = Misc.getPathToMaudJar("Maud.jar");
 	  maudJar = pathToMaudJar + fileSeparator + "Maud.jar";
-/*	  String fileToLoad = "/.maudpath_" + userName;
-	  if (windoze)
-		  fileToLoad = "/maudpath_" + userName;
-	  else {
-		  maudJar = "/" + maudJar;
-		  pathToMaudJar = "/" + pathToMaudJar;
-	  }*/
 
 	  if (pathToMaudJar.startsWith("/."))
 		  pathToMaudJar = pathToMaudJar.substring(1);
@@ -568,7 +562,7 @@ public class Constants {
 	  System.out.println("Path to Maud jar: " + pathToMaudJar);
 
 	  if (macosx) {
-	  	nativeLibraryDirectory = pathToMaudJar + fileSeparator + "../../Frameworks" + fileSeparator;
+	  	nativeLibraryDirectory = pathToMaudJar + fileSeparator + "../Frameworks" + fileSeparator;
 	  	cctbxNativeLibrary = nativeLibraryDirectory + "libcctbxForMaud.dylib";
 	  } else {
 		  nativeLibraryDirectory = pathToMaudJar + fileSeparator;
@@ -621,7 +615,7 @@ public class Constants {
 
 	  File[] jarFileList = null;
 		File[] pluginsJarFileList = null;
-	  libDirname = pathToMaudJar + fileSeparator + libDir + fileSeparator;
+	  libDirname = pathToMaudJar + fileSeparator;
 		System.out.println("Lib dir: " + libDirname);
 	  try {
       File libDir = new File(libDirname);
@@ -630,7 +624,7 @@ public class Constants {
 		    libDir = new File(libDirname);
       }
       if (libDir.exists()) {
-        addToClassPath(libDirname);
+        addToClassPath(libDirname, false);
         jarFileList = libDir.listFiles(new FilenameFilter() {
           public boolean accept(File dir, String name) {
             if (name.endsWith(".jar") || name.endsWith(".zip"))
@@ -639,7 +633,7 @@ public class Constants {
           }
         });
         for (int i = 0; i < jarFileList.length; i++) {
-          addToClassPath(jarFileList[i]);
+          addToClassPath(jarFileList[i], false);
           System.out.println("Adding to classpath: " + jarFileList[i]);
         }
       } else {
@@ -658,11 +652,14 @@ public class Constants {
 	    System.out.println("Get user dir: " + pathtoplugins);
       if (pathtoplugins.startsWith("."))
         pathtoplugins = pathToMaudJar;*/
-      String pluginsDirname = applicationSupportDirectory + "plugins";
-      File pluginsDir = new File(pluginsDirname);
+      String pluginsDirname = pathToMaudJar + fileSeparator + ".." + fileSeparator + "plugins";
+	    if (macosx) {
+		    pluginsDirname = applicationSupportDirectory + "Maud/plugins" + fileSeparator;
+	    }
+	    File pluginsDir = new File(pluginsDirname);
 	    System.out.println("Plugins dir: " + pluginsDirname);
       if (pluginsDir.exists()) {
-        addToClassPath(pluginsDirname);
+        addToClassPath(pluginsDirname, false);
 	      pluginsJarFileList = pluginsDir.listFiles(new FilenameFilter() {
           public boolean accept(File dir, String name) {
             if (name.endsWith(".jar") || name.endsWith(".zip"))
@@ -671,8 +668,8 @@ public class Constants {
           }
         });
         for (int i = 0; i < pluginsJarFileList.length; i++) {
-          addToClassPath(pluginsJarFileList[i]);
 	        System.out.println("Adding to classpath (plugins): " + pluginsJarFileList[i]);
+           addToClassPath(pluginsJarFileList[i], false);
         }
       } else {
 	      System.out.println("Plugins dir not found!");
@@ -955,35 +952,69 @@ public class Constants {
 	    }
 
 	    try {
-      for (int j = 0; j < allMaudJars.length; j++) {
-        if (testing)
-          System.out.println("Loading from jar: " + allMaudJars[j]);
-        Vector list = ClassScanner.getClassListFromJar(allMaudJars[j], "",
-            "it.unitn.ing.rista.diffr.XRDcat");
-        if (testing)
-          System.out.println("List number: " + list.size());
+		    int jarNumber = allMaudJars.length;
+		    URL u[] = new URL[jarNumber];
+		    for (int i = 0; i < jarNumber; i++) {
+			    File f = new File(allMaudJars[i]);
+			    u[i] = f.toURI().toURL();
+		    }
+	    	maudClassLoader = new URLClassLoader(u);
+			    Vector<String> list = ClassScanner.getClassListFromJar(allMaudJars, "",
+					    "it.unitn.ing.rista.diffr.XRDcat");
+			    if (testing)
+				    System.out.println("List number: " + list.size());
 
-        for (int i = 0; i < list.size(); i++) {
-          String token = (String) list.get(i);
-          if (testing)
-            System.out.println("Loading class: " + token);
-          try {
-            Class aclass = Class.forName(token);
-            Constructor ctor = aclass.getConstructor(new Class[]{});
-            BaseFactoryObject obj = (BaseFactoryObject) ctor.newInstance(new Object[]{});
-            String ident = new String(obj.identifier);
-            tmpString.addElement(token);
-            identString.addElement(ident);
-            numberofclasstype++;
-          } catch (Exception e) {
-            if (testing) {
-              System.out.println("Class not loaded: " + token);
-              e.printStackTrace();
-            }
-          }
-        }
+			    for (int i = 0; i < list.size(); i++) {
+				    String token = list.get(i);
+				    if (testing)
+					    System.out.println("Loading class: " + token);
+				    try {
+					    Class aclass = maudClassLoader.loadClass(token);
+					    Constructor ctor = aclass.getConstructor(new Class[]{});
+					    BaseFactoryObject obj = (BaseFactoryObject) ctor.newInstance(new Object[]{});
+					    String ident = obj.identifier;
+					    tmpString.addElement(token);
+					    identString.addElement(ident);
+					    numberofclasstype++;
+				    } catch (Exception e) {
+					    if (testing) {
+						    System.out.println("Class not loaded: " + token);
+						    e.printStackTrace();
+					    }
+				    }
+			    }
 
-      }
+	    	/*
+		    for (int j = 0; j < allMaudJars.length; j++) {
+			    if (testing)
+				    System.out.println("Loading from jar: " + allMaudJars[j]);
+			    Vector list = ClassScanner.getClassListFromJar(allMaudJars[j], "",
+					    "it.unitn.ing.rista.diffr.XRDcat");
+			    if (testing)
+				    System.out.println("List number: " + list.size());
+
+			    for (int i = 0; i < list.size(); i++) {
+				    String token = (String) list.get(i);
+				    if (testing)
+					    System.out.println("Loading class: " + token);
+				    try {
+					    Class aclass = Class.forName(token);
+					    Constructor ctor = aclass.getConstructor(new Class[]{});
+					    BaseFactoryObject obj = (BaseFactoryObject) ctor.newInstance(new Object[]{});
+					    String ident = new String(obj.identifier);
+					    tmpString.addElement(token);
+					    identString.addElement(ident);
+					    numberofclasstype++;
+				    } catch (Exception e) {
+					    if (testing) {
+						    System.out.println("Class not loaded: " + token);
+						    e.printStackTrace();
+					    }
+				    }
+			    }
+
+		    }
+*/
 	    } catch (Exception e) {
 		    e.printStackTrace(System.out);  //To change body of catch statement use File | Settings | File Templates.
 	    }
@@ -1107,7 +1138,7 @@ public class Constants {
       for (int i = 0; i < numberofclasstype; i++) {
         if (Misc.areClassCompatibles(asuperclass, classname[i])) {
           try {
-            Class aclass = Class.forName(classname[i]);
+            Class aclass = maudClassLoader.loadClass(classname[i]);
             Constructor ctor = aclass.getConstructor(new Class[]{});
             BaseFactoryObject obj = (BaseFactoryObject) ctor.newInstance(new Object[]{});
 	          if (obj.identifier != BaseFactoryObject.noneID && !obj.identifier.toLowerCase().startsWith("disabled")) {
@@ -1381,8 +1412,15 @@ public class Constants {
   private Constants() {
   }
 
-  public static void addToClassPath(String s) throws IOException {
+  public static void addToClassPath(String s, boolean fromPlugins) throws IOException {
     File f = new File(s);
+    if (!f.exists()) {
+      return;
+    }
+    addToClassPath(f, fromPlugins);
+  }//end method
+
+  public static void addToClassPath(File f, boolean fromPlugins) throws IOException {
     if (!f.exists()) {
       return;
     }
@@ -1390,55 +1428,40 @@ public class Constants {
     u[0] = f.toURI().toURL();
     Class[] parameters = new Class[]{URL.class};
 
-	  // Java 8
-   // URLClassLoader sysloader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-
-    // Java 9
-	  ClassLoader parent = ClassLoader.getPlatformClassLoader();
-	  URLClassLoader sysloader = new URLClassLoader(u, parent);
-
-//    ClassLoader aCL = Thread.currentThread().getContextClassLoader();
-//    URLClassLoader aUrlCL = new URLClassLoader(urls, sysloader);
-    Class sysclass = URLClassLoader.class;
-
-    try {
-      Method method = sysclass.getDeclaredMethod("addURL", parameters);
-      method.setAccessible(true);
-      method.invoke(sysloader, new Object[]{u[0]});
-    } catch (Throwable t) {
-      t.printStackTrace();
-      throw new IOException("Error, could not add URL to system classloader");
-    }//end try catch
-
-  }//end method
-
-  public static void addToClassPath(File f) throws IOException {
-    if (!f.exists()) {
-      return;
-    }
-	  URL u[] = new URL[1];
-	  u[0] = f.toURI().toURL();
-    Class[] parameters = new Class[]{URL.class};
-
     // Java 8
 //    URLClassLoader sysloader = (URLClassLoader) ClassLoader.getSystemClassLoader();
 
 	  // Java 9
+
 	  ClassLoader parent = ClassLoader.getPlatformClassLoader();
 	  URLClassLoader sysloader = new URLClassLoader(u, parent);
-
-//    ClassLoader aCL = Thread.currentThread().getContextClassLoader();
-//    URLClassLoader aUrlCL = new URLClassLoader(urls, sysloader);
-    Class sysclass = URLClassLoader.class;
+	  Class sysclass = URLClassLoader.class;
 
     try {
       Method method = sysclass.getDeclaredMethod("addURL", parameters);
       method.setAccessible(true);
       method.invoke(sysloader, new Object[]{u[0]});
     } catch (Throwable t) {
+    	System.out.println("Error, could not add URL to system classloader: " + f.getCanonicalPath());
       t.printStackTrace();
       throw new IOException("Error, could not add URL to system classloader");
     }//end try catch
+
+	  if (fromPlugins) {
+		  try {
+			  URLClassLoader urlcl = new URLClassLoader(u);
+			  Class obj = urlcl.loadClass("fr.univlille.merkel.StrainSinghIsotropic");
+			  if (obj != null)
+			   System.out.println("Success!!");
+		  } catch (Exception e) {
+			  e.printStackTrace();
+		  }
+/*		  try {
+			  Class obj = sysloader.loadClass("fr.univlille.merkel.StrainSinghIsotropic");
+		  } catch (Exception e) {
+			  e.printStackTrace();
+		  }*/
+	  }
 
   }//end method
 

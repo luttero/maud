@@ -65,6 +65,8 @@ public class CrystalliteDistribution extends XRDcat {
     this(afile, "Crystallite Distribution x");
   }
 
+	public CrystalliteDistribution() {}
+
   public void initConstant() {
     Nstring = 1;
     Nstringloop = 0;

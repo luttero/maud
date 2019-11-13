@@ -90,7 +90,7 @@ public class SpaceGroups {
 
 	public static boolean loaded = false;
 
-	static {
+/*	static {
 		try {
 //			cctbxNativeLibrary = MaudPreferences.getPref("cctbxNativeLibrary.pathToLibrary", cctbxNativeLibrary);
 			System.load(cctbxNativeLibrary); //"/Users/luca/Projects/maud/osx/Maud.app/Contents/Frameworks/libcctbxForMaud.dylib");
@@ -101,7 +101,7 @@ public class SpaceGroups {
 			loaded = false;
 //			throw new RuntimeException(err);
 		}
-	}
+	}*/
 
 	public static native int testCCTBXForMaud();
 

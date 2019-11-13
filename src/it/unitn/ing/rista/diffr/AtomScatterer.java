@@ -86,7 +86,10 @@ public class AtomScatterer extends Scatterer {
 			this(afile, "Atom scatterer x");
 		}
 
-		public void initConstant() {
+	public AtomScatterer() {
+	}
+
+	public void initConstant() {
 			Nstring = 1;
 			Nstringloop = 0;
 			Nparameter = 1;
@@ -335,9 +338,12 @@ public class AtomScatterer extends Scatterer {
 		} else {
 			// x-ray radiation
 			int atomNumber = getAtomicNumber();
-			fu = XRayDataSqLite.getF1F2FromHenkeForAtomAndEnergy(atomNumber, 12.398424 / rad.getWavelengthValue());
+			double energyInKeV = 12.398424 / rad.getWavelengthValue();
+			fu = XRayDataSqLite.getF1F2FromHenkeForAtomAndEnergy(atomNumber, energyInKeV);
 			fu[0] -= atomNumber;
+//			double img1 = fu[0];
 			fu[0] += Radiation.xraySF[atomicListNumber][8];
+
 			if (dspacing == 0)
 				for (int j = 0; j < 4; j++)
 					fu[0] += Radiation.xraySF[atomicListNumber][j];
@@ -345,6 +351,7 @@ public class AtomScatterer extends Scatterer {
 				for (int j = 0; j < 4; j++)
 					fu[0] += Radiation.xraySF[atomicListNumber][j] * Math.exp(-Radiation.xraySF[atomicListNumber][j + 4] /
 							(4 * dspacing * dspacing));
+//			System.out.println(atomNumber + ": " + energyInKeV + ", " + (fu[0] - img1) + ", " + img1 + ", " + fu[1]);
 		}
 		return fu;
 	}

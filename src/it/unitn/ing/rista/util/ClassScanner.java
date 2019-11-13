@@ -21,8 +21,7 @@
 package it.unitn.ing.rista.util;
 
 import java.io.*;
-import java.net.URL;
-import java.net.JarURLConnection;
+import java.net.*;
 import java.util.jar.*;
 import java.util.zip.*;
 import java.util.Enumeration;
@@ -50,7 +49,7 @@ public class ClassScanner {
    */
   public static void find(String tosubclassname) {
     try {
-      Class tosubclass = Class.forName(tosubclassname);
+      Class tosubclass = Constants.maudClassLoader.loadClass(tosubclassname);
       Package [] pcks = Package.getPackages();
       for (int i = 0; i < pcks.length; i++) {
         find(pcks[i].getName(), tosubclass);
@@ -319,45 +318,52 @@ public class ClassScanner {
   }
 
 
-  public static Vector getClassListFromJar(String jarName, String pckname, String subclass) {
+  public static Vector getClassListFromJar(String[] jarName, String pckname, String subclass) {
 //    System.out.println(jarName);
-    Vector list = new Vector(0, 1);
-    try {
-      Class tosubclass = Class.forName(subclass);
-      JarFile filesJar = null;
-      try {
-        filesJar = new JarFile(jarName);
-      } catch (Exception e) {
-        return list;
-      }
-      Enumeration jarEntries = filesJar.entries();
-      while (jarEntries.hasMoreElements()) {
-        String classname = jarEntries.nextElement().toString();
+//	  ClassLoader loader = ClassLoader.getPlatformClassLoader();
+	  Vector list = new Vector(0, 1);
+	  for (int i = 0; i < jarName.length; i++) {
+		  try {
+			  Class tosubclass = Class.forName(subclass);
+			  JarFile filesJar = new JarFile(jarName[i]);
+			  Enumeration jarEntries = filesJar.entries();
+			  while (jarEntries.hasMoreElements()) {
+				  String classname = jarEntries.nextElement().toString();
 //        System.out.println(classname);
-        if (classname.endsWith(".class") && classname.indexOf('$') == -1 && !classname.startsWith("com/jtex")
-		        && !classname.startsWith("org/beepcore")) {
-          classname = classname.substring(0, classname.length() - 6);
-          if (classname.startsWith("/"))
-            classname = classname.substring(1);
-          classname = classname.replace('/', '.');
-          int index = classname.lastIndexOf('.');
-          String thepackage = "";
-          if (index > 0) {
-            thepackage = classname.substring(0, index);
-          }
+				  if (classname.endsWith(".class") && classname.indexOf('$') == -1 && !classname.startsWith("com/jtex")
+						  && !classname.startsWith("org/beepcore")) {
+					  classname = classname.substring(0, classname.length() - 6);
+					  if (classname.startsWith("/"))
+						  classname = classname.substring(1);
+					  classname = classname.replace('/', '.');
+					  int index = classname.lastIndexOf('.');
+					  String thepackage = "";
+					  if (index > 0) {
+						  thepackage = classname.substring(0, index);
+					  }
 //          System.out.println(classname + " : " + thepackage + " : " + pckname + " : " + subclass);
-          if (thepackage.startsWith(pckname) && tosubclass.isAssignableFrom(Class.forName(classname))) {
-            list.add(classname);
+					  Class obj = Constants.maudClassLoader.loadClass(classname);
+					  if (thepackage.startsWith(pckname) && tosubclass.isAssignableFrom(obj)) {
+//          		Class.forName(classname))) {
+						  list.add(classname);
 //            System.out.println(classname.substring(classname.lastIndexOf('.') + 1));
-          }
-        }
-      }
-      jarEntries = null;
-    } catch (Exception ioe) {
-      ioe.printStackTrace();
-    }
+					  }
+				  }
+			  }
+		  } catch (Exception ioe) {
+			  ioe.printStackTrace();
+		  }
+	  }
 
-    return list;
+	  return list;
   }
+
+  static Class getClassForName(String classname, java.net.URL myJarFiles) throws ClassNotFoundException {
+	  URLClassLoader cl = URLClassLoader.newInstance(new URL[]{myJarFiles});
+	  Class myClass = cl.loadClass(classname);
+
+	  return myClass;
+  }
+
 
 }
