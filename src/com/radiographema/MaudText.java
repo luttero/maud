@@ -23,7 +23,7 @@ package com.radiographema;
 import java.lang.*;
 
 import it.unitn.ing.rista.util.*;
-import com.deadmoo.xgridagent.*;
+//import com.deadmoo.xgridagent.*;
 
 /**
  * The MaudText is a text only launcher for Maud.
@@ -38,19 +38,22 @@ public class MaudText {
   public static final int BATCH = 0;
   public static final int JPVM = 1;
   public static final int XGRID = 2;
-  public static final int XGRIDAGENT = 3;
+//  public static final int XGRIDAGENT = 3;
 
   /**
    * Initialize program constants.
    */
 
-  public static void programInitialization() {
+  public void programInitialization() {
     System.out.println("Initializing constants");
+	  System.out.flush();
     Constants.initConstants();
   }
 
   public void execute(int computingMode, String[] args) {
-    programInitialization();
+	  System.out.println("Starting in text mode....");
+	  System.out.flush();
+	  programInitialization();
     String insFileName = new String("textonly.ins");
     switch (computingMode) {
       case BATCH:
@@ -74,7 +77,7 @@ public class MaudText {
         XgridProcess xbatch = new XgridProcess(args);
         xbatch.process();
         break;
-      case XGRIDAGENT:
+/*      case XGRIDAGENT:
         System.out.println("Starting xgridagent");
           XGridAgent.startAgentWithDefault();
           while (true) {
@@ -82,17 +85,21 @@ public class MaudText {
               Thread.sleep(1000000);
             } catch (InterruptedException e) {
             }
-          }
+          }*/
       default: {
       }
     }
   }
 
   static public void main(String args[]) {
+	  try {
+		  System.out.println("Loading preferences........");
+		  System.out.flush();
+//    System.setProperty("apple.laf.useScreenMenuBar","true");
+//    System.setProperty("apple.awt.use-file-dialog-packages","true");
+//    System.setProperty("apple.awt.showGrowBox","true");
+
 	  MaudPreferences.loadPreferences();
-    System.setProperty("apple.laf.useScreenMenuBar","true");
-    System.setProperty("apple.awt.use-file-dialog-packages","true");
-    System.setProperty("apple.awt.showGrowBox","true");
     Constants.textonly = true;
     Constants.stdoutput = Constants.CONSOLE_WINDOW;
     int mode = BATCH;
@@ -107,12 +114,18 @@ public class MaudText {
       if (args[i].equalsIgnoreCase("-silent")) {
         Constants.stdoutput = Constants.NO_OUTPUT; // no console output
       }
-      if (args[i].equalsIgnoreCase("-xgridagent")) {
+/*      if (args[i].equalsIgnoreCase("-xgridagent")) {
         mode = XGRIDAGENT; // xgrid agent mode
-      }
+      }*/
     }
-    System.out.println("Starting Maud program, wait........");
+		  System.out.println("Starting Maud program, wait........");
+		  System.out.flush();
     (new MaudText()).execute(mode, args);
+	  } catch(Throwable e) {
+		  System.err.println(e);
+		  // returns null as the cause is nonexistent or unknown.
+		  System.err.println("Cause = " + e.getCause());
+	  }
     System.exit(0);
   }
 

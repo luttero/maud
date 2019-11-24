@@ -273,6 +273,7 @@ public class AtomScatterer extends Scatterer {
 	}
 
 	public double getSiteAbsorption(double energyInKeV) {
+//	  System.out.println("Atom: " + getAtomicNumber() + ", absorption: " + XRayDataSqLite.getTotalAbsorptionForAtomAndEnergy(getAtomicNumber(), energyInKeV));
 		return getSiteWeight() * XRayDataSqLite.getTotalAbsorptionForAtomAndEnergy(getAtomicNumber(), energyInKeV);
 	}
 
@@ -316,6 +317,29 @@ public class AtomScatterer extends Scatterer {
 		return isotopeListNumber;
 	}
 
+/*	public double[] scatfactor(double dspacing, Radiation rad) {
+
+		double[] fu = new double[2];
+		int atomicListNumber = getAtomicListNumber();
+		if (rad.isElectron()) {
+			// electron radiation
+			fu[0] = 0.023934 * (getOxidationNumber()) * (4 * dspacing * dspacing);
+			fu[1] = 0;
+			if (dspacing == 0)
+				for (int j = 0; j < 5; j++)
+					fu[0] += Radiation.electronSF[atomicListNumber][j];
+			else
+				for (int j = 0; j < 5; j++)
+					fu[0] += Radiation.electronSF[atomicListNumber][j] * Math.exp(-Radiation.electronSF[atomicListNumber][j + 4] /
+							(4 * dspacing * dspacing));
+		} else if (rad.isNeutron()) {
+			// neutron radiation
+			fu[0] = Radiation.neutronSF[getIsotopicListNumber()];
+			fu[1] = 0;
+		}
+		return fu;
+	}
+*/
 	public double[] scatfactor(double dspacing, Radiation rad) {
 
 		double[] fu = new double[2];
@@ -353,6 +377,25 @@ public class AtomScatterer extends Scatterer {
 							(4 * dspacing * dspacing));
 //			System.out.println(atomNumber + ": " + energyInKeV + ", " + (fu[0] - img1) + ", " + img1 + ", " + fu[1]);
 		}
+		return fu;
+	}
+
+	public double[] scatfactor(double dspacing, double energyInKeV) {
+    
+    int atomicListNumber = getAtomicListNumber();
+			// x-ray radiation
+			int atomNumber = getAtomicNumber();
+    double[] fu = XRayDataSqLite.getF1F2FromHenkeForAtomAndEnergy(atomNumber, energyInKeV);
+			fu[0] -= atomNumber;
+			fu[0] += Radiation.xraySF[atomicListNumber][8];
+
+			if (dspacing == 0)
+				for (int j = 0; j < 4; j++)
+					fu[0] += Radiation.xraySF[atomicListNumber][j];
+			else
+				for (int j = 0; j < 4; j++)
+					fu[0] += Radiation.xraySF[atomicListNumber][j] * Math.exp(-Radiation.xraySF[atomicListNumber][j + 4] /
+							(4 * dspacing * dspacing));
 		return fu;
 	}
 

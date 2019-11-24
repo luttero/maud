@@ -62,6 +62,8 @@ public class batchProcess {
   String poleFiguresPng = null;
   String poleFiguresXpc = null;
   String titleField = null;
+  String stressFilename = null;
+  String sin2psiOptions = null;
 
   public String[] diclist = {"_riet_analysis_file",
                              "_riet_analysis_iteration_number", "_riet_analysis_wizard_index",
@@ -73,7 +75,9 @@ public class batchProcess {
 		                       "_maud_LCLS2_Cspad0_original_image", "_maud_LCLS2_Cspad0_dark_image",
 		                       "_maud_export_pole_figures_filename", "_maud_export_pole_figures_options",
 		                       "_maud_export_pole_figures", "_maud_output_plot2D_filename",
-		                       "_maud_LCLS2_detector_config_file", "_publ_section_title"
+		                       "_maud_LCLS2_detector_config_file", "_publ_section_title",
+		                       "_maud_output_stress_filename", "_maud_output_stress_options",
+		                       "_riet_meas_datains_name"
   };
 
   public batchProcess(String insFileName) {
@@ -374,6 +378,22 @@ public class batchProcess {
 	        titleField = item.thestring;
 	        avector.removeElementAt(i);
 	        loopitem--;
+        } else if (index == 21) { // "_maud_output_stress_filename"
+	        stressFilename = item.thestring;
+	        avector.removeElementAt(i);
+	        loopitem--;
+        } else if (index == 22) { // "_maud_output_stress_options"
+	        sin2psiOptions = item.thestring;
+	        System.out.println("Stress options reading: " + sin2psiOptions);
+	        avector.removeElementAt(i);
+	        loopitem--;
+        } else if (index == 23) { // "_riet_meas_datains_name"
+//	        System.out.println(analysis + " " + item.thestring);
+	        if (analysis != null) {
+		        analysis.getSample(0).getDataSet(0).addDataFileforName(item.thestring, false);
+	        }
+	        avector.removeElementAt(i);
+	        loopitem--;
         } else
           i++;
       } // end of while (i < loopitem)
@@ -568,7 +588,52 @@ public class batchProcess {
 		      }
 	      }
       }
-    }
+
+		  if (stressFilename != null && !stressFilename.isEmpty()) {
+              System.out.println("Stress writing: " + stressFilename);
+			  System.out.println("Stress options: " + sin2psiOptions);
+			  if (sin2psiOptions != null && !sin2psiOptions.isEmpty()) {
+				  System.out.println("Stress options: " + sin2psiOptions);
+				  Vector<String> phasePF = separateInPhases(sin2psiOptions);
+				  for (int ij = 0; ij < phasePF.size(); ij++) {
+					  String pfs = phasePF.elementAt(ij);
+					  int phaseNumber = -1;
+					  Vector<Reflection> reflList = new Vector<>();
+					  StringTokenizer st = new StringTokenizer(pfs, " /t");
+					  try {
+						  String token1 = "";
+						  if (st.hasMoreTokens()) {
+							  token1 = st.nextToken();
+							  phaseNumber = Integer.parseInt(token1);
+						  }
+						  if (phaseNumber >= 0) {
+							  int hkl_index = 0;
+							  int[] hkl = new int[3];
+							  while (st.hasMoreTokens()) {
+								  token1 = st.nextToken();
+								  hkl[hkl_index++] = Integer.parseInt(token1);
+								  if (hkl_index == 3) {
+									  hkl_index = 0;
+									  Reflection refl = new Reflection(hkl[0], hkl[1], hkl[2]);
+									  reflList.addElement(refl);
+								  }
+							  }
+						  }
+					  } catch (Exception ge) {
+					  }
+					  if (phaseNumber >= 0 && reflList.size() > 0) {
+						  Phase phase = analysis.getSample(0).getPhase(phaseNumber);
+						  Strain strainModel = phase.getActiveStrain();
+						  if (strainModel != null) {
+							  strainModel.computeStressTensorAndOutput(phase, reflList, stressFilename);
+						  }
+					  }
+
+				  }
+			  }
+		  }
+
+	  }
   }
 
 	public Vector<String> separateInPhases(String xpcAll) {

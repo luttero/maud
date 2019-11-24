@@ -1447,22 +1447,6 @@ public class Constants {
       throw new IOException("Error, could not add URL to system classloader");
     }//end try catch
 
-	  if (fromPlugins) {
-		  try {
-			  URLClassLoader urlcl = new URLClassLoader(u);
-			  Class obj = urlcl.loadClass("fr.univlille.merkel.StrainSinghIsotropic");
-			  if (obj != null)
-			   System.out.println("Success!!");
-		  } catch (Exception e) {
-			  e.printStackTrace();
-		  }
-/*		  try {
-			  Class obj = sysloader.loadClass("fr.univlille.merkel.StrainSinghIsotropic");
-		  } catch (Exception e) {
-			  e.printStackTrace();
-		  }*/
-	  }
-
   }//end method
 
   public static void close() {

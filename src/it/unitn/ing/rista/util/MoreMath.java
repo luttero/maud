@@ -20,6 +20,9 @@
 
 package it.unitn.ing.rista.util;
 
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.EigenDecomposition;
+
 import java.lang.*;
 import java.util.Vector;
 
@@ -1315,4 +1318,11 @@ end;
 			absValue[i] = Math.abs(value[i]);
 		return absValue;
 	}
+
+	public static double[][] diagonalMatrix(double[][] p) {
+		EigenDecomposition ev = new EigenDecomposition(new Array2DRowRealMatrix(p, false));
+		return ev.getD().getData();
+	}
+
+
 }
