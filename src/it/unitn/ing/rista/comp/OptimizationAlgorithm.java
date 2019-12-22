@@ -51,6 +51,9 @@ public class OptimizationAlgorithm extends XRDcat implements OptimizationAlgorit
   }
 
   public OptimizationAlgorithm() {
+	  identifier = "Optimization Algorithm";
+	  IDlabel = "Optimization Algorithm";
+	  description = "select this to use an Optimization Algorithm";
   }
 
   public OptimizationAlgorithm(SimpleFunction fitFunction, int iterations) {

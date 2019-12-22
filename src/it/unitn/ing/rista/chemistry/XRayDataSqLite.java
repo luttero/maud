@@ -551,28 +551,35 @@ public class XRayDataSqLite {
 		Vector<double[]> elementData = ebelTauRange.elementAt(atomNumber_1);
 		if (mainShell >= elementData.size())
 			return 0;
-//		System.out.println((atomNumber_1 + 1) + " " + energyInKeV + " " + shellNumber + " " + mainShellNumber);
 		double result = MoreMath.getEbelLogarithmicInterpolation(elementData.elementAt(mainShell), energyInKeV);
+//		if (atomNumber_1 == 29)
+//			System.out.println("**** " + (atomNumber_1 + 1) + " " + energyInKeV + " " + shellNumber + " " + mainShellNumber[shellNumber] + " " + result);
 		// now we divide by the jump ratio for certain shellIDs
 		if (shellNumber > L1 && shellNumber < M1) {
 			if (mainShell + 1 < elementData.size()) {
 				AtomShellData atomData = shellData.elementAt(atomNumber_1);
 				double result1 = MoreMath.getEbelLogarithmicInterpolation(elementData.elementAt(mainShell + 1), energyInKeV);
+//				if (atomNumber_1 == 29)
+//					System.out.println("**** " + result1 + " " + energyInKeV + " " + elementData.size() + " " + mainShell + " " + shellNumber);
 				double delta = result - result1;
 				for (int i = shellNumber; i > L1; i--)
 					result -= delta / atomData.data.elementAt(i - 1).data[1];
 			} else {
-//				System.out.println((atomNumber_1 + 1) + " " + energyInKeV + " " + elementData.size() + " " + mainShell + " " + shellNumber);
+//				if (atomNumber_1 == 29)
+//					System.out.println("**** " + (atomNumber_1 + 1) + " " + energyInKeV + " " + elementData.size() + " " + mainShell + " " + shellNumber);
 			}
 		} else if (shellNumber > M1 && shellNumber < N1) {
 			if (mainShell + 1 < elementData.size()) {
 				AtomShellData atomData = shellData.elementAt(atomNumber_1);
 				double result1 = MoreMath.getEbelLogarithmicInterpolation(elementData.elementAt(mainShell + 1), energyInKeV);
+//				if (atomNumber_1 == 29)
+//					System.out.println("**** " + result1 + " " + energyInKeV + " " + elementData.size() + " " + mainShell + " " + shellNumber);
 				double delta = result - result1;
 				for (int i = shellNumber; i > M1; i--)
 					result -= delta / atomData.data.elementAt(i - 1).data[1];
 			} else {
-//				System.out.println((atomNumber_1 + 1) + " " + energyInKeV + " " + elementData.size() + " " + mainShell + " " + shellNumber);
+//				if (atomNumber_1 == 29)
+//					System.out.println("**** " + (atomNumber_1 + 1) + " " + energyInKeV + " " + elementData.size() + " " + mainShell + " " + shellNumber);
 			}
 		}
 		return result;
@@ -779,6 +786,10 @@ public class XRayDataSqLite {
 
 	public static void checkMinimumEnergy() {
 		linesMinimumEnergy = MaudPreferences.getDouble("fluorescenceLines.minimum_keV", linesMinimumEnergy);
+		if (linesMinimumEnergy < 1.0) {
+			linesMinimumEnergy = 1.0;
+			MaudPreferences.setPref("fluorescenceLines.minimum_keV", linesMinimumEnergy);
+		}
 	}
 
 	public static Vector<FluorescenceLine> getFluorescenceLinesFor(int atomNumber, double energyInKeV,

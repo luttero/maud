@@ -21,7 +21,7 @@
 package it.unitn.ing.rista.diffr;
 
 import it.unitn.ing.rista.chemistry.AtomInfo;
-import it.unitn.ing.rista.chemistry.XRayDataSqLite;
+//import it.unitn.ing.rista.chemistry.XRayDataSqLite;
 import it.unitn.ing.rista.util.*;
 
 import java.util.ArrayList;

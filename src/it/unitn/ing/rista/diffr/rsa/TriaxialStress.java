@@ -213,7 +213,7 @@ public class TriaxialStress extends Strain {
 
 		writer.write("Diagonalized stress tensor: ");
 		writer.write(Constants.lineSeparator);
-		writer.write(diagonal[1][1] + "   " + diagonal[0][0]);
+		writer.write(diagonal[2][2] + "   " + diagonal[0][0]);
 		writer.write(Constants.lineSeparator);
 		writer.flush();
 
@@ -225,11 +225,30 @@ public class TriaxialStress extends Strain {
 			{parameterValues[7], parameterValues[3], parameterValues[5]},
 			{parameterValues[6], parameterValues[5], parameterValues[4]} };
 
+		writer.write("Original stress tensor: ");
+		writer.write(Constants.lineSeparator);
+		writer.write(stress[0][0] + "   " + stress[0][1] + "   " + stress[0][2]);
+		writer.write(Constants.lineSeparator);
+		writer.write(stress[1][0] + "   " + stress[1][1] + "   " + stress[1][2]);
+		writer.write(Constants.lineSeparator);
+		writer.write(stress[2][0] + "   " + stress[2][1] + "   " + stress[2][2]);
+		writer.write(Constants.lineSeparator);
+
   	   double[][] diagonal = MoreMath.diagonalMatrix(stress);
 
-		writer.write("Diagonalized stress tensor: ");
+/*		writer.write("Diagonalized stress tensor: ");
 		writer.write(Constants.lineSeparator);
-		writer.write(diagonal[1][1] + "   " + diagonal[2][2] + "   " + diagonal[0][0]);
+		writer.write(diagonal[0][0] + "   " + diagonal[2][2] + "   " + diagonal[1][1]);
+		writer.write(Constants.lineSeparator);*/
+
+		writer.write("Diagonalized stress tensor: ");
+
+		writer.write(Constants.lineSeparator);
+		writer.write(diagonal[0][0] + "   " + diagonal[0][1] + "   " + diagonal[0][2]);
+		writer.write(Constants.lineSeparator);
+		writer.write(diagonal[1][0] + "   " + diagonal[1][1] + "   " + diagonal[1][2]);
+		writer.write(Constants.lineSeparator);
+		writer.write(diagonal[2][0] + "   " + diagonal[2][1] + "   " + diagonal[2][2]);
 		writer.write(Constants.lineSeparator);
 
 		writer.flush();

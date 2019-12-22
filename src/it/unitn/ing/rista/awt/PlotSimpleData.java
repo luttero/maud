@@ -41,7 +41,10 @@ public class PlotSimpleData extends GraphFrame {
   double[] function = null;
   double[] xCoord = null;
 	boolean dotsPlot = false;
+	int lineStyle = 0;
 	Axis xaxis = null, yaxis = null;
+	String xAxisTitle = "x";
+	String yAxisTitle = "Function";
 
 
 	public PlotSimpleData(Frame parent, double[] function, boolean dots) {
@@ -113,7 +116,31 @@ public class PlotSimpleData extends GraphFrame {
     createGraph(functiond);
   }
 
-  private void initializeFrame() {
+	public PlotSimpleData(Frame parent, double[] x, double[] function, int line, boolean plotdots, String xTitleValue, String yTitleValue, String title) {
+
+		super(parent);
+
+		initializeFrame();
+
+		setXaxisTitle(xTitleValue);
+		setYaxisTitle(yTitleValue);
+		lineStyle = line;
+		dotsPlot = plotdots;
+
+		createGraph(x, function);
+
+		setTitle(title);
+	}
+
+	public void setXaxisTitle(String value) {
+		xAxisTitle = value;
+  }
+
+	public void setYaxisTitle(String value) {
+		yAxisTitle = value;
+	}
+
+	private void initializeFrame() {
     frameWLabel = "plotParFunction.frameWidth";
     frameHLabel = "plotParFunction.frameHeight";
     defaultFrameW = 600;
@@ -193,7 +220,7 @@ public class PlotSimpleData extends GraphFrame {
 
       DataSet data1 = graph.loadDataSet(data, np);
 	    if (dotsPlot) {
-		    data1.linestyle = 0;
+		    data1.linestyle = lineStyle;
 		    data1.marker = 3;
 		    data1.markerscale = 1;
 		    data1.markercolor = Color.blue;
@@ -228,7 +255,7 @@ public class PlotSimpleData extends GraphFrame {
 
       DataSet data1 = graph.loadDataSet(data, np);
 	    if (dotsPlot) {
-		    data1.linestyle = 0;
+		    data1.linestyle = lineStyle;
 		    data1.marker = 3;
 		    data1.markerscale = 1;
 		    data1.markercolor = Color.blue;
@@ -265,7 +292,7 @@ public class PlotSimpleData extends GraphFrame {
 				DataSet data1 = graph.loadDataSet(data, np);
 				data1.linecolor = SpectrumPlotPanel.getPastelColor(k);
 				if (dotsPlot) {
-					data1.linestyle = 0;
+					data1.linestyle = lineStyle;
 					data1.marker = 3;
 					data1.markerscale = 1;
 					data1.markercolor = SpectrumPlotPanel.getPastelColor(k);
@@ -286,38 +313,38 @@ public class PlotSimpleData extends GraphFrame {
 	}
 
 	public void saveFile() {
-    // nothing by default
-    if (function == null)
-      return;
-    BufferedWriter output = Misc.getWriter(Utility.browseFilenametoSave(this, "Save plot data as..."));
-    try {
-      output.newLine();
-      output.write("_pd_meas_number_of_points " + Integer.toString(function.length));
-      output.newLine();
-      output.newLine();
-      output.write("loop_");
-      output.newLine();
-      output.write("_x_coordinate");
-      output.newLine();
-      output.write("_y_ordinate");
-      output.newLine();
-      double stepx = 1;
-      double min = 1.0;
-      for (int i = 0; i < function.length; i++) {
-        double xcoord = i * stepx + min;
-        if (xCoord != null)
-          xcoord = xCoord[i];
-        output.write(" " + Fmt.format(xcoord) + " " + Fmt.format(function[i]));
-        output.newLine();
-      }
-    } catch (IOException io) {
-    }
-    try {
-      output.flush();
-      output.close();
-    } catch (IOException io) {
-    }
-  }
+		// nothing by default
+		if (function == null)
+			return;
+		BufferedWriter output = Misc.getWriter(Utility.browseFilenametoSave(this, "Save plot data as..."));
+		try {
+			output.newLine();
+			output.write("_pd_meas_number_of_points " + Integer.toString(function.length));
+			output.newLine();
+			output.newLine();
+			output.write("loop_");
+			output.newLine();
+			output.write("_x_coordinate");
+			output.newLine();
+			output.write("_y_ordinate");
+			output.newLine();
+			double stepx = 1;
+			double min = 1.0;
+			for (int i = 0; i < function.length; i++) {
+				double xcoord = i * stepx + min;
+				if (xCoord != null)
+					xcoord = xCoord[i];
+				output.write(" " + Fmt.format(xcoord) + " " + Fmt.format(function[i]));
+				output.newLine();
+			}
+		} catch (IOException io) {
+		}
+		try {
+			output.flush();
+			output.close();
+		} catch (IOException io) {
+		}
+	}
 
   private void createAxes(DataSet data1) {
 /*
@@ -327,7 +354,7 @@ public class PlotSimpleData extends GraphFrame {
 
     xaxis = graph.createAxis(Axis.BOTTOM);
     xaxis.attachDataSet(data1);
-    xaxis.setTitleText("x");
+    xaxis.setTitleText(xAxisTitle);
     xaxis.setTitleFont(new Font("TimesRoman", Font.BOLD, 14));
     xaxis.setLabelFont(new Font("Helvetica", Font.PLAIN, 12));
     xaxis.setTitleColor(new Color(0, 0, 255));
@@ -338,7 +365,7 @@ public class PlotSimpleData extends GraphFrame {
 
     yaxis = graph.createAxis(Axis.LEFT);
     yaxis.attachDataSet(data1);
-    yaxis.setTitleText("Function");
+    yaxis.setTitleText(yAxisTitle);
     yaxis.setTitleFont(new Font("TimesRoman", Font.BOLD, 14));
     yaxis.setLabelFont(new Font("Helvetica", Font.PLAIN, 12));
     yaxis.setTitleColor(new Color(0, 0, 255));

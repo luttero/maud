@@ -28,6 +28,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.lang.*;
 import java.util.Vector;
+import java.util.concurrent.TimeUnit;
 import javax.swing.*;
 
 import org.apache.commons.math3.linear.*;
@@ -226,21 +227,25 @@ public class Strain extends XRDcat {
 
 	public void computeStressTensorAndOutput(Phase aphase, Vector<Reflection> reflList, String filename) {
 
-		BufferedWriter PFwriter = Misc.getWriter(filename);
+		BufferedWriter PFwriter = Misc.getWriterForAppend(filename + ".txt");
 		Sample asample = getFilePar().getActiveSample();
 		if (PFwriter != null) {
 			try {
 
-				outputStressTensor(PFwriter);
-
 				System.out.println("Strain values for phase: " + aphase.toXRDcatString());
 				PFwriter.write("Strain values for phase: " + aphase.toXRDcatString());
 				PFwriter.write(Constants.lineSeparator);
+
+				outputStressTensor(PFwriter);
+
 				int hkln = reflList.size();
 				for (int j = 0; j < hkln; j++) {
 					Reflection refl = reflList.elementAt(j);
-					Reflection arefl = aphase.getReflectionByAnyhkl(refl.getH(), refl.getH(), refl.getH());
-					if (refl.isGoodforStrain()) {
+					String hkl = refl.getH() + "_" + refl.getK() + "_" + refl.getL();
+					int reflIndex = aphase.getReflectionIndexByAnyhkl(refl.getH(), refl.getK(), refl.getL());
+					Reflection arefl = aphase.getReflex(reflIndex);
+//					System.out.println(refl.getH() + "   " + refl.getK() + "   " + refl.getL() + "   " + arefl);
+					if (refl.isGoodforStrain() && arefl != null) {
 						PFwriter.write(refl.getH() + "   " + refl.getK() + "   " + refl.getL() + "   " + arefl.d_space + "            h k l d0");
 						PFwriter.write(Constants.lineSeparator);
 						PFwriter.write("psi       phi        strain       position      d      sin2(psi)");
@@ -268,12 +273,15 @@ public class Strain extends XRDcat {
 						numberDataPoints = 0;*/
 						for (int i = 0; i < numberDatasets; i++) {
 							DataFileSet dataset = asample.getActiveDataSet(i);
+							PFwriter.write("Dataset " + i + " " + dataset.toString());
+							PFwriter.write(Constants.lineSeparator);
 							int radCount = dataset.getInstrument().getRadiationType().getLinesCount();
+							Vector<double[]> data = new Vector(10);
 							for (int k = 0; k < dataset.activedatafilesnumber(); k++) {
 								DiffrDataFile datafile = dataset.getActiveDataFile(k);
 								for (int ppp = 0; ppp < datafile.positionsPerPattern; ppp++) {
-										double pf = datafile.getStrains(aphase, j)[ppp][0];
-										double position = datafile.getPositions(aphase)[j][ppp][0];
+										double pf = datafile.getStrains(aphase, reflIndex)[ppp][0];
+										double position = datafile.getPositions(aphase)[reflIndex][ppp][0];
 										if (!Double.isNaN(pf)) {
 //											numberDataPoints++;
 											double[] angles = datafile.getTextureAngles(position);
@@ -284,9 +292,23 @@ public class Strain extends XRDcat {
 											double ds = arefl.d_space * Math.exp(pf);
 											PFwriter.write(chi + " " + phi + " " + pf + " " + position + " " + ds + " " + sinpsi);
 											PFwriter.write(Constants.lineSeparator);
+											double[] one = new double[2];
+											one[0] = sinpsi;
+											one[1] = ds;
+											data.add(one);
 										}
 								}
 							}
+							int dataNumber = data.size();
+							double[] x = new double[dataNumber];
+							double[] y = new double[dataNumber];
+							for (int k = 0; k < dataNumber; k++) {
+								x[k] = data.elementAt(k)[0];
+								y[k] = data.elementAt(k)[1];
+							}
+//							if (plotOutputFileName != null && plotOutputFileName.length() > 0)
+								createPlotFileOutput(x, y, aphase.toXRDcatString() + "-" + dataset.toXRDcatString() + "-" + hkl, filename);
+
 						}
 					}
 				}
@@ -300,6 +322,50 @@ public class Strain extends XRDcat {
 				}
 			}
 		}
+	}
+
+	public void createPlotFileOutput(double[] x, double[] function, String title, String plotOutputFileName) {
+
+		PlotSimpleData plot = new PlotSimpleData(null, x, function, 1, true,
+				"[Sin(psi)]^2", "d (Å)", title);
+		plot.setSize(800, 600);
+		plot.setVisible(true);
+		(new PersistentThread() {
+			@Override
+			public void executeJob() {
+
+				try {
+					TimeUnit.MILLISECONDS.sleep(3000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+
+				Component comp = plot.componentToPrint;
+				if (comp != null) {
+					Rectangle rect = comp.getBounds();
+					Image fileImage =
+							plot.createImage(rect.width, rect.height);
+					Graphics g = fileImage.getGraphics();
+
+					//write to the image
+					g.clearRect(0, 0, comp.getWidth(), comp.getHeight());
+					comp.paint(g);
+					// write it out in the format you want
+					BeartexPFPlot.savePic(fileImage, "png", plotOutputFileName + title + ".png", comp);
+
+					try {
+						TimeUnit.MILLISECONDS.sleep(3000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+
+					//dispose of the graphics content
+					g.dispose();
+					plot.setVisible(false);
+					plot.dispose();
+				}
+			}
+		}).start();
 	}
 
 	public double[][] getPoleFigureGrid(Reflection refl, int numberofPoints, double maxAngle) {

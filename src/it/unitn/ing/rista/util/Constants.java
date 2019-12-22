@@ -402,6 +402,8 @@ public class Constants {
 	public static it.unitn.ing.fortran.Formatter ffmt = null;
 	public static it.unitn.ing.fortran.Formatter efmt = null;
 
+	public static boolean allXrayTablesLoaded = false;
+
 	public static String userHomeDirectory = "";
 	public static String userDirectory = "";
   public static String libraryDirectory = "";
@@ -841,7 +843,7 @@ public class Constants {
 		    @Override
 		    public void run() {
 			    AtomInfo.loadAtomConstants();
-			    XRayDataSqLite.loadEbelAndShellTables(true);
+			    allXrayTablesLoaded = XRayDataSqLite.loadEbelAndShellTables(true);
 			    Sla33Constants.initConstants();
 		    }
 	    }).start();
@@ -1142,20 +1144,20 @@ public class Constants {
             Constructor ctor = aclass.getConstructor(new Class[]{});
             BaseFactoryObject obj = (BaseFactoryObject) ctor.newInstance(new Object[]{});
 	          if (obj.identifier != BaseFactoryObject.noneID && !obj.identifier.toLowerCase().startsWith("disabled")) {
-		          tmpString.addElement(new String(classname[i]));
-		          tmpString.addElement(new String(obj.IDlabel));
-		          tmpString.addElement(new String(obj.identifier));
+		          tmpString.addElement(classname[i]);
+		          tmpString.addElement(obj.IDlabel);
+		          tmpString.addElement(obj.identifier);
 	          } else {
 		          if (Constants.testing)
 			          System.out.println("Not valid subclass: " + classname[i]);
-		          if (Constants.testing && obj.identifier.toLowerCase().startsWith("disabled")) {
+/*		          if (Constants.testing && obj.identifier.toLowerCase().startsWith("disabled")) {
 		            tmpString.addElement(new String("disabled"));
 		            tmpString.addElement(new String("----"));
 		            tmpString.addElement(new String("----"));
-		          }
+		          }*/
 	          }
           } catch (Exception e) {
-            System.out.println("Class not loaded: " + classname[i]);
+ //           System.out.println("Class not loaded: " + classname[i]);
 /*            tmpString.addElement(new String("disabled"));
             tmpString.addElement(new String("----"));
             tmpString.addElement(new String("----"));*/

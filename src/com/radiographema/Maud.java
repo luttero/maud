@@ -134,10 +134,19 @@ public class Maud {
             insFileName = args[i + 1];
 
       System.out.println("Starting batch mode");
-      programInitialization();
+	    initInteractive();
+//      programInitialization();
       batchProcess batch = new batchProcess(insFileName);
       batch.process();
-      System.exit(0);
+
+	    try {
+		    System.out.print("Press Enter key to exit: ");
+		    System.in.read();
+	    } catch (IOException e) {
+		    e.printStackTrace();
+	    }
+
+	    System.exit(0);
 
     } else if (reflectivity) {
       initInteractive();

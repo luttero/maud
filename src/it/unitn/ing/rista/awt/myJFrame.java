@@ -65,7 +65,7 @@ public class myJFrame extends iconJFrame implements ParentFrame, ClipboardOwner,
 //	Vector parameterTFVector;
 //	public Font defaultFont = new Font("Dialog", Font.PLAIN, 12);
   private String helpFilename = null;
-  protected Component componentToPrint = null;
+  public Component componentToPrint = null;
 
 
   protected final Hashtable listTable = new Hashtable();

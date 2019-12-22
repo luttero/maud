@@ -457,6 +457,15 @@ public class FilePar extends XRDcat implements lFilePar, Function {
   }
 
   public void refreshAll(boolean firstLoading) {
+  	if (firstLoading) {
+  		int checkNumber = 0;
+  		while (!Constants.allXrayTablesLoaded && checkNumber < 10) {
+		   try {
+			   Thread.currentThread().sleep(1000);
+		   } catch (InterruptedException ie) {
+		   }
+	   }
+   }
     if (!isLoadingFile() && isAbilitatetoRefresh) {
       refreshComputation = true;
       setRefreshAllStatus();
@@ -889,6 +898,8 @@ public class FilePar extends XRDcat implements lFilePar, Function {
         System.out.println("IO exception in closing the file");
         ioe.printStackTrace();
       }
+    } else {
+	    System.out.println("File analysis not opened!!");
     }
 //		theframe.loadingFinished();
 //	  System.out.println("Start binding");
@@ -1031,7 +1042,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 	  }
 	  checkForVersion(getVersion());
 
-	  stringField[1] = new String("Maud version " + Double.toString(Constants.maud_version));
+	  stringField[1] = "Maud version " + Constants.maud_version;
 
 	  if (Constants.testing)
 		  System.out.println("End refresh");

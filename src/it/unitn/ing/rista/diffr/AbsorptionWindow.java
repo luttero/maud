@@ -170,7 +170,7 @@ public class AbsorptionWindow extends XRDcat {
 			absorption *= Math.abs(getWindowDensity() * getWindowThickness()); // linear absorption window
 
 			double integral = 0;
-			if (absorption < 1E40)
+			if (absorption < 1E30)
 				integral = Math.exp(-absorption);
 			energyInKeVIntensity[1][j] *= integral;
 		}
@@ -188,7 +188,7 @@ public class AbsorptionWindow extends XRDcat {
 		absorption *= Math.abs(getWindowDensity() * getWindowThickness()); // linear absorption window
 
 		double integral = 0;
-		if (absorption < 1E40)
+		if (absorption < 1E30)
 			integral = Math.exp(-absorption);
 		return integral;
 	}
@@ -200,8 +200,12 @@ public class AbsorptionWindow extends XRDcat {
 			double atomFraction = ((CompositionElement) subordinateloopField[window_composition_id].elementAt(i)).getParameterValue(0) /
 					totalAtomFraction;
 			int atomNumber = AtomInfo.retrieveAtomNumber(atomLabel);
-			absorption += atomFraction * XRayDataSqLite.getTotalAbsorptionForAtomAndEnergy(atomNumber, energyInKeV);
+			double absAtom = XRayDataSqLite.getTotalAbsorptionForAtomAndEnergy(atomNumber, energyInKeV);
+			absorption += atomFraction * absAtom;
+//			System.out.println(absorption + " " + absAtom + " " + energyInKeV + " " + atomNumber + " " + atomLabel + " " + atomFraction);
 		}
+		if (MoreMath.isInvalidNumber(absorption))
+			return 0.0;
 		return absorption;
 	}
 
@@ -217,7 +221,7 @@ public class AbsorptionWindow extends XRDcat {
 		absorption *= Math.abs(getWindowDensity() * getWindowThickness() / Math.sin(Math.abs(incidentAngleInRad))); // linear absorption window
 
 		double integral = 0;
-		if (absorption < 1E40)
+		if (absorption < 1E30)
 			integral = Math.exp(-absorption);
 		return integral;
 	}

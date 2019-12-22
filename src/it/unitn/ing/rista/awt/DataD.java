@@ -1215,83 +1215,10 @@ public class DataD extends myJFrame {
     String filename = Utility.browseFilename(this, "Import CIF list of data files");
 
     setCursor(new Cursor(Cursor.WAIT_CURSOR));
-	  Constants.refreshTreePermitted = false;
 
-	  if (filename != null) {
-      String[] folderandname = Misc.getFolderandName(filename);
+    thedata.addDatafilesFromScript(filename);
 
-      BufferedReader reader = Misc.getReader(filename);
-      if (reader != null) {
-        try {
-
-          String token;
-          StringTokenizer st;
-          String linedata = reader.readLine();
-          Vector cifItems = new Vector(0, 1);
-
-          int pivot = 0;
-          while (!linedata.toLowerCase().startsWith("loop_"))
-            linedata = reader.readLine();
-          linedata = reader.readLine();
-          while (linedata.startsWith("_")) {
-            st = new StringTokenizer(linedata, "' ,\t\r\n");
-            while (st.hasMoreTokens()) {
-              token = st.nextToken();
-              cifItems.addElement(token);
-              if (token.equalsIgnoreCase("_riet_meas_datafile_name"))
-                pivot = cifItems.size();
-            }
-            linedata = reader.readLine();
-          }
-
-          int maxindex = cifItems.size();
-          int index = 0;
-
-          DiffrDataFile datafile[] = null;
-          String[] listItems = new String[maxindex];
-
-          while ((linedata != null)) {
-            st = new StringTokenizer(linedata, "' ,\t\r\n");
-            while (st.hasMoreTokens()) {
-              token = st.nextToken();
-              index++;
-              if (index == pivot) {
-                datafile = thedata.addDataFileforName(folderandname[0] + token, false);
-//								System.out.println(datafile);
-              } else if (index > 0) {
-                listItems[index - 1] = token;
-              }
-
-              if (index == maxindex) {
-                index = 0;
-                if (datafile != null)
-                  for (int i = 0; i < maxindex; i++)
-                    if (i != pivot - 1) {
-	                    for (int ij = 0; ij < datafile.length; ij++)
-                      datafile[ij].setField((String) cifItems.elementAt(i), listItems[i], "0", "0", "0", false,
-                              null, null, null, null, null, false, false);
-//								System.out.println(datafile);
-//					System.out.println((String) cifItems.elementAt(i) + listItems[i]);
-                    }
-              }
-            }
-            linedata = reader.readLine();
-          }
-
-        } catch (IOException e) {
-          System.out.println("Error loading cif file!");
-        }
-        try {
-          reader.close();
-        } catch (IOException e) {
-	        e.printStackTrace();
-          // LogSystem.printStackTrace(e);
-        }
-      }
-    }
-	  Constants.refreshTreePermitted = true;
-	  thedata.notifyUpObjectChanged(thedata, 0);
-	  setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+    setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
   }
 
   private void datafilesDropped(File[] files) {

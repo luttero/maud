@@ -22,6 +22,9 @@ package it.unitn.ing.rista.util;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.EigenDecomposition;
+import org.la4j.Matrix;
+import org.la4j.decomposition.EigenDecompositor;
+import org.la4j.matrix.dense.Basic2DMatrix;
 
 import java.lang.*;
 import java.util.Vector;
@@ -1320,8 +1323,17 @@ end;
 	}
 
 	public static double[][] diagonalMatrix(double[][] p) {
-		EigenDecomposition ev = new EigenDecomposition(new Array2DRowRealMatrix(p, false));
-		return ev.getD().getData();
+//		EigenDecomposition ev = new EigenDecomposition(new Array2DRowRealMatrix(p, false));
+//		return ev.getD().getData();
+
+		Basic2DMatrix a = new Basic2DMatrix(p);
+		EigenDecompositor ed = new EigenDecompositor(a);
+		Matrix[] d = ed.decompose();
+		double[][] res = new double[p.length][p[0].length];
+		for (int i = 0; i < p.length; i++)
+			for (int j = 0; j < p[i].length; j++)
+				 res[i][j] = d[1].get(i, j);
+		return res;
 	}
 
 

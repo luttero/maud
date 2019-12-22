@@ -28,7 +28,7 @@ import java.io.*;
 import java.awt.*;
 import java.util.concurrent.TimeUnit;
 
-import it.unitn.ing.rista.chemistry.XRayDataSqLite;
+import it.unitn.ing.rista.diffr.AtomSite;
 import it.unitn.ing.rista.diffr.instrument.DefaultInstrument;
 import it.unitn.ing.rista.io.cif.*;
 import it.unitn.ing.rista.util.*;
@@ -192,7 +192,11 @@ public class DataFileSet extends XRDcat {
     this(afile, "DataFileSet_x");
   }
 
-	public DataFileSet() {}
+	public DataFileSet() {
+		identifier = "dataset";
+		IDlabel = "dataset";
+		description = "select this to use a dataset";
+	}
 
   @Override
   public void initConstant() {
@@ -2753,6 +2757,7 @@ public class DataFileSet extends XRDcat {
 		}
 		final String label = DataFileSet.this.toXRDcatString();
 		MultiPlotFitting2D plot = new MultiPlotFitting2D(null, adfile, label);
+		plot.setSize(800, 600);
 		(new PersistentThread() {
 			@Override
 			public void executeJob() {

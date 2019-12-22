@@ -250,14 +250,18 @@ public class Phase extends XRDcat {
   public Phase(XRDcat afile, String alabel) {
     super(afile, alabel);
     initXRD();
-    identifier = "phase";
+    identifier = "Phase";
   }
 
   public Phase(XRDcat afile) {
     this(afile, "Phase_x");
   }
 
-	public Phase() {}
+	public Phase() {
+		identifier = "Phase";
+		IDlabel = "Phase";
+		description = "select this to use a Phase";
+	}
 
   public void initConstant() {
     Nstring = 15;
@@ -2551,7 +2555,25 @@ public static final String getSpaceGroup(int index, int sgconv) {
     return null;
   }
 
-  public Reflection getReflectionByhkl(int h, int k, int l) {
+	public int getReflectionIndexByAnyhkl(int h, int k, int l) {
+		Reflection refl;
+
+		int hklnumber = gethklNumber();
+		for (int i = 0; i < hklnumber; i++) {
+			refl = reflectionv.elementAt(i);
+			int mult2 = refl.multiplicity / 2;
+			if (mult2 == 0)
+				mult2 = 1;
+			for (int j = 0; j < mult2; j++) {
+				if ((refl.hlist[j] == h && refl.klist[j] == k && refl.llist[j] == l) ||
+						(refl.hlist[j] == -h && refl.klist[j] == -k && refl.llist[j] == -l))
+					return i;
+			}
+		}
+		return -1;
+	}
+
+	public Reflection getReflectionByhkl(int h, int k, int l) {
     Reflection refl;
 
     int hklnumber = gethklNumber();

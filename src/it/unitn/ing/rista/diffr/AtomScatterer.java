@@ -87,6 +87,9 @@ public class AtomScatterer extends Scatterer {
 		}
 
 	public AtomScatterer() {
+/*		identifier = "Atom Scatterer";
+		IDlabel = "Atom Scatterer";
+		description = "select this to use an Atom Scatterer";*/
 	}
 
 	public void initConstant() {
