@@ -50,8 +50,9 @@ public class DifferencePlot2D extends MultiPlotFitting2D {
 
   }
 
-  public DifferencePlot2D(Frame parent, DiffrDataFile[] adatafile, String title) {
-    super(parent, adatafile, title);
+  public DifferencePlot2D(Frame parent, DiffrDataFile[] adatafile, String title, String yTitle,
+                          String yUnit) {
+    super(parent, adatafile, title, yTitle, yUnit);
   }
 
   JPlotLayout makeGraph(DiffrDataFile[] datafile) {
@@ -131,7 +132,10 @@ public class DifferencePlot2D extends MultiPlotFitting2D {
       	xaxis[i] = xmin + i * stepX;
         for (int sn = 0; sn < ylength; sn++) {
           if (i == 0) {
-            yaxis[sn] = sn;
+            if (yaxisUnit == null)
+              yaxis[sn] = sn;
+            else
+              yaxis[sn] = datafile[sn].get2ThetaValue();
             if (hasFit == 1 && ylength == 1) {
               yaxis[1] = 1;
               yaxis[2] = 2;
@@ -183,7 +187,13 @@ public class DifferencePlot2D extends MultiPlotFitting2D {
       SGTMetaData xMeta = new SGTMetaData(datafile[0].getAxisXLegendNoUnit(), datafile[0].getAxisXLegendUnit());
 
       String information = "residuals";
-      SGTMetaData yMeta = new SGTMetaData("Spectrum #", information);
+      if (yaxisUnit != null) {
+        information = yaxisUnit;
+      }
+      String yTitle = "Spectrum #";
+      if (yaxisTitle != null)
+        yTitle = yaxisTitle;
+      SGTMetaData yMeta = new SGTMetaData(yTitle, information);
       SimpleGrid sg = new SimpleGrid(values, xaxis, yaxis, "2D Multiplot");
       sg.setXMetaData(xMeta);
       sg.setYMetaData(yMeta);

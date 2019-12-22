@@ -28,6 +28,7 @@ import java.io.*;
 import java.awt.*;
 import java.util.concurrent.TimeUnit;
 
+import it.unitn.ing.rista.diffr.instrument.AngleEnergyMapInstrument;
 import it.unitn.ing.rista.diffr.instrument.DefaultInstrument;
 import it.unitn.ing.rista.io.cif.*;
 import it.unitn.ing.rista.util.*;
@@ -178,6 +179,11 @@ public class DataFileSet extends XRDcat {
 	boolean[] needRestore = null;
 	Vector overallVector = null;
 
+	private Map<Phase, double[][][]> phaseStructureFactors = new Hashtable<>();
+	private Map<Phase, int[]> phaseStructureFactorsID = new Hashtable<>();
+	public static final int numberStructureFactors = 3;   // experimental, calculated, errors
+	private Map<Phase, double[][][][]> phaseScatFactors = new Hashtable<>();
+
 	public DataFileSet(XRDcat afile, String alabel) {
     super(afile, alabel);
     initXRD();
@@ -187,6 +193,12 @@ public class DataFileSet extends XRDcat {
   public DataFileSet(XRDcat afile) {
     this(afile, "DataFileSet_x");
   }
+
+	public DataFileSet() {
+		identifier = "dataset";
+		IDlabel = "dataset";
+		description = "select this to use a dataset";
+	}
 
   @Override
   public void initConstant() {
@@ -687,6 +699,85 @@ public class DataFileSet extends XRDcat {
 		return null;
 	}
 
+	public void addDatafilesFromScript(String filename) {
+		Constants.refreshTreePermitted = false;
+
+		if (filename != null) {
+			String[] folderandname = Misc.getFolderandName(filename);
+
+			BufferedReader reader = Misc.getReader(filename);
+			if (reader != null) {
+				try {
+
+					String token;
+					StringTokenizer st;
+					String linedata = reader.readLine();
+					Vector cifItems = new Vector(0, 1);
+
+					int pivot = 0;
+					while (!linedata.toLowerCase().startsWith("loop_"))
+						linedata = reader.readLine();
+					linedata = reader.readLine();
+					while (linedata.startsWith("_")) {
+						st = new StringTokenizer(linedata, "' ,\t\r\n");
+						while (st.hasMoreTokens()) {
+							token = st.nextToken();
+							cifItems.addElement(token);
+							if (token.equalsIgnoreCase("_riet_meas_datafile_name"))
+								pivot = cifItems.size();
+						}
+						linedata = reader.readLine();
+					}
+
+					int maxindex = cifItems.size();
+					int index = 0;
+
+					DiffrDataFile datafile[] = null;
+					String[] listItems = new String[maxindex];
+
+					while ((linedata != null)) {
+						st = new StringTokenizer(linedata, "' ,\t\r\n");
+						while (st.hasMoreTokens()) {
+							token = st.nextToken();
+							index++;
+							if (index == pivot) {
+								datafile = addDataFileforName(folderandname[0] + token, false);
+//								System.out.println(datafile);
+							} else if (index > 0) {
+								listItems[index - 1] = token;
+							}
+
+							if (index == maxindex) {
+								index = 0;
+								if (datafile != null)
+									for (int i = 0; i < maxindex; i++)
+										if (i != pivot - 1) {
+											for (int ij = 0; ij < datafile.length; ij++)
+												datafile[ij].setField((String) cifItems.elementAt(i), listItems[i], "0", "0", "0", false,
+														null, null, null, null, null, false, false);
+//								System.out.println(datafile);
+//					System.out.println((String) cifItems.elementAt(i) + listItems[i]);
+										}
+							}
+						}
+						linedata = reader.readLine();
+					}
+
+				} catch (IOException e) {
+					System.out.println("Error loading cif file!");
+				}
+				try {
+					reader.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+					// LogSystem.printStackTrace(e);
+				}
+			}
+		}
+		Constants.refreshTreePermitted = true;
+		notifyUpObjectChanged(this, 0);
+	}
+
 	public void checkOwnPolynomial() {
     for (int i = 0; i < datafilesnumber(); i++) {
       getDataFile(i).checkOwnPolynomial();
@@ -957,10 +1048,6 @@ public class DataFileSet extends XRDcat {
     theindex = index;
   }
 
-	private Map<Phase, double[][][]> phaseStructureFactors = new Hashtable<>();
-	private Map<Phase, int[]> phaseStructureFactorsID = new Hashtable<>();
-	public static final int numberStructureFactors = 3;   // experimental, calculated, errors
-
 	public void refreshIndices(Phase phase) {
   	   int linesCount = getInstrument().getRadiationType().getLinesCount();
 		int numberOfReflections = phase.gethklNumber();
@@ -1198,8 +1285,6 @@ public class DataFileSet extends XRDcat {
 		return phaseStructureFactorsID.get(phase);
 	}
 
-	private Map<Phase, double[][][][]> phaseScatFactors = new Hashtable<>();
-
 	public void reloadScatteringFactors(Phase phase) {
 		Vector<AtomSite> atoms = phase.getFullAtomList();
 		int atomsNumber = atoms.size();
@@ -1228,12 +1313,12 @@ public class DataFileSet extends XRDcat {
           AtomSite atom = atoms.elementAt(ato);
           double[] scatteringFactors = atom.scatfactor(0, energyInKeV);
           scatFactors[0][j][ato][0] = scatteringFactors[0] + fu[0];
-          scatFactors[0][j][ato][1] = fu[1];
+          scatFactors[0][j][ato][1] = scatteringFactors[1] + fu[1];
           for (int kj = 1; kj < numberofpeaks; kj++) {
             Reflection refl = phase.getReflex(kj - 1);
             scatteringFactors = atom.scatfactor(refl.d_space, energyInKeV);
             scatFactors[kj][j][ato][0] = scatteringFactors[0] + fu[0];
-            scatFactors[kj][j][ato][1] = fu[1];
+            scatFactors[kj][j][ato][1] = scatteringFactors[1] + fu[1];
           }
         }
       }
@@ -1246,12 +1331,12 @@ public class DataFileSet extends XRDcat {
           AtomSite atom = atoms.elementAt(ato);
           double[] scatteringFactors = atom.scatfactor(0, rad1);
           scatFactors[0][j][ato][0] = scatteringFactors[0] + fu[0];
-          scatFactors[0][j][ato][1] = fu[1];
+          scatFactors[0][j][ato][1] = scatteringFactors[1] + fu[1];
           for (int kj = 1; kj < numberofpeaks; kj++) {
             Reflection refl = phase.getReflex(kj - 1);
             scatteringFactors = atom.scatfactor(refl.d_space, rad1);
             scatFactors[kj][j][ato][0] = scatteringFactors[0] + fu[0];
-            scatFactors[kj][j][ato][1] = fu[1];
+            scatFactors[kj][j][ato][1] = scatteringFactors[1] + fu[1];
           }
         }
       }
@@ -1711,6 +1796,9 @@ public class DataFileSet extends XRDcat {
 						}
 					}
 				}
+        for (int j = tmpdatafile.startingindex; j < tmpdatafile.finalindex; j++) {
+          intensity[j - tmpdatafile.startingindex] /= countingTime;
+        }
 				output.write("_pd_block_id " + tmpdatafile.toString());
 				output.newLine();
 				output.newLine();
@@ -1719,7 +1807,8 @@ public class DataFileSet extends XRDcat {
 				output.write("_riet_meas_datafile_calibrated false");
 				output.newLine();
 				output.write(DiffrDataFile.diclistc[DiffrDataFile.countingTimeValueID] + " ");
-				output.write(Fmt.format(countingTime));
+				output.write(Fmt.format(1));
+        useCountTimeToScale = false;
 				output.newLine();
 				if (energyDispersive) {
 					output.write(DiffrDataFile.pd_meas_scan_method + " disp");
@@ -2690,9 +2779,20 @@ public class DataFileSet extends XRDcat {
       }
     }).start();
   }
+  
+  String yTitle = null;
+  String yUnit = null;
 
   public void multiPlot2D(Frame aframe) {
     int datafilenumber = activedatafilesnumber();
+    
+    yTitle = null;
+    yUnit = null;
+    boolean angleAxis = MaudPreferences.getBoolean("multiplot2D.use2Theta", false);
+    if (angleAxis && getInstrument().IDlabel == AngleEnergyMapInstrument.modelID) {
+      yTitle = "2Theta";
+      yUnit = "degrees";
+    }
 
     final Frame newFrame = aframe;
     final DiffrDataFile[] adfile = new DiffrDataFile[datafilenumber];
@@ -2703,25 +2803,31 @@ public class DataFileSet extends XRDcat {
     (new PersistentThread() {
   @Override
       public void executeJob() {
-        new MultiPlotFitting2D(newFrame, adfile, label);
+        new MultiPlotFitting2D(newFrame, adfile, label, yTitle, yUnit);
       }
     }).start();
   }
-
-
+  
 	public void plot2DandExportPng(String plotOutput2DFileName) {
 		int datafilenumber = activedatafilesnumber();
+    
+    yTitle = null;
+    yUnit = null;
+    boolean angleAxis = MaudPreferences.getBoolean("multiplot2D.use2Theta", false);
+    if (angleAxis && getInstrument().IDlabel == AngleEnergyMapInstrument.modelID) {
+      yTitle = "2Theta";
+      yUnit = "degrees";
+    }
 
 		final DiffrDataFile[] adfile = new DiffrDataFile[datafilenumber];
 		for (int i = 0; i < datafilenumber; i++) {
 			adfile[i] = getActiveDataFile(i);
 		}
 		final String label = DataFileSet.this.toXRDcatString();
-		MultiPlotFitting2D plot = new MultiPlotFitting2D(null, adfile, label);
+		MultiPlotFitting2D plot = new MultiPlotFitting2D(null, adfile, label, yTitle, yUnit);
 		(new PersistentThread() {
 			@Override
 			public void executeJob() {
-
 				try {
 					TimeUnit.MILLISECONDS.sleep(3000);
 				} catch (InterruptedException e) {
@@ -2853,7 +2959,15 @@ public class DataFileSet extends XRDcat {
 
   public void differencePlot2D(Frame aframe) {
     int datafilenumber = activedatafilesnumber();
-
+  
+    yTitle = null;
+    yUnit = null;
+    boolean angleAxis = MaudPreferences.getBoolean("multiplot2D.use2Theta", false);
+    if (angleAxis && getInstrument().IDlabel == AngleEnergyMapInstrument.modelID) {
+      yTitle = "2Theta";
+      yUnit = "degrees";
+    }
+  
     final Frame newFrame = aframe;
     final DiffrDataFile[] adfile = new DiffrDataFile[datafilenumber];
     for (int i = 0; i < datafilenumber; i++) {
@@ -2863,7 +2977,7 @@ public class DataFileSet extends XRDcat {
     (new PersistentThread() {
   @Override
       public void executeJob() {
-        new DifferencePlot2D(newFrame, adfile, label);
+        new DifferencePlot2D(newFrame, adfile, label, yTitle, yUnit);
       }
     }).start();
   }
@@ -3404,7 +3518,7 @@ public class DataFileSet extends XRDcat {
 		  refl.goodforTexture = validReflection;
 		  if (validReflection) {
 			  Rhkl = intensity;
-			  Peak hklpeak = aphase.getActiveSizeStrain().createPeak(dspace, datafiletmp.dspacingbase,
+			  Peak hklpeak = getDiffraction().createPeak(aphase.getActiveSizeStrain(), dspace, datafiletmp.dspacingbase,
 					  datafiletmp.energyDispersive, wavelength, radweight, refl, i);
 			  hklpeak.setIntensity(Rhkl);
 			  thepeaklist.addElement(hklpeak);
@@ -4055,6 +4169,7 @@ public class DataFileSet extends XRDcat {
       int bank1 = ((DiffrDataFile) obj1).getBankNumber();
       int bank2 = ((DiffrDataFile) obj2).getBankNumber();
       int diff = bank2 - bank1;
+//      System.out.println(diff);
 
       if (diff == 0.0)
         return 0;

@@ -303,23 +303,27 @@ public class Geometry extends XRDcat {
 
     double[] textureAngles = new double[2];
 
-    if (Math.abs(M23) < 1.0E-9)
-      M23 = 0.0;
-    if (Math.abs(M13) < 1.0E-9) {
+
+//    System.out.println("M13, M23: " + M13 + " " + M23);
+    if (Math.abs(M13) < 1.0E-12) {
       if (M23 >= 0.0)
         textureAngles[1] = 90.0f;
       else
-        textureAngles[1] = -90.0f;
+        textureAngles[1] = 270.0f;
     } else if (M23 == 0.0) {
       if (M13 > 0.0)
         textureAngles[1] = 180.0f;
       else
         textureAngles[1] = 0.0f;
     } else {
+      if (Math.abs(M23) < 1.0E-12)
+        M23 = 0.0;
       textureAngles[1] = -MoreMath.atand(M23 / M13);
       if (M13 > 0.0)
         textureAngles[1] += 180.0f;
     }
+//    System.out.println("phi: " + textureAngles[1]);
+
 //    System.out.println("1: " + cosPsi);
     if (cosPsi > 0.99999999)
       textureAngles[0] = 0f;

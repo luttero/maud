@@ -58,6 +58,8 @@ public class CompositionElement extends XRDcat {
 		this(aobj, "AtomSite fraction");
 	}
 
+	public CompositionElement() {}
+
 	public void initConstant() {
 		Nstring = 1;
 		Nstringloop = 0;

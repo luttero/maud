@@ -71,7 +71,7 @@ public class AngleEnergyMapInstrument extends Instrument {
 		JTextField intensityTF;
 		JTextField intensityScaleTF;
 		JComboBox[] optchoice;
-		boolean[] active = {false, true, true, false, true, true, true};
+		boolean[] active = {true, true, true, false, true, true, true};
 
 //    JParameterListPane ThetaPanel;
 

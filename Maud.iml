@@ -197,7 +197,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/libs/current/commons-math.jar!/" />
+          <root url="jar://$MODULE_DIR$/libs/current/commons-math3.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

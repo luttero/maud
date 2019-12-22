@@ -28,7 +28,6 @@ import gov.noaa.pmel.sgt.dm.SGTMetaData;
 import gov.noaa.pmel.sgt.dm.SimpleGrid;
 import gov.noaa.pmel.util.Range2D;
 
-
 /**
  * The DifferencePlot2DPanel is a class
  * <p/>
@@ -40,15 +39,16 @@ import gov.noaa.pmel.util.Range2D;
  */
 
 public class DifferencePlot2DPanel extends MultiPlotFitting2DPanel {
-
-
+  
   public DifferencePlot2DPanel(myJFrame parent) {
     super(parent);
   }
 
   public void setNewData(DiffrDataFile[] afile, double[][] peaks,
-                         double[] derivative2) {
+                         double[] derivative2, String yTitle, String yUnit) {
     removeAll();
+    yaxisTitle = yTitle;
+    yaxisUnit = yUnit;
     initPanel(afile, "Difference 2D plot", 0.0f, 0.0f);
   }
 
@@ -129,7 +129,10 @@ public class DifferencePlot2DPanel extends MultiPlotFitting2DPanel {
       	xaxis[i] = xmin + i * stepX;
         for (int sn = 0; sn < ylength; sn++) {
           if (i == 0) {
-            yaxis[sn] = sn;
+            if (yaxisUnit == null)
+              yaxis[sn] = sn;
+            else
+              yaxis[sn] = datafile[sn].get2ThetaValue();
             if (hasFit == 1 && ylength == 1) {
               yaxis[1] = 1;
               yaxis[2] = 2;
@@ -179,9 +182,15 @@ public class DifferencePlot2DPanel extends MultiPlotFitting2DPanel {
       //
       SGTMetaData zMeta = new SGTMetaData(datafile[0].getAxisYLegend(), "");
       SGTMetaData xMeta = new SGTMetaData(datafile[0].getAxisXLegendNoUnit(), datafile[0].getAxisXLegendUnit());
-
+  
       String information = "residuals";
-      SGTMetaData yMeta = new SGTMetaData("Spectrum #", information);
+      if (yaxisUnit != null) {
+        information = yaxisUnit;
+      }
+      String yTitle = "Spectrum #";
+      if (yaxisTitle != null)
+        yTitle = yaxisTitle;
+      SGTMetaData yMeta = new SGTMetaData(yTitle, information);
       SimpleGrid sg = new SimpleGrid(values, xaxis, yaxis, "2D Multiplot");
       sg.setXMetaData(xMeta);
       sg.setYMetaData(yMeta);

@@ -49,6 +49,8 @@ public class Plane extends XRDcat {
     this(afile, "Plane x");
   }
 
+	public Plane() {}
+
   public void initConstant() {
     Nstring = 3;
     Nstringloop = 0;

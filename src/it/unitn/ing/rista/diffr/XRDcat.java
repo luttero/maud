@@ -2070,7 +2070,7 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
     }
     try {
 //			System.out.println("Loading " + classname);
-      XRDcatTypes.addElement(Class.forName(classname));
+      XRDcatTypes.addElement(Constants.maudClassLoader.loadClass(classname));
     } catch (Exception ex) {
       ex.printStackTrace();
       throw new PrototypeNotFound();

@@ -56,6 +56,8 @@ public class Oscillator extends XRDcat {
     this(afile, "Oscillator x");
   }
 
+	public Oscillator() {}
+
   public void initConstant() {
     Nstring = 1;
     Nstringloop = 0;

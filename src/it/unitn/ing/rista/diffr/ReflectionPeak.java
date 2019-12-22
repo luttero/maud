@@ -12,11 +12,15 @@ public class ReflectionPeak {
 	public double calcStrainFactor = 0.0;
 	public double[] sizestrain = null;
 	public double[][] instBroadFactor = null;
+  public double[][] instBroadFactor_en = null;
 	public double[] broadFactorTotal = null;
-	public double instBroadFactorHWHM_ang = 0.0;
-	public double instBroadFactorEta_ang = 0.0;
-	public double broadFactorHWHM_ang = 0.0;
-	public double broadFactorEta_ang = 0.0;
+  public double[] broadFactorTotal_en = null;
+  public double broadFactorHWHM = 0.0;
+  public double broadFactorEta = 0.0;
+  public double broadFactorHWHM_en = 0.0;
+  public double broadFactorEta_en = 0.0;
+//	public double instBroadFactorHWHM_ang = 0.0;
+//	public double instBroadFactorEta_ang = 0.0;
 //	public int min;
 //	public int max;
 

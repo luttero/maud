@@ -28,6 +28,7 @@ import it.unitn.ing.rista.awt.*;
 import javax.swing.*;
 
 import it.unitn.ing.rista.diffr.cal.*;
+import it.unitn.ing.rista.util.Misc;
 
 
 /**
@@ -98,6 +99,9 @@ public class Detector extends XRDcat {
 	}
 
 	public int getBankNumber(String bankID) {
+    String number = Misc.toStringFinalOnlyDigits(bankID);
+    if (number.length() > 0)
+      return Integer.parseInt(number);
     return -1;
   }
 

@@ -108,6 +108,8 @@ public class Fragment extends XRDcat implements AtomsStructureI {
     this(aobj, "Fragment x");
   }
 
+	public Fragment() {}
+
   public void initConstant() {
     //Nstring = 1;
     Nstringloop = 0;

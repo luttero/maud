@@ -191,7 +191,8 @@ public class DiffractionAngleEnergyMap extends Diffraction {
 						+ " texture,   "
 						+ " Abs*Vol/Vc,"
 						+ " rad. wt,   "
-						+ " phase scale");
+            + " phase scale,   "
+						+ " detector abs");
 				printStream.print(Constants.lineSeparator);
 				printStream.flush();
 //						System.out.println("String length " + toPrint.length());
@@ -241,7 +242,6 @@ public class DiffractionAngleEnergyMap extends Diffraction {
 		}
 
 		return minmaxindex;
-
 	}
 
 	public void computeasymmetry(Sample asample, DiffrDataFile datafile) {
@@ -265,8 +265,13 @@ public class DiffractionAngleEnergyMap extends Diffraction {
 //      System.out.println(", after: " + afit[j]);
 		}
 	}
-
-/*
+  
+  public Peak createPeak(SizeStrainModel activeSizeStrain, double dspace, boolean dspacingbase, boolean energyDispersive,
+                         double[] wavelength, double[] radweight, Reflection refl, int i) {
+    return new PseudoVoigt2DPeak(dspace, dspacingbase, energyDispersive, wavelength, radweight, refl, i);
+  }
+  
+	/*
 	public void computeDiffraction(Sample asample, DataFileSet adataset) {
 
 		int datafilenumber = adataset.activedatafilesnumber();

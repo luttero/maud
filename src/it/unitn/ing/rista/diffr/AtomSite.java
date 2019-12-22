@@ -21,7 +21,7 @@
 package it.unitn.ing.rista.diffr;
 
 import it.unitn.ing.rista.chemistry.AtomInfo;
-import it.unitn.ing.rista.chemistry.XRayDataSqLite;
+//import it.unitn.ing.rista.chemistry.XRayDataSqLite;
 import it.unitn.ing.rista.util.*;
 
 import java.util.ArrayList;
@@ -174,6 +174,8 @@ public class AtomSite extends XRDcat {
   public AtomSite(XRDcat parent) {
     this(parent, "Site_x");
   }
+
+  public AtomSite() {}
 
   /**
    * Init the default fields of this object, see XRDcat for this.
@@ -1429,8 +1431,13 @@ public class AtomSite extends XRDcat {
    * @return the total absorption of this atom site.
    */
   public double getSiteAbsorption(RadiationType rad) {
-    // only neutron or electron
 	  double absorption = 0;
+/*	  if (rad.isNeutron())
+		  absorption = getSiteWeight() * rad.getRadiation(0).neutronAbs[getAtomicListNumber()];
+	  else if (rad.isElectron())
+		  absorption = getSiteWeight() * rad.getRadiation(0).electronAbs[getAtomicListNumber()];
+	  else
+		  absorption = getSiteAbsorption(rad.getRadiationEnergy());*/
 	  for (int i = 0; i < getNumberOfScatterers(); i++)
 		  absorption += getAtomScatterer(i).getSiteAbsorption(rad);
 	  return getSiteMultiplicity() * absorption * getOccupancyValue();

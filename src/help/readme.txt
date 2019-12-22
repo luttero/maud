@@ -43,6 +43,15 @@ from the older one.
 
 Maud Version notes:
 
+(13/11/2019):   2.93. The "Early snow" release.
+                Will we get finally a good "deep snow" winter this year?
+                Fixed a problem with strain computation not working.
+                Fixed the plugins system that was not loading anymore an
+                external jar. For windows/linux the plugins directory to use
+                is still in the Maud directory next to the "lib" directory.
+                For Macos you should use a directory named "Maud/plugins"
+                in your user home under "~/Library/Application Support".
+
 (29/07/2019):   2.92. The "White sands" release.
                 You can die easily out there, but thanks to Sven I can still push
                 out another release.

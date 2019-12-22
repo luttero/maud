@@ -73,19 +73,25 @@ public class MultiPlotFitting2DPanel extends CopyPrintablePanel {
   JComboBox plotModeCB, xplotModeCB;
   JTextField legendMinTF;
   JTextField legendMaxTF;
+  String yaxisTitle = null;
+  String yaxisUnit = null;
 
   public MultiPlotFitting2DPanel(myJFrame parent) {
     theParent = parent;
   }
 
   public MultiPlotFitting2DPanel(myJFrame parent, DiffrDataFile[] adatafile, String title,
-                                 double IntensityMin, double IntensityMax) {
+                                 double IntensityMin, double IntensityMax, String yTitle,
+                                 String yUnit) {
     theParent = parent;
+    yaxisTitle = yTitle;
+    yaxisUnit = yUnit;
     initPanel(adatafile, title, IntensityMin, IntensityMax);
   }
 
-  public MultiPlotFitting2DPanel(myJFrame parent, DiffrDataFile[] adatafile, String title) {
-    this(parent, adatafile, title, 0.0f, 0.0f);
+  public MultiPlotFitting2DPanel(myJFrame parent, DiffrDataFile[] adatafile, String title, String yTitle,
+                                 String yUnit) {
+    this(parent, adatafile, title, 0.0f, 0.0f, yTitle, yUnit);
   }
 
   public void initPanel(DiffrDataFile[] adatafile, String title,
@@ -186,8 +192,10 @@ public class MultiPlotFitting2DPanel extends CopyPrintablePanel {
   }
 
   public void setNewData(DiffrDataFile[] afile, double[][] peaks,
-                         double[] derivative2) {
+                         double[] derivative2, String yTitle, String yUnit) {
     removeAll();
+    yaxisTitle = yTitle;
+    yaxisUnit = yUnit;
     initPanel(afile, "2D plot", 0.0f, 0.0f);
   }
 
@@ -271,7 +279,10 @@ public class MultiPlotFitting2DPanel extends CopyPrintablePanel {
       xaxis[i] = xmin + i * stepX;
       for (int sn = 0; sn < ylength; sn++) {
         if (i == 0) {
-          yaxis[sn] = sn;
+          if (yaxisUnit == null)
+            yaxis[sn] = sn;
+          else
+            yaxis[sn] = datafile[sn].get2ThetaValue();
           if (hasFit == 1 && ylength == 1) {
             yaxis[1] = 1;
             yaxis[2] = 2;
@@ -298,11 +309,11 @@ public class MultiPlotFitting2DPanel extends CopyPrintablePanel {
             values[j++] = intValue;
           }
           if (values[j - 1] < IntensityMin && computeMinMax)
-            IntensityMin = (double) values[j - 1];
+            IntensityMin = values[j - 1];
           else if (values[j - 1] < IntensityMin && !computeMinMax)
             values[j - 1] = IntensityMin;
           if (values[j - 1] > IntensityMax && computeMinMax)
-            IntensityMax = (double) values[j - 1];
+            IntensityMax = values[j - 1];
           else if (values[j - 1] > IntensityMax && !computeMinMax)
             values[j - 1] = IntensityMax;
         }
@@ -333,6 +344,7 @@ public class MultiPlotFitting2DPanel extends CopyPrintablePanel {
 */
       }
       if (hasFit > 1) {
+        double last2theta = datafile[ylength - 1].get2ThetaValue() * 1.01;
 
         values[j++] = it.unitn.ing.jgraph.ColorMap.DUMMY_VALUE;
         if (i == 0)
@@ -345,18 +357,22 @@ public class MultiPlotFitting2DPanel extends CopyPrintablePanel {
             xendmax = datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode);
           if (xstartmin > datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode))
             xstartmin = datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode);
-          if (i == 0)
-            yaxis[ylength + 1 + sn] = ylength + 1 + sn;
+          if (i == 0) {
+            if (yaxisUnit == null)
+              yaxis[ylength + 1 + sn] = ylength + 1 + sn;
+            else
+              yaxis[sn] = datafile[sn].get2ThetaValue() + last2theta;
+          }
           if (xaxis[i] < xstartmin || xaxis[i] > xendmax)
             values[j++] = it.unitn.ing.jgraph.ColorMap.DUMMY_VALUE;
           else {
             values[j++] = datafile[sn].getInterpolatedFitSqrtIntensity(xaxis[i], 2, mode);
             if (values[j - 1] < IntensityMin && computeMinMax)
-              IntensityMin = (double) values[j - 1];
+              IntensityMin = values[j - 1];
             else if (values[j - 1] < IntensityMin && !computeMinMax)
               values[j - 1] = IntensityMin;
             if (values[j - 1] > IntensityMax && computeMinMax)
-              IntensityMax = (double) values[j - 1];
+              IntensityMax = values[j - 1];
             else if (values[j - 1] > IntensityMax && !computeMinMax)
               values[j - 1] = IntensityMax;
           }
@@ -398,8 +414,17 @@ public class MultiPlotFitting2DPanel extends CopyPrintablePanel {
     if (hasFit > 1)
       information = "data | fit";
     else
-      information = "experimental";
-    SGTMetaData yMeta = new SGTMetaData("Spectrum #", information);
+      information = "Experimental";
+    if (yaxisUnit != null) {
+      if (hasFit > 1)
+        information = yaxisUnit + ", data | fit";
+      else
+        information = yaxisUnit + ", experimental";
+    }
+    String yTitle = "Spectrum #";
+    if (yaxisTitle != null)
+      yTitle = yaxisTitle;
+    SGTMetaData yMeta = new SGTMetaData(yTitle, information);
     SimpleGrid sg = new SimpleGrid(values, xaxis, yaxis, "2D Multiplot");
     sg.setXMetaData(xMeta);
     sg.setYMetaData(yMeta);
@@ -566,7 +591,8 @@ public class MultiPlotFitting2DPanel extends CopyPrintablePanel {
 
   public JPanel getNewPanel() {
     setVisible(false);
-    return new MultiPlotFitting2DPanel(getFrameParent(), datafile, title, IntensityMin, IntensityMax);
+    return new MultiPlotFitting2DPanel(getFrameParent(), datafile, title, IntensityMin, IntensityMax,
+        yaxisTitle, yaxisUnit);
   }
 
   public JPanel createOptionsPanel() {

@@ -75,6 +75,8 @@ public class Layer extends XRDcat {
     this(afile, "Layer_x");
   }
 
+	public Layer() {}
+
   public void initConstant() {
     Nstring = 1;
     Nstringloop = 0;

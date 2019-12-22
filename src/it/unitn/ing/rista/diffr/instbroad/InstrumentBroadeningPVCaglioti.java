@@ -392,8 +392,7 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
 	public Parameter getBroadeningCosEta(int index) {
 		return (Parameter) getBroadeningCosEtaList().elementAt(index);
 	}
-
-
+	
 	public static final int broadeningThetaSinEtaID = 7;
 
 	public ListVector getBroadeningThetaSinEtaList() {
