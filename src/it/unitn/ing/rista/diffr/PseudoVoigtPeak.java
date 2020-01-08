@@ -72,20 +72,20 @@ public class PseudoVoigtPeak extends basicPeak {
 		super(pos, dspacingbase, energyDispersive, wave, weight, reflex, order);
 	}
 
-	public static double[] getHwhmEtaFromIntegralBeta(double[] betaf, double[][] broadInst) {
+	public static double[] getHwhmEtaFromIntegralBeta(double[] betaf, java.util.Vector<double[]> broadInst) {
 		double betahc = 0.0;
 		for (int ij = 0; ij < numberbetacoeff; ij++)
-			betahc += coeffbetac[ij] * Math.pow(broadInst[0][1], (double) ij);
+			betahc += coeffbetac[ij] * Math.pow(broadInst.get(1)[0], ij);
 		double betahg = 1.0 - betahc;
 
 		double hwhmconv = 0.0;
 		for (int i = 0; i < numberhwhmcoeff; i++)
-			hwhmconv += coeffhwhm[i] * Math.pow(betahc, (double) i);
+			hwhmconv += coeffhwhm[i] * Math.pow(betahc, i);
 
 		if (hwhmconv == 0.0)
 			hwhmconv = 1.0E-9;
-		betahc *= ((broadInst[0][0] / hwhmconv) * hwhmtobetac);
-		betahg *= (broadInst[0][0] / (hwhmconv * hwhmtobetag));
+		betahc *= ((broadInst.get(0)[0] / hwhmconv) * hwhmtobetac);
+		betahg *= (broadInst.get(0)[0] / (hwhmconv * hwhmtobetag));
 
 		double betac = betahc + betaf[0];
 		double betag = Math.sqrt(betaf[1] * betaf[1] + betahg * betahg);

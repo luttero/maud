@@ -73,12 +73,25 @@ public class AngleEnergyMapInstrumentBroadening extends InstrumentBroadening {
 
 	protected static final String[] classlistcs = {};
 	
-	protected static final int energyParametersIndex = 11;
-
 	public static double minimumHWHMvalue = MaudPreferences.getDouble(
 			"instrBroadening.minimumHWHMvalue", 0.0000001);
-
-	public AngleEnergyMapInstrumentBroadening(XRDcat obj, String alabel) {
+  
+  public static final int asymmetryTruncationID = 0;
+  public static final int asymmetryID = 0;
+  public static final int cagliotiID = 1;
+  public static final int gaussianID = 2;
+  public static final int broadeningOmegaID = 3;
+  public static final int broadeningChiID = 4;
+  public static final int broadeningEtaID = 5;
+  public static final int broadeningCosEtaID = 6;
+  public static final int broadeningThetaSinEtaID = 7;
+  public static final int broadeningSinThetaOmegaID = 8;
+  public static final int broadeningTextureID = 9;
+  public static final int asymmetryExpID = 10;
+  
+  public static final int energyParametersIndex = 11;
+  
+  public AngleEnergyMapInstrumentBroadening(XRDcat obj, String alabel) {
 		super(obj, alabel);
 		initXRD();
 		identifier = modelID;
@@ -166,11 +179,11 @@ public class AngleEnergyMapInstrumentBroadening extends InstrumentBroadening {
 				ParameterPreferences.getDouble(getParameterString(index, number) + ".min", 0),
 				ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 100)));
 		number++;
-		addparameterloopField(index, new Parameter(this, getParameterString(0, number), 5330,
+		addparameterloopField(index, new Parameter(this, getParameterString(index, number), 5330,
 				ParameterPreferences.getDouble(getParameterString(index, number) + ".min", 100),
 				ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 10000)));
 		number++;
-		addparameterloopField(index, new Parameter(this, getParameterString(0, number), 0,
+		addparameterloopField(index, new Parameter(this, getParameterString(index, number), 0,
 				ParameterPreferences.getDouble(getParameterString(index, number) + ".min", 0),
 				ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 10000)));
 		// Gaussian
@@ -239,21 +252,6 @@ public class AngleEnergyMapInstrumentBroadening extends InstrumentBroadening {
 		}
 	}
 
-	public void updateStringtoDoubleBuffering(boolean firstLoading) {
-		super.updateStringtoDoubleBuffering(false);
-
-		minimumHWHMvalue = MaudPreferences.getDouble(
-				"instrBroadening.minimumHWHMvalue", 0.0000001);
-	}
-
-	public void updateParametertoDoubleBuffering(boolean firstLoading) {
-		// to be implemented by subclasses
-		if (getFilePar().isLoadingFile() || !isAbilitatetoRefresh)
-			return;
-		super.updateParametertoDoubleBuffering(false);
-
-	}
-
 	public Instrument getInstrument() {
 		return (Instrument) getParent();
 	}
@@ -265,9 +263,8 @@ public class AngleEnergyMapInstrumentBroadening extends InstrumentBroadening {
 	public Geometry getGeometry() {
 		return getInstrument().getGeometry();
 	}
-	
-/*
-  boolean asymmetryTanDep = true;
+  
+  boolean asymmetryTanDep = false;
   boolean cagliotiTanDep = false;
   boolean broadeningConvoluted = false;
   boolean asymmetryReciprocal = false;
@@ -290,23 +287,54 @@ public class AngleEnergyMapInstrumentBroadening extends InstrumentBroadening {
   double broadeningThetaSinEta[] = null;
   int broadeningThetaSinEtaN = 0;
   double broadeningSinThetaOmega[] = null;
-  int broadeningSinThetaOmegaN = 0;*/
-
+  int broadeningSinThetaOmegaN = 0;
   double truncationAngle = 0.4;
   
-  public static final int asymmetryTruncationID = 0;
-  public static final int asymmetryID = 0;
-  public static final int asymmetryExpID = 10;
-  public static final int broadeningTextureID = 9;
-  public static final int cagliotiID = 1;
-  public static final int gaussianID = 2;
-  public static final int broadeningOmegaID = 3;
-  public static final int broadeningChiID = 4;
-  public static final int broadeningEtaID = 5;
-  public static final int broadeningCosEtaID = 6;
-  public static final int broadeningThetaSinEtaID = 7;
-  public static final int broadeningSinThetaOmegaID = 8;
+  public void updateStringtoDoubleBuffering(boolean firstLoading) {
+    super.updateStringtoDoubleBuffering(false);
+    
+    asymmetryTanDep = false;
+    cagliotiTanDep = true;
+    broadeningConvoluted = false;
+    asymmetryReciprocal = true;
+//    System.out.println("Asymmetry: " + getAsymmetryTanDependent());
+    minimumHWHMvalue = MaudPreferences.getDouble(
+        "instrBroadening.minimumHWHMvalue", 0.0000001);
+    minimumHWHMvalue *= 4.0 * minimumHWHMvalue;
+    truncationAngle = Double.parseDouble(getTruncationAngleString());
+  }
   
+  public void updateParametertoDoubleBuffering(boolean firstLoading) {
+    // to be implemented by subclasses
+    
+    if (getFilePar().isLoadingFile() || !isAbilitatetoRefresh)
+      return;
+    super.updateParametertoDoubleBuffering(false);
+    
+    asymmetry = getParameterLoopVector(asymmetryID);
+    asymmetryN = numberOfLoopParameters[asymmetryID];
+    asymmetryExp = getParameterLoopVector(asymmetryExpID);
+    asymmetryExpN = numberOfLoopParameters[asymmetryExpID];
+//    if (MaudPreferences.getBoolean("CagliotiFirstParameter.forcePositive", true))
+//      checkCagliotiFirstParameter();
+    caglioti = getParameterLoopVector(cagliotiID);
+    cagliotiN = numberOfLoopParameters[cagliotiID];
+    gaussian = getParameterLoopVector(gaussianID);
+    gaussianN = numberOfLoopParameters[gaussianID];
+    broadeningOmega = getParameterLoopVector(broadeningOmegaID);
+    broadeningOmegaN = numberOfLoopParameters[broadeningOmegaID];
+    broadeningChi = getParameterLoopVector(broadeningChiID);
+    broadeningChiN = numberOfLoopParameters[broadeningChiID];
+    broadeningEta = getParameterLoopVector(broadeningEtaID);
+    broadeningEtaN = numberOfLoopParameters[broadeningEtaID];
+    broadeningCosEta = getParameterLoopVector(broadeningCosEtaID);
+    broadeningCosEtaN = numberOfLoopParameters[broadeningCosEtaID];
+    broadeningThetaSinEta = getParameterLoopVector(broadeningThetaSinEtaID);
+    broadeningThetaSinEtaN = numberOfLoopParameters[broadeningThetaSinEtaID];
+    broadeningSinThetaOmega = getParameterLoopVector(broadeningSinThetaOmegaID);
+    broadeningSinThetaOmegaN = numberOfLoopParameters[broadeningSinThetaOmegaID];
+  }
+
   public void setTruncationAngle(String value) {
     setString(asymmetryTruncationID, value);
   }
@@ -319,28 +347,16 @@ public class AngleEnergyMapInstrumentBroadening extends InstrumentBroadening {
     return truncationAngle;
   }
   
-  public double[][] getInstrumentalBroadeningAt(double x, DiffrDataFile diffrDataFile) {
+  public java.util.Vector<double[]> getInstrumentBroadeningAt(double x, DiffrDataFile diffrDataFile) {
   
-  
-    int maxNumber = 0;
-    for (int i = 0; i < parameterloopField.length; i++) {
-      int numb = parameterloopField[i].size();
-      if (numb > maxNumber)
-        maxNumber = numb;
-    }
-    double broad[][] = new double[6][maxNumber];
-  
-    for (int i = 0; i < parameterloopField.length; i++) {
-      double[] par = getParameterLoopVector(i);
-      for (int j = 0; j < par.length; j++)
-        broad[i][j] = par[j];
-    }
-  
-    return broad;
 // Attention: x equal to 2theta
-/*
     double[] tilting_angles = diffrDataFile.getTiltingAngle();
-    double broad[][] = new double[1][2];
+    double[] hwhm = {0.0};
+    double[] eta = {0.0};
+    java.util.Vector<double[]> broadV = new java.util.Vector<>(2);
+    broadV.add(hwhm);
+    broadV.add(eta);
+  
     double domega = x - getMeasurement().getOmega(tilting_angles[0], x);
     double tanx = x;
     if (cagliotiTanDep) {
@@ -351,35 +367,35 @@ public class AngleEnergyMapInstrumentBroadening extends InstrumentBroadening {
         tanx = Math.tan(x * Constants.DEGTOPI / 2.0);
       }
     }
-    
-    broad[0][1] = 0.0;
+
+//    broadV.get(1)[0] = 0.0;
     for (int i = 0; i < gaussianN; i++)
-      broad[0][1] += gaussian[i] * MoreMath.pow(x, i);
-    if (broad[0][1] < 0.0)
-      broad[0][1] = 0.0;
-    if (broad[0][1] > 1.0)
-      broad[0][1] = 1.0;
-    
-    broad[0][0] = 0.0;
+      broadV.get(1)[0] += gaussian[i] * MoreMath.pow(x, i);
+    if (broadV.get(1)[0] < 0.0)
+      broadV.get(1)[0] = 0.0;
+    if (broadV.get(1)[0] > 1.0)
+      broadV.get(1)[0] = 1.0;
+
+//    broadV.get(0)[0] = 0.0;
     for (int i = 0; i < cagliotiN; i++)
-      broad[0][0] += caglioti[i] * MoreMath.pow(tanx, i);
-    if (broad[0][0] <= 0)
-      broad[0][0] = minimumHWHMvalue;
+      broadV.get(0)[0] += caglioti[i] * MoreMath.pow(tanx, i);
+    if (broadV.get(0)[0] <= 0)
+      broadV.get(0)[0] = minimumHWHMvalue;
     else
-      broad[0][0] = Math.sqrt(broad[0][0]) / 2.0;
-    
+      broadV.get(0)[0] = Math.sqrt(broadV.get(0)[0]) / 2.0;
+  
     if (broadeningOmegaN > 0) {
       for (int i = 0; i < Math.min(3, broadeningOmegaN); i++)
-        broad[0][0] += broadeningOmega[i] * MoreMath.pow(domega, i);
+        broadV.get(0)[0] += broadeningOmega[i] * MoreMath.pow(domega, i);
       for (int i = Math.min(3, broadeningOmegaN); i < broadeningOmegaN; i++)
-        broad[0][0] += broadeningOmega[i] * domega * MoreMath.pow(tanx, i - 1);
+        broadV.get(0)[0] += broadeningOmega[i] * domega * MoreMath.pow(tanx, i - 1);
     }
     if (broadeningChiN > 0) {
       double tano = MoreMath.sind(Math.abs(tilting_angles[1]));
       for (int i = 0; i < Math.min(2, broadeningChiN); i++)
-        broad[0][0] += broadeningChi[i] * MoreMath.pow(tano, i + 1);
+        broadV.get(0)[0] += broadeningChi[i] * MoreMath.pow(tano, i + 1);
       for (int i = Math.min(2, broadeningChiN); i < broadeningChiN; i++)
-        broad[0][0] += broadeningChi[i] * tano * MoreMath.pow(tanx, i - 1);
+        broadV.get(0)[0] += broadeningChi[i] * tano * MoreMath.pow(tanx, i - 1);
     }
     if (broadeningEtaN > 0) {
       if (!diffrDataFile.dspacingbase) {
@@ -391,9 +407,9 @@ public class AngleEnergyMapInstrumentBroadening extends InstrumentBroadening {
       }
       double tane = MoreMath.sind(Math.abs(tilting_angles[3]));
       for (int i = 0; i < Math.min(2, broadeningEtaN); i++)
-        broad[0][0] += broadeningEta[i] * MoreMath.pow(tane, i + 1);
+        broadV.get(0)[0] += broadeningEta[i] * MoreMath.pow(tane, i + 1);
       for (int i = Math.min(2, broadeningEtaN); i < broadeningEtaN; i++)
-        broad[0][0] += broadeningEta[i] * tane * MoreMath.pow(tanx, i - 1);
+        broadV.get(0)[0] += broadeningEta[i] * tane * MoreMath.pow(tanx, i - 1);
     }
     if (broadeningCosEtaN > 0) {
       double cosx = 1.0;
@@ -404,41 +420,74 @@ public class AngleEnergyMapInstrumentBroadening extends InstrumentBroadening {
         double delta = 0;
         if (MoreMath.odd(i))
           delta = Constants.PI / 2.0;
-        broad[0][0] += broadeningCosEta[i] * Math.cos((i + 1) * tane + delta) * cosx;
+        broadV.get(0)[0] += broadeningCosEta[i] * Math.cos((i + 1) * tane + delta) * cosx;
       }
-      
-    }
     
+    }
+  
     if (broadeningThetaSinEtaN > 0) {
       double cosx = 1.0;
       if (!diffrDataFile.dspacingbase)
         cosx += Math.abs(Math.cos(x * Constants.DEGTOPI));
       double tane = 2.0 * tilting_angles[3] * Constants.DEGTOPI;
-      for (int i = 0; i <broadeningThetaSinEtaN; i++) {
-        broad[0][0] += broadeningThetaSinEta[i] * Math.cos((i + 1) * tane) * cosx;
+      for (int i = 0; i < broadeningThetaSinEtaN; i++) {
+        broadV.get(0)[0] += broadeningThetaSinEta[i] * Math.cos((i + 1) * tane) * cosx;
       }
-      
-    }
     
+    }
+  
     if (broadeningSinThetaOmegaN > 2) {
       domega = Math.abs(domega + broadeningSinThetaOmega[0]) * Constants.DEGTOPI;
       double cosx = 1.0;
       if (!diffrDataFile.dspacingbase)
         cosx = 1.0 + broadeningSinThetaOmega[1] * Math.abs(Math.cos(x * Constants.DEGTOPI));
       for (int i = 2; i < broadeningSinThetaOmegaN; i++) {
-        broad[0][0] += broadeningSinThetaOmega[i] * Math.sin(i * domega) * cosx;
+        broadV.get(0)[0] += broadeningSinThetaOmega[i] * Math.sin(i * domega) * cosx;
       }
-      
+    
     }
-    
-    if (broad[0][0] < minimumHWHMvalue || Double.isNaN(broad[0][0]))
-      broad[0][0] = minimumHWHMvalue;
-    
-    return broad;*/
+  
+    if (broadV.get(0)[0] < minimumHWHMvalue || Double.isNaN(broadV.get(0)[0]))
+      broadV.get(0)[0] = minimumHWHMvalue;
+  
+    return broadV;
   }
   
-  public double[][] getInstrumentalFluorensceBroadeningAt(double x, DiffrDataFile diffrDataFile) {
-    return new double[1][2];
+  public java.util.Vector<double[]> getInstrumentEnergyBroadeningAt(double x, DiffrDataFile diffrDataFile) {
+    
+    java.util.Vector<double[]> broad = new java.util.Vector<>(parameterloopField.length - energyParametersIndex + 1);
+    
+    double[] par = getParameterLoopVector(energyParametersIndex);
+    double[] value = {0.0};
+    for (int i = 0; i < par.length; i++)
+      value[0] += par[i] * MoreMath.pow(x, i);
+    
+    if (value[0] <= 0)
+      value[0] = minimumHWHMvalue;
+    else
+      value[0] = Math.sqrt(value[0]);
+    broad.add(value);
+    
+    par = getParameterLoopVector(energyParametersIndex + 1);
+    value = new double[]{0.0};
+    value[0] = 0.0;
+    for (int i = 0; i < par.length; i++)
+      value[0] += par[i] * MoreMath.pow(x, i);
+    if (value[0] < 0.0)
+      value[0] = 0.0;
+    if (value[0] > 1.0)
+      value[0] = 1.0;
+    broad.add(value);
+    
+    for (int i = energyParametersIndex + 2; i < parameterloopField.length; i++) {
+      par = getParameterLoopVector(i);
+      value = new double[par.length];
+      for (int j = 0; j < par.length; j++)
+        value[j] = par[j];
+      broad.add(value);
+    }
+    
+    return broad;
   }
   
   public double getTextureBroadeningAt(double x) {
@@ -607,8 +656,8 @@ public class AngleEnergyMapInstrumentBroadening extends InstrumentBroadening {
 
 			PLPanel2 = new JParameterListPane[AngleEnergyMapInstrumentBroadening.this.parameterloopField.length - energyParametersIndex];
 			for (int i = energyParametersIndex; i < AngleEnergyMapInstrumentBroadening.this.parameterloopField.length; i++) {
-				PLPanel2[i] = new JParameterListPane(this, false, true);
-				tabPanel2.addTab(tempString2[i], null, PLPanel2[i]);
+				PLPanel2[i - energyParametersIndex] = new JParameterListPane(this, false, true);
+				tabPanel2.addTab(tempString2[i - energyParametersIndex], null, PLPanel2[i - energyParametersIndex]);
 			}
 
 			setTitle("XRF/EDXRF instrumental function");
@@ -621,7 +670,7 @@ public class AngleEnergyMapInstrumentBroadening extends InstrumentBroadening {
         PLPanel1[i].setList(AngleEnergyMapInstrumentBroadening.this, i);
       }
 			for (int i = energyParametersIndex; i < AngleEnergyMapInstrumentBroadening.this.parameterloopField.length; i++) {
-				PLPanel2[i].setList(AngleEnergyMapInstrumentBroadening.this, i);
+				PLPanel2[i - energyParametersIndex].setList(AngleEnergyMapInstrumentBroadening.this, i);
 			}
 		}
 
@@ -629,19 +678,19 @@ public class AngleEnergyMapInstrumentBroadening extends InstrumentBroadening {
 			super.retrieveParameters();
       
       for (int i = 0; i < energyParametersIndex; i++) {
-        PLPanel2[i].retrieveparlist();
+        PLPanel1[i].retrieveparlist();
       }
 			for (int i = energyParametersIndex; i < AngleEnergyMapInstrumentBroadening.this.parameterloopField.length; i++) {
-				PLPanel2[i].retrieveparlist();
+				PLPanel2[i - energyParametersIndex].retrieveparlist();
 			}
 		}
 
 		public void dispose() {
       for (int i = 0; i < energyParametersIndex; i++) {
-        PLPanel2[i].dispose();
+        PLPanel1[i].dispose();
       }
       for (int i = energyParametersIndex; i < AngleEnergyMapInstrumentBroadening.this.parameterloopField.length; i++) {
-        PLPanel2[i].dispose();
+        PLPanel2[i - energyParametersIndex].dispose();
       }
 			super.dispose();
 		}

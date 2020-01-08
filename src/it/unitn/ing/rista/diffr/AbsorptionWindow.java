@@ -158,6 +158,8 @@ public class AbsorptionWindow extends XRDcat {
 	}
 
 	public void computeAbsorptionForLineWithEnergy(double[][] energyInKeVIntensity) {
+	  if (totalAtomFraction == 0)
+      updateStringtoDoubleBuffering(true);
 		for (int j = 0; j < energyInKeVIntensity[0].length; j++) {
 			double absorption = 0;
 			for (int i = 0; i < subordinateloopField[window_composition_id].size(); i++) {
@@ -166,6 +168,7 @@ public class AbsorptionWindow extends XRDcat {
 						totalAtomFraction;
 				int atomNumber = AtomInfo.retrieveAtomNumber(atomLabel);
 				absorption += atomFraction * XRayDataSqLite.getTotalAbsorptionForAtomAndEnergy(atomNumber, energyInKeVIntensity[0][j]);
+//        System.out.println(absorption + " " + atomNumber + " " + atomFraction + " " + energyInKeVIntensity[0][j] + " " + XRayDataSqLite.getTotalAbsorptionForAtomAndEnergy(atomNumber, energyInKeVIntensity[0][j])); // linear absorption window
 			}
 			absorption *= Math.abs(getWindowDensity() * getWindowThickness()); // linear absorption window
 

@@ -1,6 +1,7 @@
 package it.unitn.ing.rista.diffr;
 
 public class ReflectionPeak {
+ 
 	public double energy = 0.0;
 //	public double dspace;
 	public double position = 0.0;
@@ -11,8 +12,8 @@ public class ReflectionPeak {
 	public double expStrainFactor = 0.0;
 	public double calcStrainFactor = 0.0;
 	public double[] sizestrain = null;
-	public double[][] instBroadFactor = null;
-  public double[][] instBroadFactor_en = null;
+	public java.util.Vector<double[]> instBroadFactor = null;
+  public java.util.Vector<double[]> instBroadFactor_en = null;
 	public double[] broadFactorTotal = null;
   public double[] broadFactorTotal_en = null;
   public double broadFactorHWHM = 0.0;

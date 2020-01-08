@@ -1965,7 +1965,7 @@ public static final String getSpaceGroup(int index, int sgconv) {
         if (dspacemax < highReflnDspace)
           dspacemax = highReflnDspace;
       } else {
-        dspacemin *= 0.9;
+        dspacemin *= 0.95;
         dspacemax *= 1.1;
         if (lowDspace > dspacemin)
           dspacemin = lowDspace;
@@ -2527,7 +2527,7 @@ public static final String getSpaceGroup(int index, int sgconv) {
   public int gethklNumber() {
 //	  System.out.println("Before " + getPhaseName() + " " + reflectionv.size());
     sghklcompute(false);
-//	  System.out.println("After  " + getPhaseName() + " " + reflectionv.size());
+//	  System.out.println("Reflections number for " + getPhaseName() + ": " + reflectionv.size());
     return reflectionv.size();
   }
 

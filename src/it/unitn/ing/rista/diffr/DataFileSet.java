@@ -1049,7 +1049,7 @@ public class DataFileSet extends XRDcat {
   }
 
 	public void refreshIndices(Phase phase) {
-  	   int linesCount = getInstrument().getRadiationType().getLinesCount();
+    int linesCount = getInstrument().getRadiationType().getLinesCount();
 		int numberOfReflections = phase.gethklNumber();
 		double[][][] structureFactors = phaseStructureFactors.get(phase);
 		int[] structureFactorsID = phaseStructureFactorsID.get(phase);
@@ -1227,9 +1227,12 @@ public class DataFileSet extends XRDcat {
 
 	public void storeComputedStructureFactors(Phase phase, double[][] fhkl) {
 		double[][][] structureFactors = phaseStructureFactors.get(phase);
+//		System.out.println("Store: " + structureFactors[0].length + " " + structureFactors[0][0].length);
 		for (int i1 = 0; i1 < structureFactors[0].length; i1++)
-			for (int n = 0; n < structureFactors[0][i1].length; n++)
-				structureFactors[1][i1][n] = fhkl[i1][n];
+			for (int n = 0; n < structureFactors[0][i1].length; n++) {
+//        System.out.println("Store: " + i1 + " " + n + " " + fhkl[i1][n]);
+        structureFactors[1][i1][n] = fhkl[i1][n];
+      }
 //		arraycopy(fhkl, 0, structureFactors[1], 0, structureFactors[0].length);
 	}
 
@@ -1274,6 +1277,7 @@ public class DataFileSet extends XRDcat {
 	}
 
 	public double[] getCalculatedStructureFactors(Phase phase, int reflIndex) {
+//	  System.out.println("SF: " + phaseStructureFactors.get(phase)[1][reflIndex][0]);
 		return phaseStructureFactors.get(phase)[1][reflIndex];
 	}
 
@@ -3323,7 +3327,7 @@ public class DataFileSet extends XRDcat {
       bdatafile.checkIncreasingX();
       minindex[i] = bdatafile.getMinIndexforValue(drange[0], drange[1]);
       maxindex[i] = bdatafile.getMaxIndexforValue(drange[0], drange[1]);
-//      System.out.println("Datafile #" + i + ": " + bdatafile + " , minmax " + minindex[i] + " " + maxindex[i]);
+//      System.out.println("Datafile # " + i + ": " + bdatafile + " , minmax " + minindex[i] + " " + maxindex[i]);
       bdatafile.setMinMaxIndices(minindex[i], maxindex[i]);
       if (i > 0) {
         if (minindex[0] != minindex[i])
@@ -3341,6 +3345,7 @@ public class DataFileSet extends XRDcat {
  //   if (drange_final[0] < 0)
  //     hasNegative2theta = true;
 
+//    System.out.println("D-range " + this.toXRDcatString() + ": " + drange_final[0] + " " + drange_final[1]);
     getSample().setRange(drange_final);
 
     // preparing background datafiles if any
@@ -3505,7 +3510,7 @@ public class DataFileSet extends XRDcat {
 // todo: Luca 23/06/2011    aphase.Fhklcompv(rad1.getRadiationIDNumber(), rad1.tubeNumber, this.getIndex(), lastDataset);
 
 	  double Rhkl;
-	  double intensity = ainstrument.getIntensityValue();
+	  double intensity = ainstrument.getIntensityForDiffraction();
 
 	  for (int i = 0; i < numberofpeaks; i++) {
 		  double dspace = aphase.getDspacing(i);
@@ -4110,8 +4115,7 @@ public class DataFileSet extends XRDcat {
 	}
 
 	public boolean isDiffraction() {
-		if (getFluorescence().identifier.toLowerCase().startsWith("none") &&
-				getReflectivity().identifier.toLowerCase().startsWith("none"))
+		if (!getDiffraction().identifier.toLowerCase().startsWith("none"))
 			return true;
 		return false;
 	}

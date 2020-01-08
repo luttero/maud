@@ -2552,7 +2552,7 @@ public class DiscreteODFTexture extends Texture {
 				  Vector<ReflectionPeak> peaks = reflpeaks.elementAt(ppp);
 				  for (int k = 0; k < peaks.size(); k++) {
 					  ReflectionPeak peak = peaks.elementAt(k);
-					  int index = k + adatafile.baseReflectionNumber[ppp + adatafile.baseRadiationNumber];
+					  int index = k + adatafile.baseReflectionNumber[ppp];
 					  double texture_angles[] = adatafile.getTextureAngles(peak.position);
 					  texture_angles[0] = (texture_angles[0] * Constants.DEGTOPI);
 					  texture_angles[1] = (texture_angles[1] * Constants.DEGTOPI);
@@ -2627,7 +2627,7 @@ public class DiscreteODFTexture extends Texture {
 				  for (int ppp = 0; ppp < reflpeaks.size(); ppp++) {
 					  Vector<ReflectionPeak> peaks = reflpeaks.elementAt(ppp);
 					  for (int k = 0; k < peaks.size(); k++) {
-						  int index = k + adatafile.baseReflectionNumber[ppp + adatafile.baseRadiationNumber];
+						  int index = k + adatafile.baseReflectionNumber[ppp];
 						  ReflectionPeak peak = adatafile.getReflectionPeak(aphase, k, ppp);
 						  peak.calcTextureFactor = texFactor.get(k)[idatafile[k]];
 						  idatafile[k]++;

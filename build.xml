@@ -137,7 +137,7 @@
                 <pathelement location="libs/current/joone-engine.jar"/>
                 <pathelement location="libs/current/swingx.jar"/>
                 <pathelement location="libs/current/com.github.tschoonj.xraylib.jar"/>
-                <pathelement location="libs/current/commons-math3.jar"/>
+                <pathelement location="libs/current/commons-math.jar"/>
                 <!--pathelement location="${build}/jdic.jar"/>
         <pathelement location="${build}/jhdf.jar"/>
         <pathelement location="${build}/jhdf4obj.jar"/>

@@ -553,12 +553,16 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
 		}
 	}
 
-	public double[][] getInstrumentalBroadeningAt(double x, DiffrDataFile diffrDataFile) {
+	public java.util.Vector<double[]> getInstrumentBroadeningAt(double x, DiffrDataFile diffrDataFile) {
 
 // Attention: x equal to 2theta
-
     double[] tilting_angles = diffrDataFile.getTiltingAngle();
-    double broad[][] = new double[1][2];
+    double[] hwhm = {0.0};
+    double[] eta = {0.0};
+    java.util.Vector<double[]> broadV = new java.util.Vector<>(2);
+    broadV.add(hwhm);
+    broadV.add(eta);
+    
     double domega = x - getMeasurement().getOmega(tilting_angles[0], x);
     double tanx = x;
     if (cagliotiTanDep) {
@@ -570,34 +574,34 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
       }
     }
 
-    broad[0][1] = 0.0;
+//    broadV.get(1)[0] = 0.0;
     for (int i = 0; i < gaussianN; i++)
-      broad[0][1] += gaussian[i] * MoreMath.pow(x, i);
-    if (broad[0][1] < 0.0)
-      broad[0][1] = 0.0;
-    if (broad[0][1] > 1.0)
-      broad[0][1] = 1.0;
+      broadV.get(1)[0] += gaussian[i] * MoreMath.pow(x, i);
+    if (broadV.get(1)[0] < 0.0)
+      broadV.get(1)[0] = 0.0;
+    if (broadV.get(1)[0] > 1.0)
+      broadV.get(1)[0] = 1.0;
 
-    broad[0][0] = 0.0;
+//    broadV.get(0)[0] = 0.0;
     for (int i = 0; i < cagliotiN; i++)
-      broad[0][0] += caglioti[i] * MoreMath.pow(tanx, i);
-    if (broad[0][0] <= 0)
-    	broad[0][0] = minimumHWHMvalue;
+      broadV.get(0)[0] += caglioti[i] * MoreMath.pow(tanx, i);
+    if (broadV.get(0)[0] <= 0)
+    	broadV.get(0)[0] = minimumHWHMvalue;
     else
-      broad[0][0] = Math.sqrt(broad[0][0]) / 2.0;
+      broadV.get(0)[0] = Math.sqrt(broadV.get(0)[0]) / 2.0;
 
     if (broadeningOmegaN > 0) {
 	    for (int i = 0; i < Math.min(3, broadeningOmegaN); i++)
-		    broad[0][0] += broadeningOmega[i] * MoreMath.pow(domega, i);
+		    broadV.get(0)[0] += broadeningOmega[i] * MoreMath.pow(domega, i);
 	    for (int i = Math.min(3, broadeningOmegaN); i < broadeningOmegaN; i++)
-		    broad[0][0] += broadeningOmega[i] * domega * MoreMath.pow(tanx, i - 1);
+		    broadV.get(0)[0] += broadeningOmega[i] * domega * MoreMath.pow(tanx, i - 1);
     }
 	  if (broadeningChiN > 0) {
       double tano = MoreMath.sind(Math.abs(tilting_angles[1]));
       for (int i = 0; i < Math.min(2, broadeningChiN); i++)
-        broad[0][0] += broadeningChi[i] * MoreMath.pow(tano, i + 1);
+        broadV.get(0)[0] += broadeningChi[i] * MoreMath.pow(tano, i + 1);
       for (int i = Math.min(2, broadeningChiN); i < broadeningChiN; i++)
-        broad[0][0] += broadeningChi[i] * tano * MoreMath.pow(tanx, i - 1);
+        broadV.get(0)[0] += broadeningChi[i] * tano * MoreMath.pow(tanx, i - 1);
     }
 	  if (broadeningEtaN > 0) {
 		  if (!diffrDataFile.dspacingbase) {
@@ -609,9 +613,9 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
 		  }
       double tane = MoreMath.sind(Math.abs(tilting_angles[3]));
       for (int i = 0; i < Math.min(2, broadeningEtaN); i++)
-        broad[0][0] += broadeningEta[i] * MoreMath.pow(tane, i + 1);
+        broadV.get(0)[0] += broadeningEta[i] * MoreMath.pow(tane, i + 1);
       for (int i = Math.min(2, broadeningEtaN); i < broadeningEtaN; i++)
-        broad[0][0] += broadeningEta[i] * tane * MoreMath.pow(tanx, i - 1);
+        broadV.get(0)[0] += broadeningEta[i] * tane * MoreMath.pow(tanx, i - 1);
 	  }
 	  if (broadeningCosEtaN > 0) {
 		  double cosx = 1.0;
@@ -622,7 +626,7 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
 			  double delta = 0;
 			  if (MoreMath.odd(i))
 				  delta = Constants.PI / 2.0;
-			  broad[0][0] += broadeningCosEta[i] * Math.cos((i + 1) * tane + delta) * cosx;
+			  broadV.get(0)[0] += broadeningCosEta[i] * Math.cos((i + 1) * tane + delta) * cosx;
 		  }
 
 	  }
@@ -633,7 +637,7 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
 				cosx += Math.abs(Math.cos(x * Constants.DEGTOPI));
 			double tane = 2.0 * tilting_angles[3] * Constants.DEGTOPI;
 			for (int i = 0; i <broadeningThetaSinEtaN; i++) {
-				broad[0][0] += broadeningThetaSinEta[i] * Math.cos((i + 1) * tane) * cosx;
+				broadV.get(0)[0] += broadeningThetaSinEta[i] * Math.cos((i + 1) * tane) * cosx;
 			}
 
 		}
@@ -644,15 +648,15 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
 			if (!diffrDataFile.dspacingbase)
 				cosx = 1.0 + broadeningSinThetaOmega[1] * Math.abs(Math.cos(x * Constants.DEGTOPI));
 			for (int i = 2; i < broadeningSinThetaOmegaN; i++) {
-				broad[0][0] += broadeningSinThetaOmega[i] * Math.sin(i * domega) * cosx;
+				broadV.get(0)[0] += broadeningSinThetaOmega[i] * Math.sin(i * domega) * cosx;
 			}
 
 		}
 
-		if (broad[0][0] < minimumHWHMvalue || Double.isNaN(broad[0][0]))
-      broad[0][0] = minimumHWHMvalue;
+		if (broadV.get(0)[0] < minimumHWHMvalue || Double.isNaN(broadV.get(0)[0]))
+      broadV.get(0)[0] = minimumHWHMvalue;
 
-    return broad;
+    return broadV;
   }
 
 	public double getTextureBroadeningAt(double x) {
@@ -783,10 +787,10 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
 
     DataFileSet adataset = diffrDataFile.getDataFileSet();
     Instrument ainstrument = getInstrument();
-
-    double[][] broadinst = ainstrument.getInstrumentalBroadeningAt((max - min) / 2.0, diffrDataFile);
-    double hwhm = broadinst[0][0];
-    double eta = broadinst[0][1];
+  
+    java.util.Vector<double[]> broadinst = ainstrument.getInstrumentBroadeningAt((max - min) / 2.0, diffrDataFile);
+    double hwhm = broadinst.get(0)[0];
+    double eta = broadinst.get(1)[0];
     double newFit[] = new double[max - min];
 
     double truncation = hwhm * adataset.getPeakCutoffD();

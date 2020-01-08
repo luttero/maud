@@ -140,7 +140,7 @@ public class QuantitativeXRF extends Fluorescence {
 		Instrument ainstrument = adatafile.getDataFileSet().getInstrument();
 		XRFDetector detector = (XRFDetector) ainstrument.getDetector();
 		Geometry geometry = ainstrument.getGeometry();
-		double incidentIntensity = ainstrument.getIntensityValue();
+		double incidentIntensity = ainstrument.getIntensityForFluorescence();
 		double sampleLinearArea = detector.getGeometryCorrection(
 				((GeometryXRFInstrument) geometry).getBeamOutCorrection(adatafile, asample));
 //		incidentIntensity *= sampleLinearArea;
@@ -384,7 +384,7 @@ public class QuantitativeXRF extends Fluorescence {
 		if (source_intensity > 0) {
 			double lastEnergyInKeV = 0;
 			double lastEnergyIntensity = 0;
-  		int sub20 = radType.getSubdivision(); //MaudPreferences.getInteger("xrf_detector.energySubdivision", 20);
+  		int sub20 = 1; //radType.getSubdivision(); //MaudPreferences.getInteger("xrf_detector.energySubdivision", 20);
 			for (int ej = 0; ej < rad_lines; ej++) {
 				if (radType instanceof XrayEbelTubeRadiation && ej >= ((XrayEbelTubeRadiation) radType).getNumberOfCharacteristicsLines()) {
 					double stepEnergy = (energyInKeV[ej] - lastEnergyInKeV) / sub20;
@@ -421,7 +421,7 @@ public class QuantitativeXRF extends Fluorescence {
 
 //		System.out.println("Compute fluo peaks");
 		for (FluorescenceLine line : fluorescenceLines) {
-			double[][] broad = ainstrument.getInstrumentalBroadeningAt(line.getEnergy(), adatafile);
+      java.util.Vector<double[]> broad = ainstrument.getInstrumentEnergyBroadeningAt(line.getEnergy(), adatafile);
 			line.setShape(broad);
 			line.setEnergy(line.getEnergy() * 1000.0); // in eV
 			for (int i = 0; i < numberOfPoints; i++/*, hi++*/) {
@@ -454,7 +454,6 @@ public class QuantitativeXRF extends Fluorescence {
 				}
 			}
 		}
-
 
 		// sum peaks
 
