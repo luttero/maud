@@ -1751,6 +1751,9 @@ public class DataFileSet extends XRDcat {
 						}
 					}
 				}
+        for (int j = tmpdatafile.startingindex; j < tmpdatafile.finalindex; j++) {
+          intensity[j - tmpdatafile.startingindex] /= countingTime;
+        }
 				output.write("_pd_block_id " + tmpdatafile.toString());
 				output.newLine();
 				output.newLine();
@@ -1759,7 +1762,8 @@ public class DataFileSet extends XRDcat {
 				output.write("_riet_meas_datafile_calibrated false");
 				output.newLine();
 				output.write(DiffrDataFile.diclistc[DiffrDataFile.countingTimeValueID] + " ");
-				output.write(Fmt.format(countingTime));
+				output.write(Fmt.format(1));
+        useCountTimeToScale = false;
 				output.newLine();
 				if (energyDispersive) {
 					output.write(DiffrDataFile.pd_meas_scan_method + " disp");
@@ -2731,8 +2735,19 @@ public class DataFileSet extends XRDcat {
     }).start();
   }
 
+  String yTitle = null;
+  String yUnit = null;
+
   public void multiPlot2D(Frame aframe) {
     int datafilenumber = activedatafilesnumber();
+
+    yTitle = null;
+    yUnit = null;
+    boolean angleAxis = MaudPreferences.getBoolean("multiplot2D.use2Theta", false);
+    if (angleAxis) {
+      yTitle = "2Theta";
+      yUnit = "degrees";
+    }
 
     final Frame newFrame = aframe;
     final DiffrDataFile[] adfile = new DiffrDataFile[datafilenumber];
@@ -2743,7 +2758,7 @@ public class DataFileSet extends XRDcat {
     (new PersistentThread() {
   @Override
       public void executeJob() {
-        new MultiPlotFitting2D(newFrame, adfile, label);
+        new MultiPlotFitting2D(newFrame, adfile, label, yTitle, yUnit);
       }
     }).start();
   }
@@ -2751,13 +2766,20 @@ public class DataFileSet extends XRDcat {
 	public void plot2DandExportPng(String plotOutput2DFileName) {
 		int datafilenumber = activedatafilesnumber();
 
+    yTitle = null;
+    yUnit = null;
+    boolean angleAxis = MaudPreferences.getBoolean("multiplot2D.use2Theta", false);
+    if (angleAxis) {
+      yTitle = "2Theta";
+      yUnit = "degrees";
+    }
+
 		final DiffrDataFile[] adfile = new DiffrDataFile[datafilenumber];
 		for (int i = 0; i < datafilenumber; i++) {
 			adfile[i] = getActiveDataFile(i);
 		}
 		final String label = DataFileSet.this.toXRDcatString();
-		MultiPlotFitting2D plot = new MultiPlotFitting2D(null, adfile, label);
-		plot.setSize(800, 600);
+		MultiPlotFitting2D plot = new MultiPlotFitting2D(null, adfile, label, yTitle, yUnit);
 		(new PersistentThread() {
 			@Override
 			public void executeJob() {
@@ -2894,6 +2916,14 @@ public class DataFileSet extends XRDcat {
   public void differencePlot2D(Frame aframe) {
     int datafilenumber = activedatafilesnumber();
 
+    yTitle = null;
+    yUnit = null;
+    boolean angleAxis = MaudPreferences.getBoolean("multiplot2D.use2Theta", false);
+    if (angleAxis) {
+      yTitle = "2Theta";
+      yUnit = "degrees";
+    }
+  
     final Frame newFrame = aframe;
     final DiffrDataFile[] adfile = new DiffrDataFile[datafilenumber];
     for (int i = 0; i < datafilenumber; i++) {
@@ -2903,7 +2933,7 @@ public class DataFileSet extends XRDcat {
     (new PersistentThread() {
   @Override
       public void executeJob() {
-        new DifferencePlot2D(newFrame, adfile, label);
+        new DifferencePlot2D(newFrame, adfile, label, yTitle, yUnit);
       }
     }).start();
   }
@@ -3415,16 +3445,10 @@ public class DataFileSet extends XRDcat {
 
   public void addPhasePeaks(Phase aphase, Sample asample, boolean lastDataset) {
 
-//			 System.out.println("adding peaks");
-
-//    int datasetNumber = getIndex();
-    DiffrDataFile datafiletmp = null;// = adatafile[0];
 	  if (activedatafilesnumber() == 0)
 		  return;
 
-    if (datafiletmp == null)
-      datafiletmp = this.getActiveDataFile(0);
-
+	  DiffrDataFile datafiletmp = this.getActiveDataFile(0);
     Instrument ainstrument = getInstrument();
 
     // compute peaks

@@ -1150,14 +1150,14 @@ public class Constants {
 	          } else {
 		          if (Constants.testing)
 			          System.out.println("Not valid subclass: " + classname[i]);
-/*		          if (Constants.testing && obj.identifier.toLowerCase().startsWith("disabled")) {
+		          if (Constants.testing && obj.identifier.toLowerCase().startsWith("disabled")) {
 		            tmpString.addElement(new String("disabled"));
 		            tmpString.addElement(new String("----"));
 		            tmpString.addElement(new String("----"));
-		          }*/
+		          }
 	          }
           } catch (Exception e) {
- //           System.out.println("Class not loaded: " + classname[i]);
+            System.out.println("Class not loaded: " + classname[i]);
 /*            tmpString.addElement(new String("disabled"));
             tmpString.addElement(new String("----"));
             tmpString.addElement(new String("----"));*/

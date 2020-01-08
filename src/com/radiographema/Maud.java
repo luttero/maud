@@ -139,10 +139,16 @@ public class Maud {
       batchProcess batch = new batchProcess(insFileName);
       batch.process();
 
-	    try {
+/*	    try {
 		    System.out.print("Press Enter key to exit: ");
 		    System.in.read();
 	    } catch (IOException e) {
+		    e.printStackTrace();
+	    }*/
+
+	    try {
+		    Thread.sleep(5000);
+	    } catch (InterruptedException e) {
 		    e.printStackTrace();
 	    }
 

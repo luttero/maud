@@ -64,6 +64,8 @@ public class MultiPlotFitting2D extends myJFrame {
   double IntensityMax = Float.MIN_VALUE;
   boolean computeMinMax = true;
   int ratio = 6;
+  String yaxisTitle = null;
+  String yaxisUnit = null;
 
   public MultiPlotFitting2D(Frame parent) {
 
@@ -83,9 +85,13 @@ public class MultiPlotFitting2D extends myJFrame {
   }
 
   public MultiPlotFitting2D(Frame parent, DiffrDataFile[] adatafile, String title,
-                            double IntensityMin, double IntensityMax) {
+                            double IntensityMin, double IntensityMax, String yTitle,
+                            String yUnit) {
 
     this(parent);
+
+    yaxisTitle = yTitle;
+    yaxisUnit = yUnit;
 
     if (IntensityMin != IntensityMax) {
       computeMinMax = false;
@@ -152,8 +158,9 @@ public class MultiPlotFitting2D extends myJFrame {
     }
   }
 
-  public MultiPlotFitting2D(Frame parent, DiffrDataFile[] adatafile, String title) {
-    this(parent, adatafile, title, 0.0f, 0.0f);
+  public MultiPlotFitting2D(Frame parent, DiffrDataFile[] adatafile, String title, String yTitle,
+                            String yUnit) {
+    this(parent, adatafile, title, 0.0f, 0.0f, yTitle, yUnit);
   }
 
   JPlotLayout makeGraph(DiffrDataFile[] datafile) {
@@ -181,8 +188,6 @@ public class MultiPlotFitting2D extends myJFrame {
     int startingIndex = datafile[0].startingindex;
     int finalIndex = datafile[0].finalindex;
     datafile[0].initializeInterpolation();
-    int startDatafile = 0;
-    int finalDatafile = 0;
     int mode = PlotDataFile.checkScaleModeX();
     double xmin = 1.0E10, xmax = 0.0;
     if (xmin > datafile[0].getXDataForPlot(datafile[0].startingindex, mode))
@@ -197,11 +202,9 @@ public class MultiPlotFitting2D extends myJFrame {
       datafile[i].initializeInterpolation();
       if (startingIndex > datafile[i].startingindex) {
         startingIndex = datafile[i].startingindex;
-        startDatafile = i;
       }
       if (finalIndex < datafile[i].finalindex) {
         finalIndex = datafile[i].finalindex;
-        finalDatafile = i;
       }
         if (xmin > datafile[i].getXDataForPlot(datafile[i].startingindex, mode))
           xmin = datafile[i].getXDataForPlot(datafile[i].startingindex, mode);
@@ -223,7 +226,6 @@ public class MultiPlotFitting2D extends myJFrame {
     int j = 0;
 //    IntensityMin = (double) 1.0E60;
 //    IntensityMax = (double) -1.0E60;
-    double sep = 0.0;
     for (int i = 0; i < xlength; i++) {
 /*
       if (startingIndex + i < datafile[0].startingindex)
@@ -236,7 +238,10 @@ public class MultiPlotFitting2D extends myJFrame {
       xaxis[i] = xmin + i * stepX;
       for (int sn = 0; sn < ylength; sn++) {
         if (i == 0) {
+          if (yaxisUnit == null)
           yaxis[sn] = sn;
+          else
+            yaxis[sn] = datafile[sn].get2ThetaValue();
           if (hasFit == 1 && ylength == 1) {
             yaxis[1] = 1;
             yaxis[2] = 2;
@@ -263,11 +268,11 @@ public class MultiPlotFitting2D extends myJFrame {
             values[j++] = intValue;
           }
           if (values[j - 1] < IntensityMin && computeMinMax)
-            IntensityMin = (double) values[j - 1];
+            IntensityMin = values[j - 1];
           else if (values[j - 1] < IntensityMin && !computeMinMax)
             values[j - 1] = IntensityMin;
           if (values[j - 1] > IntensityMax && computeMinMax)
-            IntensityMax = (double) values[j - 1];
+            IntensityMax = values[j - 1];
           else if (values[j - 1] > IntensityMax && !computeMinMax)
             values[j - 1] = IntensityMax;
         }
@@ -298,7 +303,7 @@ public class MultiPlotFitting2D extends myJFrame {
 */
       }
       if (hasFit > 1) {
-
+        double last2theta = datafile[ylength - 1].get2ThetaValue() * 1.01;
         values[j++] = it.unitn.ing.jgraph.ColorMap.DUMMY_VALUE;
         if (i == 0)
           yaxis[ylength] = ylength;
@@ -310,18 +315,22 @@ public class MultiPlotFitting2D extends myJFrame {
             xendmax = datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode);
           if (xstartmin > datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode))
             xstartmin = datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode);
-          if (i == 0)
+          if (i == 0) {
+            if (yaxisUnit == null)
             yaxis[ylength + 1 + sn] = ylength + 1 + sn;
+            else
+              yaxis[sn] = datafile[sn].get2ThetaValue() + last2theta;
+          }
           if (xaxis[i] < xstartmin || xaxis[i] > xendmax)
             values[j++] = it.unitn.ing.jgraph.ColorMap.DUMMY_VALUE;
           else {
             values[j++] = datafile[sn].getInterpolatedFitSqrtIntensity(xaxis[i], 2, mode);
             if (values[j - 1] < IntensityMin && computeMinMax)
-              IntensityMin = (double) values[j - 1];
+              IntensityMin = values[j - 1];
             else if (values[j - 1] < IntensityMin && !computeMinMax)
               values[j - 1] = IntensityMin;
             if (values[j - 1] > IntensityMax && computeMinMax)
-              IntensityMax = (double) values[j - 1];
+              IntensityMax = values[j - 1];
             else if (values[j - 1] > IntensityMax && !computeMinMax)
               values[j - 1] = IntensityMax;
           }
@@ -356,15 +365,24 @@ public class MultiPlotFitting2D extends myJFrame {
     //
     // create SimpleGrid
     //
-    SGTMetaData zMeta = new SGTMetaData(datafile[0].getAxisYLegend(), "");
+    SGTMetaData zMeta = new SGTMetaData(DiffrDataFile.getAxisYLegend(), "");
     SGTMetaData xMeta = new SGTMetaData(datafile[0].getAxisXLegendNoUnit(), datafile[0].getAxisXLegendUnit());
 
     String information;
     if (hasFit > 1)
       information = "data | fit";
     else
-      information = "experimental";
-    SGTMetaData yMeta = new SGTMetaData("Spectrum #", information);
+      information = "Experimental";
+    if (yaxisUnit != null) {
+      if (hasFit > 1)
+        information = yaxisUnit + ", data | fit";
+      else
+        information = yaxisUnit + ", experimental";
+    }
+    String yTitle = "Spectrum #";
+    if (yaxisTitle != null)
+      yTitle = yaxisTitle;
+    SGTMetaData yMeta = new SGTMetaData(yTitle, information);
     SimpleGrid sg = new SimpleGrid(values, xaxis, yaxis, "2D Multiplot");
     sg.setXMetaData(xMeta);
     sg.setYMetaData(yMeta);
@@ -391,7 +409,7 @@ public class MultiPlotFitting2D extends myJFrame {
      * Add the grid to the layout and give a label for
      * the ColorKey.
      */
-    rpl.addData(sg, gridAttr_, datafile[0].getAxisYLegend());
+    rpl.addData(sg, gridAttr_, DiffrDataFile.getAxisYLegend());
     /*
      * Change the layout's three title lines.
      */
@@ -531,7 +549,7 @@ public class MultiPlotFitting2D extends myJFrame {
 
   public void showNewFrame() {
     setVisible(false);
-    new MultiPlotFitting2D(getFrameParent(), datafile, title, IntensityMin, IntensityMax);
+    new MultiPlotFitting2D(getFrameParent(), datafile, title, IntensityMin, IntensityMax, yaxisTitle, yaxisUnit);
     dispose();
   }
 
@@ -641,15 +659,15 @@ public class MultiPlotFitting2D extends myJFrame {
     }
 
     public void initParameters() {
-      legendMinTF.setText(new String(Double.toString(IntensityMin)));
-      legendMaxTF.setText(new String(Double.toString(IntensityMax)));
+      legendMinTF.setText(Double.toString(IntensityMin));
+      legendMaxTF.setText(Double.toString(IntensityMax));
       plotModeCB.setSelectedItem(MaudPreferences.getPref(principalJFrame.plotScale, PlotDataFile.plotMode[0]));
       xplotModeCB.setSelectedItem(MaudPreferences.getPref(PlotDataFile.xaxisModePref, PlotDataFile.xplotMode[0]));
     }
 
     public void retrieveParameters() {
-      IntensityMin = Float.valueOf(legendMinTF.getText()).floatValue();
-      IntensityMax = Float.valueOf(legendMaxTF.getText()).floatValue();
+      IntensityMin = Float.parseFloat(legendMinTF.getText());
+      IntensityMax = Float.parseFloat(legendMaxTF.getText());
       MaudPreferences.setPref(principalJFrame.plotScale, plotModeCB.getSelectedItem().toString());
       MaudPreferences.setPref(PlotDataFile.xaxisModePref, xplotModeCB.getSelectedItem().toString());
       PlotDataFile.checkScaleMode();

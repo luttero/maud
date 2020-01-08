@@ -107,47 +107,51 @@ public class FluorescenceLine {
 	public double getCoreShellEnergy() { return coreShellEnergy; }
 
   public void setShape(double[][] broad) {
-		double energy = getEnergy();
+	  double energy = getEnergy();
 	  hwhm = broad[0][0];
 	  eta = broad[1][0];
 	  for (int i = 1; i < broad[0].length; i++) {
-	  	hwhm += broad[0][i] * MoreMath.pow(energy, i - 1);
+	  	  hwhm += broad[0][i] * MoreMath.pow(energy, i - 1);
 		  eta += broad[1][i] * MoreMath.pow(energy, i - 1);
 	  }
 	  hwhm = Math.sqrt(Math.abs(hwhm));
 
-	  fS = broad[2][0];
-		double beta = broad[3][0];
-	  for (int i = 1; i < broad[0].length; i++) {
-		  fS += broad[2][i] * MoreMath.pow(energy, i - 1);
-		  beta += broad[3][i] * MoreMath.pow(energy, i - 1);
-	  }
-	  fS *= mhuDet;
+	  if (broad.length > 2) {
+		  fS = broad[2][0];
+		  double beta = broad[3][0];
+		  for (int i = 1; i < broad[0].length; i++) {
+			  fS += broad[2][i] * MoreMath.pow(energy, i - 1);
+			  beta += broad[3][i] * MoreMath.pow(energy, i - 1);
+		  }
+		  fS *= mhuDet;
 
-	  if (beta > 0)
-	   one_over_beta = 1.0 / beta;
-	  else
-		  one_over_beta = 0.0;
+		  if (beta > 0)
+			  one_over_beta = 1.0 / beta;
+		  else
+			  one_over_beta = 0.0;
 
-	  if (coreShellID != -1) {
-	  	if (transitionID.toUpperCase().startsWith("KL")) { // Kalpha
-		   fT = broad[4][0];
-		   for (int i = 1; i < broad[0].length; i++)
-			   fT += broad[4][i] * MoreMath.pow(mhuDet, i - 1);
-	   } else /*if (transitionID.toUpperCase().startsWith("KM"))*/ {
-		   fT = broad[5][0];
-		   for (int i = 1; i < broad[0].length; i++)
-			   fT += broad[5][i] * MoreMath.pow(mhuDet, i - 1);
-	   }
+		  if (coreShellID != -1) {
+			  if (transitionID.toUpperCase().startsWith("KL")) { // Kalpha
+				  fT = broad[4][0];
+				  for (int i = 1; i < broad[0].length; i++)
+					  fT += broad[4][i] * MoreMath.pow(mhuDet, i - 1);
+			  } else { //  "KM" -> Kbeta
+				  fT = broad[5][0];
+				  for (int i = 1; i < broad[0].length; i++)
+					  fT += broad[5][i] * MoreMath.pow(mhuDet, i - 1);
+			  }
+		  }
+	  } else {
+	  	 fT = 0;
+	  	 fS = 0;
+		 one_over_beta = 1.0;
 	  }
 
 	  one_over_hwhm = 1.0 / hwhm;
 	  double symPeakIntensity = 1.0 - fT - fS;
 	  dgx = symPeakIntensity * (1.0 - eta) * Constants.sqrtln2pi * one_over_hwhm;
 	  dcx = symPeakIntensity * eta * one_over_hwhm / Math.PI;
-
 	  one_over_sigma = Constants.sqrt2ln2 * one_over_hwhm;
-
 	  one_over_beta2 = one_over_beta * one_over_beta;
   }
 
@@ -164,7 +168,7 @@ public class FluorescenceLine {
 		 intensity = getIntensity() * (dcx / (1.0 + dx) + dgx * Math.exp(-Constants.LN2 * dx));
 
 	 if (fT > 0)
-	 intensity += getIntensity() * fT * one_over_beta * one_over_sigma * 0.5 / Math.exp(-0.5 * one_over_beta2) *
+	   intensity += getIntensity() * fT * one_over_beta * one_over_sigma * 0.5 / Math.exp(-0.5 * one_over_beta2) *
 			 Math.exp(dx1 * one_over_beta * one_over_sigma) *
 			 erfc(Constants.one_sqrt2 * (dx1 * one_over_sigma + one_over_beta));
 	 if (fS > 0)

@@ -265,6 +265,7 @@ public class batchProcess {
           Reader in = Misc.getReader(analysis.getDirectory(), analysis.getFileName());
           analysis.readall(in, null);
 	        analysis.setFileNamePreserveExtension(newfolderandname[1], false);
+	        analysis.setDirectory(newfolderandname[0]);
           avector.removeElementAt(i);
           loopitem--;
         } else if (index == 1) {
