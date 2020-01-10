@@ -159,4 +159,45 @@ public class GeometryXRFInstrument extends GeometryBraggBrentano {
 
 		return lp * 0.1;
 	}
+  
+  public double[] getIncidentAndDiffractionAngles(DiffrDataFile datafile, double[] tilting_angles,
+                                                  double[] sampleAngles, double position) {
+/*    double[] addSampleAngles = datafile.getDataFileSet().getAdditionalSampleAngles();
+    double[] newSampleAngles = new double[3];
+    for (int i = 0; i < 3; i++)
+      newSampleAngles[i] = sampleAngles[i] + addSampleAngles[i];
+    double tilting_angles3 = tilting_angles[3] + getEtaDetector(datafile);
+    double[] incidentAngles = getTextureAnglesR(tilting_angles[0], tilting_angles[1], tilting_angles[2],
+        tilting_angles3, 90.0f, newSampleAngles, false);
+    
+    double[] diffractionAngles = getTextureAnglesR(tilting_angles[0], tilting_angles[1], tilting_angles[2],
+        tilting_angles3, -90.0f + position, newSampleAngles, false);
+    
+    double[] textureAngles = getTextureAnglesR(tilting_angles[0], tilting_angles[1], tilting_angles[2],
+        tilting_angles3, position / 2.0f, newSampleAngles, false);
+    
+    double[] allAngles = new double[6];
+    for (int i = 0; i < 2; i++) {
+      allAngles[i] = incidentAngles[i];
+      allAngles[i + 2] = diffractionAngles[i];
+      allAngles[i + 4] = textureAngles[i];
+    }
+    
+    allAngles[0] = (pi_over2 - allAngles[0]);
+    allAngles[2] = (pi_over2 - allAngles[2]);
+    allAngles[4] = (pi_over2 - allAngles[4]);*/
+/*    System.out.println(position + " " + tilting_angles[0] + " " + tilting_angles[1] + " " + tilting_angles[2] + " " + tilting_angles3 + " " +
+        allAngles[0] * Constants.PITODEG + " " + allAngles[2] * Constants.PITODEG + " " +
+        allAngles[1] * Constants.PITODEG + " " + allAngles[3] * Constants.PITODEG);*/
+    double[] allAngles = new double[6];
+  
+    for (int i = 1; i < 6; i+=2)
+      allAngles[i] = 0;
+    allAngles[4] = 0; // todo: real texture angle
+    allAngles[0] = tilting_angles[0] * Constants.DEGTOPI;
+    allAngles[2] = datafile.get2ThetaValue() * Constants.DEGTOPI / 2;
+    
+    return allAngles;
+  }
+  
 }

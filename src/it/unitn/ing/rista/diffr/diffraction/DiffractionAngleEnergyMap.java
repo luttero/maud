@@ -213,7 +213,7 @@ public class DiffractionAngleEnergyMap extends Diffraction {
 		minmaxindex[1] = datafile.startingindex;
 		arraycopy(minmaxindex, 0, tmpminmax, 0, 2);
 
-//    System.out.println(peaklist.size());  // todo
+//    System.out.println(datafile.toXRDcatString() + " " + peaklist.size());  // todo
 		for (int i = 0; i < peaklist.size(); i++) {
 			if (phase == null || peaklist.elementAt(i).getPhase() == phase) {
 				peaklist.elementAt(i).computePeak(datafile, expfit, asample, ainstrument, printStream, logOutput, cutoff,

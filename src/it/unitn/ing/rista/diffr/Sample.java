@@ -1772,7 +1772,7 @@ public class Sample extends Maincat {
 //      System.out.println("Computing shape absorption.....");
 
       for (int i = 0; i < activeDatasetsNumber(); i++) {
-        if (getActiveDataSet(i) != null && getActiveDataSet(i).getFluorescence().identifier == "none fluorescence") { // todo now only for diffraction
+        if (getActiveDataSet(i) != null && getActiveDataSet(i).getDiffraction().identifier != "none fluorescence") { // todo now only for diffraction
 //          Instrument ainstrument = getActiveDataSet(i).getInstrument();
           for (int j = 0; j < getActiveDataSet(i).activedatafilesnumber(); j++) {
             DiffrDataFile adatafile = getActiveDataSet(i).getActiveDataFile(j);
