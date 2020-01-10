@@ -54,14 +54,24 @@ public class InstrumentBroadening extends XRDcat {
   public JOptionsDialog getOptionsDialog(Frame parent) {
     return new JBroadOptionsD(parent, this);
   }
-
-  public double[][] getInstrumentalBroadeningAt(double x, DiffrDataFile diffrDataFile) {
-    return new double[1][2];
+  
+  public java.util.Vector<double[]> getInstrumentBroadeningAt(double x, DiffrDataFile diffrDataFile) {
+    double[] hwhm = {0.0};
+    double[] eta = {0.0};
+    java.util.Vector<double[]> broadV = new java.util.Vector<>(2);
+    broadV.add(hwhm);
+    broadV.add(eta);
+    return broadV;
   }
-
-/*  public double getConvolutedBroadening(double x, double[] tilting_angles, boolean dspacingbase) {
-    return 0.0;
-  }*/
+  
+  public java.util.Vector<double[]> getInstrumentEnergyBroadeningAt(double x, DiffrDataFile diffrDataFile) {
+    double[] hwhm = {0.0};
+    double[] eta = {0.0};
+    java.util.Vector<double[]> broadV = new java.util.Vector<>(2);
+    broadV.add(hwhm);
+    broadV.add(eta);
+    return broadV;
+  }
 
   public double getInstrumentalAsymmetry(double x, DiffrDataFile diffrDataFile) {
 

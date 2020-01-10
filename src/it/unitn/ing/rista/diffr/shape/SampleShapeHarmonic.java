@@ -442,7 +442,62 @@ public class SampleShapeHarmonic extends SampleShape implements Shape3D {
     checkShapeParameters();
   }
 
-  public void computeAbsorptionPath(double[][] incidentAndDiffraction_angles, double absorption, double[] position,
+	public double computeAbsorptionPath(double[] incidentAndDiffraction_angles, double absorption, double position,
+	                                    double toLambda) {
+		double intensity = 0.0;
+		double totalPath = 0.0;
+		double arg1 = 0.0;
+		boolean positionCorr = false;
+		if (velocityCorrection() && toLambda != 0.0f) {
+			absorption *= toLambda;
+			positionCorr = true;
+		}
+		double incidentPathLength = getShape(incidentAndDiffraction_angles[1],
+				incidentAndDiffraction_angles[0]);
+
+		double diffractedPathLength = getShape(incidentAndDiffraction_angles[3],
+				incidentAndDiffraction_angles[2]);
+
+		double normalPathLength = getShape(incidentAndDiffraction_angles[5],
+				incidentAndDiffraction_angles[4]);
+
+		double sin0 = Math.sin(incidentAndDiffraction_angles[0]);
+		double sin1 = Math.sin(incidentAndDiffraction_angles[1]);
+		double sin2 = Math.sin(incidentAndDiffraction_angles[2]);
+		double sin3 = Math.sin(incidentAndDiffraction_angles[3]);
+		double cos0 = Math.cos(incidentAndDiffraction_angles[0]);
+		double cos1 = Math.cos(incidentAndDiffraction_angles[1]);
+		double cos2 = Math.cos(incidentAndDiffraction_angles[2]);
+		double cos3 = Math.cos(incidentAndDiffraction_angles[3]);
+//    return incidentPathLength + diffractedPathLength;
+		double xdiff = incidentPathLength * cos1 * sin0 - diffractedPathLength * cos3 * sin2;
+		double ydiff = incidentPathLength * sin1 * sin0 - diffractedPathLength * sin3 * sin2;
+		double zdiff = incidentPathLength * cos0 - diffractedPathLength * cos2;
+		double xdiffs = cos1 * sin0 - cos3 * sin2;
+		double ydiffs = sin1 * sin0 - sin3 * sin2;
+		double zdiffs = cos0 - cos2;
+		xdiff *= xdiff;
+		ydiff *= ydiff;
+		zdiff *= zdiff;
+		xdiffs *= xdiffs;
+		ydiffs *= ydiffs;
+		zdiffs *= zdiffs;
+		totalPath = (1 - getParameterValue(3)) * (Math.sqrt(xdiff + ydiff + zdiff) -
+				getParameterValue(4) * Math.sqrt(xdiffs + ydiffs + zdiffs))
+				+ getParameterValue(3) * (normalPathLength - getParameterValue(4));
+		if (positionCorr)
+			arg1 = absorption * totalPath * position;// * Constants.LAMBDA_SPEED_NEUTRON_CONV_REC;
+		else
+			arg1 = absorption * totalPath;
+		if (arg1 < 200.0)
+			intensity = Math.exp(-arg1);
+		else
+			intensity = 0.0f;
+
+		return intensity;
+	}
+
+	public void computeAbsorptionPath(double[][] incidentAndDiffraction_angles, double absorption, double[] position,
                                     double[] intensity, double toLambda) {
     double totalPath = 0.0;
     double arg1 = 0.0;

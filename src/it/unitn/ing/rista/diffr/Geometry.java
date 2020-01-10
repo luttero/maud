@@ -303,23 +303,27 @@ public class Geometry extends XRDcat {
 
     double[] textureAngles = new double[2];
 
-    if (Math.abs(M23) < 1.0E-9)
-      M23 = 0.0;
-    if (Math.abs(M13) < 1.0E-9) {
+
+//    System.out.println("M13, M23: " + M13 + " " + M23);
+    if (Math.abs(M13) < 1.0E-12) {
       if (M23 >= 0.0)
         textureAngles[1] = 90.0f;
       else
-        textureAngles[1] = -90.0f;
+        textureAngles[1] = 270.0f;
     } else if (M23 == 0.0) {
       if (M13 > 0.0)
         textureAngles[1] = 180.0f;
       else
         textureAngles[1] = 0.0f;
     } else {
+      if (Math.abs(M23) < 1.0E-12)
+        M23 = 0.0;
       textureAngles[1] = -MoreMath.atand(M23 / M13);
       if (M13 > 0.0)
         textureAngles[1] += 180.0f;
     }
+//    System.out.println("phi: " + textureAngles[1]);
+
 //    System.out.println("1: " + cosPsi);
     if (cosPsi > 0.99999999)
       textureAngles[0] = 0f;
@@ -686,49 +690,8 @@ public class Geometry extends XRDcat {
    * for the azimuthal and polar angles.
    */
 
-  public double[][] getIncidentAndDiffractionAngles(DiffrDataFile datafile, double[] tilting_angles,
-                                                   double[] sampleAngles, double[] position) {
-
-    double[] addSampleAngles = datafile.getDataFileSet().getAdditionalSampleAngles();
-    double[] newSampleAngles = new double[3];
-    for (int i = 0; i < 3; i++)
-      newSampleAngles[i] = sampleAngles[i] + addSampleAngles[i];
-    double tilting_angles0 = tilting_angles[0];
-    double tilting_angles1 = tilting_angles[1];
-    double tilting_angles2 = tilting_angles[2];
-    double oldTilt0 = tilting_angles0 + 1.0f;
-    double oldTilt1 = tilting_angles1 + 1.0f;
-    double oldTilt2 = tilting_angles2 + 1.0f;
-    double oldTilt3 = - 90001.0f;
-    int numberPositions = position.length;
-    double[] incidentAngles = null, diffractionAngles = null, textureAngles = null;
-    double[][] allAngles = new double[numberPositions][6];
-    for (int j = 0; j < numberPositions; j++) {
-      double tilting_angles3 = tilting_angles[3] + getEtaDetector(datafile);
-      if (oldTilt0 != tilting_angles0 || (oldTilt1 != tilting_angles1 || (oldTilt2 != tilting_angles2 ||
-          (oldTilt3 != tilting_angles3)))) {
-        incidentAngles = getTextureAnglesR(tilting_angles0, tilting_angles1, tilting_angles2,
-              tilting_angles3, 90.0f, newSampleAngles, false);
-
-        diffractionAngles = getTextureAnglesR(tilting_angles0, tilting_angles1, tilting_angles2,
-              tilting_angles3, -90.0f + position[j], newSampleAngles, false);
-
-        textureAngles = getTextureAnglesR(tilting_angles0, tilting_angles1, tilting_angles2,
-              tilting_angles3, position[j] / 2.0f, newSampleAngles, false);
-
-      }
-      oldTilt3 = tilting_angles3;
-      for (int i = 0; i < 2; i++) {
-        allAngles[j][i] = incidentAngles[i];
-        allAngles[j][i + 2] = diffractionAngles[i];
-        allAngles[j][i + 4] = textureAngles[i];
-      }
-    }
-    return allAngles;
-  }
-
-	public double[][][] getIncidentAndDiffractionAngles(DiffrDataFile datafile, double[] tilting_angles,
-	                                                  double[] sampleAngles, double[][] position) {
+	public double[][] getIncidentAndDiffractionAngles(DiffrDataFile datafile, double[] tilting_angles,
+	                                                  double[] sampleAngles, double[] position) {
 
 		double[] addSampleAngles = datafile.getDataFileSet().getAdditionalSampleAngles();
 		double[] newSampleAngles = new double[3];
@@ -741,11 +704,9 @@ public class Geometry extends XRDcat {
 		double oldTilt1 = tilting_angles1 + 1.0f;
 		double oldTilt2 = tilting_angles2 + 1.0f;
 		double oldTilt3 = - 90001.0f;
-		int numberPositions = position.length;
-		int nrad = position[0].length;
+		int nrad = position.length;
 		double[] incidentAngles = null, diffractionAngles = null, textureAngles = null;
-		double[][][] allAngles = new double[numberPositions][nrad][6];
-		for (int j = 0; j < numberPositions; j++) {
+		double[][] allAngles = new double[nrad][6];
 			for (int k = 0; k < nrad; k++) {
 				double tilting_angles3 = tilting_angles[3] + getEtaDetector(datafile);
 				if (oldTilt0 != tilting_angles0 || (oldTilt1 != tilting_angles1 || (oldTilt2 != tilting_angles2 ||
@@ -754,20 +715,19 @@ public class Geometry extends XRDcat {
 							tilting_angles3, 90.0f, newSampleAngles, false);
 
 					diffractionAngles = getTextureAnglesR(tilting_angles0, tilting_angles1, tilting_angles2,
-							tilting_angles3, -90.0f + position[j][k], newSampleAngles, false);
+							tilting_angles3, -90.0f + position[k], newSampleAngles, false);
 
 					textureAngles = getTextureAnglesR(tilting_angles0, tilting_angles1, tilting_angles2,
-							tilting_angles3, position[j][k] / 2.0f, newSampleAngles, false);
+							tilting_angles3, position[k] / 2.0f, newSampleAngles, false);
 
 				}
 				oldTilt3 = tilting_angles3;
 				for (int i = 0; i < 2; i++) {
-					allAngles[j][k][i] = incidentAngles[i];
-					allAngles[j][k][i + 2] = diffractionAngles[i];
-					allAngles[j][k][i + 4] = textureAngles[i];
+					allAngles[k][i] = incidentAngles[i];
+					allAngles[k][i + 2] = diffractionAngles[i];
+					allAngles[k][i + 4] = textureAngles[i];
 				}
 			}
-		}
 		return allAngles;
 	}
 
@@ -797,21 +757,26 @@ public class Geometry extends XRDcat {
     double[] diffractionAngles = getTextureAnglesR(tilting_angles[0], tilting_angles[1], tilting_angles[2],
               tilting_angles3, -90.0f + position, newSampleAngles, false);
 
-    double[] allAngles = new double[4];
-      for (int i = 0; i < 2; i++) {
-        allAngles[i] = incidentAngles[i];
-        allAngles[i + 2] = diffractionAngles[i];
-      }
+	  double[] textureAngles = getTextureAnglesR(tilting_angles[0], tilting_angles[1], tilting_angles[2],
+			     tilting_angles3, position / 2.0f, newSampleAngles, false);
 
-    allAngles[0] = (pi_over2 - allAngles[0]);
-    allAngles[2] = (pi_over2 - allAngles[2]);
+	  double[] allAngles = new double[6];
+	  for (int i = 0; i < 2; i++) {
+		  allAngles[i] = incidentAngles[i];
+		  allAngles[i + 2] = diffractionAngles[i];
+		  allAngles[i + 4] = textureAngles[i];
+	  }
+
+	  allAngles[0] = (pi_over2 - allAngles[0]);
+	  allAngles[2] = (pi_over2 - allAngles[2]);
+	  allAngles[4] = (pi_over2 - allAngles[4]);
 /*    System.out.println(position + " " + tilting_angles[0] + " " + tilting_angles[1] + " " + tilting_angles[2] + " " + tilting_angles3 + " " +
         allAngles[0] * Constants.PITODEG + " " + allAngles[2] * Constants.PITODEG + " " +
         allAngles[1] * Constants.PITODEG + " " + allAngles[3] * Constants.PITODEG);*/
-    return allAngles;
+	  return allAngles;
   }
 
-// not to use
+	// not to use
   public double[] getTextureAngles(double[] tilting_angles, double twotheta) {
     return getDetector().getTextureAngles(tilting_angles, twotheta);
   }
@@ -896,17 +861,53 @@ public class Geometry extends XRDcat {
    * The dspacingbase actually should not be used, as its value should be equal to
    */
 
-  public void computeShapeAbsorptionCorrection(DiffrDataFile adatafile, Sample asample, double[][] position,
-                                               boolean dspacingbase, boolean energyDispersive, double[][] intensity, double toLambda) {
+  public void computeShapeAbsorptionCorrection(DiffrDataFile adatafile, Sample asample, double[] position,
+                                               boolean dspacingbase, boolean energyDispersive, double[] intensity, double toLambda) {
   }
 
-  public double[] getLayerAbsorption_new(Sample asample, RadiationType rad, int layerIndex, double[][] incidentDiffractionAngles,
-                                       DataFileSet adataset) {
-	  double[] radAbs = new double[rad.getLinesCount()];
+	public double computeAbsorptionCorrection(DiffrDataFile adatafile, Phase aphase, double position, int rad_index,
+	                                          double toLambda) {
+		Instrument inst = (Instrument) getParent();
+		Sample asample = adatafile.getDataFileSet().getSample();
+		double[] sampleAngles = asample.getSampleAngles();
+		double[] tilting_angles = adatafile.getTiltingAngle();
+		double omega = tilting_angles[0];
+		tilting_angles[0] = getMeasurement().getOmega(omega, position);
+		double[] angles = getIncidentAndDiffractionAngles(adatafile, tilting_angles, sampleAngles, position);
+
+		int phaseindex = asample.getPhase(aphase);
+		DataFileSet adataset = adatafile.getDataFileSet();
+		int datasetIndex = adataset.getDataFileSetIndex();
+		double correction = 0;
+		RadiationType rad = adataset.getInstrument().getRadiationType();
+		for (int i = 0; i < asample.numberOfLayers; i++) {
+			double quantity = asample.phaseQuantity[i][phaseindex][datasetIndex];
+			if (quantity >= 0.0) {
+				double absCorrection = getLayerAbsorption_new(asample, rad, rad_index, i, angles, adataset);
+				correction += quantity * absCorrection;
+//				System.out.println("Abs layer corr: " + absCorrection + " " + quantity);
+			}
+		}
+		return correction * computeShapeAbsorptionCorrection(asample, inst.getRadiationType(), rad_index, angles, position, toLambda);
+	}
+
+	public double computeShapeAbsorptionCorrection(Sample asample, RadiationType rad, int rad_index, double[] incidentAndDiffraction_angles, double position,
+	                                               double toLambda) {
+  	   return 1.0;
+	}
+
+	public double getLayerAbsorption_new(Sample asample, RadiationType rad, int rad_index, int layerIndex,
+	                                       double[] incidentDiffractionAngles, DataFileSet adataset) {
+	  return 1.0;
+  }
+
+	public double[] getLayerAbsorption_new(Sample asample, RadiationType rad, int layerIndex, double[][] incidentDiffractionAngles,
+	                                       DataFileSet adataset) {
+		double[] radAbs = new double[rad.getLinesCount()];
 		for (int i = 0; i < rad.getLinesCount(); i++)
 			radAbs[i] = 1.0;
-	  return radAbs;
-  }
+		return radAbs;
+	}
 
 	public double getLayerAbsorption_new(Sample asample, double energyInKeV, int layerIndex, double[] incidentDiffractionAngles,
 	                                     DataFileSet adataset) {

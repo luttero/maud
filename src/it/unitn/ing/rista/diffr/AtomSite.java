@@ -21,7 +21,7 @@
 package it.unitn.ing.rista.diffr;
 
 import it.unitn.ing.rista.chemistry.AtomInfo;
-import it.unitn.ing.rista.chemistry.XRayDataSqLite;
+//import it.unitn.ing.rista.chemistry.XRayDataSqLite;
 import it.unitn.ing.rista.util.*;
 
 import java.util.ArrayList;
@@ -174,6 +174,8 @@ public class AtomSite extends XRDcat {
   public AtomSite(XRDcat parent) {
     this(parent, "Site_x");
   }
+
+  public AtomSite() {}
 
   /**
    * Init the default fields of this object, see XRDcat for this.
@@ -1438,14 +1440,14 @@ public class AtomSite extends XRDcat {
 		  absorption = getSiteAbsorption(rad.getRadiationEnergy());*/
 	  for (int i = 0; i < getNumberOfScatterers(); i++)
 		  absorption += getAtomScatterer(i).getSiteAbsorption(rad);
-	  return absorption * getOccupancyValue();
+	  return getSiteMultiplicity() * absorption * getOccupancyValue();
   }
 
 	public double getSiteAbsorption(double energyInKeV) {
 		double absorption = 0;
 		for (int i = 0; i < getNumberOfScatterers(); i++)
 			absorption += getAtomScatterer(i).getSiteAbsorption(energyInKeV);
-		return absorption * getOccupancyValue();
+		return getSiteMultiplicity() * absorption * getOccupancyValue();
 	}
 
 	/**
@@ -1607,6 +1609,19 @@ public class AtomSite extends XRDcat {
 		  for (int j = 0; j < fu.length; j++)
 			  fu[j] += addFu[j] * ato.getOccupancy();
 	  }
+    return fu;
+  }
+  
+  public double[] scatfactor(double dspacing, double energyInKeV) {
+    
+    double[] fu = new double[2]; // = localScatfactorNoDispersion(dspacing, rad);
+//	  double totalOccupancy = getOccupancyValue();
+    for (int i = 0; i < getNumberOfScatterers(); i++) {
+      AtomScatterer ato = getAtomScatterer(i);
+      double[] addFu = ato.scatfactor(dspacing, energyInKeV);
+      for (int j = 0; j < fu.length; j++)
+        fu[j] += addFu[j] * ato.getOccupancy();
+    }
     return fu;
   }
 

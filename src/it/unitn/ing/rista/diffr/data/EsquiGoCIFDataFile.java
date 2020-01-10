@@ -86,6 +86,7 @@ public class EsquiGoCIFDataFile extends MultDiffrDataFile {
 	  startingvalue = 0;
 	  measurementstep = 1;
 	  boolean oldESGfile = false;
+	  String bankID = "";
 
     DiffrDataFile datafile = null;
     if (reader != null) {
@@ -167,6 +168,7 @@ public class EsquiGoCIFDataFile extends MultDiffrDataFile {
 	              token = st.nextToken();
 	              if (token.equalsIgnoreCase("_pd_meas_angle_2theta")) {
 		              twothetaShift = Double.valueOf(token = st.nextToken()).doubleValue();
+                  theta2_angleD = twothetaShift;
 	              } else if (token.equalsIgnoreCase("_pd_meas_2theta_range_min") ||
 			              token.equalsIgnoreCase("_energy_dispersive_zero_eV")) {
 		              twothetaStart = Double.valueOf(token = st.nextToken()).doubleValue();
@@ -214,12 +216,13 @@ public class EsquiGoCIFDataFile extends MultDiffrDataFile {
 			              image2D = true;
 	              } else if (token.equalsIgnoreCase("_pd_meas_angle_eta") || token.equalsIgnoreCase("_pd_meas_orientation_eta")) {
 		              eta_angle = Double.valueOf(token = st.nextToken()).doubleValue();
-	              } else if (token.equalsIgnoreCase("_pd_meas_angle_2theta") || token.equalsIgnoreCase("_pd_meas_orientation_2theta")) {
+	              } else if (token.equalsIgnoreCase("_pd_meas_orientation_2theta")) {
 		              theta2_angleD = Double.valueOf(token = st.nextToken()).doubleValue();
 	              } else if (token.equalsIgnoreCase("_pd_meas_energy_kev")) {
 		              energy_angle = Double.valueOf(token = st.nextToken()).doubleValue();
 	              } else if (token.equalsIgnoreCase("_pd_meas_detector_id")) {
 		              token = st.nextToken();
+                  bankID = token;
 		              if (token.contains("Amptek")) {
 			              energyDispersive = true;
 			              amptek = true;
@@ -266,7 +269,16 @@ public class EsquiGoCIFDataFile extends MultDiffrDataFile {
           datafile.setAngleValue(1, chi_angle);
           datafile.setAngleValue(2, phi_angle);
           datafile.setAngleValue(3, eta_angle);
-//          System.out.println(theta2_angle + " : " + theta2_angleD);
+          datafile.setBankID(bankID);
+          int bank = -1;
+          if (bankID.length() > 0) {
+            String number = Misc.toStringFinalOnlyDigits(bankID);
+            if (number.length() > 0)
+              bank = Integer.parseInt(number);
+            if (bank >= 0)
+              theta2_angleD = datafile.getDataFileSet().getInstrument().getAngularCalibration().
+                  getReal2ThetaValue(bank, theta2_angleD);
+          }
 	        if (theta2_angle.equalsIgnoreCase("=omega"))
 		        datafile.setAngleValue(4, omega_angle);
 	        else if (theta2_angleD == 0)

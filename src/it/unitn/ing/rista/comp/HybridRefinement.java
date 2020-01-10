@@ -179,8 +179,8 @@ public class HybridRefinement extends OptimizationAlgorithm implements GAProblem
     setNumberOfPopulations(1);
     // Least squares
     stringField[6] = MaudPreferences.getPref(iterations, "3");
-    stringField[8] = MaudPreferences.getPref("leastSquares.derivateStep", "0.001");
-    stringField[9] = MaudPreferences.getPref("leastSquares.doubleDerivate", "false");
+    stringField[8] = MaudPreferences.getPref("leastSquares.derivativeStep", "0.0001");
+    stringField[9] = MaudPreferences.getPref("leastSquares.doubleDerivative", "false");
     stringField[7] = MaudPreferences.getPref("leastSquares.precision", "0.00000001");
   }
 

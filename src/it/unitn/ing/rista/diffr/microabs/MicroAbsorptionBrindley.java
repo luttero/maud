@@ -123,8 +123,13 @@ public class MicroAbsorptionBrindley extends MicroAbsorption {
 
     Phase aphase = (Phase) getParent();
 
+//    System.out.println("Brindley, phase absorption: " + aphase.getPhaseName() + " " + aphase.getAbsorption(rad));
+//    System.out.println("Layer absorption: " + alayer.getAbsorption(rad));
+    
     double mr = (aphase.getAbsorption(rad) * aphase.getDensity() -
             alayer.getAbsorption(rad) * alayer.getDensity()) * crystSize / 10000;
+    if (mr * mr < 1.0E-9)
+      return volFraction;
 
     switch (getModelNumber()) {
       case 0:

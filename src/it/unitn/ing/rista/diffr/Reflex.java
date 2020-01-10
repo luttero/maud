@@ -58,6 +58,8 @@ public class Reflex extends XRDcat {
     this(afile, "Reflection x");
   }
 
+	public Reflex() {}
+
   public void initConstant() {
     Nstring = 3;
     Nstringloop = 0;

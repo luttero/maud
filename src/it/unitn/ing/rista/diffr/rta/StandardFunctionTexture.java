@@ -30,6 +30,7 @@ import javax.swing.border.BevelBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.util.Vector;
 
 
 /**
@@ -368,11 +369,12 @@ public class StandardFunctionTexture extends Texture {
 //			setSharpness(computeAndGetSharpness());
       refreshComputation = false;
 	    int hkln = aphase.gethklNumber();
-	    double[] textF = new double[hkln];
 	    for (int i = 0; i < asample.activeDatasetsNumber(); i++) {
 		    DataFileSet adataset = asample.getActiveDataSet(i);
 //					Instrument ainstrument = adataset.getInstrument();
 //					Radiation rad = ainstrument.getRadiationType().getRadiation(0);
+		    int radNumber = adataset.getInstrument().getRadiationType().getLinesCount();
+		    double[] textF = new double[radNumber];
 		    double betaBroad = adataset.getInstrument().getInstrumentBroadening().getTextureBroadeningAt(0);
 		    if (betaBroad >= 0.0) {
 //		            System.out.println(snumber);
@@ -391,12 +393,14 @@ public class StandardFunctionTexture extends Texture {
 		    int datafilenumber = adataset.activedatafilesnumber();
 		    for (int i1 = 0; i1 < datafilenumber; i1++) {
 			    DiffrDataFile adatafile = adataset.getActiveDataFile(i1);
-			    double[][][] positions = adatafile.getPositions(aphase);
-//			    for (int ppp = 0; ppp < adatafile.positionsPerPattern; ppp++) {
-				    for (int j = 0; j < hkln; j++) {
-					    Reflection refl = aphase.getReflex(j);
-					    double texture_angles[] = adatafile.getTextureAngles(positions[j][0][0]);
-					    double newBetaBroad = adataset.getInstrument().getInstrumentBroadening().getTextureBroadeningAt(positions[j][0][0]);
+//			    Vector<Vector<ReflectionPeak>> peaks = adatafile.getReflections(aphase);
+			    for (int j = 0; j < hkln; j++) {
+			    	 Reflection refl = aphase.getReflex(j);
+
+			    	 for (int ppp = 0; ppp < radNumber; ppp++) {
+			    	 	double position = adatafile.getPosition(aphase, j, ppp);
+					    double texture_angles[] = adatafile.getTextureAngles(position);
+					    double newBetaBroad = adataset.getInstrument().getInstrumentBroadening().getTextureBroadeningAt(position);
 //	            System.out.println(snumber + " " + betaBroad);
 					    if (betaBroad != newBetaBroad) {
 //		            System.out.println(snumber);
@@ -411,7 +415,7 @@ public class StandardFunctionTexture extends Texture {
 							    sphericalComp.PARGLP(sphericalComp.betag + betaBroad);
 						    }
 					    }
-					    textF[j] = computeTextureFactor(refl.phi[0], refl.beta[0],
+					    textF[ppp] = computeTextureFactor(refl.phi[0], refl.beta[0],
 							    texture_angles[0] * Constants.DEGTOPI,
 							    texture_angles[1] * Constants.DEGTOPI);
 /*		              System.out.println(positions[0][j][0] + " " +
@@ -420,8 +424,8 @@ public class StandardFunctionTexture extends Texture {
 				              texture_angles[1] * Constants.DEGTOPI + " " + textF[j]);*/
 //						refl.setExpTextureFactor(adatafile.getIndex(), textF);
 				    }
-			    adatafile.setTextureFactors(aphase, textF);
-//			    }
+			       adatafile.setTextureFactors(aphase, j, textF);
+			    }
 		    }
 	    }
     }

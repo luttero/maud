@@ -48,8 +48,8 @@ public class Misc {
   public static final boolean areClassCompatibles(String superclass, String subclass) {
 //		System.out.println("Comparing: " + superclass + " " + subclass);
     try {
-      Class sup = Class.forName(superclass);
-      Class sub = Class.forName(subclass);
+      Class sup = Constants.maudClassLoader.loadClass(superclass);
+      Class sub = Constants.maudClassLoader.loadClass(subclass);
       return sup.isAssignableFrom(sub);
     } catch (ClassNotFoundException e) {
     }
@@ -59,7 +59,7 @@ public class Misc {
   public static final boolean areClassCompatibles(String superclass, Class subclass) {
 //		System.out.println("Comparing: " + superclass + " " + subclass);
     try {
-      Class sup = Class.forName(superclass);
+      Class sup = Constants.maudClassLoader.loadClass(superclass);
       return sup.isAssignableFrom(subclass);
     } catch (ClassNotFoundException e) {
     }

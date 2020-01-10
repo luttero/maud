@@ -58,20 +58,25 @@ public class GeometryLaueTransmissionSymmetrical extends GeometryDiffractometer 
     return 1.0 / sin2theta;
   }
 
-   public void computeShapeAbsorptionCorrection(DiffrDataFile adatafile, Sample asample, double[][] position,
-                                               boolean dspacingbase, boolean energyDispersive, double[][] intensity, double toLambda) {
+   public void computeShapeAbsorptionCorrection(DiffrDataFile adatafile, Sample asample, double[] position,
+                                               boolean dspacingbase, boolean energyDispersive, double[] intensity, double toLambda) {
 
     double[] sampleAngles = asample.getSampleAngles();
     double[] tilting_angles = adatafile.getTiltingAngle();
 
-    double[][][] angles = getIncidentAndDiffractionAngles(adatafile, tilting_angles, sampleAngles, position);
+    double[][] angles = getIncidentAndDiffractionAngles(adatafile, tilting_angles, sampleAngles, position);
 
     RadiationType rad = ((Instrument) getParent()).getRadiationType();
 
     asample.computeAbsorptionTroughPath(rad, angles, position, intensity, toLambda);
   }
 
-  public double getCorrectedPosition(Sample asample, double x, double[] tilting_angles, DiffrDataFile adatafile) {
+	public double computeShapeAbsorptionCorrection(Sample asample, RadiationType rad, int rad_index, double[] angles, double position,
+	                                               double toLambda) {
+		return asample.computeAbsorptionTroughPath(rad, rad_index, angles, position, toLambda);
+	}
+
+	public double getCorrectedPosition(Sample asample, double x, double[] tilting_angles, DiffrDataFile adatafile) {
 //    System.out.println("Omega = " + tilting_angles[0]);
 //    System.out.println("2theta = " + x);
     double radius = getRadius(null);

@@ -287,8 +287,8 @@ VLD
     }
   }
 
-  /*   public double computeStructureFactor(int h, int k, int l, int multiplicity, double dspacing, int radType,
-                                       int tubeNumber, int adatasetIndex, double factor) {
+  /*   public void computeStructureFactor(int h, int k, int l, int multiplicity, double dspacing, int radType,
+                                       int tubeNumber, int adatasetIndex, double factor, double[] structureFactor) {
 //    int h = refl.h, k = refl.k, l = refl.l, int multiplicity = refl.multiplicity;
 //    double dspacing = refl.d_space;
 
@@ -398,8 +398,8 @@ VLD
 //todo to fix    aphase.Fhklcompv(rad1.getRadiationIDNumber(), rad1.tubeNumber, adataset.getIndex(), false);
   }
 
-/*  public double computeStructureFactor(int h, int k, int l, int multiplicity, double dspacing, int radType,
-                                       int tubeNumber, int adatasetIndex, double factor) {
+/*  public void computeStructureFactor(int h, int k, int l, int multiplicity, double dspacing, int radType,
+                                       int tubeNumber, int adatasetIndex, double factor, double[] structureFactor) {
 //    int h = refl.h, k = refl.k, l = refl.l, int multiplicity = refl.multiplicity;
 //    double dspacing = refl.d_space;
 //    System.out.println("computing factors");

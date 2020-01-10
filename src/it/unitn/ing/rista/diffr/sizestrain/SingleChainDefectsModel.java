@@ -54,7 +54,7 @@ public class SingleChainDefectsModel extends PlanarDefects {
 	public static String[] diclistcrm = {"number of cell repetition for the supercell",
 			"crystal axis along the fiber direction",
 			"crystal axis with the faulting",
-			"minimum dspace for disordering",
+			"minimum energy for disordering",
 
 			"crystallite size increase parallel to the fiber",
 			"microstrain decrease parallel to the fiber"

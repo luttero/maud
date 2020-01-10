@@ -1,0 +1,11 @@
+<keymap version="1" name="Mac OS X copy" parent="Mac OS X">
+  <action id="CodeCompletion">
+    <keyboard-shortcut first-keystroke="shift ctrl c" />
+  </action>
+  <action id="android.deploy.ApplyChanges">
+    <keyboard-shortcut first-keystroke="ctrl meta r" />
+  </action>
+  <action id="android.deploy.CodeSwap">
+    <keyboard-shortcut first-keystroke="shift ctrl meta r" />
+  </action>
+</keymap>

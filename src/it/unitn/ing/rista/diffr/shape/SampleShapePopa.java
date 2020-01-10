@@ -434,6 +434,48 @@ public class SampleShapePopa extends SampleShape implements Shape3D {
     checkShapeParameters();
   }
 
+  public double computeAbsorptionPath(double[] incidentAndDiffraction_angles, double absorption, double position,
+	                                  double toLambda) {
+	  double intensity = 0.0;
+	  double totalPath = 0.0;
+	  double arg1 = 0.0;
+	  boolean positionCorr = false;
+	  if (velocityCorrection() && toLambda != 0.0f) {
+		  absorption *= toLambda;
+		  positionCorr = true;
+	  }
+	  double incidentPathLength = getShape(incidentAndDiffraction_angles[1],
+			  incidentAndDiffraction_angles[0]);
+
+	  double diffractedPathLength = getShape(incidentAndDiffraction_angles[3],
+			  incidentAndDiffraction_angles[2]);
+
+	  double normalPathLength = getShape(incidentAndDiffraction_angles[5],
+			  incidentAndDiffraction_angles[4]);
+
+	  double sin0 = Math.sin(incidentAndDiffraction_angles[0]);
+	  double sin2 = Math.sin(incidentAndDiffraction_angles[2]);
+//    return incidentPathLength + diffractedPathLength;
+	  double xdiff = incidentPathLength * Math.cos(incidentAndDiffraction_angles[1]) * sin0 -
+			  diffractedPathLength * Math.cos(incidentAndDiffraction_angles[3]) * sin2;
+	  double ydiff = incidentPathLength * Math.sin(incidentAndDiffraction_angles[1]) * sin0 -
+			  diffractedPathLength * Math.sin(incidentAndDiffraction_angles[3]) * sin2;
+	  double zdiff = incidentPathLength * Math.cos(incidentAndDiffraction_angles[0]) -
+			  diffractedPathLength * Math.cos(incidentAndDiffraction_angles[2]);
+	  totalPath = (1 - getParameterValue(3)) * Math.sqrt(xdiff * xdiff + ydiff * ydiff + zdiff * zdiff)
+			  + getParameterValue(3) * normalPathLength;
+	  if (positionCorr)
+		  arg1 = absorption * (totalPath * position - meanShapeCorr);// * Constants.LAMBDA_SPEED_NEUTRON_CONV_REC;
+	  else
+		  arg1 = absorption * (totalPath - meanShapeCorr);
+	  if (arg1 < 200.0)
+		  intensity = Math.exp(-arg1);
+	  else
+		  intensity = 0.0f;
+
+	  return intensity;
+  }
+
   public void computeAbsorptionPath(double[][] incidentAndDiffraction_angles, double absorption, double[] position,
                                     double[] intensity, double toLambda) {
     double totalPath = 0.0;

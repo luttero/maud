@@ -40,6 +40,8 @@ public class Maincat extends XRDcat {
     super(afile, alabel);
   }
 
+  public Maincat() {}
+
   public void writeDataField(BufferedWriter out) {
     String blockID = identifier + "_" + Misc.toStringNoBlank(toXRDcatString());
     CIFDataBlock.writeBlockDecl(out, blockID, this);

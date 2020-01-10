@@ -101,8 +101,13 @@ public class Diffraction extends XRDcat {
 		JOptionsDialog adialog = new JDiffractionOptionsD(parent, this);
 		return adialog;
 	}
-
-	public class JDiffractionOptionsD extends JOptionsDialog {
+  
+  public Peak createPeak(SizeStrainModel activeSizeStrain, double dspace, boolean dspacingbase, boolean energyDispersive,
+                         double[] wavelength, double[] radweight, Reflection refl, int i) {
+    return activeSizeStrain.createPeak(dspace, dspacingbase, energyDispersive, wavelength, radweight, refl, i);
+  }
+  
+  public class JDiffractionOptionsD extends JOptionsDialog {
 
 		public JDiffractionOptionsD(Frame parent, XRDcat obj) {
 

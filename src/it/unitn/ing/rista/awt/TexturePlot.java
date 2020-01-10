@@ -419,7 +419,7 @@ public class TexturePlot extends myJFrame {
 
         new BeartexPFPlot(trialPole, hklPF, numberPoleFiguresPF, lastResolution, 0, lastResolution,
                 zoom, logScale, maxAngle, min, max, filterWidth,
-                grayShadedCB.isSelected(), colrsNumber, "Experimental pole figures", false);
+                grayShadedCB.isSelected(), colrsNumber, "Pole figures", false);
       }
     }
   }
@@ -996,7 +996,7 @@ public class TexturePlot extends myJFrame {
             }
             expPF = new Vector(0, 1);
             for (int i = 0; i < numberPoleFiguresPF; i++) {
-              int[][] hkl = (int[][]) allPFs.elementAt(i * 3);
+              int[] hkl = (int[]) allPFs.elementAt(i * 3);
               double[][] pfInt = new double[3][numberOfPFPoint[i]];
               Vector poleFig = (Vector) allPFs.elementAt(i * 3 + 2);
               for (int j = 0; j < numberOfPFPoint[i]; j++) {
@@ -1367,7 +1367,7 @@ public class TexturePlot extends myJFrame {
 				DataFileSet dataset = asample.getActiveDataSet(i);
 	      for (int j = 0; j < dataset.activedatafilesnumber(); j++) {
 		      DiffrDataFile adatafile = dataset.getActiveDataFile(j);
-          angles = adatafile.getTextureAngles(adatafile.getPositions(aphase)[hklnumbersel][0][0]);
+          angles = adatafile.getTextureAngles(adatafile.getPosition(aphase, hklnumbersel, 0));  // todo: v3.0 for all radiations?
 
           datax[index] = angles[0] * Math.cos(angles[1] * Constants.DEGTOPI);
           datay[index] = angles[0] * Math.sin(angles[1] * Constants.DEGTOPI);

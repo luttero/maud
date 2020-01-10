@@ -59,8 +59,9 @@ public class PlotFitting extends PlotDataFile {
   JLiveOptionsD livedialog = null;
   double[][] peaksList = null;
   double[] secondDerivative = null;
-  SpectrumPlotPanel thePlotPanel = null;
+  public SpectrumPlotPanel thePlotPanel = null;
   DiffrDataFile[] datafile;
+  boolean createMenuBar = true;
 
   boolean toolUsed = true;
 
@@ -76,11 +77,43 @@ public class PlotFitting extends PlotDataFile {
 
   }
 
+	public PlotFitting(Frame parent, DiffrDataFile[] afile, boolean menuBar) {
+
+		this(parent, afile, null, null, menuBar);
+
+	}
+
   public PlotFitting(Frame parent, DiffrDataFile[] afile, double[][] peaks,
                      double[] derivative2) {
 
     this(parent);
 
+    if (createMenuBar)
+      createDefaultMenuBar();
+
+    Container p1 = getContentPane();
+    p1.setLayout(new BorderLayout());
+    p1.setBackground(Color.white);
+    peaksList = peaks;
+    secondDerivative = derivative2;
+    datafile = afile;
+    thePlotPanel = new SpectrumPlotPanel(afile, peaks, derivative2);
+    if (thePlotPanel != null) {
+	    p1.add(thePlotPanel, BorderLayout.CENTER);
+	    setComponentToPrint(thePlotPanel.getComponentToPrint());
+    }
+//    thePlotPanel.getComponentToPrint().setBackground(Color.white);
+
+  }
+
+	public PlotFitting(Frame parent, DiffrDataFile[] afile, double[][] peaks,
+	                   double[] derivative2, boolean menuBar) {
+
+		this(parent);
+
+		createMenuBar = menuBar;
+
+		if (createMenuBar)
     createDefaultMenuBar();
 
     Container p1 = getContentPane();
@@ -1111,8 +1144,7 @@ public class PlotFitting extends PlotDataFile {
               for (int ij = 0; ij < numberphases; ij++)
                 if (tmpphase == phaselist[ij])
                   phaseindex = ij;
-	            // todo modify for more peaks par pattern
-	            double pos = adataset.getActiveDataFile(0).getPositions(tmpphase)[peaklist.elementAt(i).getOrderPosition()][0][ijn];
+	            double pos = adataset.getActiveDataFile(0).getPosition(tmpphase, peaklist.elementAt(i).getOrderPosition(), ijn);
 	            datapeak[j] = thePlotPanel.datafile[0].convertXDataForPlot(pos, wave, mode);
 
               datapeak[j + 1] = (double) (phaseindex + 1);

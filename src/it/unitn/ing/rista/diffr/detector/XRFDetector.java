@@ -161,8 +161,8 @@ public class XRFDetector extends Detector {
 		if (version < 2.72) {
 			parameterField[escape_peaks_id].setValue(1.0);
 			parameterField[sum_peaks_id].setValue(0.0);
-			System.out.println("Warning: cenversion from old Maud version (< 2.72): escape peaks parameter reset to 1.0");
-			System.out.println("Warning: cenversion from old Maud version (< 2.72): pile-up parameter reset to 0.0");
+			System.out.println("Warning: conversion from old Maud version (< 2.72): escape peaks parameter reset to 1.0");
+			System.out.println("Warning: conversion from old Maud version (< 2.72): pile-up parameter reset to 0.0");
 		}
 	}
 

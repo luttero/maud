@@ -43,6 +43,24 @@ from the older one.
 
 Maud Version notes:
 
+(13/11/2019):   2.93. The "Early snow" release.
+                Will we get finally a good "deep snow" winter this year?
+                Fixed a problem with strain computation not working.
+                Fixed the plugins system that was not loading anymore an
+                external jar. For windows/linux the plugins directory to use
+                is still in the Maud directory next to the "lib" directory.
+                For Macos you should use a directory named "Maud/plugins"
+                in your user home under "~/Library/Application Support".
+
+(29/07/2019):   2.92. The "White sands" release.
+                You can die easily out there, but thanks to Sven I can still push
+                out another release.
+                Fixed some bugs for Hippo/TOF refinement plus some minor problems
+                with the wizard. New batch refinement for LCLS2 data. MTex
+                texture is working, but the odf is still not saved. So everytime
+                you close Maud or the analysis you loose the odf and you have
+                to recompute it again. Will be fixed in a next release.
+
 (07/01/2019):   2.91. The "Chopper" release.
                 The bigdog is running again.
                 Beta only release. Added wizard for LCLS images data.

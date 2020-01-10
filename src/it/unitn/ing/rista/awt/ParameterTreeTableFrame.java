@@ -220,6 +220,23 @@ public class ParameterTreeTableFrame extends myJFrame {
     cmdB.setToolTipText("Use this to fix all spectra count monitor parameters (eq. to a scale factor)");
     jp.add(cmdB);
 
+	  cmdB = new JButton("Free all linear abs par");
+	  cmdB.addActionListener(new ActionListener() {
+		  public void actionPerformed(ActionEvent event) {
+			  getFileParent().freeAllLinearAbsorption();
+		  }
+	  });
+	  cmdB.setToolTipText("Use this to free all spectra linear absorption parameters (only TOF)");
+	  jp.add(cmdB);
+	  cmdB = new JButton("Fix all all linear abs par");
+	  cmdB.addActionListener(new ActionListener() {
+		  public void actionPerformed(ActionEvent event) {
+			  getFileParent().fixAllLinearAbsorptionPreserveBound();
+		  }
+	  });
+	  cmdB.setToolTipText("Use this to fix all spectra linear absorption parameters (only TOF)");
+	  jp.add(cmdB);
+
     cmdB = new JButton("Bound all banks coeffs");
     cmdB.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {

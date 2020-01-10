@@ -57,6 +57,9 @@ public class AngularCalibration extends it.unitn.ing.rista.diffr.Calibration {
   }
 
   public int getBankNumber(String bankID) throws Exception {
+    String number = Misc.toStringFinalOnlyDigits(bankID);
+    if (number.length() > 0)
+      return Integer.parseInt(number);
     return 0;
   }
 
@@ -139,5 +142,9 @@ public class AngularCalibration extends it.unitn.ing.rista.diffr.Calibration {
 	public double getChannelStep(DiffrDataFile diffrDataFile) {
 		return 1.0;
 	}
-
+  
+  public double getReal2ThetaValue(int number, double twotheta) {
+    return twotheta;
+  }
+  
 }

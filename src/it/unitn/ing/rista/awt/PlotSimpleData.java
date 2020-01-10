@@ -41,7 +41,10 @@ public class PlotSimpleData extends GraphFrame {
   double[] function = null;
   double[] xCoord = null;
 	boolean dotsPlot = false;
+	int lineStyle = 0;
 	Axis xaxis = null, yaxis = null;
+	String xAxisTitle = "x";
+	String yAxisTitle = "Function";
 
 
 	public PlotSimpleData(Frame parent, double[] function, boolean dots) {
@@ -112,6 +115,30 @@ public class PlotSimpleData extends GraphFrame {
     }
     createGraph(functiond);
   }
+
+	public PlotSimpleData(Frame parent, double[] x, double[] function, int line, boolean plotdots, String xTitleValue, String yTitleValue, String title) {
+
+		super(parent);
+
+		initializeFrame();
+
+		setXaxisTitle(xTitleValue);
+		setYaxisTitle(yTitleValue);
+		lineStyle = line;
+		dotsPlot = plotdots;
+
+		createGraph(x, function);
+
+		setTitle(title);
+	}
+
+	public void setXaxisTitle(String value) {
+		xAxisTitle = value;
+  }
+
+	public void setYaxisTitle(String value) {
+		yAxisTitle = value;
+	}
 
   private void initializeFrame() {
     frameWLabel = "plotParFunction.frameWidth";
@@ -193,7 +220,7 @@ public class PlotSimpleData extends GraphFrame {
 
       DataSet data1 = graph.loadDataSet(data, np);
 	    if (dotsPlot) {
-		    data1.linestyle = 0;
+		    data1.linestyle = lineStyle;
 		    data1.marker = 3;
 		    data1.markerscale = 1;
 		    data1.markercolor = Color.blue;
@@ -228,7 +255,7 @@ public class PlotSimpleData extends GraphFrame {
 
       DataSet data1 = graph.loadDataSet(data, np);
 	    if (dotsPlot) {
-		    data1.linestyle = 0;
+		    data1.linestyle = lineStyle;
 		    data1.marker = 3;
 		    data1.markerscale = 1;
 		    data1.markercolor = Color.blue;
@@ -265,7 +292,7 @@ public class PlotSimpleData extends GraphFrame {
 				DataSet data1 = graph.loadDataSet(data, np);
 				data1.linecolor = SpectrumPlotPanel.getPastelColor(k);
 				if (dotsPlot) {
-					data1.linestyle = 0;
+					data1.linestyle = lineStyle;
 					data1.marker = 3;
 					data1.markerscale = 1;
 					data1.markercolor = SpectrumPlotPanel.getPastelColor(k);
@@ -327,7 +354,7 @@ public class PlotSimpleData extends GraphFrame {
 
     xaxis = graph.createAxis(Axis.BOTTOM);
     xaxis.attachDataSet(data1);
-    xaxis.setTitleText("x");
+    xaxis.setTitleText(xAxisTitle);
     xaxis.setTitleFont(new Font("TimesRoman", Font.BOLD, 14));
     xaxis.setLabelFont(new Font("Helvetica", Font.PLAIN, 12));
     xaxis.setTitleColor(new Color(0, 0, 255));
@@ -338,7 +365,7 @@ public class PlotSimpleData extends GraphFrame {
 
     yaxis = graph.createAxis(Axis.LEFT);
     yaxis.attachDataSet(data1);
-    yaxis.setTitleText("Function");
+    yaxis.setTitleText(yAxisTitle);
     yaxis.setTitleFont(new Font("TimesRoman", Font.BOLD, 14));
     yaxis.setLabelFont(new Font("Helvetica", Font.PLAIN, 12));
     yaxis.setTitleColor(new Color(0, 0, 255));

@@ -3,7 +3,6 @@ package it.unitn.ing.wizard.LCLS2Wizard;
 import ij.ImagePlus;
 import ij.gui.FlatCCDReflectionSquareRoi;
 import ij.process.ImageProcessor;
-import it.unitn.ing.rista.awt.DiffractionMainFrame;
 import it.unitn.ing.rista.awt.principalJFrame;
 import it.unitn.ing.rista.diffr.*;
 import it.unitn.ing.rista.diffr.cal.*;
@@ -108,69 +107,39 @@ public class LCLS2Wizard extends Wizard {
 //		System.exit(0);
 	}
 
-	public static void setupTheAnalysis(principalJFrame mainFrame, LCLS2data data) {
+	public static void setupTheAnalysis(FilePar parameterfile, LCLS2data data) {
 //		int max_nbkg = LCLS2ConfigData.getPropertyValue("background_parameters_to_add", 2);
 
-		if (data.useTempletaFile)  {
-			String[] folderAndName = Misc.getFolderandName(LCLS2ConfigData.filenameTemplate);
-			java.io.Reader in = null;
-			try {
-				if (mainFrame.parameterfile != null) {
-					mainFrame.parameterfile.dispose(); // If we don't call this no finalization will occur!!
-					mainFrame.parameterfile = null;
-				}
-				mainFrame.parameterfile = new FilePar(folderAndName[1], mainFrame);
-				in = Misc.getReader(folderAndName[0], folderAndName[1]);
-				mainFrame.parameterfile.readall(in, null);
-				mainFrame.parameterfile.setFileName("noname.par", false);
-				mainFrame.parameterfile.setDirectory(folderAndName[0]);
-				if (mainFrame.titleField != null) {
-					mainFrame.titleField.setText(mainFrame.parameterfile.getTitleField());
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		} else {
-			if (mainFrame.parameterfile != null) {
-				mainFrame.parameterfile.dispose(); // If we don't call this no finalization will occur!!
-				mainFrame.parameterfile = null;
-			}
-
-			// check file existing
-			String[] folderAndName = new String[2];
-			folderAndName[0] = Constants.documentsDirectory;
-			folderAndName[1] = "noname.par";
-
-			mainFrame.parameterfile = new FilePar(folderAndName[1], mainFrame);
-			mainFrame.parameterfile.setDirectory(folderAndName[0]);
-
-		}
 		DataFileSet adataset = null;
-		Sample asample = null;
+		Sample asample = parameterfile.getActiveSample();
 		int numberBackground = 3;
-		if (!data.useTempletaFile) {
-			mainFrame.parameterfile.removesample();
-			mainFrame.parameterfile.loadingFile = true;
-			if ((asample = mainFrame.parameterfile.getActiveSample()) == null)
-				asample = mainFrame.parameterfile.newsample();
+		if (!data.useTemplateFile) {
+			parameterfile.removesample();
+			parameterfile.loadingFile = true;
+			if (asample == null)
+				asample = parameterfile.newsample();
 			asample.setLabel(data.sampleName);
 			asample.initializeAsNew();
 			asample.setPhaseRefinementBehaviour(2);
 //		boolean original = analysis.storeSpectraWithAnalysis();
 //		int numberIndividualBackground = MaudPreferences.getInteger("lcls2Wizard.numberOfIndividualBackgroundParameters", 3);
-			numberBackground = LCLS2ConfigData.getPropertyValue("lcls2Wizard.numberOfGeneralBackgroundParameters", 3);
+			numberBackground = LCLS2ConfigData.getPropertyValue("numberOfGeneralBackgroundParameters", 3);
 		}
-		asample = mainFrame.parameterfile.getActiveSample();
-		mainFrame.parameterfile.setStoreSpectraOption(true);
+//		asample = parameterfile.getActiveSample();
+		parameterfile.setStoreSpectraOption(true);
 
 		int indexDataset = 0;
+//		System.out.println("Data panels: " + data.panels.size());
 		for (int i = 0; i < data.panels.size(); i++) {
 			Cspad panel = data.panels.elementAt(i);
+//			System.out.println("Panel: " + i + " " + panel.enabled);
 			if (panel.enabled) {
+//				System.out.println("Sensors: " + panel.detectors.size());
 				for (int j = 0; j < panel.detectors.size(); j++) {
 					SensorImage sensor = panel.detectors.elementAt(j);
+//					System.out.println("Sensor: " + j + " " + sensor.enabled);
 					if (sensor.enabled) {
-						if (!data.useTempletaFile) {
+						if (!data.useTemplateFile) {
 							if (i == 0 && j == 0)
 								adataset = asample.getDataSet(0);
 							else
@@ -205,7 +174,7 @@ public class LCLS2Wizard extends Wizard {
 							angcal.setDetectorOmegaDN(sensor.omegaDN);
 							angcal.setDetectorPhiDA(sensor.phiDA);
 
-							mainFrame.parameterfile.loadingFile = false;
+							parameterfile.loadingFile = false;
 							inst.setInstrumentBroadening(InstrumentBroadeningPVCaglioti.modelID);
 							InstrumentBroadeningPVCaglioti instBroad = (InstrumentBroadeningPVCaglioti) inst.getInstrumentBroadening();
 							instBroad.initializeAsNew();
@@ -231,17 +200,57 @@ public class LCLS2Wizard extends Wizard {
 
 						adataset.removeAllDisabledFiles();
 
-						mainFrame.parameterfile.loadingFile = true;
+						parameterfile.loadingFile = true;
 					}
 
 				}
 			}
 		}
 
-		mainFrame.parameterfile.loadingFile = false;
+		parameterfile.loadingFile = false;
 //		analysis.setStoreSpectraOption(original);
-		mainFrame.parameterfile.refreshAll(false);
+		parameterfile.refreshAll(false);
+	}
 
+	public static void setupTheAnalysis(principalJFrame mainFrame, LCLS2data data) {
+//		int max_nbkg = LCLS2ConfigData.getPropertyValue("background_parameters_to_add", 2);
+
+		if (data.useTemplateFile)  {
+			String[] folderAndName = Misc.getFolderandName(LCLS2ConfigData.filenameTemplate);
+			java.io.Reader in = null;
+			try {
+				if (mainFrame.parameterfile != null) {
+					mainFrame.parameterfile.dispose(); // If we don't call this no finalization will occur!!
+					mainFrame.parameterfile = null;
+				}
+				mainFrame.parameterfile = new FilePar(folderAndName[1], mainFrame);
+				in = Misc.getReader(folderAndName[0], folderAndName[1]);
+				mainFrame.parameterfile.readall(in, null);
+				mainFrame.parameterfile.setFileName("noname.par", false);
+				mainFrame.parameterfile.setDirectory(folderAndName[0]);
+				if (mainFrame.titleField != null) {
+					mainFrame.titleField.setText(mainFrame.parameterfile.getTitleField());
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else {
+			if (mainFrame.parameterfile != null) {
+				mainFrame.parameterfile.dispose(); // If we don't call this no finalization will occur!!
+				mainFrame.parameterfile = null;
+			}
+
+			// check file existing
+			String[] folderAndName = new String[2];
+			folderAndName[0] = Constants.documentsDirectory;
+			folderAndName[1] = "noname.par";
+
+			mainFrame.parameterfile = new FilePar(folderAndName[1], mainFrame);
+			mainFrame.parameterfile.setDirectory(folderAndName[0]);
+
+		}
+
+		setupTheAnalysis(mainFrame.parameterfile, data);
 		mainFrame.initParameters();
 
 	}

@@ -122,8 +122,8 @@ public class HybridMonteCarloRefinement extends OptimizationAlgorithm {
     setTrialsNumber("100");
     // Least squares
     stringField[1] = MaudPreferences.getPref(iterations, "3");
-    stringField[3] = MaudPreferences.getPref("leastSquares.derivateStep", "0.001");
-    stringField[4] = MaudPreferences.getPref("leastSquares.doubleDerivate", "false");
+    stringField[3] = MaudPreferences.getPref("leastSquares.derivativeStep", "0.0001");
+    stringField[4] = MaudPreferences.getPref("leastSquares.doubleDerivative", "false");
     stringField[2] = MaudPreferences.getPref("leastSquares.precision", "0.00000001");
   }
 

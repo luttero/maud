@@ -88,12 +88,12 @@ public class ESRFB11QDataFile extends it.unitn.ing.rista.diffr.data.DoubleColumn
 
 					initData(datasetsNumber);
 
-          double dspace = 0.0;
+          double energy = 0.0;
           for (int i = 0; i < datasetsNumber; i++) {
           	token1 = (String) x.elementAt(i);
           	token2 = (String) y.elementAt(i);
-          	dspace = 2 * Math.PI / Double.valueOf(token1).doubleValue();
-          	setCalibratedXData(i, dspace);
+          	energy = 2 * Math.PI / Double.valueOf(token1).doubleValue();
+          	setCalibratedXData(i, energy);
        			double intensityValue = Double.valueOf(token2).doubleValue();
 						if (intensityValue < 0.0) // we will not accept it, we suppose is an error
 							intensityValue = 0.0;

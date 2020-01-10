@@ -117,30 +117,15 @@ public class RadiationType extends XRDcat {
       double weight, totweight = 0.0, sumwave = 0.0;
       int radnumber = getLinesCount();
       for (int i = 0; i < radnumber; i++) {
-        Radiation rad = getRadiation(i);
-        if (rad != null) {
-          weight = rad.getWeigth().getValueD();
-          sumwave += rad.getWavelength().getValueD() * weight;
-          totweight += weight;
-        }
+        weight = getRadiationWeigth(i);
+        sumwave += getRadiationWavelength(i) * weight;
+        totweight += weight;
       }
 	  if (sumwave == 0)
 		  return MaudPreferences.getDouble("radiation.fake_wavelength_TOF_EnergyDispersive", 0.001);
     return sumwave / totweight;
 //    }
 //    return 0.001;
-  }
-
-  public double getRadiationWavelength() {
-//    if (isConstantWavelenght()) {
-      checkRadiation();
-      Radiation rad = getRadiation(0);
-      if (rad == null)
-	      System.out.println("No wavelength defined! Using fake wavelength for TOF/Energy dispersive");
-      else
-        return rad.getWavelength().getValueD();
-//    }
-    return MaudPreferences.getDouble("radiation.fake_wavelength_TOF_EnergyDispersive", 0.001);
   }
 
   public double getRadiationWavelength(int index) {
@@ -180,8 +165,12 @@ public class RadiationType extends XRDcat {
 		}
 		return shortestWave;
 	}
-
-	public double getRadiationWeightForFluorescence(int index) {
+  
+  public double getRadiationEnergy(int index) {
+    return lambdaToEnergy(getRadiationWavelength(index));
+  }
+  
+  public double getRadiationWeightForFluorescence(int index) {
 		return getRadiationWeigth(index);
 	}
 

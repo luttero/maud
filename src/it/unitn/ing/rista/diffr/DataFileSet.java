@@ -26,8 +26,9 @@ import static java.lang.System.*;
 import static java.util.Collections.sort;
 import java.io.*;
 import java.awt.*;
+import java.util.concurrent.TimeUnit;
 
-import it.unitn.ing.rista.chemistry.XRayDataSqLite;
+import it.unitn.ing.rista.diffr.instrument.AngleEnergyMapInstrument;
 import it.unitn.ing.rista.diffr.instrument.DefaultInstrument;
 import it.unitn.ing.rista.io.cif.*;
 import it.unitn.ing.rista.util.*;
@@ -178,8 +179,10 @@ public class DataFileSet extends XRDcat {
 	boolean[] needRestore = null;
 	Vector overallVector = null;
 
-	private Map<Phase, double[][]> phaseStructureFactors = new Hashtable<Phase, double[][]>();
-	private Map<Phase, double[][][][]> phaseScatFactors = new Hashtable<Phase, double[][][][]>();
+	private Map<Phase, double[][][]> phaseStructureFactors = new Hashtable<>();
+	private Map<Phase, int[]> phaseStructureFactorsID = new Hashtable<>();
+	public static final int numberStructureFactors = 3;   // experimental, calculated, errors
+	private Map<Phase, double[][][][]> phaseScatFactors = new Hashtable<>();
 
 	public DataFileSet(XRDcat afile, String alabel) {
     super(afile, alabel);
@@ -190,6 +193,12 @@ public class DataFileSet extends XRDcat {
   public DataFileSet(XRDcat afile) {
     this(afile, "DataFileSet_x");
   }
+
+	public DataFileSet() {
+		identifier = "dataset";
+		IDlabel = "dataset";
+		description = "select this to use a dataset";
+	}
 
   @Override
   public void initConstant() {
@@ -690,6 +699,85 @@ public class DataFileSet extends XRDcat {
 		return null;
 	}
 
+	public void addDatafilesFromScript(String filename) {
+		Constants.refreshTreePermitted = false;
+
+		if (filename != null) {
+			String[] folderandname = Misc.getFolderandName(filename);
+
+			BufferedReader reader = Misc.getReader(filename);
+			if (reader != null) {
+				try {
+
+					String token;
+					StringTokenizer st;
+					String linedata = reader.readLine();
+					Vector cifItems = new Vector(0, 1);
+
+					int pivot = 0;
+					while (!linedata.toLowerCase().startsWith("loop_"))
+						linedata = reader.readLine();
+					linedata = reader.readLine();
+					while (linedata.startsWith("_")) {
+						st = new StringTokenizer(linedata, "' ,\t\r\n");
+						while (st.hasMoreTokens()) {
+							token = st.nextToken();
+							cifItems.addElement(token);
+							if (token.equalsIgnoreCase("_riet_meas_datafile_name"))
+								pivot = cifItems.size();
+						}
+						linedata = reader.readLine();
+					}
+
+					int maxindex = cifItems.size();
+					int index = 0;
+
+					DiffrDataFile datafile[] = null;
+					String[] listItems = new String[maxindex];
+
+					while ((linedata != null)) {
+						st = new StringTokenizer(linedata, "' ,\t\r\n");
+						while (st.hasMoreTokens()) {
+							token = st.nextToken();
+							index++;
+							if (index == pivot) {
+								datafile = addDataFileforName(folderandname[0] + token, false);
+//								System.out.println(datafile);
+							} else if (index > 0) {
+								listItems[index - 1] = token;
+							}
+
+							if (index == maxindex) {
+								index = 0;
+								if (datafile != null)
+									for (int i = 0; i < maxindex; i++)
+										if (i != pivot - 1) {
+											for (int ij = 0; ij < datafile.length; ij++)
+												datafile[ij].setField((String) cifItems.elementAt(i), listItems[i], "0", "0", "0", false,
+														null, null, null, null, null, false, false);
+//								System.out.println(datafile);
+//					System.out.println((String) cifItems.elementAt(i) + listItems[i]);
+										}
+							}
+						}
+						linedata = reader.readLine();
+					}
+
+				} catch (IOException e) {
+					System.out.println("Error loading cif file!");
+				}
+				try {
+					reader.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+					// LogSystem.printStackTrace(e);
+				}
+			}
+		}
+		Constants.refreshTreePermitted = true;
+		notifyUpObjectChanged(this, 0);
+	}
+
 	public void checkOwnPolynomial() {
     for (int i = 0; i < datafilesnumber(); i++) {
       getDataFile(i).checkOwnPolynomial();
@@ -960,80 +1048,58 @@ public class DataFileSet extends XRDcat {
     theindex = index;
   }
 
-/*  public int getIndex() {
-    if (theindex == -1)
-      refreshIndex();
-    return theindex;
-  }
-
-  public void refreshIndex() {
-    getFilePar().refreshDataIndices();
-  }*/
-
 	public void refreshIndices(Phase phase) {
+    int linesCount = getInstrument().getRadiationType().getLinesCount();
 		int numberOfReflections = phase.gethklNumber();
-//		System.out.println("Refreshing structure factors -------------------- " + numberOfReflections);
-		double[][] structureFactors = phaseStructureFactors.get(phase);
+		double[][][] structureFactors = phaseStructureFactors.get(phase);
+		int[] structureFactorsID = phaseStructureFactorsID.get(phase);
 		if (structureFactors == null) {
-			structureFactors = new double[4][numberOfReflections];
+//			System.out.println("Refresh indices 1 - numbers: " + numberOfReflections + " " + linesCount);
+			structureFactors = new double[numberStructureFactors][numberOfReflections][linesCount];
 			phaseStructureFactors.put(phase, structureFactors);
-//			System.out.println("Resetting structure factors");
+			structureFactorsID = new int[numberOfReflections];
+			phaseStructureFactorsID.put(phase, structureFactorsID);
 			resetStructureFactors(phase);
-		} else if (structureFactors[0].length != numberOfReflections) {
-//			System.out.println("Problem here, to be implemented");
-//			System.out.println("Updating structure factors");
-			double[][] newStructureFactors = new double[4][numberOfReflections];
-
-			updateStructureFactorsFromTo(phase, structureFactors, newStructureFactors);
-
+		} else if (structureFactors[0].length != numberOfReflections || structureFactors[0][0].length != linesCount) {
+//			System.out.println("Refresh indices 2 - numbers: " + numberOfReflections + " " + linesCount);
+			double[][][] newStructureFactors = new double[numberStructureFactors][numberOfReflections][linesCount];
+			int[] newStructureFactorsID = new int[numberOfReflections];
+			updateStructureFactorsFromTo(phase, structureFactors, newStructureFactors, structureFactorsID, newStructureFactorsID);
 			phaseStructureFactors.remove(phase);
 			phaseStructureFactors.put(phase, newStructureFactors);
-//			resetStructureFactors(phase);
+			phaseStructureFactorsID.remove(phase);
+			phaseStructureFactorsID.put(phase, newStructureFactorsID);
 		}
+//		System.out.println("Reloading scattering factors - numbers: " + numberOfReflections + " " + linesCount);
 		reloadScatteringFactors(phase);
-/*		double[][][][] scatFactors = phaseScatFactors.get(phase);
-		int linesCount = 1; // todo, should be this in the end: getInstrument().getRadiationType().getLinesCount();
-		if (scatFactors == null) {
-			scatFactors = new double[numberOfReflections][linesCount][phase.getFullAtomList().size()][2];
-			phaseScatFactors.put(phase, scatFactors);
-			reloadScatteringFactors(phase);
-		} else if (scatFactors.length != numberOfReflections ||
-				(scatFactors.length > 0 && scatFactors[0].length != linesCount) ||
-				(scatFactors.length > 0 && scatFactors[0].length > 0 && scatFactors[0][0].length != phase.getFullAtomList().size())
-				|| resetScatFactors) {
-			phaseScatFactors.remove(phase);
-			scatFactors = new double[numberOfReflections][linesCount][phase.getFullAtomList().size()][2];
-			phaseScatFactors.put(phase, scatFactors);
-			reloadScatteringFactors(phase);
-		}*/
-
 		for (int i = 0; i < activedatafilesnumber(); i++) {
 			getActiveDataFile(i).refreshIndices(phase);
 		}
 	}
 
-	private void updateStructureFactorsFromTo(Phase phase, double[][] structureFactors, double[][] newStructureFactors) {
+	private void updateStructureFactorsFromTo(Phase phase, double[][][] structureFactors, double[][][] newStructureFactors, int[] structureFactorsID, int[] newStructureFactorsID) {
 		int numberOfReflections = phase.gethklNumber();
+		int linesCount = getInstrument().getRadiationType().getLinesCount();
 		for (int i = 0; i < numberOfReflections; i++) {
 			Reflection refl = phase.getReflex(i);
 			int reflID = Reflection.getUniqueIdFor(refl.getH(), refl.getK(), refl.getL());
 			boolean stop = false;
 			int incr = 0;
 			int index = i;
-			if (index < structureFactors[3].length && reflID == structureFactors[3][index])
+			if (index < structureFactorsID.length && reflID == structureFactorsID[index])
 				stop = true;
 			while (!stop) {
 				index = i + incr;
 				boolean outOfRange = true;
-				if (index < structureFactors[3].length) {
+				if (index < structureFactorsID.length) {
 					outOfRange = false;
-					if (reflID == structureFactors[3][index])
+					if (reflID == structureFactorsID[index])
 						stop = true;
 				}
 				index = i - incr;
-				if (index >= 0 && index < structureFactors[3].length) {
+				if (index >= 0 && index < structureFactorsID.length) {
 					outOfRange = false;
-					if (reflID == structureFactors[3][index])
+					if (reflID == structureFactorsID[index])
 						stop = true;
 				}
 				if (outOfRange && incr > 10) {
@@ -1043,14 +1109,18 @@ public class DataFileSet extends XRDcat {
 				incr++;
 			}
 			if (index >=0) {
-				for (int j = 0; j < 4; j++) {
-					newStructureFactors[j][i] = structureFactors[j][index];
+				for (int j = 0; j < numberStructureFactors; j++) {
+					for (int n = 0; n < linesCount; n++)
+						newStructureFactors[j][i][n] = structureFactors[j][index][n];
 				}
+				newStructureFactorsID[i] = structureFactorsID[index];
 			} else {
-				newStructureFactors[0][i] = Constants.STARTING_STRUCTURE_FACTOR * Constants.STARTING_STRUCTURE_FACTOR;
-				newStructureFactors[1][i] = -1.0;
-				newStructureFactors[2][i] = 0.0;
-				newStructureFactors[3][i] = reflID;
+				for (int n = 0; n < linesCount; n++) {
+					newStructureFactors[0][i][n] = Constants.STARTING_STRUCTURE_FACTOR * Constants.STARTING_STRUCTURE_FACTOR;  // experimental
+					newStructureFactors[1][i][n] = -1.0; // calculated
+					newStructureFactors[2][i][n] = 0.0;  // error
+				}
+				newStructureFactorsID[i] = reflID;
 			}
 		}
 	}
@@ -1058,18 +1128,21 @@ public class DataFileSet extends XRDcat {
 	static boolean checkHKL = true;
 
 	private void resetStructureFactors(Phase phase) {
-		double[][] structureFactors = getStructureFactors(phase);
+		double[][][] structureFactors = getStructureFactors(phase);
+		int[] structureFactorsID = getStructureFactorsID(phase);
 		if (structureFactors != null && structureFactors.length != 0) {
 //      System.out.println("resetting exp structure factors");
 			int phaseIndex = getSample().getPhaseIndex(phase);
 			if (needRestore != null && phaseIndex < needRestore.length && needRestore[phaseIndex]) {
 //				System.out.println("Loading structure factors");
 				for (int i1 = 0; i1 < structureFactors[0].length; i1++) {
-					structureFactors[0][i1] = Constants.STARTING_STRUCTURE_FACTOR * Constants.STARTING_STRUCTURE_FACTOR;
-					structureFactors[1][i1] = -1.0;
-					structureFactors[2][i1] = 0.0;
+					for (int i2 = 0; i2 < structureFactors[0][0].length; i2++) {
+						structureFactors[0][i1][i2] = Constants.STARTING_STRUCTURE_FACTOR * Constants.STARTING_STRUCTURE_FACTOR;
+						structureFactors[1][i1][i2] = -1.0;
+						structureFactors[2][i1][i2] = 0.0;
+					}
 					Reflection refl = phase.getReflex(i1);
-					structureFactors[3][i1] = Reflection.getUniqueIdFor(refl.getH(), refl.getK(), refl.getL());
+					structureFactorsID[i1] = Reflection.getUniqueIdFor(refl.getH(), refl.getK(), refl.getL());
 				}
 				int h = -1, k = -1, l = -1;
 				if (phaseIndex >= 0) {
@@ -1124,12 +1197,15 @@ public class DataFileSet extends XRDcat {
 						}
 						if (check) {
 							if (j < tmpVector[3].size())
-								structureFactors[0][j] = ((double[]) tmpVector[3].elementAt(index))[0];
+								structureFactors[0][j][0] = ((double[]) tmpVector[3].elementAt(index))[0];
 							if (j < tmpVector[4].size())
-								structureFactors[1][j] = ((double[]) tmpVector[4].elementAt(index))[0];
+								structureFactors[1][j][0] = ((double[]) tmpVector[4].elementAt(index))[0];
 							if (j < tmpVector[5].size())
-								structureFactors[2][j] = ((double[]) tmpVector[5].elementAt(index))[0];
-							structureFactors[3][j] = Reflection.getUniqueIdFor(refl.getH(), refl.getK(), refl.getL());
+								structureFactors[2][j][0] = ((double[]) tmpVector[5].elementAt(index))[0];
+							for (int n1 = 1; n1 < structureFactors.length; n1++)
+								for (int n = 1; n < structureFactors[0][j].length; n++)
+									structureFactors[n1][j][n] = structureFactors[n1][j][0];
+							structureFactorsID[j] = Reflection.getUniqueIdFor(refl.getH(), refl.getK(), refl.getL());
 						} else
 							out.println("Reflection: " + h + "," + k + "," + l + " not corresponding on loading structure factors");
 					}
@@ -1137,24 +1213,35 @@ public class DataFileSet extends XRDcat {
 				needRestore[phaseIndex] = false;
 			} else {
 				for (int i1 = 0; i1 < structureFactors[0].length; i1++) {
-					structureFactors[0][i1] = Constants.STARTING_STRUCTURE_FACTOR * Constants.STARTING_STRUCTURE_FACTOR;
-					structureFactors[1][i1] = -1.0;
-					structureFactors[2][i1] = 0.0;
+					for (int n = 0; n < structureFactors[0][i1].length; n++) {
+						structureFactors[0][i1][n] = Constants.STARTING_STRUCTURE_FACTOR * Constants.STARTING_STRUCTURE_FACTOR;
+						structureFactors[1][i1][n] = -1.0;
+						structureFactors[2][i1][n] = 0.0;
+					}
 					Reflection refl = phase.getReflectionVector().elementAt(i1);
-					structureFactors[3][i1] = Reflection.getUniqueIdFor(refl.getH(), refl.getK(), refl.getL());
+					structureFactorsID[i1] = Reflection.getUniqueIdFor(refl.getH(), refl.getK(), refl.getL());
 				}
 			}
 		}
 	}
 
-	public void storeComputedStructureFactors(Phase phase, double[] fhkl) {
-		double[][] structureFactors = phaseStructureFactors.get(phase);
-		arraycopy(fhkl, 0, structureFactors[1], 0, structureFactors[0].length);
+	public void storeComputedStructureFactors(Phase phase, double[][] fhkl) {
+		double[][][] structureFactors = phaseStructureFactors.get(phase);
+//		System.out.println("Store: " + structureFactors[0].length + " " + structureFactors[0][0].length);
+		for (int i1 = 0; i1 < structureFactors[0].length; i1++)
+			for (int n = 0; n < structureFactors[0][i1].length; n++) {
+//        System.out.println("Store: " + i1 + " " + n + " " + fhkl[i1][n]);
+        structureFactors[1][i1][n] = fhkl[i1][n];
+      }
+//		arraycopy(fhkl, 0, structureFactors[1], 0, structureFactors[0].length);
 	}
 
-	public void storeExperimentalStructureFactors(Phase phase, double[] fhkl) {
-		double[][] structureFactors = phaseStructureFactors.get(phase);
-		arraycopy(fhkl, 0, structureFactors[0], 0, structureFactors[0].length);
+	public void storeExperimentalStructureFactors(Phase phase, double[][] fhkl) {
+		double[][][] structureFactors = phaseStructureFactors.get(phase);
+		for (int i1 = 0; i1 < structureFactors[0].length; i1++)
+			for (int n = 0; n < structureFactors[0][i1].length; n++)
+				structureFactors[0][i1][n] = fhkl[i1][n];
+//		arraycopy(fhkl, 0, structureFactors[0], 0, structureFactors[0].length);
 	}
 
 	public void storeComputedOverExperimentalStructureFactors() {
@@ -1164,8 +1251,11 @@ public class DataFileSet extends XRDcat {
 	}
 
 	public void storeComputedOverExperimentalStructureFactors(Phase phase) {
-		double[][] structureFactors = phaseStructureFactors.get(phase);
-		arraycopy(structureFactors[1], 0, structureFactors[0], 0, structureFactors[0].length);
+		double[][][] structureFactors = phaseStructureFactors.get(phase);
+		for (int i1 = 0; i1 < structureFactors[0].length; i1++)
+			for (int n = 0; n < structureFactors[0][i1].length; n++)
+				structureFactors[0][i1][n] = structureFactors[1][i1][n];
+//		arraycopy(structureFactors[1], 0, structureFactors[0], 0, structureFactors[0].length);
 	}
 
 	public void storeExperimentalOverComputedStructureFactors() {
@@ -1175,19 +1265,35 @@ public class DataFileSet extends XRDcat {
 	}
 
 	public void storeExperimentalOverComputedStructureFactors(Phase phase) {
-		double[][] structureFactors = phaseStructureFactors.get(phase);
-		arraycopy(structureFactors[0], 0, structureFactors[1], 0, structureFactors[0].length);
+		double[][][] structureFactors = phaseStructureFactors.get(phase);
+		for (int i1 = 0; i1 < structureFactors[0].length; i1++)
+			for (int n = 0; n < structureFactors[0][i1].length; n++)
+				structureFactors[1][i1][n] = structureFactors[0][i1][n];
+//		arraycopy(structureFactors[0], 0, structureFactors[1], 0, structureFactors[0].length);
 	}
 
-		public double[][] getStructureFactors(Phase phase) {
-		 return phaseStructureFactors.get(phase);
-	 }
+	public double[][][] getStructureFactors(Phase phase) {
+		return phaseStructureFactors.get(phase);
+	}
+
+	public double[] getCalculatedStructureFactors(Phase phase, int reflIndex) {
+//	  System.out.println("SF: " + phaseStructureFactors.get(phase)[1][reflIndex][0]);
+		return phaseStructureFactors.get(phase)[1][reflIndex];
+	}
+
+	public double[] getExperimentalStructureFactors(Phase phase, int reflIndex) {
+		return phaseStructureFactors.get(phase)[0][reflIndex];
+	}
+
+	public int[] getStructureFactorsID(Phase phase) {
+		return phaseStructureFactorsID.get(phase);
+	}
 
 	public void reloadScatteringFactors(Phase phase) {
 		Vector<AtomSite> atoms = phase.getFullAtomList();
 		int atomsNumber = atoms.size();
 		int numberofpeaks = phase.gethklNumber() + 1;
-		int linesCount = 1; // todo, should be this in the end: getInstrument().getRadiationType().getLinesCount();
+		int linesCount = getInstrument().getRadiationType().getLinesCount();
 		double[][][][] scatFactors = phaseScatFactors.get(phase);
 		if (scatFactors == null) {
 			scatFactors = new double[numberofpeaks][linesCount][atomsNumber][2];
@@ -1200,26 +1306,45 @@ public class DataFileSet extends XRDcat {
 			phaseScatFactors.put(phase, scatFactors);
 		}
 		double[] fu = new double[2];
-//		boolean isXray = !rad1.isElectron() && !rad1.isNeutron();
-		for (int j = 0; j < linesCount; j++) {
-			Radiation rad1 = getInstrument().getRadiationType().getRadiation(j);
-//			double lambda = getInstrument().getRadiationType().getRadiationWavelength(j);
-//			double energyInKeV = Constants.ENERGY_LAMBDA / lambda * 0.001;
-			fu[0] = 0;
-			fu[1] = 0;
-			for (int ato = 0; ato < atomsNumber; ato++) {
-				AtomSite atom = atoms.elementAt(ato);
-				double[] scatteringFactors = atom.scatfactor(0, rad1);
-				scatFactors[0][j][ato][0] = scatteringFactors[0] + fu[0];
-				scatFactors[0][j][ato][1] = fu[1];
-				for (int kj = 1; kj < numberofpeaks; kj++) {
-					Reflection refl = phase.getReflex(kj - 1);
-					scatteringFactors = atom.scatfactor(refl.d_space, rad1);
-					scatFactors[kj][j][ato][0] = scatteringFactors[0] + fu[0];
-					scatFactors[kj][j][ato][1] = fu[1];
-				}
-			}
-		}
+		boolean isXray = !getInstrument().getRadiationType().isElectron() &&
+        !getInstrument().getRadiationType().isNeutron();
+		if (isXray) {
+      for (int j = 0; j < linesCount; j++) {
+			  double energyInKeV = getInstrument().getRadiationType().getRadiationEnergy(j);
+        fu[0] = 0;
+        fu[1] = 0;
+        for (int ato = 0; ato < atomsNumber; ato++) {
+          AtomSite atom = atoms.elementAt(ato);
+          double[] scatteringFactors = atom.scatfactor(0, energyInKeV);
+          scatFactors[0][j][ato][0] = scatteringFactors[0] + fu[0];
+          scatFactors[0][j][ato][1] = scatteringFactors[1] + fu[1];
+          for (int kj = 1; kj < numberofpeaks; kj++) {
+            Reflection refl = phase.getReflex(kj - 1);
+            scatteringFactors = atom.scatfactor(refl.d_space, energyInKeV);
+            scatFactors[kj][j][ato][0] = scatteringFactors[0] + fu[0];
+            scatFactors[kj][j][ato][1] = scatteringFactors[1] + fu[1];
+          }
+        }
+      }
+    } else {
+      for (int j = 0; j < linesCount; j++) {
+        Radiation rad1 = getInstrument().getRadiationType().getRadiation(j);
+        fu[0] = 0;
+        fu[1] = 0;
+        for (int ato = 0; ato < atomsNumber; ato++) {
+          AtomSite atom = atoms.elementAt(ato);
+          double[] scatteringFactors = atom.scatfactor(0, rad1);
+          scatFactors[0][j][ato][0] = scatteringFactors[0] + fu[0];
+          scatFactors[0][j][ato][1] = scatteringFactors[1] + fu[1];
+          for (int kj = 1; kj < numberofpeaks; kj++) {
+            Reflection refl = phase.getReflex(kj - 1);
+            scatteringFactors = atom.scatfactor(refl.d_space, rad1);
+            scatFactors[kj][j][ato][0] = scatteringFactors[0] + fu[0];
+            scatFactors[kj][j][ato][1] = scatteringFactors[1] + fu[1];
+          }
+        }
+      }
+    }
 	}
 
 	public double[][][][] getScatteringFactor(Phase phase) {
@@ -1260,13 +1385,13 @@ public class DataFileSet extends XRDcat {
 //				String waveS = Fmt.format(wave[i]);
 
 				int numberReflections = phase.gethklNumber();
-				double[][] structureFactors = phaseStructureFactors.get(phase);
+				double[][][] structureFactors = phaseStructureFactors.get(phase);
 				if (structureFactors != null) {
 				for (int j = 0; j < numberReflections && j < structureFactors[0].length; j++) {
 					Reflection refl = phase.getReflex(j);
 					out.write(refl.getH() + " " + refl.getK() + " " + refl.getL() + " " +
-							Fmt.format(structureFactors[0][j]) + " " + Fmt.format(structureFactors[1][j]) + " " +
-							Fmt.format(structureFactors[2][j]));
+							Fmt.format(structureFactors[0][j][0]) + " " + Fmt.format(structureFactors[1][j][0]) + " " +
+							Fmt.format(structureFactors[2][j][0]));
 					out.newLine();
 				}
 				out.newLine();
@@ -1675,6 +1800,9 @@ public class DataFileSet extends XRDcat {
 						}
 					}
 				}
+        for (int j = tmpdatafile.startingindex; j < tmpdatafile.finalindex; j++) {
+          intensity[j - tmpdatafile.startingindex] /= countingTime;
+        }
 				output.write("_pd_block_id " + tmpdatafile.toString());
 				output.newLine();
 				output.newLine();
@@ -1683,7 +1811,8 @@ public class DataFileSet extends XRDcat {
 				output.write("_riet_meas_datafile_calibrated false");
 				output.newLine();
 				output.write(DiffrDataFile.diclistc[DiffrDataFile.countingTimeValueID] + " ");
-				output.write(Fmt.format(countingTime));
+				output.write(Fmt.format(1));
+        useCountTimeToScale = false;
 				output.newLine();
 				if (energyDispersive) {
 					output.write(DiffrDataFile.pd_meas_scan_method + " disp");
@@ -2654,9 +2783,20 @@ public class DataFileSet extends XRDcat {
       }
     }).start();
   }
+  
+  String yTitle = null;
+  String yUnit = null;
 
   public void multiPlot2D(Frame aframe) {
     int datafilenumber = activedatafilesnumber();
+    
+    yTitle = null;
+    yUnit = null;
+    boolean angleAxis = MaudPreferences.getBoolean("multiplot2D.use2Theta", false);
+    if (angleAxis && getInstrument().IDlabel == AngleEnergyMapInstrument.modelID) {
+      yTitle = "2Theta";
+      yUnit = "degrees";
+    }
 
     final Frame newFrame = aframe;
     final DiffrDataFile[] adfile = new DiffrDataFile[datafilenumber];
@@ -2667,10 +2807,112 @@ public class DataFileSet extends XRDcat {
     (new PersistentThread() {
   @Override
       public void executeJob() {
-        new MultiPlotFitting2D(newFrame, adfile, label);
+        new MultiPlotFitting2D(newFrame, adfile, label, yTitle, yUnit);
       }
     }).start();
   }
+  
+	public void plot2DandExportPng(String plotOutput2DFileName) {
+		int datafilenumber = activedatafilesnumber();
+    
+    yTitle = null;
+    yUnit = null;
+    boolean angleAxis = MaudPreferences.getBoolean("multiplot2D.use2Theta", false);
+    if (angleAxis && getInstrument().IDlabel == AngleEnergyMapInstrument.modelID) {
+      yTitle = "2Theta";
+      yUnit = "degrees";
+    }
+
+		final DiffrDataFile[] adfile = new DiffrDataFile[datafilenumber];
+		for (int i = 0; i < datafilenumber; i++) {
+			adfile[i] = getActiveDataFile(i);
+		}
+		final String label = DataFileSet.this.toXRDcatString();
+		MultiPlotFitting2D plot = new MultiPlotFitting2D(null, adfile, label, yTitle, yUnit);
+		(new PersistentThread() {
+			@Override
+			public void executeJob() {
+				try {
+					TimeUnit.MILLISECONDS.sleep(3000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+
+				Component comp = plot.fullGraphPanel;
+				if (comp != null) {
+					Rectangle rect = comp.getBounds();
+					Image fileImage =
+							plot.createImage(rect.width, rect.height);
+					Graphics g = fileImage.getGraphics();
+
+					//write to the image
+					g.clearRect(0, 0, comp.getWidth(), comp.getHeight());
+					comp.paint(g);
+					// write it out in the format you want
+					BeartexPFPlot.savePic(fileImage, "png", plotOutput2DFileName + label + ".png", comp);
+
+					try {
+						TimeUnit.MILLISECONDS.sleep(3000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+
+					//dispose of the graphics content
+					g.dispose();
+					plot.setVisible(false);
+					plot.dispose();
+				}
+			}
+		}).start();
+	}
+
+	public void plotAndExportPng(String plotOutputFileName) {
+		int datafilenumber = activedatafilesnumber();
+
+		final DiffrDataFile[] adfile = new DiffrDataFile[datafilenumber];
+		for (int i = 0; i < datafilenumber; i++) {
+			adfile[i] = getActiveDataFile(i);
+		}
+		final String label = DataFileSet.this.toXRDcatString();
+		PlotFitting plot = new PlotFitting(null, adfile, false);
+		plot.setVisible(true);
+		(new PersistentThread() {
+			@Override
+			public void executeJob() {
+
+				try {
+					TimeUnit.MILLISECONDS.sleep(3000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+
+				Component comp = plot.thePlotPanel.getComponentToPrint();
+				if (comp != null) {
+					Rectangle rect = comp.getBounds();
+					Image fileImage =
+							plot.createImage(rect.width, rect.height);
+					Graphics g = fileImage.getGraphics();
+
+					//write to the image
+					g.clearRect(0, 0, comp.getWidth(), comp.getHeight());
+					comp.paint(g);
+					// write it out in the format you want
+					BeartexPFPlot.savePic(fileImage, "png", plotOutputFileName + label + ".png", comp);
+
+					try {
+						TimeUnit.MILLISECONDS.sleep(3000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+
+					//dispose of the graphics content
+					g.dispose();
+					plot.setVisible(false);
+					plot.dispose();
+				}
+			}
+		}).start();
+	}
 
   public void polarPlot2D(Frame aframe) {
     final Frame newFrame = aframe;
@@ -2721,7 +2963,15 @@ public class DataFileSet extends XRDcat {
 
   public void differencePlot2D(Frame aframe) {
     int datafilenumber = activedatafilesnumber();
-
+  
+    yTitle = null;
+    yUnit = null;
+    boolean angleAxis = MaudPreferences.getBoolean("multiplot2D.use2Theta", false);
+    if (angleAxis && getInstrument().IDlabel == AngleEnergyMapInstrument.modelID) {
+      yTitle = "2Theta";
+      yUnit = "degrees";
+    }
+  
     final Frame newFrame = aframe;
     final DiffrDataFile[] adfile = new DiffrDataFile[datafilenumber];
     for (int i = 0; i < datafilenumber; i++) {
@@ -2731,7 +2981,7 @@ public class DataFileSet extends XRDcat {
     (new PersistentThread() {
   @Override
       public void executeJob() {
-        new DifferencePlot2D(newFrame, adfile, label);
+        new DifferencePlot2D(newFrame, adfile, label, yTitle, yUnit);
       }
     }).start();
   }
@@ -3077,7 +3327,7 @@ public class DataFileSet extends XRDcat {
       bdatafile.checkIncreasingX();
       minindex[i] = bdatafile.getMinIndexforValue(drange[0], drange[1]);
       maxindex[i] = bdatafile.getMaxIndexforValue(drange[0], drange[1]);
-//      System.out.println("Datafile #" + i + ": " + bdatafile + " , minmax " + minindex[i] + " " + maxindex[i]);
+//      System.out.println("Datafile # " + i + ": " + bdatafile + " , minmax " + minindex[i] + " " + maxindex[i]);
       bdatafile.setMinMaxIndices(minindex[i], maxindex[i]);
       if (i > 0) {
         if (minindex[0] != minindex[i])
@@ -3095,6 +3345,7 @@ public class DataFileSet extends XRDcat {
  //   if (drange_final[0] < 0)
  //     hasNegative2theta = true;
 
+//    System.out.println("D-range " + this.toXRDcatString() + ": " + drange_final[0] + " " + drange_final[1]);
     getSample().setRange(drange_final);
 
     // preparing background datafiles if any
@@ -3188,7 +3439,7 @@ public class DataFileSet extends XRDcat {
 //        System.out.println("Refreshing backg: " + tmpDatafile.toXRDcatString());
 //        System.out.println("Min, max: " + minindex[i] + " " + maxindex[i]);
         tmpDatafile.resetBkg();
-        tmpDatafile.computeBackground(minindex[i], maxindex[i]);
+        tmpDatafile.computeBackground(tmpDatafile.startingindex, tmpDatafile.finalindex);
 
         double tbackgroundChi = 0.0;
         double[] chieta = tmpDatafile.getTiltingAngle();
@@ -3202,7 +3453,7 @@ public class DataFileSet extends XRDcat {
         }
 //        System.out.println("Next min, max: " + minindex[i] + " " + maxindex[i]);
 
-        for (int j = minindex[i]; j < maxindex[i]; j++) {
+        for (int j = tmpDatafile.startingindex; j < tmpDatafile.finalindex; j++) {
           double thetaord = tmpDatafile.getXData(j);
           double background = tbackgroundChi;
           for (int k = 0; k < npolbckgpar; k++)
@@ -3239,80 +3490,47 @@ public class DataFileSet extends XRDcat {
 
   public void addPhasePeaks(Phase aphase, Sample asample, boolean lastDataset) {
 
-//			 System.out.println("adding peaks");
-
-//    int datasetNumber = getIndex();
-    DiffrDataFile datafiletmp = null;// = adatafile[0];
 	  if (activedatafilesnumber() == 0)
 		  return;
 
-    if (datafiletmp == null)
-      datafiletmp = this.getActiveDataFile(0);
-
-    Instrument ainstrument = getInstrument();
+	  DiffrDataFile datafiletmp = this.getActiveDataFile(0);
+     Instrument ainstrument = getInstrument();
 
     // compute peaks
 
-    int numberofradiation = ainstrument.getRadiationType().getLinesCount();
-    double[] wavelength = new double[numberofradiation];
-		double[] radweight = new double[numberofradiation];
-    for (int j = 0; j < numberofradiation; j++) {
-	    wavelength[j] = ainstrument.getRadiationType().getRadiationWavelength(j);
-	    radweight[j] = ainstrument.getRadiationType().getRadiationWeigth(j);
-//	    System.out.println("Rad: " + j + " " + wavelength[j] + " " + radweight[j]);
-    }
+	  int numberofradiation = ainstrument.getRadiationType().getLinesCount();
+	  double[] wavelength = new double[numberofradiation];
+	  double[] radweight = new double[numberofradiation];
+	  for (int j = 0; j < numberofradiation; j++) {
+		  wavelength[j] = ainstrument.getRadiationType().getRadiationWavelength(j);
+		  radweight[j] = ainstrument.getRadiationType().getRadiationWeigth(j);
+	  }
 
-    int numberofpeaks = aphase.gethklNumber();
-//		System.out.println("Dataset compute, phase " + aphase.getPhaseName() + ", number of peaks: " + numberofpeaks);
-//    aphase.setReflectionNumber(numberofpeaks);
-
-//    double Fhkl[] =
-//    Radiation rad1 = radtype.getRadiation(0);
+	  int numberofpeaks = aphase.gethklNumber();
 // todo: Luca 23/06/2011    aphase.Fhklcompv(rad1.getRadiationIDNumber(), rad1.tubeNumber, this.getIndex(), lastDataset);
 
-    double Rhkl;
+	  double Rhkl;
+	  double intensity = ainstrument.getIntensityForDiffraction();
 
-    double intensity = ainstrument.getIntensityValue();
-//    boolean distribution = needDistribution();
-
-//			 System.out.println("Adding peaks: " + numberofpeaks);
-    for (int i = 0; i < numberofpeaks; i++) {
-      double dspace = aphase.getDspacing(i);
-      if (datafiletmp.dspacingbase || datafiletmp.energyDispersive ||
-		      datafiletmp.computeposition(dspace, wavelength[0]) < 180.0) {
-//        if (Fhkl != null)
-//          aphase.getReflex(i).setStructureFactor(datasetNumber, Fhkl[i]);
-//      double dspace = aphase.getDspacing(i);
-
-        Rhkl = intensity; // * Fhkl[i];
-        Peak hklpeak = aphase.getActiveSizeStrain().createPeak(dspace, datafiletmp.dspacingbase,
-            datafiletmp.energyDispersive, wavelength, radweight,
-                                  aphase.getReflex(i), i);
-        hklpeak.setIntensity(Rhkl);
-//				hklpeak.setLayer(alayer);
-//        hklpeak.setCrystMstrainDistribution(crystallite, microstrain, distx, distsize);
-//        hklpeak.setCrystalliteMicrostrain(aphase.getCrystallite(i), aphase.getMicrostrainD(i));
-
-        thepeaklist.addElement(hklpeak);
-
-        dspace = -dspace;
-        if (datafiletmp.xInsideRange(datafiletmp.computeposition(dspace, wavelength[0]))) {
-
-          hklpeak = aphase.getActiveSizeStrain().createPeak(dspace, datafiletmp.dspacingbase,
-              datafiletmp.energyDispersive, wavelength, radweight,
-                                    aphase.getReflex(i), i);
-          hklpeak.setIntensity(Rhkl);
-//				hklpeak.setLayer(alayer);
-//        hklpeak.setCrystMstrainDistribution(crystallite, microstrain, distx, distsize);
-//          hklpeak.setCrystalliteMicrostrain(aphase.getCrystallite(i), aphase.getMicrostrainD(i));
-
-          thepeaklist.addElement(hklpeak);
-        }
-      }// else
-      // System.out.println("Not added : " + dspace + ", " + computeposition(dspace, wavelength[0]));
-    }
-
-//			 System.out.println("adding peaks completed");
+	  for (int i = 0; i < numberofpeaks; i++) {
+		  double dspace = aphase.getDspacing(i);
+		  boolean validReflection = false;
+		  for (int k = 0; k < activedatafilesnumber(); k++)
+		  	 validReflection = validReflection || getActiveDataFile(k).isDspaceInsideRange(dspace);
+		  Reflection refl = aphase.getReflex(i);
+		  refl.goodforStructureFactor = validReflection;
+		  refl.goodforStrain = validReflection;
+		  refl.goodforTexture = validReflection;
+		  if (validReflection) {
+			  Rhkl = intensity;
+			  Peak hklpeak = getDiffraction().createPeak(aphase.getActiveSizeStrain(), dspace, datafiletmp.dspacingbase,
+					  datafiletmp.energyDispersive, wavelength, radweight, refl, i);
+			  hklpeak.setIntensity(Rhkl);
+			  thepeaklist.addElement(hklpeak);
+		  } else {
+//		    System.out.println("Reflection not valid, reason: " + refl.d_space);
+      }
+	  }
   }
 
   public void computeSpectra(Sample asample) {
@@ -3875,12 +4093,10 @@ public class DataFileSet extends XRDcat {
 		int total = 0;
 		for (int i = 0; i < activedatafilesnumber(); i++) {
 			DiffrDataFile adatafile = getActiveDataFile(i);
-			for (int j = 0; j < adatafile.positionsPerPattern; j++) {
-				boolean goodPoint = adatafile.isInsideRange(adatafile.getPositions(aphase)[hklnumbersel][j][0]);
+			boolean goodPoint = adatafile.isPeakInsideRange(aphase, hklnumbersel);
 //				System.out.println(goodPoint);
-				if (goodPoint)
-					total++;
-			}
+			if (goodPoint)
+				total++;
 		}
 		return total;
 	}
@@ -3899,8 +4115,7 @@ public class DataFileSet extends XRDcat {
 	}
 
 	public boolean isDiffraction() {
-		if (getFluorescence().identifier.toLowerCase().startsWith("none") &&
-				getReflectivity().identifier.toLowerCase().startsWith("none"))
+		if (!getDiffraction().identifier.toLowerCase().startsWith("none"))
 			return true;
 		return false;
 	}
@@ -3958,6 +4173,7 @@ public class DataFileSet extends XRDcat {
       int bank1 = ((DiffrDataFile) obj1).getBankNumber();
       int bank2 = ((DiffrDataFile) obj2).getBankNumber();
       int diff = bank2 - bank1;
+//      System.out.println(diff);
 
       if (diff == 0.0)
         return 0;

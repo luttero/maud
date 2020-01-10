@@ -25,10 +25,8 @@ import it.unitn.ing.rista.diffr.*;
 import it.unitn.ing.rista.diffr.detector.XRFDetector;
 import it.unitn.ing.rista.diffr.geometry.GeometryXRFInstrument;
 import it.unitn.ing.rista.diffr.radiation.XrayEbelTubeRadiation;
-import it.unitn.ing.rista.io.cif.CIFtoken;
 import it.unitn.ing.rista.util.*;
 
-import java.util.Hashtable;
 import java.util.Vector;
 
 import static java.lang.System.out;
@@ -214,7 +212,7 @@ public class GIXRFModel extends Fluorescence {
 		Instrument ainstrument = adatafile.getDataFileSet().getInstrument();
 		Detector detector = ainstrument.getDetector();
 		Geometry geometry = ainstrument.getGeometry();
-		double incidentIntensity = ainstrument.getIntensityValue();
+		double incidentIntensity = ainstrument.getIntensityForFluorescence();
 		double sampleLinearArea = detector.getGeometryCorrection(
 				((GeometryXRFInstrument) geometry).getBeamOutCorrection(adatafile, asample));
 //		incidentIntensity *= sampleLinearArea;
@@ -797,7 +795,7 @@ public class GIXRFModel extends Fluorescence {
 
 		for (int k = 0; k < fluorescenceLines.size(); k++) {
 			FluorescenceLine line = fluorescenceLines.get(k);
-			double[][] broad = ainstrument.getInstrumentalBroadeningAt(line.getEnergy(), adatafile);
+      java.util.Vector<double[]> broad = ainstrument.getInstrumentEnergyBroadeningAt(line.getEnergy(), adatafile);
 			line.setEnergy(line.getEnergy() * 1000.0); // in eV
 			line.setShape(broad);
 //      System.out.println(line.getEnergy() + " " + line.getIntensity());

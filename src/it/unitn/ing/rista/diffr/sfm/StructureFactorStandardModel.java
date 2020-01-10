@@ -68,153 +68,216 @@ public class StructureFactorStandardModel extends StructureFactorModel {
 	  final double thermalS = phase.getThermalStrainCached();
 	  phase.refreshFhklcompv();
 	  int hkln = phase.gethklNumber();
-	  final double[] fhkl = new double[hkln];
+	  final int nlines = adataset.getInstrument().getRadiationType().getLinesCount();
+	  final double[][] fhkl = new double[hkln][nlines];
 	  final boolean useAnisotropicCrystallites =
 			  adataset.getInstrument().getRadiationType().useCrystallitesForDynamicalCorrection();
 	  if (phase.getNumberOfCustomPeaks() > 0) {
 		  for (int i = 0; i < hkln; i++)
-		    fhkl[i] = phase.getReflex(i).structureFactor;
+		  	 for (int n = 0; n < nlines; n++)
+		      fhkl[i][n] = phase.getReflex(i).structureFactor;
 	  } else {
-	  Instrument ainstrument = adataset.getInstrument();
-	  final Radiation rad1 = ainstrument.getRadiationType().getRadiation(0);
-//	  final int radType = rad1.getRadiationIDNumber();
-	  Vector<AtomSite> atomList = phase.getFullAtomList();
-		double volume = phase.getCellVolume();
-	  double t = 1, t_corr = 1, constV = 1;
-	  if (rad1.isDynamical()) { // dynamical scattering
-			t = phase.getCrystalThickness();
-		  if (t <= 0)
-			  t = 1;
-		  else
-			  t_corr = t;
-			double E = adataset.getInstrument().getRadiationType().getRadiationEnergy();
+      Vector<AtomSite> atomList = phase.getFullAtomList();
+      double volume = phase.getCellVolume();
+      Instrument ainstrument = adataset.getInstrument();
+      RadiationType radType = ainstrument.getRadiationType();
+      
+      boolean xray = !radType.isElectron() && !radType.isNeutron();
+      if (xray) {
+        final int maxThreads = Math.min(Constants.maxNumberOfThreads, hkln / 10);
+        if ((hkln * atomList.size()) > 1000 && maxThreads > 1 && Constants.threadingGranularity >= Constants.MEDIUM_GRANULARITY) {
+          if (Constants.debugThreads)
+            System.out.println("Thread structure factors " + phase.getLabel());
+          int i;
+          PersistentThread[] threads = new PersistentThread[maxThreads];
+          for (i = 0; i < maxThreads; i++) {
+            final DataFileSet dataset = adataset;
+            threads[i] = new PersistentThread(i) {
+              @Override
+              public void executeJob() {
+                int i1 = this.getJobNumberStart();
+                int i2 = this.getJobNumberEnd();
+          
+                double[][] fhkl_t = new double[i2 - i1][nlines];
+          
+                double[][][][] scatFactors = dataset.getScatteringFactor(phase);
+                for (int j = i1; j < i2; j++) {
+                  Reflection refl = phase.getReflex(j);
+                  for (int n = 0; n < nlines; n++) {
+                    double structureFactor = Fhklcomp(phase, refl, scatFactors[j + 1][n]);
+                    fhkl_t[j - i1][n] = structureFactor;
+                  }
+                }
+          
+                synchronized (phase) {
+                  for (int j = i1; j < i2; j++)
+                    for (int n = 0; n < nlines; n++)
+                      fhkl[j][n] = fhkl_t[j - i1][n];
+                }
+              }
+            };
+          }
+          i = 0;
+          int istep = (int) (0.9999 + hkln / maxThreads);
+          for (int j = 0; j < maxThreads; j++) {
+            int is = i;
+            if (j < maxThreads - 1)
+              i = Math.min(i + istep, hkln);
+            else
+              i = hkln;
+            threads[j].setJobRange(is, i);
+            threads[j].start();
+          }
+          boolean running;
+          do {
+            running = false;
+            try {
+              Thread.sleep(Constants.timeToWaitThreadsEnding);
+            } catch (InterruptedException r) {
+            }
+            for (int h = 0; h < maxThreads; h++) {
+              if (!threads[h].isEnded())
+                running = true;
+            }
+          } while (running);
+    
+        } else {
+          double[][][][] scatFactors = adataset.getScatteringFactor(phase);
+          for (int i = 0; i < hkln; i++) {
+            Reflection refl = phase.getReflex(i);
+            for (int n = 0; n < nlines; n++) {
+              structureFactor = Fhklcomp(phase, refl, scatFactors[i + 1][n]);
+              fhkl[i][n] = structureFactor;
+            }
+          }
+        }
+      } else {
+        final Radiation rad1 = ainstrument.getRadiationType().getRadiation(0);
+  
+        //	  final int radType = rad1.getRadiationIDNumber();
+        double t = 1, t_corr = 1, constV = 1;
+        if (rad1.isDynamical()) { // dynamical scattering
+          t = phase.getCrystalThickness();
+          if (t <= 0)
+            t = 1;
+          else
+            t_corr = t;
+          double E = adataset.getInstrument().getRadiationType().getRadiationEnergy();
 //			double m_me = 1.0 + Constants.ENERGY_CONSTANT * E;
-			double K02 = Constants.E_SCAT_FACTOR_PI * E;
-			int atomNumber = atomList.size();
-			double[][] scatteringFactors = new double[atomNumber][2];
-			for (int j = 0; j < atomNumber; j++) {
-				double[] scat = atomList.get(j).scatfactor(0.0, rad1);
-				scatteringFactors[j][0] = scat[0];
-				scatteringFactors[j][1] = scat[1];
+          double K02 = Constants.E_SCAT_FACTOR_PI * E;
+          int atomNumber = atomList.size();
+          double[][] scatteringFactors = new double[atomNumber][2];
+          for (int j = 0; j < atomNumber; j++) {
+            double[] scat = atomList.get(j).scatfactor(0.0, rad1);
+            scatteringFactors[j][0] = scat[0];
+            scatteringFactors[j][1] = scat[1];
 //				System.out.println(atomList.get(j).getLabel() + " " + scat[0] + " " + scat[1]);
-			}
-		  double U0corr = Constants.E_SCAT_FACTOR_PI / volume;
-			double U0 = Math.sqrt(Fhklcomp0(phase, scatteringFactors)) * U0corr;
-		  double k = Math.sqrt(K02 + U0);
-			constV = Constants.E_SCAT_FACTOR_PI * t_corr / k * Math.PI;
+          }
+          double U0corr = Constants.E_SCAT_FACTOR_PI / volume;
+          double U0 = Math.sqrt(Fhklcomp0(phase, scatteringFactors)) * U0corr;
+          double k = Math.sqrt(K02 + U0);
+          constV = Constants.E_SCAT_FACTOR_PI * t_corr / k * Math.PI;
 /*		  if (Constants.testing && !phase.getFilePar().isOptimizing())
 		    System.out.println("U0: " + constV + " " + k + " " + K02 + " " + U0 + " " + t + " " + t_corr);*/
-		}
-		final double meanCrystallite_corr = phase.getMeanCrystallite() * thermalS + t;
-
-	  final int maxThreads = Math.min(Constants.maxNumberOfThreads, hkln / 10);
-	  if ((hkln * atomList.size()) > 1000 && maxThreads > 1 && Constants.threadingGranularity >= Constants.MEDIUM_GRANULARITY) {
-		  if (Constants.debugThreads)
-			  System.out.println("Thread structure factors " + phase.getLabel());
-		  int i;
-		  PersistentThread[] threads = new PersistentThread[maxThreads];
-		  for (i = 0; i < maxThreads; i++) {
-			  final DataFileSet dataset = adataset;
-			  final double thickness = t;
-			  final double thickness_corr = t_corr;
-			  final double volumeCorrection = constV;
-			  final double volumeCell = volume;
-			  threads[i] = new PersistentThread(i) {
-				  @Override
-				  public void executeJob() {
-					  int i1 = this.getJobNumberStart();
-					  int i2 = this.getJobNumberEnd();
-
-					  double[] fhkl_t = new double[i2 - i1];
-
-					  double[][][][] scatFactors = dataset.getScatteringFactor(phase);
-					  for (int j = i1; j < i2; j++) {
-						  Reflection refl = phase.getReflex(j);
-						  // todo, should be modified to compute scatfactors for each rad line
-						  double structureFactor = Fhklcomp(phase, refl, scatFactors[j + 1][0]);
-						  if (rad1.isDynamical()) {
-							  double crystCorr = 1.0;
-							  if (useAnisotropicCrystallites)
-								  crystCorr = (phase.getCrystallite(j) * thermalS + thickness) / thickness_corr;
-							  double Fhkl = Math.sqrt(structureFactor) / volumeCell;
-							  double A = Fhkl * volumeCorrection * crystCorr;
+        }
+        final double meanCrystallite_corr = phase.getMeanCrystallite() * thermalS + t;
+  
+        final int maxThreads = Math.min(Constants.maxNumberOfThreads, hkln / 10);
+        if ((hkln * atomList.size()) > 1000 && maxThreads > 1 && Constants.threadingGranularity >= Constants.MEDIUM_GRANULARITY) {
+          if (Constants.debugThreads)
+            System.out.println("Thread structure factors " + phase.getLabel());
+          int i;
+          PersistentThread[] threads = new PersistentThread[maxThreads];
+          for (i = 0; i < maxThreads; i++) {
+            final DataFileSet dataset = adataset;
+            final double thickness = t;
+            final double thickness_corr = t_corr;
+            final double volumeCorrection = constV;
+            final double volumeCell = volume;
+            threads[i] = new PersistentThread(i) {
+              @Override
+              public void executeJob() {
+                int i1 = this.getJobNumberStart();
+                int i2 = this.getJobNumberEnd();
+          
+                double[][] fhkl_t = new double[i2 - i1][nlines];
+          
+                double[][][][] scatFactors = dataset.getScatteringFactor(phase);
+                for (int j = i1; j < i2; j++) {
+                  Reflection refl = phase.getReflex(j);
+                  for (int n = 0; n < nlines; n++) {
+                    double structureFactor = Fhklcomp(phase, refl, scatFactors[j + 1][n]);
+                    if (rad1.isDynamical()) {
+                      double crystCorr = 1.0;
+                      if (useAnisotropicCrystallites)
+                        crystCorr = (phase.getCrystallite(j) * thermalS + thickness) / thickness_corr;
+                      double Fhkl = Math.sqrt(structureFactor) / volumeCell;
+                      double A = Fhkl * volumeCorrection * crystCorr;
 //							  if (A > cuttingThreshold)
-							  double _intA = IntegratedBesselJ0.averageIntegralBesselUpTo(A);
-								structureFactor *= _intA / meanCrystallite_corr;
+                      double _intA = IntegratedBesselJ0.averageIntegralBesselUpTo(A);
+                      structureFactor *= _intA / meanCrystallite_corr;
 //							  else
 //								  structureFactor = 1.207107;
 //								structureFactor *= volumeCorrection / thickness_corr; // we eliminate the thickness
-						  }
-						  fhkl_t[j - i1] = structureFactor;
-					  }
-
-					  synchronized(phase) {
-						  for (int j = i1; j < i2; j++)
-							  fhkl[j] = fhkl_t[j - i1];
-					  }
-				  }
-			  };
-		  }
-		  i = 0;
-		  int istep = (int) (0.9999 + hkln / maxThreads);
-		  for (int j = 0; j < maxThreads; j++) {
-			  int is = i;
-			  if (j < maxThreads - 1)
-				  i = Math.min(i + istep, hkln);
-			  else
-				  i = hkln;
-			  threads[j].setJobRange(is, i);
-			  threads[j].start();
-		  }
-		  boolean running;
-		  do {
-			  running = false;
-			  try {
-				  Thread.sleep(Constants.timeToWaitThreadsEnding);
-			  } catch (InterruptedException r) {
-			  }
-			  for (int h = 0; h < maxThreads; h++) {
-				  if (!threads[h].isEnded())
-					  running = true;
-			  }
-		  } while (running);
-
-	  } else {
-//		  boolean testingBfactors = false;
-//		  if (Constants.testing)
-//			  testingBfactors = MaudPreferences.getBoolean("testing.anisotropicBfactors", false);
-		  double[][][][] scatFactors = adataset.getScatteringFactor(phase);
-		  for (int i = 0; i < hkln; i++) {
-			  Reflection refl = phase.getReflex(i);
-			  // todo, should be modified to compute scatfactors for each rad line
-//			  if (!testingBfactors)
-			    structureFactor = Fhklcomp(phase, refl, scatFactors[i + 1][0]);
-//			  else
-//			    structureFactor = Fhklcomp(phase, refl.hlist, refl.klist, refl.llist, multiplicity, dspacing,
-//					    scatFactors[i + 1][0]);
-			  if (rad1.isDynamical()) {
-				  double crystCorrection = 1.0;
-				  if (useAnisotropicCrystallites)
-					  crystCorrection = (phase.getCrystallite(i) * thermalS + t) / t_corr;
-				  double Fhkl = Math.sqrt(structureFactor) / volume;
-				  double A = Fhkl * constV * crystCorrection;
-//				  if (A > cuttingThreshold)
-				  intA = IntegratedBesselJ0.averageIntegralBesselUpTo(A);
-					structureFactor *= intA / meanCrystallite_corr;
-//				  else
-//				    structureFactor *= 1.207107;
-/*				  if (useAnisotropicCrystallites)
-				    structureFactor *= constV / t_corr; // we eliminate the thickness;
-				  else
-					  structureFactor *= constV / t_corr;*/
-/*				  if (Constants.testing && !phase.getFilePar().isOptimizing())
-				    System.out.println(refl.getH() + " " + refl.getK() + " " + refl.getL() + " " + Fhkl + " " + A + ", IntA/A " + intA +
-				        " " + newCorrection + " " + structureFactor + " " + constV + " " + meanCrystallite + " " + t);*/
-			  }
-			  fhkl[i] = structureFactor;
-		  }
-	  }
-  }
+                    }
+                    fhkl_t[j - i1][n] = structureFactor;
+                  }
+                }
+          
+                synchronized(phase) {
+                  for (int j = i1; j < i2; j++)
+                    for (int n = 0; n < nlines; n++)
+                      fhkl[j][n] = fhkl_t[j - i1][n];
+                }
+              }
+            };
+          }
+          i = 0;
+          int istep = (int) (0.9999 + hkln / maxThreads);
+          for (int j = 0; j < maxThreads; j++) {
+            int is = i;
+            if (j < maxThreads - 1)
+              i = Math.min(i + istep, hkln);
+            else
+              i = hkln;
+            threads[j].setJobRange(is, i);
+            threads[j].start();
+          }
+          boolean running;
+          do {
+            running = false;
+            try {
+              Thread.sleep(Constants.timeToWaitThreadsEnding);
+            } catch (InterruptedException r) {
+            }
+            for (int h = 0; h < maxThreads; h++) {
+              if (!threads[h].isEnded())
+                running = true;
+            }
+          } while (running);
+    
+        } else {
+          double[][][][] scatFactors = adataset.getScatteringFactor(phase);
+          for (int i = 0; i < hkln; i++) {
+            Reflection refl = phase.getReflex(i);
+            for (int n = 0; n < nlines; n++) {
+              structureFactor = Fhklcomp(phase, refl, scatFactors[i + 1][n]);
+              if (rad1.isDynamical()) {
+                double crystCorrection = 1.0;
+                if (useAnisotropicCrystallites)
+                  crystCorrection = (phase.getCrystallite(i) * thermalS + t) / t_corr;
+                double Fhkl = Math.sqrt(structureFactor) / volume;
+                double A = Fhkl * constV * crystCorrection;
+                intA = IntegratedBesselJ0.averageIntegralBesselUpTo(A);
+                structureFactor *= intA / meanCrystallite_corr;
+              }
+              fhkl[i][n] = structureFactor;
+            }
+          }
+        }
+  
+      }
+    }
 		adataset.storeComputedStructureFactors(phase, fhkl);
 	}
 
@@ -277,11 +340,12 @@ public class StructureFactorStandardModel extends StructureFactorModel {
 				ato.trowException = false;
 			}
 			double structurefactor = (a1 * a1 + a2 * a2) * refl.multiplicity;
-//		System.out.println(refl.getH() + " " + refl.getK() + " " + refl.getL() + " " + structurefactor + " "
-//		+ refl.d_space + " " + divideFactors[0] + " " + divideFactors[1] + " " + divideFactors[2] + " " + factors);
+//			if (structurefactor == 0.0)
+//		    System.out.println(refl.getH() + " " + refl.getK() + " " + refl.getL() + " " + structurefactor + " "
+//     		    + refl.d_space + " " + divideFactors[0] + " " + divideFactors[1] + " " + divideFactors[2] + " " + factors);
 		structurefactor *= factors;
 		if (phase.getFullAtomList().size() == 0)
-				structurefactor = (double) refl.multiplicity;
+				structurefactor = refl.multiplicity;
 		return structurefactor;
 	}
 

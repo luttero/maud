@@ -127,7 +127,7 @@ public class DiffractionAngleEnergyMap extends Diffraction {
 //      System.out.println("refreshing derivative: " + this.toXRDcatString());
 			for (int ij = 0; ij < getFilePar().getActiveSample().phasesNumber(); ij++) {
 				double expfit[] = new double[datafile.getTotalNumberOfData()];
-				int minmaxindex[] = computeReflectionIntensity(asample, datafile.getDataFileSet().getPeakList(), true,
+				int minmaxindex[] = computeReflectionIntensity(asample, datafileset.getPeakList(), true,
 						expfit, Constants.ENTIRE_RANGE, Constants.COMPUTED,
 						Constants.COMPUTED, Constants.COMPUTED, false,
 						getFilePar().getActiveSample().getPhase(ij), datafile);
@@ -139,7 +139,7 @@ public class DiffractionAngleEnergyMap extends Diffraction {
 			for (int ij = 0; ij < getFilePar().getActiveSample().phasesNumber(); ij++) {
 //        System.out.println("Phase: " + getFilePar().getActiveSample().getPhase(ij).toXRDcatString());
 				double expfit[] = new double[datafile.getTotalNumberOfData()];
-				int minmaxindex[] = computeReflectionIntensity(asample, datafile.getDataFileSet().getPeakList(), true,
+				int minmaxindex[] = computeReflectionIntensity(asample, datafileset.getPeakList(), true,
 						expfit, Constants.ENTIRE_RANGE, Constants.COMPUTED,
 						Constants.COMPUTED, Constants.COMPUTED, false,
 						getFilePar().getActiveSample().getPhase(ij), datafile);
@@ -170,28 +170,30 @@ public class DiffractionAngleEnergyMap extends Diffraction {
 				printStream = new PrintStream(baos);
 				printStream.println("             Diffraction spectrum : " + datafile.toXRDcatString());
 				printStream.println("Peaks list : ");
-				printStream.print(" peak n,"
-						+ " rad. n,"
-						+ "             phase, "
-						+ " h,     "
-						+ " k,     "
-						+ " l,     "
-						+ "  dspace,   "
-						+ "  Fhkl_calc,"
-						+ "  Fhkl_exp, "
-						+ " position,  "
-						+ " strain,    "
-						+ " planar def,"
-						+ " intensity, "
-						+ " hwhm,      "
-						+ " gaussian,  "
-						+ " |Fhkl|^2*m,"
-						+ " incident I,"
-						+ " LP,        "
-						+ " texture,   "
-						+ " Abs*Vol/Vc,"
-						+ " rad. wt,   "
-						+ " phase scale");
+				printStream.print(" #,"
+						+ "rad#,"
+						+ "phase,"
+						+ "h,"
+						+ "k,"
+						+ "l,"
+            + "d-space,"
+						+ "energy,"
+						+ "Fhkl_calc,"
+						+ "Fhkl_exp,"
+						+ "position,"
+						+ "intensity,"
+						+ "hwhm,"
+						+ "gaussian,"
+						+ "incident I,"
+						+ "LP,"
+						+ "texture,"
+						+ "Abs*Vol/Vc,"
+						+ "rad.wt,"
+            + "phase scale,"
+						+ "detector abs,"
+            + "strain,"
+            + "planar def"
+           );
 				printStream.print(Constants.lineSeparator);
 				printStream.flush();
 //						System.out.println("String length " + toPrint.length());
@@ -211,7 +213,7 @@ public class DiffractionAngleEnergyMap extends Diffraction {
 		minmaxindex[1] = datafile.startingindex;
 		arraycopy(minmaxindex, 0, tmpminmax, 0, 2);
 
-//    System.out.println(peaklist.length);  // todo
+//    System.out.println(datafile.toXRDcatString() + " " + peaklist.size());  // todo
 		for (int i = 0; i < peaklist.size(); i++) {
 			if (phase == null || peaklist.elementAt(i).getPhase() == phase) {
 				peaklist.elementAt(i).computePeak(datafile, expfit, asample, ainstrument, printStream, logOutput, cutoff,
@@ -241,7 +243,6 @@ public class DiffractionAngleEnergyMap extends Diffraction {
 		}
 
 		return minmaxindex;
-
 	}
 
 	public void computeasymmetry(Sample asample, DiffrDataFile datafile) {
@@ -265,8 +266,13 @@ public class DiffractionAngleEnergyMap extends Diffraction {
 //      System.out.println(", after: " + afit[j]);
 		}
 	}
-
-/*
+  
+  public Peak createPeak(SizeStrainModel activeSizeStrain, double dspace, boolean dspacingbase, boolean energyDispersive,
+                         double[] wavelength, double[] radweight, Reflection refl, int i) {
+    return new PseudoVoigt2DPeak(dspace, dspacingbase, energyDispersive, wavelength, radweight, refl, i);
+  }
+  
+	/*
 	public void computeDiffraction(Sample asample, DataFileSet adataset) {
 
 		int datafilenumber = adataset.activedatafilesnumber();

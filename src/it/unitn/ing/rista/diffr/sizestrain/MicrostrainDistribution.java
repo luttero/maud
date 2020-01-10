@@ -59,6 +59,8 @@ public class MicrostrainDistribution extends XRDcat {
     this(afile, "Microstrain Distribution x");
   }
 
+	public MicrostrainDistribution() {}
+
   public void initConstant() {
     Nstring = 1;
     Nstringloop = 0;

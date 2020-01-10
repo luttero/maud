@@ -20,11 +20,8 @@
 
 package it.unitn.ing.rista.diffr;
 
-import it.unitn.ing.fortran.*;
 import it.unitn.ing.rista.util.*;
-
 import java.io.PrintStream;
-import java.io.IOException;
 
 /**
  * The PseudoVoigtPeak is a class
@@ -75,20 +72,20 @@ public class PseudoVoigtPeak extends basicPeak {
 		super(pos, dspacingbase, energyDispersive, wave, weight, reflex, order);
 	}
 
-	public static double[] getHwhmEtaFromIntegralBeta(double[] betaf, double[] broadInst) {
+	public static double[] getHwhmEtaFromIntegralBeta(double[] betaf, java.util.Vector<double[]> broadInst) {
 		double betahc = 0.0;
 		for (int ij = 0; ij < numberbetacoeff; ij++)
-			betahc += coeffbetac[ij] * Math.pow(broadInst[0], (double) ij);
+			betahc += coeffbetac[ij] * Math.pow(broadInst.get(1)[0], ij);
 		double betahg = 1.0 - betahc;
 
 		double hwhmconv = 0.0;
 		for (int i = 0; i < numberhwhmcoeff; i++)
-			hwhmconv += coeffhwhm[i] * Math.pow(betahc, (double) i);
+			hwhmconv += coeffhwhm[i] * Math.pow(betahc, i);
 
 		if (hwhmconv == 0.0)
 			hwhmconv = 1.0E-9;
-		betahc *= ((broadInst[1] / hwhmconv) * hwhmtobetac);
-		betahg *= (broadInst[1] / (hwhmconv * hwhmtobetag));
+		betahc *= ((broadInst.get(0)[0] / hwhmconv) * hwhmtobetac);
+		betahg *= (broadInst.get(0)[0] / (hwhmconv * hwhmtobetag));
 
 		double betac = betahc + betaf[0];
 		double betag = Math.sqrt(betaf[1] * betaf[1] + betahg * betahg);
@@ -121,13 +118,14 @@ public class PseudoVoigtPeak extends basicPeak {
 
 		double[] hwhm_i, eta, const1, const2, wave;
 		int[] minindex, maxindex;
-			Phase aphase = getPhase();
-			Reflection refl = getReflex();
+		Phase aphase = getPhase();
+		Reflection refl = getReflex();
+		int reflexIndex = getOrderPosition();
 
-			String phase_name = aphase.toXRDcatString();
-			while (phase_name.length() < 20)
-				phase_name += " ";
-			phase_name = phase_name.substring(0, 20);
+		String phase_name = aphase.toXRDcatString();
+		while (phase_name.length() < 20)
+			phase_name += " ";
+		phase_name = phase_name.substring(0, 20);
 //    int dataindex = diffrDataFile.getIndex();
 //    int datasetIndex = diffrDataFile.getDataFileSet().getIndex();
 
@@ -135,201 +133,221 @@ public class PseudoVoigtPeak extends basicPeak {
 //        addInstrumentalBroadening(ainstrument.getInstrumentalBroadeningAt(getMeanPosition(), diffrDataFile));
 //      addInstrumentalBroadening(refl.getInstBroadFactor(dataindex));
 
-			int nrad = ainstrument.getRadiationType().getLinesCount();
-			int totalLines = diffrDataFile.positionsPerPattern * nrad;
-			double[] finalposition = new double[totalLines];
-			double[][] intensity = new double[3][totalLines];
-			hwhm_i = new double[totalLines];
-			eta = new double[totalLines];
-			double[][] actualPosition = new double[3][totalLines];
-			const1 = new double[totalLines];
-			const2 = new double[totalLines];
-			wave = new double[nrad];
-			minindex = new int[totalLines];
-			maxindex = new int[totalLines];
+		int nrad = ainstrument.getRadiationType().getLinesCount();
+		int totalLines = nrad;
+		double[] finalposition = new double[totalLines];
+		double[][] intensity = new double[3][totalLines];
+		hwhm_i = new double[totalLines];
+		eta = new double[totalLines];
+		double[][] actualPosition = new double[3][totalLines];
+		const1 = new double[totalLines];
+		const2 = new double[totalLines];
+		wave = new double[nrad];
+		minindex = new int[totalLines];
+		maxindex = new int[totalLines];
 
-			double[][][] positions = diffrDataFile.getPositions(aphase);
-			double[][] absDetectorCorrection = new double[diffrDataFile.positionsPerPattern][nrad];
-			int ipv = 0;
-			for (int i = 0; i < nrad; i++) {
-				double energy = Constants.ENERGY_LAMBDA / getRadiationWavelength(i) * 0.001;
-				for (int j = 0; j < diffrDataFile.positionsPerPattern; j++) {
-					finalposition[ipv++] = positions[getOrderPosition()][j][i];
-					int pointIndex = diffrDataFile.getOldNearestPoint(positions[getOrderPosition()][j][i]);
-					absDetectorCorrection[j][i] = ainstrument.getDetector().getAbsorptionCorrection(diffrDataFile, pointIndex, energy);
-				}
-			}
+		double[] absDetectorCorrection = new double[nrad];
+		for (int i = 0; i < nrad; i++) {
+			double position = diffrDataFile.getPosition(aphase, reflexIndex, i);
+			double energy = Constants.ENERGY_LAMBDA / getRadiationWavelength(i) * 0.001;
+			finalposition[i] = position;
+			int pointIndex = diffrDataFile.getOldNearestPoint(position);
+			absDetectorCorrection[i] = ainstrument.getDetector().getAbsorptionCorrection(diffrDataFile, pointIndex, energy);
+			const1[i] = 0.0;
+			const2[i] = 0.0;
+		}
 
-		double Fhkl;
+		double[] Fhkl = null;
 		switch (computeFhkl) {
 			case Constants.COMPUTED:
-				Fhkl = diffrDataFile.getDataFileSet().getStructureFactors(aphase)[1][getOrderPosition()];
+				Fhkl = diffrDataFile.getDataFileSet().getCalculatedStructureFactors(aphase, reflexIndex);
 				break;
 			case Constants.EXPERIMENTAL:
-				Fhkl = diffrDataFile.getDataFileSet().getStructureFactors(aphase)[0][getOrderPosition()];
+				Fhkl = diffrDataFile.getDataFileSet().getExperimentalStructureFactors(aphase, reflexIndex);
 				break;
 			case Constants.UNITARY:
-				Fhkl = 99.0;
-				break;
 			default:
-				Fhkl = 88.0;
+				Fhkl = new double[nrad];
+				for (int i = 0; i < nrad; i++)
+					Fhkl[i] = 99.0;
 		}
 
 //    Fhklist = new double[totalLines];
 		double[] radiationWeight = new double[nrad];
 		int principalRad = 0;
-		radiationWeight[0] = getRadiationWeight(0);
-		double weight = radiationWeight[0];
-		for (int i1 = 1; i1 < nrad; i1++) {
-			radiationWeight[i1] = getRadiationWeight(i1);
-			if (leBailExtraction && weight < radiationWeight[i1]) {
-				weight = radiationWeight[i1];
-				principalRad = i1;
-			}
-		}
 
-		double asyConst1 = aphase.getActivePlanarDefects().getPlanarDefectAsymmetryConstant1(getReflex());
-		double asyConst2 = aphase.getActivePlanarDefects().getPlanarDefectAsymmetryConstant2(getReflex());
-		double planar_asymmetry = aphase.getActivePlanarDefects().getPlanarDefectAsymmetry(getReflex());
+		double asyConst1 = aphase.getActivePlanarDefects().getPlanarDefectAsymmetryConstant1(refl);
+		double asyConst2 = aphase.getActivePlanarDefects().getPlanarDefectAsymmetryConstant2(refl);
+		double planar_asymmetry = aphase.getActivePlanarDefects().getPlanarDefectAsymmetry(refl);
 
-		double[][][][] hwhm_eta = diffrDataFile.getBroadFactors(aphase);
-		double[][][] deff = diffrDataFile.getCrystallitesMicrostrains(aphase)[0];
+		double[] deff = diffrDataFile.getCrystallitesMicrostrains(aphase, reflexIndex, 0);
 
 //	  for (int j = 0; j < diffrDataFile.positionsPerPattern; j++) {
-			double[][] thwhm = hwhm_eta[0][getOrderPosition()];
-			double[][] teta = hwhm_eta[1][getOrderPosition()];
+		double[] thwhm = new double[nrad];
+		double[] teta = new double[nrad];
+		for (int i = 0; i < nrad; i++) {
+			thwhm[i] = diffrDataFile.getBroadFactorHWHM(aphase, reflexIndex, i);
+			teta[i] = diffrDataFile.getBroadFactorEta(aphase, reflexIndex, i);
+		}
 //	  }
-			double intensitySingle = getScaleFactor();
-			double[][] textureFactor;
+		double intensitySingle = getScaleFactor();
+		double[] textureFactor = new double[nrad];
 
-			switch (computeTexture) {
-				case Constants.COMPUTED:
-					textureFactor = diffrDataFile.getTextureFactors(aphase)[1][getOrderPosition()];
-					break;
-				case Constants.EXPERIMENTAL:
-					textureFactor = diffrDataFile.getTextureFactors(aphase)[0][getOrderPosition()];
-					break;
-				case Constants.UNITARY:
-				default:
-					textureFactor = new double[diffrDataFile.positionsPerPattern][nrad];
-					for (int i = 0; i < diffrDataFile.positionsPerPattern; i++)
-						for (int j = 0; j < nrad; j++)
-							textureFactor[i][j] = 1.0;
-			}
-			for (int i = 0; i < diffrDataFile.positionsPerPattern; i++)
+		switch (computeTexture) {
+			case Constants.COMPUTED:
+				for (int i = 0; i < nrad; i++)
+					textureFactor[i] = diffrDataFile.getTextureFactor(aphase, getOrderPosition(), i);
+				break;
+			case Constants.EXPERIMENTAL:
+				for (int i = 0; i < nrad; i++)
+					textureFactor[i] = diffrDataFile.getExperimentalTextureFactor(aphase, getOrderPosition(), i);
+				break;
+			case Constants.UNITARY:
+			default:
+				textureFactor = new double[nrad];
 				for (int j = 0; j < nrad; j++)
-					if (Double.isNaN(textureFactor[i][j]))
-						textureFactor[i][j] = 1.0;
-//		if (getOrderPosition() == 2)
+					textureFactor[j] = 1.0;
+		}
+		for (int j = 0; j < nrad; j++)
+			if (Double.isNaN(textureFactor[j]))
+				textureFactor[j] = 1.0;
+
+		double[] strainFactor = new double[nrad];
+
+		switch (computeStrain) {
+			case Constants.COMPUTED:
+				for (int i = 0; i < nrad; i++)
+					strainFactor[i] = diffrDataFile.getStrainFactor(aphase, getOrderPosition(), i);
+				break;
+			case Constants.EXPERIMENTAL:
+				for (int i = 0; i < nrad; i++)
+					strainFactor[i] = diffrDataFile.getExperimentalStrainFactor(aphase, getOrderPosition(), i);
+				break;
+			case Constants.UNITARY:
+			default:
+				strainFactor = new double[nrad];
+				for (int j = 0; j < nrad; j++)
+					strainFactor[j] = 0.0;
+		}
+		for (int j = 0; j < nrad; j++)
+			if (Double.isNaN(strainFactor[j]))
+				strainFactor[j] = 0.0;
+
+			//		if (getOrderPosition() == 2)
 //	    System.out.println(diffrDataFile.getLabel() + ", texture factor: " + textureFactor[0]);
-			double[][] shapeAbs = diffrDataFile.getShapeAbsFactors(aphase, getOrderPosition());
+		double[] shapeAbs = new double[nrad];
+		for (int i = 0; i < nrad; i++)
+			shapeAbs[i] = diffrDataFile.getShapeAbsFactor(aphase, getOrderPosition(), i);
+
 //	  System.out.println(" Total " + diffrDataFile.startingindex + " " + diffrDataFile.finalindex);
 //	  System.out.println(" Range " + diffrDataFile.getXData(diffrDataFile.startingindex) + " " +
 //			  diffrDataFile.getXData(diffrDataFile.finalindex));
 
-			double[][] lorentzPolarization = diffrDataFile.getLorentzPolarization(aphase, getOrderPosition());
-			ipv = 0;
-			for (int i = 0; i < nrad; i++) {
-				for (int j = 0; j < diffrDataFile.positionsPerPattern; j++) {
-					if (radiationWeight[i] > 0.0) {
-						double tmpIntensity = (intensitySingle * textureFactor[j][i] * shapeAbs[j][i] * Fhkl *
-								radiationWeight[i] * aphase.getScaleFactor() * lorentzPolarization[j][i] * absDetectorCorrection[j][i]);
-						if (const2[ipv] != 0.0) {
-							for (int index = 0; index < 3; index++)
-								intensity[index][ipv] = tmpIntensity * getReflex().pd_deltaIndex[index];
-						} else {
-							intensity[0][ipv] = tmpIntensity;
-						}
-						hwhm_i[ipv] = 1.0 / thwhm[j][i];
-						eta[ipv] = teta[j][i];
+		double[] lorentzPolarization = new double[nrad];
+		for (int i = 0; i < nrad; i++)
+			lorentzPolarization[i] = diffrDataFile.getLorentzPolarizationFactor(aphase, getOrderPosition(), i);
 
-						minindex[ipv] = diffrDataFile.getOldNearestPoint(finalposition[ipv] - thwhm[j][i] * cutoff);
-						maxindex[ipv] = diffrDataFile.getOldNearestPoint(finalposition[ipv] + thwhm[j][i] * cutoff) + 1;
-
-						if (!leBailExtraction || (leBailExtraction && i == principalRad)) {
-							if (minmaxindex[0] > minindex[ipv])
-								minmaxindex[0] = minindex[ipv];
-							if (minmaxindex[1] < maxindex[ipv])
-								minmaxindex[1] = maxindex[ipv];
-						}
-
-						const1[ipv] = asyConst1;
-						const2[ipv] = asyConst2;
-						wave[i] = getRadiationWavelength(i);
-
-						if (const2[ipv] != 0.0) {
-							for (int index = 0; index < 3; index++)
-								actualPosition[index][ipv] = getPositionChangeForPlanarDefectDisplacement(finalposition[ipv], index);
-						} else {
-							actualPosition[0][ipv] = finalposition[ipv];
-						}
-
-						if (logOutput && out != null) {
-							try {
-							out.print(" ");
-								out.print(getOrderPosition());
-								out.print(" ");
-								out.print(i);
-								out.print(" " + phase_name);
-								out.print(refl.getH());
-								out.print(" ");
-								out.print(refl.getK());
-								out.print(" ");
-								out.print(refl.getL());
-								out.print(" ");
-								out.print((float) refl.d_space);
-								out.print(" ");
-								out.print((float) diffrDataFile.getDataFileSet().getStructureFactors(aphase)[1][getOrderPosition()]);
-								out.print(" ");
-								out.print((float) diffrDataFile.getDataFileSet().getStructureFactors(aphase)[0][getOrderPosition()]);
-								out.print(" ");
-								out.print((float) actualPosition[0][j]);
-								out.print(" ");
-								out.print((float) diffrDataFile.getStrains(aphase, getOrderPosition())[j][i]);
-								out.print(" ");
-								out.print((float) refl.getPlanarDefectDisplacement(0));
-								out.print(" ");
-								out.print((float) intensity[0][ipv]);
-								out.print(" ");
-								out.print((float) thwhm[j][i]);
-								out.print(" ");
-								out.print((float) eta[ipv]);
-								out.print(" ");
-								out.print((float) Fhkl);
-								out.print(" ");
-								out.print((float) intensitySingle);
-								out.print(" ");
-								out.print((float) lorentzPolarization[j][i]);
-								out.print(" ");
-								out.print((float) textureFactor[j][i]);
-								out.print(" ");
-								out.print((float) shapeAbs[j][i]);
-								out.print(" ");
-								out.print((float) radiationWeight[i]);
-								out.print(" ");
-								out.print((float) aphase.getScaleFactor());
-
-								out.print(Constants.lineSeparator);
-								out.flush();
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-						}
-
-					} else {
-						intensity[0][ipv] = 0.0f;
-//						Fhkl = 1.0f;
-						hwhm_i[ipv] = 1.0f;
-						eta[ipv] = 0.0f;
-						actualPosition[0][ipv] = 0.0f;
-						minindex[ipv] = 0;
-						maxindex[ipv] = 4;
-						const1[ipv] = 0.0f;
-						const2[ipv] = 0.0f;
-					}
-					ipv++;
+		for (int i = 0; i < nrad; i++) {
+			radiationWeight[i] = getRadiationWeight(i);
+			if (radiationWeight[i] > 0.0) {
+				double tmpIntensity = intensitySingle * textureFactor[i] * shapeAbs[i] * Fhkl[i] *
+						radiationWeight[i] * aphase.getScaleFactor() * lorentzPolarization[i] * absDetectorCorrection[i];
+        const1[i] = asyConst1;
+        const2[i] = asyConst2;
+        wave[i] = getRadiationWavelength(i);
+        hwhm_i[i] = 1.0 / thwhm[i];
+        eta[i] = teta[i];
+        
+        if (const2[i] != 0.0) {
+					for (int index = 0; index < 3; index++)
+						intensity[index][i] = tmpIntensity * getReflex().pd_deltaIndex[index];
+				} else {
+					intensity[0][i] = tmpIntensity;
 				}
+
+				minindex[i] = diffrDataFile.getOldNearestPoint(finalposition[i] - thwhm[i] * cutoff);
+				maxindex[i] = diffrDataFile.getOldNearestPoint(finalposition[i] + thwhm[i] * cutoff) + 1;
+
+				if (!leBailExtraction || (leBailExtraction && i == principalRad)) {
+					if (minmaxindex[0] > minindex[i])
+						minmaxindex[0] = minindex[i];
+					if (minmaxindex[1] < maxindex[i])
+						minmaxindex[1] = maxindex[i];
+				}
+
+				if (const2[i] != 0.0) {
+					for (int index = 0; index < 3; index++)
+						actualPosition[index][i] = getPositionChangeForPlanarDefectDisplacement(finalposition[i], index);
+				} else {
+					actualPosition[0][i] = finalposition[i];
+				}
+
+				if (logOutput && out != null) {
+					try {
+						out.print(" ");
+						out.print(getOrderPosition());
+						out.print(" ");
+						out.print(i);
+						out.print(" " + phase_name);
+						out.print(refl.getH());
+						out.print(" ");
+						out.print(refl.getK());
+						out.print(" ");
+						out.print(refl.getL());
+						out.print(" ");
+						out.print((float) refl.d_space);
+						out.print(" ");
+						out.print((float) diffrDataFile.getDataFileSet().getStructureFactors(aphase)[1][getOrderPosition()][i]);
+						out.print(" ");
+						out.print((float) diffrDataFile.getDataFileSet().getStructureFactors(aphase)[0][getOrderPosition()][i]);
+						out.print(" ");
+						out.print((float) actualPosition[0][i]);
+						out.print(" ");
+						out.print((float) strainFactor[i]);
+						out.print(" ");
+						out.print((float) refl.getPlanarDefectDisplacement(0));
+						out.print(" ");
+						out.print((float) intensity[0][i]);
+						out.print(" ");
+						out.print((float) thwhm[i]);
+						out.print(" ");
+						out.print((float) eta[i]);
+						out.print(" ");
+						out.print((float) Fhkl[i]);
+						out.print(" ");
+						out.print((float) intensitySingle);
+						out.print(" ");
+						out.print((float) lorentzPolarization[i]);
+						out.print(" ");
+						out.print((float) textureFactor[i]);
+						out.print(" ");
+						out.print((float) shapeAbs[i]);
+						out.print(" ");
+						out.print((float) radiationWeight[i]);
+						out.print(" ");
+						out.print((float) aphase.getScaleFactor());
+						out.print(" ");
+						out.print((float) absDetectorCorrection[i]);
+
+						out.print(Constants.lineSeparator);
+						out.flush();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+
+			} else {
+				intensity[0][i] = 0.0f;
+				Fhkl[i] = 0.0f;
+				hwhm_i[i] = 1.0f;
+				eta[i] = 0.0f;
+				actualPosition[0][i] = 0.0f;
+				minindex[i] = 0;
+				maxindex[i] = 4;
+				const1[i] = 0.0f;
+				const2[i] = 0.0f;
 			}
+		}
 
 //    diffrDataFile.computeLorentzPolarization(ainstrument, asample, actualPosition, intensity);
 // planar defects
@@ -337,7 +355,7 @@ public class PseudoVoigtPeak extends basicPeak {
 			computeFunctions(diffrDataFile.getXData(), expfit, minindex, maxindex,
 					intensity, eta, hwhm_i, actualPosition, const1, const2, wave,
 					diffrDataFile.dspacingbase, diffrDataFile.energyDispersive, diffrDataFile.increasingX(), planar_asymmetry,
-					deff[0][0][0]);
+					deff[0], diffrDataFile.sintheta);
 /*	  computeFunctions(expfit, thwhm, cutoff, minindex, maxindex,
         intensity, eta, hwhm_i, actualPosition, const1, const2, wave,
         reverseX, minmaxindex, getOrderPosition(), aphase, diffrDataFile);*/
@@ -348,9 +366,10 @@ public class PseudoVoigtPeak extends basicPeak {
 	                                    double[][] intensity, double[] eta, double[] hwhm_i, double[][] position,
 	                                    double[] const1, double[] const2, double[] wave, boolean dspacingBase,
 	                                    boolean energyDispersive, boolean increasingX, double planar_asymmetry,
-	                                    double deff) {
+	                                    double deff, double sintheta) {
 
 		int numberOfPV = minindex.length;
+		sintheta *= 2.0;
 		double differenceDspace;
 		for (int ipv = 0; ipv < numberOfPV; ipv++) {
 			int imin = minindex[ipv];
@@ -368,7 +387,7 @@ public class PseudoVoigtPeak extends basicPeak {
 							if (dspacingBase)
 								differenceDspace = 1.0 / x[i] - 1.0 / position[ipv][index];
 							else if (energyDispersive)
-								differenceDspace = x[i] / Constants.ENERGY_LAMBDA - position[index][ipv] / Constants.ENERGY_LAMBDA;
+								differenceDspace = (x[i] - position[index][ipv]) / Constants.ENERGY_LAMBDA * sintheta;
 							else {
 								differenceDspace = 2.0 * (MoreMath.sind(x[i] * 0.5) - MoreMath.sind(position[index][ipv] * 0.5)) / wave[ipv];
 //							System.out.println(differenceDspace / dx_pi);
@@ -433,7 +452,7 @@ public class PseudoVoigtPeak extends basicPeak {
 		}
 	}
 
-	public static void computeFunctions(double[] f, double[] thwhm, double cutoff, int[] minindex, int[] maxindex,
+/*	public static void computeFunctions(double[] f, double[] thwhm, double cutoff, int[] minindex, int[] maxindex,
 	                                    double[] intensity, double[] eta, double[] hwhm_i, double[] position,
 	                                    double[] const1, double[] const2, double[] wave,
 	                                    boolean reverseX, int[] minmaxindex,
@@ -453,72 +472,71 @@ public class PseudoVoigtPeak extends basicPeak {
 		minmaxindex[0] = maxIndex;
 		minmaxindex[1] = minIndex;
 
-		int[][][][] minmaxIndex = diffrDataFile.getMinMaxIndices(phase);
+		int[][][] minmaxIndex = diffrDataFile.getMinMaxIndices(phase);
 
-		int numberRad = numberOfPV / diffrDataFile.positionsPerPattern;
-		int ipv = 0;
+		int numberRad = numberOfPV;
 		for (int nrad = 0; nrad < numberRad; nrad++) {
+			int min =
 			double i_wave = 2.0 / wave[nrad];
-			for (int ppp = 0; ppp < diffrDataFile.positionsPerPattern; ppp++) {
-				double range = thwhm[ppp] * cutoff;
+				double range = thwhm[nrad] * cutoff;
 
-				double intconst = intensity[ipv] * const2[ipv];
+				double intconst = intensity[nrad] * const2[nrad];
 
-				if (minmaxIndex[0][nrad][reflexIndex][ppp] < minIndex || minmaxIndex[0][nrad][reflexIndex][ppp] > maxIndex)
-					minmaxIndex[0][nrad][reflexIndex][ppp] = minIndex;
-				if (minmaxIndex[1][nrad][reflexIndex][ppp] < 0 || minmaxIndex[1][nrad][reflexIndex][ppp] > maxIndex)
-					minmaxIndex[1][nrad][reflexIndex][ppp] = maxIndex;
+				if (minmaxIndex[0][nrad][reflexIndex] < minIndex || minmaxIndex[0][nrad][reflexIndex] > maxIndex)
+					minmaxIndex[0][nrad][reflexIndex] = minIndex;
+				if (minmaxIndex[1][nrad][reflexIndex] < 0 || minmaxIndex[1][nrad][reflexIndex] > maxIndex)
+					minmaxIndex[1][nrad][reflexIndex] = maxIndex;
 //	    System.out.println(" Previous[" + ipv + "] " + refl.minIndex[datasetIndex][ipv] + " " + refl.maxIndex[datasetIndex][ipv]);
 
 				if (reversing) {
-					imin = minmaxIndex[1][nrad][reflexIndex][ppp];
+					imin = minmaxIndex[1][nrad][reflexIndex];
 					if (imin < minIndex)
 						imin = minIndex;
 //      System.out.println(ipv + " - " + position[ipv] + " " + x[minindex[ipv]]);
 //        maxindex[ipv] = minindex[ipv];
 					if (diffrDataFile.dspacingbase)
-						while (imin < maxIndex - 1 && (x[imin] - position[ipv]) < range)
+						while (imin < maxIndex - 1 && (x[imin] - position[nrad]) < range)
 							imin++;
 					else
-						while (imin < maxIndex - 1 && (position[ipv] - x[imin]) < range)
+						while (imin < maxIndex - 1 && (position[nrad] - x[imin]) < range)
 							imin++;
 					imax = minIndex - 1;
 				} else {
-					imin = minmaxIndex[0][nrad][reflexIndex][ppp];
+					imin = minmaxIndex[0][nrad][reflexIndex];
 					if (imin > maxIndex - 1)
 						imin = maxIndex - 1;
 //      System.out.println(ipv + " - " + position[ipv] + " " + x[minindex[ipv]]);
 //        maxindex[ipv] = minindex[ipv];
 					if (diffrDataFile.dspacingbase)
-						while (imin > minIndex && (x[imin] - position[ipv]) < range)
+						while (imin > minIndex && (x[imin] - position[nrad]) < range)
 							imin--;
 					else
-						while (imin > minIndex && (position[ipv] - x[imin]) < range)
+						while (imin > minIndex && (position[nrad] - x[imin]) < range)
 							imin--;
 					imax = maxIndex;
 				}
 
 				boolean entered = false;
-				if (const2[ipv] != 0.0f) {
-					double dgx = intensity[ipv] * (1.0 - eta[ipv]) * Constants.sqrtln2pi * hwhm_i[ipv];
-					double dcx = intensity[ipv] * eta[ipv] * hwhm_i[ipv] / Math.PI;
+				if (const2[nrad] != 0.0f) {
+					double dgx = intensity[nrad] * (1.0 - eta[nrad]) * Constants.sqrtln2pi * hwhm_i[nrad];
+					double dcx = intensity[nrad] * eta[nrad] * hwhm_i[nrad] / Math.PI;
 
 					if (diffrDataFile.dspacingbase)
-						sinpos = 1.0 / position[ipv];
+						sinpos = 1.0 / position[nrad];
 					else if (diffrDataFile.energyDispersive)
-						sinpos = position[ipv] * Constants.I_ENERGY_LAMBDA;
+						sinpos = position[nrad] * Constants.I_ENERGY_LAMBDA;
 					else
-						sinpos = MoreMath.sind(position[ipv] * 0.5);
+						sinpos = MoreMath.sind(position[nrad] * 0.5);
 
 					for (i = imin; i != imax; i += incrX) {
-						dx = x[i] - position[ipv];
+						dx = x[i] - position[nrad];
 						if (Math.abs(dx) < range) {
 							if (!entered) {
 								entered = true;
 								if (reversing)
-									minmaxIndex[1][nrad][reflexIndex][ppp] = Math.min(i, maxIndex);
+									minmaxIndex[1][nrad][reflexIndex] = Math.min(i, maxIndex);
 								else
-									minmaxIndex[0][nrad][reflexIndex][ppp] = Math.max(i, minIndex);
+									minmaxIndex[0][nrad][reflexIndex] = Math.max(i, minIndex);
 							}
 							if (diffrDataFile.dspacingbase)
 								differenceDspace = 1.0 / x[i] - sinpos;
@@ -529,11 +547,11 @@ public class PseudoVoigtPeak extends basicPeak {
 
 							double asy = 0.0;
 							if (Math.abs(dx) > 1.0E-6) {
-								asy = const1[ipv] * differenceDspace;
+								asy = const1[nrad] * differenceDspace;
 								asy = 1.0 + 1.0 / (asy * asy);
 								asy = intconst / (asy * dx);
 							}
-							dx *= hwhm_i[ipv];
+							dx *= hwhm_i[nrad];
 							dx *= dx;
 							double dcx1 = dcx / (1.0 + dx);
 							if (dx > 30.0)
@@ -547,22 +565,22 @@ public class PseudoVoigtPeak extends basicPeak {
 					}
 
 				} else {
-					double dgx = intensity[ipv] * (1.0 - eta[ipv]) * Constants.sqrtln2pi * hwhm_i[ipv];
-					double dcx = intensity[ipv] * eta[ipv] * hwhm_i[ipv] / Math.PI;
+					double dgx = intensity[nrad] * (1.0 - eta[nrad]) * Constants.sqrtln2pi * hwhm_i[nrad];
+					double dcx = intensity[nrad] * eta[nrad] * hwhm_i[nrad] / Math.PI;
 
 //	      System.out.println(" * " + imin + " " + imax + " " + position[ipv]);
 					for (i = imin; i != imax; i += incrX) {
-						dx = (position[ipv] - x[i]);
+						dx = (position[nrad] - x[i]);
 						if (Math.abs(dx) < range) {
 							if (!entered) {
 								entered = true;
 //	            System.out.println("Entered: " + x[i]);
 								if (reversing)
-									minmaxIndex[1][nrad][reflexIndex][ppp] = Math.min(i, maxIndex);
+									minmaxIndex[1][nrad][reflexIndex] = Math.min(i, maxIndex);
 								else
-									minmaxIndex[0][nrad][reflexIndex][ppp] = Math.max(i, minIndex);
+									minmaxIndex[0][nrad][reflexIndex] = Math.max(i, minIndex);
 							}
-							dx *= hwhm_i[ipv];
+							dx *= hwhm_i[nrad];
 							dx *= dx;
 							double dcx1 = dcx / (1.0 + dx);
 							if (dx > 30.0)
@@ -576,23 +594,21 @@ public class PseudoVoigtPeak extends basicPeak {
 					}
 				}
 				if (reversing)
-					minmaxIndex[0][nrad][reflexIndex][ppp] = Math.max(i, minIndex);
+					minmaxIndex[0][nrad][reflexIndex] = Math.max(i, minIndex);
 				else
-					minmaxIndex[1][nrad][reflexIndex][ppp] = Math.min(i, maxIndex);
-				if (minmaxindex[0] > minmaxIndex[0][nrad][reflexIndex][ppp])
-					minmaxindex[0] = minmaxIndex[0][nrad][reflexIndex][ppp];
-				if (minmaxindex[1] < minmaxIndex[1][nrad][reflexIndex][ppp])
-					minmaxindex[1] = minmaxIndex[1][nrad][reflexIndex][ppp];
-			}
-			ipv++;
+					minmaxIndex[1][nrad][reflexIndex] = Math.min(i, maxIndex);
+				if (minmaxindex[0] > minmaxIndex[0][nrad][reflexIndex])
+					minmaxindex[0] = minmaxIndex[0][nrad][reflexIndex];
+				if (minmaxindex[1] < minmaxIndex[1][nrad][reflexIndex])
+					minmaxindex[1] = minmaxIndex[1][nrad][reflexIndex];
 		}
 
 		// check
-		minmaxIndex = diffrDataFile.getMinMaxIndices(phase);
-		for (int nrad = 0; nrad < numberRad; nrad++) {
-			System.out.println(" New[" + nrad + "] " + minmaxIndex[0][nrad][reflexIndex][0] + " " + minmaxIndex[1][nrad][reflexIndex][0]);
-		}
-	}
+//		minmaxIndex = diffrDataFile.getMinMaxIndices(phase);
+//		for (int nrad = 0; nrad < numberRad; nrad++) {
+//			System.out.println(" New[" + nrad + "] " + minmaxIndex[0][nrad][reflexIndex] + " " + minmaxIndex[1][nrad][reflexIndex]);
+//		}
+	}*/
 
 }
 

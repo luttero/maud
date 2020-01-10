@@ -151,7 +151,7 @@ public class FullProfStructureModel extends StructureFactorModel {
   public void computeStructureFactors(Sample asample, DataFileSet adataset) {
     Phase aphase = (Phase) getParent();
     Instrument ainstrument = adataset.getInstrument();
-    Radiation rad1 = ainstrument.getRadiationType().getRadiation(0);
+    int radCount = ainstrument.getRadiationType().getLinesCount();
 //    aphase.Fhklcompv(rad1.getRadiationIDNumber(), rad1.tubeNumber, adataset.getIndex(), false);
 
     programName = MaudPreferences.getPref("fullprof.executable_name", programName);
@@ -183,7 +183,7 @@ public class FullProfStructureModel extends StructureFactorModel {
 
       int hkln = aphase.gethklNumber();
 //      System.out.println("FullProf, number of reflections: " + hkln);
-	    double[] fhkl = new double[hkln];
+	    double[][] fhkl = new double[hkln][radCount];
       for (int j = 0; j < hkln; j++) {
         Reflection refl = aphase.getReflectionVector().elementAt(j);
           for (int n = 0; n < hklList.size(); n++) {
@@ -192,7 +192,8 @@ public class FullProfStructureModel extends StructureFactorModel {
 //              System.out.println("FullProf, h k l: " + refl.h + " " + refl.k + " " + refl.l);
 
               double factor = peak.intensity * peak.intensity * refl.multiplicity;
-              fhkl[j] = factor;
+              for (int n1 = 0; n1 < radCount; n1++)
+                  fhkl[j][n1] = factor;
               hklList.removeElementAt(n);
               break;
             }
@@ -437,14 +438,18 @@ public class FullProfStructureModel extends StructureFactorModel {
     }
   }
 
-  public double computeStructureFactor(int h, int k, int l, int multiplicity, double dspacing, int radType,
-                                       int tubeNumber, int adatasetIndex, double factor) {
+  public void computeStructureFactor(int h, int k, int l, int multiplicity, double dspacing, int radType,
+                                       int tubeNumber, int adatasetIndex, double factor, double[] structureFactor) {
 //    int h = refl.h, k = refl.k, l = refl.l, int multiplicity = refl.multiplicity;
 //    double dspacing = refl.d_space;
 
-    if (fitNotInitialized)
-      return Constants.STARTING_STRUCTURE_FACTOR * Constants.STARTING_STRUCTURE_FACTOR;
-    return factor;
+    if (fitNotInitialized) {
+	    for (int i = 0; i < structureFactor.length; i++)
+		    structureFactor[i] = Constants.STARTING_STRUCTURE_FACTOR * Constants.STARTING_STRUCTURE_FACTOR;
+    } else {
+	    for (int i = 0; i < structureFactor.length; i++)
+		    structureFactor[i] = factor;
+    }
   }
 
   public Vector loadFhkl(Phase aphase, String fhklFilename) {

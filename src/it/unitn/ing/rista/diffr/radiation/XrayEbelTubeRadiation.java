@@ -238,8 +238,11 @@ public class XrayEbelTubeRadiation extends RadiationType {
 	public Radiation getRadiation(int index) {
 		if (subordinateloopField[0].size() > index && index >= 0)
 			return (Radiation) subordinateloopField[0].elementAt(index);
-		else
-			return null;
+		else {
+		  System.out.println("This should not happen, index of radiation: " + index + " (max number of radiations: " +
+          subordinateloopField[0].size() + ")");
+      return null;
+    }
 	}
 
 	public double getRadiationWavelength(int index) {
@@ -253,6 +256,7 @@ public class XrayEbelTubeRadiation extends RadiationType {
 	public int getLinesCount() {
 		if (refreshComputation) {
 			computeAll();
+//      System.out.println("Computed first");
 			refreshComputation = false;
 		}
 //		checkRadiation();
@@ -269,7 +273,8 @@ public class XrayEbelTubeRadiation extends RadiationType {
 	public int getLinesCountForPlot() {
 		if (refreshComputation) {
 			computeAll();
-			refreshComputation = false;
+//      System.out.println("Computed for plot");
+      refreshComputation = false;
 		}
 //		checkRadiation();
 		if (continuous_spectrum == null || characteristic_spectrum == null)
@@ -369,19 +374,21 @@ public class XrayEbelTubeRadiation extends RadiationType {
 
 		// now we compute the characteristic lines
 
-		characteristicLines();
+		double[][] tmp_characteristic = characteristicLines();
 
 		// now the absorption
+//    System.out.println("Intensity: " + tmp_characteristic[1][0] + ", cont " + tmp_spectrum[1][0]);
 
 		for (int i = 0; i < getList(filter_material_id).size(); i++) {
 			AbsorptionWindow absorptionWindow = (AbsorptionWindow) getList(filter_material_id).elementAt(i);
 			absorptionWindow.computeAbsorptionForLineWithEnergy(tmp_spectrum);
-			absorptionWindow.computeAbsorptionForLineWithEnergy(characteristic_spectrum);
+			absorptionWindow.computeAbsorptionForLineWithEnergy(tmp_characteristic);
 		}
-
+    
+//    System.out.println("Intensity after: " + tmp_characteristic[1][0] + ", cont " + tmp_spectrum[1][0]);
 		double maxIntensity = 0;
-		for (int i = 0; i < characteristic_spectrum[0].length; i++) {
-			double radFluorescence = characteristic_spectrum[1][i];
+		for (int i = 0; i < tmp_characteristic[0].length; i++) {
+			double radFluorescence = tmp_characteristic[1][i];
 			if (maxIntensity < radFluorescence)
 				maxIntensity = radFluorescence;
 		}
@@ -390,14 +397,36 @@ public class XrayEbelTubeRadiation extends RadiationType {
 			if (maxIntensity < radFluorescence)
 				maxIntensity = radFluorescence;
 		}
+//    System.out.println("Max intensity: " + maxIntensity + ", minimum " + minimumAcceptedIntensity);
 		double minimumIntensity = maxIntensity * minimumAcceptedIntensity;
-		int index = 0;
+    
+    int index = 0;
+    for (int i = 0; i < tmp_characteristic[0].length; i++) {
+      double radFluorescence = tmp_characteristic[1][i];
+      if (minimumIntensity < radFluorescence)
+        index++;
+    }
+    int totalLines = index;
+
+//		System.out.println("Total lines: " + totalLines + ", minimum " + minimumIntensity + ", " + maxIntensity + ", " + tmp_characteristic[0].length);
+    characteristic_spectrum = new double[3][totalLines];
+    index = 0;
+    for (int i = 0; i < tmp_characteristic[0].length; i++) {
+      double radFluorescence = tmp_characteristic[1][i];
+      if (minimumIntensity < radFluorescence) {
+        for (int j = 0; j < 3; j++)
+          characteristic_spectrum[j][index] = tmp_characteristic[j][i];
+        index++;
+      }
+    }
+
+		index = 0;
 		for (int i = 0; i < tmp_spectrum[0].length; i++) {
 			double radFluorescence = tmp_spectrum[1][i];
 			if (minimumIntensity < radFluorescence)
 				index++;
 		}
-		int totalLines = index;
+		totalLines = index;
 
 //		System.out.println("Total lines: " + totalLines + ", minimum " + minimumIntensity + ", " + maxIntensity + ", " + tmp_spectrum[0].length);
 		continuous_spectrum = new double[3][totalLines];
@@ -473,7 +502,7 @@ public class XrayEbelTubeRadiation extends RadiationType {
 	double[] const_KL = {6.0E13,6.0E13};  // in the conclusions
 	double[][] characteristic_spectrum = null;
 
-	public void characteristicLines() {
+	public double[][] characteristicLines() {
 		double tubeVoltageInkV = Math.abs(getParameterValue(voltage_kV_id));
 		double minimumEnergy = Double.parseDouble(getString(minimum_keV_id));
 
@@ -484,7 +513,7 @@ public class XrayEbelTubeRadiation extends RadiationType {
 		double sinRatio = MoreMath.sind(inc_ang_deg) / MoreMath.sind(ex_ang_deg);
 
 //		scale_factor = 0;
-		Vector<double[][]> all_spc = new Vector<double[][]>(anodeElementNumber, 1);
+		Vector<double[][]> all_spc = new Vector<>(anodeElementNumber, 1);
 		for (int anodeNumber = 0; anodeNumber < anodeElementNumber; anodeNumber++) {
 			double J = 0.0135 * atomNumber[anodeNumber];
 			double m = 0.1382 - 0.9211 / Math.sqrt(atomNumber[anodeNumber]);
@@ -499,52 +528,51 @@ public class XrayEbelTubeRadiation extends RadiationType {
 			double[][] characteristic_spc = new double[3][n_points];
 
 			for (int i = 0; i < n_points; i++) {
-				FluorescenceLine line = anodeFluorescenceLines.get(i);
-				characteristic_spc[0][i] = line.getEnergy();
+        FluorescenceLine line = anodeFluorescenceLines.get(i);
+        characteristic_spc[0][i] = line.getEnergy();
 //			System.out.println("Compute characteristic spectrum for line: " + XRayDataSqLite.shellIDs[line.getCoreShellID()] +
 //					", " + line.getEnergy());
-				double U0 = tubeVoltageInkV / characteristic_spc[0][i];
-				double lU0 = Math.log(U0);
-				double rho_zeta_bar = rho_zeta_m * lU0 * (0.49269 - 1.0987 * eta + 0.78557 * eta * eta) /
-						(0.70256 - 1.09865 * eta + 1.0046 * eta * eta + lU0);
-
-				double erre = 1.0 - 0.0081517 * atomNumber[anodeNumber] + 3.613E-5 * atomNumber[anodeNumber] * atomNumber[anodeNumber] + 0.009583 *
-						atomNumber[anodeNumber] * Math.exp(-U0) + 0.001141 * tubeVoltageInkV;
-				int flag_KL = 0; // "K"
-				if (line.getCoreShellID() > XRayDataSqLite.K)
-					flag_KL = 1;  // "L"
-				double inv_S = z_KL[flag_KL] * b_KL[flag_KL] / atomNumber[anodeNumber];
-				double den = (U0 * Math.log(U0) + 1.0 - U0);
-				double num = Math.sqrt(U0) * Math.log(U0) + 2.0 * (1.0 - Math.sqrt(U0));
-				inv_S = inv_S * den * (1.0 + 16.05 * (Math.sqrt(J / characteristic_spc[0][i])) * num / den);
-
-				double mu_tot = computeMhuTotal(characteristic_spc[0][i]);
-				double expo = mu_tot * rho_zeta_bar;
-				expo = 2.0 * expo * sinRatio;
-				double f = (1.0 - Math.exp(-expo)) / expo;
-
-				double N_ch = const_KL[flag_KL] * inv_S * erre * f * line.getTransitionProbability() * line.getFluorescenceYield();
-
-				characteristic_spc[1][i] = N_ch * atomFraction[anodeNumber];
-				characteristic_spc[2][i] = mu_tot * atomFraction[anodeNumber];
-
-			}
+        double U0 = tubeVoltageInkV / characteristic_spc[0][i];
+        double lU0 = Math.log(U0);
+        double rho_zeta_bar = rho_zeta_m * lU0 * (0.49269 - 1.0987 * eta + 0.78557 * eta * eta) /
+            (0.70256 - 1.09865 * eta + 1.0046 * eta * eta + lU0);
+        
+        double erre = 1.0 - 0.0081517 * atomNumber[anodeNumber] + 3.613E-5 * atomNumber[anodeNumber] * atomNumber[anodeNumber] + 0.009583 *
+            atomNumber[anodeNumber] * Math.exp(-U0) + 0.001141 * tubeVoltageInkV;
+        int flag_KL = 0; // "K"
+        if (line.getCoreShellID() > XRayDataSqLite.K)
+          flag_KL = 1;  // "L"
+        double inv_S = z_KL[flag_KL] * b_KL[flag_KL] / atomNumber[anodeNumber];
+        double den = (U0 * Math.log(U0) + 1.0 - U0);
+        double num = Math.sqrt(U0) * Math.log(U0) + 2.0 * (1.0 - Math.sqrt(U0));
+        inv_S = inv_S * den * (1.0 + 16.05 * (Math.sqrt(J / characteristic_spc[0][i])) * num / den);
+        
+        double mu_tot = computeMhuTotal(characteristic_spc[0][i]);
+        double expo = mu_tot * rho_zeta_bar;
+        expo = 2.0 * expo * sinRatio;
+        double f = (1.0 - Math.exp(-expo)) / expo;
+        
+        double N_ch = const_KL[flag_KL] * inv_S * erre * f * line.getTransitionProbability() * line.getFluorescenceYield();
+        
+        characteristic_spc[1][i] = N_ch * atomFraction[anodeNumber];
+        characteristic_spc[2][i] = mu_tot * atomFraction[anodeNumber];
+      }
 			all_spc.add(characteristic_spc);
 		}
 		int n_points = 0;
 		for (int i = 0; i < anodeElementNumber; i++)
 			n_points += all_spc.elementAt(i)[0].length;
-		if (characteristic_spectrum == null || characteristic_spectrum[0].length != n_points)
-			characteristic_spectrum = new double[3][n_points];
+		double[][] tmpSpectrum = new double[3][n_points];
 		int index = 0;
 		for (int i = 0; i < anodeElementNumber; i++) {
 			double[][] characteristic_spc = all_spc.elementAt(i);
 			for (int j = 0; j < characteristic_spc[0].length; j++, index++) {
 				for (int k = 0; k < 3; k++)
-					characteristic_spectrum[k][index] = characteristic_spc[k][j];
+					tmpSpectrum[k][index] = characteristic_spc[k][j];
 //				System.out.println(i + " " + characteristic_spectrum[0][index]);
 			}
 		}
+		return tmpSpectrum;
 	}
 
 	public double getFiltersFluorescenceIntensityTotal() {

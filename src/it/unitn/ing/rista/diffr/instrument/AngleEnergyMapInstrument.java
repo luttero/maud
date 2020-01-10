@@ -71,7 +71,7 @@ public class AngleEnergyMapInstrument extends Instrument {
 		JTextField intensityTF;
 		JTextField intensityScaleTF;
 		JComboBox[] optchoice;
-		boolean[] active = {false, true, true, false, true, true, true};
+		boolean[] active = {true, true, true, false, true, true, true};
 
 //    JParameterListPane ThetaPanel;
 
@@ -108,7 +108,7 @@ public class AngleEnergyMapInstrument extends Instrument {
 			jPanel6.setLayout(new GridLayout(0, 1, 3, 3));
 			jPanel12.add("West", jPanel6);
 
-			String[] tmpStringS = {"Instrument name:", "Incident intensity:", "Scale factor normalization:"};
+			String[] tmpStringS = {"Instrument name:", "Incident intensity:", "Fluorescence scale factor:"};
 			for (int i = 0; i < tmpStringS.length; i++)
 				jPanel6.add(new JLabel(tmpStringS[i]));
 

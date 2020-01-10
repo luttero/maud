@@ -71,6 +71,8 @@ public class BkgPeak extends XRDcat {
     this(afile, "Bkg Peak x");
   }
 
+  public BkgPeak() {}
+
   public void initConstant() {
     Nstring = 2;
     Nstringloop = 0;

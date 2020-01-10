@@ -182,10 +182,11 @@ public class MarchDollaseTexture extends Texture {
       }
 	    for (int j = 0; j < asample.activeDatasetsNumber(); j++) {
 		    DataFileSet dataset = asample.getActiveDataSet(j);
+		    int radNumber = asample.getActiveDataSet(j).getInstrument().getRadiationType().getLinesCount();
 		    for (int k = 0; k < dataset.activedatafilesnumber(); k++) {
 			    DiffrDataFile datafile = dataset.getActiveDataFile(k);
-//			      for (int ppp = 0; ppp < datafile.positionsPerPattern; ppp++)
-			    datafile.setTextureFactors(aphase, textF);
+			      for (int ppp = 0; ppp < radNumber; ppp++)
+			         datafile.setTextureFactors(aphase, ppp, textF);
 		    }
 	    }
     }

@@ -54,5 +54,19 @@ public class NoneTexture extends Texture {
     description = "select this for untextured phase";
   }
   public void initializeReflexes(Sample asample) {}
-
+  
+  public void computeTextureFactor(final Phase aphase, final Sample asample) {
+    
+    if (!refreshComputation)
+      return;
+  
+    for (int i = 0; i < asample.activeDatasetsNumber(); i++) {
+      int datafilenumber = asample.getActiveDataSet(i).activedatafilesnumber();
+      for (int ij1 = 0; ij1 < datafilenumber; ij1++) {
+        DiffrDataFile adatafile = asample.getActiveDataSet(i).getActiveDataFile(ij1);
+        adatafile.resetForRandomTexture(aphase);
+      }
+    }
+  }
+  
 }

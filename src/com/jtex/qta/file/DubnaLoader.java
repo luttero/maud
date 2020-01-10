@@ -14,7 +14,7 @@ import com.jtex.plot.ColorMap;
 import com.jtex.plot.Plotter;
 import com.jtex.plot.Shapes;
 import com.jtex.plot.SimpleMultiPlotComponent;
-import com.jtex.qta.ODF;
+import com.jtex.qta.*;
 import com.jtex.qta.PoleFigure;
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,10 +44,11 @@ public class DubnaLoader implements PoleFigureLoader {
 //        plot.setColorRangeEqual(true);
         Plotter.show(plot);
         
-        ODF.ODFOptions opts = new ODF.ODFOptions(pf.getCS(), Math.toRadians(5), Math.toRadians(3.5));
-        ODF odf = ODF.estimate(pf, opts);
+        ODFOptions opts = new ODFOptions(pf.getCS(), Math.toRadians(5), Math.toRadians(3.5));
+        ODF odf = new ODF();
+        odf = odf.estimate(pf, opts);
         
-        SimpleMultiPlotComponent plot1 = Plotter.plotpdf(odf,pf.getH());
+        SimpleMultiPlotComponent plot1 = Plotter.plotpdf(odf, pf.getH());
         Plotter.show(plot1);
         plot1.setColorMap(ColorMap.getColormap(ColorMap.Name.LABOTEX, 200));
 //        plot1.setc

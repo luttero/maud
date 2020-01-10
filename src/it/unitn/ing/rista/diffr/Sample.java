@@ -26,6 +26,7 @@ import it.unitn.ing.rista.io.cif.*;
 
 import java.awt.*;
 import java.io.*;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
 /**
@@ -108,11 +109,17 @@ public class Sample extends Maincat {
 	public Sample(XRDcat afile, String alabel) {
     super(afile, alabel);
     initXRD();
-    identifier = "sample";
+    identifier = "Sample";
   }
 
   public Sample(XRDcat afile) {
     this(afile, "Sample_x");
+  }
+
+	public Sample() {
+		identifier = "Sample";
+		IDlabel = "Sample";
+		description = "select this to use a Sample";
   }
 
   public void initConstant() {
@@ -289,7 +296,17 @@ public class Sample extends Maincat {
 	  getPhasesList().removeSelElement();
     phaseRemovedAt(index);
   }
-
+  
+  public void removeAllPhases() {
+    for (int i = getPhasesList().size() - 1; i >= 0; i--) {
+      Phase aphase = (Phase) getPhasesList().elementAt(i);
+      for (int j = 0; j < datasetsNumber(); j++)
+        getDataSet(j).removingPhase(aphase);
+      getPhasesList().removeItemAt(i);
+      phaseRemovedAt(i);
+    }
+  }
+  
   public void removePhase(Phase aphase) {
     for (int i = 0; i < getPhasesList().size(); i++)
       if (getPhasesList().elementAt(i) == aphase) {
@@ -390,6 +407,98 @@ public class Sample extends Maincat {
     }
     return object;
   }
+
+	public void addDatafilesFromScript(String filename) {
+		Constants.refreshTreePermitted = false;
+
+		if (filename != null) {
+
+			System.out.println("Reading ins file: " + filename);
+			String[] folderandname = Misc.getFolderandName(filename);
+
+			BufferedReader reader = Misc.getReader(filename);
+			if (reader != null) {
+				try {
+
+					String token;
+					StringTokenizer st;
+					String linedata = reader.readLine();
+					Vector cifItems = new Vector(0, 1);
+
+					int pivot = 0;
+					int datasetToken = -1;
+					int datasetNumber = 0;
+					while (!linedata.toLowerCase().startsWith("loop_"))
+						linedata = reader.readLine();
+					linedata = reader.readLine();
+//					System.out.println("Line: " + linedata);
+					while (linedata.startsWith("_")) {
+						st = new StringTokenizer(linedata, "' ,\t\r\n");
+						while (st.hasMoreTokens()) {
+							token = st.nextToken();
+							cifItems.addElement(token);
+//							System.out.println("token: " + token);
+							if (token.equalsIgnoreCase("_pd_meas_dataset_id"))
+								datasetToken = cifItems.size();
+							if (token.equalsIgnoreCase("_riet_meas_datafile_name"))
+								pivot = cifItems.size();
+						}
+						linedata = reader.readLine();
+					}
+
+					int maxindex = cifItems.size();
+					int index = 0;
+
+					DiffrDataFile datafile[] = null;
+					String[] listItems = new String[maxindex];
+
+					while ((linedata != null)) {
+//						System.out.println("Data line: " + linedata);
+						st = new StringTokenizer(linedata, "' ,\t\r\n");
+						while (st.hasMoreTokens()) {
+							token = st.nextToken();
+							index++;
+//							System.out.println("index: " + (index - 1) + " " + token);
+							if (index == pivot) {
+//								System.out.println(getDataSet(datasetNumber).toString());
+//								System.out.println("Adding: " + folderandname[0] + token);
+								datafile = getDataSet(datasetNumber).addDataFileforName(folderandname[0] + token, false);
+							} else if (index == datasetToken) {
+								datasetNumber = getDataSet(token);
+							}
+							listItems[index - 1] = token;
+
+							if (index == maxindex) {
+								index = 0;
+								if (datafile != null)
+									for (int i = 0; i < maxindex; i++)
+										if (i != pivot - 1 && i != datasetToken - 1) {
+											for (int ij = 0; ij < datafile.length; ij++) {
+												datafile[ij].setField((String) cifItems.elementAt(i), listItems[i], "0", "0", "0", false,
+														null, null, null, null, null, false, false);
+//								System.out.println(datafile[ij].toString());
+//					System.out.println(cifItems.elementAt(i) + " " + listItems[i]);
+											}
+										}
+							}
+						}
+						linedata = reader.readLine();
+					}
+
+				} catch (IOException e) {
+					System.out.println("Error loading cif file!");
+				}
+				try {
+					reader.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+					// LogSystem.printStackTrace(e);
+				}
+			}
+		}
+		Constants.refreshTreePermitted = true;
+		notifyUpObjectChanged(this, 0);
+	}
 
 /*  public DataFileSet newData() {
     DataFileSet adata = new DataFileSet(this);
@@ -985,10 +1094,10 @@ public class Sample extends Maincat {
 			for (int j = 0; j < adataset.activedatafilesnumber(); j++) {
 				DiffrDataFile datafile = adataset.getActiveDataFile(j);
 				if (totnumber == index) {
-					double position = datafile.getPositions(phase)[reflIndex][0][0];
+					double position = datafile.getPosition(phase, reflIndex, 0);
 					return datafile.getTextureAngles(position);
 				}
-				totnumber++; // todo positionsPerPattern
+				totnumber++; // todo positions per radiation
 			}
 		}
 		return null;
@@ -1060,17 +1169,16 @@ public class Sample extends Maincat {
     }
 
     for (int nd = 0; nd < activeDatasetsNumber(); nd++) {
-      getActiveDataSet(nd).setMeanAbsorption(getMeanAbsorption(
-		      getActiveDataSet(nd).getInstrument().getRadiationType()));
+      getActiveDataSet(nd).setMeanAbsorption(getMeanAbsorption(getActiveDataSet(nd).getInstrument().getRadiationType()));
 //      getActiveDataSet(nd).setTotalLayerAbsorption(getTotalLayerAbsorption(
 //		      getActiveDataSet(nd).getInstrument().getRadiationType()));
     }
 
 	  for (int i = 0; i < phasesNumber(); i++) {
 		  getPhase(i).refreshIndices(this);
-	  }
+    }
 
-	  long previousTime = Constants.tmpTime;
+    long previousTime = Constants.tmpTime;
     if (Constants.testtime)
       System.out.println("Sample preparation: " +
           (-previousTime + (previousTime = System.currentTimeMillis())) + " millisecs.");
@@ -1116,8 +1224,8 @@ public class Sample extends Maincat {
       }
 
 	  boolean[] positionRefreshed = computeReflectionsPosition();
-	  for (int ph = 0; ph < numberOfPhases; ph++)
-		  getPhase(ph).checkReflectionsInRange();
+//	  for (int ph = 0; ph < numberOfPhases; ph++)
+//		  getPhase(ph).checkReflectionsInRange();
 
 	  for (int ip = 0; ip < numberOfPhases; ip++) {
 		  double totQuantity = 0.0;
@@ -1421,7 +1529,50 @@ public class Sample extends Maincat {
 		  return 1.0;
   }
 
-  public double[] getLayerAbsorption_new(RadiationType rad, int layerIndex, double[][] incidentDiffractionAngles,
+	public double getLayerAbsorption_new(RadiationType rad, int rad_index, int layerIndex, double[] incidentDiffractionAngles,
+	                                     DataFileSet adataset) {
+
+		// todo what about Debye-Scherrer
+		double expTransmission = 0.0;
+		double expAbsorption = 1.0;
+		Layer alayer = getlayer(layerIndex);
+
+		double radAbs = 1.0;
+/*    System.out.println(incidentDiffractionAngles[0] * Constants.PITODEG
+        + " " + incidentDiffractionAngles[2] * Constants.PITODEG);*/
+			if (incidentDiffractionAngles[0] < 1.0E-5 || incidentDiffractionAngles[2] < 1.0E-5)
+				radAbs = 0;
+			else {
+				double sinIncAngle = Math.abs(Math.sin(incidentDiffractionAngles[0]));
+				double sinDiffAngle = Math.abs(Math.sin(incidentDiffractionAngles[2]));
+				double factor = 1.0 / sinIncAngle + 1.0 / sinDiffAngle;
+				double absorption = alayer.getLayerAbsorption(rad, rad_index);
+				double absorptionLayer = factor * absorption;
+				// alayer.getLayerAbsorption(rad, sinIncAngle, sinDiffAngle);
+				if (incidentDiffractionAngles[2] > 0.0) {
+					double transmission = alayer.getOverLayerAbsorption(rad, rad_index) * factor;
+//    System.out.println("transmission: " + transmission + " layer " + layerIndex);
+					if (transmission < 200)
+						expTransmission = Math.exp(-transmission);
+					if (absorptionLayer < 200)
+						expAbsorption = 1.0 - Math.exp(-absorptionLayer);
+				}
+
+//	  System.out.println("Layer: " + alayer.toString() + " " + absorption);
+				if (absorption >= 0.0) {
+//      System.out.println("abs = " + sinDiffAngle + " * " + alayer.getThicknessValue() + " / (" + absorption +
+//          " * (" + sinIncAngle + " + " + sinDiffAngle + " )) * " +
+//          expTransmission + " * " + expAbsorption);
+					radAbs = 2.0 * sinDiffAngle * alayer.getThicknessValue() / (absorption * (sinIncAngle + sinDiffAngle)) *
+							expTransmission * expAbsorption * adataset.getMeanAbsorption();
+				} else
+					radAbs = 1.0;
+			}
+
+		return radAbs;
+	}
+
+	public double[] getLayerAbsorption_new(RadiationType rad, int layerIndex, double[][] incidentDiffractionAngles,
                                        DataFileSet adataset) {
 
     // todo what about Debye-Scherrer
@@ -1508,6 +1659,23 @@ public class Sample extends Maincat {
 
     return absorption;
   }
+
+	public double getAbsorption(RadiationType rad, int rad_index) {
+		double absorption = 0.0;
+		double thickness = 0.0;
+
+		int numberoflayers = layersnumber();
+		for (int j = 0; j < numberoflayers; j++) {
+			Layer alayer = getlayer(j);
+			thickness += alayer.getThicknessValue();
+			absorption += alayer.getLayerAbsorption(rad, rad_index);
+//	    System.out.println("Thickness: " + thickness + " absorption " + absorption);
+		}
+		if (thickness != 0.0)
+			absorption /= thickness;
+
+		return absorption;
+	}
 
 	public double[] getAbsorption(RadiationType rad) {
 		int radCount = rad.getLinesCount();
@@ -1604,7 +1772,7 @@ public class Sample extends Maincat {
 //      System.out.println("Computing shape absorption.....");
 
       for (int i = 0; i < activeDatasetsNumber(); i++) {
-        if (getActiveDataSet(i) != null && getActiveDataSet(i).getFluorescence().identifier == "none fluorescence") { // todo now only for diffraction
+        if (getActiveDataSet(i) != null && getActiveDataSet(i).getDiffraction().identifier != "none fluorescence") { // todo now only for diffraction
 //          Instrument ainstrument = getActiveDataSet(i).getInstrument();
           for (int j = 0; j < getActiveDataSet(i).activedatafilesnumber(); j++) {
             DiffrDataFile adatafile = getActiveDataSet(i).getActiveDataFile(j);
@@ -1687,7 +1855,7 @@ public class Sample extends Maincat {
             double wave = getActiveDataSet(i).getInstrument().getRadiationType().getMeanRadiationWavelength();
             for (int j = 0; j < getActiveDataSet(i).activedatafilesnumber(); j++) {
               DiffrDataFile adatafile = getActiveDataSet(i).getActiveDataFile(j);
-             adatafile.computeSampleBroadening(aphase, wave);
+              adatafile.computeSampleBroadening(aphase, wave);
             }
           }
         }
@@ -1727,6 +1895,14 @@ public class Sample extends Maincat {
 		SampleShape sampleShape = (SampleShape) getActiveSubordinateModel(sampleShapeID);
 		sampleShape.computeAbsorptionPath(incidentAndDiffraction_angles, absorption, position, intensity, toLambda);
 
+	}
+
+	public double computeAbsorptionTroughPath(RadiationType rad, int rad_index, double[] angles, double position,
+	                                          double toLambda) {
+
+		double absorption = getAbsorption(rad, rad_index);
+		SampleShape sampleShape = (SampleShape) getActiveSubordinateModel(sampleShapeID);
+		return sampleShape.computeAbsorptionPath(angles, absorption, position, toLambda);
 	}
 
 	public double getAbsorptionTroughPath(RadiationType rad, double[][] incidentAndDiffraction_angles, double[] position,
@@ -1769,18 +1945,14 @@ public class Sample extends Maincat {
 
     double[][] PFreconstructed = new double[numberofPoints][numberofPoints];
     double tilting_angles[] = new double[4];
-    if (dspacingbase) {  // don't know what to do
-      position[0] = refl.d_space;
+	  position[0] = adataset.getDataFile(0).getPositionFromDspace(refl.d_space, 0);
+    if (dspacingbase)  // don't know what to do
       tilting_angles[0] = ageometry.getThetaDetector(adataset.getDataFile(0), position[0]) / 2.0f;
-    } else {
-      position[0] = adataset.getDataFile(0).computeposition(refl.d_space, rad.getRadiationWavelength(0));
-      position[0] = adataset.getDataFile(0).getCorrectedPosition(this, position[0], tilting_angles);
+    else
       tilting_angles[0] = position[0] / 2;
-
-    }
     double toLambda = 0.0f;
     if (isTOF) {
-      toLambda = (double) (2.0 * MoreMath.sind(Math.abs(tilting_angles[0])));
+      toLambda = (2.0 * MoreMath.sind(Math.abs(tilting_angles[0])));
     }
 
     double x, y, r;

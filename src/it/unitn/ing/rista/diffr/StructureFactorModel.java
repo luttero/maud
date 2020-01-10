@@ -128,14 +128,14 @@ public class StructureFactorModel extends XRDcat {
         double wave = adataset.getInstrument().getRadiationType().getMeanRadiationWavelength();
         String waveS = Fmt.format(wave);
 
-	      double[][] sf = adataset.getStructureFactors(phase);
+	      double[][][] sf = adataset.getStructureFactors(phase);
 
         int hkln = sf[0].length;
         for (int j = 0; j < hkln; j++) {
 	        Reflection refl = phase.getReflex(j);
-          if (sf[1][j] >= 0.0) {
-              printStream.print(refl.getH() + " " + refl.getK() + " " + refl.getL() + " " + Fmt.format(sf[0][j] / refl.multiplicity) +
-                      " " + Fmt.format(sf[1][j] / refl.multiplicity) + " " + Fmt.format(sf[2][j]) +
+          if (sf[1][j][0] >= 0.0) {
+              printStream.print(refl.getH() + " " + refl.getK() + " " + refl.getL() + " " + Fmt.format(sf[0][j][0] / refl.multiplicity) +
+                      " " + Fmt.format(sf[1][j][0] / refl.multiplicity) + " " + Fmt.format(sf[2][j][0]) +
                       " " + Fmt.format(refl.d_space) + " " + waveS);
             printStream.print(Constants.lineSeparator);
           }
@@ -153,9 +153,9 @@ public class StructureFactorModel extends XRDcat {
 
         for (int j = 0; j < hkln; j++) {
 	        Reflection refl = phase.getReflex(j);
-	        if (sf[1][j] >= 0.0) {
+	        if (sf[1][j][0] >= 0.0) {
           printStream.print(refl.getH() + " " + refl.getK() + " " + refl.getL() + " " +
-                  Fmt.format(Math.sqrt(sf[0][j] / refl.multiplicity)) + " " + Fmt.format(Math.sqrt(sf[2][j])));
+                  Fmt.format(Math.sqrt(sf[0][j][0] / refl.multiplicity)) + " " + Fmt.format(Math.sqrt(sf[2][j][0])));
           printStream.print(Constants.lineSeparator);
           }
         }
@@ -178,10 +178,10 @@ public class StructureFactorModel extends XRDcat {
           double maxsf = 0.0;
           double maxesd = 0.0;
           for (int j = 0; j < hkln; j++) {
-            if (sf[1][j] >= 0.0) {
+            if (sf[1][j][0] >= 0.0) {
 	            Reflection refl = phase.getReflex(j);
-	            double expSF = sf[0][j] / refl.multiplicity;  // is the mean of the exp
-            double esdSF = sf[2][j];
+	            double expSF = sf[0][j][0] / refl.multiplicity;  // is the mean of the exp
+            double esdSF = sf[2][j][0];
             if (esdSF == 0.0)
               esdSF = Math.sqrt(Math.sqrt(expSF));
             if (maxsf < expSF)
@@ -197,10 +197,10 @@ public class StructureFactorModel extends XRDcat {
             maxesd *= 0.5;
           }
           for (int j = 0; j < hkln; j++) {
-            if (sf[1][j] >= 0.0) {
+            if (sf[1][j][0] >= 0.0) {
 	            Reflection refl = phase.getReflex(j);
-	            double expSF = Math.sqrt(sf[0][j] / refl.multiplicity);  // is the mean of the exp
-	            double esdSF = Math.sqrt(sf[2][j]);
+	            double expSF = Math.sqrt(sf[0][j][0] / refl.multiplicity);  // is the mean of the exp
+	            double esdSF = Math.sqrt(sf[2][j][0]);
             if (esdSF == 0.0)
               esdSF = Math.sqrt(expSF);
 	            hklFormatter.write(refl.getH(), printStream);
@@ -237,10 +237,10 @@ public class StructureFactorModel extends XRDcat {
           Formatter hklFormatter = new Formatter("I4");
           Formatter FFormatter = new Formatter("F8.2");
           for (int j = 0; j < hkln; j++) {
-	          if (sf[1][j] >= 0.0) {
+	          if (sf[1][j][0] >= 0.0) {
 		          Reflection refl = phase.getReflex(j);
-		          double expSF = Math.sqrt(sf[0][j] / refl.multiplicity);  // is the mean of the exp
-            double esdSF = Math.sqrt(sf[2][j]);
+		          double expSF = Math.sqrt(sf[0][j][0] / refl.multiplicity);  // is the mean of the exp
+            double esdSF = Math.sqrt(sf[2][j][0]);
             if (esdSF == 0.0)
               esdSF = Math.sqrt(expSF);
 		          hklFormatter.write(refl.getH(), printStream);
@@ -288,13 +288,13 @@ public class StructureFactorModel extends XRDcat {
       int hkln = aphase.gethklNumber();
       structureFactorList[i] = new StructureFactorList(hkln);
       structureFactorList[i].radiation = rad;
-	    double[][] structureFactors = adataset.getStructureFactors(aphase);
+	    double[][][] structureFactors = adataset.getStructureFactors(aphase);
       for (int j = 0; j < hkln; j++) {
         Reflection refl = aphase.getReflectionVector().elementAt(j);
           int multiplicity = refl.multiplicity;
-	      double expSF = structureFactors[0][j];
-	      double SF = structureFactors[1][j];
-	      double esdSF = structureFactors[2][j];
+	      double expSF = structureFactors[0][j][0];
+	      double SF = structureFactors[1][j][0];
+	      double esdSF = structureFactors[2][j][0];
           if (expSF == Constants.STARTING_STRUCTURE_FACTOR * Constants.STARTING_STRUCTURE_FACTOR)
             expSF = SF;
           else
@@ -334,8 +334,8 @@ public class StructureFactorModel extends XRDcat {
     }
   }
 */
-/*  public double computeStructureFactor(int h, int k, int l, int multiplicity, double dspacing, int radType,
-                                       int tubeNumber, int adatasetIndex, double factor) {
+/*  public void computeStructureFactor(int h, int k, int l, int multiplicity, double dspacing, int radType,
+                                       int tubeNumber, int adatasetIndex, double factor, double[] structureFactor) {
 //    int h = refl.h, k = refl.k, l = refl.l, int multiplicity = refl.multiplicity;
 //    double dspacing = refl.d_space;
 

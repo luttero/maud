@@ -10,6 +10,8 @@ import java.io.*;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import static it.unitn.ing.rista.util.Constants.ENERGY_LAMBDA;
+
 public class LCLS2data {
 
 	public String title = "New LCLS2 analysis";
@@ -24,7 +26,7 @@ public class LCLS2data {
 	public double coneInterval = LCLS2ConfigData.getPropertyValue("etaStepForIntegration", 5.0);
 	public double wavelength;
 
-	public boolean useTempletaFile = true;
+	public boolean useTemplateFile = true;
 //	public String sampleDesc = "Sample description";
 
 //	public double something = MaudPreferences.getDouble("LCLS2.something", 0.0);;
@@ -46,6 +48,8 @@ public class LCLS2data {
 		LCLSDetectorType panelType = LCLS2ConfigData.getDetectorType(panel.panelType);
 
 		String[] folderAndName = Misc.getFolderandName(uncorrImageFile);
+		System.out.println("Opening image: " + folderAndName[1]);
+
 		ImagePlus imp = (new Opener()).openImage(folderAndName[0], folderAndName[1]);
 		ImageProcessor ip = imp.getChannelProcessor();
 		int width = ip.getWidth();
@@ -339,4 +343,63 @@ public class LCLS2data {
 
 	}
 
+	public void setupDataFrom(String detectorConfigFile, String original_image, String dark_image) {
+
+		double energyInKeV = 10.217;
+		omega = 0;
+		String property = "detector_config_file";
+		String calibrationDirectory = "";
+		if (detectorConfigFile == null || detectorConfigFile.isEmpty() || !Misc.checkForFile(detectorConfigFile)) {
+			System.out.println("Detector config file not found: " + detectorConfigFile + ", use the one in the preferences!");
+      detectorConfigFile = LCLS2ConfigData.getPropertyValue(property, detectorConfigFile);
+		} else
+      LCLS2ConfigData.setPropertyValue(property, detectorConfigFile);
+		if (Misc.checkForFile(detectorConfigFile)) {
+			LCLS2ConfigData.readLCLSConfigDataFromFile(detectorConfigFile);
+			omega = LCLS2ConfigData.omega;
+			energyInKeV = LCLS2ConfigData.radiationKeV;
+			calibrationDirectory = LCLS2ConfigData.calibrationDirectory;
+		} else {
+			System.out.println("No detector config file!");
+		}
+		int position = original_image.lastIndexOf(".");
+		LCLS2ConfigData.filenameToSave = original_image.substring(0, position) + ".esg";
+		LCLS2ConfigData.setPropertyValue("UnrolledImagesDatafile", LCLS2ConfigData.filenameToSave);
+		System.out.println("Unrolled Images Datafile: " + LCLS2ConfigData.filenameToSave);
+//		LCLS2ConfigData.filenameTemplate = filenameTemplateTF.getText();
+//		LCLS2ConfigData.setPropertyValue("LCLSdefaultTemplate", LCLS2ConfigData.filenameTemplate);
+		useTemplateFile = true;
+		sampleName = "";
+		wavelength = ENERGY_LAMBDA / (energyInKeV * 1000);
+
+		String file1 = "", file2 = "";
+		for (int i = 0; i < panelsNumber; i++) {
+			String prefix = "Cspad";
+			if (i == 0) {
+				file1 = new String(original_image);
+				String property1 = prefix + "." + i + "_uncorrected_image";
+				LCLS2ConfigData.setPropertyValue(property1, file1);
+				file2 = new String(dark_image);
+				String property2 = prefix + "." + i + "_dark_current_image";
+				LCLS2ConfigData.setPropertyValue(property2, file2);
+			} else {
+				prefix = prefix + "2x2";
+				String property1 = prefix + "." + i + "_uncorrected_image";
+				file1 = new String(original_image);
+//				System.out.println("file1 before: " + file1);
+				file1 = file1.replaceFirst("Cspad-0", "Cspad2x2-" + i);
+				LCLS2ConfigData.setPropertyValue(property1, file1);
+//				System.out.println("file1 after: " + file1);
+
+				String property2 = prefix + "." + i + "_dark_current_image";
+				file2 = new String(dark_image);
+//				System.out.println("file2 before: " + file2);
+				file2 = file2.replaceFirst("CsPad_", "CsPad2x2_");
+				file2 = file2.replaceFirst("Cspad.0", "Cspad2x2." + i);
+				LCLS2ConfigData.setPropertyValue(property2, file2);
+//				System.out.println("file2 after: " + file2);
+			}
+			addImagePanel(i, file2, file1);
+		}
+	}
 }

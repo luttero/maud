@@ -319,8 +319,7 @@ public class MultiPlotFitting extends PlotFitting {
               for (int ij = 0; ij < numberphases; ij++)
                 if (tmpphase == phaselist[ij])
                   phaseindex = ij;
-	            // todo modify for more peaks par pattern
-	            double pos = adataset.getActiveDataFile(0).getPositions(tmpphase)[peaklist.elementAt(i).getOrderPosition()][0][ijn];
+	            double pos = adataset.getActiveDataFile(0).getPosition(tmpphase, peaklist.elementAt(i).getOrderPosition(), ijn);
               datapeak[j] = datafile[0].convertXDataForPlot(pos, wave, mode);
 
               datapeak[j + 1] = (double) (phaseindex + 1);

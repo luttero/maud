@@ -32,11 +32,10 @@ import java.io.*;
 import java.util.*;
 
 /**
- *  The WIMVTexture is a class
+ * The WIMVTexture is a class
  *
- *
- * @version $Revision: 1.25 $, $Date: 2006/12/04 14:30:05 $
  * @author Luca Lutterotti
+ * @version $Revision: 1.25 $, $Date: 2006/12/04 14:30:05 $
  * @since JDK1.1
  */
 
@@ -75,26 +74,26 @@ C
 
 
 public class WIMVTexture extends DiscreteODFTexture {
-
+  
   public static String[] diclistc = {"_rita_generate_symmetry", "_rita_wimv_sum_coincidence",
-                                     "_rita_wimv_iteration_max", "_rita_wimv_Rp_minimum", // ITZ, ABPRO
-                                     "_rita_wimv_speed_minimum", "_rita_wimv_exponent", // VITPRO, R
-                                     "_rita_wimv_RPO_level", "_rita_wimv_zigzag_factor", // PEPS, RFAK
-                                     "_rita_wimv_zigzag", "_rita_wimv_ODF_optimization", // IZICK, IANFSU/IRP
-                                     "_rita_wimv_refl_min_int", "_rita_odf_sharpness",
-                                     "_rita_wimv_odf_resolution", "_rita_odf_refinable",
-
-                                     "_rita_interpolation_method"
+      "_rita_wimv_iteration_max", "_rita_wimv_Rp_minimum", // ITZ, ABPRO
+      "_rita_wimv_speed_minimum", "_rita_wimv_exponent", // VITPRO, R
+      "_rita_wimv_RPO_level", "_rita_wimv_zigzag_factor", // PEPS, RFAK
+      "_rita_wimv_zigzag", "_rita_wimv_ODF_optimization", // IZICK, IANFSU/IRP
+      "_rita_wimv_refl_min_int", "_rita_odf_sharpness",
+      "_rita_wimv_odf_resolution", "_rita_odf_refinable",
+      
+      "_rita_interpolation_method"
   };
   public static String[] diclistcrm = {"_rita_generate_symmetry", "_rita_wimv_sum_coincidence",
-                                     "_rita_wimv_iteration_max", "_rita_wimv_Rp_minimum", // ITZ, ABPRO
-                                     "_rita_wimv_speed_minimum", "_rita_wimv_exponent", // VITPRO, R
-                                     "_rita_wimv_RPO_level", "_rita_wimv_zigzag_factor", // PEPS, RFAK
-                                     "_rita_wimv_zigzag", "_rita_wimv_ODF_optimization", // IZICK, IANFSU/IRP
-                                     "_rita_wimv_refl_min_int", "_rita_odf_sharpness",
-                                     "_rita_wimv_odf_resolution", "_rita_odf_refinable",
-
-                                     "_rita_interpolation_method"
+      "_rita_wimv_iteration_max", "_rita_wimv_Rp_minimum", // ITZ, ABPRO
+      "_rita_wimv_speed_minimum", "_rita_wimv_exponent", // VITPRO, R
+      "_rita_wimv_RPO_level", "_rita_wimv_zigzag_factor", // PEPS, RFAK
+      "_rita_wimv_zigzag", "_rita_wimv_ODF_optimization", // IZICK, IANFSU/IRP
+      "_rita_wimv_refl_min_int", "_rita_odf_sharpness",
+      "_rita_wimv_odf_resolution", "_rita_odf_refinable",
+      
+      "_rita_interpolation_method"
   };
   public static String[] classlistcs = {"superclass:it.unitn.ing.rista.diffr.rta.Interpolation"};
   public static String[] classlistc = {};
@@ -103,18 +102,18 @@ public class WIMVTexture extends DiscreteODFTexture {
   public static String[] ZigZag = {"not enabled", "enabled"};
   public static int ZigZagnumber = 2;
   public static String[] WIMVtooltip = {"maximum number of iteration steps",
-                                        "Stop if RP for each PF-value will be lower",
-                                        "Stop if the velocity of iteration will be lower",
-                                        "Starting value of the iteration exponent",
-                                        "RP0 level",
-                                        "Factor changing the R-value if the Zickzack regime is working",
-                                        "Zickzack regime for the iteration exponent R",
-                                        "Optimization of the Starting ODF approximation (off or using as exponent Rp or Rp1)"
+      "Stop if RP for each PF-value will be lower",
+      "Stop if the velocity of iteration will be lower",
+      "Starting value of the iteration exponent",
+      "RP0 level",
+      "Factor changing the R-value if the Zickzack regime is working",
+      "Zickzack regime for the iteration exponent R",
+      "Optimization of the Starting ODF approximation (off or using as exponent Rp or Rp1)"
   };
 //  Sample actualsample = null;
-
+  
   double[][] interpolatedPoleFigures = null;
-//  double odf[][][] = null;
+  //  double odf[][][] = null;
 //  int numberPoleFigures = 0;
 //  double resolution = MaudPreferences.getDouble(Texture.prefs[0], Texture.prefVal[0]);
   int numberPoleFiguresPF = 0;
@@ -124,7 +123,7 @@ public class WIMVTexture extends DiscreteODFTexture {
   double[][] weightSingle = null;
   public static double phonstepeps = .005;
   public static double pi2deg = Constants.PI / 180.0;
-
+  
   public WIMVTexture(XRDcat aobj, String alabel) {
     super(aobj, alabel);
     initXRD();
@@ -132,17 +131,17 @@ public class WIMVTexture extends DiscreteODFTexture {
     IDlabel = "WIMV";
     description = "select this to apply WIMV model";
   }
-
+  
   public WIMVTexture(XRDcat aobj) {
     this(aobj, "WIMV");
   }
-
+  
   public WIMVTexture() {
     identifier = "WIMV";
     IDlabel = "WIMV";
     description = "select this to apply WIMV model";
   }
-
+  
   public void initConstant() {
     Nstring = 14;
     Nstringloop = 0;
@@ -151,7 +150,7 @@ public class WIMVTexture extends DiscreteODFTexture {
     Nsubordinate = 1;
     Nsubordinateloop = 0;
   }
-
+  
   public void initDictionary() {
     for (int i = 0; i < totsubordinateloop; i++)
       diclist[i] = diclistc[i];
@@ -161,10 +160,10 @@ public class WIMVTexture extends DiscreteODFTexture {
     for (int i = 0; i < totsubordinate - totparameterloop; i++)
       classlists[i] = classlistcs[i];
   }
-
+  
   public void initParameters() {
     super.initParameters();
-
+    
     setSampleSymmetry(0);
     setWIMVstatus(true);
     stringField[2] = new String(MaudPreferences.getPref("texture.maxWIMVIterations", "20"));
@@ -180,73 +179,73 @@ public class WIMVTexture extends DiscreteODFTexture {
     setInterpolationMethod("Triangular");
     stringField[13] = "true";
   }
-
+  
   public void refreshForNotificationDown(XRDcat source, int reason) {
     if (!getFilePar().isComputingDerivate() || (source == this ||
-            (reason == Constants.SAMPLE_ORIENTATION_CHANGED || (source == getParent() &&
+        (reason == Constants.SAMPLE_ORIENTATION_CHANGED || (source == getParent() &&
             (reason == Constants.STRAIN_CHANGED || reason == Constants.CELL_CHANGED)))))
       refreshComputation = true;
   }
-
+  
   public String getWIMVOption(int i) {
     return stringField[i + 2];
   }
-
+  
   public void setWIMVOption(int i, String value) {
     if (i == 0) {
       stringField[i + 2] = new String(Integer.toString(Integer.valueOf(value).intValue()));
     } else
       stringField[i + 2] = new String(value);
   }
-
+  
   public int getIteration() {
     return Integer.valueOf(getWIMVOption(0)).intValue();
   }
-
+  
   public double getRpMinimum() {
     return Double.valueOf(getWIMVOption(1)).doubleValue();
   }
-
+  
   public double getSpeedMinimum() {
     return Double.valueOf(getWIMVOption(2)).doubleValue();
   }
-
+  
   public double getRexponent() {
     return Double.valueOf(getWIMVOption(3)).doubleValue();
   }
-
+  
   public double getRPOlevel() {
     return Double.valueOf(getWIMVOption(4)).doubleValue();
   }
-
+  
   public double getRfactor() {
     return Double.valueOf(getWIMVOption(5)).doubleValue();
   }
-
+  
   public void setMinimumIntensity(String value) {
     stringField[10] = new String(value);
   }
-
+  
   public String getMinimumIntensity() {
     return stringField[10];
   }
-
+  
   public double getMinimumIntensityD() {
     return Double.valueOf(getMinimumIntensity()).doubleValue();
   }
-
+  
   public void setSharpness(String value) {
     setString(11, value);
   }
-
+  
   public String getSharpness() {
     return getString(11);
   }
-
+  
   public String getSampleSymmetry() {
     return stringField[0];
   }
-
+  
   public void setResolution(String value) {
     double res = 0.0;
     try {
@@ -259,76 +258,76 @@ public class WIMVTexture extends DiscreteODFTexture {
       resetODF();
     }
   }
-
+  
   public String getResolution() {
     return stringField[12];
   }
-
+  
   public double getResolutionD() {
     return Double.valueOf(getResolution()).doubleValue();
   }
-
+  
   public void setSampleSymmetry(int i) {
     stringField[0] = new String(symmetrychoice[i]);
   }
-
+  
   public void setSampleSymmetry(String value) {
     stringField[0] = new String(value);
   }
-
+  
   public boolean getWIMVstatus() {
     return stringField[1].equalsIgnoreCase("true");
   }
-
+  
   public void setWIMVstatus(boolean status) {
     if (status)
       stringField[1] = new String("true");
     else
       stringField[1] = new String("false");
   }
-
+  
   public void setWIMVstatus(String value) {
     stringField[1] = new String(value);
   }
-
+  
   public boolean ODFisRefinable() {
     return stringField[13].equalsIgnoreCase("true");
   }
-
+  
   public void setODFrefinable(boolean status) {
     if (status)
       stringField[13] = new String("true");
     else
       stringField[13] = new String("false");
   }
-
+  
   public void setODFrefinable(String value) {
     stringField[13] = new String(value);
   }
-
+  
   public String getZigZag() {
     return stringField[8];
   }
-
+  
   public int getZigZagValue() {
     for (int i = 0; i < ZigZagnumber; i++)
       if (getZigZag().equalsIgnoreCase(ZigZag[i]))
         return i;
     return 1;
   }
-
+  
   public void setZigZag(int i) {
     stringField[8] = new String(ZigZag[i]);
   }
-
+  
   public void setZigZag(String value) {
     stringField[8] = new String(value);
   }
-
+  
   public String getODFoptimization() {
     return stringField[9];
   }
-
+  
   public int getODFoptimizationValue() {
     int result = 0;
     for (int i = 0; i < ODFoptimizationnumber; i++)
@@ -338,43 +337,43 @@ public class WIMVTexture extends DiscreteODFTexture {
       result = 1;
     return result;
   }
-
+  
   public int getODFoptimizationCriteria() {
     int result = 0;
     for (int i = 0; i < ODFoptimizationnumber; i++)
       if (getODFoptimization().equalsIgnoreCase(ODFoptimization[i]))
         result = i - 1;
-
+    
     if (result < 0)
       result = 0;
     return result;
   }
-
+  
   public void setODFoptimization(int i) {
     stringField[9] = new String(ODFoptimization[i]);
   }
-
+  
   public void setODFoptimization(String value) {
     stringField[9] = new String(value);
   }
-
+  
   public void setInterpolationMethod(String value) {
     if (subordinateField[0] == null || !value.equals(subordinateField[0].identifier))
       setsubordinateField(getInterpolationID(), value);
   }
-
+  
   public String getInterpolationMethod() {
     return getActiveInterpolation().identifier;
   }
-
+  
   public void setInterpolationMethod(int number) {
     setInterpolationMethod(getsubordIdentifier(getInterpolationID(), number));
   }
-
+  
   public int getInterpolationID() {
     return 0;
   }
-
+  
   public Interpolation getActiveInterpolation() {
     if (subordinateField[getInterpolationID()] == null)
       setInterpolationMethod(0);
@@ -384,48 +383,48 @@ public class WIMVTexture extends DiscreteODFTexture {
 /*  public int getLaueGroupNumber() {
     return SpaceGroups.getLGNumberSiegfriedConv(getPhase());
   }*/
-
+  
   public int getLaueGroupNumberS() {
     return 1;
   }
-
+  
   public int getPoleFigureNumberAll() {
     return getPhase().gethklNumber();
   }
-
+  
   public int getPoleFigureNumber() {
     if (fromPF)
       return numberPoleFiguresPF;
     else
       return numberPoleFigures;
   }
-
+  
   public int getPointNumber(int pole) {
     return getFilePar().getActiveSample().getNumberActiveDatafiles()
-            * getSampleSymmetryMultiplicity();
+        * getSampleSymmetryMultiplicity();
   }
-
+  
   public Reflection getReflectionAll(int pole) {
     return getPhase().getReflectionVector().elementAt(pole);
   }
-
+  
   public Reflection getReflection(int pole, int partial) {
     return getPhase().getReflectionVector().elementAt(poleFigureIndex[pole] + partial);
   }
-
+  
   public double[] getTextureAngles(int pole, int point) {
     Reflection reflex = getReflection(pole, 0);
-
+    
     return applySampleSymmetry(reflex, point, getFilePar().getActiveSample().getNumberActiveDatafiles());
   }
-
+  
   public int getPoint(Reflection reflex, int point) {
     int truepointmax = getFilePar().getActiveSample().getNumberActiveDatafiles();
     int sector = point / truepointmax;
     int residual = point - sector * truepointmax;
     return residual;
   }
-
+  
   public DiffrDataFile getPointFromAll(int point) {
     Sample asample = getFilePar().getActiveSample();
     int truepointmax = asample.getNumberActiveDatafiles();
@@ -433,13 +432,13 @@ public class WIMVTexture extends DiscreteODFTexture {
     int residual = point - sector * truepointmax;
     return asample.getActiveDiffrDataFile(residual);
   }
-
+  
   public double[] applySampleSymmetry(Reflection reflex, int point, int truepointmax) {
     int sector = point / truepointmax;
     int residual = point - sector * truepointmax;
-
+    
     double[] angles = getFilePar().getActiveSample().getActiveTextureAngles(reflex, residual);
-
+    
     if (angles[0] < 0) {
       angles[0] = -angles[0];
       angles[1] += 180.0f;
@@ -459,14 +458,14 @@ public class WIMVTexture extends DiscreteODFTexture {
       angles[1] += 360.0f;
     while (angles[1] >= 360.0)
       angles[1] -= 360.0f;
-
-
+    
+    
     if (truepointmax > point)
       return angles;
-
+    
     int fold;
     double phiturn;
-
+    
     int multiplicity = getSampleSymmetryValue();
     switch (multiplicity) {
       case 1:
@@ -495,9 +494,8 @@ public class WIMVTexture extends DiscreteODFTexture {
           case 3:
             angles[1] = 360.f - angles[1];
             break;
-          default:
-            {
-            }
+          default: {
+          }
         }
         break;
       case 7:
@@ -505,53 +503,52 @@ public class WIMVTexture extends DiscreteODFTexture {
         phiturn = 360f / fold;
         angles[1] += sector * phiturn;
         break;
-      default:
-        {
-        }
+      default: {
+      }
     }
     while (angles[1] < 0)
       angles[1] += 360.0f;
     while (angles[1] >= 360.0)
       angles[1] -= 360.0f;
-
+    
     return angles;
   }
-
+  
   public double getPoleIntensity(int pole, int point) {
     int izoveri = getIzoveri(pole);
     double texturefactor = 0.0;
     double wgt, wgtsum = 0.0;
-	  Phase phase = getPhase();
+    Phase phase = getPhase();
     for (int i = 0; i < izoveri; i++) {
       Reflection reflex = getReflection(pole, i);
       wgt = reflex.getWeight();
       wgtsum += wgt;
-	    int reflexIndex = poleFigureIndex[pole] + i;
+      int reflexIndex = poleFigureIndex[pole] + i;
 //		 	int mult = reflex.multiplicity;
-	    texturefactor += getPointFromAll(point).getExperimentalTextureFactors(phase, reflexIndex)[0][0] *         // todo: for all radiations?
-			    wgt; // * mult;
+      texturefactor += getPointFromAll(point).getExperimentalTextureFactor(phase, reflexIndex, 0) *         // todo: v3.0  for all radiations?
+          wgt; // * mult;
     }
     return texturefactor / wgtsum;
   }
-
+  
   public double getWeight(int pole, int point) {
 /*		Reflection reflex = getReflection(pole, 0);
 		return reflex.getWeight(getPointFromAll(reflex, point));*/
     return 1.0;
   }
-
+  
   public int getH(int pole) {
     return getH(pole, 0);
   }
-
+  
   public int getK(int pole) {
     return getK(pole, 0);
   }
-
+  
   public int getL(int pole) {
     return getL(pole, 0);
   }
-
+  
   public int getIzoveri(int pole) {
     if (fromPF) {
 //  System.out.println(pole + " Izoveri " + izoveriPF[pole]);
@@ -561,28 +558,28 @@ public class WIMVTexture extends DiscreteODFTexture {
       return getReflection(pole, 0).izoveri;
     }
   }
-
+  
   public int getH(int pole, int partial) {
     if (fromPF)
       return hklPF[0][pole][partial];
     else
       return getReflection(pole, partial).getH();
   }
-
+  
   public int getK(int pole, int partial) {
     if (fromPF)
       return hklPF[1][pole][partial];
     else
       return getReflection(pole, partial).getK();
   }
-
+  
   public int getL(int pole, int partial) {
     if (fromPF)
       return hklPF[2][pole][partial];
     else
       return getReflection(pole, partial).getL();
   }
-
+  
   public double getWeightSingle(int pole, int partial) {
     if (fromPF) {
 //    System.out.println("pole "+pole+"  partial "+partial+" "+Double.toXRDcatString(weightSingle[pole][partial]));
@@ -598,25 +595,25 @@ public class WIMVTexture extends DiscreteODFTexture {
       return reflex.getOverlappedWeight(); // / wgtsum;
     }
   }
-
+  
   public Phase getPhase() {
     return (Phase) getParent();
   }
-
+  
   public void computeTextureFactor(Phase aphase, Sample asample) {
-
+    
     if (odf == null) { //odfnotLoaded) {
       loadOdfFromFile();
       refreshComputation = true;
     }
-
+    
     if (!refreshComputation)
       return;
-
+    
     FilePar aparFile = getFilePar();
-
+    
     fromPF = false;
-
+    
     if (aparFile.isTextureComputationPermitted() && ODFisRefinable()) {
 //      actualsample = asample;
       interpolatedPoleFigures = getActiveInterpolation().computeInterpolation();
@@ -627,7 +624,7 @@ public class WIMVTexture extends DiscreteODFTexture {
     
     if (odf == null)
       return;
-
+    
     recomputedTextureFactor(aphase, asample, true);
 
 /*    double[] cdsc = aphase.lattice();
@@ -637,7 +634,7 @@ public class WIMVTexture extends DiscreteODFTexture {
     int hkln = aphase.gethklNumber();
     for (int j = 0; j < hkln; j++) {
       Reflection refl = (Reflection) aphase.reflectionv.elementAt(j);
-      double dspace = (double) aphase.getDspacing(j);
+      double energy = (double) aphase.getDspacing(j);
 
       double[] sctf = Uwimvuo.tfhkl(refl.h, refl.k, refl.l, cdsc[7], cdsc[5], cdsc[3], cdsc[6], cdsc[0], cdsc[1]);
       double fhir = Math.acos(sctf[3]);
@@ -647,7 +644,7 @@ public class WIMVTexture extends DiscreteODFTexture {
         DataFileSet adataset = asample.getActiveDataSet(i);
         int datafilenumber = adataset.activedatafilesnumber();
         double[][] texture_angles = new double[4][datafilenumber];
-        adataset.computeActiveTextureAngles(asample, dspace, texture_angles);
+        adataset.computeActiveTextureAngles(asample, energy, texture_angles);
         double[] textF = computeTextureFactor(odf, cdsc, texture_angles, sctf, fhir, inv,
                 phoninp, getResolutionD());
         for (int i1 = 0; i1 < datafilenumber; i1++) {
@@ -658,45 +655,56 @@ public class WIMVTexture extends DiscreteODFTexture {
       }
     }*/
   }
-
+  
   public double[] computeTextureFactor(double[][] texture_angles,
                                        double[] sctf, double fhir, int inv) {
-
+    
     if (odf != null) {
       inv = Uwimvuo.equiv(getLaueGroupNumber(), sctf);
       double phoninp = Uwimvuo.subfmin(odf, Uwimvuo.getAlphamax(getResolutionD()));
       double[] cdsc = getPhase().lattice();
       double res = getResolutionD();
       return computeTextureFactor(odf, cdsc, texture_angles,
-                                  sctf, fhir, inv, phoninp, res);
-
+          sctf, fhir, inv, phoninp, res);
+      
     }
     return null;
   }
-
+  
+  public double[] computeTextureFactor(ReflectionTexture reflectionTexture) {
+    
+    if (odf != null) {
+      double phoninp = Uwimvuo.subfmin(odf, Uwimvuo.getAlphamax(getResolutionD()));
+      double res = getResolutionD();
+      return computeTextureFactor(odf, reflectionTexture, phoninp, res);
+      
+    }
+    return null;
+  }
+  
   public double[] computeTextureFactor(Phase aphase, double[][] alphabeta,
                                        Reflection reflex) {
 
 //    int numberOfPoints = alphabeta.length / 2;
-
+    
     initializeAll();
-
+    
     if (odf == null)
       return super.computeTextureFactor(aphase, alphabeta, reflex);
-
+    
     double[] cdsc = aphase.lattice();
-
+    
     double phoninp = Uwimvuo.subfmin(odf, Uwimvuo.getAlphamax(getResolutionD()));
-
+    
     double[] sctf = Uwimvuo.tfhkl(reflex.getH(), reflex.getK(), reflex.getL(), cdsc[7], cdsc[5], cdsc[3], cdsc[6], cdsc[0], cdsc[1]);
     double fhir = Math.acos(sctf[3]);
     int inv = Uwimvuo.equiv(getLaueGroupNumber(), sctf);
-
+    
     double[] textureValues = computeTextureFactor(odf, cdsc, alphabeta, sctf, fhir,
-            inv, phoninp, getResolutionD());
+        inv, phoninp, getResolutionD());
     return textureValues;
   }
-
+  
   public double getODF(double als, double bets, double gams) {
     while (bets >= Constants.PI2)
       bets -= Constants.PI2;
@@ -723,37 +731,37 @@ public class WIMVTexture extends DiscreteODFTexture {
 //        System.out.println(nal + " " + nb + " " + nga);
     return odf[nal][nb][nga];
   }
-
+  
   public double[][] getPoleFigureGrid(Reflection refl, int numberofPoints, double maxAngle) {
-
+    
     int h = refl.getH();
     int k = refl.getK();
     int l = refl.getL();
-
+    
     Phase aphase = (Phase) getParent();
-
+    
     initializeAll();
-
+    
     double[][] PFreconstructed = new double[numberofPoints][numberofPoints];
-
+    
     if (odf == null)
       return null;
-
+    
     double[] cdsc = aphase.lattice();
-
+    
     double phoninp = Uwimvuo.subfmin(odf, Uwimvuo.getAlphamax(getResolutionD()));
-
- //   int hkln = aphase.gethklNumber();
-
+    
+    //   int hkln = aphase.gethklNumber();
+    
     double[] sctf = Uwimvuo.tfhkl(h, k, l, cdsc[7], cdsc[5], cdsc[3], cdsc[6], cdsc[0], cdsc[1]);
     double fhir = Math.acos(sctf[3]);
     int inv = Uwimvuo.equiv(getLaueGroupNumber(), sctf);
-
+    
     double texture_angles[] = new double[2];
-
-    double x , y, r;
+    
+    double x, y, r;
     double dxy = 2.0 * maxAngle / numberofPoints;
-
+    
     for (int i = 0; i < numberofPoints; i++)
       for (int j = 0; j < numberofPoints; j++) {
         x = (j + 0.5) * dxy - maxAngle;
@@ -763,7 +771,7 @@ public class WIMVTexture extends DiscreteODFTexture {
           texture_angles[0] = 0.0f;
           texture_angles[1] = 0.0f;
           PFreconstructed[i][j] = computeTextureFactor(odf, cdsc, texture_angles, sctf, fhir,
-                  inv, phoninp, getResolutionD());
+              inv, phoninp, getResolutionD());
         } else if (r < maxAngle) {
           double phaseAng = Math.atan2(x, y);
           if (phaseAng < 0.0)
@@ -776,29 +784,29 @@ public class WIMVTexture extends DiscreteODFTexture {
               phaseAng -= Constants.PI2;
           }
           texture_angles[1] = (double) phaseAng;
-
+          
           PFreconstructed[i][j] = computeTextureFactor(odf, cdsc, texture_angles, sctf, fhir,
-                  inv, phoninp, getResolutionD());
+              inv, phoninp, getResolutionD());
         } else
           PFreconstructed[i][j] = Double.NaN;
       }
     return PFreconstructed;
   }
-
+  
   public double[][] getInversePoleFigureGrid(double[] texture_angles,
                                              double maxPhi, int phiPointNumber,
                                              double maxBeta, int betaPointNumber) {
-
+    
     Phase aphase = (Phase) getParent();
-
+    
     initializeAll();
-
+    
     double[] cdsc = aphase.lattice();
-
+    
     double phoninp = Uwimvuo.subfmin(odf, Uwimvuo.getAlphamax(getResolutionD()));
-
+    
     double[][] PFreconstructed = new double[phiPointNumber][betaPointNumber];
-
+    
     double[][] textureAngles = new double[2][1];
     for (int i = 0; i < 2; i++)
       textureAngles[i][0] = (double) (texture_angles[i] * Constants.DEGTOPI);
@@ -806,7 +814,7 @@ public class WIMVTexture extends DiscreteODFTexture {
     double dphi = maxPhi / (phiPointNumber - 1);
     double dbeta = maxBeta / (betaPointNumber - 1);
     double[] sctf = new double[4];
-
+    
     for (int i = 0; i < phiPointNumber; i++)
       for (int j = 0; j < betaPointNumber; j++) {
         beta = j * dbeta;
@@ -825,24 +833,24 @@ public class WIMVTexture extends DiscreteODFTexture {
       }
     return PFreconstructed;
   }
-
+  
   public double[] getInversePoleFigureGrid(double[] texture_angles, double[][] phibeta) {
     Phase aphase = (Phase) getParent();
-
+    
     initializeAll();
-
+    
     double[] cdsc = aphase.lattice();
-
+    
     double phoninp = Uwimvuo.subfmin(odf, Uwimvuo.getAlphamax(getResolutionD()));
-
+    
     int pointNumber = phibeta[0].length;
     double[] PFreconstructed = new double[pointNumber];
-
+    
     double[][] textureAngles = new double[2][1];
     for (int i = 0; i < 2; i++)
       textureAngles[i][0] = (double) (texture_angles[i] * Constants.DEGTOPI);
     double[] sctf = new double[4];
-
+    
     for (int i = 0; i < pointNumber; i++) {
       sctf[0] = Math.sin(phibeta[0][i]);
       sctf[1] = Math.cos(phibeta[0][i]);
@@ -853,14 +861,14 @@ public class WIMVTexture extends DiscreteODFTexture {
       double[] value = computeTextureFactor(odf, cdsc, textureAngles, sctf, fhir, inv, phoninp, getResolutionD());
       PFreconstructed[i] = value[0];
     }
-
+    
     return PFreconstructed;
   }
-
+  
   public void loadPFandComputeODF(Frame aframe) {
     String filename = Utility.openFileDialog(aframe, "Open PF file (Beartex format)", FileDialog.LOAD,
-            (String) MaudPreferences.getPref(FilePar.analysisPath, Constants.documentsDirectory),
-            null, "");
+        (String) MaudPreferences.getPref(FilePar.analysisPath, Constants.documentsDirectory),
+        null, "");
     if (filename != null) {
       fromPF = true;
       Vector expPF = poleFigureInput(filename, getResolutionD());
@@ -870,7 +878,7 @@ public class WIMVTexture extends DiscreteODFTexture {
       hklPF = new int[3][numberPoleFiguresPF][maxizoveri];
       weightSingle = new double[numberPoleFiguresPF][maxizoveri];
       izoveriPF = new int[numberPoleFiguresPF];
-
+      
       double res = getResolutionD();
       int alphamax = Uwimvuo.getAlphamax(res);
       int betamax = (Uwimvuo.getBetamax(res) - 1) / 2 + 1;
@@ -881,9 +889,9 @@ public class WIMVTexture extends DiscreteODFTexture {
         if (pfInt.length > totmax)
           totmax = pfInt.length;
       }*/
-
+      
       double[][] experimentalPF = new double[numberPoleFiguresPF][totmax];
-
+      
       int numberIzoveri = 0;
       for (int i = 0; i < numberPoleFiguresPF; i++) {
         int[][] hkl = (int[][]) expPF.elementAt(i * 4);
@@ -911,19 +919,19 @@ public class WIMVTexture extends DiscreteODFTexture {
           for (int j = pfInt.length; j < totmax; j++)
             experimentalPF[i][j] = -666.666;
         } else {*/
-          for (int j = 0; j < pfInt.length; j++)
-            experimentalPF[i][j] = pfInt[j];
-          for (int j = pfInt.length; j < totmax; j++)
-            experimentalPF[i][j] = -666.666;
-       // }
+        for (int j = 0; j < pfInt.length; j++)
+          experimentalPF[i][j] = pfInt[j];
+        for (int j = pfInt.length; j < totmax; j++)
+          experimentalPF[i][j] = -666.666;
+        // }
       }
       computeTextureFromPF(numberPoleFiguresPF, numberIzoveri, experimentalPF);
       fromPF = false;
     }
   }
-
+  
   public void computeTextureFromPF(int numberPF, int numberIzoveri, double[][] experimentalPF) {
-
+    
     odf = (new Uwimvuo(this, numberPF, numberIzoveri)).computeODF(experimentalPF);
 
 //    String filename = new String(((FilePar) getPhase().getFilePar()).getDirectory() +
@@ -931,11 +939,11 @@ public class WIMVTexture extends DiscreteODFTexture {
     // odfnotLoaded = false;
 //  	ODFoutputStandard(filename, odf, SpaceGroups.getLGNumberSiegfriedConv(getPhase()), getResolutionD());
   }
-
+  
   int maxizoveri = 1;
-
+  
   public Vector poleFigureInput(String filename, double internalResolution) {
-
+    
     return poleFigureInput(filename);
 
 /*    BufferedReader PFreader = Misc.getReader(filename);
@@ -1100,63 +1108,63 @@ public class WIMVTexture extends DiscreteODFTexture {
 
     return expPF;*/
   }
-
+  
   public static void poleFigureOutput(double odfl[][][], Phase thephase, int h, int k, int l, double res) {
-
+    
     double[] cdsc = thephase.lattice();
     double[] sctf = Uwimvuo.tfhkl(h, k, l, cdsc[7], cdsc[5], cdsc[3], cdsc[6], cdsc[0], cdsc[1]);
     double fhir = Math.acos(sctf[3]);
     int inv = Uwimvuo.equiv(SpaceGroups.getLGNumberSiegfriedConv(thephase.getPointGroup()), sctf);
-
+    
     double phoninp = Uwimvuo.subfmin(odfl, Uwimvuo.getAlphamax(res));
-
+    
     BufferedWriter PFwriter = Misc.getWriter(thephase.getFilePar().getDirectory() +
-            thephase.toXRDcatString() + ".xpt");
-
+        thephase.toXRDcatString() + ".xpt");
+    
     String title = new String(thephase.toXRDcatString() + ": recalculated pole figure, ");
-
+    
     StringBuffer tmp = new StringBuffer(title);
     tmp = tmp.append(" ").append(Integer.toString(h)).
-            append(",").append(Integer.toString(k)).
-            append(",").append(Integer.toString(l));
+        append(",").append(Integer.toString(k)).
+        append(",").append(Integer.toString(l));
     int bufflength = tmp.length();
     for (int i = 0; i < 79 - bufflength; i++)
       tmp = tmp.append(" ");
-
+    
     String commentLine = new String(tmp.toString().substring(0, 79) + "#");
-
+    
     try {
       PFwriter.write(commentLine);
       for (int i = 0; i < 5; i++)
         PFwriter.write(Constants.lineSeparator);
-
+      
       PFwriter.write(Misc.getFirstPFline(thephase));
       PFwriter.write(Constants.lineSeparator);
-
+      
       String firstline = new String(" " + Misc.getIntStringFormatted(h, 3) +
-              Misc.getIntStringFormatted(k, 3) +
-              Misc.getIntStringFormatted(l, 3) +
-              "   .0 90.0" + Misc.getDoubleStringFormatted(res, 3, 1) +
-              "   .0360.0" + Misc.getDoubleStringFormatted(res, 3, 1) +
-              " 1 1");
+          Misc.getIntStringFormatted(k, 3) +
+          Misc.getIntStringFormatted(l, 3) +
+          "   .0 90.0" + Misc.getDoubleStringFormatted(res, 3, 1) +
+          "   .0360.0" + Misc.getDoubleStringFormatted(res, 3, 1) +
+          " 1 1");
       PFwriter.write(firstline);
       PFwriter.write(Constants.lineSeparator);
     } catch (IOException io) {
     }
-
+    
     int until18 = 0;
     double[] texture_angles = new double[2];
     int alphamax = Uwimvuo.getAlphamax(res) - 1;
     int betamax = (Uwimvuo.getBetamax(res) - 1) / 2 + 1;
-
+    
     for (int nty = 0; nty < betamax; ++nty) {
       for (int nfy = 0; nfy < alphamax; ++nfy) {
         texture_angles[0] = (double) (nty * res * Constants.DEGTOPI);
         texture_angles[1] = (double) (nfy * res * Constants.DEGTOPI);
         double textF = computeTextureFactor(odfl, cdsc, texture_angles, sctf, fhir, inv,
-                phoninp, res);
+            phoninp, res);
         int imh = (int) (textF * 100.000001);
-
+        
         try {
           if (until18 == 0)
             PFwriter.write(" ");
@@ -1178,40 +1186,40 @@ public class WIMVTexture extends DiscreteODFTexture {
       PFwriter.write(Constants.lineSeparator);
     } catch (IOException io) {
     }
-
+    
     try {
       PFwriter.flush();
       PFwriter.close();
     } catch (IOException io) {
     }
   }
-
+  
   public void fiottu() {
     int igbl = SpaceGroups.getLGNumberSiegfriedConv(getPhase().getPointGroup());
     Uwimvuo.fiottu(odf, igbl, alphama);
   }
-
+  
   public static void ODFoutputStandardOld(String filename, double[][][] odfl, int igbl, double res) {
-
+    
     int alphama = Uwimvuo.getAlphamax(res);
-
+    
     int betama = (alphama - 1) / 2 + 1;
     int betamad2 = (betama - 1) / 2 + 1;
     int alphamad3 = (alphama - 1) / 3 + 1;
     int alphamad6 = (alphama - 1) / 6 + 1;
-
+    
     int nyzgl[][] = {{betama, betama, betamad2, betama, betamad2, betamad2, betamad2, betama, betamad2, betama, betamad2},
-                     {alphama, betama, betama, betamad2, betamad2, betama, betamad2, alphamad3, alphamad3, alphamad6, alphamad6}};
-
+        {alphama, betama, betama, betamad2, betamad2, betama, betamad2, alphamad3, alphamad3, alphamad6, alphamad6}};
+    
     int nae = nyzgl[1][0];
     int nbe = nyzgl[0][igbl - 1];
     int nge = nyzgl[1][igbl - 1];
-
+    
     BufferedWriter PFwriter = Misc.getWriter(filename);
     if (PFwriter != null) {
       try {
-
-
+        
+        
         PFwriter.write(Integer.toString(igbl) + " " + Fmt.format(res));
         PFwriter.write(Constants.lineSeparator);
 // System.out.println(nae + " " + nbe + " " + nge);
@@ -1377,31 +1385,31 @@ public class WIMVTexture extends DiscreteODFTexture {
 
     return odfl;
   }*/
-
+  
   public static void ODFoutputBeartex(String filename, double[][][] odfl, int igbl, double res) {
-
+    
     int alphama = Uwimvuo.getAlphamax(res);
-
+    
     int betama = (alphama - 1) / 2 + 1;
     int betamad2 = (betama - 1) / 2 + 1;
     int alphamad3 = (alphama - 1) / 3 + 1;
     int alphamad6 = (alphama - 1) / 6 + 1;
-
+    
     int nyzgl[][] = {{betama, betama, betamad2, betama, betamad2, betamad2, betamad2, betama, betamad2, betama, betamad2},
-                     {alphama, betama, betama, betamad2, betamad2, betama, betamad2, alphamad3, alphamad3, alphamad6, alphamad6}};
-
+        {alphama, betama, betama, betamad2, betamad2, betama, betamad2, alphamad3, alphamad3, alphamad6, alphamad6}};
+    
     int nae = nyzgl[1][0];
     int nbe = nyzgl[0][igbl - 1];
     int nge = nyzgl[1][igbl - 1];
-
+    
     BufferedWriter PFwriter = Misc.getWriter(filename);
     if (PFwriter != null) {
       try {
-
-
+        
+        
         PFwriter.write(Integer.toString(igbl) + " " + Fmt.format(res));
         PFwriter.write(Constants.lineSeparator);
-
+        
         for (int ng = 0; ng < nge; ng++) {
           for (int nb = 0; nb < nbe; nb++) {
             for (int na = 0; na < nae; na++) {
@@ -1747,39 +1755,59 @@ C
 C  *****************************************
 */
   }
-
+  
+  public static double[] computeTextureFactor(double[][][] odfl, ReflectionTexture reflectionTexture,
+                                              double phoninp, double res) {
+    
+    int numberOfPoint = reflectionTexture.getPointsNumber();
+    double[] pfValue = new double[numberOfPoint];
+    for (int i = 0; i < numberOfPoint; i++)
+      pfValue[i] = 1.0;
+    
+    
+    if (odfl != null) {
+      for (int i = 0; i < numberOfPoint; i++) {
+        double[] texture_angles = reflectionTexture.getAngles(i);
+        pfValue[i] = calculatePF(odfl, phoninp, texture_angles[0], texture_angles[1],
+            reflectionTexture.sctf[0], reflectionTexture.sctf[1], reflectionTexture.fhir,
+            reflectionTexture.inv, res);
+      }
+    }
+    return pfValue;
+  }
+  
   public static double[] computeTextureFactor(double[][][] odfl, double[] cdsc, double texture_angles[][],
                                               double[] sctf, double fhir, int inv, double phoninp, double res) {
-
+    
     int numberOfPoint = texture_angles[0].length;
     double[] pfValue = new double[numberOfPoint];
     for (int i = 0; i < numberOfPoint; i++)
       pfValue[i] = 1.0;
-
+    
     if (odfl != null) {
       for (int i = 0; i < numberOfPoint; i++)
         pfValue[i] = calculatePF(odfl, phoninp, texture_angles[0][i], texture_angles[1][i],
-                sctf[0], sctf[1], fhir, inv, res);
+            sctf[0], sctf[1], fhir, inv, res);
     }
     return pfValue;
   }
-
+  
   public static double computeTextureFactor(double[][][] odfl, double[] cdsc, double texture_angles[],
                                             double[] sctf, double fhir, int inv, double phoninp, double res) {
-
+    
     double pfValue = 1.0;
-
+    
     if (odfl != null) {
       pfValue = calculatePF(odfl, phoninp, texture_angles[0], texture_angles[1],
-              sctf[0], sctf[1], fhir, inv, res);
+          sctf[0], sctf[1], fhir, inv, res);
     }
     return pfValue;
   }
-
+  
   public static final double calculatePF(double[][][] f, double phoninp, double theta, double phi,
                                          double sthi, double cthi,
                                          double fhir, int inv, double resolution) {
-/* Local variables */
+    /* Local variables */
     double ffak;//, pfak, gams, bets;
     int nfis;//, nfiy, ntfs;
 //    int nals1, i;
@@ -1793,7 +1821,7 @@ C  *****************************************
     int nga, nal;
 //    double als;
 //    int iswitch;
-
+    
     boolean negODFout = false;
     if (Constants.testing)
       negODFout = MaudPreferences.getBoolean("debug.negativeODFout", false);
@@ -1801,28 +1829,28 @@ C  *****************************************
 //    int alphamax = (int) (360.0 / resolution + 1.00001);
 //    int betamax = alphamax / 2 + 1;
 //    int old2701max = alphamax * betamax;
-
+    
     double pi5g = resolution * Constants.DEGTOPI;
     double pi25g = pi5g / 2.;
 //    double pi75g = pi25g * 3.;
-
-/*     Calculation of a complete reduced pole figure */
-/*     Normalization */
-/*     INPUT FIO given in the whole G-space OUTPUT POLREF=FS */
-
+    
+    /*     Calculation of a complete reduced pole figure */
+    /*     Normalization */
+    /*     INPUT FIO given in the whole G-space OUTPUT POLREF=FS */
+    
     double phonstep = phoninp + phonstepeps;
-
+    
     double fs = 0.;
-
-/* Projection thread loop, Simpson integration */
-
+    
+    /* Projection thread loop, Simpson integration */
+    
     cb2 = cthi;
     g2r = Constants.PI - fhir;
     boolean checkL13 = false;
     boolean nextCheck = false;
     double cr = Math.cos(theta);
     double sr = Math.sin(theta);
-
+    
     int nfismax = (int) (Constants.PI2 / Constants.integrationStepPFR + 1.000001);
     do {
       while (g2r < 0.) {
@@ -1885,22 +1913,22 @@ C  *****************************************
         g2r -= Constants.PI;
       }
     } while (!checkL13); /*goto L13; */
-
+    
     if (inv != 1) {
       fs /= 2.;
     }
-/*                                          Normalization to PINPF */
+    /*                                          Normalization to PINPF */
 //		System.out.println(fs);
     return fs;
   } /* calpolo_ */
-
+  
   public JOptionsDialog getOptionsDialog(Frame parent) {
     JOptionsDialog adialog = new JWTextureOptionsD(parent, this);
     return adialog;
   }
-
+  
   class JWTextureOptionsD extends JOptionsDialog {
-
+    
     JComboBox symmetryCB;
     JComboBox wimvenabledCB;
     JComboBox interpolationCB;
@@ -1909,11 +1937,11 @@ C  *****************************************
     JCheckBox statusCB;
     JCheckBox refinableCB;
     JLabel sharpL = null;
-
+    
     public JWTextureOptionsD(Frame parent, XRDcat obj) {
-
+      
       super(parent, obj);
-
+      
       principalPanel.setLayout(new GridLayout(0, 2, 3, 3));
       JPanel jPanel8 = new JPanel();
       jPanel8.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
@@ -1938,21 +1966,21 @@ C  *****************************************
       resTF = new JTextField(Constants.FLOAT_FIELD);
       resTF.setToolTipText("Set the cell dimension in degrees for the ODF (standard=5.0)");
       jPanel8.add(resTF);
-
+      
       JPanel jPanel9 = new JPanel();
       jPanel9.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
       principalPanel.add(jPanel9);
       statusCB = new JCheckBox("Real coincidences unique PF");
       statusCB.setToolTipText("Check the box to let WIMV use real coincidence superposed as a unique pole figure");
       jPanel9.add(statusCB);
-
+      
       jPanel9 = new JPanel();
       jPanel9.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
       principalPanel.add(jPanel9);
       refinableCB = new JCheckBox("ODF refinable");
       refinableCB.setToolTipText("Uncheck this box if the ODF should not be modify");
       jPanel9.add(refinableCB);
-
+      
       jPanel9 = new JPanel();
       jPanel9.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
       principalPanel.add(jPanel9);
@@ -1965,7 +1993,7 @@ C  *****************************************
           resetODF();
         }
       });
-
+      
       jPanel9 = new JPanel();
       jPanel9.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
       principalPanel.add(jPanel9);
@@ -1995,12 +2023,12 @@ C  *****************************************
           advancedOptions();
         }
       });
-
+      
       jPanel10 = new JPanel();
       jPanel10.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
       principalPanel.add(jPanel10);
       jPanel10.add(new JLabel("ODF sharpness: " + getSharpness()));
-
+      
       jPanel10 = new JPanel();
       jPanel10.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
       principalPanel.add(jPanel10);
@@ -2015,7 +2043,7 @@ C  *****************************************
         }
       });
       jb.setToolTipText("Press this to load an odf using the Beartex/Maud exchange format (.mod)");
-
+      
       jPanel10 = new JPanel();
       jPanel10.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
       principalPanel.add(jPanel10);
@@ -2028,7 +2056,7 @@ C  *****************************************
         }
       });
       jb.setToolTipText("Press this to save the odf using an exchage Beartex/Maud format");
-
+      
       jPanel10 = new JPanel();
       jPanel10.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
       principalPanel.add(jPanel10);
@@ -2041,7 +2069,7 @@ C  *****************************************
         }
       });
       jb.setToolTipText("Press this to save the PFs using the Beartex format");
-
+      
       jPanel10 = new JPanel();
       jPanel10.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
       principalPanel.add(jPanel10);
@@ -2056,7 +2084,7 @@ C  *****************************************
       });
       jb.setToolTipText("Press this to compute the Texture index (F2)");
       jPanel10.add(sharpL = new JLabel("Texture index (F2): " + getSharpness()));
-
+      
       jPanel10 = new JPanel();
       jPanel10.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
       principalPanel.add(jPanel10);
@@ -2065,20 +2093,20 @@ C  *****************************************
         public void actionPerformed(ActionEvent event) {
           retrieveParameters();
           (new PersistentThread() {
-        public void executeJob() {
+            public void executeJob() {
               loadPFandComputeODF(JWTextureOptionsD.this);
             }
           }).start();
         }
       });
       jb.setToolTipText("Press this to compute the ODF from traditional Pole Figures");
-
-
+      
+      
       setTitle("Texture options panel");
       initParameters();
       pack();
     }
-
+    
     public void initParameters() {
       symmetryCB.setSelectedItem(getSampleSymmetry());
       statusCB.setSelected(getWIMVstatus());
@@ -2087,7 +2115,7 @@ C  *****************************************
       minIntTF.setText(getMinimumIntensity());
       resTF.setText(getResolution());
     }
-
+    
     public void retrieveParameters() {
       setSampleSymmetry(symmetryCB.getSelectedItem().toString());
       setWIMVstatus(statusCB.isSelected());
@@ -2096,31 +2124,31 @@ C  *****************************************
       setMinimumIntensity(minIntTF.getText());
       setResolution(resTF.getText());
     }
-
+    
     public void advancedOptions() {
       (new advancedOptionsFrame(this)).setVisible(true);
     }
-
+    
     public void interpolationOptions() {
       String selectedInterpolation = interpolationCB.getSelectedItem().toString();
       if (!getInterpolationMethod().equals(selectedInterpolation))
         setInterpolationMethod(selectedInterpolation);
       getActiveInterpolation().getOptionsDialog(this).setVisible(true);
     }
-
+    
     public String importODFfromBEARTEX() {
       String filename = Utility.browseFilename(this, "load ODF file from BEARTEX (.maa)");
       String resS = ODFinputStandard(filename);
 //      odfnotLoaded = false;
       return resS;
     }
-
+    
     public void exportODFtoBEARTEX() {
       String filename = Utility.browseFilenametoSave(this, "export ODF file for BEARTEX (.maa)");
       ODFoutputStandard(filename);
 //      ODFoutputBeartex(filename, odf, SpaceGroups.getLGNumberSiegfriedConv(getPhase()), getResolutionD());
     }
-
+    
     public void exportPFsinBEARTEXformat() {
       final String filename = Utility.browseFilenametoSave(this, "choose a file for PFs in BEARTEX format (.xpc)");
       (new PersistentThread() {
@@ -2130,26 +2158,26 @@ C  *****************************************
         }
       }).start();
     }
-
+    
   }
-
+  
   class advancedOptionsFrame extends JOptionsDialog {
     JTextField optionTF[] = null;
     JComboBox optionCB[] = null;
-
+    
     public advancedOptionsFrame(Frame parent) {
-
+      
       super(parent, null);
-
+      
       int rownumber = 8;
-
+      
       principalPanel.setLayout(new GridLayout(rownumber, 1, 6, 6));
-
+      
       JPanel panel1;
-
+      
       optionTF = new JTextField[6];
       optionCB = new JComboBox[2];
-
+      
       for (int i = 0; i < rownumber; i++) {
         panel1 = new JPanel();
         panel1.setLayout(new FlowLayout(FlowLayout.RIGHT, 6, 6));
@@ -2175,28 +2203,28 @@ C  *****************************************
           panel1.add(optionCB[i - 6]);
         }
       }
-
+      
       setTitle("WIMV advanced options");
       initParameters();
       pack();
-
+      
     }
-
+    
     public void initParameters() {
       for (int i = 0; i < 6; i++)
         optionTF[i].setText(getWIMVOption(i));
       optionCB[0].setSelectedItem(getZigZag());
       optionCB[1].setSelectedItem(getODFoptimization());
     }
-
+    
     public void retrieveParameters() {
       for (int i = 0; i < 6; i++)
         setWIMVOption(i, optionTF[i].getText());
       setZigZag(optionCB[0].getSelectedItem().toString());
       setODFoptimization(optionCB[1].getSelectedItem().toString());
     }
-
+    
   }
-
+  
 }
 

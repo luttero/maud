@@ -20,7 +20,6 @@
 
 package it.unitn.ing.rista.diffr.rta;
 
-import it.unitn.ing.rista.awt.principalJFrame;
 import it.unitn.ing.rista.diffr.*;
 import it.unitn.ing.rista.util.*;
 import it.unitn.ing.rista.io.cif.*;
@@ -310,28 +309,32 @@ public class DiscreteODFTexture extends Texture {
     }
 
     maxInt = 0;
+	  double position;
 
     for (int i = 0; i < numberDataSets; i++) {
       DataFileSet adataset = asample.getActiveDataSet(i);
       Instrument ainstrument = adataset.getInstrument();
+      int radCount = ainstrument.getRadiationType().getLinesCount();
 
       int datafilenumber = adataset.activedatafilesnumber();
       for (int j = 0; j < numberReflexes; j++) {
         intensity = 0.0;
         int number = 0;
         boolean doneOnce = false;
-	      double structureFactor = adataset.getStructureFactors(aphase)[1][j];
+	      double[] structureFactors = adataset.getCalculatedStructureFactors(aphase, j);
 	      for (int i1 = 0; i1 < datafilenumber; i1++) {
           DiffrDataFile adatafile = adataset.getActiveDataFile(i1);
-		      double[][] position = adatafile.getPositions(aphase)[j];
-		      for (int k = 0; k < adatafile.positionsPerPattern; k++) {
-			      for (int l = 0; l < position[0].length; l++) {
-				      if (adatafile.xInsideRange(position[k][l])) {
-					      double correction = /*adatafile.computeAbsorptionAndPhaseQuantity(ainstrument, asample, getPhase(), position[j]) */
-							      adatafile.computeAngularIntensityCorrection(asample, ainstrument, position[k][l]) * adatafile.getShapeAbsFactors(aphase, j)[k][l] *
-									      adatafile.getLorentzPolarization(aphase, j)[k][l];
+			      for (int l = 0; l < radCount; l++) {
+			      	ReflectionPeak peak = adatafile.getReflectionPeak(aphase, j, l);
+			      	if (adatafile.energyDispersive)
+			      		position = peak.energy;
+			      	else
+				         position = peak.position;
+				      if (adatafile.xInsideRange(position)) {
+					      double correction = adatafile.computeAngularIntensityCorrection(asample, ainstrument, position) *
+							                    peak.absShapeFactor * peak.lorentzPolarization;
 					      if (!Double.isNaN(correction)) {
-						      intensity += structureFactor * correction; //Fhkl[j] *
+						      intensity += structureFactors[l] * correction; //Fhkl[j] *
 						      number++;
 						      if (!doneOnce) {
 							      doneOnce = true;
@@ -340,7 +343,6 @@ public class DiscreteODFTexture extends Texture {
 					      }
 				      }
 			      }
-		      }
         }
         if (number > 0)
           meanintensity[j] += intensity / number;
@@ -1441,8 +1443,8 @@ public class DiscreteODFTexture extends Texture {
     int countIncluded = 0;
     for (int i = 0; i < numberofPoints; i++)
       for (int j = 0; j < numberofPoints; j++) {
-        x = (j + 0.5) * dxy - maxAngle;
-        y = (i + 0.5) * dxy - maxAngle;
+        x = (0.5 + j) * dxy - maxAngle;
+        y = (0.5 + i) * dxy - maxAngle;
         r = Math.sqrt(x * x + y * y);
         if (r == 0.0) {
           texture_angles[0][countIncluded] = 0.0f;
@@ -1459,7 +1461,7 @@ public class DiscreteODFTexture extends Texture {
             while (phaseAng >= Constants.PI2)
               phaseAng -= Constants.PI2;
           }
-          texture_angles[1][countIncluded++] = (double) phaseAng;
+          texture_angles[1][countIncluded++] = phaseAng;
           included[count++] = true;
 //          System.out.println(texture_angles[0] + " " + texture_angles[1]);
 
@@ -2516,29 +2518,52 @@ public class DiscreteODFTexture extends Texture {
     return ne;
   }
 
+  public double[] computeTextureFactor(ReflectionTexture reflectionTexture) {
+    return null;
+  }
+  
   public double[] computeTextureFactor(double[][] texture_angles,
                                        double[] sctf, double fhir, int inv) {
     return null;
   }
-
-  public double[][] recomputedTextureFactor(final Phase aphase, final Sample asample, final boolean setValues) {
+  
+  public ArrayList<double[]> recomputedTextureFactor(final Phase aphase, final Sample asample, final boolean setValues) {
 
 	  textureInitialization();
 
 	  cdsc = aphase.lattice();
-
 	  int hkln = aphase.gethklNumber();
 
-	  int totdatafile = 0;
-	  for (int i = 0; i < asample.activeDatasetsNumber(); i++) {
-		  for (int j = 0; j < asample.getActiveDataSet(i).activedatafilesnumber(); j++)
-			  totdatafile += asample.getActiveDataSet(i).getActiveDataFile(j).positionsPerPattern;
+	  ArrayList<double[]> texFactor = new ArrayList<>(hkln);
+	  ArrayList<ReflectionTexture> reflectionTextures = new ArrayList<>(hkln);
+	  for (int ij = 0; ij < hkln; ij++) {
+		  Reflection refl = aphase.getReflectionVector().elementAt(ij);
+		  ReflectionTexture reflTex = new ReflectionTexture(refl, cdsc);
+		  reflectionTextures.set(ij, reflTex);
 	  }
 
-	  double[][] textF = new double[totdatafile][hkln];
+	  int checkNumber = 0;
+	  for (int i = 0; i < asample.activeDatasetsNumber(); i++) {
+		  int datafilenumber = asample.getActiveDataSet(i).activedatafilesnumber();
+		  for (int ij1 = 0; ij1 < datafilenumber; ij1++) {
+			  DiffrDataFile adatafile = asample.getActiveDataSet(i).getActiveDataFile(ij1);
+			  Vector<Vector<ReflectionPeak>> reflpeaks = adatafile.getReflections(aphase);
+			  for (int ppp = 0; ppp < reflpeaks.size(); ppp++) {
+				  Vector<ReflectionPeak> peaks = reflpeaks.elementAt(ppp);
+				  for (int k = 0; k < peaks.size(); k++) {
+					  ReflectionPeak peak = peaks.elementAt(k);
+					  int index = k + adatafile.baseReflectionNumber[ppp];
+					  double texture_angles[] = adatafile.getTextureAngles(peak.position);
+					  texture_angles[0] = (texture_angles[0] * Constants.DEGTOPI);
+					  texture_angles[1] = (texture_angles[1] * Constants.DEGTOPI);
+					  reflectionTextures.get(index).addAngles(texture_angles);
+					  checkNumber++;
+				  }
+			  }
+		  }
+	  }
 
 	  final int maxThreads = Math.min(Constants.maxNumberOfThreads, hkln / 10);
-	  int checkNumber = totdatafile * hkln;
 	  if (maxThreads > 1 && checkNumber > 1000 &&
 			  Constants.threadingGranularity >= Constants.MEDIUM_GRANULARITY) {
 		  if (Constants.debugThreads)
@@ -2546,50 +2571,17 @@ public class DiscreteODFTexture extends Texture {
 		  int i;
 		  PersistentThread[] threads = new PersistentThread[maxThreads];
 		  for (i = 0; i < maxThreads; i++) {
-			  final int totData = totdatafile;
-			  final double[][] textFt = textF;
 			  threads[i] = new PersistentThread(i) {
 				  @Override
 				  public void executeJob() {
 					  int i1 = this.getJobNumberStart();
 					  int i2 = this.getJobNumberEnd();
-
 					  for (int ij = i1; ij < i2; ij++) {
-						  double texAngle[][] = new double[2][totData];
-
-						  Reflection refl = aphase.getReflectionVector().elementAt(ij);
-						  double[] sctf = Uwimvuo.tfhkl(refl.getH(), refl.getK(), refl.getL(), cdsc[7], cdsc[5], cdsc[3], cdsc[6], cdsc[0], cdsc[1]);
-						  double fhir = Math.acos(sctf[3]);
-						  int inv = Uwimvuo.equiv(LaueGroupSnumber, sctf);
-//      System.out.println("h k l, inv : " + refl.h + refl.k + refl.l + ", " + inv);
-
-						  int idatafile = 0;
-						  for (int i = 0; i < asample.activeDatasetsNumber(); i++) {
-							  int datafilenumber = asample.getActiveDataSet(i).activedatafilesnumber();
-							  for (int ij1 = 0; ij1 < datafilenumber; ij1++) {
-								  DiffrDataFile adatafile = asample.getActiveDataSet(i).getActiveDataFile(ij1);
-								  double[][][] positions = adatafile.getPositions(aphase);
-//								  for (int ppp = 0; ppp < adatafile.positionsPerPattern; ppp++) {
-									  double texture_angles[] = adatafile.getTextureAngles(positions[ij][0][0]);
-									  texAngle[0][idatafile] = (texture_angles[0] * Constants.DEGTOPI);
-									  texAngle[1][idatafile] = (texture_angles[1] * Constants.DEGTOPI);
-									  idatafile++;
-//								  }
-							  }
-						  }
-						  double[] texFactor = computeTextureFactor(texAngle, sctf, fhir, inv);
+						  double[] texValues = computeTextureFactor(reflectionTextures.get(ij));
 						  synchronized(asample) {
-							  int index = 0;
-							  for (int i = 0; i < asample.activeDatasetsNumber(); i++) {
-								  int datafilenumber = asample.getActiveDataSet(i).activedatafilesnumber();
-								  for (int ij1 = 0; ij1 < datafilenumber; ij1++) {
-									  textFt[index][ij] = texFactor[index];
-									  index++;
-								  }
-							  }
+							  texFactor.set(ij, texValues);
 						  }
 					  }
-
 				  }
 			  };
 		  }
@@ -2619,51 +2611,223 @@ public class DiscreteODFTexture extends Texture {
 
 	  } else {
 		  for (int ij = 0; ij < hkln; ij++) {
-			  double texAngle[][] = new double[2][totdatafile];
-
-			  Reflection refl = aphase.getReflectionVector().elementAt(ij);
-			  double[] sctf = Uwimvuo.tfhkl(refl.getH(), refl.getK(), refl.getL(), cdsc[7], cdsc[5], cdsc[3], cdsc[6], cdsc[0], cdsc[1]);
-			  double fhir = Math.acos(sctf[3]);
-			  int inv = Uwimvuo.equiv(LaueGroupSnumber, sctf);
-//      System.out.println("h k l, inv : " + refl.h + refl.k + refl.l + ", " + inv);
-
-			  int idatafile = 0;
-			  for (int i = 0; i < asample.activeDatasetsNumber(); i++) {
-				  int datafilenumber = asample.getActiveDataSet(i).activedatafilesnumber();
-				  for (int ij1 = 0; ij1 < datafilenumber; ij1++) {
-					  DiffrDataFile adatafile = asample.getActiveDataSet(i).getActiveDataFile(ij1);
-					  double[][][] positions = adatafile.getPositions(aphase);
-//					  for (int ppp = 0; ppp < adatafile.positionsPerPattern; ppp++) {
-						  double texture_angles[] = adatafile.getTextureAngles(positions[ij][0][0]);
-						  texAngle[0][idatafile] = (texture_angles[0] * Constants.DEGTOPI);
-						  texAngle[1][idatafile] = (texture_angles[1] * Constants.DEGTOPI);
-						  idatafile++;
-//					  }
-				  }
-			  }
-			  double[] texFactor = computeTextureFactor(texAngle, sctf, fhir, inv);
-			  idatafile = 0;
-			  for (int i = 0; i < asample.activeDatasetsNumber(); i++) {
-				  int datafilenumber = asample.getActiveDataSet(i).activedatafilesnumber();
-				  for (int ij1 = 0; ij1 < datafilenumber; ij1++) {
-					  textF[idatafile][ij] = texFactor[idatafile];
-					  idatafile++;
-				  }
-			  }
+			  double[] texValues = computeTextureFactor(reflectionTextures.get(ij));
+			  texFactor.set(ij, texValues);
 		  }
 	  }
 	  if (setValues) {
-		  int idatafile = 0;
+		  int[] idatafile = new int[hkln];
+		  for (int ij = 0; ij < hkln; ij++)
+		  	idatafile[ij] = 0;
 		  for (int i = 0; i < asample.activeDatasetsNumber(); i++) {
 			  int datafilenumber = asample.getActiveDataSet(i).activedatafilesnumber();
 			  for (int ij1 = 0; ij1 < datafilenumber; ij1++) {
 				  DiffrDataFile adatafile = asample.getActiveDataSet(i).getActiveDataFile(ij1);
-					adatafile.setTextureFactors(aphase, textF[idatafile++]);
+				  Vector<Vector<ReflectionPeak>> reflpeaks = adatafile.getReflections(aphase);
+				  for (int ppp = 0; ppp < reflpeaks.size(); ppp++) {
+					  Vector<ReflectionPeak> peaks = reflpeaks.elementAt(ppp);
+					  for (int k = 0; k < peaks.size(); k++) {
+						  int index = k + adatafile.baseReflectionNumber[ppp];
+						  ReflectionPeak peak = adatafile.getReflectionPeak(aphase, k, ppp);
+						  peak.calcTextureFactor = texFactor.get(k)[idatafile[k]];
+						  idatafile[k]++;
+					  }
+				  }
 			  }
 		  }
 	  }
 
-	  return textF;
+	  return texFactor;
   }
+  
+	public class ReflectionTexture {
+		public ReflectionTexture(Reflection refl, double[] _cdsc) {
+			sctf = Uwimvuo.tfhkl(refl.getH(), refl.getK(), refl.getL(),
+					_cdsc[7], _cdsc[5], _cdsc[3], _cdsc[6], _cdsc[0], _cdsc[1]);
+			fhir = Math.acos(sctf[3]);
+			inv = Uwimvuo.equiv(LaueGroupSnumber, sctf);
+		}
 
+		public double[] sctf;
+		public double fhir;
+		public int inv;
+		ArrayList<double[]> texAngles = new ArrayList<>(100);
+
+		public void addAngles(double[] textureAngles) {
+			texAngles.add(textureAngles);
+		}
+
+		public double[] getAngles(int index) {
+			return texAngles.get(index);
+		}
+
+		public int getPointsNumber() {
+			return texAngles.size();
+		}
+	}
+
+/*	public double[][] recomputedTextureFactor_old(final Phase aphase, final Sample asample, final boolean setValues) {
+
+		textureInitialization();
+
+		cdsc = aphase.lattice();
+		int hkln = aphase.gethklNumber();
+
+		int totdatafile = 0;
+		for (int i = 0; i < asample.activeDatasetsNumber(); i++) {
+			int radNumber = asample.getActiveDataSet(i).getInstrument().getRadiationType().getLinesCount();
+			for (int j = 0; j < asample.getActiveDataSet(i).activedatafilesnumber(); j++)
+				totdatafile += radNumber;
+		}
+
+		final int maxThreads = Math.min(Constants.maxNumberOfThreads, hkln / 10);
+		int checkNumber = totdatafile * hkln;
+		if (maxThreads > 1 && checkNumber > 1000 &&
+				Constants.threadingGranularity >= Constants.MEDIUM_GRANULARITY) {
+			if (Constants.debugThreads)
+				System.out.println("Thread discrete texture computation " + getLabel());
+			int i;
+			PersistentThread[] threads = new PersistentThread[maxThreads];
+			for (i = 0; i < maxThreads; i++) {
+				final int totData = totdatafile;
+				final double[][] textFt = textF;
+				threads[i] = new PersistentThread(i) {
+					@Override
+					public void executeJob() {
+						int i1 = this.getJobNumberStart();
+						int i2 = this.getJobNumberEnd();
+
+						for (int ij = i1; ij < i2; ij++) {
+							double texAngle[][] = new double[2][totData];
+
+							Reflection refl = aphase.getReflectionVector().elementAt(ij);
+							double[] sctf = Uwimvuo.tfhkl(refl.getH(), refl.getK(), refl.getL(), cdsc[7], cdsc[5], cdsc[3], cdsc[6], cdsc[0], cdsc[1]);
+							double fhir = Math.acos(sctf[3]);
+							int inv = Uwimvuo.equiv(LaueGroupSnumber, sctf);
+//      System.out.println("h k l, inv : " + refl.h + refl.k + refl.l + ", " + inv);
+
+							int idatafile = 0;
+							for (int i = 0; i < asample.activeDatasetsNumber(); i++) {
+								int datafilenumber = asample.getActiveDataSet(i).activedatafilesnumber();
+								int radNumber = asample.getActiveDataSet(i).getInstrument().getRadiationType().getLinesCount();
+								for (int ij1 = 0; ij1 < datafilenumber; ij1++) {
+									DiffrDataFile adatafile = asample.getActiveDataSet(i).getActiveDataFile(ij1);
+									for (int ppp = 0; ppp < radNumber; ppp++) {
+										ReflectionPeak peak = adatafile.getReflectionPeak(aphase, ij, ppp);
+										if (peak != null) {
+											double texture_angles[] = adatafile.getTextureAngles(peak.position);
+											texAngle[0][idatafile] = (texture_angles[0] * Constants.DEGTOPI);
+											texAngle[1][idatafile] = (texture_angles[1] * Constants.DEGTOPI);
+											idatafile++;
+										}
+									}
+								}
+							}
+							double[] texFactor = computeTextureFactor(texAngle, sctf, fhir, inv);
+							int index = 0;
+							for (int i = 0; i < asample.activeDatasetsNumber(); i++) {
+								int datafilenumber = asample.getActiveDataSet(i).activedatafilesnumber();
+								int radNumber = asample.getActiveDataSet(i).getInstrument().getRadiationType().getLinesCount();
+								for (int ij1 = 0; ij1 < datafilenumber; ij1++) {
+									synchronized(asample) {
+										for (int ppp = 0; ppp < radNumber; ppp++) {
+											textFt[index][ij] = texFactor[index];
+											index++;
+										}
+									}
+								}
+							}
+						}
+
+					}
+				};
+			}
+			i = 0;
+			int istep = (int) (0.9999 + hkln / maxThreads);
+			for (int j = 0; j < maxThreads; j++) {
+				int is = i;
+				if (j < maxThreads - 1)
+					i = Math.min(i + istep, hkln);
+				else
+					i = hkln;
+				threads[j].setJobRange(is, i);
+				threads[j].start();
+			}
+			boolean running;
+			do {
+				running = false;
+				try {
+					Thread.sleep(Constants.timeToWaitThreadsEnding);
+				} catch (InterruptedException r) {
+				}
+				for (int h = 0; h < maxThreads; h++) {
+					if (!threads[h].isEnded())
+						running = true;
+				}
+			} while (running);
+
+		} else {
+			for (int ij = 0; ij < hkln; ij++) {
+				Vector<double[]> texAngle = new Vector<>(totdatafile);
+
+				Reflection refl = aphase.getReflectionVector().elementAt(ij);
+				double[] sctf = Uwimvuo.tfhkl(refl.getH(), refl.getK(), refl.getL(), cdsc[7], cdsc[5], cdsc[3], cdsc[6], cdsc[0], cdsc[1]);
+				double fhir = Math.acos(sctf[3]);
+				int inv = Uwimvuo.equiv(LaueGroupSnumber, sctf);
+//      System.out.println("h k l, inv : " + refl.h + refl.k + refl.l + ", " + inv);
+
+				int idatafile = 0;
+				for (int i = 0; i < asample.activeDatasetsNumber(); i++) {
+					int datafilenumber = asample.getActiveDataSet(i).activedatafilesnumber();
+					int radNumber = asample.getActiveDataSet(i).getInstrument().getRadiationType().getLinesCount();
+					for (int ij1 = 0; ij1 < datafilenumber; ij1++) {
+						DiffrDataFile adatafile = asample.getActiveDataSet(i).getActiveDataFile(ij1);
+						for (int ppp = 0; ppp < radNumber; ppp++) {
+							ReflectionPeak peak = adatafile.getReflectionPeak(aphase, ij, ppp);
+							if (peak != null) {
+								double texture_angles[] = adatafile.getTextureAngles(peak.position);
+								texture_angles[0] *= Constants.DEGTOPI;
+								texture_angles[1] *= Constants.DEGTOPI;
+								texAngle.setElementAt(texture_angles, idatafile);
+								idatafile++;
+							}
+						}
+					}
+				}
+				double[] texFactor = computeTextureFactor(texAngle, sctf, fhir, inv);
+				idatafile = 0;
+				for (int i = 0; i < asample.activeDatasetsNumber(); i++) {
+					int datafilenumber = asample.getActiveDataSet(i).activedatafilesnumber();
+					int radNumber = asample.getActiveDataSet(i).getInstrument().getRadiationType().getLinesCount();
+					for (int ij1 = 0; ij1 < datafilenumber; ij1++) {
+						for (int ppp = 0; ppp < radNumber; ppp++) {
+							textF[idatafile][ij] = texFactor[idatafile];
+							idatafile++;
+						}
+					}
+				}
+			}
+		}
+		if (setValues) {
+			int idatafile = 0;
+			for (int i = 0; i < asample.activeDatasetsNumber(); i++) {
+				int datafilenumber = asample.getActiveDataSet(i).activedatafilesnumber();
+				int radNumber = asample.getActiveDataSet(i).getInstrument().getRadiationType().getLinesCount();
+				for (int ij1 = 0; ij1 < datafilenumber; ij1++) {
+					for (int ppp = 0; ppp < radNumber; ppp++) {
+						DiffrDataFile adatafile = asample.getActiveDataSet(i).getActiveDataFile(ij1);
+						for (int ij = 0; ij < hkln; ij++) {
+							ReflectionPeak peak = adatafile.getReflectionPeak(aphase, ij, ppp);
+							if (peak != null) {
+								adatafile.setTextureFactors(aphase, ppp, textF[idatafile++]);
+							}
+						}
+						idatafile++;
+					}
+				}
+			}
+		}
+
+		return textF;
+	}*/
 }

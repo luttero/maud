@@ -12,6 +12,7 @@
     </javadoc-paths>
     <content url="file://$MODULE_DIR$/src">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/src/com/github/tschoonj/xraylib2" />
       <excludeFolder url="file://$MODULE_DIR$/src/com/hypernex" />
       <excludeFolder url="file://$MODULE_DIR$/src/com/nova" />
       <excludeFolder url="file://$MODULE_DIR$/src/jnt/scimark2" />

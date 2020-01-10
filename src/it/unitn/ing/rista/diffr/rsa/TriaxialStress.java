@@ -23,9 +23,14 @@ package it.unitn.ing.rista.diffr.rsa;
 import it.unitn.ing.rista.awt.JOptionsDialog;
 import it.unitn.ing.rista.diffr.*;
 import it.unitn.ing.rista.util.*;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.RealMatrix;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.util.Vector;
 
 /**
  *  The TriaxialStress is a class to compute the diffraction shift from
@@ -198,6 +203,86 @@ public class TriaxialStress extends Strain {
                     kappa * (parameterValues[6] * cosphi + parameterValues[5] * sinphi) * sin2chi;
   }
 
+	public void outputStressTensor2x2(BufferedWriter writer) throws IOException {
+
+
+  	  double stress[][] = { {parameterValues[2], parameterValues[7]},
+		                     {parameterValues[7], parameterValues[3]} };
+
+		double[][] diagonal = MoreMath.diagonalMatrix(stress);
+
+		writer.write("Diagonalized stress tensor: ");
+		writer.write(Constants.lineSeparator);
+		writer.write(diagonal[2][2] + "   " + diagonal[0][0]);
+		writer.write(Constants.lineSeparator);
+		writer.flush();
+
+	}
+
+	public void outputStressTensor(BufferedWriter writer) throws IOException {
+
+		double stress[][] = { {parameterValues[2], parameterValues[7], parameterValues[6]},
+			{parameterValues[7], parameterValues[3], parameterValues[5]},
+			{parameterValues[6], parameterValues[5], parameterValues[4]} };
+
+		writer.write("Original stress tensor: ");
+		writer.write(Constants.lineSeparator);
+		writer.write(stress[0][0] + "   " + stress[0][1] + "   " + stress[0][2]);
+		writer.write(Constants.lineSeparator);
+		writer.write(stress[1][0] + "   " + stress[1][1] + "   " + stress[1][2]);
+		writer.write(Constants.lineSeparator);
+		writer.write(stress[2][0] + "   " + stress[2][1] + "   " + stress[2][2]);
+		writer.write(Constants.lineSeparator);
+
+  	   double[][] diagonal = MoreMath.diagonalMatrix(stress);
+
+/*		writer.write("Diagonalized stress tensor: ");
+		writer.write(Constants.lineSeparator);
+		writer.write(diagonal[0][0] + "   " + diagonal[2][2] + "   " + diagonal[1][1]);
+		writer.write(Constants.lineSeparator);*/
+
+		writer.write("Diagonalized stress tensor: ");
+
+		writer.write(Constants.lineSeparator);
+		writer.write(diagonal[0][0] + "   " + diagonal[0][1] + "   " + diagonal[0][2]);
+		writer.write(Constants.lineSeparator);
+		writer.write(diagonal[1][0] + "   " + diagonal[1][1] + "   " + diagonal[1][2]);
+		writer.write(Constants.lineSeparator);
+		writer.write(diagonal[2][0] + "   " + diagonal[2][1] + "   " + diagonal[2][2]);
+		writer.write(Constants.lineSeparator);
+
+		writer.flush();
+
+}
+
+	public void outputStressTensorTest(BufferedWriter writer) throws IOException {
+
+		double stress[][] = { {4, 3, -1}, {-3, -2, 1}, {-3, -3, 2} };
+
+		writer.write("Original stress tensor: ");
+		writer.write(Constants.lineSeparator);
+		writer.write(stress[0][0] + "   " + stress[0][1] + "   " + stress[0][2]);
+		writer.write(Constants.lineSeparator);
+		writer.write(stress[1][0] + "   " + stress[1][1] + "   " + stress[1][2]);
+		writer.write(Constants.lineSeparator);
+		writer.write(stress[2][0] + "   " + stress[2][1] + "   " + stress[2][2]);
+		writer.write(Constants.lineSeparator);
+
+		double[][] diagonal = MoreMath.diagonalMatrix(stress);
+
+		writer.write("Diagonalized stress tensor: ");
+
+		writer.write(Constants.lineSeparator);
+		writer.write(diagonal[0][0] + "   " + diagonal[0][1] + "   " + diagonal[0][2]);
+		writer.write(Constants.lineSeparator);
+		writer.write(diagonal[1][0] + "   " + diagonal[1][1] + "   " + diagonal[1][2]);
+		writer.write(Constants.lineSeparator);
+		writer.write(diagonal[2][0] + "   " + diagonal[2][1] + "   " + diagonal[2][2]);
+		writer.write(Constants.lineSeparator);
+
+		writer.flush();
+
+	}
 
   // this part implements the option window to manipulate the parameters and options
   // you need first to change the name of the Dialog inner class and then if you just have some different

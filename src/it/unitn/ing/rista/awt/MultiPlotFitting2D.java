@@ -51,7 +51,7 @@ import java.awt.event.KeyEvent;
 
 public class MultiPlotFitting2D extends myJFrame {
 
-  Panel fullGraphPanel;
+  public Panel fullGraphPanel;
   String title = null;
   public JPlotLayout rpl_data;
 //  public JPlotLayout rpl_fit;
@@ -64,6 +64,8 @@ public class MultiPlotFitting2D extends myJFrame {
   double IntensityMax = Float.MIN_VALUE;
   boolean computeMinMax = true;
   int ratio = 6;
+  String yaxisTitle = null;
+  String yaxisUnit = null;
 
   public MultiPlotFitting2D(Frame parent) {
 
@@ -83,9 +85,13 @@ public class MultiPlotFitting2D extends myJFrame {
   }
 
   public MultiPlotFitting2D(Frame parent, DiffrDataFile[] adatafile, String title,
-                            double IntensityMin, double IntensityMax) {
+                            double IntensityMin, double IntensityMax, String yTitle,
+                            String yUnit) {
 
     this(parent);
+  
+    yaxisTitle = yTitle;
+    yaxisUnit = yUnit;
 
     if (IntensityMin != IntensityMax) {
       computeMinMax = false;
@@ -152,8 +158,9 @@ public class MultiPlotFitting2D extends myJFrame {
     }
   }
 
-  public MultiPlotFitting2D(Frame parent, DiffrDataFile[] adatafile, String title) {
-    this(parent, adatafile, title, 0.0f, 0.0f);
+  public MultiPlotFitting2D(Frame parent, DiffrDataFile[] adatafile, String title, String yTitle,
+                            String yUnit) {
+    this(parent, adatafile, title, 0.0f, 0.0f, yTitle, yUnit);
   }
 
   JPlotLayout makeGraph(DiffrDataFile[] datafile) {
@@ -236,7 +243,10 @@ public class MultiPlotFitting2D extends myJFrame {
       xaxis[i] = xmin + i * stepX;
       for (int sn = 0; sn < ylength; sn++) {
         if (i == 0) {
-          yaxis[sn] = sn;
+          if (yaxisUnit == null)
+            yaxis[sn] = sn;
+          else
+            yaxis[sn] = datafile[sn].get2ThetaValue();
           if (hasFit == 1 && ylength == 1) {
             yaxis[1] = 1;
             yaxis[2] = 2;
@@ -298,7 +308,7 @@ public class MultiPlotFitting2D extends myJFrame {
 */
       }
       if (hasFit > 1) {
-
+        double last2theta = datafile[ylength - 1].get2ThetaValue() * 1.01;
         values[j++] = it.unitn.ing.jgraph.ColorMap.DUMMY_VALUE;
         if (i == 0)
           yaxis[ylength] = ylength;
@@ -310,8 +320,12 @@ public class MultiPlotFitting2D extends myJFrame {
             xendmax = datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode);
           if (xstartmin > datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode))
             xstartmin = datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode);
-          if (i == 0)
-            yaxis[ylength + 1 + sn] = ylength + 1 + sn;
+          if (i == 0) {
+            if (yaxisUnit == null)
+              yaxis[ylength + 1 + sn] = ylength + 1 + sn;
+            else
+              yaxis[sn] = datafile[sn].get2ThetaValue() + last2theta;
+          }
           if (xaxis[i] < xstartmin || xaxis[i] > xendmax)
             values[j++] = it.unitn.ing.jgraph.ColorMap.DUMMY_VALUE;
           else {
@@ -363,8 +377,17 @@ public class MultiPlotFitting2D extends myJFrame {
     if (hasFit > 1)
       information = "data | fit";
     else
-      information = "experimental";
-    SGTMetaData yMeta = new SGTMetaData("Spectrum #", information);
+      information = "Experimental";
+    if (yaxisUnit != null) {
+      if (hasFit > 1)
+        information = yaxisUnit + ", data | fit";
+      else
+        information = yaxisUnit + ", experimental";
+    }
+    String yTitle = "Spectrum #";
+    if (yaxisTitle != null)
+      yTitle = yaxisTitle;
+    SGTMetaData yMeta = new SGTMetaData(yTitle, information);
     SimpleGrid sg = new SimpleGrid(values, xaxis, yaxis, "2D Multiplot");
     sg.setXMetaData(xMeta);
     sg.setYMetaData(yMeta);
@@ -531,7 +554,7 @@ public class MultiPlotFitting2D extends myJFrame {
 
   public void showNewFrame() {
     setVisible(false);
-    new MultiPlotFitting2D(getFrameParent(), datafile, title, IntensityMin, IntensityMax);
+    new MultiPlotFitting2D(getFrameParent(), datafile, title, IntensityMin, IntensityMax, yaxisTitle, yaxisUnit);
     dispose();
   }
 

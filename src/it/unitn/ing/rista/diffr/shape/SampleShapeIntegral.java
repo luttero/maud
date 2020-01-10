@@ -738,10 +738,59 @@ public class SampleShapeIntegral extends SampleShape implements Shape3D, SimpleF
     double r = Math.sqrt(eqdist);
     angles[0] = 0.0f;
     if (r != 0.0)
-      angles[0] = (double) Angles.getAngleR(z1, r);
+      angles[0] = Angles.getAngleR(z1, r);
   }
 
-  public void computeAbsorptionPath(double[][] incidentAndDiffraction_angles, double absorption, double[] position,
+	public double computeAbsorptionPath(double[] incidentAndDiffraction_angles, double absorption, double position,
+	                                    double toLambda) {
+		double intensity = 0.0;
+		double dist1[] = new double[Ncell], dist2[] = new double[Ncell], arg1 = absorption;
+		double corrPath = 0.0;
+		boolean positionCorr = false;
+		if (velocityCorrection() && toLambda != 0.0f) {
+			absorption *= toLambda;
+			positionCorr = true;
+		}
+		double totalPath = 0.0;
+		if (positionCorr)
+			arg1 = absorption * position;// * Constants.LAMBDA_SPEED_NEUTRON_CONV_REC;
+		double sin0 = Math.sin(incidentAndDiffraction_angles[0]);
+		double sin1 = Math.sin(incidentAndDiffraction_angles[1]);
+		double sin2 = Math.sin(incidentAndDiffraction_angles[2]);
+		double sin3 = Math.sin(incidentAndDiffraction_angles[3]);
+		double cos0 = Math.cos(incidentAndDiffraction_angles[0]);
+		double cos1 = Math.cos(incidentAndDiffraction_angles[1]);
+		double cos2 = Math.cos(incidentAndDiffraction_angles[2]);
+		double cos3 = Math.cos(incidentAndDiffraction_angles[3]);
+		double xdiffs = cos1 * sin0 - cos3 * sin2;
+		double ydiffs = sin1 * sin0 - sin3 * sin2;
+		double zdiffs = cos0 - cos2;
+		xdiffs *= xdiffs;
+		ydiffs *= ydiffs;
+		zdiffs *= zdiffs;
+		corrPath = ((1 - getParameterValue(3)) * Math.sqrt(xdiffs + ydiffs + zdiffs)
+				+ getParameterValue(3)) * getParameterValue(4);
+		for (int j = 0; j < Ncell; j++) {
+			// incident ray
+			dist1[j] = computeDistance(cellList[j], incidentAndDiffraction_angles[1],
+					incidentAndDiffraction_angles[0]);
+			// diffracted ray
+			dist2[j] = computeDistance(cellList[j], incidentAndDiffraction_angles[3],
+					incidentAndDiffraction_angles[2]);
+
+			double arg2 = arg1 * (dist1[j] + dist2[j]);
+			if (arg2 < 200.0)
+				totalPath += Math.exp(-arg2) * cellList[j][4];
+		}
+		double arg3 = arg1 * corrPath;
+		if (arg3 < 200.0)
+			totalPath = Math.exp(arg3);
+		intensity = totalPath / Volume;
+
+		return intensity;
+	}
+
+	public void computeAbsorptionPath(double[][] incidentAndDiffraction_angles, double absorption, double[] position,
                                     double[] intensity, double toLambda) {
     double dist1[] = new double[Ncell], dist2[] = new double[Ncell], arg1 = absorption;
     double corrPath = 0.0;

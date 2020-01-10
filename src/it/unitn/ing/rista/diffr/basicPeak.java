@@ -65,14 +65,16 @@ public class basicPeak implements Peak {
     for (int i = 0; i < numberOfRadiations; i++) {
       wavelength[i] = wave[i];
       waveWeight[i] = weight[i];
-      if (dspacingBase || energyDispersive)
+      if (dspacingBase)
         position[i] = pos;
-      else
-        position[i] = DiffrDataFile.computeposition(pos, wavelength[i]);
-      if (position[i] < 180.0 && position[i] > -180.0) {
-        meanPosition += position[i] * weight[i];
-        totWeight += weight[i];
-	      meanWavelength += wavelength[i] * weight[i];
+      else {
+	      position[i] = DiffrDataFile.compute2ThetaPosition(pos, wavelength[i]);
+	      if (position[i] < 180.0 && position[i] > 0.0) {
+		      meanPosition += position[i] * weight[i];
+		      totWeight += weight[i];
+		      meanWavelength += wavelength[i] * weight[i];
+	      }
+
       }
     }
     if (totWeight != 0.0) {
