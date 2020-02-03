@@ -29,6 +29,8 @@ import java.io.*;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import static java.lang.System.out;
+
 /**
  * The Sample is a class
  * <p/>
@@ -1142,6 +1144,8 @@ public class Sample extends Maincat {
   public void computeSpectra(boolean hasoutput) {
 
     indexesComputed = false;
+  
+    long previousTime = Constants.tmpTime;
 
     FilePar aparFile = getFilePar();
 //    for (int nd = 0; nd < activeDatasetsNumber(); nd++)
@@ -1178,7 +1182,6 @@ public class Sample extends Maincat {
 		  getPhase(i).refreshIndices(this);
     }
 
-    long previousTime = Constants.tmpTime;
     if (Constants.testtime)
       System.out.println("Sample preparation: " +
           (-previousTime + (previousTime = System.currentTimeMillis())) + " millisecs.");
@@ -1222,10 +1225,16 @@ public class Sample extends Maincat {
           tadataset.sortPeakArray();
         }
       }
-
+  
+    if (Constants.testtime)
+      System.out.println("Sort peaks array: " +
+          (-previousTime + (previousTime = System.currentTimeMillis())) + " millisecs.");
 	  boolean[] positionRefreshed = computeReflectionsPosition();
 //	  for (int ph = 0; ph < numberOfPhases; ph++)
 //		  getPhase(ph).checkReflectionsInRange();
+    if (Constants.testtime)
+      System.out.println("Compute reflection positions: " +
+          (-previousTime + (previousTime = System.currentTimeMillis())) + " millisecs.");
 
 	  for (int ip = 0; ip < numberOfPhases; ip++) {
 		  double totQuantity = 0.0;
@@ -1240,10 +1249,19 @@ public class Sample extends Maincat {
 	  }
 
 	  computeFinalPositions();
-
+  
+    if (Constants.testtime)
+      System.out.println("Compute strain and final position: " +
+          (-previousTime + (previousTime = System.currentTimeMillis())) + " millisecs.");
 	  computeLorentzPolarization(positionRefreshed);
-     computeScatteringFactors(positionRefreshed);
-
+    if (Constants.testtime)
+      System.out.println("Compute LP correction: " +
+          (-previousTime + (previousTime = System.currentTimeMillis())) + " millisecs.");
+	  computeScatteringFactors(positionRefreshed);
+  
+    if (Constants.testtime)
+      System.out.println("Compute scattering factors: " +
+          (-previousTime + (previousTime = System.currentTimeMillis())) + " millisecs.");
 	  for (int ip = 0; ip < numberOfPhases; ip++) {
 		  Phase aphase = getPhase(ip);
 		  double totQuantity = 0.0;
@@ -1257,21 +1275,30 @@ public class Sample extends Maincat {
 		  }
 	  }
 //	  System.out.println("Size Strain");
+    if (Constants.testtime)
+      System.out.println("Compute structure factors: " +
+          (-previousTime + (previousTime = System.currentTimeMillis())) + " millisecs.");
     boolean[] refreshPhases = computeSizeStrainBroadening(); // todo, group all together?
+    if (Constants.testtime)
+      System.out.println("Compute size-strain broadening: " +
+          (-previousTime + (previousTime = System.currentTimeMillis())) + " millisecs.");
     boolean[] refreshDataset = computeInstrumentBroadening();
+    if (Constants.testtime)
+      System.out.println("Compute instrument broadening: " +
+          (-previousTime + (previousTime = System.currentTimeMillis())) + " millisecs.");
     computeSampleBroadening(refreshDataset, refreshPhases);
 
 
     if (Constants.testtime)
-      System.out.println("Refreshing peaks: " +
+      System.out.println("Compute sample broadening: " +
           (-previousTime + (previousTime = System.currentTimeMillis())) + " millisecs.");
 
-    computeShapeAbsorptionCorrection();
+/* todo: re-enable for shape absorption    computeShapeAndAbsorptionCorrection();
 
     if (Constants.testtime)
       System.out.println("Shape absorption: " +
           (-previousTime + (previousTime = System.currentTimeMillis())) + " millisecs.");
-
+*/
 	  extractIntensities = false;
     for (int i = 0; i < numberOfPhases; i++) {
       Phase aphase = getPhase(i);
@@ -1288,7 +1315,7 @@ public class Sample extends Maincat {
     }
 
     if (Constants.testtime)
-      System.out.println("Setting datafiles and layers: " +
+      System.out.println("Extract positions: " +
           (-previousTime + (previousTime = System.currentTimeMillis())) + " millisecs.");
 
     firstComputationSpectra = new boolean[activeDatasetsNumber()];
@@ -1315,7 +1342,7 @@ public class Sample extends Maincat {
       }
 
     if (Constants.testtime)
-      System.out.println("Background and extraction: " +
+      System.out.println("Extract texture factors: " +
           (-previousTime + (previousTime = System.currentTimeMillis())) + " millisecs.");
 
       for (int ip = 0; ip < numberOfPhases; ip++) {
@@ -1332,7 +1359,7 @@ public class Sample extends Maincat {
 //		computeStrains(); // todo eliminate second call, not necessary
 
 	  if (Constants.testtime)
-      System.out.println("Texture and strain: " +
+      System.out.println("Texture computation: " +
           (-previousTime + (previousTime = System.currentTimeMillis())) + " millisecs.");
 
     boolean extractInPhase = false;
@@ -1344,7 +1371,7 @@ public class Sample extends Maincat {
         }
       }
     }
-
+  
     if (extractInPhase) {
         for (int ip = 0; ip < activeDatasetsNumber(); ip++) {
           if (!firstComputationSpectra[ip] && getActiveDataSet(ip).refreshComputation) {
@@ -1352,6 +1379,10 @@ public class Sample extends Maincat {
             firstComputationSpectra[ip] = true;
           }
         }
+      if (Constants.testtime)
+        System.out.println("Compute first spectra for structure factor extraction: " +
+            (-previousTime + (previousTime = System.currentTimeMillis())) + " millisecs.");
+  
     }
 
 // luca2013 computeStructureFactors was here
@@ -1492,7 +1523,7 @@ public class Sample extends Maincat {
     return 0.0;
   }
 
-  public double getLayerAbsorption_new(double energyInKeV, int layerIndex, double[] incidentDiffractionAngles,
+/*  public double getLayerAbsorption_new(double energyInKeV, int layerIndex, double[] incidentDiffractionAngles,
                                        DataFileSet adataset) {
 
 	  // todo what about Debye-Scherrer
@@ -1506,11 +1537,11 @@ public class Sample extends Maincat {
 	  double sinIncAngle = Math.abs(Math.sin(incidentDiffractionAngles[0]));
 	  double sinDiffAngle = Math.abs(Math.sin(incidentDiffractionAngles[2]));
 	  double factor = 1.0 / sinIncAngle + 1.0 / sinDiffAngle;
-	  double absorption = alayer.getLayerAbsorption(energyInKeV);
+	  double absorption = alayer.getLayerAbsorptionForXray(energyInKeV);
 	  double absorptionLayer = factor * absorption;
 	  // alayer.getLayerAbsorption(rad, sinIncAngle, sinDiffAngle);
 	  if (incidentDiffractionAngles[2] > 0.0) {
-		  double transmission = alayer.getOverLayerAbsorption(energyInKeV) * factor;
+		  double transmission = alayer.getOverLayerAbsorptionForXray(energyInKeV) * factor;
 //    System.out.println("transmission: " + transmission + " layer " + layerIndex);
 		  if (transmission < 200)
 			  expTransmission = Math.exp(-transmission);
@@ -1527,7 +1558,7 @@ public class Sample extends Maincat {
 				  expTransmission * expAbsorption * adataset.getMeanAbsorption();
 	  } else
 		  return 1.0;
-  }
+  }*/
 
 	public double getLayerAbsorption_new(RadiationType rad, int rad_index, int layerIndex, double[] incidentDiffractionAngles,
 	                                     DataFileSet adataset) {
@@ -1572,7 +1603,7 @@ public class Sample extends Maincat {
 		return radAbs;
 	}
 
-	public double[] getLayerAbsorption_new(RadiationType rad, int layerIndex, double[][] incidentDiffractionAngles,
+/*	public double[] getLayerAbsorption_new(RadiationType rad, int layerIndex, double[][] incidentDiffractionAngles,
                                        DataFileSet adataset) {
 
     // todo what about Debye-Scherrer
@@ -1615,7 +1646,7 @@ public class Sample extends Maincat {
 	  }
 
 	  return radAbs;
-  }
+  }*/
 
 /*  public double getLayerAbsorption(RadiationType rad, int layerIndex, double pathK, double omega,
                                    double chi, double eta, DataFileSet adataset) {
@@ -1641,7 +1672,24 @@ public class Sample extends Maincat {
     } else
       return 1.0;
   }*/
-
+  
+  public double getAbsorptionForXray(double energyInKeV) {
+    double absorption = 0.0;
+    double thickness = 0.0;
+    
+    int numberoflayers = layersnumber();
+    for (int j = 0; j < numberoflayers; j++) {
+      Layer alayer = getlayer(j);
+      thickness += alayer.getThicknessValue();
+      absorption += alayer.getLayerAbsorptionForXray(energyInKeV);
+//	    System.out.println("Thickness: " + thickness + " absorption " + absorption);
+    }
+    if (thickness != 0.0)
+      absorption /= thickness;
+    
+    return absorption;
+  }
+  
   public double getMeanAbsorption(RadiationType rad) {
 
     double absorption = 0.0;
@@ -1767,32 +1815,71 @@ public class Sample extends Maincat {
     }
   }
 
-  private void computeShapeAbsorptionCorrection() {
-//    if (getActiveSubordinateModel(sampleShapeID).refreshComputation) { // todo it should include phase and layer absorption
-//      System.out.println("Computing shape absorption.....");
-
-      for (int i = 0; i < activeDatasetsNumber(); i++) {
-        if (getActiveDataSet(i) != null && getActiveDataSet(i).getDiffraction().identifier != "none fluorescence") { // todo now only for diffraction
-//          Instrument ainstrument = getActiveDataSet(i).getInstrument();
-          for (int j = 0; j < getActiveDataSet(i).activedatafilesnumber(); j++) {
-            DiffrDataFile adatafile = getActiveDataSet(i).getActiveDataFile(j);
-	          for (int p = 0; p < phasesNumber(); p++) {
-	          adatafile.computeShapeAbsorptionCorrection(getPhase(p));
-//            int datafileIndex = adatafile.getIndex();
-//            System.out.println("Computing for datafile number " + datafileIndex);
-/*            ainstrument.computeShapeAbsorptionCorrection(adatafile, this, x, adatafile.dspacingbase,
-                adatafile.energyDispersive, intensity);*/
-
-//            System.out.println("Computed for datafile number " + datafileIndex);
-	          }
-          }
+  private void computeShapeAndAbsorptionCorrection() {
+      for (int ij = 0; ij < activeDatasetsNumber(); ij++) {
+        final DataFileSet adataset = getActiveDataSet(ij);
+        if (adataset != null && adataset.getDiffraction().identifier != "none diffraction") { // todo now only for diffraction
+  
+// todo: there is no more this method:          adataset.getInstrument().computeShapeAndAbsorptionCorrection(this);
+/*
+          int datafilenumber = adataset.activedatafilesnumber();
+  
+          final int maxThreads = Math.min(Constants.maxNumberOfThreads, datafilenumber);
+          if (maxThreads > 1 && Constants.threadingGranularity >= Constants.MEDIUM_GRANULARITY) {
+            if (Constants.debugThreads)
+              out.println("Thread datafileset " + getLabel());
+            int i;
+            PersistentThread[] threads = new PersistentThread[maxThreads];
+            for (i = 0; i < maxThreads; i++) {
+              threads[i] = new PersistentThread(i) {
+                @Override
+                public void executeJob() {
+                  int i1 = this.getJobNumberStart();
+                  int i2 = this.getJobNumberEnd();
+          
+                  for (int j = i1; j < i2; j++) {
+                    DiffrDataFile datafile = adataset.getActiveDataFile(j);
+                    for (int p = 0; p < phasesNumber(); p++) {
+                      datafile.computeShapeAndAbsorptionCorrection(getPhase(p));
+                    }
+                  }
+                }
+              };
+            }
+            i = 0;
+            int istep = (int) (0.9999 + datafilenumber / maxThreads);
+            for (int j = 0; j < maxThreads; j++) {
+              int is = i;
+              if (j < maxThreads - 1)
+                i = Math.min(i + istep, datafilenumber);
+              else
+                i = datafilenumber;
+              threads[j].setJobRange(is, i);
+              threads[j].start();
+            }
+            boolean running;
+            do {
+              running = false;
+              try {
+                Thread.sleep(Constants.timeToWaitThreadsEnding);
+              } catch (InterruptedException r) {
+              }
+              for (int h = 0; h < maxThreads; h++) {
+                if (!threads[h].isEnded())
+                  running = true;
+              }
+            } while (running);
+    
+          } else
+            for (int k = 0; k < datafilenumber; k++) {
+              DiffrDataFile datafile = adataset.getActiveDataFile(k);
+              for (int p = 0; p < phasesNumber(); p++) {
+                datafile.computeShapeAndAbsorptionCorrection(getPhase(p));
+              }
+            }
+  */
         }
       }
-//      System.out.println("Finished computing shape absorption.....");
-
-
-//    }
-
     getActiveSubordinateModel(sampleShapeID).refreshComputation = false;
   }
 

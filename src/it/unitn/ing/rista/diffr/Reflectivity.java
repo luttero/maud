@@ -65,7 +65,6 @@ public class Reflectivity extends XRDcat {
 	 *
 	 *
 	 * @param adatafile
-	 * @see DiffrDataFile#addtoFit
 	 */
   public void computeReflectivity(Sample asample, DiffrDataFile adatafile) {
   }

@@ -453,7 +453,7 @@ public class AngleEnergyMapInstrumentBroadening extends InstrumentBroadening {
     return broadV;
   }
   
-  public java.util.Vector<double[]> getInstrumentEnergyBroadeningAt(double x, DiffrDataFile diffrDataFile) {
+  public java.util.Vector<double[]> getInstrumentEnergyBroadeningAt(double x) {
     
     java.util.Vector<double[]> broad = new java.util.Vector<>(parameterloopField.length - energyParametersIndex + 1);
     

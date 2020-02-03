@@ -21,6 +21,7 @@
 package it.unitn.ing.rista.diffr.data;
 
 import it.unitn.ing.rista.diffr.XRDcat;
+import it.unitn.ing.rista.util.Misc;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -84,6 +85,7 @@ public class FluorescenceDataFileSpe extends it.unitn.ing.rista.diffr.DiffrDataF
 //          title = reader.readLine();
 
         line = reader.readLine();    // read the second line
+	      line = Misc.removeUTF8BOM(line);
 
 // now the program read from the String line the values reported above
 

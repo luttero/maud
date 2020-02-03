@@ -113,23 +113,22 @@ public class MicroAbsorptionBrindley extends MicroAbsorption {
     setString(0, value);
 //		System.out.println(getModel());
   }
-
-  public double getApparentQuantity(double volFraction, RadiationType rad,
-                                    Layer alayer, double crystSize) {
-
+  
+  public double getMicroAbsorptionCorrection(double volFraction, double energyInKeV,
+                                             Layer alayer, double crystSize) {
     double muf = 1.0;
     if (crystSize == 0.0)
-      return volFraction;
+      return muf;
 
     Phase aphase = (Phase) getParent();
 
-//    System.out.println("Brindley, phase absorption: " + aphase.getPhaseName() + " " + aphase.getAbsorption(rad));
+//    System.out.println("Brindley, phase absorption: " + aphase.getPhaseName() + " " + aphase.getAbsorptionForXray(energyInKeV));
 //    System.out.println("Layer absorption: " + alayer.getAbsorption(rad));
     
-    double mr = (aphase.getAbsorption(rad) * aphase.getDensity() -
-            alayer.getAbsorption(rad) * alayer.getDensity()) * crystSize / 10000;
+    double mr = (aphase.getAbsorptionForXray(energyInKeV) * aphase.getDensity() -
+            alayer.getAbsorptionForXray(energyInKeV) * alayer.getDensity()) * crystSize / 10000;
     if (mr * mr < 1.0E-9)
-      return volFraction;
+      return muf;
 
     switch (getModelNumber()) {
       case 0:
@@ -151,7 +150,7 @@ public class MicroAbsorptionBrindley extends MicroAbsorption {
         {
         }
     }
-    return volFraction * muf;
+    return muf;
   }
 
   public JOptionsDialog getOptionsDialog(Frame parent) {

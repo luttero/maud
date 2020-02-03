@@ -148,9 +148,9 @@ public class GeometryBraggBrentano extends GeometryDiffractometer {
 		return asample.getLayerAbsorption_new(rad, rad_index, layerIndex, incidentDiffractionAngles, adataset);
 	}
 
-	public double[] getLayerAbsorption_new(Sample asample, RadiationType rad, int layerIndex, double[][] incidentDiffractionAngles,
+/*	public double[] getLayerAbsorption_new(Sample asample, RadiationType rad, int layerIndex, double[][] incidentDiffractionAngles,
 	                                       DataFileSet adataset) {
 		return asample.getLayerAbsorption_new(rad, layerIndex, incidentDiffractionAngles, adataset);
-	}
+	}*/
 
 }

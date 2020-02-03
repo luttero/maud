@@ -66,7 +66,7 @@ public class CIFDataFile extends it.unitn.ing.rista.diffr.DiffrDataFile {
 				StringTokenizer st = null;
 
 				while (token != null && !token.toLowerCase().startsWith("loop_")) {
-					linedata = Misc.toStringStripLeadingTrailingBlankAndTab(reader.readLine());
+					linedata = Misc.toStringStripLeadingTrailingBlankAndTab(Misc.removeUTF8BOM(reader.readLine()));
 
 //          System.out.println(linedata);
 					st = new StringTokenizer(linedata, "' ,\t\r\n");

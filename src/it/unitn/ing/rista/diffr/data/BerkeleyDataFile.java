@@ -66,6 +66,7 @@ public class BerkeleyDataFile extends it.unitn.ing.rista.diffr.DiffrDataFile {
         String token2 = new String("");
 
         String linedata = reader.readLine();
+	      linedata = Misc.removeUTF8BOM(linedata);
 
         while (linedata != null) {
 

@@ -116,7 +116,7 @@ public class SDPDutilities {
 		        printStream.print(Fmt.format(0.0) + " ");
 	        }
 
-          printStream.print(Fmt.format(atom.getSiteAbsorption(radType.getRadiationEnergy()) * 1.66043) + " ");
+          printStream.print(Fmt.format(atom.getSiteAbsorptionForXray(radType.getRadiationEnergy()) * 1.66043) + " ");
           printStream.print(Fmt.format(atomScatterer.getAtomRadius()));
           printStream.print(Constants.lineSeparator);
         }

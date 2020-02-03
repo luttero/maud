@@ -51,7 +51,78 @@ public class Absorption extends XRDcat {
 
   public Absorption() {
   }
+  
+  public double getAbsorptionCorrection(DiffrDataFile adatafile, Phase aphase, double positionOrEnergy) {
+    Instrument inst = (Instrument) getParent();
+    Sample asample = adatafile.getDataFileSet().getSample();
+    double[] sampleAngles = asample.getSampleAngles();
+    double[] tilting_angles = adatafile.getTiltingAngle();
+    double omega = tilting_angles[0];
+    tilting_angles[0] = inst.getMeasurement().getOmega(omega, positionOrEnergy);
+    double[] angles = inst.getGeometry().getIncidentAndDiffractionAngles(adatafile, tilting_angles, sampleAngles, positionOrEnergy);
+    
+    int phaseindex = asample.getPhase(aphase);
+    DataFileSet adataset = adatafile.getDataFileSet();
+    int datasetIndex = adataset.getDataFileSetIndex();
+    double correction = 0;
+    RadiationType rad = adataset.getInstrument().getRadiationType();
+    for (int i = 0; i < asample.numberOfLayers; i++) {
+      Layer alayer = asample.getlayer(i);
+      double quantity = asample.phaseQuantity[i][phaseindex][datasetIndex];
+      if (quantity >= 0.0) {
+        double absCorrection = getLayerAbsorption_new(rad, alayer, angles, adataset);
+        correction += quantity * absCorrection;
+//				System.out.println("Abs layer corr: " + absCorrection + " " + quantity);
+      }
+    }
+    double toLambda = inst.getLambdaForTOF(adatafile, positionOrEnergy);
+    return correction; // todo: * computeShapeAbsorptionCorrection(asample, inst.getRadiationType(), rad_index, angles, positionOrEnergy, toLambda);
+  }
+  
+  public double getLayerAbsorption_new(RadiationType rad, Layer alayer, double[] incidentDiffractionAngles,
+                                       DataFileSet adataset) {
+    
+    // todo what about Debye-Scherrer
+    double expTransmission = 0.0;
+    double expAbsorption = 1.0;
+    
+    double radAbs;
+  
+    boolean isNeutron = rad.isNeutron();
+    boolean isElectron = rad.isElectron();
+    
+    if (incidentDiffractionAngles[0] < 1.0E-5 || incidentDiffractionAngles[2] < 1.0E-5)
+      radAbs = 0;
+    else {
+      double sinIncAngle = Math.abs(Math.sin(incidentDiffractionAngles[0]));
+      double sinDiffAngle = Math.abs(Math.sin(incidentDiffractionAngles[2]));
+      double factor = 1.0 / sinIncAngle + 1.0 / sinDiffAngle;
+      double absorption = alayer.getLayerAbsorptionForXray(rad.energy);
+      double absorptionLayer = factor * absorption;
+      // alayer.getLayerAbsorption(rad, sinIncAngle, sinDiffAngle);
+      if (incidentDiffractionAngles[2] > 0.0) {
+        double transmission = alayer.getOverLayerAbsorptionForXray(rad.energy) * factor;
+//    System.out.println("transmission: " + transmission + " layer " + layerIndex);
+        if (transmission < 200)
+          expTransmission = Math.exp(-transmission);
+        if (absorptionLayer < 200)
+          expAbsorption = 1.0 - Math.exp(-absorptionLayer);
+      }
 
+//	  System.out.println("Layer: " + alayer.toString() + " " + absorption);
+      if (absorption >= 0.0) {
+//      System.out.println("abs = " + sinDiffAngle + " * " + alayer.getThicknessValue() + " / (" + absorption +
+//          " * (" + sinIncAngle + " + " + sinDiffAngle + " )) * " +
+//          expTransmission + " * " + expAbsorption);
+        radAbs = 2.0 * sinDiffAngle * alayer.getThicknessValue() / (absorption * (sinIncAngle + sinDiffAngle)) *
+            expTransmission * expAbsorption * adataset.getMeanAbsorption();
+      } else
+        radAbs = 1.0;
+    }
+    
+    return radAbs;
+  }
+  
   public JOptionsDialog getOptionsDialog(Frame parent) {
     JOptionsDialog adialog = new JAbsorptionOptionsD(parent, this);
     return adialog;

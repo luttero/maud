@@ -46,6 +46,7 @@ public class FluorescenceLine {
 
 	double energy;
 	double intensity = 1.0;
+	double[] multipleIntensity = null;
 	private double transitionProbability;
 	int coreShellID = -1;
 	double fluorescenceYield = 0;
@@ -169,12 +170,57 @@ public class FluorescenceLine {
           (2.0 * getEnergy());
     return intensity;
 	}
-
+  
+  public double getIntensity(double x, int patternIndex) {
+    double intensity = 0;
+    double dx1 = x - getEnergy();
+    double dx = dx1;
+    dx *= one_over_hwhm;
+//    System.out.println("Fluo: " + x + " " + getEnergy() + " " + one_over_hwhm);
+    dx *= dx;
+//	 dx1 *= 0.001;
+    if (dx > 30.0)
+      intensity = getIntensity(patternIndex) * dcx / (1.0 + dx);
+    else
+      intensity = getIntensity(patternIndex) * (dcx / (1.0 + dx) + dgx * Math.exp(-Constants.LN2 * dx));
+    
+    if (fT > 0)
+      intensity += getIntensity(patternIndex) * fT * one_over_beta * one_over_sigma * 0.5 / Math.exp(-0.5 * one_over_beta2) *
+          Math.exp(dx1 * one_over_beta * one_over_sigma) *
+          erfc(Constants.one_sqrt2 * (dx1 * one_over_sigma + one_over_beta));
+    if (fS > 0)
+      intensity += getIntensity(patternIndex) * fS * erfc(Constants.one_sqrt2 * dx1 * one_over_sigma) /
+          (2.0 * getEnergy());
+    return intensity;
+  }
+  
   public void multiplyIntensityBy(double atomsQuantity) {
     setIntensity(getIntensity() * atomsQuantity);
   }
-
-	public void setTransitionProbability(double transitionProbability) {
+  
+  public void multiplyIntensityBy(double[] atomsQuantity) {
+	  if (multipleIntensity == null || multipleIntensity.length != atomsQuantity.length) {
+      multipleIntensity = new double[atomsQuantity.length];
+      for (int i = 0; i < multipleIntensity.length; i++)
+        multipleIntensity[i] = getIntensity();
+    }
+	  for (int i = 0; i < atomsQuantity.length; i++)
+      multipleIntensity[i] *= atomsQuantity[i];
+  }
+  
+  public double[] getMultipleIntensity() {
+	  return multipleIntensity;
+  }
+  
+  public void setMultipleIntensity(double[] someIntensity) {
+    multipleIntensity = someIntensity;
+  }
+  
+  public double getIntensity(int index) {
+	  return multipleIntensity[index];
+  }
+  
+  public void setTransitionProbability(double transitionProbability) {
 		this.transitionProbability = transitionProbability;
 	}
 

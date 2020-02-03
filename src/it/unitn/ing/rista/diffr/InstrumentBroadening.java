@@ -64,7 +64,7 @@ public class InstrumentBroadening extends XRDcat {
     return broadV;
   }
   
-  public java.util.Vector<double[]> getInstrumentEnergyBroadeningAt(double x, DiffrDataFile diffrDataFile) {
+  public java.util.Vector<double[]> getInstrumentEnergyBroadeningAt(double x) {
     double[] hwhm = {0.0};
     double[] eta = {0.0};
     java.util.Vector<double[]> broadV = new java.util.Vector<>(2);

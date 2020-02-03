@@ -143,8 +143,7 @@ public class DiffractionBase extends Diffraction {
 						Constants.COMPUTED, Constants.COMPUTED, false,
 						getFilePar().getActiveSample().getPhase(ij), datafile);
 //        System.out.println("indices: " + minmaxindex[0] + " " + minmaxindex[1] + " " + expfit[1000]);
-				for (int j = minmaxindex[0]; j < minmaxindex[1]; j++)
-					datafile.addtoPhasesFit(j, expfit[j], ij);
+        datafile.addtoPhasesFit(expfit, minmaxindex, ij);
 			}
 		}
 	}
@@ -248,8 +247,8 @@ public class DiffractionBase extends Diffraction {
 	public void computeasymmetry(Sample asample, DiffrDataFile datafile) {
 		computeasymmetry(asample, datafile, datafile.phasesfit, datafile.startingindex, datafile.finalindex - 1);
 		if (!getFilePar().isComputingDerivate()) {
-			for (int i = 0; i < datafile.phaseFit.size(); i++)
-				computeasymmetry(asample, datafile, (double[]) datafile.phaseFit.elementAt(i), datafile.startingindex, datafile.finalindex - 1);
+			for (int i = 0; i < datafile.phaseFit.length; i++)
+				computeasymmetry(asample, datafile, datafile.phaseFit[i], datafile.startingindex, datafile.finalindex - 1);
 		}
 		refreshComputation = false;
 	}

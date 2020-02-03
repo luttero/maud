@@ -87,6 +87,7 @@ public class RigakuDataFile extends it.unitn.ing.rista.diffr.DiffrDataFile {
           // new format
           do {
             line = reader.readLine();
+	          line = Misc.removeUTF8BOM(line);
             st = new StringTokenizer(line, " =,\t\r\n");
             key = st.nextToken();
 

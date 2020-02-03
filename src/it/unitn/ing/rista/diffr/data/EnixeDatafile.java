@@ -21,6 +21,7 @@
 package it.unitn.ing.rista.diffr.data;
 
 import it.unitn.ing.rista.diffr.*;
+import it.unitn.ing.rista.util.Misc;
 
 import java.io.*;
 import java.lang.*;
@@ -65,6 +66,7 @@ public class EnixeDatafile extends it.unitn.ing.rista.diffr.DiffrDataFile {
 				String token1 = new String("");
 
 				String linedata = reader.readLine();
+				linedata = Misc.removeUTF8BOM(linedata);
 
 				while (linedata.startsWith("#")) {
 					if (linedata.startsWith("#PSI")) {

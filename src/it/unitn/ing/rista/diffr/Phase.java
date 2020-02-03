@@ -4156,7 +4156,7 @@ public static final String getSpaceGroup(int index, int sgconv) {
 //		System.out.println("Density of " + toString() + ": " + density);
 		complexPermittivity[0] = 1.0 - Constants.AVOGADRO * Constants.E_RADIUS_CM * lambda * lambda * density *
 				meanScatteringFactor / (Constants.PI * meanAtomicMass);
-		double cost = lambda * getAbsorption(energyInKeV) * density * 0.5 / Constants.PI;
+		double cost = lambda * getAbsorptionForXray(energyInKeV) * density * 0.5 / Constants.PI;
 		complexPermittivity[1] = cost * Math.sqrt(complexPermittivity[0] + cost * cost * 0.25);  // -
 		return complexPermittivity;
 	}
@@ -4175,50 +4175,40 @@ public static final String getSpaceGroup(int index, int sgconv) {
 	  return 0.03751 * Math.sqrt(getAtomScatteringCellNormalization() / getCellVolume());
 	}
 
-	public double getAbsorption(RadiationType rad) {
-	  if (rad.isElectron() || rad.isNeutron()) {
-		  double absorption = 0.0;
-		  double weight = 0.0;
-		  for (int j = 0; j < getFullAtomList().size(); j++) {
-			  absorption += getFullAtomList().get(j).getSiteAbsorption(rad);
-			  weight += getFullAtomList().get(j).getSiteWeight();
-		  }
-		  if (weight == 0.0 || absorption == 0.0)
-			  return 100.0;
-			return absorption / weight;
-	  }
-	  double lambda = rad.getMeanRadiationWavelength();
-	  double energyInKeV = Constants.ENERGY_LAMBDA / lambda * 0.001;
-		return getAbsorption(energyInKeV);
+	public double getAbsorptionForNeutron() {
+    double absorption = 0.0;
+    double weight = 0.0;
+    for (int j = 0; j < getFullAtomList().size(); j++) {
+      absorption += getFullAtomList().get(j).getSiteAbsorptionForNeutron();
+      weight += getFullAtomList().get(j).getSiteWeight();
+    }
+    if (weight == 0.0 || absorption == 0.0)
+      return 100.0;
+    return absorption / weight;
   }
-
-	public double getAbsorption(RadiationType rad, int index) {
-		if (rad.isElectron() || rad.isNeutron()) {
-			double absorption = 0.0;
-			double weight = 0.0;
-			for (int j = 0; j < getFullAtomList().size(); j++) {
-				absorption += getFullAtomList().get(j).getSiteAbsorption(rad);
-				weight += getFullAtomList().get(j).getSiteWeight();
-			}
-			if (weight == 0.0 || absorption == 0.0)
-				return 100.0;
-			return absorption / weight;
-		}
-		double lambda = rad.getRadiationWavelength(index);
-		double energyInKeV = Constants.ENERGY_LAMBDA / lambda * 0.001;
-		return getAbsorption(energyInKeV);
-	}
-
-	public double getAbsorption(double energyInKeV) {
+  
+  public double getAbsorptionForElectron() {
+    double absorption = 0.0;
+    double weight = 0.0;
+    for (int j = 0; j < getFullAtomList().size(); j++) {
+      absorption += getFullAtomList().get(j).getSiteAbsorptionForElectron();
+      weight += getFullAtomList().get(j).getSiteWeight();
+    }
+    if (weight == 0.0 || absorption == 0.0)
+      return 100.0;
+    return absorption / weight;
+  }
+  
+	public double getAbsorptionForXray(double energyInKeV) {
 		double absorption = 0.0;
-		double totalNumber = 0.0;
+		double weight = 0.0;
 		for (int j = 0; j < getFullAtomList().size(); j++) {
-			absorption += getFullAtomList().elementAt(j).getSiteAbsorption(energyInKeV);
-			totalNumber += getFullAtomList().elementAt(j).getSiteWeight();
+			absorption += getFullAtomList().elementAt(j).getSiteAbsorptionForXray(energyInKeV);
+      weight += getFullAtomList().get(j).getSiteWeight();
 		}
-//			System.out.println(absorption + " ++++++ " + totalNumber);
-		absorption /= totalNumber;
-//		System.out.println("Absorption of " + toString() + ": " + absorption);
+    if (weight == 0.0 || absorption == 0.0)
+      return 100.0;
+		absorption /= weight;
 		return absorption;
 	}
 
@@ -4319,8 +4309,9 @@ public static final String getSpaceGroup(int index, int sgconv) {
   }
 
   public double getApparentQuantity(double volFraction, RadiationType rad, Layer alayer) {
-    return ((MicroAbsorption) getActiveSubordinateModel(microAbsorptionID)).getApparentQuantity(
-        volFraction, rad, alayer, getAbsorptionCrystSizeD());
+    return volFraction;
+//    return ((MicroAbsorption) getActiveSubordinateModel(microAbsorptionID)).getApparentQuantity(
+//        volFraction, rad, alayer, getAbsorptionCrystSizeD());
   }
 
   public Sample getSample() {

@@ -59,6 +59,7 @@ public class PhilipsDataFile extends it.unitn.ing.rista.diffr.DiffrDataFile {
         String token = new String("");
         while (!token.equals("RawScan")) {
           String linedata = reader.readLine();
+	        linedata = Misc.removeUTF8BOM(linedata);
 
 //          System.out.println(linedata);
           StringTokenizer st = new StringTokenizer(linedata, " ,\t\r\n");

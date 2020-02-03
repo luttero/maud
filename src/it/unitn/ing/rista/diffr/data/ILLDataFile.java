@@ -66,6 +66,7 @@ public class ILLDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
         while (!endoffile) {
           while (!token.toLowerCase().startsWith("sssss")) {
             linedata = reader.readLine();
+	          linedata = Misc.removeUTF8BOM(linedata);
             if (linedata == null) {
               endoffile = true;
               break;
@@ -78,6 +79,7 @@ public class ILLDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
             break;
 
           linedata = reader.readLine();
+	        linedata = Misc.removeUTF8BOM(linedata);
           if (linedata == null) {
             endoffile = true;
             break;

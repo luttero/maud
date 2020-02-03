@@ -210,7 +210,7 @@ public class EDXRFInstrumentBroadening extends InstrumentBroadening {
     return getInstrument().getGeometry();
   }
 
-  public java.util.Vector<double[]> getInstrumentEnergyBroadeningAt(double x, DiffrDataFile diffrDataFile) {
+  public java.util.Vector<double[]> getInstrumentEnergyBroadeningAt(double x) {
 
     java.util.Vector<double[]> broad = new java.util.Vector<>(parameterloopField.length);
 

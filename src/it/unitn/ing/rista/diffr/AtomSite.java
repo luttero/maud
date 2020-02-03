@@ -1430,23 +1430,24 @@ public class AtomSite extends XRDcat {
    * @param rad the Radiation kind for which the absorption must be computed.
    * @return the total absorption of this atom site.
    */
-  public double getSiteAbsorption(RadiationType rad) {
+  public double getSiteAbsorptionForNeutron() {
 	  double absorption = 0;
-/*	  if (rad.isNeutron())
-		  absorption = getSiteWeight() * rad.getRadiation(0).neutronAbs[getAtomicListNumber()];
-	  else if (rad.isElectron())
-		  absorption = getSiteWeight() * rad.getRadiation(0).electronAbs[getAtomicListNumber()];
-	  else
-		  absorption = getSiteAbsorption(rad.getRadiationEnergy());*/
 	  for (int i = 0; i < getNumberOfScatterers(); i++)
-		  absorption += getAtomScatterer(i).getSiteAbsorption(rad);
+		  absorption += getAtomScatterer(i).getSiteAbsorptionForNeutron();
 	  return getSiteMultiplicity() * absorption * getOccupancyValue();
   }
-
-	public double getSiteAbsorption(double energyInKeV) {
+  
+  public double getSiteAbsorptionForElectron() {
+    double absorption = 0;
+    for (int i = 0; i < getNumberOfScatterers(); i++)
+      absorption += getAtomScatterer(i).getSiteAbsorptionForElectron();
+    return getSiteMultiplicity() * absorption * getOccupancyValue();
+  }
+  
+  public double getSiteAbsorptionForXray(double energyInKeV) {
 		double absorption = 0;
 		for (int i = 0; i < getNumberOfScatterers(); i++)
-			absorption += getAtomScatterer(i).getSiteAbsorption(energyInKeV);
+			absorption += getAtomScatterer(i).getSiteAbsorptionForXray(energyInKeV);
 		return getSiteMultiplicity() * absorption * getOccupancyValue();
 	}
 

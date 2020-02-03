@@ -59,6 +59,7 @@ public class FullProfDataFile extends it.unitn.ing.rista.diffr.DiffrDataFile {
         String token = new String("");
 
         String line = reader.readLine();  // check new format where there are two more lines at the beginning
+	      line = Misc.removeUTF8BOM(line);
 
         StringTokenizer st = new StringTokenizer(line, " ,\t\r\n");
 

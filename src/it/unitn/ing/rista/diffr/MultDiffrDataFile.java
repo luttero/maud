@@ -133,6 +133,7 @@ public class MultDiffrDataFile extends DiffrDataFile {
         int columns = 1;
 
         String linedata = reader.readLine();      // read one line
+        linedata = Misc.removeUTF8BOM(linedata);
         while (linedata != null) {
 
           st = new StringTokenizer(linedata, " ,\t\r\n");  	// create the tokenizer, fields are separed by

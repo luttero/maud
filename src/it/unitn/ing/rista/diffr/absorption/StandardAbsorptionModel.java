@@ -1,7 +1,7 @@
 /*
- * @(#)NoneAbsorption.java created 07/01/1999 Pergine Vals.
+ * @(#)StandardAbsorptionModel.java created 17/01/2020 Pergine Vals.
  *
- * Copyright (c) 1998 Luca Lutterotti All Rights Reserved.
+ * Copyright (c) 2020 Luca Lutterotti All Rights Reserved.
  *
  * This software is the research result of Luca Lutterotti and it is
  * provided as it is as confidential and proprietary information.
@@ -21,53 +21,47 @@
 package it.unitn.ing.rista.diffr.absorption;
 
 import java.lang.*;
-
 import it.unitn.ing.rista.diffr.*;
-import it.unitn.ing.rista.awt.*;
-import it.unitn.ing.rista.util.*;
-
-import java.awt.*;
-import java.awt.*;
-import java.awt.event.*;
 
 /**
- *  The NoneAbsorption is a class
+ *  The StandardAbsorptionModel is a class to compute absorption
+ *  correction in the general framework
  *
  *
- * @version $Revision: 1.5 $, $Date: 2005/05/06 18:07:25 $
+ * @version $Revision: 1.0 $, $Date: 2020/01/17 9:38:14 $
  * @author Luca Lutterotti
  * @since JDK1.1
  */
 
-public class NoneAbsorption extends Absorption {
+public class StandardAbsorptionModel extends Absorption {
   
-  public static String modelID = "none abs";
-  private static String descriptionID = "none absorption model";
+  public static String modelID = "Standard abs";
+  private static String descriptionID = "Standard absorption model";
   
   public static String[] diclistc = {};
   public static String[] diclistcrm = {};
-
+  
   public static String[] classlistc = {};
   public static String[] classlistcs = {};
-
-  public NoneAbsorption(XRDcat aobj, String alabel) {
+  
+  public StandardAbsorptionModel(XRDcat aobj, String alabel) {
     super(aobj, alabel);
     initXRD();
     identifier = modelID;
     IDlabel = modelID;
     description = descriptionID;
   }
-
-  public NoneAbsorption(XRDcat aobj) {
+  
+  public StandardAbsorptionModel(XRDcat aobj) {
     this(aobj, modelID);
   }
-
-  public NoneAbsorption() {
+  
+  public StandardAbsorptionModel() {
     identifier = modelID;
     IDlabel = modelID;
     description = descriptionID;
   }
-
+  
   public void initConstant() {
     Nstring = 0;
     Nstringloop = 0;
@@ -76,7 +70,7 @@ public class NoneAbsorption extends Absorption {
     Nsubordinate = 0;
     Nsubordinateloop = 0;
   }
-
+  
   public void initDictionary() {
     for (int i = 0; i < totsubordinateloop; i++)
       diclist[i] = diclistc[i];
@@ -86,13 +80,9 @@ public class NoneAbsorption extends Absorption {
     for (int i = 0; i < totsubordinate - totparameterloop; i++)
       classlists[i] = classlistcs[i];
   }
-
+  
   public void initParameters() {
     super.initParameters();
-  }
-  
-  public double getAbsorptionCorrection(DiffrDataFile adatafile, Phase aphase, double positionOrEnergy) {
-    return 1.0;
   }
   
 }

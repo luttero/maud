@@ -306,10 +306,10 @@ public class Instrument extends XRDcat {
     return getInstrumentBroadening().getInstrumentBroadeningAt(x, diffrDataFile);
   }
   
-  public java.util.Vector<double[]> getInstrumentEnergyBroadeningAt(double x, DiffrDataFile diffrDataFile) {
+  public java.util.Vector<double[]> getInstrumentEnergyBroadeningAt(double x) {
 
 // Attention: x equal to 2theta
-    return getInstrumentBroadening().getInstrumentEnergyBroadeningAt(x, diffrDataFile);
+    return getInstrumentBroadening().getInstrumentEnergyBroadeningAt(x);
   }
 
 /*  public double getConvolutedBroadening(double x, double[] tilting_angles, boolean dspacingbase) {
@@ -584,7 +584,7 @@ public class Instrument extends XRDcat {
 		      getLambdaForTOF(adatafile, position));
 	}
 
-	public double[] PhaseAndLayerAbsorption(DiffrDataFile adatafile, Sample asample,
+/*	public double[] PhaseAndLayerAbsorption(DiffrDataFile adatafile, Sample asample,
 	                                        Phase aphase, double[] x) {
 
 		RadiationType rad = getRadiationType();
@@ -613,7 +613,7 @@ public class Instrument extends XRDcat {
 			}
 		}
 		return correction;
-	}
+	}*/
 
 	public void computeShapeAbsorptionCorrection(DiffrDataFile adatafile, Sample asample,
                                                double[] position, boolean dspacingbase, boolean energyDispersive, double[] intensity) {
