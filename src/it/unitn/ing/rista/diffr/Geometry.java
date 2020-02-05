@@ -303,23 +303,27 @@ public class Geometry extends XRDcat {
 
     double[] textureAngles = new double[2];
 
-    if (Math.abs(M23) < 1.0E-9)
-      M23 = 0.0;
-    if (Math.abs(M13) < 1.0E-9) {
+
+//    System.out.println("M13, M23: " + M13 + " " + M23);
+    if (Math.abs(M13) < 1.0E-12) {
       if (M23 >= 0.0)
         textureAngles[1] = 90.0f;
       else
-        textureAngles[1] = -90.0f;
+        textureAngles[1] = 270.0f;
     } else if (M23 == 0.0) {
       if (M13 > 0.0)
         textureAngles[1] = 180.0f;
       else
         textureAngles[1] = 0.0f;
     } else {
+      if (Math.abs(M23) < 1.0E-12)
+        M23 = 0.0;
       textureAngles[1] = -MoreMath.atand(M23 / M13);
       if (M13 > 0.0)
         textureAngles[1] += 180.0f;
     }
+//    System.out.println("phi: " + textureAngles[1]);
+
 //    System.out.println("1: " + cosPsi);
     if (cosPsi > 0.99999999)
       textureAngles[0] = 0f;
@@ -897,18 +901,18 @@ public class Geometry extends XRDcat {
 	  return 1.0;
   }
 
-	public double[] getLayerAbsorption_new(Sample asample, RadiationType rad, int layerIndex, double[][] incidentDiffractionAngles,
+/*	public double[] getLayerAbsorption_new(Sample asample, RadiationType rad, int layerIndex, double[][] incidentDiffractionAngles,
 	                                       DataFileSet adataset) {
 		double[] radAbs = new double[rad.getLinesCount()];
 		for (int i = 0; i < rad.getLinesCount(); i++)
 			radAbs[i] = 1.0;
 		return radAbs;
-	}
+	}*/
 
-	public double getLayerAbsorption_new(Sample asample, double energyInKeV, int layerIndex, double[] incidentDiffractionAngles,
+/*	public double getLayerAbsorption_new(Sample asample, double energyInKeV, int layerIndex, double[] incidentDiffractionAngles,
 	                                     DataFileSet adataset) {
 		return asample.getLayerAbsorption_new(energyInKeV, layerIndex, incidentDiffractionAngles, adataset);
-	}
+	}*/
 
 	/**
    * Return the position of the peak corrected for position, aberration, instrumental errors.

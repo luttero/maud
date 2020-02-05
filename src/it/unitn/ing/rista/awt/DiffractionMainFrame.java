@@ -26,6 +26,7 @@ import it.unitn.ing.rista.awt.treetable.*;
 import it.unitn.ing.rista.comp.OutputPanel;
 import it.unitn.ing.rista.comp.ParallelComputationController;
 import it.unitn.ing.rista.diffr.*;
+import it.unitn.ing.rista.diffr.instrument.AngleEnergyMapInstrument;
 import it.unitn.ing.rista.io.COD.CODdatabaseConnector;
 import it.unitn.ing.rista.util.*;
 import it.unitn.ing.wizard.HIPPOWizard.HIPPOWizard;
@@ -1039,10 +1040,20 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
       boolean isResVisible = (residuals2DPlotPanel != null && residuals2DPlotPanel.isVisible());
 //      if (isVisible)
 //        datafile2DPlotPanel.setVisible(false);
+  
+      String yTitle = null;
+      String yUnit = null;
+  
+      boolean angleAxis = MaudPreferences.getBoolean("multiplot2D.use2Theta", false);
+      if (angleAxis && adata.getInstrument().IDlabel == AngleEnergyMapInstrument.modelID) {
+        yTitle = "2Theta";
+        yUnit = "degrees";
+      }
+  
       if (isVisible)
-        datafile2DPlotPanel.setNewData(datafiles, null, null);
+        datafile2DPlotPanel.setNewData(datafiles, null, null, yTitle, yUnit);
       if (isResVisible)
-        residuals2DPlotPanel.setNewData(datafiles, null, null);
+        residuals2DPlotPanel.setNewData(datafiles, null, null, yTitle, yUnit);
 //      if (isVisible)
 //        datafile2DPlotPanel.setVisible(true);
       validate();

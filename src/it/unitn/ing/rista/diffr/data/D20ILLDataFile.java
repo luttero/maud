@@ -72,6 +72,7 @@ public class D20ILLDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
         while (!linedata.startsWith("SAMPLE STATUS:")) {
           oldline = linedata;
           linedata = reader.readLine();
+	        linedata = Misc.removeUTF8BOM(linedata);
           if (linedata == null) {
             endoffile = true;
             break;

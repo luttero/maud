@@ -106,6 +106,7 @@ public class AngularDisalignment extends AngularCalibration {
     super.updateParametertoDoubleBuffering(firstLoading);
     difc = (double[]) parameterLoopValuesVector.elementAt(0);
     numberCoeff = difc.length;
+//    System.out.println("Update difc[0] =" + difc[0]);
   }
 
   public String getCoeff(int index) {
@@ -132,7 +133,9 @@ public class AngularDisalignment extends AngularCalibration {
 
   public void calibrateX(DiffrDataFile datafile) {
     int datanumber = datafile.getTotalNumberOfData();
-    updateParametertoDoubleBuffering(false);
+    if (difc == null)
+      updateParametertoDoubleBuffering(false);
+//    System.out.println("Difc[0] =" + difc[0]);
     for (int i = 0; i < datanumber; i++) {
       double value = datafile.getXDataForCalibration(i);
       double angcal = value;

@@ -70,6 +70,7 @@ public class ETHThreeColumnDataFile extends it.unitn.ing.rista.diffr.DiffrDataFi
         String token3 = new String("");
 
         String linedata = reader.readLine();
+	      linedata = Misc.removeUTF8BOM(linedata);
 
         while (linedata != null) {
 

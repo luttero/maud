@@ -144,8 +144,7 @@ public class DiffractionAngleEnergyMap extends Diffraction {
 						Constants.COMPUTED, Constants.COMPUTED, false,
 						getFilePar().getActiveSample().getPhase(ij), datafile);
 //        System.out.println("indices: " + minmaxindex[0] + " " + minmaxindex[1] + " " + expfit[1000]);
-				for (int j = minmaxindex[0]; j < minmaxindex[1]; j++)
-					datafile.addtoPhasesFit(j, expfit[j], ij);
+        datafile.addtoPhasesFit(expfit, minmaxindex, ij);
 			}
 		}
 	}
@@ -170,28 +169,30 @@ public class DiffractionAngleEnergyMap extends Diffraction {
 				printStream = new PrintStream(baos);
 				printStream.println("             Diffraction spectrum : " + datafile.toXRDcatString());
 				printStream.println("Peaks list : ");
-				printStream.print(" peak n,"
-						+ " rad. n,"
-						+ "             phase, "
-						+ " h,     "
-						+ " k,     "
-						+ " l,     "
-						+ "  energy,   "
-						+ "  Fhkl_calc,"
-						+ "  Fhkl_exp, "
-						+ " position,  "
-						+ " strain,    "
-						+ " planar def,"
-						+ " intensity, "
-						+ " hwhm,      "
-						+ " gaussian,  "
-						+ " |Fhkl|^2*m,"
-						+ " incident I,"
-						+ " LP,        "
-						+ " texture,   "
-						+ " Abs*Vol/Vc,"
-						+ " rad. wt,   "
-						+ " phase scale");
+				printStream.print(" #,"
+						+ "rad#,"
+						+ "phase,"
+						+ "h,"
+						+ "k,"
+						+ "l,"
+            + "d-space,"
+						+ "energy,"
+						+ "Fhkl_calc,"
+						+ "Fhkl_exp,"
+						+ "position,"
+						+ "intensity,"
+						+ "hwhm,"
+						+ "gaussian,"
+						+ "incident I,"
+						+ "LP,"
+						+ "texture,"
+						+ "Abs*Vol/Vc,"
+						+ "rad.wt,"
+            + "phase scale,"
+						+ "detector abs,"
+            + "strain,"
+            + "planar def"
+           );
 				printStream.print(Constants.lineSeparator);
 				printStream.flush();
 //						System.out.println("String length " + toPrint.length());
@@ -211,7 +212,7 @@ public class DiffractionAngleEnergyMap extends Diffraction {
 		minmaxindex[1] = datafile.startingindex;
 		arraycopy(minmaxindex, 0, tmpminmax, 0, 2);
 
-//    System.out.println(peaklist.size());  // todo
+//    System.out.println(datafile.toXRDcatString() + " " + peaklist.size());  // todo
 		for (int i = 0; i < peaklist.size(); i++) {
 			if (phase == null || peaklist.elementAt(i).getPhase() == phase) {
 				peaklist.elementAt(i).computePeak(datafile, expfit, asample, ainstrument, printStream, logOutput, cutoff,
@@ -241,14 +242,13 @@ public class DiffractionAngleEnergyMap extends Diffraction {
 		}
 
 		return minmaxindex;
-
 	}
 
 	public void computeasymmetry(Sample asample, DiffrDataFile datafile) {
 		computeasymmetry(asample, datafile, datafile.phasesfit, datafile.startingindex, datafile.finalindex - 1);
 		if (!getFilePar().isComputingDerivate()) {
-			for (int i = 0; i < datafile.phaseFit.size(); i++)
-				computeasymmetry(asample, datafile, (double[]) datafile.phaseFit.elementAt(i), datafile.startingindex, datafile.finalindex - 1);
+			for (int i = 0; i < datafile.phaseFit.length; i++)
+				computeasymmetry(asample, datafile, datafile.phaseFit[i], datafile.startingindex, datafile.finalindex - 1);
 		}
 		refreshComputation = false;
 	}
@@ -265,8 +265,13 @@ public class DiffractionAngleEnergyMap extends Diffraction {
 //      System.out.println(", after: " + afit[j]);
 		}
 	}
-
-/*
+  
+  public Peak createPeak(SizeStrainModel activeSizeStrain, double dspace, boolean dspacingbase, boolean energyDispersive,
+                         double[] wavelength, double[] radweight, Reflection refl, int i) {
+    return new PseudoVoigt2DPeak(dspace, dspacingbase, energyDispersive, wavelength, radweight, refl, i);
+  }
+  
+	/*
 	public void computeDiffraction(Sample asample, DataFileSet adataset) {
 
 		int datafilenumber = adataset.activedatafilesnumber();

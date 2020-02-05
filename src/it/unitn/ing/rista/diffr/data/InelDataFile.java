@@ -69,6 +69,7 @@ public class InelDataFile extends MultDiffrDataFile {
         String linedata = null;
         while (!token.equals("points")) {
           linedata = reader.readLine();
+	        linedata = Misc.removeUTF8BOM(linedata);
 
           st = new StringTokenizer(linedata, " ,\t\r\n");
 

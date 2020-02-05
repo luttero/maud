@@ -71,6 +71,7 @@ public class FreeFormatDataFile extends it.unitn.ing.rista.diffr.DiffrDataFile {
         dspacingbase = false;
 
         line = reader.readLine();    // read the first line
+	      line = Misc.removeUTF8BOM(line);
 
         st = new StringTokenizer(line, " ,\t\r\n");
 

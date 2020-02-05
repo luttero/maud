@@ -78,8 +78,8 @@ public class Diffraction extends XRDcat {
 	public void computeasymmetry(Sample asample, DiffrDataFile datafile) {
 		computeasymmetry(asample, datafile, datafile.phasesfit, datafile.startingindex, datafile.finalindex - 1);
 		if (!getFilePar().isComputingDerivate()) {
-			for (int i = 0; i < datafile.phaseFit.size(); i++)
-				computeasymmetry(asample, datafile, (double[]) datafile.phaseFit.elementAt(i), datafile.startingindex, datafile.finalindex - 1);
+			for (int i = 0; i < datafile.phaseFit.length; i++)
+				computeasymmetry(asample, datafile, datafile.phaseFit[i], datafile.startingindex, datafile.finalindex - 1);
 		}
 		refreshComputation = false;
 	}
@@ -101,8 +101,13 @@ public class Diffraction extends XRDcat {
 		JOptionsDialog adialog = new JDiffractionOptionsD(parent, this);
 		return adialog;
 	}
-
-	public class JDiffractionOptionsD extends JOptionsDialog {
+  
+  public Peak createPeak(SizeStrainModel activeSizeStrain, double dspace, boolean dspacingbase, boolean energyDispersive,
+                         double[] wavelength, double[] radweight, Reflection refl, int i) {
+    return activeSizeStrain.createPeak(dspace, dspacingbase, energyDispersive, wavelength, radweight, refl, i);
+  }
+  
+  public class JDiffractionOptionsD extends JOptionsDialog {
 
 		public JDiffractionOptionsD(Frame parent, XRDcat obj) {
 

@@ -49,6 +49,8 @@ public class Background extends XRDcat {
     this(afile, "Background x");
   }
 
+  public Background() {}
+
   public void initConstant() {
     Nstring = 0;
     Nstringloop = 0;

@@ -21,7 +21,7 @@
 package it.unitn.ing.rista.diffr;
 
 import it.unitn.ing.rista.chemistry.AtomInfo;
-import it.unitn.ing.rista.chemistry.XRayDataSqLite;
+//import it.unitn.ing.rista.chemistry.XRayDataSqLite;
 import it.unitn.ing.rista.util.*;
 
 import java.util.ArrayList;
@@ -174,6 +174,8 @@ public class AtomSite extends XRDcat {
   public AtomSite(XRDcat parent) {
     this(parent, "Site_x");
   }
+
+  public AtomSite() {}
 
   /**
    * Init the default fields of this object, see XRDcat for this.
@@ -1428,18 +1430,24 @@ public class AtomSite extends XRDcat {
    * @param rad the Radiation kind for which the absorption must be computed.
    * @return the total absorption of this atom site.
    */
-  public double getSiteAbsorption(RadiationType rad) {
-    // only neutron or electron
+  public double getSiteAbsorptionForNeutron() {
 	  double absorption = 0;
 	  for (int i = 0; i < getNumberOfScatterers(); i++)
-		  absorption += getAtomScatterer(i).getSiteAbsorption(rad);
+		  absorption += getAtomScatterer(i).getSiteAbsorptionForNeutron();
 	  return getSiteMultiplicity() * absorption * getOccupancyValue();
   }
-
-	public double getSiteAbsorption(double energyInKeV) {
+  
+  public double getSiteAbsorptionForElectron() {
+    double absorption = 0;
+    for (int i = 0; i < getNumberOfScatterers(); i++)
+      absorption += getAtomScatterer(i).getSiteAbsorptionForElectron();
+    return getSiteMultiplicity() * absorption * getOccupancyValue();
+  }
+  
+  public double getSiteAbsorptionForXray(double energyInKeV) {
 		double absorption = 0;
 		for (int i = 0; i < getNumberOfScatterers(); i++)
-			absorption += getAtomScatterer(i).getSiteAbsorption(energyInKeV);
+			absorption += getAtomScatterer(i).getSiteAbsorptionForXray(energyInKeV);
 		return getSiteMultiplicity() * absorption * getOccupancyValue();
 	}
 

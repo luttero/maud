@@ -58,6 +58,9 @@ public class IntensityCalibration extends it.unitn.ing.rista.diffr.Calibration {
   }
 
   public int getBankNumber(String bankID) throws Exception {
+    String number = Misc.toStringFinalOnlyDigits(bankID);
+    if (number.length() > 0)
+      return Integer.parseInt(number);
     return 0;
   }
 

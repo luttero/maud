@@ -157,7 +157,8 @@ public class DiffrDataFile extends XRDcat {
   public double[] phasesfit = null;
   protected double[] bkgfit = null;
   protected double[] intbkgfit = null;
-  public Vector phaseFit = null;
+//  public Vector<double[]> phaseFit = null;
+  public double[][] phaseFit = null;
   public int datanumber;
   public double measurementstep;
   public boolean dspacingbase = false;
@@ -206,6 +207,7 @@ public class DiffrDataFile extends XRDcat {
   public static String backgroundCIFstring = "_pd_calc_intensity_bkg";
   private double tilting_angles[] = new double[maxAngleNumber];
 	private double corrected_tilting_angles[] = new double[maxAngleNumber];
+  public double sintheta = 0.0;
   boolean increasingX = true;
 	int lastIndex = 0;
 	int oscillatorsNumber = 0;
@@ -410,7 +412,7 @@ public class DiffrDataFile extends XRDcat {
     phasesfit = new double[datanumber];
     bkgfit = new double[datanumber];
     intbkgfit = new double[datanumber];
-    phaseFit = new Vector();
+    phaseFit = new double[1][datanumber];
     startingindex = 0;
     finalindex = number;
 //	  System.out.println("Init datafile: " + toString() + " " + startingindex + " " + finalindex);
@@ -431,7 +433,7 @@ public class DiffrDataFile extends XRDcat {
   }
 
   public void realRangeCut(int min, int max) {
-    checkPhaseFitVector();
+    checkPhaseFitVector(datanumber);
     datanumber = max - min;
     twotheta = shrinkRange(twotheta, min, datanumber);
 	  twothetaOriginal = shrinkRange(twothetaOriginal, min, datanumber);
@@ -446,10 +448,7 @@ public class DiffrDataFile extends XRDcat {
     phasesfit = shrinkRange(phasesfit, min, datanumber);
     bkgfit = shrinkRange(bkgfit, min, datanumber);
     intbkgfit = shrinkRange(intbkgfit, min, datanumber);
-    for (int i = 0; i < phaseFit.size(); i++) {
-      double[] fit = (double[]) phaseFit.elementAt(i);
-      phaseFit.setElementAt(shrinkRange(fit, min, datanumber), i);
-    }
+    phaseFit = shrinkRange(phaseFit, min, datanumber);
   }
 
   public static double[] shrinkRange(double[] oldvector, int min, int datanumber) {
@@ -462,7 +461,19 @@ public class DiffrDataFile extends XRDcat {
 
     return newvector;
   }
-
+  
+  public static double[][] shrinkRange(double[][] oldvector, int min, int datanumber) {
+    if (oldvector == null)
+      return null;
+    
+    double[][] newvector = new double[oldvector.length][datanumber];
+    
+    for (int i = 0; i < oldvector.length; i++)
+      arraycopy(oldvector[i], min, newvector[i], 0, datanumber);
+    
+    return newvector;
+  }
+  
   @Override
   public void update(boolean firstLoading) {
     if (!dataLoaded) { // && readLater) {
@@ -1045,6 +1056,7 @@ public class DiffrDataFile extends XRDcat {
 		  corrected_tilting_angles[i] = tilting_angles[i] + getDataFileSet().getDisalignementAngles()[i];
 	  for (int i = 4; i < maxAngleNumber; i++)
 		  corrected_tilting_angles[i] = tilting_angles[i];
+    sintheta = Math.sin(get2ThetaValue() * Constants.DEGTOPI * 0.5);
 
     lorentzRestricted = dataset.isLorentzRestricted();
     oscillatorsNumber = backgOscillatorsNumber();
@@ -1052,8 +1064,13 @@ public class DiffrDataFile extends XRDcat {
       getBkgOscillator(i).preparecomputing();
 
     reflectivityStats = needReflectivityStatistic();
-    Instrument ainstrument = dataset.getInstrument();
     if (ainstrument != null) {
+      Detector det = ainstrument.getDetector();
+      if (det != null) {
+        angBankNumber = det.getBankNumber(getBankID());
+        bankNumber = angBankNumber;
+      }
+//      System.out.println(bankNumber);
       IntensityCalibration intcal = ainstrument.getIntensityCalibration();
       if (intcal != null)
         try {
@@ -1062,9 +1079,6 @@ public class DiffrDataFile extends XRDcat {
 	        e.printStackTrace();
          // LogSystem.printStackTrace(e);
         }
-      Detector det = ainstrument.getDetector();
-      if (det != null)
-        angBankNumber = det.getBankNumber(getBankID());
       if (angBankNumber == -1) {
         AngularCalibration acal = ainstrument.getAngularCalibration();
         if (acal != null)
@@ -1094,8 +1108,9 @@ public class DiffrDataFile extends XRDcat {
     theta2thetaMeasurement = ainstrument.getMeasurement() instanceof Theta2ThetaMeasurement;
     datafileWeight = Double.parseDouble(getString(datafileWeightFieldID));
 
-	  if (ainstrument.isTOF() && corrected_tilting_angles[4] == 0) {
-		  corrected_tilting_angles[4] = ainstrument.getDetector().getThetaDetector(this, 0);
+	  if ((ainstrument.isTOF() && corrected_tilting_angles[4] == 0) || !ainstrument.isTOF()) {
+		  corrected_tilting_angles[4] = ainstrument.getDetector().getThetaDetector(this,
+          corrected_tilting_angles[4]);
 	  }
   }
 
@@ -1145,7 +1160,7 @@ public class DiffrDataFile extends XRDcat {
   private void groupData(int groupControlNumber) {
     //To change body of created methods use File | Settings | File Templates.
 //      datasetsNumber = number;
-    checkPhaseFitVector();
+    checkPhaseFitVector(datanumber);
     twotheta = getReducedArray(twotheta, datanumber, groupControlNumber);
 	  twothetaOriginal = getReducedArray(twothetaOriginal, datanumber, groupControlNumber);
 	  twothetacalibrated = getReducedArray(twothetacalibrated, datanumber, groupControlNumber);
@@ -1158,10 +1173,7 @@ public class DiffrDataFile extends XRDcat {
     phasesfit = getReducedArray(phasesfit, datanumber, groupControlNumber);
     bkgfit = getReducedArray(bkgfit, datanumber, groupControlNumber);
     intbkgfit = getReducedArray(intbkgfit, datanumber, groupControlNumber);
-    for (int i = 0; i < phaseFit.size(); i++) {
-      double[] fit = (double[]) phaseFit.elementAt(i);
-      phaseFit.setElementAt(getReducedArray(fit, datanumber, groupControlNumber), i);
-    }
+    phaseFit = getReducedArray(phaseFit, datanumber, groupControlNumber);
     datanumber /= groupControlNumber;
     startingindex = 0;
     finalindex = datanumber;
@@ -1179,7 +1191,20 @@ public class DiffrDataFile extends XRDcat {
     }
     return newArray;
   }
-
+  
+  private static double[][] getReducedArray(double[][] oldArray, int oldDataNumber, int groupControlNumber) {
+    int newDataNumber = oldDataNumber / groupControlNumber;
+    double[][] newArray = new double[oldArray.length][newDataNumber];
+    for (int l = 0; l < oldArray.length; l++) {
+      for (int i = 0, j = 0; i < newDataNumber; i++, j += groupControlNumber) {
+        for (int k = 0; k < groupControlNumber; k++)
+          newArray[l][i] += oldArray[l][j + k];
+        newArray[l][i] /= groupControlNumber;
+      }
+    }
+    return newArray;
+  }
+  
   @Override
   public void updateParametertoDoubleBuffering(boolean firstLoading) {
 
@@ -1960,9 +1985,8 @@ public class DiffrDataFile extends XRDcat {
   }
 
   public double getPhaseFit(int index, int phaseIndex) {
-    if (phaseIndex > -1 && phaseIndex < phaseFit.size()) {
-      double[] fit = (double[]) phaseFit.elementAt(phaseIndex);
-      return finalIntensityCalibration(fit[index]);
+    if (phaseIndex > -1 && phaseIndex < phaseFit.length) {
+      return finalIntensityCalibration(phaseFit[phaseIndex][index]);
     } else
       return 0;
   }
@@ -2477,12 +2501,6 @@ public class DiffrDataFile extends XRDcat {
     phasesfit[index] = value;
   }
 
-  public void setPhasesFit(int index, double value, int phaseIndex) {
-//    phasesfit[index] = (double) value;
-    double[] fit = (double[]) phaseFit.elementAt(phaseIndex);
-    fit[index] = value;
-  }
-
   protected boolean setBkgFit(int index, double value) {
 	  if (index >= 0 && index < bkgfit.length) {
     bkgfit[index] = value;
@@ -2499,12 +2517,13 @@ public class DiffrDataFile extends XRDcat {
     phasesfit[index] += value;
   }
 
-  public void addtoPhasesFit(int index, double value, int phaseIndex) {
-    addtoPhasesFit(index, value);
-    double[] fit = (double[]) phaseFit.elementAt(phaseIndex);
-    fit[index] += value;
+  public void addtoPhasesFit(double[] value, int[] minmaxIndex, int phaseIndex) {
+    for (int j = minmaxIndex[0]; j < minmaxIndex[1]; j++) {
+      phasesfit[j] += value[j];
+      phaseFit[phaseIndex][j] += value[j];
+    }
   }
-
+  
   public void addtoFit(int index, double value) {
     addtoPhasesFit(index + startingindex, value);
   }
@@ -2529,6 +2548,11 @@ public class DiffrDataFile extends XRDcat {
     for (int j = 0; j < dtanumber; j++)
       q[j] = getXInEnergy(getXData(j + startingindex));
     return q;
+  }
+  
+  public double getMaxEnergy() {
+    int dtanumber = computeDataNumber();
+    return getXInEnergy(getXData(dtanumber + startingindex - 1));
   }
 
   public double[] getXrangeInQ() {
@@ -2842,7 +2866,7 @@ public class DiffrDataFile extends XRDcat {
   }
 
   public void fittingPhaseOutput(Sample asample, boolean addStatisticalError) {
-    checkPhaseFitVector();
+    checkPhaseFitVector(getTotalNumberOfData());
     double xcoorddata;
     if (getComputeString().equalsIgnoreCase("false") || !getPlotfilePermission())
       return;
@@ -2881,8 +2905,7 @@ public class DiffrDataFile extends XRDcat {
         output.write(" " + Fmt.format(getFit(i)));
         output.write(" " + Fmt.format(this.getBkgFit(i)));
         for (int j = 0; j < phasesNumber; j++) {
-          double[] phasefit = (double[]) phaseFit.elementAt(j);
-          output.write(" " + Fmt.format(phasefit[i]));
+          output.write(" " + Fmt.format(phaseFit[j][i]));
         }
         output.newLine();
       }
@@ -2902,29 +2925,22 @@ public class DiffrDataFile extends XRDcat {
     indexesComputed = false;
     refreshSpectraComputation = true;
     getParent().refreshComputation = true;
-    int datanumb = getTotalNumberOfData();
-    for (int i = 0; i < datanumb; i++) {
-      setPhasesFit(i, 0.0);
-    }
-    checkPhaseFitVector();
-    for (int j = 0; j < phaseFit.size(); j++) {
-      for (int i = 0; i < datanumb; i++) {
-        setPhasesFit(i, 0.0, j);
-      }
-    }
+//    for (int i = 0; i < datanumb; i++) {
+    Arrays.fill(phasesfit, 0.0); // setPhasesFit(i, 0.0);
+//    }
+    if (!checkPhaseFitVector(getTotalNumberOfData()))
+      for (int i = 0; i < phaseFit.length; i++)
+        Arrays.fill(phaseFit[i], 0.0);
+//    System.out.println("Reset to zero: " + phaseFit.size() + " " + datanumb);
   }
 
-  public void checkPhaseFitVector() {
-    int diff = phaseFit.size() - getFilePar().getActiveSample().phasesNumber();
-    if (diff > 0) {
-      for (int i = 0; i < diff; i++)
-        phaseFit.removeElementAt(0);
-    } else if (diff < 0) {
-      diff = -diff;
-      for (int i = 0; i < diff; i++)
-        phaseFit.addElement(new double[phasesfit.length]);
+  public boolean checkPhaseFitVector(int datanumb) {
+    int phasesNumber = getFilePar().getActiveSample().phasesNumber();
+    if (phasesNumber != phaseFit.length || phaseFit[0].length != datanumb) {
+      phaseFit = new double[phasesNumber][datanumb];
+      return true;
     }
-
+    return false;
   }
 
   public void resetBkg() {
@@ -3045,26 +3061,27 @@ public class DiffrDataFile extends XRDcat {
   }
 
   public double[] getdRange(double rangemin, double rangemax) {
+ //   System.out.println(toXRDcatString() + ", starting range in d: " + rangemin + " + " + rangemax);
     double range[] = new double[2];
     radiation = 0.0;
-    if (!dspacingbase) {
-      if (energyDispersive) {
-        if (rangemax > 0) {
-          rangemax = 12398.424121 / rangemax;
-        } else {
-          rangemax = 1.0E+10;
-        }
-        if (rangemin > 0) {
-          rangemin = 12398.424121 / rangemin;
-        } else {
-          rangemin = 1.0E+10;
-        }
-        if (rangemin <= 0.0)
-          rangemin = 1.0E-01;
-        if (rangemax <= 0.0)
-          rangemax = 1.0E-01;
-
+    if (energyDispersive) {
+      double value = 2.0 * MoreMath.sind(get2ThetaValue() * 0.5);
+      if (rangemax > 0) {
+        rangemax = 12398.424121 / (rangemax * value);
       } else {
+        rangemax = 1.0E+10;
+      }
+      if (rangemin > 0) {
+        rangemin = 12398.424121 / (rangemin * value);
+      } else {
+        rangemin = 1.0E+10;
+      }
+      if (rangemin <= 0.0)
+        rangemin = 1.0E-01;
+      if (rangemax <= 0.0)
+        rangemax = 1.0E-01;
+    
+    } else if (!dspacingbase) {
         radiation = getMeanRadiationWavelength();
         if (radiation == 0.0)
           out.println("Error, unable to get radiation wavelength!");
@@ -3083,7 +3100,6 @@ public class DiffrDataFile extends XRDcat {
           else if (rangemin >= 180.0)
             rangemin = 1.0E-01;
         }
-      }
     }
     if (rangemax > rangemin) {
       range[0] = rangemin;
@@ -3092,7 +3108,8 @@ public class DiffrDataFile extends XRDcat {
       range[1] = rangemin;
       range[0] = rangemax;
     }
-//	  System.out.println(rangemin + " + " + rangemax);
+    
+ //   System.out.println(toXRDcatString() + ", range in d: " + rangemin + " + " + rangemax);
 
     return range;
   }
@@ -3402,7 +3419,7 @@ public class DiffrDataFile extends XRDcat {
 			Vector<ReflectionPeak> refl_rad = peaks.elementAt(i);
 			int index = reflIndex - baseReflectionNumber[i];
 			if (index >= 0 && index < refl_rad.size()) {
-				if (energyDispersive || dspacingbase)
+				if (energyDispersive)
 					x = refl_rad.elementAt(index).energy;
 				else
 					x = refl_rad.elementAt(index).position;
@@ -3416,23 +3433,11 @@ public class DiffrDataFile extends XRDcat {
 	}
 
 	public boolean isDspaceInsideRange(double dspace) {
-		boolean incrX = increasingX();
-
-		double x = 0;
 		RadiationType rad = getDataFileSet().getInstrument().getRadiationType();
 		int numberRad = rad.getLinesCount();
 		for (int i = 0; i < numberRad; i++) {
-			x = getPositionFromDspace(dspace, i);
-			if (energyDispersive) {
-			  double angle = get2ThetaValue();
-			  if (angle * 1.2 > x && angle * 0.8 < x) // todo: use cutoff
-			    return true;
-      }
-//		System.out.println(incrX + " " + x + " " + startingX + " " + finalX);
-			if ((incrX && (x >= startingX && x <= finalX)) ||
-					(!incrX && (x <= startingX && x >= finalX))) {
-				return true;
-			}
+			if (isInsideRangeWithMargin(getPositionFromDspace(dspace, i)))
+			  return true;
 		}
 		return false;
 	}
@@ -3450,7 +3455,9 @@ public class DiffrDataFile extends XRDcat {
   public boolean isInsideRangeWithMargin(double x) {
     boolean incrX = increasingX();
     double cutoff = getCutoffAngle();
-    if (dspacingbase)
+    if (energyDispersive)
+      cutoff *= 1.0;
+    else if (dspacingbase)
       cutoff *= 0.01;
     else
       cutoff *= 0.1;
@@ -3460,7 +3467,7 @@ public class DiffrDataFile extends XRDcat {
     
     double startingX1 = startingX - cutoff * sign;
     double finalX1 = finalX + cutoff * sign;
-//    System.out.println(cutoff + " " + x + " " + startingX + " " + finalX);
+//    System.out.println(cutoff + " " + x + " " + startingX + " " + finalX + " " + incrX + " " + startingX1 + " " + finalX1);
     if ((incrX && (x >= startingX1 && x <= finalX1)) ||
         (!incrX && (x <= startingX1 && x >= finalX1))) {
       return true;
@@ -4926,14 +4933,17 @@ public class DiffrDataFile extends XRDcat {
 
 	private Hashtable<Phase, Vector<Vector<ReflectionPeak>>> phaseReflections = new Hashtable<>();
 	public int[] baseReflectionNumber = null;
-	public int baseRadiationNumber = 0;
+//	public int baseRadiationNumber = 0;
 
 	public double getPositionFromDspace(double d_space, int radIndex) {
 		double position = 0;
-		if (dspacingbase) {
+		if (dspacingbase && !energyDispersive) {
 			position = d_space;
-		} else {
-      double wavelength = getDataFileSet().getInstrument().getRadiationType().getRadiationWavelength(radIndex + baseRadiationNumber);
+		} else if (energyDispersive) {
+//		  double sintheta = Math.sin(get2ThetaValue() * Constants.DEGTOPI * 0.5);
+      position = Constants.ENERGY_LAMBDA / (2.0 * d_space * sintheta);
+    } else {
+      double wavelength = getDataFileSet().getInstrument().getRadiationType().getRadiationWavelength(radIndex);
       double ratioposition = wavelength / (2.0 * d_space);
       position = 180.0;
       if (ratioposition < 1.0)
@@ -4950,9 +4960,12 @@ public class DiffrDataFile extends XRDcat {
 		int radNumber = dataset.getInstrument().getRadiationType().getLinesCount();
 
 		Vector<Vector<ReflectionPeak>> reflections = getReflections(phase);
-		if (reflections.size() != radNumber)
-			reflections.setSize(radNumber);
-		if (baseReflectionNumber == null)
+		if (reflections.size() != radNumber) {
+      reflections.setSize(radNumber);
+      phase.refreshCrystMicrostrain = true;
+//      System.out.println("Datafile: " + getLabel() + ", resizing reflections for radiation: " + radNumber);
+    }
+		if (baseReflectionNumber == null || baseReflectionNumber.length != radNumber)
 			baseReflectionNumber = new int[radNumber];
 //		System.out.println("Datafile: " + getLabel() + ", refresh indices: " + numberOfReflections + " - " + radNumber);
 
@@ -4963,12 +4976,16 @@ public class DiffrDataFile extends XRDcat {
 			if (refl_vector == null) {
 				refl_vector = new Vector<>();
 				reflections.setElementAt(refl_vector, i);
+        phase.refreshCrystMicrostrain = true;
+//        System.out.println("Datafile: " + getLabel() + ", initializing reflections for radiation: " + i);
 			}
 			for (int k = 0; k < numberOfReflections; k++) {
 				Reflection refl = phase.getReflex(k);
 				double position = getPositionFromDspace(refl.d_space, i);
 				refl.tmp_position = position;
-				if (isInsideRangeWithMargin(position))
+				boolean isInside = isInsideRangeWithMargin(position);
+//        System.out.println("Checking: " + k + ", " + position + " " + isInside);
+				if (isInside)
 					maxRefl = k + 1;
 				else if (maxRefl == 0)
 					minRefl = k;
@@ -4976,22 +4993,40 @@ public class DiffrDataFile extends XRDcat {
 			if (maxRefl != 0) {
 				int peaksNumber = maxRefl - minRefl;
 				if (baseReflectionNumber[i] != minRefl || peaksNumber != refl_vector.size()) {
+//          System.out.println("Datafile: " + getLabel() + ", setting new reflection peaks for radiation: " + i + " " + minRefl + " " + maxRefl);
+          int oldMin = baseReflectionNumber[i];
 					baseReflectionNumber[i] = minRefl;
-					refl_vector.setSize(peaksNumber);
-					int index = 0;
-					for (int k = minRefl; k < maxRefl; k++, index++) {
-						ReflectionPeak peak = new ReflectionPeak();
-						Reflection refl = phase.getReflex(k);
-						peak.position = refl.tmp_position;
-						refl_vector.setElementAt(peak, index);
-					}
+					int oldSize = refl_vector.size();
+					if (oldMin < minRefl) {
+            for (int k = 0; k < minRefl - oldMin; k++) {
+              refl_vector.remove(0);
+            }
+          } else {
+            for (int k = 0; k < oldMin - minRefl; k++) {
+              ReflectionPeak peak = new ReflectionPeak();
+              Reflection refl = phase.getReflex(oldMin - k - 1);
+              peak.position = refl.tmp_position;
+              refl_vector.insertElementAt(peak,0);
+              phase.refreshCrystMicrostrain = true;
+            }
+          }
+					if (peaksNumber > refl_vector.size()) {
+					  while (peaksNumber > refl_vector.size()) {
+              ReflectionPeak peak = new ReflectionPeak();
+              Reflection refl = phase.getReflex(minRefl + refl_vector.size());
+              peak.position = refl.tmp_position;
+              refl_vector.add(peak);
+              phase.refreshCrystMicrostrain = true;
+            }
+          } else if (peaksNumber < refl_vector.size()) {
+					  refl_vector.setSize(peaksNumber);
+          }
 				}
 			} else {
 				baseReflectionNumber[i] = 0;
 				refl_vector.setSize(0);
 			}
 //			System.out.println("Radiation " + i + ": " + baseReflectionNumber[i] + " - " + refl_vector.size());
-
 
 		}
 		
@@ -5029,10 +5064,10 @@ public class DiffrDataFile extends XRDcat {
 	}
 
 	public Vector<ReflectionPeak> getReflectionPeaks(Phase phase, int radNumber) {
-		int index = radNumber - baseRadiationNumber;
+		int index = radNumber;
 		Vector<Vector<ReflectionPeak>> peaks = getReflections(phase);
 		if (index < 0 || index >= peaks.size()) {
-			System.out.println("Datafile: " + getLabel() + ", peaks vector for radiation, index out of bounds: " + index + ", rad number: " + radNumber);
+//			System.out.println("Datafile: " + getLabel() + ", peaks vector for radiation, index out of bounds: " + index + ", rad number: " + radNumber);
 			return null;
 		}
 		return peaks.elementAt(index);
@@ -5126,24 +5161,54 @@ public class DiffrDataFile extends XRDcat {
 	public double getBroadFactorHWHM(Phase phase, int reflNumber, int radNumber) {
 		ReflectionPeak peak = getReflectionPeak(phase, reflNumber, radNumber);
 		if (peak != null)
-			return peak.broadFactorHWHM_ang;
+			return peak.broadFactorHWHM;
 		else {
 //      System.out.println("BroadFactor hwhm: " + getLabel() + ", reflection index out of bounds: " + reflNumber + ", rad number: " + radNumber + ", base: " + baseReflectionNumber[radNumber]);
       return 0.001;
     }
 	}
-
-	public double getBroadFactorEta(Phase phase, int reflNumber, int radNumber) {
+  
+  public java.util.Vector<double[]> getEnergyBroadFactor(Phase phase, int reflNumber, int radNumber) {
+    ReflectionPeak peak = getReflectionPeak(phase, reflNumber, radNumber);
+    if (peak != null)
+      return peak.instBroadFactor_en;
+    else {
+//      System.out.println("BroadFactor hwhm: " + getLabel() + ", reflection index out of bounds: " + reflNumber + ", rad number: " + radNumber + ", base: " + baseReflectionNumber[radNumber]);
+      return null;
+    }
+  }
+  
+  public double getBroadFactorHWHM_en(Phase phase, int reflNumber, int radNumber) {
+    ReflectionPeak peak = getReflectionPeak(phase, reflNumber, radNumber);
+    if (peak != null)
+      return peak.broadFactorHWHM_en;
+    else {
+//      System.out.println("BroadFactor hwhm: " + getLabel() + ", reflection index out of bounds: " + reflNumber + ", rad number: " + radNumber + ", base: " + baseReflectionNumber[radNumber]);
+      return 0.001;
+    }
+  }
+  
+  public double getBroadFactorEta(Phase phase, int reflNumber, int radNumber) {
 		ReflectionPeak peak = getReflectionPeak(phase, reflNumber, radNumber);
 		if (peak != null)
-			return peak.broadFactorEta_ang;
+			return peak.broadFactorEta;
 		else {
 //      System.out.println("BroadFactor eta: " + getLabel() + ", reflection index out of bounds: " + reflNumber + ", rad number: " + radNumber + ", base: " + baseReflectionNumber[radNumber]);
       return 0.0;
     }
 	}
-
-	public double[] getCrystallitesMicrostrains(Phase phase, int reflNumber, int radNumber) {
+  
+  public double getBroadFactorEta_en(Phase phase, int reflNumber, int radNumber) {
+    ReflectionPeak peak = getReflectionPeak(phase, reflNumber, radNumber);
+    if (peak != null)
+      return peak.broadFactorEta_en;
+    else {
+//      System.out.println("BroadFactor eta: " + getLabel() + ", reflection index out of bounds: " + reflNumber + ", rad number: " + radNumber + ", base: " + baseReflectionNumber[radNumber]);
+      return 0.0;
+    }
+  }
+  
+  public double[] getCrystallitesMicrostrains(Phase phase, int reflNumber, int radNumber) {
 		ReflectionPeak peak = getReflectionPeak(phase, reflNumber, radNumber);
 		if (peak != null)
 			return peak.sizestrain;
@@ -5161,7 +5226,7 @@ public class DiffrDataFile extends XRDcat {
 		Vector<Vector<ReflectionPeak>> peaks = getReflections(phase);
 		for (int i = 0; i < peaks.size(); i++) {
 			Vector<ReflectionPeak> peaks_rad = peaks.elementAt(i);
-			int index = reflIndex - baseReflectionNumber[i + baseRadiationNumber];
+			int index = reflIndex - baseReflectionNumber[i];
 			if (index >= 0 && index < peaks_rad.size()) {
 				ReflectionPeak peak = peaks_rad.elementAt(index);
 				if (energyDispersive)
@@ -5169,14 +5234,14 @@ public class DiffrDataFile extends XRDcat {
 				else
 					pos = peak.position;
 				if (energyDispersive) {
-					hwhm = Math.abs(peak.broadFactorHWHM_ang * rangeFactor * getCutoffAngle());
+					hwhm = Math.abs(peak.broadFactorHWHM_en * rangeFactor * getCutoffAngle());
 					double th = peak.position * Constants.DEGTOPI;
 					double sintheta2 = Math.sin(th);
 					sintheta2 *= sintheta2;
 					double costheta = Math.cos(th) / sintheta2;
 					hwhm *= Constants.ENERGY_LAMBDA / (2000.0 * refl.d_space) * costheta;
 				} else
-					hwhm = Math.abs(peak.broadFactorHWHM_ang * rangeFactor * getCutoffAngle());
+					hwhm = Math.abs(peak.broadFactorHWHM * rangeFactor * getCutoffAngle());
 				if (xInsideRange(pos) || xInsideRange(pos + hwhm) || xInsideRange(pos - hwhm))
 					isIn = true;
 			}
@@ -5189,7 +5254,7 @@ public class DiffrDataFile extends XRDcat {
 		Vector<Vector<ReflectionPeak>> peaks = getReflections(phase);
 		for (int i = 0; i < peaks.size(); i++) {
 			Vector<ReflectionPeak> peaks_rad = peaks.elementAt(i);
-			int index = reflIndex - baseReflectionNumber[i + baseRadiationNumber];
+			int index = reflIndex - baseReflectionNumber[i];
 			if (index >= 0 && index < peaks_rad.size() && xInsideRange(peaks_rad.elementAt(index).position))
 				isIn = true;
 		}
@@ -5202,9 +5267,9 @@ public class DiffrDataFile extends XRDcat {
 				Vector<Vector<ReflectionPeak>> peaks = getReflections(phase);
 				for (int i = 0; i < peaks.size(); i++) {
 					Vector<ReflectionPeak> peaks_rad = peaks.elementAt(i);
-					int index = reflIndex - baseReflectionNumber[i + baseRadiationNumber];
+					int index = reflIndex - baseReflectionNumber[i];
 					if (index >= 0 && index < peaks_rad.size())
-						peaks_rad.elementAt(index).calcTextureFactor = textureValues[i + baseRadiationNumber];
+						peaks_rad.elementAt(index).calcTextureFactor = textureValues[i];
 				}
 			}
 		}
@@ -5600,12 +5665,14 @@ public class DiffrDataFile extends XRDcat {
 		for (int i = 0; i < peaks.size(); i++) {
 			Vector<ReflectionPeak> peaksR = peaks.elementAt(i);
 			for (int j = 0; j < peaksR.size(); j++) {
-				Reflection refl = aphase.getReflex(j + baseReflectionNumber[i + baseRadiationNumber]);
+				Reflection refl = aphase.getReflex(j + baseReflectionNumber[i]);
 				ReflectionPeak peak = peaksR.elementAt(j);
 				peak.position = getPositionFromDspace(refl.d_space, i);
-				if (!dspacingbase) {
-					double wavelength = getDataFileSet().getInstrument().getRadiationType().getRadiationWavelength(i + baseRadiationNumber);
+//        System.out.println("Position g: " + peak.position + " " + " " + energyDispersive);
+				if (!dspacingbase || energyDispersive) {
+					double wavelength = getDataFileSet().getInstrument().getRadiationType().getRadiationWavelength(i);
 					peak.energy = Constants.ENERGY_LAMBDA / (1000.0 * wavelength);
+//				  System.out.println("Position: " + peak.position + " " + " " + peak.energy);
 				}
 			}
 		}
@@ -5618,11 +5685,15 @@ public class DiffrDataFile extends XRDcat {
 		for (int i = 0; i < peaks.size(); i++) {
 			Vector<ReflectionPeak> peaksR = peaks.elementAt(i);
 			for (int j = 0; j < peaksR.size(); j++) {
-				Reflection refl = aphase.getReflex(j + baseReflectionNumber[i + baseRadiationNumber]);
+				Reflection refl = aphase.getReflex(j + baseReflectionNumber[i]);
 				ReflectionPeak peak = peaksR.elementAt(j);
 				if (dspacingbase || energyDispersive || (peak.position > 0 && peak.position < 180.0)) {
 					peak.position = computeFinalPosition(sample, refl, peak.calcStrainFactor, peak.position);
 				}
+        if (!dspacingbase || energyDispersive) {
+          double wavelength = getDataFileSet().getInstrument().getRadiationType().getRadiationWavelength(i);
+          peak.energy = Constants.ENERGY_LAMBDA / (1000.0 * wavelength);
+        }
 			}
 		}
 	}
@@ -5641,7 +5712,7 @@ public class DiffrDataFile extends XRDcat {
 		if (theta2thetaMeasurement)
 			x /= 2;
 		if (getParameterValue(sampleDisplacementYID) != 0.0)
-			if (dspacingbase)
+			if (dspacingbase && !energyDispersive)
 				position -= getDSpaceFrom2Theta(Constants.PITODEG * getParameterValue(sampleDisplacementYID) *
 						Math.sin(get2ThetaFromDSpace(x)));
 			else if (energyDispersive)
@@ -5650,7 +5721,7 @@ public class DiffrDataFile extends XRDcat {
 			else
 				position -= Constants.PITODEG * getParameterValue(sampleDisplacementYID) * MoreMath.sind(x);
 		if (getParameterValue(sampleDisplacementZID) != 0.0)
-			if (dspacingbase)
+			if (dspacingbase && !energyDispersive)
 				position += getDSpaceFrom2Theta(Constants.PITODEG * getParameterValue(sampleDisplacementZID) *
 						Math.cos(get2ThetaFromDSpace(x)));
 			else if (energyDispersive)
@@ -5668,7 +5739,7 @@ public class DiffrDataFile extends XRDcat {
 		strain = Math.exp(strain);
 		// approximate treatment
 //		strain = 1.0 + strain;
-		if (dspacingbase)
+		if (dspacingbase && !energyDispersive)
 				position *= strain;
 		else if (energyDispersive) {
 				position /= strain;
@@ -5730,17 +5801,21 @@ public class DiffrDataFile extends XRDcat {
 		}
 	}
 
-	public void computeShapeAbsorptionCorrection(Phase aphase) {
+	public void computeShapeAndAbsorptionCorrection(Phase aphase) {
  	   double abs = getParameter(absorptionFactorID).getValueD();
 		Instrument ainstrument = getDataFileSet().getInstrument();
-		boolean isTOF = ainstrument.isTOF();
+//		boolean isTOF = ainstrument.isTOF();
 		Vector<Vector<ReflectionPeak>> peaks = getReflections(aphase);
+		int totalPeaks = 0;
 		for (int i = 0; i < peaks.size(); i++) {
-			int rad_index = i + baseRadiationNumber;
 			Vector<ReflectionPeak> peaksR = peaks.elementAt(i);
+			totalPeaks += peaksR.size();
 			for (int j = 0; j < peaksR.size(); j++) {
 				ReflectionPeak peak = peaksR.elementAt(j);
-				peak.absShapeFactor = ainstrument.getAbsorptionCorrection(this, aphase, peak.position, rad_index);
+				double posOrEnergy = peak.position;
+				if (energyDispersive)
+				  posOrEnergy = peak.energy;
+				peak.absShapeFactor = ainstrument.getAbsorption().getAbsorptionCorrection(this, aphase, posOrEnergy);
 /*
 				for (int j = 0; j < positionsPerPattern; j++)
 					for (int k = 0; k < radNumber; k++)
@@ -5771,6 +5846,7 @@ public class DiffrDataFile extends XRDcat {
 				*/
 			}
 		}
+    System.out.println(toXRDcatString() + ": " + totalPeaks);
 	}
 
 	public void computeInstBroadFactor(Phase aphase) {
@@ -5782,7 +5858,11 @@ public class DiffrDataFile extends XRDcat {
 			for (int j = 0; j < peaksR.size(); j++) {
 				ReflectionPeak peak = peaksR.elementAt(j);
 				if (dspacingbase || energyDispersive || (peak.position > 0 && peak.position < 180.0)) {
-					peak.instBroadFactor = ainstrument.getInstrumentalBroadeningAt(peak.position, this);
+					peak.instBroadFactor = ainstrument.getInstrumentBroadeningAt(peak.position, this);
+          if (energyDispersive) {
+            peak.instBroadFactor_en = ainstrument.getInstrumentEnergyBroadeningAt(peak.energy);
+//            System.out.println("Refl: " + peak.instBroadFactor_en.get(0)[0] + " " + peak.energy);
+          }
 				}
 			}
 		}
@@ -5793,11 +5873,12 @@ public class DiffrDataFile extends XRDcat {
 		for (int i = 0; i < peaks.size(); i++) {
 			Vector<ReflectionPeak> peaksR = peaks.elementAt(i);
 			for (int j = 0; j < peaksR.size(); j++) {
-				Reflection refl = aphase.getReflex(j + baseReflectionNumber[i + baseRadiationNumber]);
+				Reflection refl = aphase.getReflex(j + baseReflectionNumber[i]);
 				ReflectionPeak peak = peaksR.elementAt(j);
 				if (dspacingbase || energyDispersive || (peak.position > 0 && peak.position < 180.0)) {
 					peak.sizestrain = aphase.getCrystalliteMicrostrain(refl, getTextureAngles(peak.position));
 				}
+//        System.out.println(i + " " + j + " " + peak.sizestrain + " " + peak.position + " " + peak + " " + refl.getH() + " " + refl.getK() + " " + refl.getL()) ;
 			}
 		}
 	}
@@ -5808,7 +5889,7 @@ public class DiffrDataFile extends XRDcat {
 			for (int i = 0; i < peaks.size(); i++) {
 				Vector<ReflectionPeak> peaksR = peaks.elementAt(i);
 				for (int j = 0; j < peaksR.size(); j++) {
-					Reflection refl = aphase.getReflex(j + baseReflectionNumber[i + baseRadiationNumber]);
+					Reflection refl = aphase.getReflex(j + baseReflectionNumber[i]);
 					ReflectionPeak peak = peaksR.elementAt(j);
 					if (dspacingbase || energyDispersive || (peak.position > 0 && peak.position < 180.0)) {
 						peak.calcStrainFactor = aphase.getActiveStrain().computeStrain(refl, getTextureAngles(peak.position));
@@ -5826,24 +5907,40 @@ public class DiffrDataFile extends XRDcat {
 		for (int i = 0; i < peaks.size(); i++) {
 			Vector<ReflectionPeak> peaksR = peaks.elementAt(i);
 			for (int j = 0; j < peaksR.size(); j++) {
-				Reflection refl = aphase.getReflex(j + baseReflectionNumber[i + baseRadiationNumber]);
+				Reflection refl = aphase.getReflex(j + baseReflectionNumber[i]);
 				ReflectionPeak peak = peaksR.elementAt(j);
-				betaf[0] = aphase.getActiveSizeStrain().getBetaChauchy(refl.d_space, peak.sizestrain[0],
-							peak.sizestrain[1]); // / 2.0;
-				betaf[1] = aphase.getActiveSizeStrain().getBetaGauss(refl.d_space, peak.sizestrain[0],
-						peak.sizestrain[1]); // / 2.0;
-				if (!dspacingbase && !energyDispersive) {
+//				System.out.println("Sample b: " + i + " " + j + " " + peak.sizestrain + " " + peak.position + " " + peak + " " + refl.getH() + " " + refl.getK() + " " + refl.getL()) ;
+				betaf[0] = aphase.getActiveSizeStrain().getBetaChauchy(refl.d_space, peak.sizestrain[0], peak.sizestrain[1]); // / 2.0;
+				betaf[1] = aphase.getActiveSizeStrain().getBetaGauss(refl.d_space, peak.sizestrain[0], peak.sizestrain[1]); // / 2.0;
+        if (energyDispersive) {
+          double[] betafen = new double[]{0,0};
+          double corr = 2.0 * sintheta * Constants.ENERGY_LAMBDA / (wave * wave);
+          betafen[0] = betaf[0] * corr;
+          betafen[1] = betaf[1] * corr;
+          peak.broadFactorTotal_en = PseudoVoigtPeak.getHwhmEtaFromIntegralBeta(betafen, peak.instBroadFactor_en);
+          peak.broadFactorHWHM_en = peak.broadFactorTotal_en[0];
+          peak.broadFactorEta_en = peak.broadFactorTotal_en[1];
+          double sintheta1 = sintheta;
+          sintheta1 *= sintheta1;
+          double costheta = Math.sqrt(1.0 - sintheta1);
+          corr = 4.0 * sintheta1 / (wave * costheta) * Constants.PITODEG;
+          betaf[0] *= corr;
+          betaf[1] *= corr;
+        } else {
+          peak.broadFactorTotal_en = null;
+        }
+        if (!dspacingbase && !energyDispersive) {
 					double position = peak.position / 2 * Constants.DEGTOPI;
-					double sintheta = Math.sin(position);
-					sintheta *= sintheta;
+					double sintheta1 = Math.sin(position);
+					sintheta1 *= sintheta1;
 					double costheta = Math.cos(position);
-					double corr = 4.0 * sintheta / (wave * costheta) * Constants.PITODEG;
+					double corr = 4.0 * sintheta1 / (wave * costheta) * Constants.PITODEG;
 					betaf[0] *= corr;
 					betaf[1] *= corr;
 				}
 				peak.broadFactorTotal = PseudoVoigtPeak.getHwhmEtaFromIntegralBeta(betaf, peak.instBroadFactor);
-				peak.broadFactorHWHM_ang = peak.broadFactorTotal[0];
-				peak.broadFactorEta_ang = peak.broadFactorTotal[1];
+				peak.broadFactorHWHM = peak.broadFactorTotal[0];
+				peak.broadFactorEta = peak.broadFactorTotal[1];
 			}
 		}
 	}
@@ -5960,7 +6057,6 @@ public class DiffrDataFile extends XRDcat {
 		twothetaOriginal = null;
 		twothetacalibrated = null;
 		phasesfit = null;
-		phaseFit.removeAllElements();
 		phaseFit = null;
 		bkgfit = null;
 		intbkgfit = null;

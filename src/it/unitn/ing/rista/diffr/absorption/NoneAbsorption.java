@@ -40,7 +40,10 @@ import java.awt.event.*;
  */
 
 public class NoneAbsorption extends Absorption {
-
+  
+  public static String modelID = "none abs";
+  private static String descriptionID = "none absorption model";
+  
   public static String[] diclistc = {};
   public static String[] diclistcrm = {};
 
@@ -50,19 +53,19 @@ public class NoneAbsorption extends Absorption {
   public NoneAbsorption(XRDcat aobj, String alabel) {
     super(aobj, alabel);
     initXRD();
-    identifier = "none abs";
-    IDlabel = "none abs";
-    description = "none absorption model";
+    identifier = modelID;
+    IDlabel = modelID;
+    description = descriptionID;
   }
 
   public NoneAbsorption(XRDcat aobj) {
-    this(aobj, "none abs");
+    this(aobj, modelID);
   }
 
   public NoneAbsorption() {
-    identifier = "none abs";
-    IDlabel = "none abs";
-    description = "none absorption model";
+    identifier = modelID;
+    IDlabel = modelID;
+    description = descriptionID;
   }
 
   public void initConstant() {
@@ -87,5 +90,9 @@ public class NoneAbsorption extends Absorption {
   public void initParameters() {
     super.initParameters();
   }
-
+  
+  public double getAbsorptionCorrection(DiffrDataFile adatafile, Phase aphase, double positionOrEnergy) {
+    return 1.0;
+  }
+  
 }

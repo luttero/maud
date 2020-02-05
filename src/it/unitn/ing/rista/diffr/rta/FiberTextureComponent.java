@@ -77,6 +77,8 @@ public class FiberTextureComponent extends XRDcat {
     this(afile, "FiberTextureComponent x");
   }
 
+	public FiberTextureComponent() {}
+
   public void initConstant() {
     Nstring = 1;
     Nstringloop = 0;

@@ -86,6 +86,12 @@ public class AtomScatterer extends Scatterer {
 			this(afile, "Atom scatterer x");
 		}
 
+	public AtomScatterer() {
+/*		identifier = "Atom Scatterer";
+		IDlabel = "Atom Scatterer";
+		description = "select this to use an Atom Scatterer";*/
+	}
+
 		public void initConstant() {
 			Nstring = 1;
 			Nstringloop = 0;
@@ -260,16 +266,15 @@ public class AtomScatterer extends Scatterer {
 	 * @param rad the Radiation kind for which the absorption must be computed.
 	 * @return the total absorption of this atom site.
 	 */
-	public double getSiteAbsorption(RadiationType rad) {
-		if (rad.isNeutron())
-			return getSiteWeight() * rad.getRadiation(0).neutronAbs[getAtomicListNumber()];
-		else if (rad.isElectron())
-			return getSiteWeight() * rad.getRadiation(0).electronAbs[getAtomicListNumber()];
-		else
-			return 0.0;
+	public double getSiteAbsorptionForNeutron() {
+	  return getSiteWeight() * Radiation.neutronAbs[getAtomicListNumber()];
 	}
-
-	public double getSiteAbsorption(double energyInKeV) {
+  
+  public double getSiteAbsorptionForElectron() {
+	  return getSiteWeight() * Radiation.electronAbs[getAtomicListNumber()];
+  }
+  
+  public double getSiteAbsorptionForXray(double energyInKeV) {
 //	  System.out.println("Atom: " + getAtomicNumber() + ", absorption: " + XRayDataSqLite.getTotalAbsorptionForAtomAndEnergy(getAtomicNumber(), energyInKeV));
 		return getSiteWeight() * XRayDataSqLite.getTotalAbsorptionForAtomAndEnergy(getAtomicNumber(), energyInKeV);
 	}
@@ -314,7 +319,7 @@ public class AtomScatterer extends Scatterer {
 		return isotopeListNumber;
 	}
 
-	public double[] scatfactor(double dspacing, Radiation rad) {
+/*	public double[] scatfactor(double dspacing, Radiation rad) {
 
 		double[] fu = new double[2];
 		int atomicListNumber = getAtomicListNumber();
@@ -336,6 +341,46 @@ public class AtomScatterer extends Scatterer {
 		}
 		return fu;
 	}
+*/
+  public double[] scatfactor(double dspacing, Radiation rad) {
+    
+    double[] fu = new double[2];
+    int atomicListNumber = getAtomicListNumber();
+    if (rad.isElectron()) {
+      // electron radiation
+      fu[0] = 0.023934 * (getOxidationNumber()) * (4 * dspacing * dspacing);
+      fu[1] = 0;
+      if (dspacing == 0)
+        for (int j = 0; j < 5; j++)
+          fu[0] += Radiation.electronSF[atomicListNumber][j];
+      else
+        for (int j = 0; j < 5; j++)
+          fu[0] += Radiation.electronSF[atomicListNumber][j] * Math.exp(-Radiation.electronSF[atomicListNumber][j + 4] /
+              (4 * dspacing * dspacing));
+    } else if (rad.isNeutron()) {
+      // neutron radiation
+      fu[0] = Radiation.neutronSF[getIsotopicListNumber()];
+      fu[1] = 0;
+    } else {
+      // x-ray radiation
+      int atomNumber = getAtomicNumber();
+      double energyInKeV = 12.398424 / rad.getWavelengthValue();
+      fu = XRayDataSqLite.getF1F2FromHenkeForAtomAndEnergy(atomNumber, energyInKeV);
+      fu[0] -= atomNumber;
+//			double img1 = fu[0];
+      fu[0] += Radiation.xraySF[atomicListNumber][8];
+      
+      if (dspacing == 0)
+        for (int j = 0; j < 4; j++)
+          fu[0] += Radiation.xraySF[atomicListNumber][j];
+      else
+        for (int j = 0; j < 4; j++)
+          fu[0] += Radiation.xraySF[atomicListNumber][j] * Math.exp(-Radiation.xraySF[atomicListNumber][j + 4] /
+              (4 * dspacing * dspacing));
+//			System.out.println(atomNumber + ": " + energyInKeV + ", " + (fu[0] - img1) + ", " + img1 + ", " + fu[1]);
+    }
+    return fu;
+  }
   
   public double[] scatfactor(double dspacing, double energyInKeV) {
     

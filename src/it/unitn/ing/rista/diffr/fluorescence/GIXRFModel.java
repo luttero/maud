@@ -25,10 +25,8 @@ import it.unitn.ing.rista.diffr.*;
 import it.unitn.ing.rista.diffr.detector.XRFDetector;
 import it.unitn.ing.rista.diffr.geometry.GeometryXRFInstrument;
 import it.unitn.ing.rista.diffr.radiation.XrayEbelTubeRadiation;
-import it.unitn.ing.rista.io.cif.CIFtoken;
 import it.unitn.ing.rista.util.*;
 
-import java.util.Hashtable;
 import java.util.Vector;
 
 import static java.lang.System.out;
@@ -214,7 +212,7 @@ public class GIXRFModel extends Fluorescence {
 		Instrument ainstrument = adatafile.getDataFileSet().getInstrument();
 		Detector detector = ainstrument.getDetector();
 		Geometry geometry = ainstrument.getGeometry();
-		double incidentIntensity = ainstrument.getIntensityValue();
+		double incidentIntensity = ainstrument.getIntensityForFluorescence();
 		double sampleLinearArea = detector.getGeometryCorrection(
 				((GeometryXRFInstrument) geometry).getBeamOutCorrection(adatafile, asample));
 //		incidentIntensity *= sampleLinearArea;
@@ -480,7 +478,7 @@ public class GIXRFModel extends Fluorescence {
 /*		  double thickness_or_zero = thickness;
 		  if (j1 == layersNumber - 2)
 			  thickness_or_zero = 0;*/
-					double layerAbsorption = layer.getAbsorption(energyInKeV) * layer.getDensity();
+					double layerAbsorption = layer.getAbsorptionForXray(energyInKeV) * layer.getDensity();
 
 					double[] AE = new double[4];
 					double[] bE = new double[4];
@@ -528,8 +526,8 @@ public class GIXRFModel extends Fluorescence {
 								subEnergy += stepEnergy;
 								subEnergyInt += stepIntEnergy;
 								FluorescenceLine transfertLine = new FluorescenceLine(subEnergy, -1, 0, "source");
-								double absorptionLineLambda = layer.getAbsorption(subEnergy) * density;
-								double totalIntensity = Math.exp(-layer.getOverLayerAbsorption(subEnergy) * density / sinPhid)
+								double absorptionLineLambda = layer.getAbsorptionForXray(subEnergy) * density;
+								double totalIntensity = Math.exp(-layer.getOverLayerAbsorptionForXray(subEnergy) * density / sinPhid)
 										* subEnergyInt;
 								double totalRe = 0.0;
 								double mhuOverSinD = absorptionLineLambda / sinPhid;
@@ -579,8 +577,8 @@ public class GIXRFModel extends Fluorescence {
 							double subEnergy = energyInKeV;
 							double subEnergyInt = energy_intensity;
 							FluorescenceLine transfertLine = new FluorescenceLine(subEnergy, -1, 0, "source");
-							double absorptionLineLambda = layer.getAbsorption(subEnergy) * density;
-							double totalIntensity = Math.exp(-layer.getOverLayerAbsorption(subEnergy) * density / sinPhid)
+							double absorptionLineLambda = layer.getAbsorptionForXray(subEnergy) * density;
+							double totalIntensity = Math.exp(-layer.getOverLayerAbsorptionForXray(subEnergy) * density / sinPhid)
 									* subEnergyInt;
 							double totalRe = 0.0;
 							double mhuOverSinD = absorptionLineLambda / sinPhid;
@@ -643,9 +641,9 @@ public class GIXRFModel extends Fluorescence {
 									System.out.println(chemicalComposition.elementAt(k).label + " " + lineEnergyKeV + " " + line.getIntensity());
 //				  double lineEnergy = lineEnergyKeV * 1000; // in eV
 //				  double lineLambda = Constants.ENERGY_LAMBDA / lineEnergy;
-									double absorptionLineLambda = layer.getAbsorption(lineEnergyKeV) * density;
+									double absorptionLineLambda = layer.getAbsorptionForXray(lineEnergyKeV) * density;
 
-									double totalIntensity = Math.exp(-layer.getOverLayerAbsorption(lineEnergyKeV) * density / sinPhid)
+									double totalIntensity = Math.exp(-layer.getOverLayerAbsorptionForXray(lineEnergyKeV) * density / sinPhid)
 											* energy_intensity;
 									double totalRe = 0.0;
 									double mhuOverSinD = absorptionLineLambda / sinPhid;
@@ -797,7 +795,7 @@ public class GIXRFModel extends Fluorescence {
 
 		for (int k = 0; k < fluorescenceLines.size(); k++) {
 			FluorescenceLine line = fluorescenceLines.get(k);
-			double[][] broad = ainstrument.getInstrumentalBroadeningAt(line.getEnergy(), adatafile);
+      java.util.Vector<double[]> broad = ainstrument.getInstrumentEnergyBroadeningAt(line.getEnergy());
 			line.setEnergy(line.getEnergy() * 1000.0); // in eV
 			line.setShape(broad);
 //      System.out.println(line.getEnergy() + " " + line.getIntensity());

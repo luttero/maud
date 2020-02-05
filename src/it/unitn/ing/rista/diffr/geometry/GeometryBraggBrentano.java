@@ -75,10 +75,10 @@ public class GeometryBraggBrentano extends GeometryDiffractometer {
     double sin2theta;
     double lp = 1.0;
     position *= Constants.DEGTOPI;
-	  double positionHalf = position * 0.5;
+	  double theta = position * 0.5;
     if (getAutomaticSlit()) {
       if (!dspacingbase && !energyDispersive)
-        lp *= Math.sin(positionHalf);
+        lp *= Math.sin(theta);
       else if (!warningAlreadyPrinted) {
         System.out.println("Warning: programmable slits option not selectable with non-2theta based data");
         warningAlreadyPrinted = true;
@@ -87,7 +87,7 @@ public class GeometryBraggBrentano extends GeometryDiffractometer {
 
     double[] tilt_angles = adatafile.getTiltingAngle();
     sin2theta = Math.sin(position);
-    lp *= polarization(adatafile, positionHalf) / (Math.sin(positionHalf) * sin2theta);
+    lp *= polarization(adatafile, theta) / (Math.sin(theta) * sin2theta);
     double omega = getMeasurement().getOmega(tilt_angles[0], position) * Constants.DEGTOPI;
     if (omega >= position)
       return 0.0;
@@ -148,9 +148,9 @@ public class GeometryBraggBrentano extends GeometryDiffractometer {
 		return asample.getLayerAbsorption_new(rad, rad_index, layerIndex, incidentDiffractionAngles, adataset);
 	}
 
-	public double[] getLayerAbsorption_new(Sample asample, RadiationType rad, int layerIndex, double[][] incidentDiffractionAngles,
+/*	public double[] getLayerAbsorption_new(Sample asample, RadiationType rad, int layerIndex, double[][] incidentDiffractionAngles,
 	                                       DataFileSet adataset) {
 		return asample.getLayerAbsorption_new(rad, layerIndex, incidentDiffractionAngles, adataset);
-	}
+	}*/
 
 }

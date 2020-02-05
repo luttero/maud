@@ -779,6 +779,10 @@ public class XRayDataSqLite {
 
 	public static void checkMinimumEnergy() {
 		linesMinimumEnergy = MaudPreferences.getDouble("fluorescenceLines.minimum_keV", linesMinimumEnergy);
+		if (linesMinimumEnergy < 1.0) {
+			linesMinimumEnergy = 1.0;
+			MaudPreferences.setPref("fluorescenceLines.minimum_keV", linesMinimumEnergy);
+		}
 	}
 
 	public static Vector<FluorescenceLine> getFluorescenceLinesFor(int atomNumber, double energyInKeV,

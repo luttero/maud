@@ -48,6 +48,8 @@
         <!-- Build everything -->
         <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" encoding="UTF-8">
             <src path="${src}"/>
+            <exclude name="com/github/tschoonj/xraylib2/**"/>
+            <exclude name="com/github/tschoonj/xraylib2/tests/**"/>
             <!--exclude name="it/unitn/ing/jsginfo/**" /-->
             <!--exclude name="it/unitn/ing/jgraph/**" /-->
             <exclude name="it/unitn/ing/esqui/client/**"/>
@@ -213,6 +215,14 @@
             <exclude name="ij/gui/PlotWindow.java"/>
             <exclude name="org/java/misc/GL4Installer/MSJVMVersionApplet.java"/>
             <exclude name="ec/**"/>
+            <exclude name="com/github/tschoonj/xraylib/tests/**"/>
+            <exclude name="com/github/tschoonj/xraylib/compoundData.java"/>
+            <exclude name="com/github/tschoonj/xraylib/compoundDataBase.java"/>
+            <exclude name="com/github/tschoonj/xraylib/compoundDataNIST.java"/>
+            <exclude name="com/github/tschoonj/xraylib/Crystal_Atom.java"/>
+            <exclude name="com/github/tschoonj/xraylib/Crystal_Struct.java"/>
+            <exclude name="com/github/tschoonj/xraylib/radioNuclideData2.java"/>
+            <exclude name="com/github/tschoonj/xraylib/Xraylib2.java"/>
             <!--exclude name="com/jtex/**"/-->
             <exclude name="fr/ensicaen/**"/>
             <!--exclude name="it/unitn/ing/fortran/**" /-->
@@ -2099,7 +2109,7 @@
             <option value="-Dapple.awt.application.name=Maud"/>
             <option value="-Dcom.apple.smallTabs=true"/>
 
-            <option value="-Xmx16384M"/>
+            <option value="-Xmx65536M"/>
         </bundleapp>
 
         <mkdir dir="${app_osx_beta}/Maud.app/Contents/Frameworks"/>

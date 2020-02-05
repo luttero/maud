@@ -210,38 +210,38 @@ public class EDXRFInstrumentBroadening extends InstrumentBroadening {
     return getInstrument().getGeometry();
   }
 
-  public double[][] getInstrumentalBroadeningAt(double x, DiffrDataFile diffrDataFile) {
+  public java.util.Vector<double[]> getInstrumentEnergyBroadeningAt(double x) {
 
-	 int maxNumber = 0;
-	 for (int i = 0; i < parameterloopField.length; i++) {
-	 	int numb = parameterloopField[i].size();
-		 if (numb > maxNumber)
-		 	maxNumber = numb;
-	 }
-    double broad[][] = new double[maxNumber][6];
+    java.util.Vector<double[]> broad = new java.util.Vector<>(parameterloopField.length);
 
 	  double[] par = getParameterLoopVector(0);
-	  broad[0][0] = 0.0;
+	  double[] value = {0.0};
 	  for (int i = 0; i < par.length; i++)
-		  broad[0][0] += par[i] * MoreMath.pow(x, i);
-	  if (broad[0][0] <= 0)
-		  broad[0][0] = minimumHWHMvalue;
+      value[0] += par[i] * MoreMath.pow(x, i);
+	  
+	  if (value[0] <= 0)
+      value[0] = minimumHWHMvalue;
 	  else
-		  broad[0][0] = Math.sqrt(broad[0][0]);
+      value[0] = Math.sqrt(value[0]);
+    broad.add(value);
 
 	  par = getParameterLoopVector(1);
-	  broad[0][1] = 0.0;
+    value = new double[]{0.0};
+    value[0] = 0.0;
 	  for (int i = 0; i < par.length; i++)
-		  broad[0][1] += par[i] * MoreMath.pow(x, i);
-	  if (broad[0][1] < 0.0)
-		  broad[0][1] = 0.0;
-	  if (broad[0][1] > 1.0)
-		  broad[0][1] = 1.0;
+      value[0] += par[i] * MoreMath.pow(x, i);
+	  if (value[0] < 0.0)
+      value[0] = 0.0;
+	  if (value[0] > 1.0)
+      value[0] = 1.0;
+    broad.add(value);
 
 	  for (int i = 2; i < parameterloopField.length; i++) {
 		 par = getParameterLoopVector(i);
+		 value = new double[par.length];
 		 for (int j = 0; j < par.length; j++)
-			broad[j][i] = par[j];
+       value[j] = par[j];
+      broad.add(value);
 	 }
 
     return broad;

@@ -52,6 +52,8 @@ public class DataSetSample extends XRDcat {
     this(afile, "Data_set_x");
   }
 
+	public DataSetSample() {}
+
   public void initConstant() {
     Nstring = 0;
     Nstringloop = 0;

@@ -78,6 +78,7 @@ public class EdaxCSVDataFile extends DiffrDataFile {
 
   Vector values = new Vector(4000, 1000);
         line = reader.readLine();
+	      line = Misc.removeUTF8BOM(line);
 	while (line != null && token != null) {
         	st = new StringTokenizer(line, " ,\t\r\n");
 		token = st.nextToken();

@@ -83,6 +83,7 @@ public class TnxDatafile extends MultDiffrDataFile {
 				String token1 = new String("");
 				StringTokenizer st = null;
 				String linedata = reader.readLine();
+				linedata = Misc.removeUTF8BOM(linedata);
 				boolean endoffile = false;
 				String numberString = null;
 				boolean atmpB = true;

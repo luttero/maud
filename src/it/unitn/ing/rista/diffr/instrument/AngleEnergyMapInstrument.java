@@ -21,8 +21,7 @@
 package it.unitn.ing.rista.diffr.instrument;
 
 import it.unitn.ing.rista.awt.*;
-import it.unitn.ing.rista.diffr.XRDcat;
-import it.unitn.ing.rista.diffr.Instrument;
+import it.unitn.ing.rista.diffr.*;
 import it.unitn.ing.rista.util.Constants;
 
 import javax.swing.*;
@@ -58,8 +57,12 @@ public class AngleEnergyMapInstrument extends Instrument {
 		IDlabel = modelID;
 		description = modelID;
 	}
-
-	public void edit(Frame aframe) {
+  
+  public double getAbsorptionCorrection(DiffrDataFile adatafile, Phase aphase, double position, int rad_index) {
+    return 1;
+  }
+  
+  public void edit(Frame aframe) {
 		(new AngleEnergyMapInstrumentD(aframe, this)).setVisible(true);
 	}
 
@@ -71,7 +74,7 @@ public class AngleEnergyMapInstrument extends Instrument {
 		JTextField intensityTF;
 		JTextField intensityScaleTF;
 		JComboBox[] optchoice;
-		boolean[] active = {false, true, true, false, true, true, true};
+		boolean[] active = {true, true, true, false, true, true, true};
 
 //    JParameterListPane ThetaPanel;
 
@@ -108,7 +111,7 @@ public class AngleEnergyMapInstrument extends Instrument {
 			jPanel6.setLayout(new GridLayout(0, 1, 3, 3));
 			jPanel12.add("West", jPanel6);
 
-			String[] tmpStringS = {"Instrument name:", "Incident intensity:", "Scale factor normalization:"};
+			String[] tmpStringS = {"Instrument name:", "Incident intensity:", "Fluorescence scale factor:"};
 			for (int i = 0; i < tmpStringS.length; i++)
 				jPanel6.add(new JLabel(tmpStringS[i]));
 

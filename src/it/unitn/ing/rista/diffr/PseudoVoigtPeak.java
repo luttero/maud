@@ -20,11 +20,8 @@
 
 package it.unitn.ing.rista.diffr;
 
-import it.unitn.ing.fortran.*;
 import it.unitn.ing.rista.util.*;
-
 import java.io.PrintStream;
-import java.io.IOException;
 
 /**
  * The PseudoVoigtPeak is a class
@@ -75,20 +72,20 @@ public class PseudoVoigtPeak extends basicPeak {
 		super(pos, dspacingbase, energyDispersive, wave, weight, reflex, order);
 	}
 
-	public static double[] getHwhmEtaFromIntegralBeta(double[] betaf, double[][] broadInst) {
+	public static double[] getHwhmEtaFromIntegralBeta(double[] betaf, java.util.Vector<double[]> broadInst) {
 		double betahc = 0.0;
 		for (int ij = 0; ij < numberbetacoeff; ij++)
-			betahc += coeffbetac[ij] * Math.pow(broadInst[0][1], (double) ij);
+			betahc += coeffbetac[ij] * Math.pow(broadInst.get(1)[0], ij);
 		double betahg = 1.0 - betahc;
 
 		double hwhmconv = 0.0;
 		for (int i = 0; i < numberhwhmcoeff; i++)
-			hwhmconv += coeffhwhm[i] * Math.pow(betahc, (double) i);
+			hwhmconv += coeffhwhm[i] * Math.pow(betahc, i);
 
 		if (hwhmconv == 0.0)
 			hwhmconv = 1.0E-9;
-		betahc *= ((broadInst[0][0] / hwhmconv) * hwhmtobetac);
-		betahg *= (broadInst[0][0] / (hwhmconv * hwhmtobetag));
+		betahc *= ((broadInst.get(0)[0] / hwhmconv) * hwhmtobetac);
+		betahg *= (broadInst.get(0)[0] / (hwhmconv * hwhmtobetag));
 
 		double betac = betahc + betaf[0];
 		double betag = Math.sqrt(betaf[1] * betaf[1] + betahg * betahg);
@@ -255,14 +252,18 @@ public class PseudoVoigtPeak extends basicPeak {
 			if (radiationWeight[i] > 0.0) {
 				double tmpIntensity = intensitySingle * textureFactor[i] * shapeAbs[i] * Fhkl[i] *
 						radiationWeight[i] * aphase.getScaleFactor() * lorentzPolarization[i] * absDetectorCorrection[i];
-				if (const2[i] != 0.0) {
+        const1[i] = asyConst1;
+        const2[i] = asyConst2;
+        wave[i] = getRadiationWavelength(i);
+        hwhm_i[i] = 1.0 / thwhm[i];
+        eta[i] = teta[i];
+        
+        if (const2[i] != 0.0) {
 					for (int index = 0; index < 3; index++)
 						intensity[index][i] = tmpIntensity * getReflex().pd_deltaIndex[index];
 				} else {
 					intensity[0][i] = tmpIntensity;
 				}
-				hwhm_i[i] = 1.0 / thwhm[i];
-				eta[i] = teta[i];
 
 				minindex[i] = diffrDataFile.getOldNearestPoint(finalposition[i] - thwhm[i] * cutoff);
 				maxindex[i] = diffrDataFile.getOldNearestPoint(finalposition[i] + thwhm[i] * cutoff) + 1;
@@ -273,10 +274,6 @@ public class PseudoVoigtPeak extends basicPeak {
 					if (minmaxindex[1] < maxindex[i])
 						minmaxindex[1] = maxindex[i];
 				}
-
-				const1[i] = asyConst1;
-				const2[i] = asyConst2;
-				wave[i] = getRadiationWavelength(i);
 
 				if (const2[i] != 0.0) {
 					for (int index = 0; index < 3; index++)
@@ -358,7 +355,7 @@ public class PseudoVoigtPeak extends basicPeak {
 			computeFunctions(diffrDataFile.getXData(), expfit, minindex, maxindex,
 					intensity, eta, hwhm_i, actualPosition, const1, const2, wave,
 					diffrDataFile.dspacingbase, diffrDataFile.energyDispersive, diffrDataFile.increasingX(), planar_asymmetry,
-					deff[0]);
+					deff[0], diffrDataFile.sintheta);
 /*	  computeFunctions(expfit, thwhm, cutoff, minindex, maxindex,
         intensity, eta, hwhm_i, actualPosition, const1, const2, wave,
         reverseX, minmaxindex, getOrderPosition(), aphase, diffrDataFile);*/
@@ -369,9 +366,10 @@ public class PseudoVoigtPeak extends basicPeak {
 	                                    double[][] intensity, double[] eta, double[] hwhm_i, double[][] position,
 	                                    double[] const1, double[] const2, double[] wave, boolean dspacingBase,
 	                                    boolean energyDispersive, boolean increasingX, double planar_asymmetry,
-	                                    double deff) {
+	                                    double deff, double sintheta) {
 
 		int numberOfPV = minindex.length;
+		sintheta *= 2.0;
 		double differenceDspace;
 		for (int ipv = 0; ipv < numberOfPV; ipv++) {
 			int imin = minindex[ipv];
@@ -389,7 +387,7 @@ public class PseudoVoigtPeak extends basicPeak {
 							if (dspacingBase)
 								differenceDspace = 1.0 / x[i] - 1.0 / position[ipv][index];
 							else if (energyDispersive)
-								differenceDspace = x[i] / Constants.ENERGY_LAMBDA - position[index][ipv] / Constants.ENERGY_LAMBDA;
+								differenceDspace = (x[i] - position[index][ipv]) / Constants.ENERGY_LAMBDA * sintheta;
 							else {
 								differenceDspace = 2.0 * (MoreMath.sind(x[i] * 0.5) - MoreMath.sind(position[index][ipv] * 0.5)) / wave[ipv];
 //							System.out.println(differenceDspace / dx_pi);

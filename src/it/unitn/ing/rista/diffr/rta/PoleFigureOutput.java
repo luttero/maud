@@ -22,6 +22,7 @@ package it.unitn.ing.rista.diffr.rta;
 
 import java.lang.*;
 import java.io.*;
+import java.util.Vector;
 
 import it.unitn.ing.rista.util.*;
 import it.unitn.ing.rista.diffr.*;

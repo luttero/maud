@@ -48,15 +48,15 @@ public class LaueMicroAbsorption  extends MicroAbsorption {
     description = "Laue microabsorption correction is performed (only for Laue transmission camera)";
   }
 
-  public double getApparentQuantity(double volFraction, RadiationType rad,
-                                    Layer alayer, double crystSize) {
+/*  getMicroAbsorptionCorrection(double volFraction, double energyInKeV,
+                                 Layer alayer, double crystSize) {
 
     if (crystSize < 50.0)
-      return volFraction;
+      return 1.0;
 
     Phase aphase = (Phase) getParent();
 
-    return volFraction * alayer.getDensity() / aphase.getDensity();
-  }
+    return alayer.getDensity() / aphase.getDensity();
+  }*/
 
 }

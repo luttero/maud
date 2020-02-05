@@ -62,6 +62,8 @@ public class Radiation extends XRDcat {
     this(afile, "Radiation x");
   }
 
+	public Radiation() {}
+
   public void initConstant() {
     Nstring = 0;
     Nstringloop = 0;

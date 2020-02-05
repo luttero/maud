@@ -46,6 +46,7 @@ public class FluorescenceLine {
 
 	double energy;
 	double intensity = 1.0;
+	double[] multipleIntensity = null;
 	private double transitionProbability;
 	int coreShellID = -1;
 	double fluorescenceYield = 0;
@@ -106,69 +107,120 @@ public class FluorescenceLine {
 
 	public double getCoreShellEnergy() { return coreShellEnergy; }
 
-  public void setShape(double[][] broad) {
+  public void setShape(java.util.Vector<double[]> broad) {
 		// double energy = getEnergy();
-	  hwhm = broad[0][0];
-	  eta = broad[0][1];
-
-	  fS = broad[0][2];
-	  double beta = broad[0][3];
-	  fS *= mhuDet;
-
-	  if (beta > 0)
-	   one_over_beta = 1.0 / beta;
-	  else
-		  one_over_beta = 0.0;
-
-	  if (coreShellID != -1) {
-	  	if (transitionID.toUpperCase().startsWith("KL")) { // Kalpha
-		   fT = broad[0][4];
-		   for (int i = 1; i < broad.length; i++)
-			   fT += broad[i][4] * MoreMath.pow(mhuDet, i - 1);
-	   } else /*if (transitionID.toUpperCase().startsWith("KM"))*/ {
-		   fT = broad[0][5];
-		   for (int i = 1; i < broad.length; i++)
-			   fT += broad[i][5] * MoreMath.pow(mhuDet, i - 1);
-	   }
-	  }
+      hwhm = broad.get(0)[0];
+//    System.out.println("Fluo: " + hwhm + " " + getEnergy());
+      eta = broad.get(1)[0];
+  
+      if (broad.size() > 2) {
+        fS = broad.get(2)[0];
+        double beta = broad.get(3)[0];
+        fS *= mhuDet;
+    
+        if (beta > 0)
+          one_over_beta = 1.0 / beta;
+        else
+          one_over_beta = 0.0;
+    
+        if (coreShellID != -1) {
+          if (transitionID.toUpperCase().startsWith("KL")) { // Kalpha
+            fT = broad.get(4)[0];
+            for (int i = 1; i < broad.get(4).length; i++)
+              fT += broad.get(4)[i] * MoreMath.pow(mhuDet, i - 1);
+          } else /*if (transitionID.toUpperCase().startsWith("KM"))*/ {
+            fT = broad.get(5)[0];
+            for (int i = 1; i < broad.get(5).length; i++)
+              fT += broad.get(5)[i] * MoreMath.pow(mhuDet, i - 1);
+          }
+        }
+      } else {
+        fT = 0;
+        fS = 0;
+        one_over_beta = 1.0;
+    }
 
 	  one_over_hwhm = 1.0 / hwhm;
 	  double symPeakIntensity = 1.0 - fT - fS;
 	  dgx = symPeakIntensity * (1.0 - eta) * Constants.sqrtln2pi * one_over_hwhm;
 	  dcx = symPeakIntensity * eta * one_over_hwhm / Math.PI;
-
 	  one_over_sigma = Constants.sqrt2ln2 * one_over_hwhm;
-
 	  one_over_beta2 = one_over_beta * one_over_beta;
   }
 
   public double getIntensity(double x) {
-		double intensity = 0;
+    double intensity = 0;
     double dx1 = x - getEnergy();
     double dx = dx1;
-	 dx *= one_over_hwhm;
-	 dx *= dx;
+    dx *= one_over_hwhm;
+//    System.out.println("Fluo: " + x + " " + getEnergy() + " " + one_over_hwhm);
+    dx *= dx;
 //	 dx1 *= 0.001;
-	 if (dx > 30.0)
-		 intensity = getIntensity() * dcx / (1.0 + dx);
-	 else
-		 intensity = getIntensity() * (dcx / (1.0 + dx) + dgx * Math.exp(-Constants.LN2 * dx));
-
-	 if (fT > 0)
-	 intensity += getIntensity() * fT * one_over_beta * one_over_sigma * 0.5 / Math.exp(-0.5 * one_over_beta2) *
-			 Math.exp(dx1 * one_over_beta * one_over_sigma) *
-			 erfc(Constants.one_sqrt2 * (dx1 * one_over_sigma + one_over_beta));
-	 if (fS > 0)
-	   intensity += getIntensity() * fS * erfc(Constants.one_sqrt2 * dx1 * one_over_sigma) /
-			   (2.0 * getEnergy());
-	 return intensity;
+    if (dx > 30.0)
+      intensity = getIntensity() * dcx / (1.0 + dx);
+    else
+      intensity = getIntensity() * (dcx / (1.0 + dx) + dgx * Math.exp(-Constants.LN2 * dx));
+  
+    if (fT > 0)
+      intensity += getIntensity() * fT * one_over_beta * one_over_sigma * 0.5 / Math.exp(-0.5 * one_over_beta2) *
+          Math.exp(dx1 * one_over_beta * one_over_sigma) *
+          erfc(Constants.one_sqrt2 * (dx1 * one_over_sigma + one_over_beta));
+    if (fS > 0)
+      intensity += getIntensity() * fS * erfc(Constants.one_sqrt2 * dx1 * one_over_sigma) /
+          (2.0 * getEnergy());
+    return intensity;
 	}
-
+  
+  public double getIntensity(double x, int patternIndex) {
+    double intensity = 0;
+    double dx1 = x - getEnergy();
+    double dx = dx1;
+    dx *= one_over_hwhm;
+//    System.out.println("Fluo: " + x + " " + getEnergy() + " " + one_over_hwhm);
+    dx *= dx;
+//	 dx1 *= 0.001;
+    if (dx > 30.0)
+      intensity = getIntensity(patternIndex) * dcx / (1.0 + dx);
+    else
+      intensity = getIntensity(patternIndex) * (dcx / (1.0 + dx) + dgx * Math.exp(-Constants.LN2 * dx));
+    
+    if (fT > 0)
+      intensity += getIntensity(patternIndex) * fT * one_over_beta * one_over_sigma * 0.5 / Math.exp(-0.5 * one_over_beta2) *
+          Math.exp(dx1 * one_over_beta * one_over_sigma) *
+          erfc(Constants.one_sqrt2 * (dx1 * one_over_sigma + one_over_beta));
+    if (fS > 0)
+      intensity += getIntensity(patternIndex) * fS * erfc(Constants.one_sqrt2 * dx1 * one_over_sigma) /
+          (2.0 * getEnergy());
+    return intensity;
+  }
+  
   public void multiplyIntensityBy(double atomsQuantity) {
     setIntensity(getIntensity() * atomsQuantity);
   }
-
-	public void setTransitionProbability(double transitionProbability) {
+  
+  public void multiplyIntensityBy(double[] atomsQuantity) {
+	  if (multipleIntensity == null || multipleIntensity.length != atomsQuantity.length) {
+      multipleIntensity = new double[atomsQuantity.length];
+      for (int i = 0; i < multipleIntensity.length; i++)
+        multipleIntensity[i] = getIntensity();
+    }
+	  for (int i = 0; i < atomsQuantity.length; i++)
+      multipleIntensity[i] *= atomsQuantity[i];
+  }
+  
+  public double[] getMultipleIntensity() {
+	  return multipleIntensity;
+  }
+  
+  public void setMultipleIntensity(double[] someIntensity) {
+    multipleIntensity = someIntensity;
+  }
+  
+  public double getIntensity(int index) {
+	  return multipleIntensity[index];
+  }
+  
+  public void setTransitionProbability(double transitionProbability) {
 		this.transitionProbability = transitionProbability;
 	}
 

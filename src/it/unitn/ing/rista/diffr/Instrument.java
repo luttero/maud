@@ -204,9 +204,17 @@ public class Instrument extends XRDcat {
   }
 
 	public double getIntensityValue() {
-		return getIntensity().getValueD()  * intensityScaleFactor;
+		return getIntensity().getValueD() * intensityScaleFactor;
 	}
-
+  
+  public double getIntensityForDiffraction() {
+    return getIntensity().getValueD();
+  }
+  
+  public double getIntensityForFluorescence() {
+    return getIntensity().getValueD() * intensityScaleFactor;
+  }
+  
   public void setIntensity(String value) {
     parameterField[0].setValue(value);
   }
@@ -292,10 +300,16 @@ public class Instrument extends XRDcat {
     }
   }*/
 
-  public double[][] getInstrumentalBroadeningAt(double x, DiffrDataFile diffrDataFile) {
+  public java.util.Vector<double[]> getInstrumentBroadeningAt(double x, DiffrDataFile diffrDataFile) {
 
 // Attention: x equal to 2theta
-    return getInstrumentBroadening().getInstrumentalBroadeningAt(x, diffrDataFile);
+    return getInstrumentBroadening().getInstrumentBroadeningAt(x, diffrDataFile);
+  }
+  
+  public java.util.Vector<double[]> getInstrumentEnergyBroadeningAt(double x) {
+
+// Attention: x equal to 2theta
+    return getInstrumentBroadening().getInstrumentEnergyBroadeningAt(x);
   }
 
 /*  public double getConvolutedBroadening(double x, double[] tilting_angles, boolean dspacingbase) {
@@ -570,7 +584,7 @@ public class Instrument extends XRDcat {
 		      getLambdaForTOF(adatafile, position));
 	}
 
-	public double[] PhaseAndLayerAbsorption(DiffrDataFile adatafile, Sample asample,
+/*	public double[] PhaseAndLayerAbsorption(DiffrDataFile adatafile, Sample asample,
 	                                        Phase aphase, double[] x) {
 
 		RadiationType rad = getRadiationType();
@@ -599,7 +613,7 @@ public class Instrument extends XRDcat {
 			}
 		}
 		return correction;
-	}
+	}*/
 
 	public void computeShapeAbsorptionCorrection(DiffrDataFile adatafile, Sample asample,
                                                double[] position, boolean dspacingbase, boolean energyDispersive, double[] intensity) {
