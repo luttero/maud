@@ -21,6 +21,7 @@
 package it.unitn.ing.rista.diffr.data;
 
 import it.unitn.ing.rista.diffr.*;
+import it.unitn.ing.rista.util.Misc;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -73,6 +74,7 @@ public class DubnaDataFile extends MultDiffrDataFile {
 				int columns = 1;
 
 				String linedata = reader.readLine();      // read one line
+				linedata = Misc.removeUTF8BOM(linedata);
 				while (linedata != null) {
 
 					st = new StringTokenizer(linedata, " ,\t\r\n");  	// create the tokenizer, fields are separed by

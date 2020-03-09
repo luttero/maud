@@ -68,6 +68,7 @@ public class GSASNewDataFile extends MultDiffrDataFile {
         boolean endoffile = false;
 
         String titleString = reader.readLine();
+	      titleString = Misc.removeUTF8BOM(titleString);
         double omega = 0.0, chi = 0.0, phi = 0.0;
 
 

@@ -196,6 +196,7 @@ public class VeneziaDataFile extends DiffrDataFile {
         // read the entire first line and use it as title
 
         title = reader.readLine();
+	      title = Misc.removeUTF8BOM(title);
 
         line = reader.readLine();    // read the second line
 

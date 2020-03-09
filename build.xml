@@ -2109,7 +2109,7 @@
             <option value="-Dapple.awt.application.name=Maud"/>
             <option value="-Dcom.apple.smallTabs=true"/>
 
-            <option value="-Xmx16384M"/>
+            <option value="-Xmx65536M"/>
         </bundleapp>
 
         <mkdir dir="${app_osx_beta}/Maud.app/Contents/Frameworks"/>

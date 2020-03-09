@@ -66,6 +66,7 @@ public class Lpec1DataFile extends MultDiffrDataFile {
         String linedata = null;
 
         linedata = reader.readLine();
+	      linedata = Misc.removeUTF8BOM(linedata);
 
         st = new StringTokenizer(linedata, " ,\t\r\n");
 

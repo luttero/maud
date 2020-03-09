@@ -95,6 +95,7 @@ public class EsquiGoCIFDataFile extends MultDiffrDataFile {
         String token = new String("");
         StringTokenizer st = null;
         String linedata = reader.readLine();
+        linedata = Misc.removeUTF8BOM(linedata);
         boolean endoffile = false;
         String numberString = null;
         boolean atmpB = true;

@@ -190,10 +190,10 @@ public class QuantitativeXRF extends Fluorescence {
 		for (int ej = 0; ej < rad_lines; ej++) {
 			energyInKeV[ej] = Constants.ENERGY_LAMBDA / radType.getRadiationWavelengthForFluorescence(ej) * 0.001;
 			energy_intensity[ej] = radType.getRadiationWeightForFluorescence(ej);
-			layerAbsorption[0][ej] = -asample.getlayer(0).getAbsorption(energyInKeV[ej]) * layerDensity[0] / sinPhii;
+			layerAbsorption[0][ej] = -asample.getlayer(0).getAbsorptionForXray(energyInKeV[ej]) * layerDensity[0] / sinPhii;
 			overLayerAbsorption[0][ej] = 0;
 			for (int j1 = 1; j1 < layersNumber; j1++) {
-				layerAbsorption[j1][ej] = -asample.getlayer(j1).getAbsorption(energyInKeV[ej]) * layerDensity[j1] / sinPhii;
+				layerAbsorption[j1][ej] = -asample.getlayer(j1).getAbsorptionForXray(energyInKeV[ej]) * layerDensity[j1] / sinPhii;
 				overLayerAbsorption[j1][ej] = overLayerAbsorption[j1 - 1][ej] + layerAbsorption[j1 - 1][ej] * layerThickness[j1 - 1];
 //				System.out.println(overLayerAbsorption[j1][ej]);
 			}
@@ -227,10 +227,10 @@ public class QuantitativeXRF extends Fluorescence {
 						double lineInnerShellEnergyKeV = line.getCoreShellEnergy(); // in KeV
 						double overLayerAbsorptionForLine = 0;
 						for (int j2 = 0; j2 < j1; j2++) {
-							double actualLayerAbs = -asample.getlayer(j2).getAbsorption(lineEnergyKeV) * layerDensity[j2] / sinPhid;
+							double actualLayerAbs = -asample.getlayer(j2).getAbsorptionForXray(lineEnergyKeV) * layerDensity[j2] / sinPhid;
 							overLayerAbsorptionForLine += actualLayerAbs * layerThickness[j2];
 						}
-						double actualLayerAbsorption = -asample.getlayer(j1).getAbsorption(lineEnergyKeV) * layerDensity[j1] / sinPhid;
+						double actualLayerAbsorption = -asample.getlayer(j1).getAbsorptionForXray(lineEnergyKeV) * layerDensity[j1] / sinPhid;
 //						System.out.println(actualLayerAbsorption + " " + asample.getlayer(j1).getAbsorption(lineEnergyKeV) + " " + layerDensity[j1] + " " + sinPhid);
 						double totalIntensity = 0;
 						for (int ej = 0; ej < rad_lines; ej++) {
@@ -421,7 +421,7 @@ public class QuantitativeXRF extends Fluorescence {
 
 //		System.out.println("Compute fluo peaks");
 		for (FluorescenceLine line : fluorescenceLines) {
-      java.util.Vector<double[]> broad = ainstrument.getInstrumentEnergyBroadeningAt(line.getEnergy(), adatafile);
+      java.util.Vector<double[]> broad = ainstrument.getInstrumentEnergyBroadeningAt(line.getEnergy());
 			line.setShape(broad);
 			line.setEnergy(line.getEnergy() * 1000.0); // in eV
 			for (int i = 0; i < numberOfPoints; i++/*, hi++*/) {

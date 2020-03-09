@@ -199,17 +199,21 @@ public class PseudoVoigt2DPeak extends PseudoVoigtPeak {
 //    int totalIndex = 0;
     for (int i = 0; i < nrad; i++) {
       radiationWeight[i] = getRadiationWeight(i);
-//      if (radiationWeight[i] > 0.0 && finalposition[i] != 0) {
+      if (radiationWeight[i] > 0.0 && finalposition[i] != 0) {
         lorentzPolarization[i] = diffrDataFile.getLorentzPolarizationFactor(aphase, reflexIndex, i);
 
-      java.util.Vector<double[]> energyBroadening = diffrDataFile.getEnergyBroadFactor(aphase, reflexIndex, i);
-      energyBroadeningVector.add(energyBroadening);
+        java.util.Vector<double[]> energyBroadening = diffrDataFile.getEnergyBroadFactor(aphase, reflexIndex, i);
+        energyBroadeningVector.add(energyBroadening);
 //        totalIndex++;
-//      }
+      } else {
+        java.util.Vector<double[]> energyBroadening = null;
+        energyBroadeningVector.add(energyBroadening);
+      }
     }
   
     for (int i = 0; i < nrad; i++) {
       if (radiationWeight[i] > 0.0 && finalposition[i] != 0) {
+        
         const1[i] = asyConst1;
         const2[i] = asyConst2;
         hwhm_i[i] = 1.0 / thwhm[i];

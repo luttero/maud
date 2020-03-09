@@ -21,6 +21,7 @@
 package it.unitn.ing.rista.diffr.data;
 
 import it.unitn.ing.rista.diffr.XRDcat;
+import it.unitn.ing.rista.util.Misc;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -76,6 +77,7 @@ public class AscFluorescenceDatafile extends it.unitn.ing.rista.diffr.DiffrDataF
 				String token1 = new String("");
 
 				String linedata = reader.readLine();
+				linedata = Misc.removeUTF8BOM(linedata);
 
 				while (linedata.startsWith("#"))
 					linedata = reader.readLine();

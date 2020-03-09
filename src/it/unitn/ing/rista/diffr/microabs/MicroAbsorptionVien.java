@@ -60,23 +60,23 @@ public class MicroAbsorptionVien extends MicroAbsorption {
     IDlabel = "Vien microabsorption";
     description = "Vien microabsorption correction is performed";
   }
-
-  public double getApparentQuantity(double volFraction, RadiationType rad,
-                                    Layer alayer, double crystSize) {
+  
+  public double getMicroAbsorptionCorrection(double volFraction, double energyInKeV,
+                                             Layer alayer, double crystSize) {
 
     if (crystSize == 0.0)
-      return volFraction;
+      return 1.0;
 
     Phase aphase = (Phase) getParent();
 
-    double musrhorho = alayer.getAbsorption(rad) * alayer.getDensity();
+    double musrhorho = alayer.getAbsorptionForXray(energyInKeV) * alayer.getDensity();
 
-    double mr = (aphase.getAbsorption(rad) * aphase.getDensity() -
+    double mr = (aphase.getAbsorptionForXray(energyInKeV) * aphase.getDensity() -
             musrhorho) * crystSize / 10000;
 
     double denom = 1.0 - 2.0 * (1.0 - volFraction) * mr;
     double muf = musrhorho / denom;
-    return volFraction * muf;
+    return muf;
   }
 
 }

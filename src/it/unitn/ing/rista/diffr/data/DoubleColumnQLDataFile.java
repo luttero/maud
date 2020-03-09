@@ -79,6 +79,7 @@ public class DoubleColumnQLDataFile extends DoubleColumnQDataFile {
         double lambda = getDataFileSet().getInstrument().getRadiationType().getMeanRadiationWavelength(); //Double.valueOf(token1).doubleValue();
 
         linedata = reader.readLine();
+	      linedata = Misc.removeUTF8BOM(linedata);
         while (linedata != null) {
 
           st = new StringTokenizer(linedata, "' ,\t\r\n");

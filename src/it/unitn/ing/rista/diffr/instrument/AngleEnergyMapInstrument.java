@@ -21,8 +21,7 @@
 package it.unitn.ing.rista.diffr.instrument;
 
 import it.unitn.ing.rista.awt.*;
-import it.unitn.ing.rista.diffr.XRDcat;
-import it.unitn.ing.rista.diffr.Instrument;
+import it.unitn.ing.rista.diffr.*;
 import it.unitn.ing.rista.util.Constants;
 
 import javax.swing.*;
@@ -58,8 +57,12 @@ public class AngleEnergyMapInstrument extends Instrument {
 		IDlabel = modelID;
 		description = modelID;
 	}
-
-	public void edit(Frame aframe) {
+  
+  public double getAbsorptionCorrection(DiffrDataFile adatafile, Phase aphase, double position, int rad_index) {
+    return 1;
+  }
+  
+  public void edit(Frame aframe) {
 		(new AngleEnergyMapInstrumentD(aframe, this)).setVisible(true);
 	}
 

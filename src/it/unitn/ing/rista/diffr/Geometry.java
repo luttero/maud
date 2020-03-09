@@ -901,18 +901,18 @@ public class Geometry extends XRDcat {
 	  return 1.0;
   }
 
-	public double[] getLayerAbsorption_new(Sample asample, RadiationType rad, int layerIndex, double[][] incidentDiffractionAngles,
+/*	public double[] getLayerAbsorption_new(Sample asample, RadiationType rad, int layerIndex, double[][] incidentDiffractionAngles,
 	                                       DataFileSet adataset) {
 		double[] radAbs = new double[rad.getLinesCount()];
 		for (int i = 0; i < rad.getLinesCount(); i++)
 			radAbs[i] = 1.0;
 		return radAbs;
-	}
+	}*/
 
-	public double getLayerAbsorption_new(Sample asample, double energyInKeV, int layerIndex, double[] incidentDiffractionAngles,
+/*	public double getLayerAbsorption_new(Sample asample, double energyInKeV, int layerIndex, double[] incidentDiffractionAngles,
 	                                     DataFileSet adataset) {
 		return asample.getLayerAbsorption_new(energyInKeV, layerIndex, incidentDiffractionAngles, adataset);
-	}
+	}*/
 
 	/**
    * Return the position of the peak corrected for position, aberration, instrumental errors.

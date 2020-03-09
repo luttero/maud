@@ -81,6 +81,7 @@ public class MCADatafile extends DiffrDataFile {
         double c_value = 0.0;
 
         line = reader.readLine();
+	      line = Misc.removeUTF8BOM(line);
 	      if (line.startsWith("<<PMCA SPECTRUM>>")) {
 		      boolean takeTimeFromDatfile = MaudPreferences.getBoolean("mac_datafile.useInternalTime", true);
 		      AMTEK_FORMAT = true;

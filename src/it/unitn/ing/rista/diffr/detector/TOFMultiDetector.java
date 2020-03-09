@@ -174,6 +174,7 @@ public class TOFMultiDetector extends Detector {
         StringTokenizer st;
 
         line = reader.readLine();
+        line = Misc.removeUTF8BOM(line);
         while (line != null) {
           st = new StringTokenizer(line, " ,:\t\r\n");
 

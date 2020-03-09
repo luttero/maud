@@ -246,7 +246,7 @@ public class TubeSpectrumTransmission extends FluorescenceBase {
 
 		for (int k = 0; k < fluorescenceLines.size(); k++) {
 			FluorescenceLine line = fluorescenceLines.get(k);
-      java.util.Vector<double[]> broad = ainstrument.getInstrumentEnergyBroadeningAt(line.getEnergy(), adatafile);
+      java.util.Vector<double[]> broad = ainstrument.getInstrumentEnergyBroadeningAt(line.getEnergy());
 			line.setEnergy(line.getEnergy() * 1000.0); // in eV
 			line.setShape(broad);
 //        System.out.print(/*line.getEnergy() + " " + */line.getIntensity() + " ");

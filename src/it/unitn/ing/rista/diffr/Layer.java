@@ -667,7 +667,7 @@ public class Layer extends XRDcat {
 //ll    if (layerAbsorption.containsKey(rad))
 //ll      absorption = (double[]) layerAbsorption.get(rad);
 //ll    else {
-      absorption[0] = getThicknessValue() * getAbsorption(rad);
+      absorption[0] = getThicknessValue() * getAbsorptionForXray(rad.energy);
 //	    System.out.println(getThicknessValue() + " ----- " + getAbsorption(rad));
 //ll      layerAbsorption.put(rad, absorption);
 //ll    }
@@ -684,7 +684,7 @@ public class Layer extends XRDcat {
 //ll    if (layerAbsorption.containsKey(rad))
 //ll      absorption = (double[]) layerAbsorption.get(rad);
 //ll    else {
-		absorption[0] = getThicknessValue() * getAbsorption(rad, index);
+		absorption[0] = getThicknessValue() * getAbsorptionForXray(rad.energy);
 //	    System.out.println(getThicknessValue() + " ----- " + getAbsorption(rad));
 //ll      layerAbsorption.put(rad, absorption);
 //ll    }
@@ -713,7 +713,7 @@ public class Layer extends XRDcat {
 		return totalthick[0];
 	}
 
-	public double getOverLayerAbsorption(RadiationType rad) {
+/*	public double getOverLayerAbsorption(RadiationType rad) {
 		if (rad == null)
 			return 0.0;
 		double[] totalthick = new double[1];
@@ -734,12 +734,12 @@ public class Layer extends XRDcat {
 //ll		}
 		return totalthick[0];
 	}
-
-	public double getLayerAbsorption(double energyInKeV) {
-		return getThicknessInCm() * getAbsorption(energyInKeV);
+*/
+	public double getLayerAbsorptionForXray(double energyInKeV) {
+		return getThicknessInCm() * getAbsorptionForXray(energyInKeV);
 	}
 
-	public double getOverLayerAbsorption(double energyInKeV) {
+	public double getOverLayerAbsorptionForXray(double energyInKeV) {
 		Sample aSample = (Sample) getParent();
 		boolean mustStop = false;
 		double totalAbsorption = 0;
@@ -748,7 +748,7 @@ public class Layer extends XRDcat {
 			if (aLayer == this)
 				mustStop = true;
 			else
-				totalAbsorption += aLayer.getLayerAbsorption(energyInKeV);
+				totalAbsorption += aLayer.getLayerAbsorptionForXray(energyInKeV);
 		}
 		return totalAbsorption;
 	}
@@ -805,7 +805,20 @@ public class Layer extends XRDcat {
     return player;
   }
 
-  public double getAbsorption(RadiationType rad) {
+	public double getAbsorptionForXray(double energyInKeV) {
+		double absorption = 0.0;
+		int phasenumber = checkPhaseNumber();
+//    normalizePhaseQuantity(); // to be sure it's normalized
+		double[] quantity = getWeightedPhaseQuantity();
+		for (int i = 0; i < phasenumber; i++) {
+//			double quantity = getNormalizedPhaseQuantity(i);
+			Phase aphase = getSample().getPhase(i);
+			absorption += aphase.getAbsorptionForXray(energyInKeV) * quantity[i];
+		}
+		return absorption;
+	}
+  
+  public double getAbsorptionForNeutron() {
     double absorption = 0.0;
     int phasenumber = checkPhaseNumber();
 //    normalizePhaseQuantity(); // to be sure it's normalized
@@ -813,39 +826,25 @@ public class Layer extends XRDcat {
     for (int i = 0; i < phasenumber; i++) {
 //			double quantity = getNormalizedPhaseQuantity(i);
       Phase aphase = getSample().getPhase(i);
-      absorption += aphase.getAbsorption(rad) * quantity[i];
+      absorption += aphase.getAbsorptionForNeutron() * quantity[i];
     }
     return absorption;
   }
-
-	public double getAbsorption(RadiationType rad, int index) {
-		double absorption = 0.0;
-		int phasenumber = checkPhaseNumber();
+  public double getAbsorptionForElectron() {
+    double absorption = 0.0;
+    int phasenumber = checkPhaseNumber();
 //    normalizePhaseQuantity(); // to be sure it's normalized
-		double[] quantity = getWeightedPhaseQuantity();
-		for (int i = 0; i < phasenumber; i++) {
+    double[] quantity = getWeightedPhaseQuantity();
+    for (int i = 0; i < phasenumber; i++) {
 //			double quantity = getNormalizedPhaseQuantity(i);
-			Phase aphase = getSample().getPhase(i);
-			absorption += aphase.getAbsorption(rad, index) * quantity[i];
-		}
-//    System.out.println("Absorption of " + toString() + ": " + absorption);
-		return absorption;
-	}
-
-	public double getAbsorption(double energyInKeV) {
-		double absorption = 0.0;
-		int phasenumber = checkPhaseNumber();
-//    normalizePhaseQuantity(); // to be sure it's normalized
-		double[] quantity = getWeightedPhaseQuantity();
-		for (int i = 0; i < phasenumber; i++) {
-//			double quantity = getNormalizedPhaseQuantity(i);
-			Phase aphase = getSample().getPhase(i);
-			absorption += aphase.getAbsorption(energyInKeV) * quantity[i];
-		}
-		return absorption;
-	}
-
-	public double getDensity() {
+      Phase aphase = getSample().getPhase(i);
+      absorption += aphase.getAbsorptionForElectron() * quantity[i];
+    }
+    return absorption;
+  }
+  
+  
+  public double getDensity() {
     double density = 0.0;
     int phasenumber = checkPhaseNumber();
 //    normalizePhaseQuantity(); // to be sure it's normalized

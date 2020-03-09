@@ -1110,8 +1110,12 @@ public class DataFileSet extends XRDcat {
 			}
 			if (index >=0) {
 				for (int j = 0; j < numberStructureFactors; j++) {
-					for (int n = 0; n < linesCount; n++)
-						newStructureFactors[j][i][n] = structureFactors[j][index][n];
+					for (int n = 0; n < linesCount; n++) {
+            if (n < structureFactors[j][index].length)
+              newStructureFactors[j][i][n] = structureFactors[j][index][n];
+            else
+              newStructureFactors[j][i][n] = 0;
+          }
 				}
 				newStructureFactorsID[i] = structureFactorsID[index];
 			} else {
@@ -3534,6 +3538,8 @@ public class DataFileSet extends XRDcat {
   }
 
   public void computeSpectra(Sample asample) {
+  
+    long previousTime = System.currentTimeMillis();
 
     indexesComputed = false;
 
@@ -3542,15 +3548,81 @@ public class DataFileSet extends XRDcat {
 	  final Fluorescence fluo = getFluorescence();
 
     int datafilenumber = activedatafilesnumber();
+    
+/*    final int maxThreads = Math.min(Constants.maxNumberOfThreads, datafilenumber);
+    if (maxThreads > 1 && Constants.threadingGranularity >= Constants.MEDIUM_GRANULARITY) {
+      if (Constants.debugThreads)
+        out.println("Thread datafileset " + getLabel());
+      int i;
+      PersistentThread[] threads = new PersistentThread[maxThreads];
+      for (i = 0; i < maxThreads; i++) {
+        threads[i] = new PersistentThread(i) {
+          @Override
+          public void executeJob() {
+            int i1 = this.getJobNumberStart();
+            int i2 = this.getJobNumberEnd();
+          
+            for (int j = i1; j < i2; j++) {
+              DiffrDataFile datafile = getActiveDataFile(j);
+              if (datafile.refreshSpectraComputation)
+                datafile.resetPhasesFit();
+            }
+          }
+        };
+      }
+      i = 0;
+      int istep = (int) (0.9999 + datafilenumber / maxThreads);
+      for (int j = 0; j < maxThreads; j++) {
+        int is = i;
+        if (j < maxThreads - 1)
+          i = Math.min(i + istep, datafilenumber);
+        else
+          i = datafilenumber;
+        threads[j].setJobRange(is, i);
+        threads[j].start();
+      }
+      boolean running;
+      do {
+        running = false;
+        try {
+          Thread.sleep(Constants.timeToWaitThreadsEnding);
+        } catch (InterruptedException r) {
+        }
+        for (int h = 0; h < maxThreads; h++) {
+          if (!threads[h].isEnded())
+            running = true;
+        }
+      } while (running);
+    
+    } else
+      for (int k = 0; k < datafilenumber; k++) {
+        DiffrDataFile datafile = getActiveDataFile(k);
+        if (datafile.refreshSpectraComputation)
+          datafile.resetPhasesFit();
+      } */
+
 	  for (int k = 0; k < datafilenumber; k++) {
 		  DiffrDataFile datafile = getActiveDataFile(k);
 		  if (datafile.refreshSpectraComputation)
 			  datafile.resetPhasesFit();
 	  }
-
-	  diffr.computeDiffraction(asample,this);
+  
+    if (Constants.testtime)
+      System.out.println("Dataset " + toXRDcatString() + ": reset phases: " +
+          (-previousTime + (previousTime = System.currentTimeMillis())) + " millisecs.");
+  
+    diffr.computeDiffraction(asample,this);
+    if (Constants.testtime)
+      System.out.println("Dataset " + toXRDcatString() + ": compute diffraction: " +
+          (-previousTime + (previousTime = System.currentTimeMillis())) + " millisecs.");
 	  refle.computeReflectivity(asample, this);
+    if (Constants.testtime)
+      System.out.println("Dataset " + toXRDcatString() + ": compute reflectivity: " +
+          (-previousTime + (previousTime = System.currentTimeMillis())) + " millisecs.");
 	  fluo.computeFluorescence(asample, this);
+    if (Constants.testtime)
+      System.out.println("Dataset " + toXRDcatString() + ": compute fluorescence: " +
+          (-previousTime + (previousTime = System.currentTimeMillis())) + " millisecs.");
 
 	  for (int k = 0; k < datafilenumber; k++) {
 	  	DiffrDataFile datafile = getActiveDataFile(k);
@@ -3567,7 +3639,10 @@ public class DataFileSet extends XRDcat {
 		  }
 
 	  }
-
+  
+    if (Constants.testtime)
+      System.out.println("Dataset " + toXRDcatString() + ": compute background: " +
+          (-previousTime + (previousTime = System.currentTimeMillis())) + " millisecs.");
   }
 
 	public double meanAbsorptionScaleFactor = 1.0;

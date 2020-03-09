@@ -55,9 +55,9 @@ public class MicroAbsorption extends XRDcat {
   public MicroAbsorption() {
   }
 
-  public double getApparentQuantity(double volFraction, RadiationType rad,
-                                    Layer alayer, double crystSize) {
-    return volFraction;
+  public double getMicroAbsorptionCorrection(double volFraction, double energyInKeV,
+                                             Layer alayer, double crystSize) {
+    return 1.0;
   }
 
   public JOptionsDialog getOptionsDialog(Frame parent) {

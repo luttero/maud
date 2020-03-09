@@ -266,16 +266,15 @@ public class AtomScatterer extends Scatterer {
 	 * @param rad the Radiation kind for which the absorption must be computed.
 	 * @return the total absorption of this atom site.
 	 */
-	public double getSiteAbsorption(RadiationType rad) {
-		if (rad.isNeutron())
-			return getSiteWeight() * rad.getRadiation(0).neutronAbs[getAtomicListNumber()];
-		else if (rad.isElectron())
-			return getSiteWeight() * rad.getRadiation(0).electronAbs[getAtomicListNumber()];
-		else
-			return getSiteAbsorption(rad.getRadiationEnergy());
+	public double getSiteAbsorptionForNeutron() {
+	  return getSiteWeight() * Radiation.neutronAbs[getAtomicListNumber()];
 	}
-
-	public double getSiteAbsorption(double energyInKeV) {
+  
+  public double getSiteAbsorptionForElectron() {
+	  return getSiteWeight() * Radiation.electronAbs[getAtomicListNumber()];
+  }
+  
+  public double getSiteAbsorptionForXray(double energyInKeV) {
 //	  System.out.println("Atom: " + getAtomicNumber() + ", absorption: " + XRayDataSqLite.getTotalAbsorptionForAtomAndEnergy(getAtomicNumber(), energyInKeV));
 		return getSiteWeight() * XRayDataSqLite.getTotalAbsorptionForAtomAndEnergy(getAtomicNumber(), energyInKeV);
 	}
