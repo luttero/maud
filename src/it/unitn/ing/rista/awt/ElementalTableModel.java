@@ -77,20 +77,24 @@ public class ElementalTableModel extends AbstractTableModel {
 			remove(i);
 		CompositionElement elementN = new CompositionElement(parent);
 		elementN.setString(0, "N");
-		elementN.getParameter(0).setValue(0.78);
+		elementN.getParameter(0).setValue(0.75527);
 		parent.addsubordinateloopField(subordinateListIndex, elementN);
 		CompositionElement elementO = new CompositionElement(parent);
 		elementO.setString(0, "O");
-		elementO.getParameter(0).setValue(0.2);
+		elementO.getParameter(0).setValue(0.23178);
 		parent.addsubordinateloopField(subordinateListIndex, elementO);
 		CompositionElement elementAr = new CompositionElement(parent);
 		elementAr.setString(0, "Ar");
-		elementAr.getParameter(0).setValue(0.01);
+		elementAr.getParameter(0).setValue(0.012827);
 		parent.addsubordinateloopField(subordinateListIndex, elementAr);
 		CompositionElement elementC = new CompositionElement(parent);
 		elementC.setString(0, "C");
-		elementC.getParameter(0).setValue(0.003);
+		elementC.getParameter(0).setValue(1.24E-4);
 		parent.addsubordinateloopField(subordinateListIndex, elementC);
+    CompositionElement elementKr = new CompositionElement(parent);
+    elementKr.setString(0, "Kr");
+    elementKr.getParameter(0).setValue(3.2E-6);
+    parent.addsubordinateloopField(subordinateListIndex, elementKr);
 		fireTableRowsInserted(0, 0);
 	}
 

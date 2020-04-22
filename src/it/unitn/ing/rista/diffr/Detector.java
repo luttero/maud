@@ -28,6 +28,7 @@ import it.unitn.ing.rista.awt.*;
 import javax.swing.*;
 
 import it.unitn.ing.rista.diffr.cal.*;
+import it.unitn.ing.rista.util.Constants;
 import it.unitn.ing.rista.util.Misc;
 
 
@@ -97,8 +98,12 @@ public class Detector extends XRDcat {
 	public double getGeometryCorrection(double beamOutCorrection) {
 		return beamOutCorrection;
 	}
-
-	public int getBankNumber(String bankID) {
+  
+  public double getAreaCorrection(double linearArea) {
+    return 1.0;
+  }
+  
+  public int getBankNumber(String bankID) {
     String number = Misc.toStringFinalOnlyDigits(bankID);
     if (number.length() > 0)
       return Integer.parseInt(number);

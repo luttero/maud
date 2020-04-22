@@ -144,12 +144,13 @@ public class GIXRFModel extends Fluorescence {
 	double phiDelta = 0.0;
 	double phiStep = 0; // phiDelta / (phiIntegrationNumber - 1);
 
-	public void computeFluorescence(Sample asample, DataFileSet adataset) {
-
-		int datafilenumber = adataset.activedatafilesnumber();
+	public void computeFluorescence(Sample asample) {
+    
+    final DataFileSet theDataset = getDataFileSet();
+    
+    int datafilenumber = theDataset.activedatafilesnumber();
 
 		final Sample theSample = asample;
-		final DataFileSet theDataset = adataset;
 
 		final int maxThreads = Math.min(Constants.maxNumberOfThreads, datafilenumber);
 		if (maxThreads > 1 && Constants.threadingGranularity >= Constants.MEDIUM_GRANULARITY) {
@@ -214,7 +215,7 @@ public class GIXRFModel extends Fluorescence {
 		Geometry geometry = ainstrument.getGeometry();
 		double incidentIntensity = ainstrument.getIntensityForFluorescence();
 		double sampleLinearArea = detector.getGeometryCorrection(
-				((GeometryXRFInstrument) geometry).getBeamOutCorrection(adatafile, asample));
+				geometry.getBeamOutCorrection(adatafile, asample)) / adatafile.sintheta;
 //		incidentIntensity *= sampleLinearArea;
 
 		double polarization = ainstrument.getGeometry().getPolarizationAmount();
@@ -270,7 +271,7 @@ public class GIXRFModel extends Fluorescence {
 		double sinPhid = Math.sin(incidentDiffracted[1]);
 
 		RadiationType radType = ainstrument.getRadiationType();
-		int rad_lines = radType.getLinesCount();
+		int rad_lines = radType.getLinesCountForFluorescence();
 		int sub20 = radType.getSubdivision(); //MaudPreferences.getInteger("xrf_detector.energySubdivision", 20);
 
 		int initialContent = 100;
@@ -796,7 +797,7 @@ public class GIXRFModel extends Fluorescence {
 		for (int k = 0; k < fluorescenceLines.size(); k++) {
 			FluorescenceLine line = fluorescenceLines.get(k);
       java.util.Vector<double[]> broad = ainstrument.getInstrumentEnergyBroadeningAt(line.getEnergy());
-			line.setEnergy(line.getEnergy() * 1000.0); // in eV
+//			line.setEnergy(line.getEnergy() * 1000.0); // in eV
 			line.setShape(broad);
 //      System.out.println(line.getEnergy() + " " + line.getIntensity());
 			for (int i = 0; i < numberOfPoints; i++)

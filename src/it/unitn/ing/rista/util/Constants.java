@@ -219,6 +219,7 @@ public class Constants {
 	
   public static final double ENERGY_LAMBDA = 12398.424121;
   public static final double I_ENERGY_LAMBDA = 1.0 / 12398.424121;
+  public static final double ENERGY_LAMBDA_KEV = 12.398424121;
 
 
   public static final int FLOAT_FIELD = 12;

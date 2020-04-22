@@ -149,7 +149,7 @@ public class PseudoVoigtPeak extends basicPeak {
 		double[] absDetectorCorrection = new double[nrad];
 		for (int i = 0; i < nrad; i++) {
 			double position = diffrDataFile.getPosition(aphase, reflexIndex, i);
-			double energy = Constants.ENERGY_LAMBDA / getRadiationWavelength(i) * 0.001;
+			double energy = Constants.ENERGY_LAMBDA / ainstrument.getRadiationType().getRadiationWavelength(i) * 0.001;
 			finalposition[i] = position;
 			int pointIndex = diffrDataFile.getOldNearestPoint(position);
 			absDetectorCorrection[i] = ainstrument.getDetector().getAbsorptionCorrection(diffrDataFile, pointIndex, energy);
@@ -248,13 +248,13 @@ public class PseudoVoigtPeak extends basicPeak {
 			lorentzPolarization[i] = diffrDataFile.getLorentzPolarizationFactor(aphase, getOrderPosition(), i);
 
 		for (int i = 0; i < nrad; i++) {
-			radiationWeight[i] = getRadiationWeight(i);
+			radiationWeight[i] = ainstrument.getRadiationType().getRadiationWeigth(i);
 			if (radiationWeight[i] > 0.0) {
 				double tmpIntensity = intensitySingle * textureFactor[i] * shapeAbs[i] * Fhkl[i] *
 						radiationWeight[i] * aphase.getScaleFactor() * lorentzPolarization[i] * absDetectorCorrection[i];
         const1[i] = asyConst1;
         const2[i] = asyConst2;
-        wave[i] = getRadiationWavelength(i);
+        wave[i] = ainstrument.getRadiationType().getRadiationWavelength(i);
         hwhm_i[i] = 1.0 / thwhm[i];
         eta[i] = teta[i];
         

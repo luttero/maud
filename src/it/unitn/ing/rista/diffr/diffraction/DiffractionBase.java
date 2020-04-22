@@ -60,14 +60,14 @@ public class DiffractionBase extends Diffraction {
 		description = identifier;
 	}
 
-	public void computeDiffraction(Sample asample, DataFileSet adataset) {
-
-		int datafilenumber = adataset.activedatafilesnumber();
+	public void computeDiffraction(Sample asample) {
 
 		final Sample theSample = asample;
-		final DataFileSet theDataset = adataset;
-
-		final int maxThreads = Math.min(Constants.maxNumberOfThreads, datafilenumber);
+		final DataFileSet theDataset = getDataFileSet();
+    
+    int datafilenumber = theDataset.activedatafilesnumber();
+    
+    final int maxThreads = Math.min(Constants.maxNumberOfThreads, datafilenumber);
 		if (maxThreads > 1 && Constants.threadingGranularity >= Constants.MEDIUM_GRANULARITY) {
 			if (Constants.debugThreads)
 				out.println("Thread datafileset " + getLabel());
@@ -242,28 +242,6 @@ public class DiffractionBase extends Diffraction {
 
 		return minmaxindex;
 
-	}
-
-	public void computeasymmetry(Sample asample, DiffrDataFile datafile) {
-		computeasymmetry(asample, datafile, datafile.phasesfit, datafile.startingindex, datafile.finalindex - 1);
-		if (!getFilePar().isComputingDerivate()) {
-			for (int i = 0; i < datafile.phaseFit.length; i++)
-				computeasymmetry(asample, datafile, datafile.phaseFit[i], datafile.startingindex, datafile.finalindex - 1);
-		}
-		refreshComputation = false;
-	}
-
-	public void computeasymmetry(Sample asample, DiffrDataFile datafile, double afit[], int min, int max) {
-
-		Instrument ainstrument = datafile.getDataFileSet().getInstrument();
-
-		ainstrument.getInstrumentBroadening().computeAsymmetry(datafile, asample, afit, min, max);
-
-		for (int j = min; j < max; j++) {
-//      System.out.print("Before: " + afit[j]);
-			afit[j] *= datafile.computeAngularIntensityCorrection(asample, ainstrument, j);
-//      System.out.println(", after: " + afit[j]);
-		}
 	}
 
 }

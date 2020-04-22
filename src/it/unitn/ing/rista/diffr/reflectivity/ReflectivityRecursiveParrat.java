@@ -99,14 +99,14 @@ public class ReflectivityRecursiveParrat extends Reflectivity {
 				ParameterPreferences.getDouble(getParameterString(0) + ".max", 1E9));
 	}
 
-	public void computeReflectivity(Sample asample, DataFileSet adataset) {
-
-		int datafilenumber = adataset.activedatafilesnumber();
+	public void computeReflectivity(Sample asample) {
 
 		final Sample theSample = asample;
-		final DataFileSet theDataset = adataset;
-
-		final int maxThreads = Math.min(Constants.maxNumberOfThreads, datafilenumber);
+		final DataFileSet theDataset = getDataFileSet();
+    
+    int datafilenumber = theDataset.activedatafilesnumber();
+    
+    final int maxThreads = Math.min(Constants.maxNumberOfThreads, datafilenumber);
 		if (maxThreads > 1 && Constants.threadingGranularity >= Constants.MEDIUM_GRANULARITY) {
 			if (Constants.debugThreads)
 				out.println("Thread datafileset " + getLabel());

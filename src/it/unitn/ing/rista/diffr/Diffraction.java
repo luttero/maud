@@ -52,8 +52,12 @@ public class Diffraction extends XRDcat {
 
 	public Diffraction() {
 	}
+	
+	public DataFileSet getDataFileSet() {
+	  return (DataFileSet) getParent();
+  }
 
-	public void computeDiffraction(Sample asample, DataFileSet adataset) {
+	public void computeDiffraction(Sample asample) {
 	}
 
 		/**
@@ -74,30 +78,23 @@ public class Diffraction extends XRDcat {
 	                                        Phase phase, DiffrDataFile datafile) {
 		return new int[0];
 	}
-
-	public void computeasymmetry(Sample asample, DiffrDataFile datafile) {
-		computeasymmetry(asample, datafile, datafile.phasesfit, datafile.startingindex, datafile.finalindex - 1);
-		if (!getFilePar().isComputingDerivate()) {
-			for (int i = 0; i < datafile.phaseFit.length; i++)
-				computeasymmetry(asample, datafile, datafile.phaseFit[i], datafile.startingindex, datafile.finalindex - 1);
-		}
-		refreshComputation = false;
-	}
-
-	public void computeasymmetry(Sample asample, DiffrDataFile datafile, double afit[], int min, int max) {
-
-		Instrument ainstrument = datafile.getDataFileSet().getInstrument();
-
-		ainstrument.getInstrumentBroadening().computeAsymmetry(datafile, asample, afit, min, max);
-
-		for (int j = min; j < max; j++) {
-//      System.out.print("Before: " + afit[j]);
-			afit[j] *= datafile.computeAngularIntensityCorrection(asample, ainstrument, j);
-//      System.out.println(", after: " + afit[j]);
-		}
-	}
-
-	public JOptionsDialog getOptionsDialog(Frame parent) {
+  
+  public void computeasymmetry(Sample asample, DiffrDataFile datafile) {
+    InstrumentBroadening inst_broad = datafile.getDataFileSet().getInstrument().getInstrumentBroadening();
+    inst_broad.computeAsymmetry(datafile, asample, datafile.phasesfit, datafile.startingindex, datafile.finalindex);
+    if (!getFilePar().isComputingDerivate()) {
+      for (int i = 0; i < datafile.phaseFit.length; i++)
+        inst_broad.computeAsymmetry(datafile, asample, datafile.phaseFit[i], datafile.startingindex, datafile.finalindex);
+    }
+    refreshComputation = false;
+  }
+  
+  public void computeasymmetry(Sample asample, DiffrDataFile datafile, double afit[], int min, int max) {
+    getDataFileSet().getInstrument().getInstrumentBroadening().
+        computeAsymmetry(datafile, asample, afit, min, max);
+  }
+  
+  public JOptionsDialog getOptionsDialog(Frame parent) {
 		JOptionsDialog adialog = new JDiffractionOptionsD(parent, this);
 		return adialog;
 	}

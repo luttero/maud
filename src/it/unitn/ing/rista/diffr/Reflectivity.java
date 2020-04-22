@@ -54,8 +54,12 @@ public class Reflectivity extends XRDcat {
 
   public Reflectivity() {
   }
+  
+  public DataFileSet getDataFileSet() {
+    return (DataFileSet) getParent();
+  }
 
-	public void computeReflectivity(Sample asample, DataFileSet adataset) {
+	public void computeReflectivity(Sample asample) {
 	}
 
 	/**

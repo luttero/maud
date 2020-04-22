@@ -302,7 +302,7 @@ public class MultiPlotFitting2DPanel extends CopyPrintablePanel {
             values[j++] = it.unitn.ing.jgraph.ColorMap.DUMMY_VALUE;
           }
         } else {
-          double intValue = datafile[sn].getInterpolatedYSqrtIntensity(xaxis[i], 2, mode);
+          double intValue = datafile[sn].getInterpolatedYSqrtIntensityStd(xaxis[i], 2, mode);
           values[j++] = intValue;
           if (hasFit == 1 && ylength == 1) {
             values[j++] = intValue;
@@ -366,7 +366,7 @@ public class MultiPlotFitting2DPanel extends CopyPrintablePanel {
           if (xaxis[i] < xstartmin || xaxis[i] > xendmax)
             values[j++] = it.unitn.ing.jgraph.ColorMap.DUMMY_VALUE;
           else {
-            values[j++] = datafile[sn].getInterpolatedFitSqrtIntensity(xaxis[i], 2, mode);
+            values[j++] = datafile[sn].getInterpolatedFitSqrtIntensityStd(xaxis[i], 2, mode);
             if (values[j - 1] < IntensityMin && computeMinMax)
               IntensityMin = values[j - 1];
             else if (values[j - 1] < IntensityMin && !computeMinMax)

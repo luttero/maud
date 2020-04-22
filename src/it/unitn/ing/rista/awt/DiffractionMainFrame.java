@@ -26,7 +26,6 @@ import it.unitn.ing.rista.awt.treetable.*;
 import it.unitn.ing.rista.comp.OutputPanel;
 import it.unitn.ing.rista.comp.ParallelComputationController;
 import it.unitn.ing.rista.diffr.*;
-import it.unitn.ing.rista.diffr.instrument.AngleEnergyMapInstrument;
 import it.unitn.ing.rista.io.COD.CODdatabaseConnector;
 import it.unitn.ing.rista.util.*;
 import it.unitn.ing.wizard.HIPPOWizard.HIPPOWizard;
@@ -39,8 +38,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.*;
 import java.util.StringTokenizer;
 
@@ -1043,12 +1040,6 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
   
       String yTitle = null;
       String yUnit = null;
-  
-      boolean angleAxis = MaudPreferences.getBoolean("multiplot2D.use2Theta", false);
-      if (angleAxis && adata.getInstrument().IDlabel == AngleEnergyMapInstrument.modelID) {
-        yTitle = "2Theta";
-        yUnit = "degrees";
-      }
   
       if (isVisible)
         datafile2DPlotPanel.setNewData(datafiles, null, null, yTitle, yUnit);

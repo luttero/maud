@@ -39,8 +39,6 @@ public interface Peak {
 
   public void setIntensity(double intensity);
 
-  public double[] getPosition();
-
   public double getMeanPosition();
 
   public Reflection getReflex();

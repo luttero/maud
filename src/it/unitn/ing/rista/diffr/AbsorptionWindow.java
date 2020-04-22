@@ -243,7 +243,7 @@ public class AbsorptionWindow extends XRDcat {
 					atomNumber, energyInKeV);
 			for (int j = 0; j < linesForAtom.size(); j++) {
 				FluorescenceLine line = linesForAtom.elementAt(j);
-				double lineEnergy = line.getEnergy();
+//				double lineEnergy = line.getEnergy();
 				//			System.out.println(line.getIntensity() + " " + intensity + " " + computeDetectorEfficiency(lineEnergy));
 				line.multiplyIntensityBy(atomFraction * intensity * getWindowDensity());
 /*				if (!getFilePar().isOptimizing() && Constants.testing) {
@@ -337,8 +337,8 @@ public class AbsorptionWindow extends XRDcat {
 				@Override
 				public void actionPerformed(ActionEvent actionEvent) {
 					windowCompositionModel.setAsAir();
-					AbsorptionWindow.this.setWindowDensity(0.0012);
-					windowDensityTF.setText("0.0012");
+					AbsorptionWindow.this.setWindowDensity(0.00120479);
+					windowDensityTF.setText("0.00120479");
 				}
 			});
 

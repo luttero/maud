@@ -940,7 +940,11 @@ public class Geometry extends XRDcat {
 //			getThetaDisplacement(i).setRefinableCheckBound();
     return false;
   }
-
+  
+  public double getBeamOutCorrection(DiffrDataFile adatafile, Sample asample) {
+    return 1.0;
+  }
+  
   /**
    * Instantiates and display the properties/options frame of this object.
    */

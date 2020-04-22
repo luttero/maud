@@ -52,8 +52,15 @@ public class GeometryXRFInstrument extends GeometryBraggBrentano {
 		IDlabel = "XRF instrument";
 		description = "XRF instrument geometry";
 	}
-
-	public double LorentzPolarization(DiffrDataFile adatafile, Sample asample, double position, boolean dspacingbase, boolean energyDispersive) {
+  
+/*  public double polarization(DiffrDataFile adatafile, double position) {
+    double cos2theta = Math.cos(position * 2.0);
+    cos2theta *= cos2theta;
+    return 1.0 + cos2theta;
+  }
+  */
+  public double LorentzPolarization(DiffrDataFile adatafile, Sample asample, double position,
+                                    boolean dspacingbase, boolean energyDispersive) {
 
 		// first correction for absorption on asymmetric diffraction
     
@@ -61,30 +68,34 @@ public class GeometryXRFInstrument extends GeometryBraggBrentano {
 
     double lp = 1.0;
     
-    sintheta = adatafile.sintheta;
-    theta2 = adatafile.get2ThetaValue();
-    sin2theta = Math.sin(theta2 * Constants.DEGTOPI);
-    lp *= polarization(adatafile, theta2 / 2) / (sintheta * sin2theta);
+//    sintheta = adatafile.sintheta;
+    theta2 = position * Constants.DEGTOPI;   // adatafile.get2ThetaValue() * Constants.DEGTOPI;
+    theta2 *= 0.5;
+    sin2theta = Math.sin(theta2);
+    sin2theta *= sin2theta;
+    double costheta = Math.cos(theta2);
+    lp *= polarization(adatafile, theta2) / (costheta * sin2theta);
 
 
 /*    double sradius = asample.getRadiusDimensionD();
     if (sradius > 0.0)
       sradius = 2 * sradius * sintheta;
     else
-      sradius = 10.0e6;
-    width = asample.getEquatorialDimensionD();
+      sradius = 10.0e6;*/
+
+/*    width = asample.getEquatorialDimensionD();
     if (width <= 0.0)
       width = 10.0e6;
 
-    width = Math.min(width, sradius);
+//    width = Math.min(width, sradius);
 
     if (width > 0.0 && (slitaperture > 0.0 && radius > 0.0)) {
       beamsize = radius * MoreMath.sind(slitaperture) / sintheta;
       if (beamsize > width)
         lp *= width / beamsize;
-    }
+    }*/
 
-    double[] tilt_angles = adatafile.getTiltingAngle();
+/*    double[] tilt_angles = adatafile.getTiltingAngle();
 
     sintheta = Math.sin((90.0 - tilt_angles[1]) * Constants.DEGTOPI);
 
@@ -138,26 +149,19 @@ public class GeometryXRFInstrument extends GeometryBraggBrentano {
 	public double getBeamOutCorrection(DiffrDataFile adatafile, Sample asample) {
 		// first correction for absorption on asymmetric diffraction
 
-		double lp = 1.0, beamsize = 0;
-
 		double[] incidentDiffracted = adatafile.getIncidentAndDiffractionAngles(0);
-//		System.out.println(incidentDiffracted[0]);
-//	  incidentDiffracted[0] *= Constants.DEGTOPI;
-		double slitApertureRad = slitaperture * Constants.DEGTOPI / 2;
+		double slitApertureRad = slitaperture * Constants.DEGTOPI;
 		double sintheta = Math.sin(incidentDiffracted[0]); // - slitApertureRad);
 
-		double width = asample.getEquatorialDimensionD();
+		double width = asample.getEquatorialDimensionD() * sintheta;
 
-		lp = 1.0 / sintheta;
-		if (slitaperture > 0.0 && radius > 0.0) {
-			beamsize = 2.0 * radius * Math.sin(slitApertureRad);
-			lp *= beamsize;
+		double lp = 1.0, beamsize;
+		if (slitaperture > 0.0 && radius > 0.0 && width > 0) {
+			beamsize = radius * slitApertureRad;
+			if (beamsize > width)
+			  lp *= width / beamsize;
 		}
-
-		if (width > 0.0 && beamsize > width)
-			lp = width;
-
-		return lp * 0.1;
+		return lp;
 	}
   
   public double[] getIncidentAndDiffractionAngles(DiffrDataFile datafile, double[] tilting_angles,

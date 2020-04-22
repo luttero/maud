@@ -214,7 +214,11 @@ public class Texture extends XRDcat {
       random[i] = 1.0;
     return random;
   }
-
+  
+  public double computeTextureFactor(Reflection reflex, double alpha, double beta) {
+    return 1.0;
+  }
+  
   public double getODF(double alpha, double beta, double gamma) {
     // in radiant
     return 1.0;
@@ -222,7 +226,11 @@ public class Texture extends XRDcat {
 
   public void initializeAll() {
   }
-
+  
+  public void initializeAll(DiffrDataFile adatafile, double position) {
+  // used for angle-energy maps if needed (see stand Function Texture
+  }
+  
   public double getResolutionD() {
     return Constants.ODFresolution;
   }

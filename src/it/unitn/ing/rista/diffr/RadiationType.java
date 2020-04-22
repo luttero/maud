@@ -157,9 +157,9 @@ public class RadiationType extends XRDcat {
 	}
 
 	public double getShortestWavelengthForFluorescence() {
-		double shortestWave = getRadiationWavelengthForFluorescence(0);
+		double shortestWave = getRadiationWavelength(0);
 		for (int i = 1; i < getLinesCount(); i++) {
-			double wave = getRadiationWavelengthForFluorescence(i);
+			double wave = getRadiationWavelength(i);
 			if (wave < shortestWave)
 				shortestWave = wave;
 		}
@@ -168,6 +168,20 @@ public class RadiationType extends XRDcat {
   
   public double getRadiationEnergy(int index) {
     return lambdaToEnergy(getRadiationWavelength(index));
+  }
+  
+  public double getRadiationEnergyForFluorescence(int index) {
+//		checkRadiation();
+    return getRadiationEnergy(index);
+  }
+  
+  public double getRadiationEnergyKeV(int index) {
+    return getRadiationEnergy(index) * 0.001;
+  }
+  
+  public double getRadiationEnergyForFluorescenceKeV(int index) {
+//		checkRadiation();
+    return getRadiationEnergyKeV(index);
   }
   
   public double getRadiationWeightForFluorescence(int index) {
@@ -181,6 +195,10 @@ public class RadiationType extends XRDcat {
 
   public int getLinesCount() {
     return numberofelementSubL(0);
+  }
+  
+  public int getLinesCountForFluorescence() {
+    return getLinesCount();
   }
 
   public int getLinesCountForPlot() {
@@ -234,17 +252,17 @@ public class RadiationType extends XRDcat {
 			return;
 		super.updateParametertoDoubleBuffering(firstLoading);
 
-		energy = lambdaToEnergy(getMeanRadiationWavelength());
+		energy = lambdaToEnergy(getMeanRadiationWavelength()) * 0.001; // in KeV
 	}
 
 	public double energyToLambda(double e)
 	{
-		return 12.398424 / e;
+		return Constants.ENERGY_LAMBDA / e;
 	}
 
 	public double lambdaToEnergy(double lambda)
 	{
-		return 12.398424 / lambda;
+		return Constants.ENERGY_LAMBDA / lambda;
 	}
 
 	public double getRadiationEnergy() {
@@ -280,8 +298,12 @@ public class RadiationType extends XRDcat {
   public int getSubdivision() {
     return 1;
   }
-
-	public void exportToCif(BufferedWriter output) throws IOException {
+  
+  public int getGroupingNumber() { // for XRF
+    return 1;
+  }
+  
+  public void exportToCif(BufferedWriter output) throws IOException {
 
 		output.write("loop_");
 		output.newLine();

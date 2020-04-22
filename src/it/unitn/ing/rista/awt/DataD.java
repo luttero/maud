@@ -74,6 +74,7 @@ public class DataD extends myJFrame {
   JParameterListPane polynomialP;
   JParameterListPane backgroundChiP;
   JParameterListPane backgroundEtaP;
+  JParameterListPane backgroundThetaP;
   JSubordListPane gaussianP;
 
   JCheckBox plotCB;
@@ -632,7 +633,16 @@ public class DataD extends myJFrame {
       }
     });
     sumB.setToolTipText("Plot the hystogram of total intensity of each enabled spectrum");
-
+  
+    sumB = new JButton("Int. hyst. & fit");
+    p4.add(sumB);
+    sumB.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent event) {
+        plotIntensityHystogramAndFit();
+      }
+    });
+    sumB.setToolTipText("Plot the hystogram of total intensity and fit of each enabled spectrum");
+  
     sumB = new JButton("Sort by angles");
     p4.add(sumB);
     sumB.addActionListener(new ActionListener() {
@@ -802,7 +812,7 @@ public class DataD extends myJFrame {
     JPanel bkgPanel = new JPanel();
     bkgPanel.setLayout(new BorderLayout(3, 3));
     JTabbedPane tabPanel1 = new JTabbedPane();
-    String tempString[] = {"Polynomial", "Interpolated", "Background peaks", "Chi dependent", "Eta dependent"};
+    String tempString[] = {"Polynomial", "Interpolated", "Background peaks", "Chi dependent", "Eta dependent", "Theta dependent"};
 
     polynomialP = new JParameterListPane(this, false, true);
     tabPanel1.addTab(tempString[0], null, polynomialP);
@@ -873,7 +883,10 @@ public class DataD extends myJFrame {
 
     backgroundEtaP = new JParameterListPane(this, false, true);
     tabPanel1.addTab(tempString[4], null, backgroundEtaP);
-
+  
+    backgroundThetaP = new JParameterListPane(this, false, true);
+    tabPanel1.addTab(tempString[5], null, backgroundThetaP);
+  
     bkgPanel.add(BorderLayout.CENTER, tabPanel1);
 
     tp1.addTab(tp1String[3], null, bkgPanel);
@@ -995,6 +1008,7 @@ public class DataD extends myJFrame {
 
     backgroundChiP.setList(thedata, 1);
     backgroundEtaP.setList(thedata, 2);
+    backgroundThetaP.setList(thedata, 3);
 
     String exlabels[] = {"Min in data units :", "Max in data units :"};
     excludedregionP.setList(thedata, 0, exlabels.length, exlabels);
@@ -1084,6 +1098,7 @@ public class DataD extends myJFrame {
     gaussianP.retrieveparlist();
     backgroundChiP.retrieveparlist();
     backgroundEtaP.retrieveparlist();
+    backgroundThetaP.retrieveparlist();
     excludedregionP.retrieveparlist();
     thedata.setInstrument(InstrumentC.getSelectedItem().toString());
     thedata.setIntensityExtractor(IntensityExtractorCB.getSelectedItem().toString());
@@ -1522,9 +1537,23 @@ public class DataD extends myJFrame {
    */
 
   public void plotIntensityHystogram() {
-    (new PlotSimpleData(this, thedata.get2ThetaForActiveSpectra(), thedata.getTotalIntensityForActiveSpectra())).setVisible(true);
+    thedata.setMinRange(minTF.getText());
+    thedata.setMaxRange(maxTF.getText());
+    (new PlotSimpleData(this, thedata.get2ThetaForActiveSpectra(), thedata.getTotalIntensityForActiveSpectra(),
+        0, true, "2-theta", "Intensity", "Intensity hystogram")).setVisible(true);
   }
-
+  
+  /**
+   * Plot an hystogram of the total intensity and fit of each spectrum.
+   */
+  
+  public void plotIntensityHystogramAndFit() {
+    thedata.setMinRange(minTF.getText());
+    thedata.setMaxRange(maxTF.getText());
+    (new PlotSimpleData(this, thedata.get2ThetaForActiveSpectra(), thedata.getTotalIntensityAndFitForActiveSpectra(),
+      0, true, "2-theta", "Intensity", "Intensity hystogram")).setVisible(true);
+  }
+  
   /**
    * Sort spectra listing by bank number.
    */
@@ -1662,6 +1691,7 @@ public class DataD extends myJFrame {
     excludedregionP.dispose();
     polynomialP.dispose();
     backgroundEtaP.dispose();
+    backgroundThetaP.dispose();
     gaussianP.dispose();
     PositionExtractorCB.removeAllItems();
     IntensityExtractorCB.removeAllItems();

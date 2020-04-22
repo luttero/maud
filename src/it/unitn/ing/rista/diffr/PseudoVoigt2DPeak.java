@@ -89,7 +89,7 @@ public class PseudoVoigt2DPeak extends PseudoVoigtPeak {
     double[] absDetectorCorrection = new double[nrad];
     for (int i = 0; i < nrad; i++) {
       double position = diffrDataFile.getPosition(aphase, reflexIndex, i);
-      energy[i] = Constants.ENERGY_LAMBDA / getRadiationWavelength(i);
+      energy[i] = Constants.ENERGY_LAMBDA / ainstrument.getRadiationType().getRadiationWavelength(i);
       finalposition[i] = position;
 //      if (position != 0)
 //      System.out.println(i + " " + position + " " + energy + " " + reflexIndex);
@@ -198,7 +198,7 @@ public class PseudoVoigt2DPeak extends PseudoVoigtPeak {
     java.util.Vector<java.util.Vector<double[]>> energyBroadeningVector = new java.util.Vector<>(nrad);
 //    int totalIndex = 0;
     for (int i = 0; i < nrad; i++) {
-      radiationWeight[i] = getRadiationWeight(i);
+      radiationWeight[i] = ainstrument.getRadiationType().getRadiationWeigth(i);
       if (radiationWeight[i] > 0.0 && finalposition[i] != 0) {
         lorentzPolarization[i] = diffrDataFile.getLorentzPolarizationFactor(aphase, reflexIndex, i);
 
@@ -641,46 +641,76 @@ public class PseudoVoigt2DPeak extends PseudoVoigtPeak {
     int totalLines = numberOfPV;
     double intensity_a;
     for (int ipv = 0; ipv < totalLines; ipv++) {
-      double hwhm = 1.0;
-      double eta_e = 0;
-      java.util.Vector<double[]> broad = energyBroadeningVector.get(ipv);
-      if (broad != null) {
-        hwhm = broad.get(0)[0];
-        eta_e = broad.get(1)[0];
-      }
-      double hwhm_i_e = 1.0 / hwhm;
-  
-      double dgx_e = (1.0 - eta_e) * Constants.sqrtln2pi * hwhm_i_e;
-      double dcx_e = eta_e * hwhm_i_e / Math.PI;
-  
-      double dgx = (1.0 - eta[ipv]) * Constants.sqrtln2pi * hwhm_i[ipv];
-      double dcx = eta[ipv] * hwhm_i[ipv] / Math.PI;
-      double theta2_i = constEnergy / energy[ipv];
-      theta2_i = MoreMath.asind(theta2_i) * 2.0;
-      double dx = theta2_i - theta2;
-      dx *= hwhm_i[ipv];
-      dx *= dx;
-      if (dx > 30.0)
-        intensity_a = dcx / (1.0 + dx);
-      else
-        intensity_a = dcx / (1.0 + dx) + dgx * Math.exp(-Constants.LN2 * dx);
-      intensity_a *= intensity[0][ipv];
-      
       int imin1 = minindex[ipv];
       int imax1 = maxindex[ipv];
       if (imax1 - imin1 > 0) {
         double[] tmpFit = new double[imax1 - imin1];
+
+        // angular broadening
+        double dgx = (1.0 - eta[ipv]) * Constants.sqrtln2pi * hwhm_i[ipv];
+        double dcx = eta[ipv] * hwhm_i[ipv] / Math.PI;
+        double theta2_i = constEnergy / energy[ipv];
+        theta2_i = MoreMath.asind(theta2_i) * 2.0;
+        double dx = theta2_i - theta2;
+        dx *= hwhm_i[ipv];
+        dx *= dx;
+        if (dx > 30.0)
+          intensity_a = dcx / (1.0 + dx);
+        else
+          intensity_a = dcx / (1.0 + dx) + dgx * Math.exp(-Constants.LN2 * dx);
+        intensity_a *= intensity[0][ipv];
+  
         if (intensity_a > 1.0E-9) {
-          for (int i = imin1; i < imax1; i++) {
-            double dx_e = x[i] - energy[ipv]; //position[0][ipv];
-            dx_e *= hwhm_i_e;
-            dx_e *= dx_e;
-            if (dx_e > 30.0)
-              tmpFit[i - imin1] += intensity_a * dcx_e / (1.0 + dx_e);
-            else
-              tmpFit[i - imin1] += intensity_a * (dcx_e / (1.0 + dx_e) + dgx_e *
-                  Math.exp(-Constants.LN2 * dx_e));
+          // energy broadening
+          java.util.Vector<double[]> broad = energyBroadeningVector.get(ipv);
+          if (broad != null) {
+            double hwhm = broad.get(0)[0];
+            double eta_e = broad.get(1)[0];
+            double hwhm_i_e = 1.0 / hwhm;
+            double one_over_beta = 1.0;
+            double fT = 0;
+            double fS = 0;
+  
+            if (ipv < 2 && broad.size() > 2) {
+              fS = broad.get(2)[0];
+              double beta = broad.get(3)[0];
+  
+              if (beta > 0)
+                one_over_beta = 1.0 / beta;
+              else
+                one_over_beta = 1.0;
+    
+              fT = broad.get(4)[0];
+            }
+  
+            double symPeakIntensity = 1.0 - fT - fS;
+            double dgx_e = symPeakIntensity * (1.0 - eta_e) * Constants.sqrtln2pi * hwhm_i_e;
+            double dcx_e = symPeakIntensity * eta_e * hwhm_i_e / Math.PI;
+            double one_over_sigma = Constants.sqrt2ln2 * hwhm_i_e;
+            double one_over_beta2 = one_over_beta * one_over_beta;
+            double exp_one_over_beta2 = one_over_beta * one_over_sigma * 0.5 / Math.exp(-0.5 * one_over_beta2);
+            double erf_arg = Constants.one_sqrt2 * one_over_sigma;
+            double one_over_2energy = 1.0 / (2.0 * energy[ipv]);
+  
+            for (int i = imin1; i < imax1; i++) {
+              double dx_e1 = x[i] - energy[ipv]; //position[0][ipv];
+              double dx_e = dx_e1 * hwhm_i_e;
+              dx_e *= dx_e;
+              if (dx_e > 30.0)
+                tmpFit[i - imin1] += intensity_a * dcx_e / (1.0 + dx_e);
+              else
+                tmpFit[i - imin1] += intensity_a * (dcx_e / (1.0 + dx_e) + dgx_e *
+                    Math.exp(-Constants.LN2 * dx_e));
+  
+              if (fT > 0)
+                tmpFit[i - imin1] += intensity_a * exp_one_over_beta2 * fT * Math.exp(dx_e1 * one_over_beta * one_over_sigma) *
+                    erfc(Constants.one_sqrt2 * (dx_e1 * one_over_sigma + one_over_beta));
+              if (fS > 0)
+                tmpFit[i - imin1] += intensity_a * erfc(dx_e1 * erf_arg) * one_over_2energy * fS;
+
+            }
           }
+          
         }
         for (int i = imin1; i < imax1; i++)
           f[i] += tmpFit[i - imin1];

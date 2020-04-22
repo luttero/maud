@@ -150,7 +150,7 @@ public class FourierTransformPeak extends PseudoVoigtPeak {
 	  double[] absDetectorCorrection = new double[nrad];
 	  for (int i = 0; i < nrad; i++) {
 		  double position = diffrDataFile.getPosition(aphase, getOrderPosition(), i);
-		  double energy = Constants.ENERGY_LAMBDA / getRadiationWavelength(i) * 0.001;
+		  double energy = Constants.ENERGY_LAMBDA / ainstrument.getRadiationType().getRadiationWavelength(i) * 0.001;
 			  finalposition[i] = position;
 			  int pointIndex = diffrDataFile.getOldNearestPoint(position);
 			  absDetectorCorrection[i] = ainstrument.getDetector().getAbsorptionCorrection(diffrDataFile, pointIndex, energy);
@@ -230,11 +230,11 @@ public class FourierTransformPeak extends PseudoVoigtPeak {
     deltaL = Lmax / Ldivision;
     double range = deltaL;
     if (!getdspacingBase()) {
-      range = Math.asin(wavelength[0] / (4.0 * deltaL * MoreMath.cosd(0.5 * finalposition[0]))) * Constants.PITODEG;
+      range = Math.asin(getMeanWavelength() / (4.0 * deltaL * MoreMath.cosd(0.5 * finalposition[0]))) * Constants.PITODEG;
       while (Double.isNaN(range) && Ldivision > 2) {
         Ldivision /= 2;
         deltaL = Lmax / Ldivision;
-        range = Math.asin(wavelength[0] / (4.0 * deltaL * MoreMath.cosd(0.5 * finalposition[0]))) * Constants.PITODEG;
+        range = Math.asin(getMeanWavelength() / (4.0 * deltaL * MoreMath.cosd(0.5 * finalposition[0]))) * Constants.PITODEG;
       }
     }
 //    System.out.println("final position " + finalposition[0] + ", range " + range);
@@ -243,14 +243,14 @@ public class FourierTransformPeak extends PseudoVoigtPeak {
 
     double step = 2.0 * (MoreMath.sind(0.5 * finalposition[0] + 0.25 * range) - MoreMath.sind(0.5 * finalposition[0] -
         0.25 * range))
-        / (wavelength[0] * Ldivision);
+        / (getMeanWavelength() * Ldivision);
 //    System.out.println(step + " deltaL " + deltaL + ", Ldivision " + Ldivision);
 
 	  double[] lorentzPolarization = new double[nrad];
 	  for (int i = 0; i < nrad; i++)
 		  lorentzPolarization[i] = diffrDataFile.getLorentzPolarizationFactor(aphase, getOrderPosition(), i);
 	  for (int i = 0; i < nrad; i++) {
-		  radiationWeight[i] = getRadiationWeight(i);
+		  radiationWeight[i] = ainstrument.getRadiationType().getRadiationWeigth(i);
       if (radiationWeight[i] > 0.0) {
         intensity[i] = (intensitySingle * textureFactor[i] * shapeAbs[i] * Fhklist[i] *
 		        radiationWeight[i] * aphase.getScaleFactor() * lorentzPolarization[i] * absDetectorCorrection[i]);
@@ -275,7 +275,7 @@ public class FourierTransformPeak extends PseudoVoigtPeak {
         actualPosition[i] = finalposition[i];
         const1[i] = asyConst1;
         const2[i] = asyConst2;
-        wave[i] = getRadiationWavelength(i);
+        wave[i] = ainstrument.getRadiationType().getRadiationWavelength(i);
 
 //          if (aphase.computeFaultAsymmetry)
 //            for (int ij = minindex[indexPeak]; ij < maxindex[indexPeak]; ij++) {

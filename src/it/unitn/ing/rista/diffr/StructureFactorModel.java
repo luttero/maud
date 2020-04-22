@@ -73,8 +73,8 @@ public class StructureFactorModel extends XRDcat {
 
 	public void computeStructureFactors(Sample asample, DataFileSet adataset) {
 	}
-
-	public void prepareStructureFactorComputing(boolean structureSolution) {
+  
+  public void prepareStructureFactorComputing(boolean structureSolution) {
   }
 
   public void storeStructureFactors(Sample asample) {

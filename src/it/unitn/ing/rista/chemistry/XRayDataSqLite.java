@@ -719,15 +719,13 @@ public class XRayDataSqLite {
 		double sensitivity = 0;
 		if (xrl_line_number != 0) {
 			try {
-		//		double sensitivity_nocs = Xraylib.CS_FluorLine_Kissel_no_Cascade(atomNumber, xrl_line_number, energyInKeV);
 				sensitivity = Xraylib.CS_FluorLine_Kissel_Cascade(atomNumber, xrl_line_number, energyInKeV);
 	//			System.out.println("Sensitivity difference for: " + atomNumber + " " + xrl_line_number + " " + energyInKeV + " " + (sensitivity - sensitivity_nocs));
 			} catch (XraylibException xe) {
-				return getSensitivityNoXrl(atomNumber, shellID, energyInKeV, fluorescenceYield);
+				return getSensitivityNoXrl(atomNumber, shellID, energyInKeV) * fluorescenceYield;
 			}
 		}
-		if (fluorescenceYield == 0) fluorescenceYield = 1;
-		return sensitivity / fluorescenceYield;
+		return sensitivity;
 
 	}
 
@@ -745,17 +743,15 @@ public class XRayDataSqLite {
 		if (xrl_line_number != 0) {
 			try {
 				sensitivity = Xraylib.CS_FluorLine_Kissel_no_Cascade(atomNumber, xrl_line_number, energyInKeV);
-//				sensitivity = Xraylib.CS_FluorLine_Kissel(atomNumber, xrl_line_number, energyInKeV);
 				//			System.out.println("Sensitivity difference for: " + atomNumber + " " + xrl_line_number + " " + energyInKeV + " " + (sensitivity - sensitivity_nocs));
 			} catch (XraylibException xe) {
-				return getSensitivityNoXrl(atomNumber, shellID, energyInKeV, fluorescenceYield);
+				return getSensitivityNoXrl(atomNumber, shellID, energyInKeV) * fluorescenceYield;
 			}
 		}
-		if (fluorescenceYield == 0) fluorescenceYield = 1;
-		return sensitivity / fluorescenceYield;
-  	}
+		return sensitivity;
+	}
 
-	public static double getSensitivityNoXrl(int atomNumber, int shellID, double energyInKeV, double fluorescenceYield) {
+	public static double getSensitivityNoXrl(int atomNumber, int shellID, double energyInKeV) {
 		int msi = mainShellIndex[shellID];
       if (msi > 2) return 0;
 		Hashtable<Integer, double[][]> ckv = costerKronigData.get(msi);
@@ -809,14 +805,52 @@ public class XRayDataSqLite {
 //							innerShell + " " + transitionEnergy[1] + " " + fluorescenceYield + " " + getAbsorptionEdge(atomNumber, innerShell));
 				if (sensitivity < 0)
 					sensitivity = 0;
-				aLine.setIntensity(fluorescenceYield * sensitivity * transitionEnergy[1]); // this is the probability
+				aLine.setIntensity(sensitivity); // this is the probability
 				linesForAtom.addElement(aLine);
 			}
 		}
 		return linesForAtom;
 	}
-
-	public static Vector<FluorescenceLine> getFluorescenceLinesNoSensitivityFor(int atomNumber, double energyInKeV) {
+  
+  public static Vector<FluorescenceLine> getFluorescenceLinesFor(int atomNumber,
+                                                                 double minimumEnergyInKeV,
+                                                                 double maximumEnergyInKeV,
+                                                                 double[] energyInKeV,
+                                                                 double[] energy_intensity) {
+    atomNumber--;
+    Vector<FluorescenceLine> linesForAtom = new Vector(0, 10);
+    loadEbelAndShellTables(false);
+    
+    Vector<int[]> shellIDsData = transitionShellIDs.elementAt(atomNumber);
+    Vector<double[]> shellEnergies = transitionEnergies.elementAt(atomNumber);
+    Vector<String> idLabels = transitionShellIDlabels.elementAt(atomNumber);
+    double[] sensitivity = new double[energyInKeV.length];
+    for (int i = 0; i < shellIDsData.size(); i++) {
+      double[] transitionEnergy = shellEnergies.elementAt(i);
+      int innerShell = shellIDsData.elementAt(i)[0];
+      String id = idLabels.elementAt(i);
+      if (innerShell >= 0 && transitionEnergy[0] > minimumEnergyInKeV && maximumEnergyInKeV > transitionEnergy[0]) {
+        double fluorescenceYield = getFluorescenceYield(atomNumber, innerShell);
+        FluorescenceLine aLine = new FluorescenceLine(transitionEnergy[0], innerShell, getAbsorptionEdge(atomNumber, innerShell), id);
+        aLine.setFluorescenceYield(fluorescenceYield);
+        aLine.setTransitionProbability(transitionEnergy[1]);
+        for (int j = 0; j < energyInKeV.length; j++) {
+          sensitivity[j] = getSensitivity(atomNumber, innerShell, aLine.xrl_line_number, energyInKeV[j],
+              fluorescenceYield * transitionEnergy[1]) * energy_intensity[j]; // * fluorescenceYield * transitionEnergy[1];
+//				if (atomNumber == 39)
+//					System.out.println(energyInKeV + " " + transitionEnergy[0] + " " + sensitivity + " " +
+//							innerShell + " " + transitionEnergy[1] + " " + fluorescenceYield + " " + getAbsorptionEdge(atomNumber, innerShell));
+          if (sensitivity[j] < 0)
+            sensitivity[j] = 0;
+        }
+        aLine.setMultipleIntensity(sensitivity); // this is the probability
+        linesForAtom.addElement(aLine);
+      }
+    }
+    return linesForAtom;
+  }
+  
+  public static Vector<FluorescenceLine> getFluorescenceLinesNoSensitivityFor(int atomNumber, double energyInKeV) {
 //		linesMinimumEnergy = MaudPreferences.getDouble("fluorescenceLines.minimum_keV", linesMinimumEnergy);
 		return getFluorescenceLinesNoSensitivityFor(atomNumber, energyInKeV, linesMinimumEnergy);
 	}
@@ -840,7 +874,8 @@ public class XRayDataSqLite {
 				aLine.setFluorescenceYield(fluorescenceYield);
 				aLine.setIntensity(fluorescenceYield * transitionEnergy[1]); // this is the probability without sensitivity
 				aLine.setTransitionProbability(transitionEnergy[1]);
-				linesForAtom.addElement(aLine);
+				if (aLine.getIntensity() > 0)
+				  linesForAtom.addElement(aLine);
 /*				if (atomNumber > 80)
 					System.out.println(atomNumber + ", Line: " + energyInKeV + " " + transitionEnergy[0] + " " +
 							innerShell + " " + transitionEnergy[1] + " " + fluorescenceYield + " " + getAbsorptionEdge(atomNumber, innerShell));*/
@@ -848,7 +883,6 @@ public class XRayDataSqLite {
 		}
 		return linesForAtom;
 	}
-
 }
 
 class AtomShellData {

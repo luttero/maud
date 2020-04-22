@@ -39,54 +39,41 @@ public class basicPeak implements Peak {
   public boolean dspacingBase = false;
   public boolean energyDispersive = false;
   double IntegratedIntensity = 0.0;
-  double[] wavelength;
-  double[] waveWeight;
-  int numberOfRadiations = 0;
-  double[] position = null;
+//  double[] position = null;
   double meanPosition = 0.0;
   double meanWavelength = 0.0;
   Phase thephase;
   Reflection reflex = null;
   public int orderPosition = 0;
-  boolean toRemove = false;
 
   public basicPeak(double pos, boolean dspacingBase, boolean energyDispersive, double[] wave, double[] weight,
                    Reflection reflex, int order) {
     this.dspacingBase = dspacingBase;
     this.energyDispersive = energyDispersive;
 
-    numberOfRadiations = wave.length;
-    wavelength = new double[numberOfRadiations];
-    waveWeight = new double[numberOfRadiations];
-    position = new double[numberOfRadiations];
-    meanPosition = 0.0;
-    meanWavelength = 0.0;
+    int numberOfRadiations = wave.length;
+//    position = new double[numberOfRadiations];
+    meanPosition = pos;
+    meanWavelength = wave[0];
     double totWeight = 0.0;
     for (int i = 0; i < numberOfRadiations; i++) {
-      wavelength[i] = wave[i];
-      waveWeight[i] = weight[i];
-      if (dspacingBase)
-        position[i] = pos;
-      else {
-	      position[i] = DiffrDataFile.compute2ThetaPosition(pos, wavelength[i]);
-	      if (position[i] < 180.0 && position[i] > 0.0) {
-		      meanPosition += position[i] * weight[i];
+      if (!dspacingBase)  {
+        double position = DiffrDataFile.compute2ThetaPosition(pos, wave[i]);
+	      if (position < 180.0 && position > 0.0) {
+		      meanPosition += position * weight[i];
 		      totWeight += weight[i];
-		      meanWavelength += wavelength[i] * weight[i];
+		      meanWavelength += wave[i] * weight[i];
 	      }
-
       }
     }
     if (totWeight != 0.0) {
       meanPosition /= totWeight;
       meanWavelength /= totWeight;
     } else {
-      meanPosition = 180.0;
+      meanPosition = pos;
       meanWavelength = 1.54;
     }
-
     setReflex(reflex);
-
     orderPosition = order;
 //	  System.out.println("Creating peak n: " + order + " for phase " + reflex.getParent().getPhaseName() + " " + meanPosition);
   }
@@ -96,14 +83,6 @@ public class basicPeak implements Peak {
 
   public double getIntensityAt(double x) {
     return 0.0;
-  }
-
-  public double getRadiationWeight(int index) {
-    return waveWeight[index];
-  }
-
-  public double getRadiationWavelength(int index) {
-    return wavelength[index];
   }
 
   public double getMeanWavelength() {
@@ -160,19 +139,9 @@ public class basicPeak implements Peak {
     return thephase;
   }
 
-  public double[] getPosition() {
-    // in deg if an angle
-    return position;
-  }
-
   public double getMeanPosition() {
     // in deg if an angle
     return meanPosition;
-  }
-
-  public void setPosition(double pos, int radnumber) {
-    // in deg if an angle
-    position[radnumber] = pos;
   }
 
   public boolean intensityExtractionAllowed() {

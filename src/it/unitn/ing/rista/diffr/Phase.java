@@ -2492,11 +2492,10 @@ public static final String getSpaceGroup(int index, int sgconv) {
   }
 
   public void computeStructureFactors(Sample asample, boolean structureSolution) {
-    ((StructureFactorModel) getActiveSubordinateModel(structureFactorModelID)).
-        computeStructureFactors(asample, structureSolution);
+    getStructureFactorModel().computeStructureFactors(asample, structureSolution);
     refreshFhklcomp = false;
   }
-
+  
   double energyLevel = 0.0;
 
   public void computeEnergy() {

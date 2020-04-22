@@ -46,8 +46,12 @@ public class Fluorescence extends XRDcat {
 
   public Fluorescence() {
   }
-
-	public void computeFluorescence(Sample asample, DataFileSet adataset) {
+  
+  public DataFileSet getDataFileSet() {
+    return (DataFileSet) getParent();
+  }
+  
+  public void computeFluorescence(Sample asample) {
 	}
 
 	/**
@@ -93,11 +97,6 @@ public class Fluorescence extends XRDcat {
 
 		ainstrument.getInstrumentBroadening().computeAsymmetry(datafile, asample, afit, min, max);
 
-		for (int j = min; j < max; j++) {
-//      System.out.print("Before: " + afit[j]);
-			afit[j] *= datafile.computeAngularIntensityCorrection(asample, ainstrument, j);
-//      System.out.println(", after: " + afit[j]);
-		}
 	}
 
 	public JOptionsDialog getOptionsDialog(Frame parent) {

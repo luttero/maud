@@ -140,13 +140,14 @@ public class TDSWarren extends TDSModel {
           actualPosition[j], radWave, indexPoint, minmaxindex);
     }
     */
+    RadiationType radType = diffrDataFile.getDataFileSet().getInstrument().getRadiationType();
 
     double conversion = Constants.DEGTOPI / 2.0;
     int maxIndex = expfit.length - 1;
     double center, intensity;
 
     for (int j = 0; j < position.length; j++) {
-      double radWave = peak.getRadiationWavelength(j);
+      double radWave = radType.getRadiationWavelength(j);
       int indexPoint = diffrDataFile.getOldNearestPoint(position[j]);
       double[] xdata = diffrDataFile.getXData();
 

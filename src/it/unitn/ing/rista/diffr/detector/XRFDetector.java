@@ -441,7 +441,12 @@ public class XRFDetector extends Detector {
 		absorption = Math.abs(absorption);
 
 		double integral = 1.0;
-/*		if (integrationPointsNumber > 1) {
+    if (absorption < 1E40)
+      integral = 1.0 - Math.exp(- absorption);
+    
+    return integral; // * areaCorrection;
+
+    /*		if (integrationPointsNumber > 1) {
 			double h0 = getDistanceFromSample();
 			double integralUpperLimit = Math.atan(linearArea / h0 * 0.5);
 			double integrationStep = integralUpperLimit / (integrationPointsNumber - 1);
@@ -456,11 +461,8 @@ public class XRFDetector extends Detector {
 //						integral / (linearArea * Math.exp(- absorption)));
 			}
 		} else {*/
-			if (absorption < 1E40)
-				integral = 1.0 - Math.exp(- absorption);
 //		}
 
-		return integral; // * areaCorrection;
 	}
 
 	public double getAreaCorrection(double linearArea) {

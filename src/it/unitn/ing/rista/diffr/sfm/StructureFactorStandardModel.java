@@ -61,7 +61,7 @@ public class StructureFactorStandardModel extends StructureFactorModel {
 			return;
 		computeStructureFactors(phase, asample, adataset);
 	}
-
+  
   public static void computeStructureFactors(final Phase phase, Sample asample, DataFileSet adataset) {
 	  double structureFactor, intA = 1;
 	  final double cuttingThreshold = 0.0001;
@@ -340,12 +340,12 @@ public class StructureFactorStandardModel extends StructureFactorModel {
 				ato.trowException = false;
 			}
 			double structurefactor = (a1 * a1 + a2 * a2) * refl.multiplicity;
-//			if (structurefactor == 0.0)
-//		    System.out.println(refl.getH() + " " + refl.getK() + " " + refl.getL() + " " + structurefactor + " "
-//     		    + refl.d_space + " " + divideFactors[0] + " " + divideFactors[1] + " " + divideFactors[2] + " " + factors);
 		structurefactor *= factors;
 		if (phase.getFullAtomList().size() == 0)
 				structurefactor = refl.multiplicity;
+//			if (structurefactor == 0.0)
+//    System.out.println(refl.getH() + " " + refl.getK() + " " + refl.getL() + " " + structurefactor + " "
+//        + refl.d_space + " " + divideFactors[0] + " " + divideFactors[1] + " " + divideFactors[2] + " " + factors);
 		return structurefactor;
 	}
 

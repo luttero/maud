@@ -153,8 +153,8 @@ public class DifferencePlot2DPanel extends MultiPlotFitting2DPanel {
               values[j++] = it.unitn.ing.jgraph.ColorMap.DUMMY_VALUE;
             }
           } else {
-          double intValue = datafile[sn].getInterpolatedYSqrtIntensity(xaxis[i], 2, mode) -
-                datafile[sn].getInterpolatedFitSqrtIntensity(xaxis[i], 2, mode);
+          double intValue = datafile[sn].getInterpolatedYSqrtIntensityStd(xaxis[i], 2, mode) -
+                datafile[sn].getInterpolatedFitSqrtIntensityStd(xaxis[i], 2, mode);
           values[j++] = intValue;
           if (hasFit == 1 && ylength == 1) {
             values[j++] = intValue;

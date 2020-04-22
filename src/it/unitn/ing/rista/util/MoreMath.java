@@ -487,6 +487,16 @@ public class MoreMath {
 
     return Math.sqrt(distance);
   }
+  
+  public static double getLinearInterpolatedValue(double x, double[][] stepFunction) {
+    int upper = 1;
+    int maxIndex = stepFunction[0].length - 1;
+    while (upper < maxIndex && stepFunction[0][upper] < x) {
+      upper++;
+    }
+    int lower = upper - 1;
+    return getLinearInterpolation(x, stepFunction[0][lower], stepFunction[0][upper], stepFunction[1][lower], stepFunction[1][upper]);
+  }
 
   public static double getLinearInterpolation(double x, double x1, double x2,
                                               double y1, double y2) {

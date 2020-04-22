@@ -435,7 +435,11 @@ public class HarmonicTexture extends Texture implements Function {
     }
     return poleIntensity;
   }
-
+  
+  public double computeTextureFactor(Reflection reflex, double alpha, double beta) {
+    return computeTextureFactor(reflex.phi[0], reflex.beta[0], alpha, beta);
+  }
+  
   public double[] computeTextureFactor(Phase aphase, double[][] alphabeta, Reflection reflex) {
 
     int numberOfPoints = alphabeta[0].length;

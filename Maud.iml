@@ -5,11 +5,8 @@
     <option name="LOCAL_VCS_PURGING_PERIOD" value="259200000" />
     <option name="SHOW_CHANGES_ONLY" value="false" />
   </component>
-  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_11">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_13">
     <output url="file://$MODULE_DIR$/build" />
-    <javadoc-paths>
-      <root url="file:///System/Library/Frameworks/JavaVM.framework/Home/docs" />
-    </javadoc-paths>
     <content url="file://$MODULE_DIR$/src">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/src/com/github/tschoonj/xraylib2" />

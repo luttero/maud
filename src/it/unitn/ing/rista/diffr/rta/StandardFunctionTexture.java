@@ -289,7 +289,26 @@ public class StandardFunctionTexture extends Texture {
   public void initializeAll() {
     applySymmetryRules();
   }
-
+  
+// do not use in multi threading
+  
+  public void initializeAll(DiffrDataFile adatafile, double position) {
+    int fnumber = fiberTextureComponentsNumber();
+    int snumber = sphericalTextureComponentsNumber();
+    DataFileSet adataset = adatafile.getDataFileSet();
+    double betaBroad = adataset.getInstrument().getInstrumentBroadening().getTextureBroadeningAt(position);
+    if (betaBroad >= 0.0) {
+      for (int ig = 0; ig < fnumber; ig++) {
+        FiberTextureComponent fiberComp = getFiberTextureComponent(ig);
+        fiberComp.PARFP(fiberComp.betag + betaBroad);
+      }
+      for (int ig = 0; ig < snumber; ig++) {
+        SphericalTextureComponent sphericalComp = getSphericalTextureComponent(ig);
+        sphericalComp.PARGLP(sphericalComp.betag + betaBroad);
+      }
+    }
+  }
+  
   public void refreshCoefficients() {
 
 //    double FAK5 = Constants.PI / 36.;
@@ -432,7 +451,11 @@ public class StandardFunctionTexture extends Texture {
   }
 
   double[] HX = new double[96], HY = new double[96], HZ = new double[96];
-
+  
+  public double computeTextureFactor(Reflection reflex, double alpha, double beta) {
+    return computeTextureFactor(reflex.phi[0], reflex.beta[0], alpha, beta);
+  }
+  
   public double computeTextureFactor(double phi, double beta, double psi, double gamma) {
 
 	  // for planar sample symmetry we homogenize around psi

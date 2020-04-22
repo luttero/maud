@@ -60,12 +60,12 @@ public class QuantitativeXRF extends Fluorescence {
     description = descriptionID;
   }
 
-	public void computeFluorescence(Sample asample, DataFileSet adataset) {
+	public void computeFluorescence(Sample asample) {
 
-		int datafilenumber = adataset.activedatafilesnumber();
+    final DataFileSet theDataset = getDataFileSet();
+		int datafilenumber = theDataset.activedatafilesnumber();
 
 		final Sample theSample = asample;
-		final DataFileSet theDataset = adataset;
 
 		final int maxThreads = Math.min(Constants.maxNumberOfThreads, datafilenumber);
 		if (maxThreads > 1 && Constants.threadingGranularity >= Constants.MEDIUM_GRANULARITY) {
@@ -142,7 +142,7 @@ public class QuantitativeXRF extends Fluorescence {
 		Geometry geometry = ainstrument.getGeometry();
 		double incidentIntensity = ainstrument.getIntensityForFluorescence();
 		double sampleLinearArea = detector.getGeometryCorrection(
-				((GeometryXRFInstrument) geometry).getBeamOutCorrection(adatafile, asample));
+				geometry.getBeamOutCorrection(adatafile, asample)) / adatafile.sintheta;
 //		incidentIntensity *= sampleLinearArea;
 
 //		double polarization = ainstrument.getGeometry().getPolarizationAmount();
@@ -156,7 +156,8 @@ public class QuantitativeXRF extends Fluorescence {
 		int channelZero = adatafile.getChannelForZero();
 		double channelStep = adatafile.getChannelStep();
 		int numberOfPoints = xEnergy.length;
-		double maxEnergyInKeV = xEnergy[numberOfPoints - 1] * 0.001 * 1.1;
+    double maxEnergyInKeV = adatafile.getLargestCoordinate() * 0.0011;
+    double minEnergyInKeV = adatafile.getSmallestCoordinate() * 0.0009;
 		//double minEnergyInKeV = xEnergy[0] * 0.001 / 1.1;
 //    System.out.println(xEnergy[0] + " " + xEnergy[numberOfPoints - 1]);
 
@@ -164,17 +165,17 @@ public class QuantitativeXRF extends Fluorescence {
 
 		double[] fluorescence = new double[numberOfPoints];
 
-		double twothetadetector = detector.getThetaDetector(adatafile, 0);
-		double[] incidentDiffracted = adatafile.getIncidentAndDiffractionAngles(adatafile.get2ThetaValue());
+		double twothetadetector = adatafile.get2ThetaValue();
+		double[] incidentDiffracted = adatafile.getIncidentAndDiffractionAngles(twothetadetector);
 //		System.out.println(adatafile.getLabel() + ", incident beam angle: " + incidentDiffracted[0] * Constants.PITODEG + ", exiting beam angle: " + incidentDiffracted[2] * Constants.PITODEG + " " + adatafile.getTiltingAngle()[4]);
 //	  incidentDiffracted[0] *= Constants.DEGTOPI;
 
 //		double cosPhi2 = Math.cos(incidentDiffracted[0]);
-		double sinPhii = Math.sin(incidentDiffracted[0]);
-		double sinPhid = Math.sin(incidentDiffracted[2]);
+		double sinPhii = 1.0 / Math.sin(incidentDiffracted[0]);
+		double sinPhid = 1.0 / Math.sin(incidentDiffracted[2]);
 
 		RadiationType radType = ainstrument.getRadiationType();
-		int rad_lines = radType.getLinesCount();
+		int rad_lines = radType.getLinesCountForFluorescence();
 		double[] energyInKeV = new double[rad_lines];
 		double[] energy_intensity = new double[rad_lines];
 
@@ -188,14 +189,15 @@ public class QuantitativeXRF extends Fluorescence {
 			layerThickness[j1] = layer.getThicknessInCm();
 		}
 		for (int ej = 0; ej < rad_lines; ej++) {
-			energyInKeV[ej] = Constants.ENERGY_LAMBDA / radType.getRadiationWavelengthForFluorescence(ej) * 0.001;
+			energyInKeV[ej] = radType.getRadiationEnergyForFluorescenceKeV(ej);
 			energy_intensity[ej] = radType.getRadiationWeightForFluorescence(ej);
-			layerAbsorption[0][ej] = -asample.getlayer(0).getAbsorptionForXray(energyInKeV[ej]) * layerDensity[0] / sinPhii;
+			layerAbsorption[0][ej] = -asample.getlayer(0).getAbsorptionForXray(energyInKeV[ej]) * layerDensity[0] * sinPhii;
 			overLayerAbsorption[0][ej] = 0;
+//      System.out.println(energyInKeV[ej] + " " + 0 + " " + (-layerAbsorption[0][ej]/layerDensity[0]/sinPhii) + " " + layerDensity[0] + " " + (1.0/sinPhii) + " " + layerThickness[0]);
 			for (int j1 = 1; j1 < layersNumber; j1++) {
-				layerAbsorption[j1][ej] = -asample.getlayer(j1).getAbsorptionForXray(energyInKeV[ej]) * layerDensity[j1] / sinPhii;
+				layerAbsorption[j1][ej] = -asample.getlayer(j1).getAbsorptionForXray(energyInKeV[ej]) * layerDensity[j1] * sinPhii;
 				overLayerAbsorption[j1][ej] = overLayerAbsorption[j1 - 1][ej] + layerAbsorption[j1 - 1][ej] * layerThickness[j1 - 1];
-//				System.out.println(overLayerAbsorption[j1][ej]);
+//				System.out.println(energyInKeV[ej] + " " + j1 + " " + (-layerAbsorption[j1][ej]/layerDensity[j1]/sinPhii) + " " + layerDensity[j1] + " " + sinPhii + " " + layerThickness[j1]);
 			}
 		}
 //		int sub20 = radType.getSubdivision(); //MaudPreferences.getInteger("xrf_detector.energySubdivision", 20);
@@ -219,7 +221,7 @@ public class QuantitativeXRF extends Fluorescence {
 //						linesForAtom = XRayDataSqLite.getFluorescenceLinesFor(     // remove NoSensitivity
 //							atomNumber, maxEnergyInKeV);
 //					else
-					linesForAtom = XRayDataSqLite.getFluorescenceLinesNoSensitivityFor(atomNumber, maxEnergyInKeV);
+					linesForAtom = XRayDataSqLite.getFluorescenceLinesNoSensitivityFor(atomNumber, maxEnergyInKeV, minEnergyInKeV);
 
 					for (int ij = 0; ij < linesForAtom.size(); ij++) {
 						FluorescenceLine line = linesForAtom.elementAt(ij);
@@ -227,10 +229,10 @@ public class QuantitativeXRF extends Fluorescence {
 						double lineInnerShellEnergyKeV = line.getCoreShellEnergy(); // in KeV
 						double overLayerAbsorptionForLine = 0;
 						for (int j2 = 0; j2 < j1; j2++) {
-							double actualLayerAbs = -asample.getlayer(j2).getAbsorptionForXray(lineEnergyKeV) * layerDensity[j2] / sinPhid;
+							double actualLayerAbs = -asample.getlayer(j2).getAbsorptionForXray(lineEnergyKeV) * layerDensity[j2] * sinPhid;
 							overLayerAbsorptionForLine += actualLayerAbs * layerThickness[j2];
 						}
-						double actualLayerAbsorption = -asample.getlayer(j1).getAbsorptionForXray(lineEnergyKeV) * layerDensity[j1] / sinPhid;
+						double actualLayerAbsorption = -asample.getlayer(j1).getAbsorptionForXray(lineEnergyKeV) * layerDensity[j1] * sinPhid;
 //						System.out.println(actualLayerAbsorption + " " + asample.getlayer(j1).getAbsorption(lineEnergyKeV) + " " + layerDensity[j1] + " " + sinPhid);
 						double totalIntensity = 0;
 						for (int ej = 0; ej < rad_lines; ej++) {
@@ -239,8 +241,8 @@ public class QuantitativeXRF extends Fluorescence {
 								if (!Double.isNaN(over_abs)) {
 									if (over_abs > -Double.MAX_EXPONENT / 2 && over_abs < Double.MAX_EXPONENT / 2)
 										over_abs = Math.exp(over_abs);
-									else if (over_abs > 0)
-										over_abs = Double.MAX_VALUE / 2;
+									else if (over_abs >= 0)
+										over_abs = 1.0;
 									else
 										over_abs = 0;
 								} else
@@ -249,10 +251,12 @@ public class QuantitativeXRF extends Fluorescence {
 								double ab = (actualLayerAbsorption + layerAbsorption[j1][ej]);
 								double abs = ab * layerThickness[j1];
 								if (!Double.isNaN(abs) && abs != 0) {
-									if (abs > -Double.MAX_EXPONENT / 2 && abs < Double.MAX_EXPONENT / 2)
+									if (abs > -Double.MAX_EXPONENT / 2 && abs < Double.MAX_EXPONENT / 2 && ab != 0)
 										abs = -(1.0 - Math.exp(abs)) / ab;
-									else
+									else if (ab != 0)
 										abs = -1.0 / ab;
+									else
+									  abs = 1.0;
 								} else
 									abs = 0;
 
@@ -262,19 +266,19 @@ public class QuantitativeXRF extends Fluorescence {
 //									System.out.println(atomNumber - 1 + " " + lineEnergyKeV + " " + line.transitionID + " " + lineSensitivity + " " + energyInKeV[ej]
 //										+ " " + line.getCoreShellID() + " " + XRayDataSqLite.getTauShell(atomNumber - 1, line.getCoreShellID(), energyInKeV[ej]));
 //								System.out.println(totalIntensity + " " + actualLayerAbsorption + " " + layerAbsorption[j1][ej] + " " + lineSensitivity + " " + over_abs + " " + abs + " " + energy_intensity[ej]);
+//                System.out.println(atomNumber + " " + line.transitionID + " " + lineEnergyKeV + " " + energyInKeV[ej] + " " + line.getFluorescenceYield() + " " + line.getTransitionProbability() + " " + (lineSensitivity / (line.getFluorescenceYield() * line.getTransitionProbability())) + " " + over_abs + " " + abs);
 								totalIntensity += lineSensitivity * over_abs * abs * energy_intensity[ej];
 							}
 						}
 						totalIntensity *= layerDensity[j1];
 						double detectorAbsorption = detector.computeAbsorptionForLineWithEnergy(lineEnergyKeV);
-						line.mhuDet = detector.computeMACForLineWithEnergy(lineEnergyKeV);
 						double detectorEfficiency = detector.computeDetectorEfficiency(lineEnergyKeV);
 						double areaCorrection = detector.getAreaCorrection(sampleLinearArea);
 //						if (lineEnergyKeV * 1000 > xEnergy[0] && lineEnergyKeV * 1000 < xEnergy[numberOfPoints - 1])
-//						System.out.println("Line: " + lineEnergyKeV + " " + line.getIntensity() + " " + atomsQuantities + " " + totalIntensity + " " + detectorAbsorption + " " +
-//								detectorEfficiency + " " + areaCorrection + " " + getIntensityCorrection(atomNumber));
-						line.multiplyIntensityBy(atomsQuantities * totalIntensity * detectorAbsorption *
+						line.setIntensity(atomsQuantities * totalIntensity * detectorAbsorption *
 								detectorEfficiency * areaCorrection * getIntensityCorrection(atomNumber));
+//            System.out.println("Line: " + line.transitionID + " " + lineEnergyKeV + " " + line.getIntensity() + " " + atomsQuantities + " " + totalIntensity + " " + detectorAbsorption + " " +
+//                detectorEfficiency + " " + areaCorrection);
 //						System.out.println(line.transitionID + " " + line.getIntensity() + " " + lineEnergyKeV);
 						boolean addLine = true;
 						for (int i = 0; i < fluorescenceLines.size() && addLine; i++) {
@@ -299,6 +303,9 @@ public class QuantitativeXRF extends Fluorescence {
 			for (int ej = 0; ej < rad_lines; ej++) {
 				Vector<FluorescenceLine> filtersFluorescenceLines = ((XRFDetector) ainstrument.getDetector()).getFluorescenceLines(energyInKeV[ej]);
 				for (FluorescenceLine line : filtersFluorescenceLines) {
+          double detectorAbsorption = detector.computeAbsorptionForLineWithEnergy(line.getEnergy());
+          double detectorEfficiency = detector.computeDetectorEfficiency(line.getEnergy());
+          line.setIntensity(line.getIntensity() * detectorAbsorption * detectorEfficiency);
 					boolean addLine = true;
 					for (int i = 0; i < fluorescenceLines.size() && addLine; i++) {
 						FluorescenceLine lineExisting = fluorescenceLines.get(i);
@@ -322,6 +329,10 @@ public class QuantitativeXRF extends Fluorescence {
 				for (int ej = 0; ej < rad_lines; ej++) {
 					Vector<FluorescenceLine> filtersFluorescenceLines = source.getFluorescenceLines(energyInKeV[ej]);
 					for (FluorescenceLine line : filtersFluorescenceLines) {
+            double detectorAbsorption = detector.computeAbsorptionForLineWithEnergy(line.getEnergy());
+            double detectorEfficiency = detector.computeDetectorEfficiency(line.getEnergy());
+            double areaCorrection = detector.getAreaCorrection(sampleLinearArea);
+            line.setIntensity(line.getIntensity() * detectorAbsorption * detectorEfficiency * areaCorrection);
 						boolean addLine = true;
 						for (FluorescenceLine lineExisting : fluorescenceLines) {
 							//							lineExisting.setIntensity(lineExisting.getIntensity());
@@ -423,7 +434,8 @@ public class QuantitativeXRF extends Fluorescence {
 		for (FluorescenceLine line : fluorescenceLines) {
       java.util.Vector<double[]> broad = ainstrument.getInstrumentEnergyBroadeningAt(line.getEnergy());
 			line.setShape(broad);
-			line.setEnergy(line.getEnergy() * 1000.0); // in eV
+//			line.setEnergy(line.getEnergy() * 1000.0); // in eV
+//      System.out.println("Line: " + line.transitionID + " " + line.getEnergy() + " " + line.getIntensity());
 			for (int i = 0; i < numberOfPoints; i++/*, hi++*/) {
 				fluorescence[i] += line.getIntensity(xEnergy[i]);
 			}

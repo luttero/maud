@@ -1172,14 +1172,16 @@ public class Sample extends Maincat {
       }
     }
 
+/* Angle-energy map speedup
     for (int nd = 0; nd < activeDatasetsNumber(); nd++) {
       getActiveDataSet(nd).setMeanAbsorption(getMeanAbsorption(getActiveDataSet(nd).getInstrument().getRadiationType()));
 //      getActiveDataSet(nd).setTotalLayerAbsorption(getTotalLayerAbsorption(
 //		      getActiveDataSet(nd).getInstrument().getRadiationType()));
     }
-
+*/
 	  for (int i = 0; i < phasesNumber(); i++) {
 		  getPhase(i).refreshIndices(this);
+		  getPhase(i).getActiveTexture().initializeAll();
     }
 
     if (Constants.testtime)
@@ -1236,6 +1238,7 @@ public class Sample extends Maincat {
       System.out.println("Compute reflection positions: " +
           (-previousTime + (previousTime = System.currentTimeMillis())) + " millisecs.");
 
+/* Angle-energy map speedup
 	  for (int ip = 0; ip < numberOfPhases; ip++) {
 		  double totQuantity = 0.0;
 		  for (int j = 0; j < numberOfLayers; j++)
@@ -1249,19 +1252,24 @@ public class Sample extends Maincat {
 	  }
 
 	  computeFinalPositions();
-  
     if (Constants.testtime)
       System.out.println("Compute strain and final position: " +
           (-previousTime + (previousTime = System.currentTimeMillis())) + " millisecs.");
+ */
+    
+/* Angle-energy map speedup
 	  computeLorentzPolarization(positionRefreshed);
     if (Constants.testtime)
       System.out.println("Compute LP correction: " +
           (-previousTime + (previousTime = System.currentTimeMillis())) + " millisecs.");
+ */
+    
 	  computeScatteringFactors(positionRefreshed);
-  
     if (Constants.testtime)
       System.out.println("Compute scattering factors: " +
           (-previousTime + (previousTime = System.currentTimeMillis())) + " millisecs.");
+ 
+    
 	  for (int ip = 0; ip < numberOfPhases; ip++) {
 		  Phase aphase = getPhase(ip);
 		  double totQuantity = 0.0;
@@ -1278,45 +1286,56 @@ public class Sample extends Maincat {
     if (Constants.testtime)
       System.out.println("Compute structure factors: " +
           (-previousTime + (previousTime = System.currentTimeMillis())) + " millisecs.");
+          
+ 
+
+/* Angle-energy map speedup
     boolean[] refreshPhases = computeSizeStrainBroadening(); // todo, group all together?
     if (Constants.testtime)
       System.out.println("Compute size-strain broadening: " +
           (-previousTime + (previousTime = System.currentTimeMillis())) + " millisecs.");
+
     boolean[] refreshDataset = computeInstrumentBroadening();
     if (Constants.testtime)
       System.out.println("Compute instrument broadening: " +
           (-previousTime + (previousTime = System.currentTimeMillis())) + " millisecs.");
+
     computeSampleBroadening(refreshDataset, refreshPhases);
-
-
     if (Constants.testtime)
       System.out.println("Compute sample broadening: " +
           (-previousTime + (previousTime = System.currentTimeMillis())) + " millisecs.");
+ */
 
-/* todo: re-enable for shape absorption    computeShapeAndAbsorptionCorrection();
+/* Angle-energy map speedup
+    todo: re-enable for shape absorption    computeShapeAndAbsorptionCorrection();
 
     if (Constants.testtime)
       System.out.println("Shape absorption: " +
           (-previousTime + (previousTime = System.currentTimeMillis())) + " millisecs.");
 */
+
+/* Angle-energy map speedup
 	  extractIntensities = false;
     for (int i = 0; i < numberOfPhases; i++) {
       Phase aphase = getPhase(i);
       if (aphase.extractIntensities()) {
         extractIntensities = true;
-/*	      for (int j = 0; j < activeDatasetsNumber(); j++) {
+	      for (int j = 0; j < activeDatasetsNumber(); j++) {
 		      for (int k = 0; k < getActiveDataSet(j).activedatafilesnumber(); k++) {
 			      getActiveDataSet(j).getActiveDataFile(k).computedToExperimentalTextureFactors(aphase);
 		      }
-	      }*/
+	      }
       }
       if (aphase.extractPositions())
         extractPositions = true;
     }
-
     if (Constants.testtime)
       System.out.println("Extract positions: " +
           (-previousTime + (previousTime = System.currentTimeMillis())) + " millisecs.");
+          
+ */
+
+/* Angle-energy map speedup
 
     firstComputationSpectra = new boolean[activeDatasetsNumber()];
     for (int i = 0; i < activeDatasetsNumber(); i++)
@@ -1407,6 +1426,7 @@ public class Sample extends Maincat {
 	  if (Constants.testtime)
       System.out.println("Structure factor extraction and computation: " +
           (-previousTime + (previousTime = System.currentTimeMillis())) + " millisecs.");
+ */
 
       for (int ip = 0; ip < activeDatasetsNumber(); ip++) {
         if (getActiveDataSet(ip) != null && getActiveDataSet(ip).refreshComputation) {

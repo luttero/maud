@@ -516,7 +516,23 @@ public class ExpHarmonicTexture extends HarmonicTexture {
 
     return computeTextureFactor(alphabeta, sctf, fhir, inv);
   }
+  
+  public double computeTextureFactor(Reflection reflex, double alpha, double beta) {
+    double[] cdsc = getPhase().lattice();
 
+//    float phoninp = subfmin();
+  
+    double[] sctf = Uwimvuo.tfhkl(reflex.getH(), reflex.getK(), reflex.getL(), cdsc[7], cdsc[5], cdsc[3], cdsc[6], cdsc[0], cdsc[1]);
+    double fhir = Math.acos(sctf[3]);
+    int inv = Uwimvuo.equiv(LaueGroupSnumber, sctf);
+  
+    double[][] alphabeta = new double[2][1];
+    alphabeta[0][0] = alpha;
+    alphabeta[0][0] = beta;
+    double[] textF = computeTextureFactor(alphabeta, sctf, fhir, inv);
+    return textF[0];
+  }
+  
   public double[][] getInversePoleFigureGrid(double[] texture_angles,
                                              double maxPhi, int phiPointNumber,
                                              double maxBeta, int betaPointNumber) {

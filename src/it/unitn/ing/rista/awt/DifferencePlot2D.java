@@ -156,19 +156,19 @@ public class DifferencePlot2D extends MultiPlotFitting2D {
               values[j++] = it.unitn.ing.jgraph.ColorMap.DUMMY_VALUE;
             }
           } else {
-          double intValue = datafile[sn].getInterpolatedYSqrtIntensity(xaxis[i], 2, mode) -
-                datafile[sn].getInterpolatedFitSqrtIntensity(xaxis[i], 2, mode);
+          double intValue = datafile[sn].getInterpolatedYSqrtIntensityStd(xaxis[i], 2, mode) -
+                datafile[sn].getInterpolatedFitSqrtIntensityStd(xaxis[i], 2, mode);
           values[j++] = intValue;
           if (hasFit == 1 && ylength == 1) {
             values[j++] = intValue;
             values[j++] = intValue;
           }
             if (values[j - 1] < IntensityMin && computeMinMax)
-              IntensityMin = (double) values[j - 1];
+              IntensityMin = values[j - 1];
             else if (values[j - 1] < IntensityMin && !computeMinMax)
               values[j - 1] = IntensityMin;
             if (values[j - 1] > IntensityMax && computeMinMax)
-              IntensityMax = (double) values[j - 1];
+              IntensityMax = values[j - 1];
             else if (values[j - 1] > IntensityMax && !computeMinMax)
               values[j - 1] = IntensityMax;
           }

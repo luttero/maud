@@ -89,8 +89,12 @@ public class XrayEbelTubeRadiation extends RadiationType {
 	private static int filter_material_id = 1;
 
 	private int spectrumPointsNumber = 0;
+	
+	private int groupingNumber = 1;
+  private int subdivision = 1;
 
-	private static double scale_factor = 1.0E-12;
+	private static final double scale_factor = 1.0E-14;
+  private static final double scale_factor_fluo = 1.0E-5;
 
 	public XrayEbelTubeRadiation(XRDcat aobj, String alabel) {
 		identifier = "X-ray Ebel tube";
@@ -224,6 +228,8 @@ public class XrayEbelTubeRadiation extends RadiationType {
 	}
 
 	public void checkRadiation() {
+    subdivision = MaudPreferences.getInteger("xrf_detector.energySubdivision", 1);
+	  groupingNumber = MaudPreferences.getInteger("xrf_detector.energySuperGrouping", 20);
 /*		if (getLinesCountForFluorescence() <= 0) {
 			addRadiation("Cu");
 			// todo: add lines from fluorescence
@@ -246,11 +252,28 @@ public class XrayEbelTubeRadiation extends RadiationType {
 	}
 
 	public double getRadiationWavelength(int index) {
-		return getRadiationWavelengthForFluorescence(index);
+    return Constants.ENERGY_LAMBDA / getRadiationEnergy(index);
 	}
-
-	public double getRadiationWeigth(int index) {
-		return getRadiationWeightForFluorescence(index);
+  
+  public double getRadiationEnergy(int index) {
+//		checkRadiation();
+    if (continuous_spectrum == null || characteristic_spectrum == null)
+      return super.getRadiationEnergy(index);
+    double energy;
+    if (index >= characteristic_spectrum[0].length)
+      energy = continuous_spectrum[0][index - characteristic_spectrum[0].length];
+    else
+      energy =  characteristic_spectrum[0][index];
+    return energy * 1000.0;
+  }
+  
+  public double getRadiationWeigth(int index) {
+    if (continuous_spectrum == null || characteristic_spectrum == null)
+      return super.getRadiationWeigth(index);
+    if (index >= characteristic_spectrum[1].length) {
+      return continuous_spectrum[1][index - characteristic_spectrum[1].length] * scale_factor;
+    } else
+      return characteristic_spectrum[1][index] * scale_factor;
 	}
 
 	public int getLinesCount() {
@@ -266,11 +289,25 @@ public class XrayEbelTubeRadiation extends RadiationType {
 	}
 
 	public int getSubdivision() {
-		return MaudPreferences.getInteger("xrf_detector.energySubdivision", 20);
-
+		return subdivision;
 	}
-
-	public int getLinesCountForPlot() {
+  
+  public int getGroupingNumber() { // for XRF
+    return groupingNumber;
+  }
+  
+  public int getLinesCountForFluorescence() {
+    if (continuous_spectrum == null)
+      return super.getLinesCount();
+    int charLines = 0;
+    if (characteristic_spectrum != null)
+      charLines = characteristic_spectrum[0].length;
+    if (getGroupingNumber() == 1 || getLinesCount() <= charLines + 1)
+      return getLinesCount();
+    return (getLinesCount() - charLines - 1) / getGroupingNumber() + charLines;
+  }
+  
+  public int getLinesCountForPlot() {
 		if (refreshComputation) {
 			computeAll();
 //      System.out.println("Computed for plot");
@@ -294,27 +331,40 @@ public class XrayEbelTubeRadiation extends RadiationType {
 	}*/
 
 	public double getRadiationWavelengthForFluorescence(int index) {
-//		checkRadiation();
-		if (continuous_spectrum == null || characteristic_spectrum == null)
-			return super.getRadiationWavelength(index);
-		double energy;
-		if (index >= characteristic_spectrum[0].length)
-			energy = continuous_spectrum[0][index - characteristic_spectrum[0].length];
-		else
-			energy = characteristic_spectrum[0][index];
-		return Constants.ENERGY_LAMBDA / energy * 0.001;
+		return Constants.ENERGY_LAMBDA_KEV / getRadiationEnergyForFluorescenceKeV(index);
 	}
-
-	public double getRadiationEnergyForFluorescence(int index) {
+  
+  public double getRadiationEnergyKeV(int index) {
 //		checkRadiation();
-		if (continuous_spectrum == null || characteristic_spectrum == null)
-			return Constants.ENERGY_LAMBDA / super.getRadiationWavelength(index) * 0.001;
-		double energy;
-		if (index >= characteristic_spectrum[0].length)
-			energy = continuous_spectrum[0][index - characteristic_spectrum[0].length];
-		else
-			energy =  characteristic_spectrum[0][index];
-		return energy;
+    if (continuous_spectrum == null || characteristic_spectrum == null)
+      return Constants.ENERGY_LAMBDA_KEV / super.getRadiationWavelength(index);
+    double energy;
+    if (index >= characteristic_spectrum[0].length) {
+      index -= characteristic_spectrum[0].length;
+      if (index >= continuous_spectrum[0].length)
+        index = continuous_spectrum[0].length - 1;
+      energy = continuous_spectrum[0][index];
+    } else
+      energy =  characteristic_spectrum[0][index];
+    return energy;
+  }
+  
+  public double getRadiationEnergyForFluorescenceKeV(int index) {
+//		checkRadiation();
+    if (continuous_spectrum == null || characteristic_spectrum == null)
+      return Constants.ENERGY_LAMBDA_KEV / super.getRadiationWavelength(index);
+    if (index >= characteristic_spectrum[0].length) {
+      index -= characteristic_spectrum[0].length;
+      index *= getGroupingNumber();
+      if (index >= continuous_spectrum[0].length)
+        index = continuous_spectrum[0].length - 1;
+      return continuous_spectrum[0][index];
+    } else
+      return characteristic_spectrum[0][index];
+  }
+  
+  public double getRadiationEnergyForFluorescence(int index) {
+		return getRadiationEnergyForFluorescenceKeV(index) * 1000.0;
 	}
 
 	public int getNumberOfCharacteristicsLines() {
@@ -325,10 +375,14 @@ public class XrayEbelTubeRadiation extends RadiationType {
 //		checkRadiation();
 		if (continuous_spectrum == null || characteristic_spectrum == null)
 			return super.getRadiationWeigth(index);
-		if (index >= characteristic_spectrum[1].length)
-			return continuous_spectrum[1][index - characteristic_spectrum[1].length] * scale_factor;
-		else
-			return characteristic_spectrum[1][index] * scale_factor;
+		if (index >= characteristic_spectrum[1].length) {
+      index -= characteristic_spectrum[1].length;
+      index *= getGroupingNumber();
+      if (index >= continuous_spectrum[1].length)
+        index = continuous_spectrum[1].length - 1;
+      return continuous_spectrum[1][index] * scale_factor_fluo * getGroupingNumber();
+    } else
+			return characteristic_spectrum[1][index] * scale_factor_fluo;
 	}
 
 	int anodeElementNumber = 0;
@@ -337,7 +391,7 @@ public class XrayEbelTubeRadiation extends RadiationType {
 	double[] atomWeight = null;
 
 	public void computeAll() {
-		double minimumAcceptedIntensity = MaudPreferences.getDouble("ebelTube.BremsStrahlung_minimumIntensity", 0.0001);
+		double minimumAcceptedIntensity = MaudPreferences.getDouble("ebel_tube.BremsStrahlung_minimumIntensity", 0.0001);
 		// here goes the tube spectrum computation
 
 //		System.out.println("Computing Ebel tube spectrum for anode: " + getRadiation(0).getWavelengthID());
@@ -440,7 +494,7 @@ public class XrayEbelTubeRadiation extends RadiationType {
 			}
 		}
 
-		scale_factor = 1.0E-12;
+//		scale_factor = 1.0E-12;
 	}
 
 	double[][] continuous_spectrum = null;
@@ -469,8 +523,9 @@ public class XrayEbelTubeRadiation extends RadiationType {
 			double eta = Math.pow(tubeVoltageInkV, m) * (0.1904 - 0.2236 * lZ + 0.1292 * lZ * lZ - 0.0149 * lZ * lZ * lZ);
 			double rho_zeta_m = atomWeight[anodeNumber] / atomNumber[anodeNumber] * (0.787E-5 * Math.sqrt(J) * Math.pow(tubeVoltageInkV, 1.5) +
 					0.735E-6 * tubeVoltageInkV * tubeVoltageInkV);
-			double xself = 1.0314 - 0.0032 * atomNumber[anodeNumber] + 0.0047 * tubeVoltageInkV;
-			double consta = 1.36E9;
+			double xself = 1.109 - 0.00435 * atomNumber[anodeNumber] + 0.00175 * tubeVoltageInkV;
+      // Ebel double xself = 1.0314 - 0.0032 * atomNumber[anodeNumber] + 0.0047 * tubeVoltageInkV;
+			double consta = 1.35E9;; // Ebel 1.36E9;
 
 			for (int i = 0; i < n_points; i++) {
 				double U0 = tubeVoltageInkV / tmp_spectrum[0][i];
@@ -503,6 +558,9 @@ public class XrayEbelTubeRadiation extends RadiationType {
 	double[][] characteristic_spectrum = null;
 
 	public double[][] characteristicLines() {
+	  
+	  boolean useSensitivity = MaudPreferences.getBoolean("ebel_tube.useSensitivityForLines", false);
+	  
 		double tubeVoltageInkV = Math.abs(getParameterValue(voltage_kV_id));
 		double minimumEnergy = Double.parseDouble(getString(minimum_keV_id));
 
@@ -552,10 +610,15 @@ public class XrayEbelTubeRadiation extends RadiationType {
         expo = 2.0 * expo * sinRatio;
         double f = (1.0 - Math.exp(-expo)) / expo;
         
-        double N_ch = const_KL[flag_KL] * inv_S * erre * f * line.getTransitionProbability() * line.getFluorescenceYield();
+        double N_ch = const_KL[flag_KL] * inv_S * erre * f;
+        if (useSensitivity)
+          N_ch *= line.getIntensity();
+        else
+          N_ch *= line.getTransitionProbability() * line.getFluorescenceYield();
         
         characteristic_spc[1][i] = N_ch * atomFraction[anodeNumber];
         characteristic_spc[2][i] = mu_tot * atomFraction[anodeNumber];
+        
       }
 			all_spc.add(characteristic_spc);
 		}
@@ -737,8 +800,8 @@ public class XrayEbelTubeRadiation extends RadiationType {
 			double[] x = new double[lineCounts];
 			double[] y = new double[lineCounts];
 			for (int i = 0; i < lineCounts; i++) {
-				x[i] = getRadiationEnergyForFluorescence(i);
-				y[i] = getRadiationWeightForFluorescence(i);
+				x[i] = getRadiationEnergyKeV(i);
+				y[i] = getRadiationWeigth(i);
 			}
 			(new PlotSimpleData(this, x, y, true)).setVisible(true);
 
@@ -747,8 +810,8 @@ public class XrayEbelTubeRadiation extends RadiationType {
 			x = new double[lineCounts];
 			y = new double[lineCounts];
 			for (int i = 0; i < lineCounts; i++) {
-				x[i] = getRadiationEnergyForFluorescence(i + characteristic_spectrum[0].length);
-				y[i] = getRadiationWeightForFluorescence(i + characteristic_spectrum[1].length);
+				x[i] = getRadiationEnergyKeV(i + characteristic_spectrum[0].length);
+				y[i] = getRadiationWeigth(i + characteristic_spectrum[1].length);
 			}
 			(new PlotSimpleData(this, x, y, true)).setVisible(true);
 		}

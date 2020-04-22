@@ -131,8 +131,24 @@ public class PlotSimpleData extends GraphFrame {
 
 		setTitle(title);
 	}
-
-	public void setXaxisTitle(String value) {
+  
+  public PlotSimpleData(Frame parent, double[] x, double[][] function, int line, boolean plotdots, String xTitleValue, String yTitleValue, String title) {
+    
+    super(parent);
+    
+    initializeFrame();
+    
+    setXaxisTitle(xTitleValue);
+    setYaxisTitle(yTitleValue);
+    lineStyle = line;
+    dotsPlot = plotdots;
+    
+    createGraph(x, function);
+    
+    setTitle(title);
+  }
+  
+  public void setXaxisTitle(String value) {
 		xAxisTitle = value;
   }
 
@@ -280,7 +296,7 @@ public class PlotSimpleData extends GraphFrame {
 //          System.out.println("Loading data....");
 
 			for (int k = 0; k < function.length; k++) {
-				int np = function.length;
+				int np = function[0].length;
 				double data[] = new double[2 * np];
 				for (int i = 0, j = 0; i < np; i++, j += 2) {
 					data[j] = x[i];
@@ -291,7 +307,7 @@ public class PlotSimpleData extends GraphFrame {
 
 				DataSet data1 = graph.loadDataSet(data, np);
 				data1.linecolor = SpectrumPlotPanel.getPastelColor(k);
-				if (dotsPlot) {
+				if (dotsPlot && k == 0) {
 					data1.linestyle = lineStyle;
 					data1.marker = 3;
 					data1.markerscale = 1;

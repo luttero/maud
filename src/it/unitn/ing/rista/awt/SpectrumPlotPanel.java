@@ -1119,6 +1119,8 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 			    }
 			    if (total > 0)
 				    data[is2 + 1] /= total;
+          data[is2 + 1] = datafile[0].getValueScaled(data[is2 + 1], datafile[0].getOldNearestPoint(
+              datafile[0].revertXDataForPlot(data[is2], mode)));
 
 			    if (datafile[0].hasfit()) {
 				    datafit[is2] = data[is2];
@@ -1137,6 +1139,8 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 				    }
 				    if (totalFit > 0)
 					    datafit[is2 + 1] /= totalFit;
+            datafit[is2 + 1] = datafile[0].getValueScaled(datafit[is2 + 1], datafile[0].getOldNearestPoint(
+                datafile[0].revertXDataForPlot(datafit[is2], mode)));
 			    }
 		    }
 
@@ -1351,7 +1355,7 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 						    if (line.getIntensity() > threasholdXRFLines) {
 							    PeakInfo peakInfo = new PeakInfo();
 							    peakInfo.info = atomLabel + " " + line.toString();
-							    peakInfo.coordinate = line.getEnergy() * 1000;
+							    peakInfo.coordinate = line.getEnergyIneV();
 							    peaksInfoXRF.add(peakInfo);
 						    }/* else {
 						    System.out.println("Not added: " + atomLabel + " " + line.toString() + " " + line.getEnergy() + " " + line.getIntensity());
@@ -2003,7 +2007,7 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 	    if (adataset.getInstrument() instanceof XRFInstrument) {
 		    numberofPeaks = 0;
 		    double energyInKeV = Constants.ENERGY_LAMBDA / adataset.getInstrument().getRadiationType().
-				    getRadiationWavelengthForFluorescence(0) * 0.001;
+				    getRadiationWavelength(0) * 0.001;
 		    if (peaksInfoXRF == null || energyUsedForPeakInfoXRF < energyInKeV) {
 			    energyUsedForPeakInfoXRF = energyInKeV;
 			    peaksInfoXRF = new Vector<PeakInfo>(10000, 1000);
@@ -2017,7 +2021,7 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 					    if (line.getIntensity() > threasholdXRFLines) {
 						    PeakInfo peakInfo = new PeakInfo();
 						    peakInfo.info = atomLabel + " " + line.toString();
-						    peakInfo.coordinate = line.getEnergy() * 1000;
+						    peakInfo.coordinate = line.getEnergyIneV();
 						    peaksInfoXRF.add(peakInfo);
 					    }/* else {
 						    System.out.println("Not added: " + atomLabel + " " + line.toString() + " " + line.getEnergy() + " " + line.getIntensity());
@@ -2562,7 +2566,7 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 					if (line.getIntensity() > threasholdXRFLines) {
 						PeakInfo peakInfo = new PeakInfo();
 						peakInfo.info = atomLabel + " " + line.toString();
-						peakInfo.coordinate = line.getEnergy() * 1000;
+						peakInfo.coordinate = line.getEnergyIneV();
 						peaksInfoXRF.add(peakInfo);
 					}
 				}

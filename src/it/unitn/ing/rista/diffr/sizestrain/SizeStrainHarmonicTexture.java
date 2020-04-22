@@ -61,7 +61,7 @@ public class SizeStrainHarmonicTexture extends SizeStrainSymModel {
 
   protected static String[] classlistcs = {};
 
-  static String modelIDstring = "Disabled Size-strain harmonic ODF";
+  public static String modelIDstring = "Disabled Size-strain harmonic ODF";
 
   public static String[] symmetrychoice = {"-1",
                                            "2/m",

@@ -2374,28 +2374,38 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 
     //   boolean refreshPartially = false;  // speedModification
 	  Constants.refreshTreePermitted = false;
+	  long previousTime = 0;
     logOutput = MaudPreferences.getBoolean("log_output.saveInFile", Constants.stdoutput != Constants.NO_OUTPUT);
     fullResults = MaudPreferences.getBoolean("log_output.fullResults", false);
     setOutput(hasoutput);
-    if (Constants.testtime)
-      Constants.tmpTime = System.currentTimeMillis();
+    if (Constants.testtime) {
+      Constants.tmpTime = previousTime = System.currentTimeMillis();
+    }
 
-    if (refreshAll) {
+//    if (refreshAll) {
       refreshAll(false);
 //b		else
 //b			refreshPartially = true;  // speedModification
 
 //    refreshDataIndices();
-
-      for (int i = 0; i < samplesNumber(); i++) {
+  
+    if (Constants.testtime)
+      System.out.println("Refresh all: " +
+          (-previousTime + (previousTime = System.currentTimeMillis())) + " millisecs.");
+  
+    for (int i = 0; i < samplesNumber(); i++) {
         Sample asample = getSample(i);
         asample.prepareComputation();
       }
 //      System.out.println("Updating phases");
       updateAllPhases();
-    }
+//    }
     indexesComputed = false;
     // to be implemented in subclasses
+    if (Constants.testtime)
+      System.out.println("Update all phases: " +
+          (-previousTime + (previousTime = System.currentTimeMillis())) + " millisecs.");
+  
     for (int i = 0; i < samplesNumber(); i++) {
       if (hasoutput && outputframe != null)
         outputframe.appendnewline("Computing spectra for sample: " + getSample(i).toXRDcatString());

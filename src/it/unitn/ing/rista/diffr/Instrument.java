@@ -97,9 +97,9 @@ public class Instrument extends XRDcat {
   }
 
   public void initConstant() {
-    Nstring = 2;
+    Nstring = 1;
     Nstringloop = 0;
-    Nparameter = 1;
+    Nparameter = 2;
     Nparameterloop = 1;
     Nsubordinate = 8;
     Nsubordinateloop = 0;
@@ -116,8 +116,8 @@ public class Instrument extends XRDcat {
     super.initParameters();
 
     stringField[0] = toXRDcatString(); // to avoid the notifyInstrumentLabelChanged
-	  stringField[1] = "1.0";
     setIntensity("1.0");
+    setIntensityFluorescence("1.0");
     setGeometry("Bragg-Brentano");
     setMeasurement("Theta-2Theta");
     setRadiationType("X-ray tube");
@@ -127,7 +127,7 @@ public class Instrument extends XRDcat {
     setIntensityCalibration("none cal");
     setAngularCalibration("Instrument disalignment");
     setInstrumentBroadening("Caglioti PV");
-    for (int i = 0; i < 1; i++) {
+    for (int i = 0; i < 2; i++) {
       parameterField[i].setValueMin(ParameterPreferences.getDouble(parameterField[i].getLabel() + ".min",
                          0.0));
       parameterField[i].setValueMax(ParameterPreferences.getDouble(parameterField[i].getLabel() + ".max",
@@ -204,21 +204,33 @@ public class Instrument extends XRDcat {
   }
 
 	public double getIntensityValue() {
-		return getIntensity().getValueD() * intensityScaleFactor;
+		return getIntensity().getValueD();
 	}
   
+  public Parameter getIntensityFluorescence() {
+    return parameterField[1];
+  }
+  
+  public double getIntensityFluorescenceValue() {
+    return getIntensityFluorescence().getValueD();
+  }
+  
   public double getIntensityForDiffraction() {
-    return getIntensity().getValueD();
+    return getIntensityValue();
   }
   
   public double getIntensityForFluorescence() {
-    return getIntensity().getValueD() * intensityScaleFactor;
+    return getIntensityFluorescenceValue();
   }
   
   public void setIntensity(String value) {
     parameterField[0].setValue(value);
   }
-
+  
+  public void setIntensityFluorescence(String value) {
+    parameterField[1].setValue(value);
+  }
+  
   public double[] getTextureAngles(DiffrDataFile datafile, double[] tilting_angles,
                                   double[] sampleAngles, double twotheta) {
     return getGeometry().getTextureAngles(datafile, tilting_angles, sampleAngles, twotheta);
@@ -255,12 +267,6 @@ public class Instrument extends XRDcat {
         -0.1, 0.1));
   }
 
-	double intensityScaleFactor = 1.0;
-
-	public void updateStringtoDoubleBuffering(boolean firstLoading) {
-		intensityScaleFactor = Double.parseDouble(stringField[1]);
-	}
-
 	public void updateParametertoDoubleBuffering(boolean firstLoading) {
     // to be implemented by subclasses
 
@@ -269,6 +275,7 @@ public class Instrument extends XRDcat {
     super.updateParametertoDoubleBuffering(false);
 
     parameterField[0].setPositiveOnly();
+    parameterField[1].setPositiveOnly();
     thetaDisplacement = getParameterLoopVector(thetaDisplacementID);
     thetaDisplacementN = numberOfLoopParameters[thetaDisplacementID];
     for (int i = 0; i < thetaDisplacementN; i++)
@@ -278,7 +285,7 @@ public class Instrument extends XRDcat {
   public void notifyParameterChanged(Parameter source) {
     FilePar filepar = getFilePar();
     if ((filepar != null && !filepar.isLoadingFile()) && isAbilitatetoRefresh) {
-        if (source == parameterField[0]) {
+        if (source == parameterField[0] || source == parameterField[1]) {
           notifyParameterChanged(source, Constants.BEAM_INTENSITY_CHANGED);
           return;
         }
@@ -732,6 +739,7 @@ public class Instrument extends XRDcat {
 
   public void multiplyScaleFactorBy(double totalquantity) {
     setIntensity(Double.toString(getIntensity().getValueD() * totalquantity));
+    setIntensityFluorescence(Double.toString(getIntensityFluorescence().getValueD() * totalquantity));
   }
 
   public void forceAllBankIntRefinable() {

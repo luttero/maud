@@ -2049,7 +2049,7 @@
                    shortversion="3.00"
                    icon="${inst}/maud.icns"
                    mainclassname="com.radiographema.Maud"
-                   copyright="Maud, for materials analysis, Copyright 1997-2019 Luca Lutterotti"
+                   copyright="Maud, for materials analysis, Copyright 1997-2020 Luca Lutterotti"
                    applicationCategory="public.app-category.productivity">
 
             <!-- The directory where your OpenJDK runtime is. -->
@@ -2109,7 +2109,7 @@
             <option value="-Dapple.awt.application.name=Maud"/>
             <option value="-Dcom.apple.smallTabs=true"/>
 
-            <option value="-Xmx65536M"/>
+            <option value="-Xmx16384M"/>
         </bundleapp>
 
         <mkdir dir="${app_osx_beta}/Maud.app/Contents/Frameworks"/>

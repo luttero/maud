@@ -61,12 +61,12 @@ public class QuantitativeEDXRF extends QuantitativeXRF {
     description = descriptionID;
   }
 
-	public void computeFluorescence(Sample asample, DataFileSet adataset) {
-
-		int datafilenumber = adataset.activedatafilesnumber();
+	public void computeFluorescence(Sample asample) {
+    
+    final DataFileSet theDataset = getDataFileSet();
+		int datafilenumber = theDataset.activedatafilesnumber();
 
 		final Sample theSample = asample;
-		final DataFileSet theDataset = adataset;
 
 		final int maxThreads = Math.min(Constants.maxNumberOfThreads, datafilenumber);
 		if (maxThreads > 1 && Constants.threadingGranularity >= Constants.MEDIUM_GRANULARITY) {

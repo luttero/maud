@@ -66,8 +66,7 @@ public class XRFInstrument extends Instrument {
 		public XRFInstrument theinstrument;
 
 		JTextField InstrumentnameTF;
-		JTextField intensityTF;
-		JTextField intensityScaleTF;
+		JTextField intensityFluoTF;
 		JComboBox[] optchoice;
 		boolean[] active = {false, true, true, false, true, true, true};
 
@@ -106,7 +105,7 @@ public class XRFInstrument extends Instrument {
 			jPanel6.setLayout(new GridLayout(0, 1, 3, 3));
 			jPanel12.add("West", jPanel6);
 
-			String[] tmpStringS = {"Instrument name:", "Incident intensity:", "Scale factor normalization:"};
+			String[] tmpStringS = {"Instrument name:", "Fluorescence intensity:"};
 			for (int i = 0; i < tmpStringS.length; i++)
 				jPanel6.add(new JLabel(tmpStringS[i]));
 
@@ -116,12 +115,9 @@ public class XRFInstrument extends Instrument {
 
 			InstrumentnameTF = new JTextField(24);
 			jPanel8.add(InstrumentnameTF);
-			intensityTF = new JTextField(Constants.FLOAT_FIELD);
-			jPanel8.add(intensityTF);
-			intensityTF.setText("1");
-			intensityScaleTF = new JTextField(Constants.FLOAT_FIELD);
-			jPanel8.add(intensityScaleTF);
-			intensityScaleTF.setText("1");
+			intensityFluoTF = new JTextField(Constants.FLOAT_FIELD);
+			jPanel8.add(intensityFluoTF);
+      intensityFluoTF.setText("1");
 
 			jPanel12 = new JPanel();
 			jPanel12.setLayout(new BorderLayout(2, 2));
@@ -206,9 +202,8 @@ public class XRFInstrument extends Instrument {
 			int i, j;
 
 			InstrumentnameTF.setText(theinstrument.getInstrumentID());
-			intensityTF.setText(theinstrument.getIntensity().getValue());
-			intensityScaleTF.setText(theinstrument.getString(1));
-			addComponenttolist(intensityTF, theinstrument.getIntensity());
+			intensityFluoTF.setText(theinstrument.getIntensityFluorescence().getValue());
+			addComponenttolist(intensityFluoTF, theinstrument.getIntensityFluorescence());
 
 //      ThetaPanel.setList(theinstrument, 0);
 
@@ -226,8 +221,7 @@ public class XRFInstrument extends Instrument {
 			super.retrieveParameters();
 
 			theinstrument.setInstrumentID(InstrumentnameTF.getText());
-			theinstrument.getIntensity().setValue(intensityTF.getText());
-			theinstrument.setString(1, intensityScaleTF.getText());
+			theinstrument.getIntensityFluorescence().setValue(intensityFluoTF.getText());
 
 //      ThetaPanel.retrieveparlist();
 

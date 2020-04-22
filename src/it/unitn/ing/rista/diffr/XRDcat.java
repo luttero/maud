@@ -1427,6 +1427,7 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
     // for parent = FilePar this must be overrided
     updateStringtoDoubleBuffering(firstLoading);
     updateParametertoDoubleBuffering(firstLoading);
+    updateStringtoDoubleBuffering(firstLoading);
   }
 
   public void updateStringtoDoubleBuffering(boolean firstLoading) {
