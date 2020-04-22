@@ -64,6 +64,7 @@ public class DBWSDataFile extends it.unitn.ing.rista.diffr.DiffrDataFile {
         dspacingbase = false;
 
         line = reader.readLine();
+	      line = Misc.removeUTF8BOM(line);
 
         st = new StringTokenizer(line, " \t\r\n");
 

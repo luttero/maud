@@ -429,7 +429,8 @@ public class ABINITEnergyComputation extends ForceField {
         String linedata;
 
         linedata = reader.readLine();
-        while (linedata != null && !linedata.contains("Etotal")) {
+	      linedata = Misc.removeUTF8BOM(linedata);
+	      while (linedata != null && !linedata.contains("Etotal")) {
           linedata = reader.readLine();
         }
         if (linedata != null) {

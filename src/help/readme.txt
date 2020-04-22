@@ -43,6 +43,20 @@ from the older one.
 
 Maud Version notes:
 
+(06/04/2020):   2.94. The "Covid-19" release.
+                The snow is still out there, plenty of, but we are stuck here...
+                Fixed a problem with the Lorentz-polarization (X-ray). There
+                were some cases with alpha1 and alpha2 for which one peak
+                was below 180 degs but the other not. The program was not
+                checking for alpha2 before computing the L-P correction leading
+                to very high number if close to 180 degs.
+                Some of the LP factors were not computed correctly for some
+                geometries (images mainly). So with the new version, loading old
+                analysis files may give you a different fitting. Re-run the
+                refinement to fix it. It should be just scales and B-factors.
+                It may have affected quantitative analysis if the phases had
+                very different cell sizes (one large, the other small).
+
 (13/11/2019):   2.93. The "Early snow" release.
                 Will we get finally a good "deep snow" winter this year?
                 Fixed a problem with strain computation not working.

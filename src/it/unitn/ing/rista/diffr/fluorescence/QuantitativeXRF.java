@@ -192,6 +192,7 @@ public class QuantitativeXRF extends Fluorescence {
 			energy_intensity[ej] = radType.getRadiationWeightForFluorescence(ej);
 			layerAbsorption[0][ej] = -asample.getlayer(0).getAbsorption(energyInKeV[ej]) * layerDensity[0] / sinPhii;
 			overLayerAbsorption[0][ej] = 0;
+//			System.out.println(energyInKeV[ej] + " " + 0 + " " + (-layerAbsorption[0][ej]/layerDensity[0]*sinPhii) + " " + layerDensity[0] + " " + sinPhii + " " + layerThickness[0]);
 			for (int j1 = 1; j1 < layersNumber; j1++) {
 				layerAbsorption[j1][ej] = -asample.getlayer(j1).getAbsorption(energyInKeV[ej]) * layerDensity[j1] / sinPhii;
 				overLayerAbsorption[j1][ej] = overLayerAbsorption[j1 - 1][ej] + layerAbsorption[j1 - 1][ej] * layerThickness[j1 - 1];
@@ -258,10 +259,11 @@ public class QuantitativeXRF extends Fluorescence {
 
 								double lineSensitivity = XRayDataSqLite.getSensitivity(atomNumber, line.getCoreShellID(),
 										line.xrl_line_number, energyInKeV[ej], line.getFluorescenceYield() * line.getTransitionProbability());
-//								if (atomNumber > 80 && line.transitionID.startsWith("M"))
-//									System.out.println(atomNumber - 1 + " " + lineEnergyKeV + " " + line.transitionID + " " + lineSensitivity + " " + energyInKeV[ej]
-//										+ " " + line.getCoreShellID() + " " + XRayDataSqLite.getTauShell(atomNumber - 1, line.getCoreShellID(), energyInKeV[ej]));
-//								System.out.println(totalIntensity + " " + actualLayerAbsorption + " " + layerAbsorption[j1][ej] + " " + lineSensitivity + " " + over_abs + " " + abs + " " + energy_intensity[ej]);
+						//		if (ej == 0 && (atomNumber == 28 || atomNumber == 24)) {
+					//				System.out.println(atomNumber + " " + lineEnergyKeV + " " + line.transitionID + " " + lineSensitivity + " " + energyInKeV[ej]
+					//						+ " " + line.getCoreShellID() + " " + XRayDataSqLite.getTauShell(atomNumber - 1, line.getCoreShellID(), energyInKeV[ej]))
+//									System.out.println(atomNumber + " " + line.transitionID + " " + lineEnergyKeV + " " + energyInKeV[ej] + " " + line.getFluorescenceYield() + " " + line.getTransitionProbability() + " " + lineSensitivity + " " + over_abs + " " + abs);
+						//		}
 								totalIntensity += lineSensitivity * over_abs * abs * energy_intensity[ej];
 							}
 						}
@@ -275,6 +277,8 @@ public class QuantitativeXRF extends Fluorescence {
 //								detectorEfficiency + " " + areaCorrection + " " + getIntensityCorrection(atomNumber));
 						line.multiplyIntensityBy(atomsQuantities * totalIntensity * detectorAbsorption *
 								detectorEfficiency * areaCorrection * getIntensityCorrection(atomNumber));
+//						System.out.println("Line: " + line.transitionID + " " + lineEnergyKeV + " " + line.getIntensity() + " " + atomsQuantities + " " + (totalIntensity * line.getFluorescenceYield() * line.getTransitionProbability()) + " " + detectorAbsorption + " " +
+//								detectorEfficiency + " " + areaCorrection);
 //						System.out.println(line.transitionID + " " + line.getIntensity() + " " + lineEnergyKeV);
 						boolean addLine = true;
 						for (int i = 0; i < fluorescenceLines.size() && addLine; i++) {

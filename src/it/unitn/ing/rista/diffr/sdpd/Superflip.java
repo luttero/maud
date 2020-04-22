@@ -225,6 +225,7 @@ public class Superflip extends StructureFactorSolveCrystalStructure {
               String line = "";
               while (line != null) {
                 line = reader.readLine();
+	              line = Misc.removeUTF8BOM(line);
                 if (line != null) {
                   output.write(line);
                   output.newLine();

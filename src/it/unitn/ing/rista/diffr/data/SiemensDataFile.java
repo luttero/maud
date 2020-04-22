@@ -75,6 +75,7 @@ public class SiemensDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile 
           while (!token.equalsIgnoreCase("_CPS") &&
               !token.equalsIgnoreCase("_COUNTS") && !token.equalsIgnoreCase("_2THETACOUNTS")) {
             linedata = reader.readLine();
+	          linedata = Misc.removeUTF8BOM(linedata);
             if (linedata != null) {
               st = new StringTokenizer(linedata, " ,=\t\r\n");
             } else

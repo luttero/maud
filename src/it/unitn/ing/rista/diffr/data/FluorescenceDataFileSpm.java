@@ -84,6 +84,7 @@ public class FluorescenceDataFileSpm extends MultDiffrDataFile {
           if (token == null)
             token = " ";
           linedata = reader.readLine();
+	        linedata = Misc.removeUTF8BOM(linedata);
           if (linedata == null)
             endoffile = true;
           else {

@@ -72,7 +72,8 @@ public class SietronicCPIDataFile extends it.unitn.ing.rista.diffr.DiffrDataFile
         // read the entire first line and use it as title
 
         title = reader.readLine();
-        if (title.startsWith("SIETRONICS")) {
+	      title = Misc.removeUTF8BOM(title);
+	      if (title.startsWith("SIETRONICS")) {
 
           st = new StringTokenizer(reader.readLine(), " ,\t\r\n");
           startingvalue = Double.valueOf(st.nextToken()).doubleValue();

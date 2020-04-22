@@ -21,6 +21,7 @@
 package it.unitn.ing.rista.diffr.geometry;
 
 import it.unitn.ing.rista.diffr.*;
+import it.unitn.ing.rista.util.Constants;
 
 
 /**
@@ -57,11 +58,15 @@ public class GeometryNoCorrections extends GeometryDiffractometer {
   }
 
   public double Lorentz(DiffrDataFile adatafile, double position) {
-    return 1.0;
+	  if (position < Constants.PI)
+		  return 1.0;
+	  return 0.0;
   }
 
   public double polarization(DiffrDataFile adatafile, double position) {
-    return 1.0;
+	  if (position < Constants.PI)
+		  return 1.0;
+	  return 0.0;
   }
 
 }

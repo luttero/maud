@@ -55,7 +55,7 @@ public class D19ImageDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile
     isAbilitatetoRefresh = false;
 
     int[] imageDimension = new int[3];
-    Vector<double[]> dimension = new Vector<double[]>();
+    Vector<double[]> dimension = new Vector<>();
     String[] properties = new String[1];
 //    new Opener().open();
 //		OpenDialog od = new OpenDialog("Open...", "");

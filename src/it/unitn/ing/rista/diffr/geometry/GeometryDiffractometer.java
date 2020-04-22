@@ -245,16 +245,19 @@ public class GeometryDiffractometer extends Geometry {
 			return 1.0;
 
 		// X-ray
-		double cos2theta = Math.cos(position * 2.0);
-		cos2theta *= cos2theta;
-		double eta = adatafile.getEtaValue() * Constants.DEGTOPI + polarizationAngle;
-		double coseta = Math.cos(eta);
-		double sineta = Math.sin(eta);
-		double cos2eta = coseta * coseta;
-		double sin2eta = sineta * sineta;
-		double Pm = getMonochromatorCorrection();
-		double Ph = 2.0 * ((polarizationStar * cos2eta + sin2eta) * cos2theta * Pm + polarizationStar * sin2eta + cos2eta)
-				/ (1.0 + polarizationStar);
+		double Ph = 0.0;
+		if (position < Constants.PI) {
+			double cos2theta = Math.cos(position);
+			cos2theta *= cos2theta;
+			double eta = adatafile.getEtaValue() * Constants.DEGTOPI + polarizationAngle;
+			double coseta = Math.cos(eta);
+			double sineta = Math.sin(eta);
+			double cos2eta = coseta * coseta;
+			double sin2eta = sineta * sineta;
+			double Pm = getMonochromatorCorrection();
+			Ph = 2.0 * ((polarizationStar * cos2eta + sin2eta) * cos2theta * Pm + polarizationStar * sin2eta + cos2eta)
+					/ (1.0 + polarizationStar);
+		}
 		return Ph;
 	}
 

@@ -78,6 +78,7 @@ public class ISISGemRotaxDatafile extends MultDiffrDataFile {
         DiffrDataFile datafile = null;
         String bankID = null;
         String linedata = reader.readLine();
+	      linedata = Misc.removeUTF8BOM(linedata);
         boolean atmpB = false;
 
         while (!endoffile) {

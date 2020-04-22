@@ -70,6 +70,7 @@ public class NumericalAOData extends MultDiffrDataFile {
           while (!endoffile && !token.startsWith("$")) {
             if (linedata == null)
               linedata = reader.readLine();
+	          linedata = Misc.removeUTF8BOM(linedata);
 //            System.out.println("early " + linedata);
             if (linedata == null)
               endoffile = true;

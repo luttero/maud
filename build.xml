@@ -2036,10 +2036,10 @@
                    displayname="Maud"
                    identifier="com.radiographema.maud"
                    executableName="Maud"
-                   shortversion="2.93"
+                   shortversion="2.94"
                    icon="${inst}/maud.icns"
                    mainclassname="com.radiographema.Maud"
-                   copyright="Maud, for materials analysis, Copyright 1997-2019 Luca Lutterotti"
+                   copyright="Maud, for materials analysis, Copyright 1997-2020 Luca Lutterotti"
                    applicationCategory="public.app-category.productivity">
 
             <!-- The directory where your OpenJDK runtime is. -->

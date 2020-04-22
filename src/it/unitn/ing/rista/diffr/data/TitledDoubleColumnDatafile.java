@@ -68,6 +68,7 @@ public class TitledDoubleColumnDatafile extends it.unitn.ing.rista.diffr.DiffrDa
         String token2 = new String("");
 
         title = reader.readLine();
+	      title = Misc.removeUTF8BOM(title);
         if (title.startsWith("*TYPE")) {
           String token = " ";
           StringTokenizer st = null;

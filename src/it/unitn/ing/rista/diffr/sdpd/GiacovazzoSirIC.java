@@ -312,6 +312,7 @@ VLD
       try {
         while (line != null) {
           line = reader.readLine();
+	        line = Misc.removeUTF8BOM(line);
           if (line != null) {
             int shelxCode = getShelxIndexForKeyword(line);
             switch (shelxCode) {

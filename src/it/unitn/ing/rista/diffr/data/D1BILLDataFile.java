@@ -77,7 +77,8 @@ public class D1BILLDataFile extends MultDiffrDataFile {
         while (!endoffile) {
           for (int i = 0; i < numberOfLeadingLines; i++) {
             linedata = reader.readLine();
-            if (linedata == null) {
+	          linedata = Misc.removeUTF8BOM(linedata);
+	          if (linedata == null) {
               endoffile = true;
               break;
             } else

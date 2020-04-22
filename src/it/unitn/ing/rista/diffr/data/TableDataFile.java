@@ -72,6 +72,7 @@ public class TableDataFile extends MultDiffrDataFile {
         String numberString = null;
         boolean atmpB = true;
         linedata = reader.readLine();
+	      linedata = Misc.removeUTF8BOM(linedata);
         if (linedata == null)
           endoffile = true;
         else {

@@ -440,8 +440,9 @@ public class XrayEbelTubeRadiation extends RadiationType {
 			double eta = Math.pow(tubeVoltageInkV, m) * (0.1904 - 0.2236 * lZ + 0.1292 * lZ * lZ - 0.0149 * lZ * lZ * lZ);
 			double rho_zeta_m = atomWeight[anodeNumber] / atomNumber[anodeNumber] * (0.787E-5 * Math.sqrt(J) * Math.pow(tubeVoltageInkV, 1.5) +
 					0.735E-6 * tubeVoltageInkV * tubeVoltageInkV);
-			double xself = 1.0314 - 0.0032 * atomNumber[anodeNumber] + 0.0047 * tubeVoltageInkV;
-			double consta = 1.36E9;
+			double xself = 1.109 - 0.00435 * atomNumber[anodeNumber] + 0.00175 * tubeVoltageInkV;
+      // Ebel double xself = 1.0314 - 0.0032 * atomNumber[anodeNumber] + 0.0047 * tubeVoltageInkV;
+			double consta = 1.35E9;; // Ebel 1.36E9;
 
 			for (int i = 0; i < n_points; i++) {
 				double U0 = tubeVoltageInkV / tmp_spectrum[0][i];
@@ -484,7 +485,7 @@ public class XrayEbelTubeRadiation extends RadiationType {
 		double sinRatio = MoreMath.sind(inc_ang_deg) / MoreMath.sind(ex_ang_deg);
 
 //		scale_factor = 0;
-		Vector<double[][]> all_spc = new Vector<double[][]>(anodeElementNumber, 1);
+		Vector<double[][]> all_spc = new Vector<>(anodeElementNumber, 1);
 		for (int anodeNumber = 0; anodeNumber < anodeElementNumber; anodeNumber++) {
 			double J = 0.0135 * atomNumber[anodeNumber];
 			double m = 0.1382 - 0.9211 / Math.sqrt(atomNumber[anodeNumber]);

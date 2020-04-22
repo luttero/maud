@@ -67,6 +67,7 @@ public class DummyStressDatafile extends MultDiffrDataFile {
 
         for (int i = 0; i < 7; i++) {
           linedata = reader.readLine();
+	        linedata = Misc.removeUTF8BOM(linedata);
           st = new StringTokenizer(linedata, "' ,\t\r\n");
           numberString = Integer.toString(++spectrumNumber);
           datafile = addDiffrDatafile(numberString);

@@ -20,6 +20,7 @@
 package it.unitn.ing.rista.diffr.geometry;
 
 import it.unitn.ing.rista.diffr.*;
+import it.unitn.ing.rista.util.Constants;
 import it.unitn.ing.rista.util.MoreMath;
 
 /**
@@ -53,9 +54,13 @@ public class GeometryLaueTransmissionSymmetrical extends GeometryDiffractometer 
 
   public double Lorentz(DiffrDataFile adatafile, double position) {
     // Lorentz - velocity
-    double sin2theta = Math.sin(2.0 * position);
-    sin2theta *= sin2theta;
-    return 1.0 / sin2theta;
+	  double lp = 0.0;
+	  if (position < Constants.PI) {
+		  double sin2theta = Math.sin(position);
+		  sin2theta *= sin2theta;
+		  lp = 1.0 / sin2theta;
+	  }
+	  return lp;
   }
 
    public void computeShapeAbsorptionCorrection(DiffrDataFile adatafile, Sample asample, double[][] position,

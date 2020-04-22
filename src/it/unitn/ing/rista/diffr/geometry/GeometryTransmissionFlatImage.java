@@ -54,13 +54,17 @@ public class GeometryTransmissionFlatImage extends GeometryDebyeScherrer {
   }
 
   public double Lorentz(DiffrDataFile adatafile, double position) {
-    double sintheta, costheta, cos2theta;
-    // from P. Norby, J. Appl. Cryst. (1997), 30, 21-30.
-    sintheta = Math.sin(position);
-    costheta = Math.cos(position);
-    cos2theta = Math.cos(2.0 * position);
+	  double lp = 0.0;
+	  if (position < Constants.PI) {
+		  double sintheta, costheta, cos2theta;
+		  // from P. Norby, J. Appl. Cryst. (1997), 30, 21-30.
+		  sintheta = Math.sin(position * 0.5);
+		  costheta = Math.cos(position * 0.5);
+		  cos2theta = Math.cos(position);
 //    cos2theta *= cos2theta;
-    return cos2theta / (costheta * sintheta * sintheta);
+		  lp = cos2theta / (costheta * sintheta * sintheta);
+	  }
+	  return lp;
   }
 
 }

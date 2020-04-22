@@ -21,6 +21,7 @@
 package it.unitn.ing.rista.diffr.geometry;
 
 import it.unitn.ing.rista.diffr.*;
+import it.unitn.ing.rista.util.Constants;
 
 
 /**
@@ -51,12 +52,16 @@ public class GeometryTransmissionFlatImageNoLorentz extends GeometryTransmission
   }
 
   public double Lorentz(DiffrDataFile adatafile, double position) {
-    double sintheta, costheta;
-    sintheta = Math.sin(position);
-    costheta = Math.cos(position);
-    return 1.0 / (costheta * sintheta * sintheta);
+	  double lp = 0.0;
+	  if (position < Constants.PI) {
+		  double sintheta, costheta;
+		  sintheta = Math.sin(position * 0.5);
+		  costheta = Math.cos(position * 0.5);
+		  lp = 1.0 / (costheta * sintheta * sintheta);
 //    double cos2theta = Math.cos(2.0 * position);
 //    return 0.5 / cos2theta + 0.5 * cos2theta;
+	  }
+	  return lp;
   }
 
 }

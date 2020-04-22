@@ -839,11 +839,15 @@ public class Geometry extends XRDcat {
   }
 
   public double Lorentz(DiffrDataFile adatafile, double position) {
-    return 1.0;
+	  if (position < Constants.PI)
+      return 1.0;
+	  return 0.0;
   }
 
   public double polarization(DiffrDataFile adatafile, double position) {
-    return 1.0;
+	  if (position < Constants.PI)
+		  return 1.0;
+	  return 0.0;
   }
 
   /**

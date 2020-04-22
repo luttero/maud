@@ -54,10 +54,13 @@ public class GeometryDebyeScherrer extends GeometryDiffractometer {
   }
 
   public double Lorentz(DiffrDataFile adatafile, double position) {
-    double sintheta, costheta, lp;
-    sintheta = Math.sin(position);
-    costheta = Math.cos(position);
-    lp = 0.5 / (costheta * sintheta * sintheta);
+  	double lp = 0.0;
+  	if (position < Constants.PI) {
+  		double sintheta, costheta;
+  		sintheta = Math.sin(position * 0.5);
+  		costheta = Math.cos(position * 0.5);
+  		lp = 0.5 / (costheta * sintheta * sintheta);
+  	}
     return lp;
   }
 
