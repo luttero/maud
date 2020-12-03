@@ -1,5 +1,5 @@
 <application>
   <component name="UISettings">
-    <option name="FONT_FACE" value=".SFNSText-Regular" />
+    <option name="IDE_AA_TYPE" value="Greyscale" />
   </component>
 </application>
