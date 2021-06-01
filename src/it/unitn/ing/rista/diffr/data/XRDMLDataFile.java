@@ -87,6 +87,8 @@ public class XRDMLDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
       String scanAxis = scanElement.getAttribute("scanAxis");
 
       NodeList intensities = scanElement.getElementsByTagName("intensities");
+	    if (intensities.getLength() == 0)
+		    intensities = scanElement.getElementsByTagName("counts");
       if (intensities.getLength() > 0) {
         // intensities
         Vector intVector = new Vector();

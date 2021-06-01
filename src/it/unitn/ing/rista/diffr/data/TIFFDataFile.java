@@ -178,24 +178,24 @@ public class TIFFDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
 		}
 		FlatCCDReflectionSquareRoi.getXYFromPixelIndex(minX, maxX, minY, maxY, cal.pixelWidth, cal.pixelHeight,
 				x, y, centerX, centerY);
-/*    System.out.println("Conversion to xy coordinates done: " + minX + " " + maxX + " " + minY + " " + maxY + " " +
-		    dimension[0] + " " + dimension[1] + " " + x[3] + " " + y[3] + " " + centerX + " " + centerY);*/
+//    System.out.println("Conversion to xy coordinates done: " + minX + " " + maxX + " " + minY + " " + maxY + " " +
+//		    cal.pixelWidth + " " + cal.pixelHeight + " " + x[3] + " " + y[3] + " " + centerX + " " + centerY);
 
 		double[] theta2 = new double[npointsX * npointsY];
 		double[] eta = new double[npointsX * npointsY];
 //	        Angles.getTheta2EtaFromXYPixelDetector(x, y, theta2, eta, omega, det2Theta, phiDA,
 //			        omegaDN, etaDA, detectorDistance, 0.0);
-/*	        System.out.println("Converting to 2theta, eta: " + dimension[3] + " " +
-			        dimension[5] + " " + azimuthal + " " +
-			        phiDetector + " 0 " + dimension[7]);*/
+//		System.out.println("Converting to 2theta, eta: " + omega + " " +
+//				detector2Theta + " " + azimuthal + " " +
+//				phiDetector + " " + coneAngle + " " + detectorDistance);
 		Angles.getTheta2EtaFromXYPixelDetector(x, y, theta2, eta, omega,
 				detector2Theta, azimuthal, phiDetector, coneAngle, detectorDistance, 0);
-/*	        System.out.println("Conversion to theta, eta angles done! " + theta2[0] + " " + theta2[theta2.length - 1] + " " +
-			        eta[0] + " " + eta[eta.length - 1]);*/
-		double min2theta = 2.0 * Math.PI;
-		double max2theta = -2 * Math.PI;
-		double mineta = 2 * Math.PI;
-		double maxeta = -2 * Math.PI;
+//	        System.out.println("Conversion to theta, eta angles done! " + theta2[0] + " " + theta2[theta2.length - 1] + " " +
+//			        eta[0] + " " + eta[eta.length - 1]);
+		double min2theta = 1.0E32; //2.0 * Math.PI;
+		double max2theta = -1.0E32; //-2 * Math.PI;
+		double mineta = 2.0 * Math.PI;
+		double maxeta = -2.0 * Math.PI;
 		for (int i = 0; i < theta2.length; i++) {
 			if (min2theta > theta2[i])
 				min2theta = theta2[i];
@@ -209,19 +209,19 @@ public class TIFFDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
 		double nmineta = 0.0;
 		int i = 0;
 		while (nmineta < mineta)
-			nmineta = i++ * coneInterval * Constants.DEGTOPI;
+			nmineta = coneInterval * Constants.DEGTOPI * i++;
 		while (nmineta >= mineta + coneInterval * Constants.DEGTOPI)
-			nmineta = i-- * coneInterval * Constants.DEGTOPI;
+			nmineta = coneInterval * Constants.DEGTOPI * i--;
 		mineta = nmineta;
 		double nmintheta = 0.0;
 		i = 0;
 		while (nmintheta < min2theta)
-			nmintheta = i++ * theta2Step * Constants.DEGTOPI;
+			nmintheta = theta2Step * Constants.DEGTOPI * i++;
 		while (nmintheta >= min2theta + theta2Step * Constants.DEGTOPI)
-			nmintheta = i-- * theta2Step * Constants.DEGTOPI;
+			nmintheta = theta2Step * Constants.DEGTOPI * i--;
 		min2theta = nmintheta;
 
-//	        System.out.println(theta2.length + " " + eta.length + " " + intensity.length + " " + x.length + " " + y.length + " " + detectorDistance +
+//	        System.out.println("Spectra conversion: " + theta2.length + " " + eta.length + " " + intensity.length + " " + x.length + " " + y.length + " " + detectorDistance +
 //			        " " + min2theta + " " + max2theta + " " + theta2Step * Constants.DEGTOPI + " " + mineta + " " + maxeta + " " +
 //			        coneInterval * Constants.DEGTOPI);
 		double[][][] profile = Angles.spectraFromPixelsByEtaTheta2(theta2, eta, intensity, x, y, detectorDistance,

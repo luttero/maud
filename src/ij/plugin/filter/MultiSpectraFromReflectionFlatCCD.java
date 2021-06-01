@@ -159,17 +159,25 @@ public class MultiSpectraFromReflectionFlatCCD extends OvalSpectraSelection {
         MaudPreferences.getDouble("pixelDetector.trackerRadius", roi.getCircle()), 2);
 /*    param.addNumericField("Selection height ("+imp.getCalibration().getUnit()+")", MaudPreferences.getDouble(
             "camera.defaultHeight", 100.0), 2);*/
-    if (prop != null && prop.containsKey(BrukerImageReader.brukerImage)) {
-    param.addNumericField("Eta step for spectra (deg)", MaudPreferences.getDouble(
-            "brukerImage.defaultDiffractionConeInterval", 5.0), 2);
-    param.addNumericField("2theta step for spectra (deg)", MaudPreferences.getDouble(
-            "brukerImage.defaultDiffractionStepAngle", 0.02), 4);
-    } else {
-      param.addNumericField("Eta step for spectra (deg)", MaudPreferences.getDouble(
-              "pixelDetector.defaultDiffractionConeInterval", 5.0), 2);
-      param.addNumericField("2theta step for spectra (deg)", MaudPreferences.getDouble(
-              "pixelDetector.defaultDiffractionStepAngle", 0.02), 4);
-    }
+
+	  double idealStep = imp.getCalibration().pixelWidth / roi.getRadius() * 180.0 / Math.PI;
+	  int counts = 0;
+	  while (idealStep < 1.0) {
+		  idealStep *= 10.0;
+		  counts++;
+	  }
+	  int iStep = (int) idealStep;
+	  float idealStepf = iStep;
+	  for (int i = 0; i < counts; i++)
+	  	idealStepf /= 10;
+
+	  String prefix = "pixelDetector";
+    if (prop != null && prop.containsKey(BrukerImageReader.brukerImage))
+	    prefix = "brukerImage";
+	  param.addNumericField("Eta step for spectra (deg)", MaudPreferences.getDouble(
+			  prefix + ".defaultDiffractionConeInterval", 5.0), 2);
+	  param.addNumericField("2theta step (deg, >= " + idealStepf + ")", MaudPreferences.getDouble(
+			  prefix + ".defaultDiffractionStepAngle", idealStepf), 4);
     param.addNumericField("Sample omega angle (deg)", omega, 2);
     param.addNumericField("Sample chi angle (deg)", chi, 2);
     param.addNumericField("Sample phi angle (deg)", phi, 2);

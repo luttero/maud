@@ -50,6 +50,7 @@ public class Native {
         if (osName.startsWith("Win")) {
             return "win";
         }
+//	    System.out.println(osName);
         return osName;
     }
 
@@ -61,6 +62,7 @@ public class Native {
         if (osArch.equals("amd64") || osArch.equals("IA64N") || osArch.equals("x86_64") || osArch.equals("IA64W")) {
             return "64";
         }
+//        System.out.println(osArch);
         return osArch;
     }
 
@@ -124,9 +126,9 @@ public class Native {
 	         cmd.add(EXECUTABLE_PATH + set.getExec());
             cmd.add(set.getParamFile().getAbsolutePath());
 
-//            System.out.println(cmd);
+            System.out.println(cmd);
             ProcessBuilder p = new ProcessBuilder(cmd);
-//            System.out.println(p.toString());
+            System.out.println(p.toString());
             Process process = p.start();
             int i = process.waitFor();
             if (i == 0) {
@@ -139,7 +141,7 @@ public class Native {
             Logger.getLogger(Native.class.getName()).log(Level.SEVERE, "Mtex: " + set.getExec() + " not running properly!", ex);
         }
 
-        set.cleanup();
+// Luca       set.cleanup();
         return result;
     }
 
@@ -224,8 +226,8 @@ public class Native {
                 }
 	            tmpfile.close();
 					Utilities.setPermission(tmpparam, false);
-					if (name.startsWith("res"))
-						tmpparam.delete();
+// Luca					if (name.startsWith("res"))
+// Luca						tmpparam.delete();
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(Native.class.getName()).log(Level.SEVERE,
 		                "Mtex: add parameter and save, file not found: " + tmpparam.getAbsolutePath(), ex);

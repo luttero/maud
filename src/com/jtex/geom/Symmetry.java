@@ -343,8 +343,8 @@ public class Symmetry extends Quaternion {
         } /*else if (schoen.isLaue("mmm", "-3m", "4/mmm", "m-3m", "6/mmm", "m-3")) {
          theta = Math.PI;
          } */ else if (schoen.isLaue("2/m")) {
-            if (!antipodal && !get(2).axis().dot(Vec3.zvector()).isNull().any()) {
-                theta = 2 * Math.PI;
+            if (!antipodal) { // Luca && !get(2).axis().dot(Vec3.zvector()).isNull().any()) {
+// Luca                theta = 2 * Math.PI;
             }
         }
         return theta;

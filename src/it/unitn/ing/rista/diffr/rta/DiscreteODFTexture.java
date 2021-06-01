@@ -1475,7 +1475,7 @@ public class DiscreteODFTexture extends Texture {
       for (int j = 0; j < 2; j++)
         new_texture_angles[j][i] = texture_angles[j][i];
 
-    double[] textureFactors = computeTextureFactor(new_texture_angles, sctf, fhir, inv);
+    double[] textureFactors = computeTextureFactor(new_texture_angles, sctf, fhir, inv, h, k, l);
 
     count = 0;
     countIncluded = 0;
@@ -1513,7 +1513,7 @@ public class DiscreteODFTexture extends Texture {
         sctf[3] = Math.cos(beta);
         double fhir = beta;
         int inv = Uwimvuo.equiv(LaueGroupSnumber, sctf);
-        double[] value = computeTextureFactor(textureAngles, sctf, fhir, inv);
+        double[] value = computeTextureFactor(textureAngles, sctf, fhir, inv, 0, 0, 0);
         PFreconstructed[i][j] = value[0];
       }
     return PFreconstructed;
@@ -1538,7 +1538,7 @@ public class DiscreteODFTexture extends Texture {
       sctf[3] = Math.cos(phibeta[1][i]);
       double fhir = phibeta[1][i];
       int inv = Uwimvuo.equiv(LaueGroupSnumber, sctf);
-      double[] value = computeTextureFactor(textureAngles, sctf, fhir, inv);
+      double[] value = computeTextureFactor(textureAngles, sctf, fhir, inv, 0, 0, 0);
       PFreconstructed[i] = value[0];
     }
 
@@ -2517,7 +2517,8 @@ public class DiscreteODFTexture extends Texture {
   }
 
   public double[] computeTextureFactor(double[][] texture_angles,
-                                       double[] sctf, double fhir, int inv) {
+                                       double[] sctf, double fhir, int inv,
+                                       int h, int k, int l) {
     return null;
   }
 
@@ -2577,7 +2578,7 @@ public class DiscreteODFTexture extends Texture {
 //								  }
 							  }
 						  }
-						  double[] texFactor = computeTextureFactor(texAngle, sctf, fhir, inv);
+						  double[] texFactor = computeTextureFactor(texAngle, sctf, fhir, inv, refl.getH(), refl.getK(), refl.getL());
 						  synchronized(asample) {
 							  int index = 0;
 							  for (int i = 0; i < asample.activeDatasetsNumber(); i++) {
@@ -2641,7 +2642,7 @@ public class DiscreteODFTexture extends Texture {
 //					  }
 				  }
 			  }
-			  double[] texFactor = computeTextureFactor(texAngle, sctf, fhir, inv);
+			  double[] texFactor = computeTextureFactor(texAngle, sctf, fhir, inv, refl.getH(), refl.getK(), refl.getL());
 			  idatafile = 0;
 			  for (int i = 0; i < asample.activeDatasetsNumber(); i++) {
 				  int datafilenumber = asample.getActiveDataSet(i).activedatafilesnumber();

@@ -22,6 +22,7 @@ package it.unitn.ing.rista.diffr.detector;
 
 import it.unitn.ing.rista.diffr.XRDcat;
 import java.lang.*;
+import it.unitn.ing.rista.util.Misc;
 
 /**
  *  The AngleEnergyMapDetector is a class
@@ -50,6 +51,13 @@ public class AngleEnergyMapDetector extends XRFDetector {
 		identifier = "Angle-energy map detector";
 		IDlabel = identifier;
 		description = identifier;
+	}
+
+	public int getBankNumber(String bankID) {
+    String number = Misc.toStringFinalOnlyDigits(bankID);
+    if (number.length() > 0)
+      return Integer.parseInt(number) - 1;
+    return -1;
 	}
 
 }

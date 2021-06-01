@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.8.2
+Created-By: 1.6.0_33-b03-424-10M3720 (Apple Inc.)
+Main-Class: ij.ImageJ
+

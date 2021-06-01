@@ -33,24 +33,24 @@ public class IPRFileReader {
 				double theta2 = Double.parseDouble(theta2string);
 				int roundedForName = (int) (theta2 + 0.5);
 				String nameAndTof_theta = "Bank" + roundedForName;
-        boolean found = false;
-        for (int i = 0; i < data.mbank.size(); i++) {
-          if (Math.abs(((HIPPOBank) data.mbank.elementAt(i)).theta2 - theta2) < maxBankToleranceTheta) {
-            ((HIPPOBank) data.mbank.elementAt(i)).available = true;
-            found = true;
-          }
-        }
-        if (!found) {
-          String number = line.substring(3, 6);
-          number = number.trim();
-//	        System.out.println(number);
-          data.mbank.add(new HIPPOBank(nameAndTof_theta, theta2, Integer.parseInt(number), true));
-//	        System.out.println("Number of banks read: " + data.mbank.size() + " " + nameAndTof_theta + " " + number);
-        }
-      }
+				boolean found = false;
+				for (int i = 0; i < data.mbank.size(); i++) {
+					if (Math.abs(((HIPPOBank) data.mbank.elementAt(i)).theta2 - theta2) < maxBankToleranceTheta) {
+						((HIPPOBank) data.mbank.elementAt(i)).available = true;
+						found = true;
+					}
+				}
+				if (!found) {
+					String number = line.substring(3, 6);
+					number = number.trim();
+//	            System.out.println(number);
+					data.mbank.add(new HIPPOBank(nameAndTof_theta, theta2, Integer.parseInt(number), true));
+//	            System.out.println("Number of banks read: " + data.mbank.size() + " " + nameAndTof_theta + " " + number);
+				}
+			}
 
 		}
-		
+
 	}
 
 }

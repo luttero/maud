@@ -297,14 +297,16 @@ public class MultiPlotFitting2DPanel extends CopyPrintablePanel {
             values[j++] = intValue;
             values[j++] = intValue;
           }
-          if (values[j - 1] < IntensityMin && computeMinMax)
-            IntensityMin = (double) values[j - 1];
-          else if (values[j - 1] < IntensityMin && !computeMinMax)
-            values[j - 1] = IntensityMin;
-          if (values[j - 1] > IntensityMax && computeMinMax)
-            IntensityMax = (double) values[j - 1];
-          else if (values[j - 1] > IntensityMax && !computeMinMax)
-            values[j - 1] = IntensityMax;
+	        if (values[j - 1] != Double.NaN) {
+		        if (values[j - 1] < IntensityMin && computeMinMax)
+			        IntensityMin = values[j - 1];
+		        else if (values[j - 1] < IntensityMin && !computeMinMax)
+			        values[j - 1] = IntensityMin;
+		        if (values[j - 1] > IntensityMax && computeMinMax)
+			        IntensityMax = values[j - 1];
+		        else if (values[j - 1] > IntensityMax && !computeMinMax)
+			        values[j - 1] = IntensityMax;
+	        }
         }
 /*
 
@@ -351,14 +353,16 @@ public class MultiPlotFitting2DPanel extends CopyPrintablePanel {
             values[j++] = it.unitn.ing.jgraph.ColorMap.DUMMY_VALUE;
           else {
             values[j++] = datafile[sn].getInterpolatedFitSqrtIntensity(xaxis[i], 2, mode);
-            if (values[j - 1] < IntensityMin && computeMinMax)
-              IntensityMin = (double) values[j - 1];
-            else if (values[j - 1] < IntensityMin && !computeMinMax)
-              values[j - 1] = IntensityMin;
-            if (values[j - 1] > IntensityMax && computeMinMax)
-              IntensityMax = (double) values[j - 1];
-            else if (values[j - 1] > IntensityMax && !computeMinMax)
-              values[j - 1] = IntensityMax;
+	          if (values[j - 1] != Double.NaN) {
+		          if (values[j - 1] < IntensityMin && computeMinMax)
+			          IntensityMin = (double) values[j - 1];
+		          else if (values[j - 1] < IntensityMin && !computeMinMax)
+			          values[j - 1] = IntensityMin;
+		          if (values[j - 1] > IntensityMax && computeMinMax)
+			          IntensityMax = (double) values[j - 1];
+		          else if (values[j - 1] > IntensityMax && !computeMinMax)
+			          values[j - 1] = IntensityMax;
+	          }
           }
         }
 /*

@@ -458,6 +458,7 @@ public class MTextureModel extends DiscreteODFTexture {
 	}
 
 	public int textureInitialization() {
+		LaueGroupSnumber = getLaueGroupNumber();
 		sampleSymmetryValue = computeSampleSymmetryValue();
 
 		phiturn = getDouble(prefs[2], Double.parseDouble(Texture.prefVal[2]));
@@ -826,6 +827,43 @@ public class MTextureModel extends DiscreteODFTexture {
 
 		return null;
 	}
+
+	public double[] computeTextureFactor(double[][] texture_angles,
+	                                     double[] sctf, double fhir, int inv,
+	                                     int h, int k, int l) {
+
+		if (odf != null) {
+			return computePF(getPhase(), texture_angles, h, k, l);
+		}
+		return null;
+	}
+
+	public double[] computePF(Phase aphase, double[][] texture_angles, int h, int k, int l) {
+
+		if (odf == null)
+			return null;
+
+		int numberOfPoints = texture_angles[0].length;
+		double[] fs = new double[numberOfPoints];
+
+		int LGIndex = SpaceGroups.getLGNumber(getPhase().getPointGroup());
+
+		String symmetry = it.unitn.ing.rista.util.SpaceGroups.laueGroupOnly[LGIndex];
+		Symmetry cs = new Symmetry(symmetry, aphase.getFullCellValue(0), aphase.getFullCellValue(1), aphase.getFullCellValue(2),
+				aphase.getFullCellValue(3), aphase.getFullCellValue(4), aphase.getFullCellValue(5));
+
+		double[] theta = new double[numberOfPoints], rho = new double[numberOfPoints];
+		for (int i = 0; i < numberOfPoints; i++) {
+			theta[i] = texture_angles[0][i];
+			rho[i] = texture_angles[1][i];
+		}
+		com.jtex.qta.PoleFigure pf = odf.calcPoleFigure(new Miller(h, k, l, cs, ""), new Vec3(theta, rho));
+		Array1D reflData = pf.getData();
+		for (int i = 0; i < numberOfPoints; i++)
+			theta[i] = reflData.get(i);
+		return theta;
+	}
+
 	public JOptionsDialog getOptionsDialog(Frame parent) {
 		return new JMTextureOptionsD(parent, this);
 	}

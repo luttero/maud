@@ -607,7 +607,7 @@ public class GSASbankCalibration extends AngularCalibration {
                 stringField[2] = st.nextToken();
 //	              System.out.println("FPATH1(" + banknumber + "): " + stringField[2]);
               } else if (token.equalsIgnoreCase("ICONS")) {
-//	              System.out.println(banknumber);
+//              	 System.out.println(this + ", Adding bank number: " + banknumber);
                 addBank(bankPrefix + bankString);
                 addDifc(banknumber, token = st.nextToken());
                 addDifa(banknumber, token = st.nextToken());
@@ -631,6 +631,7 @@ public class GSASbankCalibration extends AngularCalibration {
         reader.close();
       } catch (IOException e) {
       }
+//      System.out.println("Number of banks loaded: " + banknumbers());
     }
 
     checkConsistency(true);

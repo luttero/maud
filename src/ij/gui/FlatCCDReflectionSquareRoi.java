@@ -183,8 +183,8 @@ public class FlatCCDReflectionSquareRoi extends LaueOvalRoi {
 
 //    count++;
     ycoord *= coordTrasfY;
-    double tan2t = Math.tan(getCircle() * Constants.DEGTOPI);
-    tan2t *= tan2t;
+//    double tan2t = Math.tan(getCircle() * Constants.DEGTOPI);
+//    tan2t *= tan2t;
     double centerX = getX();
     double centerY = getY();
     double zs = 0.0;
@@ -197,12 +197,12 @@ public class FlatCCDReflectionSquareRoi extends LaueOvalRoi {
     double b = ABC[1];
     double c = ABC[2];
 
-    if (Math.abs(a) > 1.0E-9) {
+    if (Math.abs(a) > 1.0E-18) {
       double sqrt = Math.sqrt(b * b - 4.0 * a * c);
       coordX[0] = -(b + sqrt) / (2.0 * a);
       coordX[1] = -(b - sqrt) / (2.0 * a);
     } else {
-      if (Math.abs(b) > 1.0E-9) {
+      if (Math.abs(b) > 1.0E-18) {
         coordX[0] = -c / b;
         coordX[1] = -c / b;
       } else {
@@ -282,25 +282,24 @@ public class FlatCCDReflectionSquareRoi extends LaueOvalRoi {
     }
 //    System.out.println(index);
     getXYFromPixelIndex(minX, maxX, minY, maxY, coordTrasfX, coordTrasfY, x, y, centerX, centerY);
-/*	  System.out.println("Conversion to xy coordinates done: " + minX + " " + maxX + " " + minY + " " + maxY + " " +
-			  coordTrasfX + " " + coordTrasfY + " " + x[3] + " " + y[3] + " " + centerX + " " + centerY);*/
+//	  System.out.println("Conversion to xy coordinates done: " + minX + " " + maxX + " " + minY + " " + maxY + " " +
+//			  coordTrasfX + " " + coordTrasfY + " " + x[3] + " " + y[3] + " " + centerX + " " + centerY);
 
     double[] theta2 = new double[npointsX * npointsY];
     double[] eta = new double[npointsX * npointsY];
     double detectorDistance = getRadius();
-/*	  System.out.println("Converting to 2theta, eta: " + omega + " " +
-			  det2Theta + " " + phiDA + " " +
-			  omegaDN + " " + etaDA + " " + detectorDistance);*/
+//	  System.out.println("Converting to 2theta, eta: " + omega + " " +
+//			  det2Theta + " " + phiDA + " " +
+//			  omegaDN + " " + etaDA + " " + detectorDistance);
     Angles.getTheta2EtaFromXYPixelDetector(x, y, theta2, eta, omega, det2Theta, phiDA,
         omegaDN, etaDA, detectorDistance, 0.0);
-/*    System.out.println("Conversion to theta, eta angles done! " + theta2[0] + " " + theta2[theta2.length - 1] + " " +
-        eta[0] + " " + eta[eta.length - 1]);*/
-
+//    System.out.println("Conversion to theta, eta angles done! " + theta2[0] + " " + theta2[theta2.length - 1] + " " +
+//        eta[0] + " " + eta[eta.length - 1]);
 
     double min2theta = 1.0E32; //2.0 * Math.PI;
     double max2theta = -1.0E32; //-2 * Math.PI;
-    double mineta = 2 * Math.PI;
-    double maxeta = -2 * Math.PI;
+    double mineta = 2.0 * Math.PI;
+    double maxeta = -2.0 * Math.PI;
     for (int i = 0; i < theta2.length; i++) {
       if (min2theta > theta2[i])
         min2theta = theta2[i];
@@ -315,23 +314,23 @@ public class FlatCCDReflectionSquareRoi extends LaueOvalRoi {
     double nmineta = 0.0;
     int i = 0;
     while (nmineta < mineta)
-      nmineta = i++ * coneInterval * Constants.DEGTOPI;
+      nmineta = coneInterval * Constants.DEGTOPI * i++;
     while (nmineta >= mineta + coneInterval * Constants.DEGTOPI)
-      nmineta = i-- * coneInterval * Constants.DEGTOPI;
+      nmineta = coneInterval * Constants.DEGTOPI * i--;
     mineta = nmineta;
     double nmintheta = 0.0;
     i = 0;
     while (nmintheta < min2theta)
-      nmintheta = i++ * theta2Step * Constants.DEGTOPI;
+      nmintheta = theta2Step * Constants.DEGTOPI * i++;
     while (nmintheta >= min2theta + theta2Step * Constants.DEGTOPI)
-      nmintheta = i-- * theta2Step * Constants.DEGTOPI;
+      nmintheta = theta2Step * Constants.DEGTOPI * i--;
     min2theta = nmintheta;
 
 //    System.out.println("BrukerImageReader, angles: " + detectorDistance + " " + min2theta + " " + max2theta + " " +
 //        theta2Step * Constants.DEGTOPI + " " + mineta + " " + maxeta + " " + coneInterval * Constants.DEGTOPI);
-/*	  System.out.println("BrukerImageReader, angles: " + theta2.length + " " + eta.length + " " + intensity.length + " " + x.length + " " + y.length + " " + detectorDistance +
-			  " " + min2theta + " " + max2theta + " " + theta2Step * Constants.DEGTOPI + " " + mineta + " " + maxeta + " " +
-			  coneInterval * Constants.DEGTOPI);*/
+//	  System.out.println("Spectra from pixels, angles: " + theta2.length + " " + eta.length + " " + intensity.length + " " + x.length + " " + y.length + " " + detectorDistance +
+//			  " " + min2theta + " " + max2theta + " " + theta2Step * Constants.DEGTOPI + " " + mineta + " " + maxeta + " " +
+//			  coneInterval * Constants.DEGTOPI);
     double[][][] profile = Angles.spectraFromPixelsByEtaTheta2(theta2, eta, intensity, x, y, detectorDistance,
         min2theta, max2theta, theta2Step * Constants.DEGTOPI,
         mineta, maxeta, coneInterval * Constants.DEGTOPI);

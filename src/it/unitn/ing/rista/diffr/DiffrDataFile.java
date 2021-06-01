@@ -272,6 +272,8 @@ public class DiffrDataFile extends XRDcat {
 //	private String measurementDate;
 //	private String measurementTime;
 
+	protected Vector<double[]> indicesDataHoles = new Vector<>();
+
 	public DiffrDataFile(XRDcat aobj, String alabel) {
 		super(aobj, alabel);
 		setParent(aobj);
@@ -1987,6 +1989,8 @@ public class DiffrDataFile extends XRDcat {
       calibrated = true;
     } else
       out.println("Warning: uncalibrated x coordinate");
+
+    checkDataHoles();
   }
 
   public double notCalibrated(double x) {
@@ -2016,6 +2020,59 @@ public class DiffrDataFile extends XRDcat {
 
     return x;
   }*/
+
+	public void checkDataHoles() {
+		indicesDataHoles.clear();
+		int datanumber = getTotalNumberOfData();
+		if (datanumber < 5) return;
+		double previousValue = getXData(0);
+		double meanDeltaValue = 0;
+		for (int i = 1; i < datanumber; i++) {
+			double value = getXData(i);
+			meanDeltaValue += Math.abs(value - previousValue);
+			previousValue = value;
+		}
+		meanDeltaValue /= (datanumber - 1);
+
+		previousValue = getXData(0);
+		double deltaValue = meanDeltaValue; // Math.abs(previousValue - getXData(0));
+		int firstIndex = -1;
+		for (int i = 1; i < datanumber; i++) {
+			double value = getXData(i);
+			double actualDeltaValue = Math.abs(value - previousValue);
+//			System.out.println(i + ", value: " + value + " - " + previousValue + " " + deltaValue + " * 3 < " + actualDeltaValue + " |||| " + meanDeltaValue);
+			if (deltaValue / meanDeltaValue > 0.01 && deltaValue * 3.0 < actualDeltaValue) {
+//				System.out.println("Starting: " + i);
+				firstIndex = i - 1;
+			} else {
+				if (firstIndex > -1) {
+					double[] newData = new double[2];
+					newData[0] = getXData(firstIndex);
+					newData[1] = getXData(i - 1);
+					if (newData[1] < newData[0]) {
+						// switch
+						double switchValue = newData[0];
+						newData[0] = newData[1];
+						newData[1] = switchValue;
+					}
+//					System.out.println("Ending: " + i + ", range: " + newData[0] + ", " + newData[1]);
+					indicesDataHoles.add(newData);
+					firstIndex = -1;
+				}
+			}
+			deltaValue = actualDeltaValue;
+			previousValue = value;
+		}
+	}
+
+	boolean isInsideHoles(double x) {
+		for (int i = 0; i < indicesDataHoles.size(); i++) {
+			double[] values = indicesDataHoles.elementAt(i);
+			if (x > values[0] && x < values[1])
+				return true;
+		}
+		return false;
+	}
 
   public double getYData(int index) {
     return intensity[index];
@@ -2953,6 +3010,8 @@ public class DiffrDataFile extends XRDcat {
 
   public double getInterpolatedYSqrtIntensity(double xvalue, double expT, double expT2, int mode) {
     xvalue = revertXDataForPlot(xvalue, mode);
+    if (isInsideHoles(xvalue))
+    	return Double.NaN;
     if (PlotDataFile.subtractBackground())
       return getValueScaled(getInterpolatedIntensity(xvalue, expT, expT2) -
           getInterpolatedBackground(xvalue, expT, expT2), getOldNearestPoint(xvalue));
@@ -2962,6 +3021,8 @@ public class DiffrDataFile extends XRDcat {
 
   public double getInterpolatedYSqrtIntensity(double xvalue, int exponent, int mode) {
     xvalue = revertXDataForPlot(xvalue, mode);
+    if (isInsideHoles(xvalue))
+    	return Double.NaN;
     if (PlotDataFile.subtractBackground())
       return getValueScaled(getInterpolatedIntensityAt(xvalue, exponent) -
           getInterpolatedBkgFitAt(xvalue, exponent), getOldNearestPoint(xvalue));
@@ -2971,11 +3032,15 @@ public class DiffrDataFile extends XRDcat {
 
   public double getInterpolatedYForSummation(double xvalue) {
     xvalue = revertXDataForPlot(xvalue, 0);
+    if (isInsideHoles(xvalue))
+    	return Double.NaN;
     return getValueScaled(getInterpolatedIntensityAt(xvalue, 1), getOldNearestPoint(xvalue));
   }
 
   public double getInterpolatedFitSqrtIntensity(double xvalue, int exponent, int mode) {
     xvalue = revertXDataForPlot(xvalue, mode);
+    if (isInsideHoles(xvalue))
+    	return Double.NaN;
     if (PlotDataFile.subtractBackground())
       return getValueScaled(getInterpolatedFitAt(xvalue, exponent) -
           getInterpolatedBkgFitAt(xvalue, exponent), getOldNearestPoint(xvalue));
@@ -2985,6 +3050,8 @@ public class DiffrDataFile extends XRDcat {
 
   public double getInterpolatedFitSqrtIntensity(double xvalue, int exponent, int mode, int phase) {
     xvalue = revertXDataForPlot(xvalue, mode);
+    if (isInsideHoles(xvalue))
+    	return Double.NaN;
     if (PlotDataFile.subtractBackground())
       return getValueScaled(getInterpolatedFitAt(xvalue, exponent, phase), getOldNearestPoint(xvalue));
     else
@@ -2994,6 +3061,8 @@ public class DiffrDataFile extends XRDcat {
 
   public double getInterpolatedBkgFitSqrtIntensity(double xvalue, int exponent, int mode) {
     xvalue = revertXDataForPlot(xvalue, mode);
+    if (isInsideHoles(xvalue))
+    	return Double.NaN;
     return getValueScaled(getInterpolatedBkgFitAt(xvalue, exponent), getOldNearestPoint(xvalue));
   }
 
@@ -5145,6 +5214,7 @@ public class DiffrDataFile extends XRDcat {
 //		System.out.println("Diffraction datafile: " + this.getLabel() + ", refresh indices: " + numberOfReflections);
 		int[] reflectionsIDs = getReflectionIDs(phase);
 		boolean reflectionsChanged = false;
+		boolean updatedIndices = false;
 		int[] indices = null;
 		if (reflectionsIDs == null) {
 			reflectionsIDs = new int[numberOfReflections];
@@ -5158,6 +5228,7 @@ public class DiffrDataFile extends XRDcat {
 				indices = updateIndicesFromTo(reflectionsIDs, newReflectionsIDs);
 				phaseReflectionIDs.remove(phase);
 				phaseReflectionIDs.put(phase, newReflectionsIDs);
+				updatedIndices = true;
 			}
 		}
 
@@ -5167,6 +5238,14 @@ public class DiffrDataFile extends XRDcat {
 			phaseTextureFactors.put(phase, textureFactors);
 			resetTextureFactors(phase);
 		} else if (reflectionsChanged || textureFactors[0].length != numberOfReflections || textureFactors[0][0].length != positionsPerPattern || textureFactors[0][0][0].length != radNumber) {
+			if (!updatedIndices) {
+				int[] newReflectionsIDs = new int[numberOfReflections];
+				initReflectionIDs(phase, newReflectionsIDs);
+				indices = updateIndicesFromTo(reflectionsIDs, newReflectionsIDs);
+				phaseReflectionIDs.remove(phase);
+				phaseReflectionIDs.put(phase, newReflectionsIDs);
+				updatedIndices = true;
+			}
 			double[][][][] newTextureFactors = new double[2][numberOfReflections][positionsPerPattern][radNumber];
 			phaseTextureFactors.remove(phase);
 			phaseTextureFactors.put(phase, newTextureFactors);
@@ -5179,6 +5258,14 @@ public class DiffrDataFile extends XRDcat {
 			strainFactors = new double[2][numberOfReflections][positionsPerPattern][radNumber];
 			phaseStrainFactors.put(phase, strainFactors);
 		} else if (reflectionsChanged || strainFactors[0].length != numberOfReflections || strainFactors[0][0].length != positionsPerPattern || strainFactors[0][0][0].length != radNumber) {
+			if (!updatedIndices) {
+				int[] newReflectionsIDs = new int[numberOfReflections];
+				initReflectionIDs(phase, newReflectionsIDs);
+				indices = updateIndicesFromTo(reflectionsIDs, newReflectionsIDs);
+				phaseReflectionIDs.remove(phase);
+				phaseReflectionIDs.put(phase, newReflectionsIDs);
+				updatedIndices = true;
+			}
 			double[][][][] newStrainFactors = new double[2][numberOfReflections][positionsPerPattern][radNumber];
 			phaseStrainFactors.remove(phase);
 			phaseStrainFactors.put(phase, newStrainFactors);
@@ -5191,6 +5278,14 @@ public class DiffrDataFile extends XRDcat {
 			positions = new double[numberOfReflections][positionsPerPattern][radNumber];
 			phasePositions.put(phase, positions);
 		} else if (reflectionsChanged || positions.length != numberOfReflections || positions[0].length != positionsPerPattern || positions[0][0].length != radNumber) {
+			if (!updatedIndices) {
+				int[] newReflectionsIDs = new int[numberOfReflections];
+				initReflectionIDs(phase, newReflectionsIDs);
+				indices = updateIndicesFromTo(reflectionsIDs, newReflectionsIDs);
+				phaseReflectionIDs.remove(phase);
+				phaseReflectionIDs.put(phase, newReflectionsIDs);
+				updatedIndices = true;
+			}
 			double[][][] newPositions = new double[numberOfReflections][positionsPerPattern][radNumber];
 			phasePositions.remove(phase);
 			phasePositions.put(phase, newPositions);
@@ -5203,6 +5298,14 @@ public class DiffrDataFile extends XRDcat {
 			minmaxIndices = new int[2][numberOfReflections][positionsPerPattern][radNumber];
 			phaseMinMaxIndices.put(phase, minmaxIndices);
 		} else if (reflectionsChanged || minmaxIndices[0].length != numberOfReflections || minmaxIndices[0][0].length != positionsPerPattern || minmaxIndices[0][0][0].length != radNumber) {
+			if (!updatedIndices) {
+				int[] newReflectionsIDs = new int[numberOfReflections];
+				initReflectionIDs(phase, newReflectionsIDs);
+				indices = updateIndicesFromTo(reflectionsIDs, newReflectionsIDs);
+				phaseReflectionIDs.remove(phase);
+				phaseReflectionIDs.put(phase, newReflectionsIDs);
+				updatedIndices = true;
+			}
 			int[][][][] newMinmaxIndices = new int[2][numberOfReflections][positionsPerPattern][radNumber];
 			phaseMinMaxIndices.remove(phase);
 			phaseMinMaxIndices.put(phase, newMinmaxIndices);
@@ -5215,6 +5318,14 @@ public class DiffrDataFile extends XRDcat {
 			lorentzPolarizations = new double[numberOfReflections][positionsPerPattern][radNumber];
 			phaseLorentzPolarization.put(phase, lorentzPolarizations);
 		} else if (reflectionsChanged || positions.length != numberOfReflections || positions[0].length != positionsPerPattern || positions[0][0].length != radNumber) {
+			if (!updatedIndices) {
+				int[] newReflectionsIDs = new int[numberOfReflections];
+				initReflectionIDs(phase, newReflectionsIDs);
+				indices = updateIndicesFromTo(reflectionsIDs, newReflectionsIDs);
+				phaseReflectionIDs.remove(phase);
+				phaseReflectionIDs.put(phase, newReflectionsIDs);
+				updatedIndices = true;
+			}
 			double[][][] newLorentzPolarizations = new double[numberOfReflections][positionsPerPattern][radNumber];
 			phaseLorentzPolarization.remove(phase);
 			phaseLorentzPolarization.put(phase, newLorentzPolarizations);
@@ -5228,6 +5339,14 @@ public class DiffrDataFile extends XRDcat {
 			shapeAbsorption = new double[numberOfReflections][positionsPerPattern][radNumber];
 			phaseShapeAbsFactors.put(phase, shapeAbsorption);
 		} else if (reflectionsChanged || shapeAbsorption.length != numberOfReflections || shapeAbsorption[0].length != positionsPerPattern || shapeAbsorption[0][0].length != radNumber) {
+			if (!updatedIndices) {
+				int[] newReflectionsIDs = new int[numberOfReflections];
+				initReflectionIDs(phase, newReflectionsIDs);
+				indices = updateIndicesFromTo(reflectionsIDs, newReflectionsIDs);
+				phaseReflectionIDs.remove(phase);
+				phaseReflectionIDs.put(phase, newReflectionsIDs);
+				updatedIndices = true;
+			}
 			double[][][] newShapeAbsorption = new double[numberOfReflections][positionsPerPattern][radNumber];
 			phaseShapeAbsFactors.remove(phase);
 			phaseShapeAbsFactors.put(phase, newShapeAbsorption);
@@ -5242,6 +5361,14 @@ public class DiffrDataFile extends XRDcat {
 			crystallitesMicrostrains = new double[numberCrystStrains][numberOfReflections][positionsPerPattern][radNumber];
 			phaseCrystallitesMicrostrains.put(phase, crystallitesMicrostrains);
 		} else if (reflectionsChanged || crystallitesMicrostrains[0].length != numberOfReflections || crystallitesMicrostrains[0][0].length != positionsPerPattern || crystallitesMicrostrains[0][0][0].length != radNumber) {
+			if (!updatedIndices) {
+				int[] newReflectionsIDs = new int[numberOfReflections];
+				initReflectionIDs(phase, newReflectionsIDs);
+				indices = updateIndicesFromTo(reflectionsIDs, newReflectionsIDs);
+				phaseReflectionIDs.remove(phase);
+				phaseReflectionIDs.put(phase, newReflectionsIDs);
+				updatedIndices = true;
+			}
 			double[][][][] newCrystallitesMicrostrains = new double[numberCrystStrains][numberOfReflections][positionsPerPattern][radNumber];
 			phaseCrystallitesMicrostrains.remove(phase);
 			phaseCrystallitesMicrostrains.put(phase, newCrystallitesMicrostrains);
@@ -5254,6 +5381,14 @@ public class DiffrDataFile extends XRDcat {
 			instrumentBroadening = new double[instrumentBroadeningParNumber][numberOfReflections][positionsPerPattern][radNumber];
 			phaseInstBroadFactors.put(phase, instrumentBroadening);
 		} else if (reflectionsChanged || instrumentBroadening[0].length != numberOfReflections || instrumentBroadening[0][0].length != positionsPerPattern || instrumentBroadening[0][0][0].length != radNumber) {
+			if (!updatedIndices) {
+				int[] newReflectionsIDs = new int[numberOfReflections];
+				initReflectionIDs(phase, newReflectionsIDs);
+				indices = updateIndicesFromTo(reflectionsIDs, newReflectionsIDs);
+				phaseReflectionIDs.remove(phase);
+				phaseReflectionIDs.put(phase, newReflectionsIDs);
+				updatedIndices = true;
+			}
 			double[][][][] newInstrumentBroadening = new double[instrumentBroadeningParNumber][numberOfReflections][positionsPerPattern][radNumber];
 			phaseInstBroadFactors.remove(phase);
 			phaseInstBroadFactors.put(phase, newInstrumentBroadening);
@@ -5266,6 +5401,14 @@ public class DiffrDataFile extends XRDcat {
 			phaseBroadening = new double[2][numberOfReflections][positionsPerPattern][radNumber];
 			phaseBroadFactors.put(phase, phaseBroadening);
 		} else if (reflectionsChanged || phaseBroadening[0].length != numberOfReflections || phaseBroadening[0][0].length != positionsPerPattern || phaseBroadening[0][0][0].length != radNumber) {
+			if (!updatedIndices) {
+				int[] newReflectionsIDs = new int[numberOfReflections];
+				initReflectionIDs(phase, newReflectionsIDs);
+				indices = updateIndicesFromTo(reflectionsIDs, newReflectionsIDs);
+				phaseReflectionIDs.remove(phase);
+				phaseReflectionIDs.put(phase, newReflectionsIDs);
+				updatedIndices = true;
+			}
 			double[][][][] newPhaseBroadening = new double[2][numberOfReflections][positionsPerPattern][radNumber];
 			phaseBroadFactors.remove(phase);
 			phaseBroadFactors.put(phase, newPhaseBroadening);
@@ -5372,10 +5515,10 @@ public class DiffrDataFile extends XRDcat {
 	private void updateCrystallitesMicrostrains(double[][][][] crystallitesMicrostrains, double[][][][] newCrystallitesMicrostrains, int[] indices) {
 		if (indices != null)
 		for (int j = 0; j < indices.length; j++) {
-			if (indices[j] >= 0 && j < newCrystallitesMicrostrains[0].length && indices[j] < crystallitesMicrostrains[0].length)
-				for (int i = 0; i < newCrystallitesMicrostrains.length && i < crystallitesMicrostrains.length; i++)
+			for (int i = 0; i < newCrystallitesMicrostrains.length && i < crystallitesMicrostrains.length; i++)
+				if (indices[j] >= 0 && j < newCrystallitesMicrostrains[0].length && indices[j] < crystallitesMicrostrains[0].length)
 					for (int k = 0; k < newCrystallitesMicrostrains[0][0].length && k < crystallitesMicrostrains[0][0].length; k++)
-						for (int l = 0; l < crystallitesMicrostrains[0][0][0].length; l++)
+						for (int l = 0; l < newCrystallitesMicrostrains[0][0][0].length && l < crystallitesMicrostrains[0][0][0].length; l++)
 							newCrystallitesMicrostrains[i][j][k][l] = crystallitesMicrostrains[i][indices[j]][k][l];
 		}
 	}

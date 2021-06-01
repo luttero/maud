@@ -798,7 +798,7 @@ public class ConvertImageToSpectra {
 
     // compute 2theta
     double a = Math.sqrt(z2 + y2);
-    if (Math.abs(a) < 1.0E-9)
+    if (Math.abs(a) < 1.0E-18)
       return thetaEta;
     double b = Math.sqrt(z2 + y2 + x2);
     thetaEta[0] = Math.asin(a / b);
@@ -806,7 +806,7 @@ public class ConvertImageToSpectra {
       thetaEta[0] = Constants.PI - thetaEta[0];
 
     // compute eta
-    if (Math.abs(xf[2]) < 1.0E-9) {
+    if (Math.abs(xf[2]) < 1.0E-18) {
       if (xf[1] >= 0.0)
         thetaEta[1] = Constants.PI2;
       else
@@ -827,7 +827,7 @@ public class ConvertImageToSpectra {
 // System.out.println(x2 + " " + y2 + " " + z2);
     // compute 2theta
     double a = Math.sqrt(z2 + y2);
-    if (Math.abs(a) < 1.0E-9)
+    if (Math.abs(a) < 1.0E-18)
       return theta;
     double b = Math.sqrt(z2 + y2 + x2);
     theta = Math.asin(a / b);

@@ -455,8 +455,11 @@ public class DataFileSet extends XRDcat {
 					if (xstartmin > datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode))
 						xstartmin = datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode);
 					if (dataForPlot[is2] >= xstartmin && dataForPlot[is2] <= xendmax) {
-						dataForPlot[is2 + 1] += datafile[sn].getInterpolatedYSqrtIntensity(dataForPlot[is2], 2, mode);
-						total++;
+						double value = datafile[sn].getInterpolatedYSqrtIntensity(dataForPlot[is2], 2, mode);
+						if (!Double.isNaN(value)) {
+							dataForPlot[is2 + 1] += value;
+							total++;
+						}
 					}
 				}
 				if (total > 0)
@@ -475,8 +478,11 @@ public class DataFileSet extends XRDcat {
 						if (xstartmin > datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode))
 							xstartmin = datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode);
 						if (datafitForPlot[is2] >= xstartmin && datafitForPlot[is2] <= xendmax) {
-							datafitForPlot[is2 + 1] += datafile[sn].getInterpolatedFitSqrtIntensity(datafitForPlot[is2], 2, mode);
-							totalFit++;
+							double value = datafile[sn].getInterpolatedFitSqrtIntensity(datafitForPlot[is2], 2, mode);
+							if (!Double.isNaN(value)) {
+								datafitForPlot[is2 + 1] += value;
+								totalFit++;
+							}
 						}
 					}
 					if (totalFit > 0)
@@ -503,8 +509,11 @@ public class DataFileSet extends XRDcat {
 								if (xstartmin > datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode))
 									xstartmin = datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode);
 								if (datafitForPlot[j] >= xstartmin && datafitForPlot[j] <= xendmax) {
-									dataphaseForPlot[s][j + 1] += datafile[sn].getInterpolatedFitSqrtIntensity(datafitForPlot[j], 2, mode, s);
-									totalFit++;
+									double value = datafile[sn].getInterpolatedFitSqrtIntensity(datafitForPlot[j], 2, mode, s);
+									if (!Double.isNaN(value)) {
+										dataphaseForPlot[s][j + 1] += value;
+										totalFit++;
+									}
 								}
 							}
 							if (totalFit > 0)
@@ -529,8 +538,11 @@ public class DataFileSet extends XRDcat {
 						if (xstartmin > datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode))
 							xstartmin = datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode);
 						if (datafitForPlot[j] >= xstartmin && datafitForPlot[j] <= xendmax) {
-							backgroundForPlot[j + 1] += datafile[sn].getInterpolatedBkgFitSqrtIntensity(datafitForPlot[j], 2, mode);
-							totalFit++;
+							double value = datafile[sn].getInterpolatedBkgFitSqrtIntensity(datafitForPlot[j], 2, mode);
+							if (!Double.isNaN(value)) {
+								backgroundForPlot[j + 1] += value;
+								totalFit++;
+							}
 						}
 					}
 					if (totalFit > 0)

@@ -43,6 +43,30 @@ from the older one.
 
 Maud Version notes:
 
+(31/05/2021):   2.98. The "Knee" release.
+                I do not want to talk about it.
+                Fixed a couple of outstanding bugs affecting the Hippo
+                wizard and the loading of older datafiles using multibanks
+                TOF data.
+
+(12/05/2021):   2.97. The "Rudy" release.
+                Rudy asked for it by long....
+                Improved the 2D plotting for multispectra. Now the routine does
+                not interpolate anymore over gaps, but the plot remains white.
+                Added some utility functions to help image integration. See the
+                new youtube video on how to work with images.
+                Update (13/05/2021): fix for new xrdml format.
+
+(05/05/2021):   2.96. The "BCH" release.
+                The day today turned for good!
+                There is a new plugin for ImageJ to convert .odeiger images
+                exported by Crysalis to tiff images ready to be used in Maud.
+
+(12/09/2020):   2.95. The "Forgot" release.
+                I forgot what was changed in this release, probably just bug fixes.
+                It is also based on a newer java virtual machine. And it was not
+                released to public.
+
 (06/04/2020):   2.94. The "Covid-19" release.
                 The snow is still out there, plenty of, but we are stuck here...
                 Fixed a problem with the Lorentz-polarization (X-ray). There

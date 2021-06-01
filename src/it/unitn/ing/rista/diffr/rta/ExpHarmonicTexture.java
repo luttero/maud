@@ -199,7 +199,8 @@ public class ExpHarmonicTexture extends HarmonicTexture {
   }
 
   public double[] computeTextureFactor(double[][] texture_angles,
-                                       double[] sctf, double fhir, int inv) {
+                                       double[] sctf, double fhir, int inv,
+                                       int h, int k, int l) {
     if (tubeProjection)
       return calculatePFbyTubeProjection(texture_angles, sctf[0], sctf[1], fhir, inv);
     else
@@ -397,7 +398,7 @@ public class ExpHarmonicTexture extends HarmonicTexture {
 //								  }
 								}
 							}
-							double[] texFactor = computeTextureFactor(texAngle, sctf, fhir, inv);
+							double[] texFactor = computeTextureFactor(texAngle, sctf, fhir, inv, refl.getH(), refl.getK(), refl.getL());
 							synchronized(asample) {
 								int index = 0;
 								for (int i = 0; i < asample.activeDatasetsNumber(); i++) {
@@ -461,7 +462,7 @@ public class ExpHarmonicTexture extends HarmonicTexture {
 //					  }
 					}
 				}
-				double[] texFactor = computeTextureFactor(texAngle, sctf, fhir, inv);
+				double[] texFactor = computeTextureFactor(texAngle, sctf, fhir, inv, refl.getH(), refl.getK(), refl.getL());
 				idatafile = 0;
 				for (int i = 0; i < asample.activeDatasetsNumber(); i++) {
 					int datafilenumber = asample.getActiveDataSet(i).activedatafilesnumber();
@@ -500,7 +501,7 @@ public class ExpHarmonicTexture extends HarmonicTexture {
     double fhir = Math.acos(sctf[3]);
     int inv = Uwimvuo.equiv(LaueGroupSnumber, sctf);
 
-    return computeTextureFactor(alphabeta, sctf, fhir, inv);
+    return computeTextureFactor(alphabeta, sctf, fhir, inv, reflex.getH(), reflex.getK(), reflex.getL());
   }
 
   public double[][] getInversePoleFigureGrid(double[] texture_angles,
@@ -529,7 +530,7 @@ public class ExpHarmonicTexture extends HarmonicTexture {
         sctf[3] = Math.cos(beta);
         double fhir = beta;
         int inv = Uwimvuo.equiv(LaueGroupSnumber, sctf);
-        double[] value = computeTextureFactor(textureAngles, sctf, fhir, inv);
+        double[] value = computeTextureFactor(textureAngles, sctf, fhir, inv, 0, 0, 0);
         PFreconstructed[i][j] = value[0];
       }
     return PFreconstructed;
@@ -554,7 +555,7 @@ public class ExpHarmonicTexture extends HarmonicTexture {
       sctf[3] = Math.cos(phibeta[1][i]);
       double fhir = phibeta[1][i];
       int inv = Uwimvuo.equiv(LaueGroupSnumber, sctf);
-      double[] value = computeTextureFactor(textureAngles, sctf, fhir, inv);
+      double[] value = computeTextureFactor(textureAngles, sctf, fhir, inv, 0, 0, 0);
       PFreconstructed[i] = value[0];
     }
 
@@ -628,7 +629,7 @@ public class ExpHarmonicTexture extends HarmonicTexture {
       for (int j = 0; j < 2; j++)
         new_texture_angles[j][i] = texture_angles[j][i];
 
-    double[] textureFactors = computeTextureFactor(new_texture_angles, sctf, fhir, inv);
+    double[] textureFactors = computeTextureFactor(new_texture_angles, sctf, fhir, inv, h, k, l);
 
     count = 0;
     countIncluded = 0;

@@ -1113,8 +1113,11 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 				    if (xstartmin > datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode))
 					    xstartmin = datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode);
 				    if (data[is2] >= xstartmin && data[is2] <= xendmax) {
-					    data[is2 + 1] += datafile[sn].getInterpolatedYSqrtIntensity(data[is2], 2, mode);
-					    total++;
+				    	double value = datafile[sn].getInterpolatedYSqrtIntensity(data[is2], 2, mode);
+				    	if (!Double.isNaN(value)) {
+					      data[is2 + 1] += value;
+					      total++;
+				      }
 				    }
 			    }
 			    if (total > 0)
@@ -1131,8 +1134,11 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 					    if (xstartmin > datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode))
 						    xstartmin = datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode);
 					    if (datafit[is2] >= xstartmin && datafit[is2] <= xendmax) {
-						    datafit[is2 + 1] += datafile[sn].getInterpolatedFitSqrtIntensity(datafit[is2], 2, mode);
-						    totalFit++;
+						    double value = datafile[sn].getInterpolatedFitSqrtIntensity(datafit[is2], 2, mode);
+						    if (!Double.isNaN(value)) {
+							    datafit[is2 + 1] += value;
+							    totalFit++;
+						    }
 					    }
 				    }
 				    if (totalFit > 0)
@@ -1228,8 +1234,11 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 //            if (is1 == 0)
 //              syaxis[ylength + 1 + sn] = ylength + 1 + sn;
 							    if (datafit[j] >= xstartmin && datafit[j] <= xendmax) {
-								    dataphase[j + 1] += datafile[sn].getInterpolatedFitSqrtIntensity(datafit[j], 2, mode, s);
-								    totalFit++;
+							    	double value = datafile[sn].getInterpolatedFitSqrtIntensity(datafit[j], 2, mode, s);
+							    	if (!Double.isNaN(value)) {
+								      dataphase[j + 1] += value;
+								      totalFit++;
+							      }
 							    }
 						    }
 						    if (totalFit > 0)
@@ -1265,8 +1274,11 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 //            if (is1 == 0)
 //              syaxis[ylength + 1 + sn] = ylength + 1 + sn;
 					    if (datafit[j] >= xstartmin && datafit[j] <= xendmax) {
-						    dataphase[j + 1] += datafile[sn].getInterpolatedBkgFitSqrtIntensity(datafit[j], 2, mode);
-						    totalFit++;
+					    	double value = datafile[sn].getInterpolatedBkgFitSqrtIntensity(datafit[j], 2, mode);
+					    	if (!Double.isNaN(value)) {
+						      dataphase[j + 1] += value;
+						      totalFit++;
+					      }
 					    }
 				    }
 				    if (totalFit > 0)

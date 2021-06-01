@@ -660,7 +660,8 @@ public class WIMVTexture extends DiscreteODFTexture {
   }
 
   public double[] computeTextureFactor(double[][] texture_angles,
-                                       double[] sctf, double fhir, int inv) {
+                                       double[] sctf, double fhir, int inv,
+                                       int h, int k, int l) {
 
     if (odf != null) {
       inv = Uwimvuo.equiv(getLaueGroupNumber(), sctf);

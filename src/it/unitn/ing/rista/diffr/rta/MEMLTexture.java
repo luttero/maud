@@ -3226,7 +3226,8 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 	}
 
 	public double[] computeTextureFactor(double[][] texture_angles,
-	                                     double[] sctf, double fhir, int inv) {
+	                                     double[] sctf, double fhir, int inv,
+	                                     int h, int k, int l) {
 
 		if (odf != null) {
 			if (useTubeProjection())
@@ -3317,7 +3318,7 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 		double fhir = Math.acos(sctf[3]);
 		int inv = Uwimvuo.equiv(LaueGroupSnumber, sctf);
 
-		return computeTextureFactor(alphabeta, sctf, fhir, inv);
+		return computeTextureFactor(alphabeta, sctf, fhir, inv, reflex.getH(), reflex.getK(), reflex.getL());
 	}
 
 /*  public void checkComputation() {

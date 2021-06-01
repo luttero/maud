@@ -50,6 +50,7 @@ public class XrayEbelTubeRadiation extends RadiationType {
 //			"_ebel_radiation_wavelength_id",
 			"_ebel_radiation_minimum_keV",
 			"_ebel_radiation_step_keV",
+			"_ebel_radiation_trasmission_target",
 
 			"_ebel_radiation_tube_voltage_kV",
 			"_ebel_radiation_incident_angle_degrees",
@@ -63,6 +64,7 @@ public class XrayEbelTubeRadiation extends RadiationType {
 //			"_ebel_radiation_wavelength_id",
 			"_ebel_radiation_minimum_keV",
 			"_ebel_radiation_step_keV",
+			"_ebel_radiation_trasmission_target",
 
 			"_ebel_radiation_tube_voltage_kV",
 			"_ebel_radiation_incident_angle_degrees",
@@ -81,6 +83,7 @@ public class XrayEbelTubeRadiation extends RadiationType {
 //	private static int wavelength_id = 0;
 	private static int minimum_keV_id = 0;
 	private static int step_keV_id = 1;
+	private static int trasmission_target_id = 2;
 	private static int voltage_kV_id = 0;
 	private static int incident_angle_id = 1;
 	private static int exiting_angle_id = 2;
@@ -116,7 +119,7 @@ public class XrayEbelTubeRadiation extends RadiationType {
 	}
 
 	public void initConstant() {
-		Nstring = 2;
+		Nstring = 3;
 		Nstringloop = 0;
 		Nparameter = 4;
 		Nparameterloop = 0;
@@ -208,6 +211,7 @@ public class XrayEbelTubeRadiation extends RadiationType {
 //		stringField[wavelength_id] = MaudPreferences.getPref("ebel_tube.anode_element", "Cu");
 		stringField[minimum_keV_id] = MaudPreferences.getPref("ebel_tube.minimum_keV", "1");
 		stringField[step_keV_id] = MaudPreferences.getPref("ebel_tube.computation_step_keV", "0.1");
+		setTrasmissionTarget(MaudPreferences.getBoolean("ebel_tube.trasmission_target", false));
 
 		parameterField[voltage_kV_id] = new Parameter(this, getParameterString(voltage_kV_id), 40,
 				ParameterPreferences.getDouble(getParameterString(voltage_kV_id) + ".min", 20),
@@ -221,6 +225,17 @@ public class XrayEbelTubeRadiation extends RadiationType {
 		parameterField[continuous_scale_factor_id] = new Parameter(this, getParameterString(continuous_scale_factor_id), 1,
 				ParameterPreferences.getDouble(getParameterString(continuous_scale_factor_id) + ".min", 0.1),
 				ParameterPreferences.getDouble(getParameterString(continuous_scale_factor_id) + ".max", 10.0));
+	}
+
+	public boolean trasmissionTarget() {
+		return stringField[trasmission_target_id].equalsIgnoreCase("true");
+	}
+
+	private void setTrasmissionTarget(boolean selected) {
+		if (selected)
+			stringField[trasmission_target_id] = "true";
+		else
+			stringField[trasmission_target_id] = "false";
 	}
 
 	public void checkRadiation() {
@@ -432,6 +447,8 @@ public class XrayEbelTubeRadiation extends RadiationType {
 		double inc_ang_deg = getParameterValue(incident_angle_id);
 		double ex_ang_deg = getParameterValue(exiting_angle_id);
 		double sinRatio = MoreMath.sind(inc_ang_deg) / MoreMath.sind(ex_ang_deg);
+		double f = 1.0;
+		boolean reflectionTarget = !trasmissionTarget();
 
 		for (int anodeNumber = 0; anodeNumber < anodeElementNumber; anodeNumber++) {
 			double J = 0.0135 * atomNumber[anodeNumber];
@@ -450,9 +467,11 @@ public class XrayEbelTubeRadiation extends RadiationType {
 				double rho_zeta_bar = rho_zeta_m * lU0 * (0.49269 - 1.0987 * eta + 0.78557 * eta * eta) /
 						(0.70256 - 1.09865 * eta + 1.0046 * eta * eta + lU0);
 				double mu_tot = computeMhuTotal(tmp_spectrum[0][i]);
-				double expo = mu_tot * rho_zeta_bar;
-				expo = 2.0 * expo * sinRatio;
-				double f = (1.0 - Math.exp(-expo)) / expo;
+				if (reflectionTarget) {
+					double expo = mu_tot * rho_zeta_bar;
+					expo = 2.0 * expo * sinRatio;
+					f = (1.0 - Math.exp(-expo)) / expo;
+				}
 				double dN = energyStep * consta * atomNumber[anodeNumber] * f * Math.pow((U0 - 1.0), xself);
 				tmp_spectrum[1][i] += dN * atomFraction[anodeNumber] * scale_continuous;
 				tmp_spectrum[2][i] += mu_tot * atomFraction[anodeNumber];
@@ -483,6 +502,8 @@ public class XrayEbelTubeRadiation extends RadiationType {
 		double inc_ang_deg = getParameterValue(incident_angle_id);
 		double ex_ang_deg = getParameterValue(exiting_angle_id);
 		double sinRatio = MoreMath.sind(inc_ang_deg) / MoreMath.sind(ex_ang_deg);
+		double f = 1.0;
+		boolean reflectionTarget = !trasmissionTarget();
 
 //		scale_factor = 0;
 		Vector<double[][]> all_spc = new Vector<>(anodeElementNumber, 1);
@@ -520,9 +541,11 @@ public class XrayEbelTubeRadiation extends RadiationType {
 				inv_S = inv_S * den * (1.0 + 16.05 * (Math.sqrt(J / characteristic_spc[0][i])) * num / den);
 
 				double mu_tot = computeMhuTotal(characteristic_spc[0][i]);
-				double expo = mu_tot * rho_zeta_bar;
-				expo = 2.0 * expo * sinRatio;
-				double f = (1.0 - Math.exp(-expo)) / expo;
+				if (reflectionTarget) {
+					double expo = mu_tot * rho_zeta_bar;
+					expo = 2.0 * expo * sinRatio;
+					f = (1.0 - Math.exp(-expo)) / expo;
+				}
 
 				double N_ch = const_KL[flag_KL] * inv_S * erre * f * line.getTransitionProbability() * line.getFluorescenceYield();
 
@@ -609,6 +632,7 @@ public class XrayEbelTubeRadiation extends RadiationType {
 		JTextField incidentAngleTF;
 		JTextField exitingAngleTF;
 		JTextField ratioIntensitiesTF;
+		JCheckBox trasmission = null;
 
 		JButton plotSpectrumB;
 
@@ -633,6 +657,7 @@ public class XrayEbelTubeRadiation extends RadiationType {
 		stepEnergyTF = new JTextField(Constants.FLOAT_FIELD);
 		stepEnergyTF.setToolTipText("Specify step in keV for the spectrum computation (smaller step, longer computation!)");
 		jp1.add(stepEnergyTF);
+
 		jp1.add(new JLabel("Tube incident angle (degrees): "));
 		incidentAngleTF = new JTextField(Constants.FLOAT_FIELD);
 		incidentAngleTF.setToolTipText("Specify the incident angle for the electrons on the anode in degrees");
@@ -645,6 +670,9 @@ public class XrayEbelTubeRadiation extends RadiationType {
 		ratioIntensitiesTF = new JTextField(Constants.FLOAT_FIELD);
 		ratioIntensitiesTF.setToolTipText("Scale factor for the continuous spectrum (1 the default)");
 		jp1.add(ratioIntensitiesTF);
+
+		jp1.add(trasmission = new JCheckBox("Trasmission target"));
+		trasmission.setToolTipText("Select this for a trasmission target tube (angles are ignored)");
 
 		JPanel eastPanel = new JPanel(new BorderLayout(6, 6));
 		principalPanel.add(BorderLayout.EAST, eastPanel);
@@ -686,6 +714,8 @@ public class XrayEbelTubeRadiation extends RadiationType {
 		ratioIntensitiesTF.setText(getParameterValueAsString(continuous_scale_factor_id));
 		addComponenttolist(ratioIntensitiesTF, getParameter(continuous_scale_factor_id));
 
+		trasmission.setSelected(trasmissionTarget());
+
 		radiationPanel.setList(XrayEbelTubeRadiation.this, radiation_id);
 		absorptionMaterialPanel.setList(XrayEbelTubeRadiation.this, filter_material_id);
 	}
@@ -700,6 +730,7 @@ public class XrayEbelTubeRadiation extends RadiationType {
 		getParameter(incident_angle_id).setValue(incidentAngleTF.getText());
 		getParameter(exiting_angle_id).setValue(exitingAngleTF.getText());
 		getParameter(continuous_scale_factor_id).setValue(ratioIntensitiesTF.getText());
+		setTrasmissionTarget(trasmission.isSelected());
 	}
 
 		public void plotSpectrum() {

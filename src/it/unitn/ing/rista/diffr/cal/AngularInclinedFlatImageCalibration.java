@@ -321,14 +321,15 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 	  double chi = tiltingAngles[1];
 	  double detectorProper2Theta = detector2Theta + tiltingAngles[4];
 
-	  if (Math.abs(omega) > 1.0E-9)
+	  if (Math.abs(omega) > 1.0E-18)
       zs /= Math.cos((90.0 - omega) * Constants.DEGTOPI);
     zs /= Math.cos(chi * Constants.DEGTOPI);
-    double dx = zs * Math.cos((detectorProper2Theta - 90) * Constants.DEGTOPI);
-    double dd = zs * Math.sin((detectorProper2Theta - 90) * Constants.DEGTOPI);
+    double dx = zs * Math.cos((detectorProper2Theta - 90.0) * Constants.DEGTOPI);
+    double dd = zs * Math.sin((detectorProper2Theta - 90.0) * Constants.DEGTOPI);
 
     double[][] tmat = ConvertImageToSpectra.getTransformationMatrixNew(detectorOmegaDN, detectorPhiDA,
         detectorEtaDA, detectorProper2Theta, omega);
+//    double pangcal = -999.0;
     for (int i = 0; i < datanumber; i++) {
 //      double value = datafile.getXDataOriginal(i);
       double x = datafile.getXDataImage(i);
@@ -336,15 +337,16 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 
       xf = ConvertImageToSpectra.getTransformedVectorNew(tmat, x, y, centerX + dx, centerY, detectorDistance - dd);
       angcal = ConvertImageToSpectra.get2ThetaNew(xf) * Constants.PITODEG;
-//	    System.out.println(i + " " + angcal);
-
+//      if (Math.abs(pangcal - angcal) < 1E-6)
+//	      System.out.println(i + " " + angcal + " " + pangcal + " " + x + " " + y + " " + datafile.getXDataImage(i - 1) + " " + datafile.getYDataImage(i - 1));
+//	    pangcal = angcal;
       if (rx != 0/* || ry != 0*/) {
         double xc = rx * MoreMath.sind(90.0 - angcal / 2.0);
         double zc = rx * (1.0 - MoreMath.cosd(90.0 - angcal));
-        double dx1 = (zs - zc) * Math.cos((detectorProper2Theta - 90) * Constants.DEGTOPI);
-        double dd1 = (zs - zc) * Math.sin((detectorProper2Theta - 90) * Constants.DEGTOPI);
-        double dx2 = xc * Math.sin((detectorProper2Theta - 90) * Constants.DEGTOPI);
-        double dd2 = xc * Math.cos((detectorProper2Theta - 90) * Constants.DEGTOPI);
+        double dx1 = (zs - zc) * Math.cos((detectorProper2Theta - 90.0) * Constants.DEGTOPI);
+        double dd1 = (zs - zc) * Math.sin((detectorProper2Theta - 90.0) * Constants.DEGTOPI);
+        double dx2 = xc * Math.sin((detectorProper2Theta - 90.0) * Constants.DEGTOPI);
+        double dd2 = xc * Math.cos((detectorProper2Theta - 90.0) * Constants.DEGTOPI);
         xf = ConvertImageToSpectra.getTransformedVectorNew(tmat, x, y, centerX + dx1 + dx2, centerY, detectorDistance - dd1 - dd2);
         angcal = ConvertImageToSpectra.get2ThetaNew(xf) * Constants.PITODEG;
       }
@@ -447,6 +449,7 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 
 		int width = ip.getWidth();
 		int height = ip.getHeight();
+//		System.out.println("Image dimensions " + width + " " + height);
 		double[] buffer = new double[width * height];
 		for (int ix = 0; ix < width; ix++)
 			for (int iy = 0; iy < height; iy++)
@@ -507,24 +510,24 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 		}
 		FlatCCDReflectionSquareRoi.getXYFromPixelIndex(minX, maxX, minY, maxY, cal.pixelWidth, cal.pixelHeight,
 				x, y, centerX, centerY);
-/*    System.out.println("Conversion to xy coordinates done: " + minX + " " + maxX + " " + minY + " " + maxY + " " +
-		    dimension[0] + " " + dimension[1] + " " + x[3] + " " + y[3] + " " + centerX + " " + centerY);*/
+//		System.out.println("Conversion to xy coordinates done: " + minX + " " + maxX + " " + minY + " " + maxY + " " +
+//				cal.pixelWidth + " " + cal.pixelHeight + " " + x[3] + " " + y[3] + " " + centerX + " " + centerY);
 
 		double[] theta2 = new double[npointsX * npointsY];
 		double[] eta = new double[npointsX * npointsY];
 //	        Angles.getTheta2EtaFromXYPixelDetector(x, y, theta2, eta, omega, det2Theta, phiDA,
 //			        omegaDN, etaDA, detectorDistance, 0.0);
-/*	        System.out.println("Converting to 2theta, eta: " + dimension[3] + " " +
-			        dimension[5] + " " + azimuthal + " " +
-			        phiDetector + " 0 " + dimension[7]);*/
+		System.out.println("Converting to 2theta, eta: " + omega + " " +
+				detector2Theta + " " + azimuthal + " " +
+				phiDetector + " " + coneAngle + " " + detectorDistance);
 		Angles.getTheta2EtaFromXYPixelDetector(x, y, theta2, eta, omega,
 				detector2Theta, azimuthal, phiDetector, coneAngle, detectorDistance, 0);
-/*	        System.out.println("Conversion to theta, eta angles done! " + theta2[0] + " " + theta2[theta2.length - 1] + " " +
-			        eta[0] + " " + eta[eta.length - 1]);*/
-		double min2theta = 2.0 * Math.PI;
-		double max2theta = -2 * Math.PI;
-		double mineta = 2 * Math.PI;
-		double maxeta = -2 * Math.PI;
+//		System.out.println("Conversion to theta, eta angles done! " + theta2[0] + " " + theta2[theta2.length - 1] + " " +
+//				eta[0] + " " + eta[eta.length - 1]);
+		double min2theta = 1.0E32; //2.0 * Math.PI;
+		double max2theta = -1.0E32; //-2 * Math.PI;
+		double mineta = 2.0 * Math.PI;
+		double maxeta = -2.0 * Math.PI;
 		for (int i = 0; i < theta2.length; i++) {
 			if (min2theta > theta2[i])
 				min2theta = theta2[i];
@@ -538,21 +541,21 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 		double nmineta = 0.0;
 		int i = 0;
 		while (nmineta < mineta)
-			nmineta = i++ * coneInterval * Constants.DEGTOPI;
+			nmineta = coneInterval * Constants.DEGTOPI * i++;
 		while (nmineta >= mineta + coneInterval * Constants.DEGTOPI)
-			nmineta = i-- * coneInterval * Constants.DEGTOPI;
+			nmineta = coneInterval * Constants.DEGTOPI * i--;
 		mineta = nmineta;
 		double nmintheta = 0.0;
 		i = 0;
 		while (nmintheta < min2theta)
-			nmintheta = i++ * theta2Step * Constants.DEGTOPI;
+			nmintheta = theta2Step * Constants.DEGTOPI * i++;
 		while (nmintheta >= min2theta + theta2Step * Constants.DEGTOPI)
-			nmintheta = i-- * theta2Step * Constants.DEGTOPI;
+			nmintheta = theta2Step * Constants.DEGTOPI * i--;
 		min2theta = nmintheta;
 
-//	        System.out.println(theta2.length + " " + eta.length + " " + intensity.length + " " + x.length + " " + y.length + " " + detectorDistance +
-//			        " " + min2theta + " " + max2theta + " " + theta2Step * Constants.DEGTOPI + " " + mineta + " " + maxeta + " " +
-//			        coneInterval * Constants.DEGTOPI);
+//		System.out.println("Spectra conversion: " + theta2.length + " " + eta.length + " " + intensity.length + " " + x.length + " " + y.length + " " + detectorDistance +
+//				" " + min2theta + " " + max2theta + " " + theta2Step * Constants.DEGTOPI + " " + mineta + " " + maxeta + " " +
+//				coneInterval * Constants.DEGTOPI);
 		double[][][] profile = Angles.spectraFromPixelsByEtaTheta2(theta2, eta, intensity, x, y, detectorDistance,
 				min2theta, max2theta, theta2Step * Constants.DEGTOPI,
 				mineta, maxeta, coneInterval * Constants.DEGTOPI);
@@ -562,7 +565,7 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 		int dotLocation = name.lastIndexOf(".");
 		String filename = name.substring(0, dotLocation) + ".esg";
 		if (!MaudPreferences.getBoolean("imageUnrolling.saveEsgFileInCachesDir", false)) {
-			System.out.println("Conversion to spectra done! Name to save: " + filename);
+//			System.out.println("Conversion to spectra done! Name to save: " + filename);
 			FlatCCDReflectionSquareRoi.saveAsText(profile, profile[0].length, 0, profile[0][0].length, xmin, theta2Step,
 					etaStart, coneInterval, directory, filename, "mm", detectorDistance, omega, chi, phi, detector2Theta,
 					true);
@@ -663,8 +666,18 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 
 		  textStrings[1] = "Center x:   ";
 		  textStrings[2] = "Center y:   ";
+
+		  String[] tooltipStrings = {
+		  		  "Sample-detector distance used in the image integration, default in Maud preferences with keyword: pixelDetector.defaultDetectorDistance",
+				  "X coord on the image of the center used in the image integration (where the line perpendicular to the detector plane and passing by the sample center will hit the detector virtual plane, can be outside the image); pref keyword: image2D.centerX",
+				  "Y coord on the image of the center used in the image integration (where the line perpendicular to the detector plane and passing by the sample center will hit the detector virtual plane, can be outside the image); pref keyword: image2D.centerY",
+				  "Position of the detector in 2theta during image integration; pref keyword: pixelDetector.default2ThetaAngle",
+				  "Tilt of the detector around its horizontal axis during image integration; pref keyword: pixelDetector.defaultPhiDAangle",
+				  "Rotation of the detector around its perpendicular axis passing by the center during image integration; pref keyword: pixelDetector.defaultOmegaDNangle",
+				  "Position of the detector in eta (along diffraction circles) during image integration; pref keyword: pixelDetector.defaultEtaDAangle",
+				  "Pre processing of the image: pixelDetector.defaultRotoInversion (0 = no action, 1 = rotation 90 clockwise, 2 = rotation 180 clockwise, 3 = rotation 90 anticlockwise, 4 = rotation 180 anticlockwise, 5 = flip horizontal, 6 = flip vertical, 7 = center inversion)"};
 		  for (int i = 0; i < stringField.length; i++)
-		    addStringField(secondPanel, textStrings[i], i);
+		    addStringField(secondPanel, textStrings[i], tooltipStrings[i], i);
 
 	    setTitle("2D Image angular calibration");
       initParameters();
@@ -683,10 +696,11 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 		  super.retrieveParameters();
 	  }
 
-	  public void addStringField(JPanel apanel, String label, int stringFieldNumber) {
+	  public void addStringField(JPanel apanel, String label, String tooltip, int stringFieldNumber) {
 		  apanel.add(new JLabel(label));
 		  textfield[stringFieldNumber] = new JTextField(Constants.FLOAT_FIELD);
 		  textfield[stringFieldNumber].setText(stringField[stringFieldNumber]);
+		  textfield[stringFieldNumber].setToolTipText(tooltip);
 		  apanel.add(textfield[stringFieldNumber]);
 	  }
 

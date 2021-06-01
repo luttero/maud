@@ -220,20 +220,27 @@ public class LaueOvalStepRoi extends OpenRoi {
       y2++;
       double[] x2 = getXCoordSym(y2);
 //	    System.out.println("Calculated: " + y2 + ": " + x2[0] + " & " + x2[1]);
+//	    boolean isnan = Double.isNaN(x2[0]) && Double.isNaN(x2[1]);
 	    if ((Double.isNaN(lastCoordX[0]) && Double.isNaN(lastCoordX[1])) && (!Double.isNaN(x2[0]) && !Double.isNaN(x2[1])))
-		    if (contains((int) x2[0], y2) && contains((int) x2[1], y2))
+		    if (contains((int) x2[0], y2) && contains((int) x2[1], y2)) {
 		      g.drawLine(ic.screenX((int) x2[0]), ic.screenY(y2), ic.screenX((int) x2[1]), ic.screenY(y2));
+//			    System.out.println("Draw line0 from " + x2[0] + ", " + y2 + " to " + x2[1] + ", " + y2);
+		    }
 	    if ((!Double.isNaN(lastCoordX[0]) && !Double.isNaN(lastCoordX[1])) && (Double.isNaN(x2[0]) && Double.isNaN(x2[1])))
-		    if (contains((int) lastCoordX[0], y2 - 1) && contains((int) lastCoordX[1], y2 - 1))
+		    if ((contains((int) lastCoordX[0], y2 - 1) && contains((int) lastCoordX[1], y2 - 1))) {
 			    g.drawLine(ic.screenX((int) lastCoordX[0]), ic.screenY(y2 - 1), ic.screenX((int) lastCoordX[1]), ic.screenY(y2 - 1));
+			    for (int i = 0; i < 2; i++)
+			    	lastCoordX[i] = x2[i];
+//			    System.out.println("Draw line1 from " + lastCoordX[0] + ", " + (y2 - 1) + " to " + lastCoordX[1] + ", " + (y2 - 1));
+		    }
       for (int i = 0; i < 2; i++) {
       	if (Double.isNaN(x2[i]))
       		x2[i] = lastCoordX[i];
       	else
       		lastCoordX[i] = x2[i];
-        if (contains((int) x2[i], y2) && contains((int) x1[i], y1)) {
+        if ((contains((int) x2[i], y2) && contains((int) x1[i], y1))) {
           g.drawLine(ic.screenX((int) x1[i]), ic.screenY(y1), ic.screenX((int) x2[i]), ic.screenY(y2));
-//          System.out.println("Draw line from " + x1[i] + ", " + y1 + " to " + x2[i] + ", " + y2);
+//          System.out.println("Draw line2 from " + x1[i] + ", " + y1 + " to " + x2[i] + ", " + y2);
         }
         x1[i] = x2[i];
       }

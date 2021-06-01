@@ -157,14 +157,16 @@ public class DifferencePlot2DPanel extends MultiPlotFitting2DPanel {
             values[j++] = intValue;
             values[j++] = intValue;
           }
-            if (values[j - 1] < IntensityMin && computeMinMax)
-              IntensityMin = values[j - 1];
-            else if (values[j - 1] < IntensityMin && !computeMinMax)
-              values[j - 1] = IntensityMin;
-            if (values[j - 1] > IntensityMax && computeMinMax)
-              IntensityMax = values[j - 1];
-            else if (values[j - 1] > IntensityMax && !computeMinMax)
-              values[j - 1] = IntensityMax;
+	        if (values[j - 1] != Double.NaN) {
+		        if (values[j - 1] < IntensityMin && computeMinMax)
+			        IntensityMin = values[j - 1];
+		        else if (values[j - 1] < IntensityMin && !computeMinMax)
+			        values[j - 1] = IntensityMin;
+		        if (values[j - 1] > IntensityMax && computeMinMax)
+			        IntensityMax = values[j - 1];
+		        else if (values[j - 1] > IntensityMax && !computeMinMax)
+			        values[j - 1] = IntensityMax;
+	        }
           }
 
         }

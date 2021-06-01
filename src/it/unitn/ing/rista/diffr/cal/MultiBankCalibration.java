@@ -62,6 +62,7 @@ public class MultiBankCalibration extends GSASbankCalibration {
   }
 
   public double getTthetaValue(DiffrDataFile datafile, double twotheta) {
+//	  System.out.println(this + ", asking for bank number: " + getBankNumber(datafile));
     return theta[getBankNumber(datafile)];
   }
 

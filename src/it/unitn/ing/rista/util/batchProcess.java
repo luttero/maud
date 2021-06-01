@@ -78,7 +78,7 @@ public class batchProcess {
 		                       "_maud_export_pole_figures", "_maud_output_plot2D_filename",
 		                       "_maud_LCLS2_detector_config_file", "_publ_section_title",
 		                       "_maud_output_stress_filename", "_maud_output_stress_options",
-		                       "_riet_meas_datains_name"
+		                       "_riet_meas_datains_name", "_riet_meas_datafile_fitting"
   };
 
   public batchProcess(String insFileName) {
@@ -229,6 +229,7 @@ public class batchProcess {
     String detectorConfigFile = null;
 
     if (loopitem > 0) {
+	    DiffrDataFile[] lastDatafiles = null;
       boolean automaticBackground = false;
       while (i < loopitem) {
         item = (CIFItem) avector.elementAt(i);
@@ -290,7 +291,7 @@ public class batchProcess {
         } else if (index == 4) {
 //	        System.out.println(analysis + " " + item.thestring);
           if (analysis != null) {
-            analysis.getSample(0).getDataSet(0).addDataFileforName(workingDirectory + item.thestring, false);
+	          lastDatafiles = analysis.getSample(0).getDataSet(0).addDataFileforName(workingDirectory + item.thestring, false);
           }
           avector.removeElementAt(i);
           loopitem--;
@@ -398,6 +399,14 @@ public class batchProcess {
 //	        System.out.println(analysis + " " + item.thestring);
 	        if (analysis != null) {
 		        analysis.getSample(0).addDatafilesFromScript(workingDirectory + item.thestring);
+	        }
+	        avector.removeElementAt(i);
+	        loopitem--;
+        } else if (index == 24) { // "_riet_meas_datafile_fitting"
+//	        System.out.println(analysis + " " + item.thestring);
+	        if (analysis != null && lastDatafiles != null) {
+	        	  for (int jj = 0; jj < lastDatafiles.length; jj++)
+		           lastDatafiles[jj].setGeneratePlotfile(item.thestring.equalsIgnoreCase("true"));
 	        }
 	        avector.removeElementAt(i);
 	        loopitem--;

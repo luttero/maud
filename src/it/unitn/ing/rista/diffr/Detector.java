@@ -99,9 +99,6 @@ public class Detector extends XRDcat {
 	}
 
 	public int getBankNumber(String bankID) {
-    String number = Misc.toStringFinalOnlyDigits(bankID);
-    if (number.length() > 0)
-      return Integer.parseInt(number);
     return -1;
   }
 
