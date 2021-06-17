@@ -1034,65 +1034,29 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 	    int j;
 
 	    int ylength = datafile.length;
-	    int startingIndex = datafile[0].startingindex;
-	    int finalIndex = datafile[0].finalindex;
-	    double xmin = 1.0E10, xmax = 0.0;
-	    if (datafile[0].increasingX()) {
-		    if (xmin > datafile[0].getXDataForPlot(datafile[0].startingindex))
-			    xmin = datafile[0].getXDataForPlot(datafile[0].startingindex);
-		    if (xmax < datafile[0].getXDataForPlot(datafile[0].finalindex - 1))
-			    xmax = datafile[0].getXDataForPlot(datafile[0].finalindex - 1);
-		    if (xmin > datafile[0].getXDataForPlot(datafile[0].finalindex - 1))
-			    xmin = datafile[0].getXDataForPlot(datafile[0].finalindex - 1);
-		    if (xmax < datafile[0].getXDataForPlot(datafile[0].startingindex))
-			    xmax = datafile[0].getXDataForPlot(datafile[0].startingindex);
-		    for (int is1 = 1; is1 < ylength; is1++) {
-			    if (startingIndex > datafile[is1].startingindex) {
-				    startingIndex = datafile[is1].startingindex;
-			    }
-			    if (finalIndex < datafile[is1].finalindex) {
-				    finalIndex = datafile[is1].finalindex;
-			    }
-			    if (xmin > datafile[is1].getXDataForPlot(datafile[is1].startingindex))
-				    xmin = datafile[is1].getXDataForPlot(datafile[is1].startingindex);
-			    if (xmax < datafile[is1].getXDataForPlot(datafile[is1].finalindex - 1))
-				    xmax = datafile[is1].getXDataForPlot(datafile[is1].finalindex - 1);
-			    if (xmin > datafile[is1].getXDataForPlot(datafile[is1].finalindex - 1))
-				    xmin = datafile[is1].getXDataForPlot(datafile[is1].finalindex - 1);
-			    if (xmax < datafile[is1].getXDataForPlot(datafile[is1].startingindex))
-				    xmax = datafile[is1].getXDataForPlot(datafile[is1].startingindex);
-		    }
-	    } else {
-		    xmin = 1.0E10;
-		    xmax = 0.0;
-		    if (xmin > datafile[0].getXDataForPlot(datafile[0].startingindex))
-			    xmin = datafile[0].getXDataForPlot(datafile[0].startingindex);
-		    if (xmax < datafile[0].getXDataForPlot(datafile[0].finalindex - 1))
-			    xmax = datafile[0].getXDataForPlot(datafile[0].finalindex - 1);
-		    if (xmin > datafile[0].getXDataForPlot(datafile[0].finalindex - 1))
-			    xmin = datafile[0].getXDataForPlot(datafile[0].finalindex - 1);
-		    if (xmax < datafile[0].getXDataForPlot(datafile[0].startingindex))
-			    xmax = datafile[0].getXDataForPlot(datafile[0].startingindex);
-		    for (int is1 = 1; is1 < ylength; is1++) {
-			    if (startingIndex > datafile[is1].startingindex) {
-				    startingIndex = datafile[is1].startingindex;
-			    }
-			    if (finalIndex < datafile[is1].finalindex) {
-				    finalIndex = datafile[is1].finalindex;
-			    }
-			    if (xmin > datafile[is1].getXDataForPlot(datafile[is1].startingindex))
-				    xmin = datafile[is1].getXDataForPlot(datafile[is1].startingindex);
-			    if (xmax < datafile[is1].getXDataForPlot(datafile[is1].finalindex - 1))
-				    xmax = datafile[is1].getXDataForPlot(datafile[is1].finalindex - 1);
-			    if (xmin > datafile[is1].getXDataForPlot(datafile[is1].finalindex - 1))
-				    xmin = datafile[is1].getXDataForPlot(datafile[is1].finalindex - 1);
-			    if (xmax < datafile[is1].getXDataForPlot(datafile[is1].startingindex))
-				    xmax = datafile[is1].getXDataForPlot(datafile[is1].startingindex);
-		    }
+
+	    double stepX = 1.0E10;
+	    double xmin = 1.0E10, xmax = -1.0E10;
+
+	    // minimum maximum range
+
+	    for (int is1 = 0; is1 < ylength; is1++) {
+		    int xlength = datafile[is1].finalindex - datafile[is1].startingindex - 1;
+		    double x1 = datafile[is1].getXDataForPlot(datafile[is1].startingindex, mode);
+		    double x2 = datafile[is1].getXDataForPlot(datafile[is1].finalindex - 1, mode);
+		    double lstepX = Math.abs((x2 - x1) / xlength);
+		    if (lstepX < stepX)
+			    stepX = lstepX;
+		    if (xmin > x1)
+			    xmin = x1;
+		    if (xmax < x2)
+			    xmax = x2;
+		    if (xmin > x2)
+			    xmin = x2;
+		    if (xmax < x1)
+			    xmax = x1;
 	    }
-	    int xlength = finalIndex - startingIndex;
-	    double stepX = (xmax - xmin) / (xlength - 1);
-	    np = xlength;
+	    int np = (int) Math.abs((xmax - xmin) / stepX) + 1;
 
 	    if (np > 0) {
 		    double data[] = new double[2 * np];
@@ -1100,7 +1064,7 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 			    datafit = new double[2 * np];
 		    }
 		    mode = PlotDataFile.checkScaleModeX();
-		    for (int is1 = 0; is1 < xlength; is1++) {
+		    for (int is1 = 0; is1 < np; is1++) {
 			    int is2 = is1 * 2;
 			    data[is2] = xmin + is1 * stepX;
 			    int total = 0;

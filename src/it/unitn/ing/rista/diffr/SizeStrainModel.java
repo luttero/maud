@@ -62,7 +62,7 @@ public class SizeStrainModel extends XRDcat {
 		return 2; // crystallite size and r.m.s. microstrain
 	}
 
-  public Peak createPeak(double pos, boolean control, boolean energyDispersive, double[] wave, double[] weight,
+  public Peak createPeak(double pos, boolean dspacingbase, boolean energyDispersive, double[] wave, double[] weight,
                          Reflection reflex, int order) {
 
 /*    int peakf = 0;
@@ -76,7 +76,7 @@ public class SizeStrainModel extends XRDcat {
         return new PseudoVoigtPeak(pos, control, wave, weight, reflex, order);
       default:
     }*/
-    return new PseudoVoigtPeak(pos, control, energyDispersive, wave, weight, reflex, order);
+    return new PseudoVoigtPeak(pos, dspacingbase, energyDispersive, wave, weight, reflex, order);
   }
 
   public JOptionsDialog getOptionsDialog(Frame parent) {

@@ -646,6 +646,22 @@ public class PlotFitting extends PlotDataFile {
 		if (thePlotPanel.datafile == null || thePlotPanel.datafile[0] == null)
 			return;
 
+		double omega = 0, chi = 0, phi = 0, eta = 0, theta2 = 0;
+		for (int i = 0; i < datafile.length; i++) {
+			omega += datafile[i].getOmegaValue();
+			chi += datafile[i].getChiValue();
+			phi += datafile[i].getPhiValue();
+			eta += datafile[i].getEtaValue();
+			theta2 += datafile[i].get2ThetaValue();
+		}
+		omega /= datafile.length;
+		chi /= datafile.length;
+		phi /= datafile.length;
+		eta /= datafile.length;
+		theta2 /= datafile.length;
+
+		double[][] dataToExport = DataFileSet.getSummedExperimentalComputedData(thePlotPanel.datafile, 0);
+
 		String filename = Utility.openFileDialog(this, "Save as CIF...",
 				FileDialog.SAVE, thePlotPanel.datafile[0].getFilePar().getDirectory(), null, "put a name.cif");
 		if (filename == null)
@@ -663,20 +679,20 @@ public class PlotFitting extends PlotDataFile {
 
 			BufferedWriter output = Misc.getWriter(folder, filename);
 			try {
-				int nPoints = thePlotPanel.datafile[0].computeDataNumber();
+				int nPoints = dataToExport[0].length;
 				output.write("data_" + thePlotPanel.datafile[0]);
 				output.newLine();
 				datafile[0].getDataFileSet().getInstrument().exportInstrumentDataForFPSM(output);
 
-				output.write("_pd_meas_angle_omega " + Fmt.format(datafile[0].getOmegaValue()));
+				output.write("_pd_meas_angle_omega " + Fmt.format(omega));
 				output.newLine();
-				output.write("_pd_meas_angle_chi " + Fmt.format(datafile[0].getChiValue()));
+				output.write("_pd_meas_angle_chi " + Fmt.format(chi));
 				output.newLine();
-				output.write("_pd_meas_angle_phi " + Fmt.format(datafile[0].getPhiValue()));
+				output.write("_pd_meas_angle_phi " + Fmt.format(phi));
 				output.newLine();
-				output.write("_pd_meas_angle_eta " + Fmt.format(datafile[0].getEtaValue()));
+				output.write("_pd_meas_angle_eta " + Fmt.format(eta));
 				output.newLine();
-				output.write("_pd_meas_angle_2theta " + Fmt.format(datafile[0].get2ThetaValue()));
+				output.write("_pd_meas_angle_2theta " + Fmt.format(theta2));
 				output.newLine();
 
 				output.write("_pd_meas_number_of_points " + Integer.toString(nPoints));
@@ -692,24 +708,8 @@ public class PlotFitting extends PlotDataFile {
 				output.newLine();
 				output.write("_pd_meas_intensity_total");
 				output.newLine();
-				int starting = thePlotPanel.datafile[0].startingindex;
-				int ending = thePlotPanel.datafile[0].finalindex;
-				int step = 1;
-				int mode = checkScaleModeX();
-				if (thePlotPanel.datafile[0].getXData(ending - 1) < thePlotPanel.datafile[0].getXData(starting)) {
-					starting = thePlotPanel.datafile[0].finalindex - 1;
-					ending = thePlotPanel.datafile[0].startingindex - 1;
-					step = -1;
-				}
-				boolean from_Plot = MaudPreferences.getBoolean("exportData.useXcoordinateFromPlot", false);
-				for (int i = starting; i != ending; i+=step) {
-					double intens = thePlotPanel.datafile[0].getYData(i);
-					double xcoorddata;
-					if (!from_Plot)
-						xcoorddata = thePlotPanel.datafile[0].getXData(i);
-					else
-						xcoorddata = thePlotPanel.datafile[0].getXDataForPlot(i, mode);
-					output.write(" " + Fmt.format(xcoorddata) + " " + Fmt.format(intens));
+				for (int i = 0; i != nPoints; i++) {
+					output.write(" " + Fmt.format(dataToExport[0][i]) + " " + Fmt.format(dataToExport[1][i]));
 					output.newLine();
 				}
 			} catch (IOException io) {
@@ -745,9 +745,15 @@ public class PlotFitting extends PlotDataFile {
 
     if (filename != null) {
 
+	    boolean from_Plot = MaudPreferences.getBoolean("exportData.useXcoordinateFromPlot", false);
+	    int mode = checkScaleModeX();
+	    if (!from_Plot)
+		    mode = 0;
+	    double[][] dataToExport = DataFileSet.getSummedExperimentalComputedData(thePlotPanel.datafile, mode);
+
       BufferedWriter output = Misc.getWriter(folder, filename);
       try {
-        int nPoints = thePlotPanel.datafile[0].computeDataNumber();
+        int nPoints = dataToExport[0].length;
 	      output.write("data_" + thePlotPanel.datafile[0]);
         output.write("_pd_meas_number_of_points " + Integer.toString(nPoints));
         output.newLine();
@@ -763,24 +769,8 @@ public class PlotFitting extends PlotDataFile {
         output.newLine();
         output.write("_pd_meas_intensity_total");
         output.newLine();
-        int starting = thePlotPanel.datafile[0].startingindex;
-        int ending = thePlotPanel.datafile[0].finalindex;
-        int step = 1;
-	      int mode = checkScaleModeX();
-        if (thePlotPanel.datafile[0].getXData(ending - 1) < thePlotPanel.datafile[0].getXData(starting)) {
-          starting = thePlotPanel.datafile[0].finalindex - 1;
-          ending = thePlotPanel.datafile[0].startingindex - 1;
-          step = -1;
-        }
-	      boolean from_Plot = MaudPreferences.getBoolean("exportData.useXcoordinateFromPlot", false);
-        for (int i = starting; i != ending; i+=step) {
-          double intens = thePlotPanel.datafile[0].getYData(i);
-          double xcoorddata;
-	        if (!from_Plot)
-	          xcoorddata = thePlotPanel.datafile[0].getXData(i);
-	        else
-	          xcoorddata = thePlotPanel.datafile[0].getXDataForPlot(i, mode);
-          output.write(" " + Fmt.format(xcoorddata) + " " + Fmt.format(intens));
+        for (int i = 0; i < nPoints; i++) {
+          output.write(" " + Fmt.format(dataToExport[0][i]) + " " + Fmt.format(dataToExport[1][i]));
           output.newLine();
         }
       } catch (IOException io) {
@@ -835,7 +825,7 @@ public class PlotFitting extends PlotDataFile {
     if (thePlotPanel.datafile == null || thePlotPanel.datafile[0] == null) {
 	    return;
     }
-	  System.out.println("Length " + thePlotPanel.datafile.length);
+//	  System.out.println("Length " + thePlotPanel.datafile.length);
 	  if (thePlotPanel.datafile.length <= 0) {
 		  return;
 	  }

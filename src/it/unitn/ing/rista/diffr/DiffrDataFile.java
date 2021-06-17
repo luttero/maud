@@ -600,9 +600,10 @@ public class DiffrDataFile extends XRDcat {
 	  if (!getFilePar().compactSavingTextureFactors() && radiationsNumber < 5) { // we do not save the texture factors in compact saving
 		  try {
 			  out.newLine();
-			  out.write("#custom_object_" + "texture_factors");
+			  out.write("#custom_object_texture_factors");
 			  out.newLine();
 			  out.write(CIFdictionary.texture_points_number + " " + positionsPerPattern);
+			  out.newLine();
 			  out.write(CIFdictionary.texture_radiations_number + " " + radiationsNumber);
 			  out.newLine();
 			  for (int i = 0; i < asample.phasesNumber(); i++) {
@@ -638,7 +639,7 @@ public class DiffrDataFile extends XRDcat {
 				  out.newLine();
 			  }
 			  out.newLine();
-			  out.write("#end_custom_object_" + "texture_factors");
+			  out.write("#end_custom_object_texture_factors");
 			  out.newLine();
 			  out.newLine();
 		  } catch (Exception ioe) {
@@ -3034,10 +3035,17 @@ public class DiffrDataFile extends XRDcat {
     xvalue = revertXDataForPlot(xvalue, 0);
     if (isInsideHoles(xvalue))
     	return Double.NaN;
-    return getValueScaled(getInterpolatedIntensityAt(xvalue, 1), getOldNearestPoint(xvalue));
+    return getInterpolatedIntensityAt(xvalue, 1);
   }
 
-  public double getInterpolatedFitSqrtIntensity(double xvalue, int exponent, int mode) {
+	public double getInterpolatedFitForSummation(double xvalue) {
+		xvalue = revertXDataForPlot(xvalue, 0);
+		if (isInsideHoles(xvalue))
+			return Double.NaN;
+		return getInterpolatedFitAt(xvalue, 1);
+	}
+
+	public double getInterpolatedFitSqrtIntensity(double xvalue, int exponent, int mode) {
     xvalue = revertXDataForPlot(xvalue, mode);
     if (isInsideHoles(xvalue))
     	return Double.NaN;

@@ -107,7 +107,7 @@ public class IntensityExtLeBail extends IntensityExtractor {
   }
 
   public int getIterationMax() {
-    return Integer.valueOf(getIterationMaximum());
+    return Integer.parseInt(getIterationMaximum());
   }
 
   public void setIterationMax(String value) {
@@ -123,7 +123,7 @@ public class IntensityExtLeBail extends IntensityExtractor {
   }
 
   public double getErrorMax() {
-    return Double.valueOf(getErrorMaximum());
+    return Double.parseDouble(getErrorMaximum());
   }
 
   public void setErrorMax(String value) {
@@ -139,7 +139,7 @@ public class IntensityExtLeBail extends IntensityExtractor {
   }
 
   public double getDeltaMax() {
-    return Double.valueOf(getDeltaMaximum());
+    return Double.parseDouble(getDeltaMaximum());
   }
 
   public void setDeltaMax(String value) {
@@ -155,7 +155,7 @@ public class IntensityExtLeBail extends IntensityExtractor {
   }
 
   public double getRangeFactorD() {
-    return Double.valueOf(getRangeFactor());
+    return Double.parseDouble(getRangeFactor());
   }
 
   public void setRangeFactor(String value) {
@@ -306,8 +306,10 @@ The PF's of peaks of the same family are imposed equals for all the lines.
           while (i + ndelta < numberofpeaks &&
                   (superOrder[n + ndelta] < 0 &&
                   Math.abs((pos - fullpeaklist.elementAt(i + ndelta).getMeanPosition()) // to be corrected
-                  / pos) < delta))
-            ndelta++;
+                  / pos) < delta)) {
+//	          System.out.println(i + " " + ndelta + " " + fullpeaklist.elementAt(i + ndelta).getReflex().getH() + " " + fullpeaklist.elementAt(i + ndelta).getReflex().getK() + " " + fullpeaklist.elementAt(i + ndelta).getReflex().getL() + " " + pos + " " + fullpeaklist.elementAt(i + ndelta).getMeanPosition());
+	          ndelta++;
+          }
         } else
           ndelta = 1;
         numberpeaktouse = ndelta;
@@ -351,10 +353,7 @@ The PF's of peaks of the same family are imposed equals for all the lines.
               if (Double.isNaN(oldfactor))
                 oldfactor = 1.0;
               double newlebailfactor = lebailfactor * oldfactor;
-//						System.out.println(ij);
-//						System.out.println(oldfactor);
-//						System.out.println(lebailfactor);
-//						System.out.println(newlebailfactor);
+//              System.out.println(ij + " " + tpeaklist.elementAt(ij).getReflex().getH() + " " + tpeaklist.elementAt(ij).getReflex().getK() + " " + tpeaklist.elementAt(ij).getReflex().getL() + " " + oldfactor + " " + lebailfactor + " " + newlebailfactor);
               if (oldfactor == 0.0)
                 diff[n + ij] = Math.abs(newlebailfactor);
               else

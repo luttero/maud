@@ -357,6 +357,72 @@ public class DataFileSet extends XRDcat {
 		return dataphaseForPlot;
 	}
 
+	static public double[][] getSummedExperimentalComputedData(DiffrDataFile[] datafile, int mode) {
+
+		if (datafile == null || datafile.length == 0)
+			return null;
+
+		int ylength = datafile.length;
+
+		double stepX = 1.0E10;
+		double xmin = 1.0E10, xmax = -1.0E10;
+
+		// minimum maximum range
+
+		for (int is1 = 0; is1 < ylength; is1++) {
+			int xlength = datafile[is1].finalindex - datafile[is1].startingindex - 1;
+			double x1 = datafile[is1].getXDataForPlot(datafile[is1].startingindex, mode);
+			double x2 = datafile[is1].getXDataForPlot(datafile[is1].finalindex - 1, mode);
+			double lstepX = Math.abs((x2 - x1) / xlength);
+			if (lstepX < stepX)
+				stepX = lstepX;
+			if (xmin > x1)
+				xmin = x1;
+			if (xmax < x2)
+				xmax = x2;
+			if (xmin > x2)
+				xmin = x2;
+			if (xmax < x1)
+				xmax = x1;
+		}
+		int np = (int) Math.abs((xmax - xmin) / stepX) + 1;
+		double[][] dataToExport = new double[3][np];
+
+		if (np > 0) {
+			for (int is1 = 0; is1 < np; is1++) {
+				dataToExport[0][is1] = xmin + is1 * stepX;
+				int total = 0;
+				int totalFit = 0;
+// data
+				for (int sn = 0; sn < ylength; sn++) {
+					double xstartmin = datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode);
+					double xendmax = datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode);
+					if (xendmax < datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode))
+						xendmax = datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode);
+					if (xstartmin > datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode))
+						xstartmin = datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode);
+					if (dataToExport[0][is1] >= xstartmin && dataToExport[0][is1] <= xendmax) {
+						double value = datafile[sn].getInterpolatedYForSummation(dataToExport[0][is1]);
+						double valuec = datafile[sn].getInterpolatedFitForSummation(dataToExport[0][is1]);
+						if (!Double.isNaN(value)) {
+							dataToExport[1][is1] += value;
+							total++;
+						}
+						if (!Double.isNaN(valuec)) {
+							dataToExport[2][is1] += valuec;
+							totalFit++;
+						}
+					}
+				}
+				if (total > 0)
+					dataToExport[1][is1] /= total;
+				if (totalFit > 0)
+					dataToExport[2][is1] /= totalFit;
+			}
+		}
+		return dataToExport;
+	}
+
 	public void updateDataForPlot() {
 
 		dataForPlot = null;
@@ -372,74 +438,35 @@ public class DataFileSet extends XRDcat {
 		int startingIndex = datafile[0].startingindex;
 		int finalIndex = datafile[0].finalindex;
 		double xmin = 1.0E10, xmax = 0.0;
+		double stepX = 1.0E10;
+		int mode = PlotDataFile.checkScaleModeX();
 
 		// minimum maximum range
 
-		if (datafile[0].increasingX()) {
-			if (xmin > datafile[0].getXDataForPlot(datafile[0].startingindex))
-				xmin = datafile[0].getXDataForPlot(datafile[0].startingindex);
-			if (xmax < datafile[0].getXDataForPlot(datafile[0].finalindex - 1))
-				xmax = datafile[0].getXDataForPlot(datafile[0].finalindex - 1);
-			if (xmin > datafile[0].getXDataForPlot(datafile[0].finalindex - 1))
-				xmin = datafile[0].getXDataForPlot(datafile[0].finalindex - 1);
-			if (xmax < datafile[0].getXDataForPlot(datafile[0].startingindex))
-				xmax = datafile[0].getXDataForPlot(datafile[0].startingindex);
-			for (int is1 = 1; is1 < ylength; is1++) {
-				if (startingIndex > datafile[is1].startingindex) {
-					startingIndex = datafile[is1].startingindex;
-				}
-				if (finalIndex < datafile[is1].finalindex) {
-					finalIndex = datafile[is1].finalindex;
-				}
-				if (xmin > datafile[is1].getXDataForPlot(datafile[is1].startingindex))
-					xmin = datafile[is1].getXDataForPlot(datafile[is1].startingindex);
-				if (xmax < datafile[is1].getXDataForPlot(datafile[is1].finalindex - 1))
-					xmax = datafile[is1].getXDataForPlot(datafile[is1].finalindex - 1);
-				if (xmin > datafile[is1].getXDataForPlot(datafile[is1].finalindex - 1))
-					xmin = datafile[is1].getXDataForPlot(datafile[is1].finalindex - 1);
-				if (xmax < datafile[is1].getXDataForPlot(datafile[is1].startingindex))
-					xmax = datafile[is1].getXDataForPlot(datafile[is1].startingindex);
-			}
-		} else {
-			xmin = 1.0E10;
-			xmax = 0.0;
-			if (xmin > datafile[0].getXDataForPlot(datafile[0].startingindex))
-				xmin = datafile[0].getXDataForPlot(datafile[0].startingindex);
-			if (xmax < datafile[0].getXDataForPlot(datafile[0].finalindex - 1))
-				xmax = datafile[0].getXDataForPlot(datafile[0].finalindex - 1);
-			if (xmin > datafile[0].getXDataForPlot(datafile[0].finalindex - 1))
-				xmin = datafile[0].getXDataForPlot(datafile[0].finalindex - 1);
-			if (xmax < datafile[0].getXDataForPlot(datafile[0].startingindex))
-				xmax = datafile[0].getXDataForPlot(datafile[0].startingindex);
-			for (int is1 = 1; is1 < ylength; is1++) {
-				if (startingIndex > datafile[is1].startingindex) {
-					startingIndex = datafile[is1].startingindex;
-				}
-				if (finalIndex < datafile[is1].finalindex) {
-					finalIndex = datafile[is1].finalindex;
-				}
-				if (xmin > datafile[is1].getXDataForPlot(datafile[is1].startingindex))
-					xmin = datafile[is1].getXDataForPlot(datafile[is1].startingindex);
-				if (xmax < datafile[is1].getXDataForPlot(datafile[is1].finalindex - 1))
-					xmax = datafile[is1].getXDataForPlot(datafile[is1].finalindex - 1);
-				if (xmin > datafile[is1].getXDataForPlot(datafile[is1].finalindex - 1))
-					xmin = datafile[is1].getXDataForPlot(datafile[is1].finalindex - 1);
-				if (xmax < datafile[is1].getXDataForPlot(datafile[is1].startingindex))
-					xmax = datafile[is1].getXDataForPlot(datafile[is1].startingindex);
-			}
+		for (int is1 = 0; is1 < ylength; is1++) {
+			int xlength = datafile[is1].finalindex - datafile[is1].startingindex - 1;
+			double x1 = datafile[is1].getXDataForPlot(datafile[is1].startingindex, mode);
+			double x2 = datafile[is1].getXDataForPlot(datafile[is1].finalindex - 1, mode);
+			double lstepX = Math.abs((x2 - x1) / xlength);
+			if (lstepX < stepX)
+				stepX = lstepX;
+			if (xmin > x1)
+				xmin = x1;
+			if (xmax < x2)
+				xmax = x2;
+			if (xmin > x2)
+				xmin = x2;
+			if (xmax < x1)
+				xmax = x1;
 		}
-		int xlength = finalIndex - startingIndex;
-		double stepX = (xmax - xmin) / (xlength - 1);
-		int np = xlength;
-
+		int np = (int) Math.abs((xmax - xmin) / stepX) + 1;
 
 		if (np > 0) {
 			dataForPlot = new double[2 * np];
 			if (datafile[0].hasfit()/* || peaksLocated todo ripristinare */) {
 				datafitForPlot = new double[2 * np];
 			}
-			int mode = PlotDataFile.checkScaleModeX();
-			for (int is1 = 0; is1 < xlength; is1++) {
+			for (int is1 = 0; is1 < np; is1++) {
 				int is2 = is1 * 2;
 				dataForPlot[is2] = xmin + is1 * stepX;
 				int total = 0;
@@ -1510,123 +1537,35 @@ public class DataFileSet extends XRDcat {
     if (!filename.endsWith(".cif"))
       filename += ".cif";
 //    int numberOfFilesTotal = 0;
-    Vector datafiles = getSelectedDatafiles();
+    DiffrDataFile[] datafiles = getSelectedDataFiles();
     if (datafiles == null) {
       (new AttentionD(new Frame(), "No item from the list selected!")).setVisible(true);
       return;
     }
-    int ylength = datafiles.size();
+
+    double[][] dataToExport = DataFileSet.getSummedExperimentalComputedData(datafiles, 0);
+    int ylength = datafiles.length;
     BufferedWriter output = Misc.getWriter(folder, filename);
     try {
-
-      DiffrDataFile tmpdatafile = (DiffrDataFile) datafiles.elementAt(0);
-      int startingIndex = tmpdatafile.startingindex;
-      int finalIndex = tmpdatafile.finalindex;
-      double xmin = 1.0E10, xmax = 0.0;
-      if (xmin > tmpdatafile.getXDataForPlot(tmpdatafile.startingindex))
-        xmin = tmpdatafile.getXDataForPlot(tmpdatafile.startingindex);
-      if (xmax < tmpdatafile.getXDataForPlot(tmpdatafile.finalindex - 1))
-        xmax = tmpdatafile.getXDataForPlot(tmpdatafile.finalindex - 1);
-      if (xmin > tmpdatafile.getXDataForPlot(tmpdatafile.finalindex - 1))
-        xmin = tmpdatafile.getXDataForPlot(tmpdatafile.finalindex - 1);
-      if (xmax < tmpdatafile.getXDataForPlot(tmpdatafile.startingindex))
-        xmax = tmpdatafile.getXDataForPlot(tmpdatafile.startingindex);
-      for (int is1 = 1; is1 < ylength; is1++) {
-        tmpdatafile = (DiffrDataFile) datafiles.elementAt(is1);
-        if (startingIndex > tmpdatafile.startingindex) {
-          startingIndex = tmpdatafile.startingindex;
-        }
-        if (finalIndex < tmpdatafile.finalindex) {
-          finalIndex = tmpdatafile.finalindex;
-        }
-        if (xmin > tmpdatafile.getXDataForPlot(tmpdatafile.startingindex))
-          xmin = tmpdatafile.getXDataForPlot(tmpdatafile.startingindex);
-        if (xmax < tmpdatafile.getXDataForPlot(tmpdatafile.finalindex - 1))
-          xmax = tmpdatafile.getXDataForPlot(tmpdatafile.finalindex - 1);
-        if (xmin > tmpdatafile.getXDataForPlot(tmpdatafile.finalindex - 1))
-          xmin = tmpdatafile.getXDataForPlot(tmpdatafile.finalindex - 1);
-        if (xmax < tmpdatafile.getXDataForPlot(tmpdatafile.startingindex))
-          xmax = tmpdatafile.getXDataForPlot(tmpdatafile.startingindex);
-      }
-      int xlength = finalIndex - startingIndex;
-      double stepX = (xmax - xmin) / (xlength - 1);
-//      int np = xlength;
-      if (xlength <= 0) {
-        return;
-      }
-      xcoord = new double[xlength];
-      intensity = new double[xlength];
-      int mode = 0;  // default
-      for (int is1 = 0; is1 < xlength; is1++) {
-      	tmpdatafile = (DiffrDataFile) datafiles.elementAt(0);
-        xcoord[is1] = tmpdatafile.getXDataOriginal(tmpdatafile.startingindex + is1);
-        int total = 0;
-        for (int sn = 0; sn < ylength; sn++) {
-          tmpdatafile = (DiffrDataFile) datafiles.elementAt(sn);
-/*          double xstartmin = tmpdatafile.getXDataForPlot(tmpdatafile.startingindex, mode);
-          double xendmax = tmpdatafile.getXDataForPlot(tmpdatafile.finalindex - 1, mode);
-          if (xendmax < tmpdatafile.getXDataForPlot(tmpdatafile.startingindex, mode))
-            xendmax = tmpdatafile.getXDataForPlot(tmpdatafile.startingindex, mode);
-          if (xstartmin > tmpdatafile.getXDataForPlot(tmpdatafile.finalindex - 1, mode))
-            xstartmin = tmpdatafile.getXDataForPlot(tmpdatafile.finalindex - 1, mode);
-          if (xcoord[is1] >= xstartmin && xcoord[is1] <= xendmax) {
-            double xvalue = xcoord[is1];
-            double fitValue = tmpdatafile.getInterpolatedYForSummation(xvalue);
-            intensity[is1] += fitValue;
-            total++;
-          }*/
-	        intensity[is1] += tmpdatafile.getYData(tmpdatafile.startingindex + is1);
-	        total++;
-        }
-        if (total > 0)
-          intensity[is1] /= total;
-
-      }
-      boolean first = true;
-
-//      boolean[] verifySameAngles = new boolean[DiffrDataFile.maxAngleNumber];
       double[] meanAngles = new double[DiffrDataFile.maxAngleNumber];
       for (int ib = 0; ib < DiffrDataFile.maxAngleNumber; ib++)
 	      meanAngles[ib] = 0;
-//        verifySameAngles[ib] = true;
-      double[] firstTilt = null;
-      int start = 0, end = 0;
-
       boolean energyDispersive = false;
 
       for (int i = 0; i < ylength; i++) {
-        try {
-          tmpdatafile = (DiffrDataFile) datafiles.elementAt(i);
-          if (tmpdatafile.energyDispersive)
+          if (datafiles[i].energyDispersive)
 	          energyDispersive = true;
-          double[] tilt = tmpdatafile.getTiltingAngle();
+          double[] tilt = datafiles[i].getTiltingAngle();
 //          if (i == 0) firstTilt = tilt;
           for (int ib = 0; ib < DiffrDataFile.maxAngleNumber; ib++)
 	          meanAngles[ib] += tilt[ib] / ylength;
-//            if (tilt[ib] != firstTilt[ib])
-//              verifySameAngles[ib] = false;
-//				if (tmpdatafile.getComputePermission()) {
-//          numberOfFilesTotal++;
-          if (first) {
-            first = false;
-            end = tmpdatafile.datanumber; // tmpdatafile.finalindex;
-            start = 0; // tmpdatafile.startingindex;
-            datanumber = end - start;
-//          System.out.println("n="+i+" , start="+tmpdatafile.startingindex+" , end:"+tmpdatafile.finalindex);
-          }
-
-        } catch (Exception e) {
-          e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-//          out.println("File number: " + i + ", start: " + start + ", end: " + end);
-//          out.println("Error summing files, may be they are uncompatible?");
-        }
       }
 
 
       if (energyDispersive)
       	output.write("_pd_meas_scan_method disp");
 	    output.newLine();
-      output.write("_pd_meas_number_of_points " + Integer.toString(xlength));
+      output.write("_pd_meas_number_of_points " + Integer.toString(dataToExport[0].length));
       output.newLine();
 /*      if (tmpdatafile.originalNotCalibrated) {
         output.write("_riet_meas_datafile_calibrated false");
@@ -1641,18 +1580,18 @@ public class DataFileSet extends XRDcat {
 //        }
       }
       output.write(DiffrDataFile.diclistc[7] + ' ');
-      output.write(tmpdatafile.getString(7));
+      output.write(datafiles[0].getString(7));
       output.newLine();
 
       output.newLine();
       output.write("loop_");
       output.newLine();
-      output.write(tmpdatafile.getCIFXcoord());
+      output.write(datafiles[0].getCIFXcoord());
       output.newLine();
       output.write(DiffrDataFile.intensityCalcCIFstring);
       output.newLine();
-      for (int i = 0; i < xlength; i++) {
-        output.write(' ' + Fmt.format(xcoord[i]) + ' ' + Fmt.format(intensity[i]));
+      for (int i = 0; i < dataToExport[0].length; i++) {
+        output.write(' ' + Fmt.format(dataToExport[0][i]) + ' ' + Fmt.format(dataToExport[1][i]));
         output.newLine();
       }
     } catch (Exception io) {

@@ -43,6 +43,11 @@ from the older one.
 
 Maud Version notes:
 
+(xx/06/2021):   2.99. The "never ending waiting" release.
+                When needed time goes too slow.
+                Fixed exporting summed spectra when datafiles have not overlapping
+                ranges.
+
 (31/05/2021):   2.98. The "Knee" release.
                 I do not want to talk about it.
                 Fixed a couple of outstanding bugs affecting the Hippo

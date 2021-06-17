@@ -900,21 +900,23 @@
 
 
     <target name="copy_full" depends="build_full" description="Copy the full build files to the final destination.">
-        <copy file="${build}/Maud_dev.jar" tofile="${mirrorfulldir}/Maud.jar"/>
-        <copy file="${build}/Maud_dev.jar" tofile="${mirrorfulldir2}/lib/Maud.jar"/>
+        <!--copy file="${build}/Maud_dev.jar" tofile="${mirrorfulldir}/Maud.jar"/>
+        <copy file="${build}/Maud_dev.jar" tofile="${mirrorfulldir2}/lib/Maud.jar"/-->
         <!--signjar jar="${mirrorfulldir}/Maud.jar" alias="${myself}" storepass="${keypasswd}" keystore="${keystore}"/-->
-        <copy file="${build}/Maud_dev.jar" tofile="${inst}/Maud.jar"/>
+        <!--copy file="${build}/Maud_dev.jar" tofile="${inst}/Maud.jar"/>
         <copy file="${build}/Maud_dev.jar" tofile="${inst}/Maud_OSX/Maud.app/Contents/Resources/Java/Maud.jar"/>
         <copy file="${build}/Maud_dev.jar" tofile="${installfulldirMac}/Maud.jar"/>
         <copy file="${build}/Maud_dev.jar" tofile="${installfulldirMac64}/Maud.jar"/>
-        <copy file="${build}/Maud_dev.jar" tofile="${installfulldirUnix}/lib/Maud.jar"/>
+        <copy file="${build}/Maud_dev.jar" tofile="${installfulldirUnix}/lib/Maud.jar"/-->
         <copy file="${build}/Maud_dev.jar" tofile="${installfulldirLinux64}/lib/Maud.jar"/>
-        <copy file="${build}/Maud_dev.jar" tofile="${installfulldirWindows}/lib/Maud.jar"/>
+        <copy file="${build}/Maud_dev.jar" tofile="${installfulldirLinux64ojdk}/lib/Maud.jar"/>
+        <!--copy file="${build}/Maud_dev.jar" tofile="${installfulldirWindows}/lib/Maud.jar"/-->
         <copy file="${build}/Maud_dev.jar" tofile="${installfulldirWin64}/lib/Maud.jar"/>
-        <copy file="${build}/Maud_dev.jar" tofile="${installfulldirUnixNJ}/lib/Maud.jar"/>
+        <copy file="${build}/Maud_dev.jar" tofile="${installfulldirWin64ojdk}/lib/Maud.jar"/>
+        <!--copy file="${build}/Maud_dev.jar" tofile="${installfulldirUnixNJ}/lib/Maud.jar"/>
         <copy file="${build}/Maud_dev.jar" tofile="${installfulldirLinux64NJ}/lib/Maud.jar"/>
         <copy file="${build}/Maud_dev.jar" tofile="${installfulldirWindowsNJ}/lib/Maud.jar"/>
-        <copy file="${build}/Maud_dev.jar" tofile="${installfulldirWin64NJ}/lib/Maud.jar"/>
+        <copy file="${build}/Maud_dev.jar" tofile="${installfulldirWin64NJ}/lib/Maud.jar"/-->
         <!--copy file="${build}/Maud_dev.jar" tofile="${user.home}/Analysis/Analysis_07/nova/LargePhotoplateExample/lib/maud/Maud.jar" /-->
         <!--		<exec dir="." executable="cmd" os="Windows NT"> -->
         <!--  		<arg line="/c test.bat"/> -->
@@ -929,17 +931,19 @@
         <!--copy file="${build}/Maud_dev.jar" tofile="${mirrorfulldir}/Maud.jar" />
         <copy file="${build}/Maud_dev.jar" tofile="${mirrorfulldir2}/Maud.jar" /-->
         <!--signjar jar="${mirrorfulldir}/Maud.jar" alias="${myself}" storepass="${keypasswd}" keystore="${keystore}"/-->
-        <copy file="${build}/Maud_dev.jar" tofile="${inst}/Maud.jar"/>
+        <copy file="${build}/Maud_dev.jar" tofile="${installfulldirWin64}/lib/Maud.jar"/>
+        <copy file="${build}/Maud_dev.jar" tofile="${installfulldirWin64ojdk}/lib/Maud.jar"/>
+        <copy file="${build}/Maud_dev.jar" tofile="${installfulldirLinux64}/lib/Maud.jar"/>
+        <copy file="${build}/Maud_dev.jar" tofile="${installfulldirLinux64ojdk}/lib/Maud.jar"/>
+        <!--copy file="${build}/Maud_dev.jar" tofile="${inst}/Maud.jar"/>
         <copy file="${build}/Maud_dev.jar" tofile="${installfulldirMac}/Maud.jar"/>
         <copy file="${build}/Maud_dev.jar" tofile="${installfulldirMac64}/Maud.jar"/>
         <copy file="${build}/Maud_dev.jar" tofile="${installfulldirUnix}/lib/Maud.jar"/>
-        <copy file="${build}/Maud_dev.jar" tofile="${installfulldirLinux64}/lib/Maud.jar"/>
         <copy file="${build}/Maud_dev.jar" tofile="${installfulldirWindows}/lib/Maud.jar"/>
-        <copy file="${build}/Maud_dev.jar" tofile="${installfulldirWin64}/lib/Maud.jar"/>
         <copy file="${build}/Maud_dev.jar" tofile="${installfulldirUnixNJ}/lib/Maud.jar"/>
         <copy file="${build}/Maud_dev.jar" tofile="${installfulldirLinux64NJ}/lib/Maud.jar"/>
         <copy file="${build}/Maud_dev.jar" tofile="${installfulldirWindowsNJ}/lib/Maud.jar"/>
-        <copy file="${build}/Maud_dev.jar" tofile="${installfulldirWin64NJ}/lib/Maud.jar"/>
+        <copy file="${build}/Maud_dev.jar" tofile="${installfulldirWin64NJ}/lib/Maud.jar"/-->
         <!--copy file="${build}/Maud_dev.jar" tofile="${user.home}/Analysis/Analysis_07/nova/LargePhotoplateExample/lib/maud/Maud.jar" /-->
         <!--		<exec dir="." executable="cmd" os="Windows NT"> -->
         <!--  		<arg line="/c test.bat"/> -->
@@ -1249,13 +1253,18 @@
 
     <target name="copy_miscLib" depends="build_miscLib"
             description="Copy all libraries files to the final destination.">
-        <copy file="${build}/miscLib.jar" tofile="${mirrorfulldir}/miscLib.jar"/>
+        <!--copy file="${build}/miscLib.jar" tofile="${mirrorfulldir}/miscLib.jar"/>
         <copy file="${build}/miscLib.jar" tofile="${mirrorfulldir2}/lib/miscLib.jar"/>
         <copy file="${build}/miscLib.jar" tofile="${installfulldirMac}/miscLib.jar"/>
         <copy file="${build}/miscLib.jar" tofile="${installfulldirMac64}/miscLib.jar"/>
         <copy file="${build}/miscLib.jar" tofile="${installfulldirLinux64}/lib/miscLib.jar"/>
         <copy file="${build}/miscLib.jar" tofile="${installfulldirWindows}/lib/miscLib.jar"/>
+        <copy file="${build}/miscLib.jar" tofile="${installfulldirWin64}/lib/miscLib.jar"/-->
+        <copy file="${build}/miscLib.jar" tofile="${installfulldirLinux64}/lib/miscLib.jar"/>
+        <copy file="${build}/miscLib.jar" tofile="${installfulldirLinux64ojdk}/lib/miscLib.jar"/>
         <copy file="${build}/miscLib.jar" tofile="${installfulldirWin64}/lib/miscLib.jar"/>
+        <copy file="${build}/miscLib.jar" tofile="${installfulldirWin64ojdk}/lib/miscLib.jar"/>
+        <copy file="${build}/miscLib.jar" todir="libs/current"/>
         <!--signjar jar="${mirrorreddir}/lib/miscLib.jar" alias="${myself}" storepass="${keypasswd}" keystore="${keystore}"/-->
         <!--		<exec dir="." executable="cmd" os="Windows NT"> -->
         <!--  		<arg line="/c test.bat"/> -->
@@ -1581,18 +1590,20 @@
 
 
     <target name="copy_ImageJ" depends="build_ImageJ" description="Copy the ImageJ build files to the final destination.">
-        <copy file="${build}/ij.jar" tofile="${mirrorfulldir}/ij.jar"/>
+        <!--copy file="${build}/ij.jar" tofile="${mirrorfulldir}/ij.jar"/>
         <copy file="${build}/ij.jar" tofile="${mirrorfulldir2}/lib/ij.jar"/>
         <copy file="${build}/ij.jar" tofile="${installfulldirMac}/ij.jar"/>
         <copy file="${build}/ij.jar" tofile="${installfulldirMac64}/ij.jar"/>
         <copy file="${build}/ij.jar" tofile="${installfulldirUnix}/lib/ij.jar"/>
-        <copy file="${build}/ij.jar" tofile="${installfulldirLinux64}/lib/ij.jar"/>
         <copy file="${build}/ij.jar" tofile="${installfulldirWindows}/lib/ij.jar"/>
-        <copy file="${build}/ij.jar" tofile="${installfulldirWin64}/lib/ij.jar"/>
         <copy file="${build}/ij.jar" tofile="${installfulldirUnixNJ}/lib/ij.jar"/>
         <copy file="${build}/ij.jar" tofile="${installfulldirLinux64NJ}/lib/ij.jar"/>
         <copy file="${build}/ij.jar" tofile="${installfulldirWindowsNJ}/lib/ij.jar"/>
-        <copy file="${build}/ij.jar" tofile="${installfulldirWin64NJ}/lib/ij.jar"/>
+        <copy file="${build}/ij.jar" tofile="${installfulldirWin64NJ}/lib/ij.jar"/-->
+        <copy file="${build}/ij.jar" tofile="${installfulldirLinux64}/lib/ij.jar"/>
+        <copy file="${build}/ij.jar" tofile="${installfulldirLinux64ojdk}/lib/ij.jar"/>
+        <copy file="${build}/ij.jar" tofile="${installfulldirWin64}/lib/ij.jar"/>
+        <copy file="${build}/ij.jar" tofile="${installfulldirWin64ojdk}/lib/ij.jar"/>
         <copy file="${build}/ij.jar" todir="libs/current"/>
         <!--signjar jar="${mirrorreddir}/lib/ij.jar" alias="${myself}" storepass="${keypasswd}" keystore="${keystore}"/-->
         <!--		<exec dir="." executable="cmd" os="Windows NT"> -->
@@ -1756,19 +1767,21 @@
 
 
     <target name="copy_Images" depends="build_Images" description="Copy the Images jar files to the final destination.">
-        <copy file="${build}/Images.jar" todir="${mirrorfulldir}"/>
+        <!--copy file="${build}/Images.jar" todir="${mirrorfulldir}"/>
         <copy file="${build}/Images.jar" todir="${mirrorfulldir2}/lib"/>
         <copy file="${build}/Images.jar" todir="${installfulldirMac}"/>
         <copy file="${build}/Images.jar" todir="${installfulldirMac64}"/>
         <copy file="${build}/Images.jar" todir="${installfulldirUnix}/lib"/>
-        <copy file="${build}/Images.jar" todir="${installfulldirLinux64}/lib"/>
         <copy file="${build}/Images.jar" todir="${installfulldirWindows}/lib"/>
-        <copy file="${build}/Images.jar" todir="${installfulldirWin64}/lib"/>
-        <copy file="${build}/Images.jar" todir="libs/current"/>
         <copy file="${build}/Images.jar" todir="${installfulldirUnixNJ}/lib"/>
         <copy file="${build}/Images.jar" todir="${installfulldirLinux64NJ}/lib"/>
         <copy file="${build}/Images.jar" todir="${installfulldirWindowsNJ}/lib"/>
-        <copy file="${build}/Images.jar" todir="${installfulldirWin64NJ}/lib"/>
+        <copy file="${build}/Images.jar" todir="${installfulldirWin64NJ}/lib"/-->
+        <copy file="${build}/Images.jar" todir="${installfulldirLinux64}/lib"/>
+        <copy file="${build}/Images.jar" todir="${installfulldirLinux64ojdk}/lib"/>
+        <copy file="${build}/Images.jar" todir="${installfulldirWin64}/lib"/>
+        <copy file="${build}/Images.jar" todir="${installfulldirWin64ojdk}/lib"/>
+        <copy file="${build}/Images.jar" todir="libs/current"/>
         <!--signjar jar="${mirrorreddir}/lib/Images.jar" alias="${myself}" storepass="${keypasswd}" keystore="${keystore}"/-->
         <!--		<exec dir="." executable="cmd" os="Windows NT"> -->
         <!--  		<arg line="/c test.bat"/> -->
@@ -1793,18 +1806,20 @@
 
 
     <target name="copy_Help" depends="build_Help" description="Copy the Help jar files to the final destination.">
-        <copy file="${build}/Help.jar" todir="${mirrorfulldir}"/>
+        <!--copy file="${build}/Help.jar" todir="${mirrorfulldir}"/>
         <copy file="${build}/Help.jar" todir="${mirrorfulldir2}/lib"/>
         <copy file="${build}/Help.jar" todir="${installfulldirMac}"/>
         <copy file="${build}/Help.jar" todir="${installfulldirMac64}"/>
         <copy file="${build}/Help.jar" todir="${installfulldirUnix}/lib"/>
-        <copy file="${build}/Help.jar" todir="${installfulldirLinux64}/lib"/>
         <copy file="${build}/Help.jar" todir="${installfulldirWindows}/lib"/>
-        <copy file="${build}/Help.jar" todir="${installfulldirWin64}/lib"/>
         <copy file="${build}/Help.jar" todir="${installfulldirUnixNJ}/lib"/>
         <copy file="${build}/Help.jar" todir="${installfulldirLinux64NJ}/lib"/>
         <copy file="${build}/Help.jar" todir="${installfulldirWindowsNJ}/lib"/>
-        <copy file="${build}/Help.jar" todir="${installfulldirWin64NJ}/lib"/>
+        <copy file="${build}/Help.jar" todir="${installfulldirWin64NJ}/lib"/-->
+        <copy file="${build}/Help.jar" todir="${installfulldirLinux64}/lib"/>
+        <copy file="${build}/Help.jar" todir="${installfulldirLinux64ojdk}/lib"/>
+        <copy file="${build}/Help.jar" todir="${installfulldirWin64}/lib"/>
+        <copy file="${build}/Help.jar" todir="${installfulldirWin64ojdk}/lib"/>
         <copy file="${build}/Help.jar" todir="libs/current"/>
         <!--signjar jar="${mirrorreddir}/lib/Help.jar" alias="${myself}" storepass="${keypasswd}" keystore="${keystore}"/-->
         <!--		<exec dir="." executable="cmd" os="Windows NT"> -->
@@ -1832,18 +1847,20 @@
 
 
     <target name="copy_Files" depends="build_Files" description="Copy the Files jar files to the final destination.">
-        <copy file="${build}/Files.jar" todir="${mirrorfulldir}"/>
+        <!--copy file="${build}/Files.jar" todir="${mirrorfulldir}"/>
         <copy file="${build}/Files.jar" todir="${mirrorfulldir2}/lib"/>
         <copy file="${build}/Files.jar" todir="${installfulldirMac}"/>
         <copy file="${build}/Files.jar" todir="${installfulldirMac64}"/>
         <copy file="${build}/Files.jar" todir="${installfulldirUnix}/lib"/>
-        <copy file="${build}/Files.jar" todir="${installfulldirLinux64}/lib"/>
         <copy file="${build}/Files.jar" todir="${installfulldirWindows}/lib"/>
-        <copy file="${build}/Files.jar" todir="${installfulldirWin64}/lib"/>
         <copy file="${build}/Files.jar" todir="${installfulldirUnixNJ}/lib"/>
         <copy file="${build}/Files.jar" todir="${installfulldirLinux64NJ}/lib"/>
         <copy file="${build}/Files.jar" todir="${installfulldirWindowsNJ}/lib"/>
-        <copy file="${build}/Files.jar" todir="${installfulldirWin64NJ}/lib"/>
+        <copy file="${build}/Files.jar" todir="${installfulldirWin64NJ}/lib"/-->
+        <copy file="${build}/Files.jar" todir="${installfulldirLinux64}/lib"/>
+        <copy file="${build}/Files.jar" todir="${installfulldirLinux64ojdk}/lib"/>
+        <copy file="${build}/Files.jar" todir="${installfulldirWin64}/lib"/>
+        <copy file="${build}/Files.jar" todir="${installfulldirWin64ojdk}/lib"/>
         <copy file="${build}/Files.jar" todir="libs/current"/>
         <!--signjar jar="${mirrorreddir}/lib/Files.jar" alias="${myself}" storepass="${keypasswd}" keystore="${keystore}"/-->
         <!--		<exec dir="." executable="cmd" os="Windows NT"> -->
@@ -1870,18 +1887,20 @@
 
     <target name="copy_Examples" depends="build_Examples"
             description="Copy the Examples jar files to the final destination.">
-        <copy file="${build}/Examples.jar" todir="${mirrorfulldir}"/>
+        <!--copy file="${build}/Examples.jar" todir="${mirrorfulldir}"/>
         <copy file="${build}/Examples.jar" todir="${mirrorfulldir2}/lib"/>
         <copy file="${build}/Examples.jar" todir="${installfulldirMac}"/>
         <copy file="${build}/Examples.jar" todir="${installfulldirMac64}"/>
         <copy file="${build}/Examples.jar" todir="${installfulldirUnix}/lib"/>
-        <copy file="${build}/Examples.jar" todir="${installfulldirLinux64}/lib"/>
         <copy file="${build}/Examples.jar" todir="${installfulldirWindows}/lib"/>
-        <copy file="${build}/Examples.jar" todir="${installfulldirWin64}/lib"/>
         <copy file="${build}/Examples.jar" todir="${installfulldirUnixNJ}/lib"/>
         <copy file="${build}/Examples.jar" todir="${installfulldirLinux64NJ}/lib"/>
         <copy file="${build}/Examples.jar" todir="${installfulldirWindowsNJ}/lib"/>
-        <copy file="${build}/Examples.jar" todir="${installfulldirWin64NJ}/lib"/>
+        <copy file="${build}/Examples.jar" todir="${installfulldirWin64NJ}/lib"/-->
+        <copy file="${build}/Examples.jar" todir="${installfulldirLinux64}/lib"/>
+        <copy file="${build}/Examples.jar" todir="${installfulldirLinux64ojdk}/lib"/>
+        <copy file="${build}/Examples.jar" todir="${installfulldirWin64}/lib"/>
+        <copy file="${build}/Examples.jar" todir="${installfulldirWin64ojdk}/lib"/>
         <copy file="${build}/Examples.jar" todir="libs/current"/>
         <!--signjar jar="${mirrorreddir}/lib/Files.jar" alias="${myself}" storepass="${keypasswd}" keystore="${keystore}"/-->
         <!--		<exec dir="." executable="cmd" os="Windows NT"> -->
@@ -2360,9 +2379,17 @@
         <exec dir="${inst}/Maud_linux64/" executable="tar" os="Mac OS X">
             <arg line="cfz ${dropbox}/linux64/Maud.tar.gz Maud"/>
         </exec>
+        <delete file="${dropbox}/linux64_openjdk/Maud.tar.gz"/>
+        <exec dir="${inst}/Maud_linux64_ojdk/" executable="tar" os="Mac OS X">
+            <arg line="cfz ${dropbox}/linux64_openjdk/Maud.tar.gz Maud"/>
+        </exec>
         <delete file="${dropbox}/windows64/Maud.zip"/>
         <exec dir="${inst}/Maud_windows64/" executable="zip" os="Mac OS X">
             <arg line="-r ${dropbox}/windows64/Maud.zip Maud"/>
+        </exec>
+        <delete file="${dropbox}/windows64_openjdk/Maud.zip"/>
+        <exec dir="${inst}/Maud_windows64_ojdk/" executable="zip" os="Mac OS X">
+            <arg line="-r ${dropbox}/windows64_openjdk/Maud.zip Maud"/>
         </exec>
     </target>
 
@@ -2376,9 +2403,17 @@
         <exec dir="${inst}/Maud_linux64/" executable="tar" os="Mac OS X">
             <arg line="cfz ${inst}/linux64/Maud.tar.gz Maud"/>
         </exec>
+        <delete file="${dropbox}/linux64_openjdk/Maud.tar.gz"/>
+        <exec dir="${inst}/Maud_linux64_ojdk/" executable="tar" os="Mac OS X">
+            <arg line="cfz ${dropbox}/linux64_openjdk/Maud.tar.gz Maud"/>
+        </exec>
         <delete file="${inst}/windows64/Maud.zip"/>
         <exec dir="${inst}/Maud_windows64/" executable="zip" os="Mac OS X">
             <arg line="-r ${inst}/windows64/Maud.zip Maud"/>
+        </exec>
+        <delete file="${dropbox}/windows64_openjdk/Maud.zip"/>
+        <exec dir="${inst}/Maud_windows64_ojdk/" executable="zip" os="Mac OS X">
+            <arg line="-r ${dropbox}/windows64_openjdk/Maud.zip Maud"/>
         </exec>
     </target>
 
