@@ -1061,6 +1061,9 @@ public class DiffrDataFile extends XRDcat {
 	  for (int i = 4; i < maxAngleNumber; i++)
 		  corrected_tilting_angles[i] = tilting_angles[i];
 
+	  if (MaudPreferences.getBoolean("testing.invertEta", true) && !MaudPreferences.getBoolean("testing.useNewRotationMatrices", true))
+		  corrected_tilting_angles[3] = -corrected_tilting_angles[3];
+
     lorentzRestricted = dataset.isLorentzRestricted();
     oscillatorsNumber = backgOscillatorsNumber();
     for (int i = 0; i < oscillatorsNumber; i++)

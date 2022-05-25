@@ -431,7 +431,7 @@ public class InstrumentBroadeningGSAS1f extends InstrumentBroadening {
 
           if (!linedata.toUpperCase().startsWith("COMMENT")) {
             st = new StringTokenizer(linedata, " ,\t\r\n");
-
+//				boolean functionReaded = false;
             while (st.hasMoreTokens()) {
 //              String lasttoken = token;
               token = st.nextToken();
@@ -441,11 +441,12 @@ public class InstrumentBroadeningGSAS1f extends InstrumentBroadening {
 	              if (bankString.length() > 0)
                   banknumber = Integer.valueOf(bankString).intValue();
                 addBank(GSASbankCalibration.bankPrefix + bankString);
+//	              functionReaded = false;
 //                System.out.println("bank " + banknumber);
 //                for (int i = 0; i < maxNumberFunctionCoefficients; i++)
 //                  addCoeff(i, banknumber, "0.0");
                 ncoeff = 0;
-              } else if (token.toUpperCase().indexOf("PRCF") != -1) {
+              } else if (token.toUpperCase().indexOf("PRCF1") != -1) {
 //                banknumber = Integer.valueOf(Misc.toStringDeleteBlank(linedata.substring(4, 6))).intValue();
                 token = Misc.toStringDeleteBlank(linedata.substring(10, 12));
                 if (token.length() == 1) {

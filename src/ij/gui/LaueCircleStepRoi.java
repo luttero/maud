@@ -112,8 +112,8 @@ public class LaueCircleStepRoi extends LaueCircleRoi {
 		  }
 	  }
 
-	  int npoints = Math.max(maxX - minX, maxY - minY) * pointsPerPixel;//  (int) getPixelCircleX(); //xMax / 2;  / coordTrasf
-	  double stepIntegration = imp.getCalibration().pixelWidth / pointsPerPixel;
+	  int npoints = Math.max(maxX - minX, maxY - minY) * pointsPerPixel / 2;//  (int) getPixelCircleX(); //xMax / 2;  / coordTrasf
+	  double stepIntegration = imp.getCalibration().pixelWidth / pointsPerPixel * 2;
     double coneStep = (finalAngle - startingAngle) / nprofiles;
     double halfConeStep = startingAngle - coneStep / 2.0;
     double[][] profile = new double[nprofiles][npoints];
@@ -158,8 +158,8 @@ public class LaueCircleStepRoi extends LaueCircleRoi {
 		MaudPreferences.setPref("squareRoi.yminValue", minY);
 		MaudPreferences.setPref("squareRoi.ymaxValue", maxY);
 
-		int npoints = Math.max(maxX - minX, maxY - minY) * pointsPerPixel;//  (int) getPixelCircleX(); //xMax / 2;  / coordTrasf
-		double stepIntegration = imp.getCalibration().pixelWidth / pointsPerPixel;
+		int npoints = Math.max(maxX - minX, maxY - minY) * pointsPerPixel / 2;//  (int) getPixelCircleX(); //xMax / 2;  / coordTrasf
+		double stepIntegration = imp.getCalibration().pixelWidth / pointsPerPixel * 2;
 		double coneStep = (finalAngle - startingAngle) / nprofiles;
 		double[][] profile = getPixels();
 		saveAsText(profile, nprofiles, npoints, coneStep, startingAngle, stepIntegration);

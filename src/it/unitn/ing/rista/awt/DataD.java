@@ -414,7 +414,7 @@ public class DataD extends myJFrame {
       }   // end filesDropped
     }); // end FileDrop.Listener
     datafileL.setVisibleRowCount(7);
-    datafileL.setPrototypeCellValue("123456789012345678901234567890");
+    datafileL.setPrototypeCellValue("123456789012345678901234567890123456789012345678901234567890");
     datafileL.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
     sp1 = new JScrollPane();
 //		sp1.setBorder(new LineBorder(Color.black));

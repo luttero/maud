@@ -86,8 +86,9 @@ public class GeometryBraggBrentano extends GeometryDiffractometer {
     }
 
     double[] tilt_angles = adatafile.getTiltingAngle();
-    sin2theta = Math.sin(position);
-    lp *= polarization(adatafile, positionHalf) / (Math.sin(positionHalf) * sin2theta);
+    sin2theta = Math.sin(positionHalf);
+    sin2theta *= sin2theta;
+    lp *= polarization(adatafile, positionHalf) / (Math.cos(positionHalf) * sin2theta);
     double omega = getMeasurement().getOmega(tilt_angles[0], position) * Constants.DEGTOPI;
     if (omega >= position || position >= Constants.PI)
       return 0.0;

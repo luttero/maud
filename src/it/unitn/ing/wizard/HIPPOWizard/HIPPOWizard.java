@@ -135,8 +135,13 @@ public class HIPPOWizard extends Wizard {
                 data.omegaOffset;
             if (i != 0 || k != 0)
               adataset = asample.newData(numberBackground);
-            else
-              adataset = asample.getDataSet(0);
+            else {
+	            adataset = asample.getDataSet(0);
+	            adataset.removeAllBackgroundCoeff();
+	            for (int n = 0; n < numberBackground; n++) {
+		            adataset.addBackgroudCoeff();
+	            }
+            }
             adataset.initializeAsNew();
             adataset.setLabel(((HIPPOBank) data.mbank.elementAt(i)).name + " omega " + ((float) omega));
             adataset.setInstrument(DefaultInstrument.modelID);
@@ -187,7 +192,7 @@ public class HIPPOWizard extends Wizard {
               if (newdatanumber > actualdatanumber) {
                 DiffrDataFile adatafile = adataset.getDataFile(actualdatanumber);
 
-	              adatafile.setAngleValue(0, omega);
+	              adatafile.setAngleValue(0, -omega);
 	              for (int bj = 0; bj < numberIndividualBackground; bj++)
                   adatafile.addBackgroundParameter();
               }
@@ -216,8 +221,13 @@ public class HIPPOWizard extends Wizard {
         if (((HIPPOBank) data.mbank.elementAt(i)).enabled) {
           if (i != 0)
             adataset = asample.newData(numberBackground);
-          else
-            adataset = asample.getDataSet(0);
+          else {
+	          adataset = asample.getDataSet(0);
+	          adataset.removeAllBackgroundCoeff();
+	          for (int n = 0; n < numberBackground; n++) {
+		          adataset.addBackgroudCoeff();
+	          }
+          }
           adataset.initializeAsNew();
           adataset.setLabel(((HIPPOBank) data.mbank.elementAt(i)).name);
           adataset.setInstrument(DefaultInstrument.modelID);
@@ -305,8 +315,8 @@ public class HIPPOWizard extends Wizard {
 //				            System.out.println("Add: " + name + " , to: " + adataset.getLabel() + " for: " + instAngCal.getBankID(j));
 				            DiffrDataFile[] adatafile = adataset.addDataFileforName(name, false);
 				            for (int ij = 0; ij < adatafile.length; ij++) {
-					            adatafile[ij].setAngleValue(0, Double.parseDouble(adatafile[ij].getString(1)) +
-							            ((HIPPODataFile) data.dataFiles.get(k)).omegaAngle +
+					            adatafile[ij].setAngleValue(0, -Double.parseDouble(adatafile[ij].getString(1)) -
+							            ((HIPPODataFile) data.dataFiles.get(k)).omegaAngle -
 							            data.omegaOffset);
 					            for (int nbkg = 0; nbkg < numberIndividualBackground; nbkg++) {
 						            adatafile[ij].addBackgroundParameter();

@@ -80,12 +80,13 @@ public class GSASbankCalibration extends AngularCalibration {
   int choosedBankNumber = 0;
 
   public static final String bankPrefix = "Bank";
+  public static String modelID = "IPNS/LANSCE Bank";
 
   public GSASbankCalibration(XRDcat aobj, String alabel) {
     super(aobj, alabel);
     initXRD();
-    identifier = "IPNS/LANSCE Bank";
-    IDlabel = "IPNS/LANSCE Bank";
+    identifier = modelID;
+    IDlabel = modelID;
   }
 
   public GSASbankCalibration(XRDcat aobj) {
@@ -93,8 +94,8 @@ public class GSASbankCalibration extends AngularCalibration {
   }
 
   public GSASbankCalibration() {
-    identifier = "IPNS/LANSCE Bank";
-    IDlabel = "IPNS/LANSCE Bank";
+    identifier = modelID;
+    IDlabel = modelID;
   }
 
   public void initConstant() {
@@ -128,7 +129,14 @@ public class GSASbankCalibration extends AngularCalibration {
     flightPath = Double.parseDouble(stringField[2]) * 1000;
   }
 
-  public void updateParametertoDoubleBuffering(boolean firstLoading) {
+	public void invertEta() {
+		for (int bank = 0; bank < banknumbers(); bank++) {
+			double eta = getParameterLoopValues(4, bank);
+			getParameterFromLoop(4, bank).setValue(-eta);
+		}
+	}
+
+	public void updateParametertoDoubleBuffering(boolean firstLoading) {
     if (getFilePar().isLoadingFile() || !isAbilitatetoRefresh)
       return;
     isAbilitatetoRefresh = false;
@@ -618,7 +626,15 @@ public class GSASbankCalibration extends AngularCalibration {
                 addTtheta(banknumber, token = st.nextToken());
               } else if (token.toLowerCase().indexOf("detazm") != -1) {
                 int j = token.toLowerCase().indexOf("detazm");
-                addEta(banknumber, token = st.nextToken());
+	              token = st.nextToken();
+						double eta = Double.parseDouble(token);
+						boolean invert = MaudPreferences.getBoolean("testing.HippoInvertDetzmInImport", true);
+						double shift = MaudPreferences.getDouble("testing.HippoShiftDetzmInImport", -180.0);
+						int sign = 1;
+						if (invert) sign = -1;
+						eta = eta * sign + shift;
+						token = Double.toString(eta);
+	              addEta(banknumber, token);
               }
             }
           }

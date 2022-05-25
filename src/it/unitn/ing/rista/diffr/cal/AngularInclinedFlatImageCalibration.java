@@ -31,6 +31,8 @@ import it.unitn.ing.rista.util.*;
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Vector;
 
 /**
@@ -50,7 +52,9 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
                                      "_pd_instr_dist_spec/detc",
                                      "_inst_ang_calibration_center_x", "_inst_ang_calibration_center_y",
                                      "_inst_ang_calibration_detc_2theta", "_inst_ang_calibration_detc_phiDA",
-                                     "_inst_ang_calibration_detc_omegaDN", "_inst_ang_calibration_detc_etaDA"};
+                                     "_inst_ang_calibration_detc_omegaDN", "_inst_ang_calibration_detc_etaDA",
+
+                                     "_image_original_pixels_mask"};
   public static String[] diclistcrm = {"original detector distance (arb)",
 		                                   "image original center x (arb)", "image original center y (arb)",
 		                                   "original 2theta (deg)", "original phiDA (deg)",
@@ -60,10 +64,12 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 		                                   "sample detector distance (arb)",
                                        "image center x (arb)", "image center y (arb)",
                                        "image 2theta (deg)", "image phiDA (deg)",
-                                       "image rotation (deg)", "image etaDA (deg)"};
+                                       "image rotation (deg)", "image etaDA (deg)",
 
+                                       "image mask to filter/correct pixels"};
+
+  public static String[] classlistcs = {"superclass:it.unitn.ing.rista.diffr.DataMask"};
   public static String[] classlistc = {};
-  public static String[] classlistcs = {};
 
   boolean refreshCalibration = true;
 
@@ -102,7 +108,7 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
     Nstringloop = 0;
     Nparameter = 7;
     Nparameterloop = 0;
-    Nsubordinate = 0;
+    Nsubordinate = 1;
     Nsubordinateloop = 0;
   }
 
@@ -120,6 +126,9 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
   @Override
   public void initParameters() {
     super.initParameters();
+
+	  setDataMask("no mask");
+
 	  stringField[0] = MaudPreferences.getPref("pixelDetector.defaultDetectorDistance", "85.0");
     stringField[1] = "0.0";
     stringField[2] = "0.0";
@@ -149,7 +158,31 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
             ParameterPreferences.getDouble(getParameterString(6) + ".max", 180));
   }
 
-  public void setDetectorDistance(double value) {
+	public int getDataMaskID() {
+		return 0;
+	}
+
+	public DataMask getDataMask() {
+		if (subordinateField[getDataMaskID()] == null)
+			setDataMask(0);
+		return (DataMask) subordinateField[getDataMaskID()];
+	}
+
+	public void setDataMask(String value) {
+		if (subordinateField[getDataMaskID()] == null ||
+				!value.equals(subordinateField[getDataMaskID()].identifier))
+			setsubordinateField(getDataMaskID(), value);
+	}
+
+	public void setDataMask(int number) {
+		setDataMask(getsubordIdentifier(getDataMaskID(), number));
+	}
+
+	public String getDataMaskS() {
+		return getDataMask().identifier;
+	}
+
+	public void setDetectorDistance(double value) {
     parameterField[0].setValue(value);
   }
 
@@ -416,6 +449,13 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 
 		ImageProcessor ip = imp.getChannelProcessor();
 
+//		int width = ip.getWidth();
+//		int height = ip.getHeight();
+//    buffer[width, height]
+		int[][] pixels = ip.getIntArray();
+		getDataMask().filterData(pixels);
+		ip.setIntArray(pixels);
+
 		rotationInversion = getOriginalRotoInversionOperation();
 
 		switch (rotationInversion) {
@@ -517,9 +557,9 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 		double[] eta = new double[npointsX * npointsY];
 //	        Angles.getTheta2EtaFromXYPixelDetector(x, y, theta2, eta, omega, det2Theta, phiDA,
 //			        omegaDN, etaDA, detectorDistance, 0.0);
-		System.out.println("Converting to 2theta, eta: " + omega + " " +
-				detector2Theta + " " + azimuthal + " " +
-				phiDetector + " " + coneAngle + " " + detectorDistance);
+//		System.out.println("Converting to 2theta, eta: " + omega + " " +
+//				detector2Theta + " " + azimuthal + " " +
+//				phiDetector + " " + coneAngle + " " + detectorDistance);
 		Angles.getTheta2EtaFromXYPixelDetector(x, y, theta2, eta, omega,
 				detector2Theta, azimuthal, phiDetector, coneAngle, detectorDistance, 0);
 //		System.out.println("Conversion to theta, eta angles done! " + theta2[0] + " " + theta2[theta2.length - 1] + " " +
@@ -639,6 +679,7 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
   class JPolAngOptionsD extends JOptionsDialog {
 
 		JTextField[] textfield = null;
+	  JComboBox[] optchoice;
 
 	  public JPolAngOptionsD(Frame parent, XRDcat obj) {
 
@@ -659,8 +700,11 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 		  for (int i = 0; i < parameterField.length; i++)
 	      addParField(firstPanel, textStrings[i], parameterField[i]);
 
-	    JPanel secondPanel = new JPanel(new GridLayout(0, 4, 3, 3));
+	    JPanel secondPanel = new JPanel(new BorderLayout(3, 3));
 	    tabPanel.addTab(tempString[1], null, secondPanel);
+
+		  JPanel secondPanelTop = new JPanel(new GridLayout(0, 4, 3, 3));
+		  secondPanel.add(secondPanelTop, BorderLayout.CENTER);
 
 		  textfield = new JTextField[stringField.length];
 
@@ -677,9 +721,47 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 				  "Position of the detector in eta (along diffraction circles) during image integration; pref keyword: pixelDetector.defaultEtaDAangle",
 				  "Pre processing of the image: pixelDetector.defaultRotoInversion (0 = no action, 1 = rotation 90 clockwise, 2 = rotation 180 clockwise, 3 = rotation 90 anticlockwise, 4 = rotation 180 anticlockwise, 5 = flip horizontal, 6 = flip vertical, 7 = center inversion)"};
 		  for (int i = 0; i < stringField.length; i++)
-		    addStringField(secondPanel, textStrings[i], tooltipStrings[i], i);
+		    addStringField(secondPanelTop, textStrings[i], tooltipStrings[i], i);
 
-	    setTitle("2D Image angular calibration");
+		  JPanel jPanel12 = new JPanel();
+		  jPanel12.setLayout(new BorderLayout(2, 2));
+		  secondPanel.add(jPanel12, BorderLayout.SOUTH);
+
+		  JPanel jPanel6 = new JPanel();
+		  jPanel6.setLayout(new GridLayout(0, 1, 1, 1));
+		  jPanel12.add("West", jPanel6);
+
+		  String[] tmpStringS1 = {"Image Mask model:"};
+
+		  for (int i = 0; i < Nsubordinate; i++)
+			  jPanel6.add(new JLabel(tmpStringS1[i]));
+
+		  JPanel jPanel8 = new JPanel();
+		  jPanel8.setLayout(new GridLayout(0, 1, 1, 1));
+		  jPanel12.add(jPanel8, BorderLayout.CENTER);
+
+		  optchoice = new JComboBox[Nsubordinate];
+		  for (int i = 0; i < Nsubordinate; i++) {
+			  final int index = i;
+			  JPanel jPanel2 = new JPanel();
+			  jPanel2.setLayout(new FlowLayout(FlowLayout.RIGHT, 1, 1));
+			  jPanel8.add(jPanel2);
+			  optchoice[i] = new JComboBox();
+			  optchoice[i].setEditable(false);
+			  optchoice[i].setMaximumRowCount(4);
+			  jPanel2.add(optchoice[i]);
+			  JButton optbutton = new JIconButton("Eyeball.gif", "Options");
+			  optbutton.addActionListener(new ActionListener() {
+				  public void actionPerformed(ActionEvent event) {
+					  subordinateOptions(index);
+				  }
+			  });
+			  jPanel2.add(optbutton);
+		  }
+
+
+
+		  setTitle("2D Image angular calibration");
       initParameters();
 
       pack();
@@ -688,11 +770,25 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
   @Override
     public void initParameters() {
 
-    }
+	  for (int i = 0; i < Nsubordinate; i++) { //absorption removed here
+		  for (int j = 0; j < getsubordClassNumber(i); j++)
+			  optchoice[i].addItem(getsubordIdentifier(i, j));
+		  optchoice[i].setSelectedItem(subordinateField[i].identifier);
+	  }
+
+  }
 
 	  public void retrieveParameters() {
 		  for (int i = 0; i < stringField.length; i++)
 			  stringField[i] = textfield[i].getText();
+
+		  for (int i = 0; i < Nsubordinate; i++) { //absorption removed here
+			  String value = optchoice[i].getSelectedItem().toString();
+			  if (subordinateField[i] == null ||
+					  !value.equals(subordinateField[i].identifier))
+				  setsubordinateField(i, value);
+		  }
+
 		  super.retrieveParameters();
 	  }
 
@@ -704,6 +800,23 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 		  apanel.add(textfield[stringFieldNumber]);
 	  }
 
+	  public void subordinateOptions(int index) {
+		  String value = optchoice[index].getSelectedItem().toString();
+		  if (subordinateField[index] == null ||
+				  !value.equals(subordinateField[index].identifier))
+			  setsubordinateField(index, value);
+
+		  subordinateField[index].getOptionsDialog(this).setVisible(true);
+	  }
+
+	  public void dispose() {
+		  for (int i = 0; i < Nsubordinate; i++) {  //absorption removed here
+			  optchoice[i].removeAllItems();
+		  }
+		  optchoice = null;
+
+		  super.dispose();
+	  }
   }
 
 }

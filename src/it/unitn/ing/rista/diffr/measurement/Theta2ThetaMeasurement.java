@@ -85,7 +85,7 @@ public class Theta2ThetaMeasurement extends Measurement {
   }
 
   public void initParameters() {
-    super.initParameters();
+  	super.initParameters();
   }
 
 /*	public double getIntensityCorrection(	DiffrDataFile adatafile, Sample asample, double position, boolean dspacingbase) {
@@ -182,7 +182,10 @@ public class Theta2ThetaMeasurement extends Measurement {
   }
 
   public double getOmega(double omega, double twotheta) {
-    return omega + twotheta / 2;
+  	 if (Constants.angleConversionUseLegacy)
+      return omega + twotheta / 2;
+  	 else
+  	 	return omega - twotheta / 2;
   }
 
 }

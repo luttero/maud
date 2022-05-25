@@ -669,7 +669,13 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 
 	public double calibrateData(DiffrDataFile datafile, double x, int index) {
 //    updateStringtoDoubleBuffering(false);
-    int bank = getBankNumber(datafile);
+		int bank = getBankNumber(datafile);
+		return calibrateData(bank, x, index);
+	}
+
+	public double calibrateData(int bank, double x, int index) {
+//    updateStringtoDoubleBuffering(false);
+//		System.out.println(bank + " " + x + " " + index);
     x /= 1000.0;
     double wt = 0.0, tx = 0.0;
     switch (typeNumber[bank]) {
@@ -708,7 +714,7 @@ public class GSASbankIntCalibration extends IntensityCalibration {
         wt = getCoeffD(bank, 0);
         w4 = x * x;
         wt += getCoeffD(bank, 1) * Math.exp(-getCoeffD(bank, 2) / w4) / (w4 * w4 * x);
-        w4 = x;
+//        w4 = x;
         for (int i = 3; i < numberIncSpectrumCoefficients; i++)
           wt += getCoeffD(bank, i) * ChebyshevPolynomial.getT(i - 2, tx);
 
@@ -799,7 +805,7 @@ public class GSASbankIntCalibration extends IntensityCalibration {
       typeCB.setToolTipText("Select the incident function type");
       jp2.add(typeCB);
 
-      jp2 = new JPanel();
+		jp2 = new JPanel();
       jp2.setLayout(new FlowLayout(FlowLayout.RIGHT, 6, 6));
       jp1.add(jp2);
       JButton removeButton = new JButton("Remove bank");
@@ -828,7 +834,19 @@ public class GSASbankIntCalibration extends IntensityCalibration {
       scaleTF = new JTextField(Constants.FLOAT_FIELD);
       jp2.add(scaleTF);
 
-      setTitle("IPNS/LANSCE intensity calibration");
+	    jp2 = new JPanel();
+	    jp2.setLayout(new FlowLayout(FlowLayout.RIGHT, 6, 6));
+	    jp1.add(jp2);
+	    JButton plotButton = new JButton("Plot function");
+	    jp2.add(plotButton);
+	    plotButton.setToolTipText("Plot incident spectrum for the selected bank");
+	    plotButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent event) {
+			    plotSpectrum();
+		    }
+	    });
+
+	    setTitle("IPNS/LANSCE intensity calibration");
       initParameters();
 
       bankCB.addItemListener(new ItemListener() {
@@ -962,6 +980,27 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 	    }
     }
 
+	  public void plotSpectrum() {
+		  retrieveParameters();
+		  updateStringtoDoubleBuffering(false);
+		  refreshComputation = true;
+		  int bankIndex = 0;
+		  if (selectedBank > 0)
+			  bankIndex = selectedBank;
+		  DataFileSet data = (DataFileSet) getInstrument().getParent();
+		  int datafileIndex = 0;
+		  DiffrDataFile datafile = data.getActiveDataFile(datafileIndex);
+		  while (datafile.getBankNumber() != bankIndex && datafileIndex < data.activedatafilesnumber() - 1)
+			  datafile = data.getActiveDataFile(++datafileIndex);
+		  int lineCounts = datafile.datanumber;
+		  double[] x = new double[lineCounts];
+		  double[] y = new double[lineCounts];
+		  for (int i = datafile.startingindex; i < datafile.finalindex; i++) {
+			  x[i] = datafile.getXDataOriginal(i);
+			  y[i] = calibrateData(datafile, x[i], i);
+		  }
+		  (new PlotSimpleData(this, x, y, true)).setVisible(true);
+	  }
   }
 
 }

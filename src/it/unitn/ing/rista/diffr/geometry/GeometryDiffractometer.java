@@ -247,7 +247,7 @@ public class GeometryDiffractometer extends Geometry {
 		// X-ray
 		double Ph = 0.0;
 		if (position < Constants.PI) {
-			double cos2theta = Math.cos(position);
+			double cos2theta = Math.cos(position * 2.0);
 			cos2theta *= cos2theta;
 			double eta = adatafile.getEtaValue() * Constants.DEGTOPI + polarizationAngle;
 			double coseta = Math.cos(eta);

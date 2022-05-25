@@ -2495,6 +2495,10 @@ public class DataFileSet extends XRDcat {
         ParameterPreferences.getDouble(parameterString + ".max", minmax)));
   }
 
+  public void removeAllBackgroundCoeff() {
+	  removeAllPLField(backgroundID);
+  }
+
   public Parameter getbackgcoef(int index) {
     return (Parameter) parameterloopField[backgroundID].elementAt(index);
   }

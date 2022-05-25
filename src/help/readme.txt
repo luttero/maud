@@ -43,10 +43,100 @@ from the older one.
 
 Maud Version notes:
 
-(xx/06/2021):   2.99. The "never ending waiting" release.
+(25/05/2022):   2.994. The "Stout" release.
+                You have to empty the beer keg while working on angles conversion.
+                That's why it takes so long.....
+                The angles conversion routine was re-done again as we spot some
+                problems still remain. We found actually (thanks Matt and Sven)
+                the last problems and fixed. We are working on a paper to publish
+                the details to make it clear for all.
+                Finally the angle conversion is working good for Hippo and the rest
+                of the world.
+
+(16/02/2022):   2.993. The "Zara" release.
+                Jack now has a small replica. Difficult to contain.
+                The angle conversion routine at the base of all texture,
+                absorption and geometry corrections has been re-worked from
+                scratch. There is a Maud preference to either use the new one
+                or the old one (1.992 and before): testing.useNewRotationMatrices
+                if set to true the new conversion will be used. It is true by
+                default. The angle conversion used is still the one defined in
+                Figure 1 of the paper: Grasslin et al. J. Appl. Cryst. 46,
+                173-180, 2013. There is one error in the appendix there: in the
+                matrix multiplication not only the Theta matrix should have a
+                minus sign, but also the Eta matrix just after Theta. Otherwise
+                we end up with the wrong rotation as it has been corrected
+                in version 2.992 (see notes below). Please notice that not all
+                rotations are CCW or right ended. But this is what it is in
+                Maud. For the sample the angles are not changing the coordinates
+                system, but adding the angles of rotation. The difference is
+                that of the sign of the angle. So in Maud it is the same
+                sign or rotation as for the goniometer rotations and not the
+                inverse rotation as it should be for a change in the coordinates
+                system of the sample.
+                There is the possibility now to change the background in all
+                the openGl renderings (the rotating 3D figures like the
+                crystallite etc.). You have to edit the Properties.3D file
+                in the maud directory (located under your user home directory
+                in AppData/Local in Windows or Documents for MacOS/Linux).
+                At the end of the "# Crystallite" section before "# Pole Figure"
+                there may be a line:
+                0.0  0.0  0.0  0.0     // Background only OpenGl
+                if the line is not there but it ends with ""// Shineness ...",
+                just add this new line for the background.
+                The 4 numbers are the Red Green Blue and Alpha values for the
+                background color. All zeros is for a black background. The
+                maximum value is 1.0 for all 4 and corresponds to white. You
+                have to edit the file before starting Maud. Otherwise just
+                restart it to change the color.
+
+(28/11/2021):   2.992. The "goofy" release.
+                Eta has a left handed coordinates system.
+                Fixed an error in loading the GSAS parameter file. To fix it
+                temporarily MAUD now loads only the function 1: PRCF1 and ignore
+                the others.
+                There is a second change that concern how texture angles are
+                calculated. There was a mistake in the eta angles tensor that
+                affected the texture angles calculation. To correct it now Maud
+                considers that the eta angle follow a left handed system when
+                viewed from the source as for the others tensors. In most cases
+                this only affected the reference system for the texture, but
+                in few cases (X-ray in reflection with both eta and chi angles
+                different than zero) it affected also the absorption
+                correction computation.
+                In this version the eta angle is inverted in the calculations
+                resulting in the correct angles calcultation for all cases and
+                a better absorption correction for some cases.
+                But this will change the computation for the old refinements
+                when the eta angle is involved (from the angular calibration
+                to the texture orientation). So to keep the old analysis files
+                still working in this release, Maud also inverts the eta angles
+                set for each datafile when it detects a version of the file
+                older than this release. So your calculation will remain the
+                same. For all the new analyses be careful you may need to
+                redo the calibration also if the eta angles are used, and the
+                texture may look inverted respect to the vertical axis in
+                the pole figures.
+                To check the difference between the old and the new way to
+                compute texture (and absorption) angles, you can switch
+                between the new and old computation using the Maud preference
+                "testing.invertEta". If it is true the new (correct) calculation
+                is used, false otherwise. Keep in mind that old analyses when
+                loaded from an analysis file will have eta inverted before
+                the calculation (in the angle setting for each datafile) in
+                order to compensate the inversion in the calculation.
+
+(08/07/2021):   2.991. The "supernull" release.
+                Sometimes I think the french people have the best definition.
+                Fixed a problem on reflectivity. The reflectivity computation
+                was never called by mistake.
+
+(06/07/2021):   2.99. The "never ending waiting" release.
                 When needed time goes too slow.
                 Fixed exporting summed spectra when datafiles have not overlapping
-                ranges.
+                ranges. Fixed an error in the computation of the polarization
+                factor for Bragg-Brentano geometries. The error was introduced
+                with version 2.94. Now is fixed in this version.
 
 (31/05/2021):   2.98. The "Knee" release.
                 I do not want to talk about it.

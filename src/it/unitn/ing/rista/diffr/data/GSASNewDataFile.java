@@ -258,7 +258,7 @@ public class GSASNewDataFile extends MultDiffrDataFile {
                 } else if (form.equalsIgnoreCase("ESD")) {
                   token = data[j];
                   esd = Double.valueOf(data[j + 1]).doubleValue();
-                  System.out.println("ESD " + data[j] + " " + data[j + 1]);
+//                  System.out.println("ESD " + data[j] + " " + data[j + 1]);
                 } else if (form.equalsIgnoreCase("ALT")) {
                   x = Double.valueOf(data[j]).doubleValue();
                   token = data[j + 1];

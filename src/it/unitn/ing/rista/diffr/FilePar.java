@@ -22,6 +22,7 @@ package it.unitn.ing.rista.diffr;
 
 import it.unitn.ing.rista.awt.*;
 import it.unitn.ing.rista.comp.*;
+import it.unitn.ing.rista.diffr.cal.*;
 import it.unitn.ing.rista.diffr.detector.XRFDetector;
 import it.unitn.ing.rista.interfaces.Function;
 import it.unitn.ing.rista.interfaces.basicObj;
@@ -1040,12 +1041,34 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 			  }
 		  }
 	  }
+	  if (getVersion() < 2.992) {
+		  for (int i = 0; i < getSample(0).getDatasetsList().size(); i++) {
+			  DataFileSet dataset = getSample(0).getDataSet(i);
+			  for (int j = 0; j < dataset.datafilesnumber(); j++) // invert eta
+			  	 dataset.getDataFile(j).setAngleValue(3, -dataset.getDataFile(j).getAngleValue(3));
+		  }
+	  }
+	  if (getVersion() < 2.993) {
+		  for (int i = 0; i < getSample(0).getDatasetsList().size(); i++) {
+			  DataFileSet dataset = getSample(0).getDataSet(i);
+			  AngularCalibration angcal = dataset.getInstrument().getAngularCalibration();
+			  if (angcal.identifier.equalsIgnoreCase(GSASbankCalibration.modelID) ||
+					  angcal.identifier.equalsIgnoreCase(MultiBankCalibration.modelID)) {
+			  	 dataset.getParameter(DataFileSet.samplePhiID).setValue(
+			  	 		dataset.getParameterValue(DataFileSet.samplePhiID) + 180.0);
+			  }
+		  }
+	  }
 	  checkForVersion(getVersion());
 
 	  stringField[1] = "Maud version " + Constants.maud_version;
 
 	  if (Constants.testing)
 		  System.out.println("End refresh");
+
+	  Constants.angleConversionUseLegacy = MaudPreferences.getBoolean("testing.angleConversionLegacy", true);
+
+
 	  saved = true;
 //		System.gc();
   }

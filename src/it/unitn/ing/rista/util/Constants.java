@@ -263,13 +263,13 @@ public class Constants {
   public static String resultsFile = "results.txt";
   public static String userName = null;
   public static String startPath = "/";
-  public static String maudReleaseBuilt = "$Revision: 2.98 $";
-  public static String maudDateBuilt = "$Date: 2021/05/31 16:17:05 $";
+  public static String maudReleaseBuilt = "$Revision: 2.994 $";
+  public static String maudDateBuilt = "$Date: 2022/05/16 21:58:29 $";
 
   public static final double arg2PIover3 = PI2 / 3.;
   public static final double sinArg2PIover3 = Math.sin(arg2PIover3);
   public static final double cosArg2PIover3 = Math.cos(arg2PIover3);
-  public static double maud_version = 2.98;
+  public static double maud_version = 2.994;
   public static boolean useOpenCL = false;
   public static Vector<OpenCLDevice> openClDevices= null;
   public static OpenCLDevice openclDevice = null;
@@ -371,6 +371,7 @@ public class Constants {
 	public static boolean testing = false;
   public static boolean testtime = false;
   public static boolean esquienabled = false;
+  public static boolean angleConversionUseLegacy = true;
 
   public static boolean webStart = false;
   public static URL ourCodebase = null;
@@ -1062,6 +1063,8 @@ public class Constants {
 //    if (Misc.checkTesting())
       testing = MaudPreferences.getBoolean("newFeatures.testing", testing);
     testtime = MaudPreferences.getBoolean("debug.computeTime", testtime);
+	  angleConversionUseLegacy = MaudPreferences.getBoolean("testing.angleConversionLegacy", true);
+
 //    useAltivec = MaudPreferences.getBoolean("debug.useG4Altivec", useAltivec);
 	  nativeComputation = false;
 	  OpenGL = false;
@@ -1123,6 +1126,21 @@ public class Constants {
             crystallite_mat_shininess[i] = Float.valueOf(token).floatValue();
           }
         }
+	      line = in.readLine();
+	     if (!line.startsWith("# Pole")) {
+
+		      while (line.startsWith("#") && !line.startsWith("# Pole"))
+			      line = in.readLine();
+		     if (!line.startsWith("# Pole")) {
+			     st = new StringTokenizer(line, " ,\t\r\n");
+			     for (int i = 0; i < 4; i++) {
+				     if (st.hasMoreTokens()) {
+					     token = st.nextToken();
+					     openglBackColor[i] = Float.valueOf(token).floatValue();
+				     }
+			     }
+		     }
+	      }
         in.close();
       } catch (IOException ie) {
         try {

@@ -5,6 +5,7 @@
       <additionalClassPath>
         <entry dir="file://$APPLICATION_HOME_DIR$/lib/ant/lib" />
         <entry path="file://$PROJECT_DIR$/libs/commons-net-3.3.jar" />
+        <entry path="file://$PROJECT_DIR$/Installers/infinitekind-appbundler-arm/appbundler/bin/appbundler-1.1.jar" />
         <entry path="file://$PROJECT_DIR$/Installers/infinitekind-appbundler-last/appbundler/bin/appbundler-1.0.jar" />
       </additionalClassPath>
       <maximumHeapSize value="1024" />
@@ -322,9 +323,6 @@
       <JavaCodeStyleSettings>
         <option name="CLASS_COUNT_TO_USE_IMPORT_ON_DEMAND" value="3" />
       </JavaCodeStyleSettings>
-      <XML>
-        <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
-      </XML>
       <codeStyleSettings language="JAVA">
         <indentOptions>
           <option name="INDENT_SIZE" value="3" />
@@ -393,7 +391,7 @@
   <component name="ProjectResources">
     <default-html-doctype>http://www.w3.org/1999/xhtml</default-html-doctype>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_13" default="false" project-jdk-name="13" project-jdk-type="JavaSDK" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_13" project-jdk-name="13" project-jdk-type="JavaSDK" />
   <component name="ResourceManagerContainer">
     <option name="myResourceBundles">
       <value>

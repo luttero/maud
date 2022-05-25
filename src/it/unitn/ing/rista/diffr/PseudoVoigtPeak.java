@@ -286,13 +286,13 @@ public class PseudoVoigtPeak extends basicPeak {
 								out.print(" ");
 								out.print((float) diffrDataFile.getDataFileSet().getStructureFactors(aphase)[0][getOrderPosition()]);
 								out.print(" ");
-								out.print((float) actualPosition[1][j]);
+								out.print((float) actualPosition[0][j]);
 								out.print(" ");
 								out.print((float) diffrDataFile.getStrains(aphase, getOrderPosition())[j][i]);
 								out.print(" ");
 								out.print((float) refl.getPlanarDefectDisplacement(0));
 								out.print(" ");
-								out.print((float) intensity[1][ipv]);
+								out.print((float) intensity[0][ipv]);
 								out.print(" ");
 								out.print((float) thwhm[j][i]);
 								out.print(" ");

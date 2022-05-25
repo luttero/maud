@@ -192,7 +192,7 @@ public class QuantitativeXRF extends Fluorescence {
 			energy_intensity[ej] = radType.getRadiationWeightForFluorescence(ej);
 			layerAbsorption[0][ej] = -asample.getlayer(0).getAbsorption(energyInKeV[ej]) * layerDensity[0] / sinPhii;
 			overLayerAbsorption[0][ej] = 0;
-//			System.out.println(energyInKeV[ej] + " " + 0 + " " + (-layerAbsorption[0][ej]/layerDensity[0]*sinPhii) + " " + layerDensity[0] + " " + sinPhii + " " + layerThickness[0]);
+//			System.out.println(energyInKeV[ej] + ": " + (-layerAbsorption[0][ej]/layerDensity[0]*sinPhii) + " " + layerDensity[0] + /*" " + sinPhii +*/ " " + layerThickness[0]);
 			for (int j1 = 1; j1 < layersNumber; j1++) {
 				layerAbsorption[j1][ej] = -asample.getlayer(j1).getAbsorption(energyInKeV[ej]) * layerDensity[j1] / sinPhii;
 				overLayerAbsorption[j1][ej] = overLayerAbsorption[j1 - 1][ej] + layerAbsorption[j1 - 1][ej] * layerThickness[j1 - 1];
@@ -234,6 +234,7 @@ public class QuantitativeXRF extends Fluorescence {
 						double actualLayerAbsorption = -asample.getlayer(j1).getAbsorption(lineEnergyKeV) * layerDensity[j1] / sinPhid;
 //						System.out.println(actualLayerAbsorption + " " + asample.getlayer(j1).getAbsorption(lineEnergyKeV) + " " + layerDensity[j1] + " " + sinPhid);
 						double totalIntensity = 0;
+//						System.out.println(atomNumber + " " + line.transitionID + " " + lineEnergyKeV);
 						for (int ej = 0; ej < rad_lines; ej++) {
 							if (energyInKeV[ej] > lineInnerShellEnergyKeV && lineEnergyKeV <= energyInKeV[ej]) {
 								double over_abs = overLayerAbsorptionForLine + overLayerAbsorption[j1][ej];
@@ -264,7 +265,9 @@ public class QuantitativeXRF extends Fluorescence {
 					//						+ " " + line.getCoreShellID() + " " + XRayDataSqLite.getTauShell(atomNumber - 1, line.getCoreShellID(), energyInKeV[ej]))
 //									System.out.println(atomNumber + " " + line.transitionID + " " + lineEnergyKeV + " " + energyInKeV[ej] + " " + line.getFluorescenceYield() + " " + line.getTransitionProbability() + " " + lineSensitivity + " " + over_abs + " " + abs);
 						//		}
+//								System.out.println("Energy " + energyInKeV[ej] + " " + lineSensitivity);
 								totalIntensity += lineSensitivity * over_abs * abs * energy_intensity[ej];
+
 							}
 						}
 						totalIntensity *= layerDensity[j1];
@@ -273,12 +276,12 @@ public class QuantitativeXRF extends Fluorescence {
 						double detectorEfficiency = detector.computeDetectorEfficiency(lineEnergyKeV);
 						double areaCorrection = detector.getAreaCorrection(sampleLinearArea);
 //						if (lineEnergyKeV * 1000 > xEnergy[0] && lineEnergyKeV * 1000 < xEnergy[numberOfPoints - 1])
-//						System.out.println("Line: " + lineEnergyKeV + " " + line.getIntensity() + " " + atomsQuantities + " " + totalIntensity + " " + detectorAbsorption + " " +
+//						System.out.println("Line: " + lineEnergyKeV + " " + line.getIntensity() + " " + totalIntensity + " " + detectorAbsorption + " " +
 //								detectorEfficiency + " " + areaCorrection + " " + getIntensityCorrection(atomNumber));
 						line.multiplyIntensityBy(atomsQuantities * totalIntensity * detectorAbsorption *
 								detectorEfficiency * areaCorrection * getIntensityCorrection(atomNumber));
-//						System.out.println("Line: " + line.transitionID + " " + lineEnergyKeV + " " + line.getIntensity() + " " + atomsQuantities + " " + (totalIntensity * line.getFluorescenceYield() * line.getTransitionProbability()) + " " + detectorAbsorption + " " +
-//								detectorEfficiency + " " + areaCorrection);
+//						System.out.println("Line: " + line.transitionID + " " + lineEnergyKeV + " " + line.getIntensity() + " " +
+//								(atomsQuantities * totalIntensity) + " " + detectorAbsorption + " " + detectorEfficiency);
 //						System.out.println(line.transitionID + " " + line.getIntensity() + " " + lineEnergyKeV);
 						boolean addLine = true;
 						for (int i = 0; i < fluorescenceLines.size() && addLine; i++) {
@@ -290,6 +293,7 @@ public class QuantitativeXRF extends Fluorescence {
 						}
 						if (addLine) {
 							fluorescenceLines.add(line);
+
 						}
 
 					}

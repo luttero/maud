@@ -157,35 +157,18 @@ public class AbsorptionWindow extends XRDcat {
 		getParameter(window_density_id).setValue(value);
 	}
 
-	public void computeAbsorptionForLineWithEnergy(double[][] energyInKeVIntensity) {
-		for (int j = 0; j < energyInKeVIntensity[0].length; j++) {
-			double absorption = 0;
-			for (int i = 0; i < subordinateloopField[window_composition_id].size(); i++) {
-				String atomLabel = ((CompositionElement) subordinateloopField[window_composition_id].elementAt(i)).getString(0);
-				double atomFraction = ((CompositionElement) subordinateloopField[window_composition_id].elementAt(i)).getParameterValue(0) /
-						totalAtomFraction;
-				int atomNumber = AtomInfo.retrieveAtomNumber(atomLabel);
-				absorption += atomFraction * XRayDataSqLite.getTotalAbsorptionForAtomAndEnergy(atomNumber, energyInKeVIntensity[0][j]);
-			}
-			absorption *= Math.abs(getWindowDensity() * getWindowThickness()); // linear absorption window
+	public double getAngleInRad() {
+		return getParameterValue(incident_angle_id) * Constants.DEGTOPI;
+	}
 
-			double integral = 0;
-			if (absorption < 1E30)
-				integral = Math.exp(-absorption);
-			energyInKeVIntensity[1][j] *= integral;
-		}
+	public void computeAbsorptionForLineWithEnergy(double[][] energyInKeVIntensity) {
+		for (int j = 0; j < energyInKeVIntensity[0].length; j++)
+			energyInKeVIntensity[1][j] *= computeAbsorptionForLineWithEnergy(energyInKeVIntensity[0][j]);
 	}
 
 	public double computeAbsorptionForLineWithEnergy(double energyInKeV) {
-		double absorption = 0;
-		for (int i = 0; i < subordinateloopField[window_composition_id].size(); i++) {
-			String atomLabel = ((CompositionElement) subordinateloopField[window_composition_id].elementAt(i)).getString(0);
-			double atomFraction = ((CompositionElement) subordinateloopField[window_composition_id].elementAt(i)).getParameterValue(0) /
-					totalAtomFraction;
-			int atomNumber = AtomInfo.retrieveAtomNumber(atomLabel);
-			absorption += atomFraction * XRayDataSqLite.getTotalAbsorptionForAtomAndEnergy(atomNumber, energyInKeV);
-		}
-		absorption *= Math.abs(getWindowDensity() * getWindowThickness()); // linear absorption window
+		double absorption = computeMACForLineWithEnergy(energyInKeV);
+		absorption *= Math.abs(getWindowDensity() * getWindowThickness() / Math.sin(Math.abs(getAngleInRad()))); // linear absorption window
 
 		double integral = 0;
 		if (absorption < 1E30)
@@ -209,15 +192,8 @@ public class AbsorptionWindow extends XRDcat {
 		return absorption;
 	}
 
-	public double computeAbsorptionForLineWithEnergy(double energyInKeVIntensity, double incidentAngleInRad) {
-		double absorption = 0;
-		for (int i = 0; i < subordinateloopField[window_composition_id].size(); i++) {
-			String atomLabel = ((CompositionElement) subordinateloopField[window_composition_id].elementAt(i)).getString(0);
-			double atomFraction = ((CompositionElement) subordinateloopField[window_composition_id].elementAt(i)).getParameterValue(0) /
-					totalAtomFraction;
-			int atomNumber = AtomInfo.retrieveAtomNumber(atomLabel);
-			absorption += atomFraction * XRayDataSqLite.getTotalAbsorptionForAtomAndEnergy(atomNumber, energyInKeVIntensity);
-		}
+	public double computeAbsorptionForLineWithEnergy(double energyInKeV, double incidentAngleInRad) {
+		double absorption = computeMACForLineWithEnergy(energyInKeV);
 		absorption *= Math.abs(getWindowDensity() * getWindowThickness() / Math.sin(Math.abs(incidentAngleInRad))); // linear absorption window
 
 		double integral = 0;
@@ -242,7 +218,7 @@ public class AbsorptionWindow extends XRDcat {
 					atomNumber, energyInKeV);
 			for (int j = 0; j < linesForAtom.size(); j++) {
 				FluorescenceLine line = linesForAtom.elementAt(j);
-				double lineEnergy = line.getEnergy();
+//				double lineEnergy = line.getEnergy();
 				//			System.out.println(line.getIntensity() + " " + intensity + " " + computeDetectorEfficiency(lineEnergy));
 				line.multiplyIntensityBy(atomFraction * intensity * getWindowDensity());
 /*				if (!getFilePar().isOptimizing() && Constants.testing) {
@@ -336,8 +312,8 @@ public class AbsorptionWindow extends XRDcat {
 				@Override
 				public void actionPerformed(ActionEvent actionEvent) {
 					windowCompositionModel.setAsAir();
-					AbsorptionWindow.this.setWindowDensity(0.0012);
-					windowDensityTF.setText("0.0012");
+					AbsorptionWindow.this.setWindowDensity(0.00120479);
+					windowDensityTF.setText("0.00120479");
 				}
 			});
 

@@ -27,6 +27,8 @@ import it.unitn.ing.rista.util.*;
 import javax.swing.*;
 import java.awt.*;
 
+import static java.lang.Math.abs;
+
 
 /**
  *  The Geometry is a class to performs computation specific for the geometry of a
@@ -43,13 +45,15 @@ import java.awt.*;
 
 public class Geometry extends XRDcat {
 
-	public static double pi_over2 = Math.PI * 0.5;
+//	public static double pi_over2 = Math.PI * 0.5;
 	public static double degtopi2 = Constants.DEGTOPI / 2.0;
 
+	public boolean newRotationMatrices = true;
 	public double radius = 175.0; // in mm, the default goniometer radius
 
   public Geometry(XRDcat aobj, String alabel) {
-    super(aobj, alabel);
+  	super(aobj, alabel);
+  	newRotationMatrices = MaudPreferences.getBoolean("testing.useNewRotationMatrices", true);
   }
 
   public Geometry(XRDcat aobj) {
@@ -57,6 +61,7 @@ public class Geometry extends XRDcat {
   }
 
   public Geometry() {
+	  newRotationMatrices = MaudPreferences.getBoolean("testing.useNewRotationMatrices", true);
   }
 
   /**
@@ -146,7 +151,7 @@ public class Geometry extends XRDcat {
     double[] newSampleAngles = new double[3];
     for (int i = 0; i < 3; i++)
       newSampleAngles[i] = sampleAngles[i] + addSampleAngles[i];
-
+// System.out.println(tilting_angles0 + " " + tilting_angles1 + " " + tilting_angles2 + " " + tilting_angles3 + " " + (twotheta / 2.0f));
     return getTextureAngles(tilting_angles0, tilting_angles1, tilting_angles2, tilting_angles3,
             twotheta / 2.0f, newSampleAngles, true);
 
@@ -188,7 +193,7 @@ public class Geometry extends XRDcat {
     double cosnu = MoreMath.cosd(nu);
     double sinnu = MoreMath.sind(nu);
     double cosk = 1.0;
-    if (Math.abs(cosnu) > 1.0E-9)
+    if (abs(cosnu) > 1.0E-9)
       cosk = MoreMath.cosd(twotheta) / cosnu;
     double sink = Math.sqrt(1.0 - cosk * cosk);
 
@@ -200,7 +205,7 @@ public class Geometry extends XRDcat {
     double costhetay = MoreMath.cosd(90.0 - thetayprime + tilting_angles1) * MoreMath.cosd(phiyprime - tilting_angles0);
     double thetay = MoreMath.acosd(costhetay);
     double sinphiy = 0.0;
-    if (Math.abs(costhetay) < 0.999999999)
+    if (abs(costhetay) < 0.999999999)
       sinphiy = MoreMath.sind(90.0 - thetayprime + tilting_angles1) / MoreMath.sind(thetay);
     double phiy = MoreMath.asind(sinphiy);
 
@@ -266,6 +271,8 @@ public class Geometry extends XRDcat {
     // tilting_angles2 = Phi
     // tilting_angles3 = Eta
 
+ //System.out.println(tilting_angles0 + " " + tilting_angles1 + " " + tilting_angles2 + " " + tilting_angles3 + " " + thetaAng
+//		 + " " + sampleAngles[0] + " " + sampleAngles[1] + " " + sampleAngles[2]);
     double sinOmegaSample = MoreMath.sind(sampleAngles[0]);
     double cosOmegaSample = MoreMath.cosd(sampleAngles[0]);
     double sinOmega = MoreMath.sind(tilting_angles0);
@@ -282,55 +289,112 @@ public class Geometry extends XRDcat {
     double sinTheta = MoreMath.sind(thetaAng);
     double cosTheta = MoreMath.cosd(thetaAng);
 
-    double const1 = cosOmegaSample * sinCsiSample * cosPhi + sinOmegaSample * sinPhi;
-    double const2 = -const1 * sinCsi + cosOmegaSample * cosCsiSample * cosCsi;
-    double const3 = cosOmegaSample * sinCsiSample * sinPhi - sinOmegaSample * cosPhi;
-    double const4 = const1 * cosCsi + cosOmegaSample * cosCsiSample * sinCsi;
-    double const5 = sinOmegaSample * sinCsiSample * cosPhi - cosOmegaSample * sinPhi;
-    double const6 = -const5 * sinCsi + sinOmegaSample * cosCsiSample * cosCsi;
-    double const7 = sinOmegaSample * sinCsiSample * sinPhi + cosOmegaSample * cosPhi;
-    double const8 = const5 * cosCsi + sinOmegaSample * cosCsiSample * sinCsi;
-    double const9 = -cosCsiSample * cosPhi * sinCsi - sinCsiSample * cosCsi;
-    double const10 = cosCsiSample * sinPhi * sinOmega + const9 * cosOmega;
-    double const11 = cosCsiSample * cosPhi * cosCsi - sinCsiSample * sinCsi;
+	  double[] textureAngles = new double[2];
 
-    double M13 = -(cosCsiSample * sinPhi * cosOmega - const9 * sinOmega) * sinTheta +
-            (const11 * sinEta + const10 * cosEta) * cosTheta; // res[0][2];
-    double M23 = -(const7 * cosOmega - const6 * sinOmega) * sinTheta + (const8 * sinEta +
-            (const7 * sinOmega + const6 * cosOmega) * cosEta) * cosTheta; // res[1][2];
-    double cosPsi = -(const3 * cosOmega - const2 * sinOmega) * sinTheta + (const4 * sinEta +
-            (const3 * sinOmega + const2 * cosOmega) * cosEta) * cosTheta; // res[2][2];
+    if (newRotationMatrices) {
+	    double cs_TO = cosTheta*sinOmega;
+	    double ccs_ETO = cosEta*cs_TO;
+	    double ss_OT = sinOmega*sinTheta;
+	    double cs_OT = cosOmega*sinTheta;
+	    double cc_OT = cosOmega*cosTheta;
+	    double ccc_EOT = cosEta*cc_OT;
+	    double cs_TE = cosTheta*sinEta;
+	    double k1 = ss_OT + ccc_EOT;
+	    double sk1 = sinCsi*k1;
+	    double ccs_CTE = cosCsi*cs_TE;
+	    double sk1_c = sk1 + ccs_CTE;
+	    double cs_cs = cs_OT - ccs_ETO;
+	    double k2 = cosCsi*k1 - sinCsi*cs_TE;
+	    double k3 = sinPhi*sk1_c - cosPhi*cs_cs;
+	    double k4 = cosPhi*sk1_c + sinPhi*cs_cs;
+	    double k5 = sinCsiSample*k4 - cosCsiSample*k2;
 
-    double[] textureAngles = new double[2];
+	    double m31 = cosOmegaSample*k3 - sinOmegaSample*k5; //cosOmegaSample*k3 + sinOmegaSample*k5; // sin(Alpha)*sin(Beta)
+	    double m32 = cosCsiSample*k4 + sinCsiSample*k2; // - cosCsiSample*k4 - sinCsiSample*k2; // -cos(Alpha)*sin(Beta)
+	    double m33 = - sinOmegaSample*k3 - cosOmegaSample*k5; // sinOmegaSample*k3 - cosOmegaSample*k5; // cos(Beta)
+
+	    if (m33 > 0.999999999) {
+		    textureAngles[0] = 0.0; // Beta
+		    textureAngles[1] = 0.0; // Alpha
+	    } else if (m33 < -0.999999999) {
+		    textureAngles[0] = 180.0; // Beta
+		    textureAngles[1] = 0.0; // Alpha
+	    } else {
+		    textureAngles[0] = MoreMath.acosd(m33);
+		    // sin(Beta) != 0
+		    if (m32 < 1.0E-9 && m32 > -1.0E-9) {  // sin(Alpha) == 0
+			    if (m31 >= 0.0)
+				    textureAngles[1] = 90.0;
+			    else
+				    textureAngles[1] = 270.0;
+		    } else {
+			    textureAngles[1] = MoreMath.atand(-m31 / m32);
+			    if (m32 > 0.0)
+				    textureAngles[1] += 180.0;
+			    if (textureAngles[1] < 0.0)
+				    textureAngles[1] += 360.0;
+		    }
+	    }
+	    if (planeProjection) {        // only for texture
+		    if (textureAngles[0] > 90.0) {
+			    textureAngles[0] = 180.0 - textureAngles[0];
+			    textureAngles[1] += 180.0;
+			    while (textureAngles[1] > 360.0)
+				    textureAngles[1] -= 360.0;
+		    }
+	    }
+
+//	    System.out.println(m31 + ", " + m32 + ", " + m33 + " : " + textureAngles[0] + ", " + textureAngles[1]);
+
+    } else {
+
+	    double const1 = cosOmegaSample * sinCsiSample * cosPhi + sinOmegaSample * sinPhi;
+	    double const2 = -const1 * sinCsi + cosOmegaSample * cosCsiSample * cosCsi;
+	    double const3 = cosOmegaSample * sinCsiSample * sinPhi - sinOmegaSample * cosPhi;
+	    double const4 = const1 * cosCsi + cosOmegaSample * cosCsiSample * sinCsi;
+	    double const5 = sinOmegaSample * sinCsiSample * cosPhi - cosOmegaSample * sinPhi;
+	    double const6 = -const5 * sinCsi + sinOmegaSample * cosCsiSample * cosCsi;
+	    double const7 = sinOmegaSample * sinCsiSample * sinPhi + cosOmegaSample * cosPhi;
+	    double const8 = const5 * cosCsi + sinOmegaSample * cosCsiSample * sinCsi;
+	    double const9 = -cosCsiSample * cosPhi * sinCsi - sinCsiSample * cosCsi;
+	    double const10 = cosCsiSample * sinPhi * sinOmega + const9 * cosOmega;
+	    double const11 = cosCsiSample * cosPhi * cosCsi - sinCsiSample * sinCsi;
+
+	    double M13 = -(cosCsiSample * sinPhi * cosOmega - const9 * sinOmega) * sinTheta +
+			    (const11 * sinEta + const10 * cosEta) * cosTheta; // res[0][2];
+	    double M23 = -(const7 * cosOmega - const6 * sinOmega) * sinTheta + (const8 * sinEta +
+			    (const7 * sinOmega + const6 * cosOmega) * cosEta) * cosTheta; // res[1][2];
+	    double cosPsi = -(const3 * cosOmega - const2 * sinOmega) * sinTheta + (const4 * sinEta +
+			    (const3 * sinOmega + const2 * cosOmega) * cosEta) * cosTheta; // res[2][2];
 
 
 //    System.out.println("M13, M23: " + M13 + " " + M23);
-    if (Math.abs(M13) < 1.0E-12) {
-      if (M23 >= 0.0)
-        textureAngles[1] = 90.0f;
-      else
-        textureAngles[1] = 270.0f;
-    } else if (M23 == 0.0) {
-      if (M13 > 0.0)
-        textureAngles[1] = 180.0f;
-      else
-        textureAngles[1] = 0.0f;
-    } else {
-      if (Math.abs(M23) < 1.0E-12)
-        M23 = 0.0;
-      textureAngles[1] = -MoreMath.atand(M23 / M13);
-      if (M13 > 0.0)
-        textureAngles[1] += 180.0f;
-    }
+	    if (abs(M13) < 1.0E-9) {
+		    if (M23 >= 0.0)
+			    textureAngles[1] = 90.0;
+		    else
+			    textureAngles[1] = 270.0;
+	    } else if (M23 == 0.0) {
+		    if (M13 > 0.0)
+			    textureAngles[1] = 180.0;
+		    else
+			    textureAngles[1] = 0.0;
+	    } else {
+		    if (abs(M23) < 1.0E-9)
+			    M23 = 0.0;
+		    textureAngles[1] = -MoreMath.atand(M23 / M13);
+		    if (M13 > 0.0)
+			    textureAngles[1] += 180.0;
+	    }
 //    System.out.println("phi: " + textureAngles[1]);
 
 //    System.out.println("1: " + cosPsi);
-    if (cosPsi > 0.99999999)
-      textureAngles[0] = 0f;
-    else if (cosPsi < -0.99999999)
-      textureAngles[0] = 180f;
-    else
-      textureAngles[0] = MoreMath.acosd(cosPsi);
+	    if (cosPsi > 0.999999999)
+		    textureAngles[0] = 0f;
+	    else if (cosPsi < -0.999999999)
+		    textureAngles[0] = 180f;
+	    else
+		    textureAngles[0] = MoreMath.acosd(cosPsi);
 //    System.out.println("2: " + textureAngles[0]);
 
     /*if (textureAngles[0] < 0.0) {  // should never happen
@@ -338,14 +402,16 @@ public class Geometry extends XRDcat {
       textureAngles[1] += 180.0f;
     }
     */
-    if (planeProjection && textureAngles[0] > 90.0) {        // only for texture
-      textureAngles[0] = 180.0f - textureAngles[0];
-      textureAngles[1] += 180.0f;
+	    if (planeProjection && textureAngles[0] > 90.0) {        // only for texture
+		    textureAngles[0] = 180.0f - textureAngles[0];
+		    textureAngles[1] += 180.0f;
+	    }
+	    while (textureAngles[1] > 360.0)
+		    textureAngles[1] -= 360.0f;
+	    while (textureAngles[1] < 0.0)
+		    textureAngles[1] += 360.0f;
+
     }
-    if (textureAngles[1] > 360.0)
-      textureAngles[1] -= 360.0f;
-    if (textureAngles[1] < 0.0)
-      textureAngles[1] += 360.0f;
 
     return textureAngles;
   }
@@ -375,57 +441,121 @@ public class Geometry extends XRDcat {
      double cosCsi = MoreMath.cosd(tilting_angles1);
      double sinEta = MoreMath.sind(tilting_angles3);
      double cosEta = MoreMath.cosd(tilting_angles3);
-     double const1 = cosOmegaSample * sinCsiSample * cosPhi + sinOmegaSample * sinPhi;
-     double const2 = -const1 * sinCsi + cosOmegaSample * cosCsiSample * cosCsi;
-     double const3 = cosOmegaSample * sinCsiSample * sinPhi - sinOmegaSample * cosPhi;
-     double const4 = const1 * cosCsi + cosOmegaSample * cosCsiSample * sinCsi;
-     double const5 = sinOmegaSample * sinCsiSample * cosPhi - cosOmegaSample * sinPhi;
-     double const6 = -const5 * sinCsi + sinOmegaSample * cosCsiSample * cosCsi;
-     double const7 = sinOmegaSample * sinCsiSample * sinPhi + cosOmegaSample * cosPhi;
-     double const8 = const5 * cosCsi + sinOmegaSample * cosCsiSample * sinCsi;
-     double const9 = -cosCsiSample * cosPhi * sinCsi - sinCsiSample * cosCsi;
-     double const10 = cosCsiSample * sinPhi * sinOmega + const9 * cosOmega;
-     double const11 = cosCsiSample * cosPhi * cosCsi - sinCsiSample * sinCsi;
 
-    double[][] textureAngles = new double[2][thetaAng.length];
+	  double[][] textureAngles = new double[2][thetaAng.length];
 
-    for (int i = 0; i < thetaAng.length; i++) {
+	  if (newRotationMatrices) {
+		  for (int i = 0; i < thetaAng.length; i++) {
 
-      double theta = thetaAng[i] / 2.0;
-    double sinTheta = MoreMath.sind(theta);
-    double cosTheta = MoreMath.cosd(theta);
+			  double theta = thetaAng[i] / 2.0;
+			  double sinTheta = MoreMath.sind(theta);
+			  double cosTheta = MoreMath.cosd(theta);
 
-     double M13 = -(cosCsiSample * sinPhi * cosOmega - const9 * sinOmega) * sinTheta +
-             (const11 * sinEta + const10 * cosEta) * cosTheta; // res[0][2];
-     double M23 = -(const7 * cosOmega - const6 * sinOmega) * sinTheta + (const8 * sinEta +
-             (const7 * sinOmega + const6 * cosOmega) * cosEta) * cosTheta; // res[1][2];
-     double cosPsi = -(const3 * cosOmega - const2 * sinOmega) * sinTheta + (const4 * sinEta +
-             (const3 * sinOmega + const2 * cosOmega) * cosEta) * cosTheta; // res[2][2];
+			  double cs_TO = cosTheta*sinOmega;
+			  double ccs_ETO = cosEta*cs_TO;
+			  double ss_OT = sinOmega*sinTheta;
+			  double cs_OT = cosOmega*sinTheta;
+			  double cc_OT = cosOmega*cosTheta;
+			  double ccc_EOT = cosEta*cc_OT;
+			  double cs_TE = cosTheta*sinEta;
+			  double k1 = ss_OT + ccc_EOT;
+			  double sk1 = sinCsi*k1;
+			  double ccs_CTE = cosCsi*cs_TE;
+			  double sk1_c = sk1 + ccs_CTE;
+			  double cs_cs = cs_OT - ccs_ETO;
+			  double k2 = cosCsi*k1 - sinCsi*cs_TE;
+			  double k3 = sinPhi*sk1_c - cosPhi*cs_cs;
+			  double k4 = cosPhi*sk1_c + sinPhi*cs_cs;
+			  double k5 = sinCsiSample*k4 - cosCsiSample*k2;
 
-     if (Math.abs(M23) < 1.0E-9)
-       M23 = 0.0;
-     if (Math.abs(M13) < 1.0E-9) {
-       if (M23 >= 0.0)
-         textureAngles[1][i] = 90.0f;
-       else
-         textureAngles[1][i] = -90.0f;
-     } else if (M23 == 0.0) {
-       if (M13 > 0.0)
-         textureAngles[1][i] = 180.0f;
-       else
-         textureAngles[1][i] = 0.0f;
-     } else {
-       textureAngles[1][i] = -MoreMath.atand(M23 / M13);
-       if (M13 > 0.0)
-         textureAngles[1][i] += 180.0f;
-     }
+			  double m31 = cosOmegaSample*k3 - sinOmegaSample*k5; //cosOmegaSample*k3 + sinOmegaSample*k5; // sin(Alpha)*sin(Beta)
+			  double m32 = cosCsiSample*k4 + sinCsiSample*k2; // - cosCsiSample*k4 - sinCsiSample*k2; // -cos(Alpha)*sin(Beta)
+			  double m33 = - sinOmegaSample*k3 - cosOmegaSample*k5; // sinOmegaSample*k3 - cosOmegaSample*k5; // cos(Beta)
+
+			  if (m33 > 0.999999999) {
+				  textureAngles[0][i] = 0.0; // Beta
+				  textureAngles[1][i] = 0.0; // Alpha
+			  } else if (m33 < -0.999999999) {
+				  textureAngles[0][i] = 180.0; // Beta
+				  textureAngles[1][i] = 0.0; // Alpha
+			  } else {
+				  textureAngles[0][i] = MoreMath.acosd(m33);
+				  // sin(Beta) != 0
+				  if (m32 < 1.0E-9 && m32 > -1.0E-9) {  // sin(Alpha) == 0
+					  if (m31 >= 0.0)
+						  textureAngles[1][i] = 90.0;
+					  else
+						  textureAngles[1][i] = 270.0;
+				  } else {
+					  textureAngles[1][i] = MoreMath.atand(-m31 / m32);
+					  if (m32 > 0.0)
+						  textureAngles[1][i] += 180.0;
+					  if (textureAngles[1][i] < 0.0)
+						  textureAngles[1][i] += 360.0;
+				  }
+			  }
+			  if (planeProjection) {        // only for texture
+				  if (textureAngles[0][i] > 90.0) {
+					  textureAngles[0][i] = 180.0 - textureAngles[0][i];
+					  textureAngles[1][i] += 180.0;
+					  while (textureAngles[1][i] > 360.0)
+						  textureAngles[1][i] -= 360.0;
+				  }
+			  }
+		  }
+
+	  } else {
+
+
+		  double const1 = cosOmegaSample * sinCsiSample * cosPhi + sinOmegaSample * sinPhi;
+		  double const2 = -const1 * sinCsi + cosOmegaSample * cosCsiSample * cosCsi;
+		  double const3 = cosOmegaSample * sinCsiSample * sinPhi - sinOmegaSample * cosPhi;
+		  double const4 = const1 * cosCsi + cosOmegaSample * cosCsiSample * sinCsi;
+		  double const5 = sinOmegaSample * sinCsiSample * cosPhi - cosOmegaSample * sinPhi;
+		  double const6 = -const5 * sinCsi + sinOmegaSample * cosCsiSample * cosCsi;
+		  double const7 = sinOmegaSample * sinCsiSample * sinPhi + cosOmegaSample * cosPhi;
+		  double const8 = const5 * cosCsi + sinOmegaSample * cosCsiSample * sinCsi;
+		  double const9 = -cosCsiSample * cosPhi * sinCsi - sinCsiSample * cosCsi;
+		  double const10 = cosCsiSample * sinPhi * sinOmega + const9 * cosOmega;
+		  double const11 = cosCsiSample * cosPhi * cosCsi - sinCsiSample * sinCsi;
+
+		  for (int i = 0; i < thetaAng.length; i++) {
+
+			  double theta = thetaAng[i] / 2.0;
+			  double sinTheta = MoreMath.sind(theta);
+			  double cosTheta = MoreMath.cosd(theta);
+
+			  double M13 = -(cosCsiSample * sinPhi * cosOmega - const9 * sinOmega) * sinTheta +
+					  (const11 * sinEta + const10 * cosEta) * cosTheta; // res[0][2];
+			  double M23 = -(const7 * cosOmega - const6 * sinOmega) * sinTheta + (const8 * sinEta +
+					  (const7 * sinOmega + const6 * cosOmega) * cosEta) * cosTheta; // res[1][2];
+			  double cosPsi = -(const3 * cosOmega - const2 * sinOmega) * sinTheta + (const4 * sinEta +
+					  (const3 * sinOmega + const2 * cosOmega) * cosEta) * cosTheta; // res[2][2];
+
+			  if (abs(M23) < 1.0E-9)
+				  M23 = 0.0;
+			  if (abs(M13) < 1.0E-9) {
+				  if (M23 >= 0.0)
+					  textureAngles[1][i] = 90.0f;
+				  else
+					  textureAngles[1][i] = -90.0f;
+			  } else if (M23 == 0.0) {
+				  if (M13 > 0.0)
+					  textureAngles[1][i] = 180.0f;
+				  else
+					  textureAngles[1][i] = 0.0f;
+			  } else {
+				  textureAngles[1][i] = -MoreMath.atand(M23 / M13);
+				  if (M13 > 0.0)
+					  textureAngles[1][i] += 180.0f;
+			  }
 //    System.out.println("1: " + cosPsi);
-     if (cosPsi > 0.99999999)
-       textureAngles[0][i] = 0f;
-     else if (cosPsi < -0.99999999)
-       textureAngles[0][i] = 180f;
-     else
-       textureAngles[0][i] = MoreMath.acosd(cosPsi);
+			  if (cosPsi > 0.99999999)
+				  textureAngles[0][i] = 0f;
+			  else if (cosPsi < -0.99999999)
+				  textureAngles[0][i] = 180f;
+			  else
+				  textureAngles[0][i] = MoreMath.acosd(cosPsi);
 //    System.out.println("2: " + textureAngles[0]);
 
      /*if (textureAngles[0] < 0.0) {  // should never happen
@@ -433,15 +563,16 @@ public class Geometry extends XRDcat {
        textureAngles[1] += 180.0f;
      }
      */
-     if (planeProjection && textureAngles[0][i] > 90.0) {        // only for texture
-       textureAngles[0][i] = 180.0f - textureAngles[0][i];
-       textureAngles[1][i] += 180.0f;
-     }
-     if (textureAngles[1][i] > 360.0)
-       textureAngles[1][i] -= 360.0f;
-     if (textureAngles[1][i] < 0.0)
-       textureAngles[1][i] += 360.0f;
-    }
+			  if (planeProjection && textureAngles[0][i] > 90.0) {        // only for texture
+				  textureAngles[0][i] = 180.0f - textureAngles[0][i];
+				  textureAngles[1][i] += 180.0f;
+			  }
+			  if (textureAngles[1][i] > 360.0)
+				  textureAngles[1][i] -= 360.0f;
+			  if (textureAngles[1][i] < 0.0)
+				  textureAngles[1][i] += 360.0f;
+		  }
+	  }
 
      return textureAngles;
    }
@@ -487,55 +618,111 @@ public class Geometry extends XRDcat {
     double sinTheta = MoreMath.sind(thetaAng);
     double cosTheta = MoreMath.cosd(thetaAng);
 
-    double const1 = cosOmegaSample * sinCsiSample * cosPhi + sinOmegaSample * sinPhi;
-    double const2 = -const1 * sinCsi + cosOmegaSample * cosCsiSample * cosCsi;
-    double const3 = cosOmegaSample * sinCsiSample * sinPhi - sinOmegaSample * cosPhi;
-    double const4 = const1 * cosCsi + cosOmegaSample * cosCsiSample * sinCsi;
-    double const5 = sinOmegaSample * sinCsiSample * cosPhi - cosOmegaSample * sinPhi;
-    double const6 = -const5 * sinCsi + sinOmegaSample * cosCsiSample * cosCsi;
-    double const7 = sinOmegaSample * sinCsiSample * sinPhi + cosOmegaSample * cosPhi;
-    double const8 = const5 * cosCsi + sinOmegaSample * cosCsiSample * sinCsi;
-    double const9 = -cosCsiSample * cosPhi * sinCsi - sinCsiSample * cosCsi;
-    double const10 = cosCsiSample * sinPhi * sinOmega + const9 * cosOmega;
-    double const11 = cosCsiSample * cosPhi * cosCsi - sinCsiSample * sinCsi;
+	  double[] textureAngles = new double[2];
 
-    double M13 = -(cosCsiSample * sinPhi * cosOmega - const9 * sinOmega) * sinTheta +
-            (const11 * sinEta + const10 * cosEta) * cosTheta; // res[0][2];
-    double M23 = -(const7 * cosOmega - const6 * sinOmega) * sinTheta + (const8 * sinEta +
-            (const7 * sinOmega + const6 * cosOmega) * cosEta) * cosTheta; // res[1][2];
-    double cosPsi = -(const3 * cosOmega - const2 * sinOmega) * sinTheta + (const4 * sinEta +
-            (const3 * sinOmega + const2 * cosOmega) * cosEta) * cosTheta; // res[2][2];
+	  if (newRotationMatrices) {
+		  double cs_TO = cosTheta*sinOmega;
+		  double ccs_ETO = cosEta*cs_TO;
+		  double ss_OT = sinOmega*sinTheta;
+		  double cs_OT = cosOmega*sinTheta;
+		  double cc_OT = cosOmega*cosTheta;
+		  double ccc_EOT = cosEta*cc_OT;
+		  double cs_TE = cosTheta*sinEta;
+		  double k1 = ss_OT + ccc_EOT;
+		  double sk1 = sinCsi*k1;
+		  double ccs_CTE = cosCsi*cs_TE;
+		  double sk1_c = sk1 + ccs_CTE;
+		  double cs_cs = cs_OT - ccs_ETO;
+		  double k2 = cosCsi*k1 - sinCsi*cs_TE;
+		  double k3 = sinPhi*sk1_c - cosPhi*cs_cs;
+		  double k4 = cosPhi*sk1_c + sinPhi*cs_cs;
+		  double k5 = sinCsiSample*k4 - cosCsiSample*k2;
 
-    double[] textureAngles = new double[2];
+		  double m31 = cosOmegaSample*k3 - sinOmegaSample*k5; //cosOmegaSample*k3 + sinOmegaSample*k5; // sin(Alpha)*sin(Beta)
+		  double m32 = cosCsiSample*k4 + sinCsiSample*k2; // - cosCsiSample*k4 - sinCsiSample*k2; // -cos(Alpha)*sin(Beta)
+		  double m33 = - sinOmegaSample*k3 - cosOmegaSample*k5; // sinOmegaSample*k3 - cosOmegaSample*k5; // cos(Beta)
 
-    if (Math.abs(M23) < 1.0E-9)
-      M23 = 0.0;
-    if (Math.abs(M13) < 1.0E-9) {
-      if (M23 >= 0.0)
-        textureAngles[1] = pi_over2;
-      else
-        textureAngles[1] = -pi_over2;
-    } else if (M23 == 0.0) {
-      if (M13 > 0.0)
-        textureAngles[1] = Math.PI;
-      else
-        textureAngles[1] = 0.0f;
-    } else {
-      textureAngles[1] = -Math.atan(M23 / M13);
-      if (M13 > 0.0)
-        textureAngles[1] += Math.PI;
-    }
+		  if (m33 > 0.999999999) {
+			  textureAngles[0] = 0.0; // Beta
+			  textureAngles[1] = 0.0; // Alpha
+		  } else if (m33 < -0.999999999) {
+			  textureAngles[0] = Constants.PI; // Beta
+			  textureAngles[1] = 0.0; // Alpha
+		  } else {
+			  textureAngles[0] = Math.acos(m33);
+			  // sin(Beta) != 0
+			  if (m32 < 1.0E-9 && m32 > -1.0E-9) {  // sin(Alpha) == 0
+				  if (m31 >= 0.0)
+					  textureAngles[1] = Constants.PI_2;
+				  else
+					  textureAngles[1] = Constants.PI_2 + Constants.PI;
+			  } else {
+				  textureAngles[1] = Math.atan(-m31 / m32);
+				  if (m32 > 0.0)
+					  textureAngles[1] += Constants.PI;
+				  if (textureAngles[1] < 0.0)
+					  textureAngles[1] += Constants.PI2;
+			  }
+		  }
+		  if (planeProjection) {        // only for texture
+			  if (textureAngles[0] > Constants.PI_2) {
+				  textureAngles[0] = Constants.PI - textureAngles[0];
+				  textureAngles[1] += Constants.PI;
+				  while (textureAngles[1] > Constants.PI2)
+					  textureAngles[1] -= Constants.PI2;
+			  }
+		  }
 
-    textureAngles[0] = Math.acos(cosPsi);
+	  } else {
 
-    if (planeProjection && textureAngles[0] > pi_over2) {        // only for texture
-      textureAngles[0] = Math.PI - textureAngles[0];
-      textureAngles[1] += Math.PI;
-    }
-    if (textureAngles[1] > Constants.PI2)
-      textureAngles[1] -= Constants.PI2;
-    if (textureAngles[1] < 0.0)
-      textureAngles[1] += Constants.PI2;
+		  double const1 = cosOmegaSample * sinCsiSample * cosPhi + sinOmegaSample * sinPhi;
+		  double const2 = -const1 * sinCsi + cosOmegaSample * cosCsiSample * cosCsi;
+		  double const3 = cosOmegaSample * sinCsiSample * sinPhi - sinOmegaSample * cosPhi;
+		  double const4 = const1 * cosCsi + cosOmegaSample * cosCsiSample * sinCsi;
+		  double const5 = sinOmegaSample * sinCsiSample * cosPhi - cosOmegaSample * sinPhi;
+		  double const6 = -const5 * sinCsi + sinOmegaSample * cosCsiSample * cosCsi;
+		  double const7 = sinOmegaSample * sinCsiSample * sinPhi + cosOmegaSample * cosPhi;
+		  double const8 = const5 * cosCsi + sinOmegaSample * cosCsiSample * sinCsi;
+		  double const9 = -cosCsiSample * cosPhi * sinCsi - sinCsiSample * cosCsi;
+		  double const10 = cosCsiSample * sinPhi * sinOmega + const9 * cosOmega;
+		  double const11 = cosCsiSample * cosPhi * cosCsi - sinCsiSample * sinCsi;
+
+		  double M13 = -(cosCsiSample * sinPhi * cosOmega - const9 * sinOmega) * sinTheta +
+				  (const11 * sinEta + const10 * cosEta) * cosTheta; // res[0][2];
+		  double M23 = -(const7 * cosOmega - const6 * sinOmega) * sinTheta + (const8 * sinEta +
+				  (const7 * sinOmega + const6 * cosOmega) * cosEta) * cosTheta; // res[1][2];
+		  double cosPsi = -(const3 * cosOmega - const2 * sinOmega) * sinTheta + (const4 * sinEta +
+				  (const3 * sinOmega + const2 * cosOmega) * cosEta) * cosTheta; // res[2][2];
+
+		  if (abs(M23) < 1.0E-9)
+			  M23 = 0.0;
+		  if (abs(M13) < 1.0E-9) {
+			  if (M23 >= 0.0)
+				  textureAngles[1] = Constants.PI_2;
+			  else
+				  textureAngles[1] = -Constants.PI_2;
+		  } else if (M23 == 0.0) {
+			  if (M13 > 0.0)
+				  textureAngles[1] = Constants.PI;
+			  else
+				  textureAngles[1] = 0.0;
+		  } else {
+			  textureAngles[1] = -Math.atan(M23 / M13);
+			  if (M13 > 0.0)
+				  textureAngles[1] += Constants.PI;
+		  }
+
+		  textureAngles[0] = Math.acos(cosPsi);
+
+		  if (planeProjection && textureAngles[0] > Constants.PI_2) {        // only for texture
+			  textureAngles[0] = Math.PI - textureAngles[0];
+			  textureAngles[1] += Math.PI;
+		  }
+		  if (textureAngles[1] > Constants.PI2)
+			  textureAngles[1] -= Constants.PI2;
+		  if (textureAngles[1] < 0.0)
+			  textureAngles[1] += Constants.PI2;
+	  }
 
     return textureAngles;
   }
@@ -646,13 +833,13 @@ public class Geometry extends XRDcat {
 
       tilting_angles[0][i] = Math.acos(cosPsi);
 
-      if (Math.abs(M23) < 1.0E-9)
+      if (abs(M23) < 1.0E-9)
         M23 = 0.0f;
-      if (Math.abs(M13) < 1.0E-9) {
+      if (abs(M13) < 1.0E-9) {
         if (M23 >= 0.0)
-          tilting_angles[1][i] = pi_over2;
+          tilting_angles[1][i] = Constants.PI_2;
         else
-          tilting_angles[1][i] = -pi_over2;
+          tilting_angles[1][i] = -Constants.PI_2;
       } else if (M23 == 0.0) {
         if (M13 > 0.0)
           tilting_angles[1][i] = Math.PI;
@@ -664,7 +851,7 @@ public class Geometry extends XRDcat {
           tilting_angles[1][i] += Math.PI;
       }
 
-      if (tilting_angles[0][i] > pi_over2) {
+      if (tilting_angles[0][i] > Constants.PI_2) {
         tilting_angles[0][i] = Math.PI - tilting_angles[0][i];
         tilting_angles[1][i] += Math.PI;
       }
@@ -807,8 +994,8 @@ public class Geometry extends XRDcat {
         allAngles[i + 2] = diffractionAngles[i];
       }
 
-    allAngles[0] = (pi_over2 - allAngles[0]);
-    allAngles[2] = (pi_over2 - allAngles[2]);
+    allAngles[0] = (Constants.PI_2 - allAngles[0]);
+    allAngles[2] = (Constants.PI_2 - allAngles[2]);
 /*    System.out.println(position + " " + tilting_angles[0] + " " + tilting_angles[1] + " " + tilting_angles[2] + " " + tilting_angles3 + " " +
         allAngles[0] * Constants.PITODEG + " " + allAngles[2] * Constants.PITODEG + " " +
         allAngles[1] * Constants.PITODEG + " " + allAngles[3] * Constants.PITODEG);*/
@@ -835,7 +1022,7 @@ public class Geometry extends XRDcat {
   public double LorentzPolarization(DiffrDataFile adatafile, Sample asample, double position,
                                     boolean dspacingbase, boolean energyDispersive) {
     position *= degtopi2;
-    return Math.abs(polarization(adatafile, position) * Lorentz(adatafile, position));
+    return abs(polarization(adatafile, position) * Lorentz(adatafile, position));
   }
 
   public double Lorentz(DiffrDataFile adatafile, double position) {

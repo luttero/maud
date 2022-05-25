@@ -392,7 +392,7 @@ public class LaueCircleRoi extends OpenRoi {
 //	  System.out.println(getX() + " " + getY() + " " + coordX + " : " + coordY + " " + step + " " + npoints);
     for (int ix = 0; ix < npoints; ix++) {
       profile[0][ix] = 0.0;
-      int numbAvg = 0;
+      double numbAvg = 0;
 
       double imageIntegrationStep = 360.0 / (Constants.PI2 * (ix + 1));
       setCircle(ix * step);
@@ -406,11 +406,9 @@ public class LaueCircleRoi extends OpenRoi {
         double x1 = Math.cos(arg) * dixx + coordX;
         double y1 = -Math.sin(arg) * dixy + coordY;
 
-        // double i1 = getPixelXd(x1);
-        // double j1 = getPixelYd(y1);
-
 //        System.out.println(ix + ", " + x1 + " : " + y1);
-        if ((usableRoi != null && usableRoi.contains((int) x1, (int) y1)) ||
+
+/*        if ((usableRoi != null && usableRoi.contains((int) x1, (int) y1)) ||
 		        (usableRoi == null && (x1 >= xMin && x1 < xMax && y1 >= yMin && y1 < yMax))) {
 //          x1 *= coordTrasf;
 //          y1 *= coordTrasf;
@@ -419,7 +417,36 @@ public class LaueCircleRoi extends OpenRoi {
           numbAvg++;
         } else {
           profile[0][ix] = Double.NaN;
+        }*/
+
+        int i1 = (int) x1;
+        int j1 = (int) y1;
+        double intensity = 0;
+        double count = 0;
+        for (int ij = i1 - 1; ij <= i1 + 2; ij++) {
+        	 for (int ji = j1 - 1; ji <= j1 + 2; ji++) {
+	          if ((usableRoi != null && usableRoi.contains(ij, ji)) ||
+			          (usableRoi == null && (ij >= xMin && ij < xMax && ji >= yMin && ji < yMax))) {
+					double value = ip.getPixelValue(ij, ji);
+					double weight = 0;
+					if (value >= 0) {
+						double dx = x1 - ij;
+						dx *= dx;
+						double dy = y1 - ji;
+						dy *= dy;
+						double distance = Math.sqrt(dx + dy);
+						weight = Math.exp(-distance);
+						intensity += value * weight;
+						count += weight;
+					}
+	          }
+        	 }
         }
+        if (count > 0) {
+	        profile[0][ix] += intensity / count;
+	        numbAvg += 1;
+        } else
+	        profile[0][ix] = Double.NaN;
 // System.out.println("Not x:  " + x1 + " " + iy);
       }
       if (numbAvg != 0 && !Double.isNaN(profile[0][ix])) {

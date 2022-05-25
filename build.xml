@@ -17,6 +17,7 @@
     <property name="bundle.icon" value="maud.icns"/>
     <property name="application_OSX.title" value="Maud.app"/>
     <property name="app_osx_295" location="${user.home}/Projects/maud/osx_295"/>
+    <property name="app_osx_arm" location="${user.home}/Projects/maud/osx_arm"/>
     <!--property name="java_version" value="1.8"/>
     <property name="JAVA_HOME" location="/Library/Java/JavaVirtualMachines/jdk1.8.0_121.jdk/Contents/Home"/-->
 
@@ -2045,7 +2046,7 @@
     </target>
 
 
-    <target name="bundle" depends="copy_full">
+    <target name="bundle" depends="build_full">
         <!-- Import the AppBundlerTaks from ant lib directory -->
         <taskdef name="bundleapp"
                  classname="com.oracle.appbundler.AppBundlerTask"/>
@@ -2055,7 +2056,7 @@
                    displayname="Maud"
                    identifier="com.radiographema.maud"
                    executableName="Maud"
-                   shortversion="2.98"
+                   shortversion="2.992"
                    icon="${inst}/maud.icns"
                    mainclassname="com.radiographema.Maud"
                    copyright="Maud, for materials analysis, Copyright 1997-2021 Luca Lutterotti"
@@ -2103,6 +2104,168 @@
             <!-- Specify which architectures you want to support -->
             <arch name="x86_64"/>
             <arch name="i386"/>
+
+            <!-- Register the application as an editor for PNG and JPG files -->
+            <bundledocument extensions="par"
+                            icon="${bundle.icon}"
+                            name="Analysis"
+                            role="editor">
+            </bundledocument>
+
+            <!-- OSX specific options, optional -->
+            <option value="-Dapple.laf.useScreenMenuBar=true"/>
+            <option value="-Dcom.apple.macos.use-file-dialog-packages=true"/>
+            <option value="-Dcom.apple.macos.useScreenMenuBar=true"/>
+            <option value="-Dapple.awt.application.name=Maud"/>
+            <option value="-Dcom.apple.smallTabs=true"/>
+
+            <option value="-Xmx16384M"/>
+        </bundleapp>
+
+        <mkdir dir="${app_osx}/Maud.app/Contents/Frameworks"/>
+        <!--copy file="cctbxForMaud/build/Debug/libcctbxForMaud.dylib" tofile="${inst}/Maud_mac/Maud.app/Contents/Plugins/Home/jre/lib/libcctbxForMaud.dylib" /-->
+        <!--copy file="cctbxForMaud/libcctbxForMaud.dylib"
+              tofile="${app_osx}/Maud.app/Contents/Frameworks/libcctbxForMaud.dylib"/-->
+        <!--copy file="${inst}/Info.plist" tofile="${app_osx}/Maud.app/Contents/Plugins/"/-->
+
+        <!--bundleapp outputdirectory="${inst}/Maud_mac/"
+                   name="Maud"
+                   displayname="Maud"
+                   identifier="com.radiographema.maud"
+                   executableName="Maud"
+                   shortversion="2.60"
+                   icon="${inst}/maud.icns"
+                   mainclassname="com.radiographema.Maud"
+                   copyright="Maud, for materials analysis, Copyright 1997-2016 Luca Lutterotti"
+                   applicationCategory="public.app-category.productivity"-->
+
+        <!-- The directory where your OpenJDK runtime is. -->
+        <!--runtime dir="${inst}/Home/"/-->
+
+        <!-- The bundleapp task doesn't support classpathref so all
+                the run classpath entries must be stated here too.
+            -->
+        <!--classpath file="${inst}/Maud.jar"/>
+            <classpath file="${build}/Files.jar"/>
+            <classpath file="${build}/Examples.jar"/>
+            <classpath file="libs/current/jmol.jar"/>
+            <classpath file="${build}/Help.jar"/>
+            <classpath file="${build}/Images.jar"/>
+            <classpath file="libs/current/miscLib.jar"/>
+            <classpath file="libs/current/HTTPClient.jar"/>
+            <classpath file="libs/current/jdom.jar"/>
+            <classpath file="libs/current/ij.jar"/>
+            <classpath file="libs/current/jgap.jar"/>
+            <classpath file="libs/current/jogl.all.jar"/>
+            <classpath file="libs/current/joone-engine.jar"/>
+            <classpath file="libs/current/jgaec.jar"/>
+            <classpath file="libs/current/jsplines.jar"/>
+            <classpath file="libs/current/jnlp.jar"/>
+            <classpath file="libs/current/MySQL-ConnectorJ.jar"/>
+            <classpath file="libs/current/swingx.jar"/>
+            <classpath file="libs/current/sqlite-jdbc.jar"/>
+            <classpath file="libs/current/newt.all.jar"/>
+            <classpath file="libs/current/nativewindow.all.jar"/>
+            <classpath file="libs/current/sqlite-jdbc.jar"/>
+            <classpath file="libs/current/xgridagent.jar"/>
+            <classpath file="libs/current/xgridlib.jar"/-->
+
+        <!-- Workaround since the icon parameter for bundleapp
+                 doesn't work. (It's not a bug in AppBundler but
+                 in the JavaAppLauncher, see Known Problems).
+            -->
+        <!--option value="-Xdock:icon=Contents/Resources/${bundle.icon}"/-->
+
+        <!-- Specify which architectures you want to support -->
+        <!--arch name="x86_64"/>
+            <arch name="i386"/-->
+
+        <!-- Register the application as an editor for PNG and JPG files -->
+        <!--bundledocument extensions="par"
+                            icon="${bundle.icon}"
+                            name="Analysis"
+                            role="editor">
+            </bundledocument-->
+
+        <!-- OSX specific options, optional -->
+        <!--option value="-Dapple.laf.useScreenMenuBar=true"/>
+            <option value="-Dcom.apple.macos.use-file-dialog-packages=true"/>
+            <option value="-Dcom.apple.macos.useScreenMenuBar=true"/>
+            <option value="-Dapple.awt.application.name=Maud"/>
+            <option value="-Dcom.apple.smallTabs=true"/>
+
+            <option value="-Xmx8192M"/>
+        </bundleapp>
+        <mkdir dir="${inst}/Maud_mac/Maud.app/Contents/MacOS/lib" /-->
+        <!--copy file="cctbxForMaud/build/Debug/libcctbxForMaud.dylib" tofile="${inst}/Maud_mac/Maud.app/Contents/Plugins/Home/jre/lib/libcctbxForMaud.dylib" /-->
+        <!--copy file="cctbxForMaud/libcctbx.dylib" tofile="${inst}/Maud_mac/Maud.app/Contents/MacOS/lib/libcctbx.dylib" />
+        <copy file="cctbxForMaud/libcctbxForMaud.dylib" tofile="${inst}/Maud_mac/Maud.app/Contents/MacOS/libcctbxForMaud.dylib" /-->
+        <mkdir dir="${app_osx}/Maud.app/Contents/MacOS/mtex" />
+        <copy todir="${app_osx}/Maud.app/Contents/MacOS/mtex" >
+            <fileset dir="${src}/com/jtex/external/bin/maci64" includes="**"/>
+        </copy>
+        <exec executable="chmod">
+            <arg line=" -R a+x ${app_osx}/Maud.app/Contents/MacOS/mtex"/>
+        </exec>
+    </target>
+
+    <target name="bundle_arm64" depends="build_full">
+        <!-- Import the AppBundlerTaks from ant lib directory -->
+        <taskdef name="bundleapp"
+                 classname="com.radiographema.appbundler.AppBundlerTask"/>
+
+        <bundleapp outputdirectory="${app_osx_arm}/"
+                   name="Maud"
+                   displayname="Maud"
+                   identifier="com.radiographema.maud"
+                   executableName="Maud"
+                   shortversion="2.993"
+                   icon="${inst}/maud.icns"
+                   mainclassname="com.radiographema.Maud"
+                   copyright="Maud, for materials analysis, Copyright 1997-2022 Luca Lutterotti"
+                   applicationCategory="public.app-category.productivity">
+
+            <!-- The directory where your OpenJDK runtime is. -->
+            <runtime dir="${inst}/Home_aarch64/"/>
+
+            <!-- The bundleapp task doesn't support classpathref so all
+                the run classpath entries must be stated here too.
+            -->
+            <classpath file="${build}/Maud.jar"/>
+            <classpath file="libs/current/Files.jar"/>
+            <classpath file="libs/current/Examples.jar"/>
+            <classpath file="libs/current/jmol.jar"/>
+            <classpath file="libs/current/Help.jar"/>
+            <classpath file="libs/current/Images.jar"/>
+            <classpath file="libs/current/miscLib.jar"/>
+            <classpath file="libs/current/HTTPClient.jar"/>
+            <classpath file="libs/current/jdom.jar"/>
+            <classpath file="libs/current/ij.jar"/>
+            <classpath file="libs/current/jgap.jar"/>
+            <classpath file="libs/current/jogl.all.jar"/>
+            <classpath file="libs/current/joone-engine.jar"/>
+            <classpath file="libs/current/jgaec.jar"/>
+            <classpath file="libs/current/jsplines.jar"/>
+            <classpath file="libs/current/jnlp.jar"/>
+            <classpath file="libs/current/MySQL-ConnectorJ.jar"/>
+            <classpath file="libs/current/swingx.jar"/>
+            <classpath file="libs/current/sqlite-jdbc.jar"/>
+            <classpath file="libs/current/newt.all.jar"/>
+            <classpath file="libs/current/nativewindow.all.jar"/>
+            <classpath file="libs/current/sqlite-jdbc.jar"/>
+            <classpath file="libs/current/xgridagent.jar"/>
+            <classpath file="libs/current/xgridlib.jar"/>
+            <classpath file="libs/current/com.github.tschoonj.xraylib.jar"/>
+            <classpath file="libs/current/commons-math.jar"/>
+
+            <!-- Workaround since the icon parameter for bundleapp
+                 doesn't work. (It's not a bug in AppBundler but
+                 in the JavaAppLauncher, see Known Problems).
+            -->
+            <option value="-Xdock:icon=Contents/Resources/${bundle.icon}"/>
+
+            <!-- Specify which architectures you want to support -->
+            <arch name="arm_64"/>
 
             <!-- Register the application as an editor for PNG and JPG files -->
             <bundledocument extensions="par"
@@ -2403,17 +2566,17 @@
         <exec dir="${inst}/Maud_linux64/" executable="tar" os="Mac OS X">
             <arg line="cfz ${inst}/linux64/Maud.tar.gz Maud"/>
         </exec>
-        <delete file="${dropbox}/linux64_openjdk/Maud.tar.gz"/>
+        <delete file="${inst}/Maud_linux64_ojdk/Maud.tar.gz"/>
         <exec dir="${inst}/Maud_linux64_ojdk/" executable="tar" os="Mac OS X">
-            <arg line="cfz ${dropbox}/linux64_openjdk/Maud.tar.gz Maud"/>
+            <arg line="cfz ${inst}/Maud_linux64_ojdk/Maud.tar.gz Maud"/>
         </exec>
-        <delete file="${inst}/windows64/Maud.zip"/>
+        <delete file="${inst}/Maud_windows64/Maud.zip"/>
         <exec dir="${inst}/Maud_windows64/" executable="zip" os="Mac OS X">
-            <arg line="-r ${inst}/windows64/Maud.zip Maud"/>
+            <arg line="-r ${inst}/Maud_windows64/Maud.zip Maud"/>
         </exec>
-        <delete file="${dropbox}/windows64_openjdk/Maud.zip"/>
+        <delete file="${inst}/Maud_windows64_ojdk/Maud.zip"/>
         <exec dir="${inst}/Maud_windows64_ojdk/" executable="zip" os="Mac OS X">
-            <arg line="-r ${dropbox}/windows64_openjdk/Maud.zip Maud"/>
+            <arg line="-r ${inst}/Maud_windows64_ojdk/Maud.zip Maud"/>
         </exec>
     </target>
 

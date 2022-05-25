@@ -408,7 +408,11 @@ public class XRFDetector extends Detector {
 		double integral = 1.0;
 		for (int i = 0; i < getList(filter_material_id).size(); i++) {
 			AbsorptionWindow absorptionWindow = (AbsorptionWindow) getList(filter_material_id).elementAt(i);
-			integral *= absorptionWindow.computeAbsorptionForLineWithEnergy(energyInKeV);
+			double trasm_factor = absorptionWindow.computeAbsorptionForLineWithEnergy(energyInKeV);
+			integral *= trasm_factor;
+//			System.out.println("Window: " + absorptionWindow.thelabel + ", thickness: " + absorptionWindow.getWindowThickness() +
+//					", denisty: " + absorptionWindow.getWindowDensity() + ", line energy: " + energyInKeV + ", transmission: " +
+//					trasm_factor);
 		}
 		return integral;
 	}

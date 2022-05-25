@@ -146,5 +146,7 @@ public class AngularCalibration extends it.unitn.ing.rista.diffr.Calibration {
   public double getReal2ThetaValue(int number, double twotheta) {
     return twotheta;
   }
+
+  public void invertEta() {}
   
 }
