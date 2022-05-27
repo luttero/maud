@@ -1,9 +1,0 @@
-<application>
-  <component name="PrintSettings">
-    <option name="printScope" value="1" />
-    <option name="FONT_NAME" value="ArialHebrew-Light" />
-    <option name="FONT_SIZE" value="10" />
-    <option name="PRINT_LINE_NUMBERS" value="false" />
-    <option name="DRAW_BORDER" value="false" />
-  </component>
-</application>

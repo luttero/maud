@@ -7,7 +7,7 @@
     <property name="dropbox" location="${user.home}/Dropbox/Maud"/>
     <property name="src" location="src"/>
     <property name="web" location="src/web"/>
-    <property name="inst" location="Installers"/>
+    <property name="inst" location="${installerDir}"/>
     <!--property name="build" location="${user.home}/Library/Developer/Maud/build"/-->
     <property name="build_ant" location="${build}/build.ant"/>
     <property name="libs" location="libs"/>
@@ -15,12 +15,13 @@
     <property name="buildnumber" location="build_numbers"/>
     <property name="myself" value="myself"/>
     <property name="bundle.icon" value="maud.icns"/>
+    <property name="icon" value="src/images/${bundle.icon}"/>
+    <property name="maud_version" value="2.994"/>
     <property name="application_OSX.title" value="Maud.app"/>
     <property name="app_osx_295" location="${user.home}/Projects/maud/osx_295"/>
     <property name="app_osx_arm" location="${user.home}/Projects/maud/osx_arm"/>
     <!--property name="java_version" value="1.8"/>
     <property name="JAVA_HOME" location="/Library/Java/JavaVirtualMachines/jdk1.8.0_121.jdk/Contents/Home"/-->
-
 
     <target name="clean" description="Delete the build files.">
         <delete dir="${build_ant}"/>
@@ -2056,10 +2057,10 @@
                    displayname="Maud"
                    identifier="com.radiographema.maud"
                    executableName="Maud"
-                   shortversion="2.992"
-                   icon="${inst}/maud.icns"
+                   shortversion="${maud_version}"
+                   icon="${icon}"
                    mainclassname="com.radiographema.Maud"
-                   copyright="Maud, for materials analysis, Copyright 1997-2021 Luca Lutterotti"
+                   copyright="Maud, for materials analysis, Copyright 1997-2022 Luca Lutterotti"
                    applicationCategory="public.app-category.productivity">
 
             <!-- The directory where your OpenJDK runtime is. -->
@@ -2134,7 +2135,7 @@
                    identifier="com.radiographema.maud"
                    executableName="Maud"
                    shortversion="2.60"
-                   icon="${inst}/maud.icns"
+                   icon="${icon}"
                    mainclassname="com.radiographema.Maud"
                    copyright="Maud, for materials analysis, Copyright 1997-2016 Luca Lutterotti"
                    applicationCategory="public.app-category.productivity"-->
@@ -2219,8 +2220,8 @@
                    displayname="Maud"
                    identifier="com.radiographema.maud"
                    executableName="Maud"
-                   shortversion="2.993"
-                   icon="${inst}/maud.icns"
+                   shortversion="${maud_version}"
+                   icon="${icon}"
                    mainclassname="com.radiographema.Maud"
                    copyright="Maud, for materials analysis, Copyright 1997-2022 Luca Lutterotti"
                    applicationCategory="public.app-category.productivity">
@@ -2296,7 +2297,7 @@
                    identifier="com.radiographema.maud"
                    executableName="Maud"
                    shortversion="2.60"
-                   icon="${inst}/maud.icns"
+                   icon="${icon}"
                    mainclassname="com.radiographema.Maud"
                    copyright="Maud, for materials analysis, Copyright 1997-2016 Luca Lutterotti"
                    applicationCategory="public.app-category.productivity"-->
@@ -2371,7 +2372,7 @@
         </exec>
     </target>
 
-    <target name="bundle_alt295" depends="copy_full">
+    <target name="bundle_alt295" depends="build_full">
         <!-- Import the AppBundlerTaks from ant lib directory -->
         <taskdef name="bundleapp"
                  classname="com.oracle.appbundler.AppBundlerTask"/>
@@ -2382,7 +2383,7 @@
                    identifier="com.radiographema.maud"
                    executableName="Maud"
                    shortversion="2.95"
-                   icon="${inst}/maud.icns"
+                   icon="${icon}"
                    mainclassname="com.radiographema.Maud"
                    copyright="Maud, for materials analysis, Copyright 1997-2021 Luca Lutterotti"
                    applicationCategory="public.app-category.productivity">
