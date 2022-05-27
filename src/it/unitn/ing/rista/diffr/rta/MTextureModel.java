@@ -725,7 +725,7 @@ public class MTextureModel extends DiscreteODFTexture {
 			if (odf == null)
 				odf = new ODF();
 			com.jtex.qta.ODFOptions odfOptions = new com.jtex.qta.ODFOptions(pf, Math.toRadians(getResolutionD()), kernel);
-			odfOptions.setGhostCorrection(false);
+			odfOptions.setGhostCorrection(true);
 
 			odf = odf.estimate(pf, odfOptions);
 
