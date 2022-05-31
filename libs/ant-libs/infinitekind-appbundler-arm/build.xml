@@ -42,8 +42,8 @@ questions.
         <javac destDir="${ant.project.name}/${folder.classes}"
             includejavaruntime="true"
             includeantruntime="true"
-            target="13"
-            source="13"
+            target="1.8"
+            source="1.8"
             deprecation="true"
             debug="true"
             encoding="UTF-8"
@@ -90,7 +90,7 @@ questions.
             <arg value="${javahome}/../.."/>
             <arg value="-isysroot"/>
             <arg value="${osx.sdk.dir}"/>
-            <arg value="-mmacosx-version-min=10.9"/> 
+            <arg value="-mmacosx-version-min=11.0"/> 
             <arg value="-fobjc-exceptions"/>
             <arg value="-std=c99"/>
             <arg value="appbundler/native/main.m"/>
@@ -133,7 +133,7 @@ questions.
             name="Test"
             displayname="Test"
             identifier="com.radiographema.javafx.swing.Test"
-            shortversion="1.0"
+            shortversion="1.2"
             applicationCategory="public.app-category.developer-tools"
             mainclassname="com/javafx/main/Main">
             <runtime dir="${env.JAVA_HOME}"/>
@@ -152,7 +152,7 @@ questions.
             name="TestPlugin"
             displayname="Test (Plugin)"
             identifier="com.radiographema.javafx.swing.TestPlugin"
-            shortversion="1.0"
+            shortversion="1.2"
             applicationCategory="public.app-category.developer-tools"
             mainclassname="com/javafx/main/Main">
             <classpath file="${ant.project.name}/SwingInterop.jar"/>
