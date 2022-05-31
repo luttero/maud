@@ -20,8 +20,8 @@
     <property name="application_OSX.title" value="Maud.app"/>
     <property name="app_osx_295" location="${user.home}/Projects/maud/osx_295"/>
     <property name="app_osx_arm" location="${user.home}/Projects/maud/osx_arm"/>
-    <!--property name="java_version" value="1.8"/>
-    <property name="JAVA_HOME" location="/Library/Java/JavaVirtualMachines/jdk1.8.0_121.jdk/Contents/Home"/-->
+    <!--property name="java_version" value="1.8"/-->
+    <property name="java_openjdk" location="${openjdk}"/>
 
     <target name="clean" description="Delete the build files.">
         <delete dir="${build_ant}"/>
@@ -48,7 +48,7 @@
         <mkdir dir="${build}"/>
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
-        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" encoding="UTF-8">
+        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" source="${java_version}" encoding="UTF-8">
             <src path="${src}"/>
             <!--exclude name="it/unitn/ing/jsginfo/**" /-->
             <!--exclude name="it/unitn/ing/jgraph/**" /-->
@@ -163,7 +163,7 @@
         <mkdir dir="build"/>
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
-        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" encoding="UTF-8">
+        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" source="${java_version}" encoding="UTF-8">
             <src path="${src}"/>
             <!--exclude name="it/unitn/ing/jsginfo/**" /-->
             <!--exclude name="it/unitn/ing/jgraph/**" /-->
@@ -556,7 +556,7 @@
         <mkdir dir="build"/>
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
-        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" encoding="UTF-8">
+        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" source="${java_version}" encoding="UTF-8">
             <src path="${src}"/>
             <exclude name="it/unitn/ing/esqui/client/**"/>
             <exclude name="it/unitn/ing/esqui/server/**"/>
@@ -708,7 +708,7 @@
         <mkdir dir="build"/>
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
-        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" encoding="UTF-8">
+        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" source="${java_version}" encoding="UTF-8">
             <src path="${src}"/>
             <include name="com/deadmoo/xgridagent/**"/>
             <include name="jint/scimark2/**"/>
@@ -771,7 +771,7 @@
         <mkdir dir="build"/>
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
-        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" encoding="UTF-8">
+        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" source="${java_version}" encoding="UTF-8">
             <src path="${src}"/>
             <include name="it/unitn/ing/xgridclient/**"/>
             <classpath>
@@ -821,7 +821,7 @@
         <mkdir dir="build"/>
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
-        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" encoding="UTF-8">
+        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" source="${java_version}" encoding="UTF-8">
             <src path="${src}"/>
             <include name="it/unitn/ing/xgridclient/XGridHello.java"/>
             <classpath>
@@ -857,7 +857,7 @@
         <mkdir dir="build"/>
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
-        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" encoding="UTF-8">
+        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" source="${java_version}" encoding="UTF-8">
             <src path="${src}"/>
             <include name="it/unitn/ing/xgridagent/XGridJavaLauncher.java"/>
             <!--include name="HTTPClient/*.java" />
@@ -1015,7 +1015,7 @@
         <mkdir dir="build"/>
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
-        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" encoding="UTF-8">
+        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" source="${java_version}" encoding="UTF-8">
             <src path="${src}"/>
             <!--exclude name="it/unitn/ing/jsginfo/*" /-->
             <!--exclude name="it/unitn/ing/jgraph/*" /-->
@@ -1282,7 +1282,7 @@
         <mkdir dir="build"/>
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
-        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" encoding="UTF-8">
+        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" source="${java_version}" encoding="UTF-8">
             <src path="${src}/it/unitn/ing/jsginfo"/>
             <exclude name="it/unitn/ing/jsginfo/sglib.java"/>
             <exclude name="it/unitn/ing/jsginfo/sginfoh.tmp.java"/>
@@ -1324,7 +1324,7 @@
         <mkdir dir="build"/>
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
-        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" encoding="UTF-8">
+        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" source="${java_version}" encoding="UTF-8">
             <src path="${src}/ec"/>
             <exclude name="vector/AtomVectorIndividual.java"/>
             <exclude name="teambots/**"/>
@@ -1448,7 +1448,7 @@
         <mkdir dir="build"/>
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
-        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" encoding="UTF-8">
+        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" source="${java_version}" encoding="UTF-8">
             <src path="${src}/it/unitn/ing/jgraph"/>
             <classpath>
                 <pathelement location="${build}/Maud_dev.jar"/>
@@ -1495,7 +1495,7 @@
         <mkdir dir="build"/>
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
-        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" encoding="UTF-8">
+        <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" source="${java_version}" encoding="UTF-8">
             <src path="${src}/gov/noaa/pmel"/>
             <!--classpath>
 			<pathelement location="${build}/Maud_dev.jar"/>
@@ -1574,7 +1574,7 @@
     <delete dir="${build_ant}" />
     <mkdir dir="build" />
     <mkdir dir="${build_ant}" />
-    <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" encoding="UTF-8">
+    <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" source="${java_version}" encoding="UTF-8">
     	<src path="ImageJ"/>
       <exclude name="plugins/*" />
     </javac>
@@ -2064,7 +2064,7 @@
                    applicationCategory="public.app-category.productivity">
 
             <!-- The directory where your OpenJDK runtime is. -->
-            <runtime dir="${inst}/Home/"/>
+            <runtime dir="${java_openjdk}/"/>
 
             <!-- The bundleapp task doesn't support classpathref so all
                 the run classpath entries must be stated here too.
@@ -2141,7 +2141,7 @@
                    applicationCategory="public.app-category.productivity"-->
 
         <!-- The directory where your OpenJDK runtime is. -->
-        <!--runtime dir="${inst}/Home/"/-->
+        <!--runtime dir="${java_openjdk}/"/-->
 
         <!-- The bundleapp task doesn't support classpathref so all
                 the run classpath entries must be stated here too.
@@ -2227,7 +2227,7 @@
                    applicationCategory="public.app-category.productivity">
 
             <!-- The directory where your OpenJDK runtime is. -->
-            <runtime dir="${inst}/Home_aarch64/"/>
+            <runtime dir="${java_openjdk}/"/>
 
             <!-- The bundleapp task doesn't support classpathref so all
                 the run classpath entries must be stated here too.
@@ -2303,7 +2303,7 @@
                    applicationCategory="public.app-category.productivity"-->
 
         <!-- The directory where your OpenJDK runtime is. -->
-        <!--runtime dir="${inst}/Home/"/-->
+        <!--runtime dir="${java_openjdk}/"/-->
 
         <!-- The bundleapp task doesn't support classpathref so all
                 the run classpath entries must be stated here too.
@@ -2389,7 +2389,7 @@
                    applicationCategory="public.app-category.productivity">
 
             <!-- The directory where your OpenJDK runtime is. -->
-            <runtime dir="${inst}/Home/"/>
+            <runtime dir="${java_openjdk}/"/>
 
             <!-- The bundleapp task doesn't support classpathref so all
                 the run classpath entries must be stated here too.

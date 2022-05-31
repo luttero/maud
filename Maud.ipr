@@ -5,10 +5,13 @@
       <additionalClassPath>
         <entry dir="file://$APPLICATION_HOME_DIR$/lib/ant/lib" />
         <entry path="file://$PROJECT_DIR$/libs/commons-net-3.3.jar" />
-        <entry path="file://$PROJECT_DIR$/Installers/infinitekind-appbundler-arm/appbundler/bin/appbundler-1.1.jar" />
-        <entry path="file://$PROJECT_DIR$/Installers/infinitekind-appbundler-last/appbundler/bin/appbundler-1.0.jar" />
+        <entry path="file:///Volumes/GoogleDrive/My Drive/Projects/rta/Maud_v2/libs/ant-libs/infinitekind-appbundler-last/appbundler/bin/appbundler-1.2.jar" />
+        <entry path="file:///Volumes/GoogleDrive/My Drive/Projects/rta/Maud_v2/libs/ant-libs/infinitekind-appbundler-arm/appbundler/bin/appbundler-1.2.jar" />
       </additionalClassPath>
-      <maximumHeapSize value="1024" />
+      <antReference name="Apache Ant version 1.10.12" />
+      <customJdkName value="zulu-18" />
+      <maximumHeapSize value="2048" />
+      <maximumStackSize value="4" />
     </buildFile>
   </component>
   <component name="ArtifactManager">
@@ -391,7 +394,7 @@
   <component name="ProjectResources">
     <default-html-doctype>http://www.w3.org/1999/xhtml</default-html-doctype>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_13" project-jdk-name="13" project-jdk-type="JavaSDK" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_13" project-jdk-name="azul-18" project-jdk-type="JavaSDK" />
   <component name="ResourceManagerContainer">
     <option name="myResourceBundles">
       <value>

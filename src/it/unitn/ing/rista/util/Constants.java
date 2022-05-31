@@ -969,7 +969,7 @@ public class Constants {
 
 			    for (int i = 0; i < list.size(); i++) {
 				    String token = list.get(i);
-				    if (testing)
+//				    if (testing)
 					    System.out.println("Loading class: " + token);
 				    try {
 					    Class aclass = maudClassLoader.loadClass(token);

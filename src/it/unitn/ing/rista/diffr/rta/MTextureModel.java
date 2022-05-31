@@ -47,9 +47,11 @@ import javax.swing.*;
 
 public class MTextureModel extends DiscreteODFTexture {
 
-	public static String[] diclistc = {"_rita_generate_symmetry", "_rita_wimv_odf_resolution", "_rita_wimv_refl_min_int",
+	public static String[] diclistc = {"_rita_generate_symmetry", "_rita_wimv_odf_resolution", "_mtex_kernel_resolution"
+			, "_rita_wimv_refl_min_int",
 			"_rita_wimv_refl_min_dspacing", "_rita_odf_refinable", "_rita_odf_sharpness", "_mtex_kernel_type"};
-	public static String[] diclistcrm = {"_rita_generate_symmetry", "_rita_wimv_odf_resolution", "_rita_wimv_refl_min_int",
+	public static String[] diclistcrm = {"_rita_generate_symmetry", "_rita_wimv_odf_resolution", "_mtex_kernel_resolution"
+			, "_rita_wimv_refl_min_int",
 			"_rita_wimv_refl_min_dspacing", "_rita_odf_refinable", "_rita_odf_sharpness", "_mtex_kernel_type"};
 
 	public static String[] classlistcs = {};
@@ -61,10 +63,13 @@ public class MTextureModel extends DiscreteODFTexture {
 
 	com.jtex.qta.ODF odf = null;
 	com.jtex.qta.PoleFigure pf = null;
+	Symmetry cs;
+	Symmetry ss;
 
 	public static final int KERNEL_VONMISES = 0, KERNEL_DELAVALLEEPOUSSIN = 1;
 	public static final String[] kernel_type = {"VonMises", "DeLaValleePoussin"};
-	public static final int kernelID = 6;
+	public static final int kernelID = 7;
+	public static final int kernelResID = 2;
 	int actualKernel = 0;
 
 	boolean showPlotsAtEnd = false;
@@ -90,7 +95,7 @@ public class MTextureModel extends DiscreteODFTexture {
 	}
 
 	public void initConstant() {
-		Nstring = 7;
+		Nstring = 8;
 		Nstringloop = 0;
 		Nparameter = 0;
 		Nparameterloop = 0;
@@ -110,6 +115,7 @@ public class MTextureModel extends DiscreteODFTexture {
 
 		setSampleSymmetry(NONE);
 		setResolution(MaudPreferences.getPref("odf.defaultResolution", "7.5"));
+		setKernelResolution(MaudPreferences.getPref("mtex.defaultKernelResolution", "6.0"));
 		setMinimumIntensity(MaudPreferences.getPref("ewimv.minimumPFIntensity", "0.001"));
 		setMinimumDspacing(MaudPreferences.getPref("ewimv.minimumDspacing", "0.0"));
 		setODFrefinable(true);
@@ -153,6 +159,28 @@ public class MTextureModel extends DiscreteODFTexture {
 		return Double.parseDouble(getResolution());
 	}
 
+	public void setKernelResolution(String value) {
+		double res = 5.0;
+		try {
+			res = Double.parseDouble(stringField[kernelResID]);
+		} catch (Exception e) {
+//			e.printStackTrace();
+		}
+		if (value != null && Double.parseDouble(value) != res) {
+			stringField[kernelResID] = value;
+//			resetODF();
+		}
+	}
+
+	public String getKernelResolution() {
+		return stringField[kernelResID];
+	}
+
+	public double getKernelResolutionD() {
+//    System.out.println("res " + getResolution());
+		return Double.parseDouble(getResolution());
+	}
+
 	public void setKernelType(int type) {
 		setKernelType(kernel_type[type]);
 	}
@@ -181,11 +209,11 @@ public class MTextureModel extends DiscreteODFTexture {
 	}
 
 	public void setMinimumIntensity(String value) {
-		stringField[2] = value;
+		stringField[3] = value;
 	}
 
 	public String getMinimumIntensity() {
-		return stringField[2];
+		return stringField[3];
 	}
 
 	public double getMinimumIntensityD() {
@@ -193,11 +221,11 @@ public class MTextureModel extends DiscreteODFTexture {
 	}
 
 	public void setMinimumDspacing(String value) {
-		stringField[3] = value;
+		stringField[4] = value;
 	}
 
 	public String getMinimumDspacing() {
-		return stringField[3];
+		return stringField[4];
 	}
 
 	public double getMinimumDspacingD() {
@@ -241,7 +269,6 @@ public class MTextureModel extends DiscreteODFTexture {
 //	SIX_FOLD, MIRROR, ORTHOROMBIC, FIBER
 
 	public Symmetry getMTexSampleSymmetry() {
-		Symmetry ss;
 		switch (getSampleSymmetryValue()) {
 			case 0:
 				ss = new Symmetry(PointGroup.C1.getSchoenflies());
@@ -276,26 +303,26 @@ public class MTextureModel extends DiscreteODFTexture {
 	}
 
 	public boolean ODFisRefinable() {
-		return stringField[4].equalsIgnoreCase("true");
+		return stringField[5].equalsIgnoreCase("true");
 	}
 
 	public void setODFrefinable(boolean status) {
 		if (status)
-			stringField[4] = "true";
+			stringField[5] = "true";
 		else
-			stringField[4] = "false";
+			stringField[5] = "false";
 	}
 
 	public void setODFrefinable(String value) {
-		stringField[4] = value;
+		stringField[5] = value;
 	}
 
 	public void setSharpness(String value) {
-		setString(5, value);
+		setString(6, value);
 	}
 
 	public String getSharpness() {
-		return getString(5);
+		return getString(6);
 	}
 
 	public int prepareiteration(double[][] experimentalPF) {
@@ -348,31 +375,16 @@ public class MTextureModel extends DiscreteODFTexture {
 		int LGIndex = SpaceGroups.getLGNumber(getPhase().getPointGroup());
 
 		String symmetry = it.unitn.ing.rista.util.SpaceGroups.laueGroupOnly[LGIndex];
-		Symmetry cs = new Symmetry(symmetry, aphase.getFullCellValue(0), aphase.getFullCellValue(1), aphase.getFullCellValue(2),
+		cs = new Symmetry(symmetry, aphase.getFullCellValue(0), aphase.getFullCellValue(1), aphase.getFullCellValue(2),
 				aphase.getFullCellValue(3), aphase.getFullCellValue(4), aphase.getFullCellValue(5));
 
 //		System.out.println(cs.euler("ZXZ").toDegrees());
 
 		pf = new com.jtex.qta.PoleFigure();
 		pf.setCS(cs);
-		pf.setSS(getMTexSampleSymmetry());
+		ss = getMTexSampleSymmetry();
+		pf.setSS(ss);
 
-/* test
-		double[] th = new double[5];
-		double[] ph = new double[5];
-		double[] dd = new double[5];
-		for (int i = 0; i < 5; i++) {
-			th[i] = 10.0 * i * Constants.DEGTOPI;
-			ph[i] = 10.0 * i * Constants.DEGTOPI;
-			dd[i] = 0.5 + 0.25 * i;
-		}
-
-		PoleFigure ps1 = new PoleFigure(new Miller(1, 1, 1, cs, ""),
-				new Vec3(th, ph), new Array1D(dd));
-//				ps.setCS(cs);
-		pf.add(ps1);
-
- */
 		int pf_number = 0;
 		for (int j = 0; j < hkln; j++) {
 			Reflection refl = aphase.getReflectionVector().elementAt(j);
@@ -423,31 +435,12 @@ public class MTextureModel extends DiscreteODFTexture {
 						index++;
 					}
 				}
-/*
-				double[][] expTFAndAngles = refl.getExpPoleFigureGrid();
-				int numberDataPoints = expTFAndAngles[0].length;
-				int symNumberDataPoints = numberDataPoints * getSampleSymmetryMultiplicity();
-				double[] theta = new double[symNumberDataPoints],
-						rho = new double[symNumberDataPoints],
-						data = new double[symNumberDataPoints];
-				int index = 0;
-				for (int k = 0; k < getSampleSymmetryMultiplicity(); k++) {
-					for (int i = 0; i < numberDataPoints; i++) {
-						double angles[] = new double[2];
-						angles[0] = expTFAndAngles[0][i];
-						angles[1] = expTFAndAngles[1][i];
-						double[] newangles = applySampleSymmetry(angles, index, numberDataPoints);
-						theta[index] = newangles[0] * Constants.DEGTOPI;
-						rho[index] = newangles[1] * Constants.DEGTOPI;
-						data[index] = expTFAndAngles[2][i];
-						index++;
-					}
-				}*/
 
 //            System.out.println("PF number & size: " + pf_number + " " + data.length);
 				com.jtex.qta.PoleFigure ps = new com.jtex.qta.PoleFigure(new Miller(refl.getH(), refl.getK(), refl.getL(), cs, ""),
 						new Vec3(theta, rho), new Array1D(data));
-//				ps.setCS(cs);
+				ps.setCS(cs);
+				ps.setSS(ss);
 				pf.add(ps);
 				pf_number++;
 			}
@@ -716,10 +709,10 @@ public class MTextureModel extends DiscreteODFTexture {
 			Kernel kernel;
 			switch (getKernelTypeAsInt()) {
 				case KERNEL_DELAVALLEEPOUSSIN:
-					kernel =  new DeLaValleePoussin(Math.toRadians(getResolutionD()));
+					kernel =  new DeLaValleePoussin(Math.toRadians(getKernelResolutionD()));
 					break;
 				default: {
-					kernel =  new VonMisesFisher(Math.toRadians(getResolutionD()));
+					kernel =  new VonMisesFisher(Math.toRadians(getKernelResolutionD()));
 				}
 			}
 			if (odf == null)
@@ -872,6 +865,7 @@ public class MTextureModel extends DiscreteODFTexture {
 
 		JComboBox symmetryCB;
 		JTextField resolutionTF;
+		JTextField kernelResolutionTF;
 		JComboBox kernelTypeCB;
 		JCheckBox refinableCB;
 		JCheckBox showPlotCB;
@@ -895,6 +889,14 @@ public class MTextureModel extends DiscreteODFTexture {
 			resolutionTF = new JTextField(Constants.FLOAT_FIELD);
 			resolutionTF.setToolTipText("Choose the ODF cells resolution");
 			jPanel8.add(resolutionTF);
+			lowerPanel.add(jPanel8);
+
+			jPanel8 = new JPanel();
+			jPanel8.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
+			jPanel8.add(new JLabel("Kernel resolution in degrees: "));
+			kernelResolutionTF = new JTextField(Constants.FLOAT_FIELD);
+			kernelResolutionTF.setToolTipText("Set the kernel resolution");
+			jPanel8.add(kernelResolutionTF);
 			lowerPanel.add(jPanel8);
 
 			jPanel8 = new JPanel();
@@ -1059,6 +1061,7 @@ public class MTextureModel extends DiscreteODFTexture {
 			minIntTF.setText(getMinimumIntensity());
 			thresholdTF.setText(getMinimumDspacing());
 			resolutionTF.setText(getResolution());
+			kernelResolutionTF.setText(getKernelResolution());
 			kernelTypeCB.setSelectedIndex(getKernelTypeAsInt());
 			showPlotCB.setSelected(showPlotsAtEnd);
 		}
@@ -1067,6 +1070,7 @@ public class MTextureModel extends DiscreteODFTexture {
 			setSampleSymmetry(symmetryCB.getSelectedItem().toString());
 			setResolution(resolutionTF.getText());
 			setKernelType(kernelTypeCB.getSelectedIndex());
+			setKernelResolution(kernelResolutionTF.getText());
 			setODFrefinable(refinableCB.isSelected());
 			showPlotsAtEnd = showPlotCB.isSelected();
 			setMinimumIntensity(minIntTF.getText());

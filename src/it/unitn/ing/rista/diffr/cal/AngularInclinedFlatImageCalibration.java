@@ -33,7 +33,6 @@ import javax.swing.border.BevelBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Vector;
 
 /**
  * The AngularInclinedFlatImageCalibration is a class to

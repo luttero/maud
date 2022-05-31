@@ -877,6 +877,41 @@ public class DataFileSet extends XRDcat {
 		notifyUpObjectChanged(this, 0);
 	}
 
+	public void generateByAngles(double[] startingAngle, double[] finalAngle, double[] everyAngle) {
+		Constants.refreshTreePermitted = false;
+		Vector datafiles = getSelectedDatafiles();
+		int numberDatafiles = datafiles.size();
+		for (int i = 0; i < numberDatafiles; i++) {
+			double[] angles = new double[startingAngle.length];
+			DiffrDataFile diffrDatafile = (DiffrDataFile) datafiles.elementAt(i);
+			double[] originalAngles = new double[startingAngle.length];
+			for (int j = 0; j < startingAngle.length; j++)
+				originalAngles[j] = diffrDatafile.getAngleValue(j);
+
+			generateOutputForAngles(diffrDatafile, 0, startingAngle.length,
+					startingAngle, finalAngle, everyAngle);
+
+			for (int j = 0; j < startingAngle.length; j++)
+				diffrDatafile.setAngleValue(j, originalAngles[j]);
+		}
+		Constants.refreshTreePermitted = true;
+		notifyUpObjectChanged(this, 0);
+	}
+
+	public void generateOutputForAngles(DiffrDataFile diffrDatafile, int angleNumber, int angleMax,
+	                                    double[] start, double[] end, double[] step) {
+  	   if (angleNumber == angleMax) {
+	      return;
+      }
+  	   for (double angle = start[angleNumber]; angle <= end[angleNumber]; angle += step[angleNumber]) {
+	      diffrDatafile.setAngleValue(angleNumber, angle);
+//	      System.out.println("Generating: " + angleNumber + " " + angleMax + " " + diffrDatafile.getAngleValue(0) + " " + diffrDatafile.getAngleValue(1) + " " + diffrDatafile.getAngleValue(2) + " " + diffrDatafile.getAngleValue(3));
+	      diffrDatafile.fittingFileOutput(false, angleMax);
+	      generateOutputForAngles(diffrDatafile, angleNumber + 1, angleMax, start, end, step);
+      }
+		diffrDatafile.setAngleValue(angleNumber, start[angleNumber]);
+	}
+
 	private void disable(DiffrDataFile diffrDatafile) {
 	  diffrDatafile.setCompute(false);
   }
@@ -3808,7 +3843,7 @@ public class DataFileSet extends XRDcat {
       if (phaseOutput)
         adtafile1.fittingPhaseOutput(getSample(), addStatisticalError);
       else
-        adtafile1.fittingFileOutput(addStatisticalError);
+        adtafile1.fittingFileOutput(addStatisticalError, 0);
     }
   }
 

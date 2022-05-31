@@ -954,8 +954,15 @@ public class DataD extends myJFrame {
       }
     });
 
+	  toolsMenu.add(menuitem = new JMenuItem("Multiply datafiles by rules (for simulation only)"));
+	  menuitem.addActionListener(new ActionListener() {
+		  public void actionPerformed(ActionEvent e) {
+			  multiplyDatafiles();
+		  }
+	  });
 
-    return toolsMenu;
+
+	  return toolsMenu;
   }
 
   /**
@@ -1550,15 +1557,23 @@ public class DataD extends myJFrame {
     (new SortByAnglesFrame(this)).setVisible(true);
   }
 
-  /**
-    * Remove spectra by angle range.
-   */
-   public void removeByAngles() {
-     fileselected = -1;
-     (new RemoveByAnglesFrame(this)).setVisible(true);
-   }
+	/**
+	 * Remove spectra by angle range.
+	 */
+	public void removeByAngles() {
+		fileselected = -1;
+		(new RemoveByAnglesFrame(this)).setVisible(true);
+	}
 
-  /**
+	/**
+	 * Multiply datafiles by angle range.
+	 */
+	public void multiplyDatafiles() {
+		fileselected = -1;
+		(new AddByAnglesFrame(this)).setVisible(true);
+	}
+
+	/**
    * Instrument setup methods.
    */
 
@@ -2220,7 +2235,7 @@ public class DataD extends myJFrame {
         orderCB.addItem(angleNames[j]);
       orderCB.setSelectedIndex(angleNames.length - 1);
       jp1.add(orderCB);
-      jp1.add(new JLabel(" every "));
+      jp1.add(new JLabel(" from "));
       jp1.add(startingTF = new JTextField("0.0"));
       jp1.add(new JLabel(" to "));
       jp1.add(finalTF = new JTextField("90.0"));
@@ -2319,6 +2334,95 @@ public class DataD extends myJFrame {
     }
   }
 
+	class AddByAnglesFrame extends myJFrame {
+
+		JTextField startingTF[];
+		JTextField finalTF[];
+		JTextField everyTF[];
+		JPanel anglePanel[];
+		String[] angleNames = {"omega",
+				"chi",
+				"phi"};
+
+		public AddByAnglesFrame(DataD aframe) {
+
+			super(aframe);
+
+			final DataFileSet adata = aframe.thedata;
+			AddByAnglesFrame.this.setOwnPosition = true;
+
+			Container c1 = AddByAnglesFrame.this.getContentPane();
+
+			c1.setLayout(new BorderLayout(3, 3));
+			JPanel principalPanel = new JPanel();
+			c1.add(BorderLayout.CENTER, principalPanel);
+
+			principalPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
+
+			JPanel panel3 = new JPanel();
+			panel3.setLayout(new GridLayout(0, 1, 3, 3));
+			principalPanel.add(panel3);
+
+			anglePanel = new JPanel[angleNames.length];
+			startingTF = new JTextField[angleNames.length];
+			finalTF = new JTextField[angleNames.length];
+			everyTF = new JTextField[angleNames.length];
+
+			for (int i = 0; i < angleNames.length; i++) {
+				anglePanel[i] = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 2));
+				anglePanel[i].add(new JLabel(angleNames[i] + ":"));
+				anglePanel[i].add(new JLabel(" from "));
+				anglePanel[i].add(startingTF[i] = new JTextField("0.0"));
+				anglePanel[i].add(new JLabel(" to "));
+				anglePanel[i].add(finalTF[i] = new JTextField("90.0"));
+				anglePanel[i].add(new JLabel(" every "));
+				anglePanel[i].add(everyTF[i] = new JTextField("5.0"));
+				anglePanel[i].add(new JLabel(" degrees "));
+				panel3.add(anglePanel[i]);
+			}
+
+			panel3 = new JPanel();
+			panel3.setLayout(new FlowLayout(FlowLayout.RIGHT, 6, 6));
+			c1.add(BorderLayout.SOUTH, panel3);
+
+			JButton generateB = new JButton("Generate");
+			generateB.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent event) {
+					double startingAngle[] = new double[angleNames.length];
+					double finalAngle[] = new double[angleNames.length];
+					double everyAngle[] = new double[angleNames.length];
+					for (int j = 0; j < angleNames.length; j++) {
+						startingAngle[j] = Double.parseDouble(startingTF[j].getText());
+						finalAngle[j] = Double.parseDouble(finalTF[j].getText());
+						everyAngle[j] = Double.parseDouble(everyTF[j].getText());
+					}
+					adata.generateByAngles(startingAngle, finalAngle, everyAngle);
+					AddByAnglesFrame.this.setVisible(false);
+					AddByAnglesFrame.this.dispose();
+				}
+			});
+			panel3.add(generateB);
+
+			JButton stopD = new JCancelButton();
+			stopD.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent event) {
+					AddByAnglesFrame.this.setVisible(false);
+					AddByAnglesFrame.this.dispose();
+				}
+			});
+			panel3.add(stopD);
+
+//			this.setHelpButton(panel3);
+
+			AddByAnglesFrame.this.setTitle("Disable by rules: priorities");
+
+			AddByAnglesFrame.this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+
+			AddByAnglesFrame.this.pack();
+			AddByAnglesFrame.this.setResizable(false);
+
+		}
+	}
 
 }
 

@@ -116,7 +116,7 @@ public class DubnaLoader implements PoleFigureLoader {
         
         Symmetry cs = new Symmetry("-3m", 1.4, 1.4, 1.5);
         
-        System.out.println(cs.euler("ZXZ").toDegrees());
+//        System.out.println(cs.euler("ZXZ").toDegrees());
         String names[] = new String[]{"Q(02-21)_amp.cnv", "Q(10-10)_amp.cnv",
             "Q(10-11)(01-11)_amp.cnv", "Q(10-12)_amp.cnv",
             "Q(11-20)_amp.cnv", "Q(11-21)_amp.cnv", "Q(11-22)_amp.cnv"};

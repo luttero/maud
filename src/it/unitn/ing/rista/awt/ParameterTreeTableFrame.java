@@ -254,13 +254,13 @@ public class ParameterTreeTableFrame extends myJFrame {
     cmdB.setToolTipText("Use this to force bound togheter all banks in an instrument");
     jp.add(cmdB);
 
-    cmdB = new JButton("Refine all ZEROs/shifts");
+    cmdB = new JButton("Refine all DIFC/shifts");
     cmdB.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
         getFileParent().refineAllZEROBankCoefficients(false);
       }
     });
-    cmdB.setToolTipText("Use this to set refinable all ZERO coefficients of TOF banks or individual datafiles shifts");
+    cmdB.setToolTipText("Use this to set refinable all DIFC coefficients of TOF banks or individual datafiles shifts");
     jp.add(cmdB);
 
     cmdB = new JButton("Refine all y-z displ");

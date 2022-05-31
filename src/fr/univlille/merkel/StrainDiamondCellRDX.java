@@ -150,7 +150,7 @@ public void initParameters() {
 	refreshComputation = true; // we specify the computation need to be refreshed (it has never done up to now)
 }
 
-	public int indexFromAngles(double psi, double beta) {
+public int indexFromAngles(double psi, double beta) {
 	int hkln = Integer.parseInt(stringField[0]);
 	int h, k, l;
 	double phiTest;

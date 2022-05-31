@@ -3111,12 +3111,12 @@ public class DiffrDataFile extends XRDcat {
       return CIFXcoord2T;
   }
 
-  public void fittingFileOutput(boolean addStatisticalError) {
+  public void fittingFileOutput(boolean addStatisticalError, int angleMax) {
     double xcoorddata;
 
     if (!(getComputePermission()) || !getPlotfilePermission())
       return;
-    BufferedWriter output = getWriter();
+    BufferedWriter output = getWriter(angleMax);
     try {
       output.write("_pd_block_id noTitle|#0");
       output.newLine();
@@ -3177,7 +3177,7 @@ public class DiffrDataFile extends XRDcat {
     double xcoorddata;
     if (getComputeString().equalsIgnoreCase("false") || !getPlotfilePermission())
       return;
-    BufferedWriter output = getWriter();
+    BufferedWriter output = getWriter(0);
     try {
       setGeneratePlotfile(false);
       writeAllFields(output);
@@ -5119,7 +5119,7 @@ public class DiffrDataFile extends XRDcat {
     return filename;
   }
 
-  public BufferedWriter getWriter() {
+  public BufferedWriter getWriter(int maxAngle) {
     String filename = this.toXRDcatString();
     String tmpname = "";
     if (filename.endsWith(")")) {
@@ -5148,8 +5148,18 @@ public class DiffrDataFile extends XRDcat {
     if (finalIndex != -1)
       filename = filename.substring(0, finalIndex);
 
-    filename = filename + tmpname + ".fit";
+    if (maxAngle > 0) {
+    	filename = filename + tmpname;
+    	for (int i = 0; i < maxAngle; i++) {
+    		double angle = getAngleValue(i);
+    		String angleS = Float.toString((float) angle);
+	      filename = filename + "_" + angleS;
+      }
+    	filename = filename + ".esg";
+    } else
+      filename = filename + tmpname + ".fit";
 
+    System.out.println("Saving to: " + getFolder() + filename);
     return Misc.getWriter(getFolder(), filename);
   }
 
