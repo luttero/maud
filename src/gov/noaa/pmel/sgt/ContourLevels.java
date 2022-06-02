@@ -138,7 +138,7 @@ public class ContourLevels implements Cloneable {
   public ContourLineAttribute getContourLineAttribute(double val)
     throws ContourLevelNotFoundException  {
     ContourLineAttribute attr =
-      (ContourLineAttribute)lineAttrMap_.get(new Double(val));
+      (ContourLineAttribute)lineAttrMap_.get(val);
     if(attr == null) {
       throw new ContourLevelNotFoundException();
     }
@@ -202,7 +202,7 @@ public class ContourLevels implements Cloneable {
    * <code>ContourLineAttribute</code>.
    */
   public void addLevel(double val, ContourLineAttribute l) {
-    Double value = new Double(val);
+    Double value = val;
     levels_.addElement(value);
     lineAttrMap_.put(value, l);
     sorted_ = false;
@@ -244,7 +244,7 @@ public class ContourLevels implements Cloneable {
    */
   public int getIndex(double val) {
     if(!sorted_) sort();
-    return getIndex(new Double(val));
+    return getIndex(val);
   }
   /**
    * Get the maximum level index.

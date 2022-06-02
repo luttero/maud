@@ -577,7 +577,7 @@ public class GeoDate extends java.util.Date implements java.io.Serializable {
   /**
    * Get year
    *
-   * @deprecated Overrides a deprecated method, replaced by {@link #getGMTYear}.
+   * Avoiding warning: deprecated Overrides a deprecated method, replaced by {@link #getGMTYear}.
    */
   public int getYear() {
     splitTimeFormat();

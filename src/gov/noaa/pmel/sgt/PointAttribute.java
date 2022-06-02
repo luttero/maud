@@ -156,11 +156,11 @@ public class PointAttribute implements Attribute, Cloneable {
    **/
   public void setMarkHeightP(double markh) {
     if(markHeightP_ != markh) {
-      Double tempOld = new Double(markHeightP_);
+      Double tempOld = markHeightP_;
       markHeightP_ = markh;
       firePropertyChange("markHeightP",
                                   tempOld,
-                                  new Double(markHeightP_));
+		      markHeightP_);
     }
   }
   /**
@@ -194,11 +194,11 @@ public class PointAttribute implements Attribute, Cloneable {
    **/
   public void setWidthP(double t) {
     if(pwidth_ != t) {
-      Double tempOld = new Double(pwidth_);
+      Double tempOld = pwidth_;
       pwidth_ = t;
       firePropertyChange("widthP",
                                   tempOld,
-                                  new Double(pwidth_));
+		      pwidth_);
     }
   }
   /**
@@ -226,11 +226,11 @@ public class PointAttribute implements Attribute, Cloneable {
    **/
   public void setMark(int mark) {
     if(mark_ != mark) {
-      Integer tempOld = new Integer(mark_);
+      Integer tempOld = mark_;
       mark_ = mark;
       firePropertyChange("mark",
                                   tempOld,
-                                  new Integer(mark_));
+		      mark_);
     }
   }
   /**
@@ -248,11 +248,11 @@ public class PointAttribute implements Attribute, Cloneable {
    */
   public void setLabelPosition(int pos) {
     if(labelPosition_ != pos) {
-      Integer tempOld = new Integer(labelPosition_);
+      Integer tempOld = labelPosition_;
       labelPosition_ = pos;
       firePropertyChange("labelPosition",
                                   tempOld,
-                                  new Integer(labelPosition_));
+		      labelPosition_);
     }
   }
   /**
@@ -305,11 +305,11 @@ public class PointAttribute implements Attribute, Cloneable {
    */
   public void setLabelHeightP(double h) {
     if(labelHeightP_ != h) {
-      Double tempOld = new Double(labelHeightP_);
+      Double tempOld = labelHeightP_;
       labelHeightP_ = h;
       firePropertyChange("labelHeightP",
                                   tempOld,
-                                  new Double(labelHeightP_));
+		      labelHeightP_);
     }
   }
   /**
@@ -324,11 +324,11 @@ public class PointAttribute implements Attribute, Cloneable {
    */
   public void setDrawLabel(boolean dl) {
     if(drawLabel_ != dl) {
-      Boolean tempOld = new Boolean(drawLabel_);
+      Boolean tempOld = drawLabel_;
       drawLabel_ = dl;
       firePropertyChange("drawLabel",
                                   tempOld,
-                                  new Boolean(drawLabel_));
+		      drawLabel_);
     }
   }
   /**

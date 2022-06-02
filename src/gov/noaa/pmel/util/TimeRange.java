@@ -19,7 +19,7 @@ package  gov.noaa.pmel.util;
  * @version $Revision: 1.1 $, $Date: 2004/12/27 16:15:23 $
  * @since sgt 1.0
  *
- * @deprecated As of sgt 3.0, use {@link gov.noaa.pmel.util.SoTRange.Time SoTRange.Time}
+ * L_deprecated As of sgt 3.0, use {@link gov.noaa.pmel.util.SoTRange.Time SoTRange.Time}
  */
 public class TimeRange implements java.io.Serializable {
   /** The range's first time  */
@@ -50,7 +50,7 @@ public class TimeRange implements java.io.Serializable {
    *
    * @param tstart first time
    * @param tend last time
-   * @param delta time increment
+   * @param tdelta time increment
    */
   public TimeRange(GeoDate tstart,GeoDate tend, GeoDate tdelta) {
     this.start = tstart;

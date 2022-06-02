@@ -152,7 +152,7 @@ public abstract class SoTValue implements Serializable {
       value_ = value;
     }
     public Object getObjectValue() {
-      return new java.lang.Long(value_);
+      return value_;
     }
     /**
      * Test if <code>SoTValue</code> is time
@@ -234,7 +234,7 @@ public abstract class SoTValue implements Serializable {
       value_ = value;
     }
     public Object getObjectValue() {
-      return new java.lang.Integer(value_);
+      return value_;
     }
     /**
      * Test if <code>SoTValue</code> is time
@@ -314,7 +314,7 @@ public abstract class SoTValue implements Serializable {
       value_ = value;
     }
     public Object getObjectValue() {
-      return new java.lang.Short(value_);
+      return value_;
     }
     /**
      * Test if <code>SoTValue</code> is time
@@ -394,7 +394,7 @@ public abstract class SoTValue implements Serializable {
       value_ = value;
     }
     public Object getObjectValue() {
-      return new java.lang.Float(value_);
+      return value_;
     }
     /**
      * Test if <code>SoTValue</code> is time
@@ -474,7 +474,7 @@ public abstract class SoTValue implements Serializable {
       value_ = value;
     }
     public Object getObjectValue() {
-      return new java.lang.Double(value_);
+      return value_;
     }
     /**
      * Test if <code>SoTValue</code> is time

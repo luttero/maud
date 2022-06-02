@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Activates the sandbox, required. -->
+    <key>com.apple.security.app-sandbox</key>
+    <false/>
+    <!-- Allow your application read/write access to the user downloads folder -->
+    <key>com.apple.security.files.downloads.read-write</key>
+    <true/>
+    <!-- Allow your application read/write access to the file selected by the user. -->
+    <key>com.apple.security.files.user-selected.read-write</key>
+    <true/>
+    <!-- Allow your application to initiate network requests -->
+    <key>com.apple.security.network.client</key>
+    <true/>
+    <!-- Allow your application to listen for network requests -->
+    <key>com.apple.security.network.server</key>
+    <true/>
+    <!-- Allow your application to use the printer -->
+    <key>com.apple.security.print</key>
+    <true/>
+</dict>
+</plist>

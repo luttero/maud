@@ -62,7 +62,7 @@ public abstract class SoTRange implements java.io.Serializable, Cloneable {
      *
      * @param tstart first time
      * @param tend last time
-     * @param delta time increment
+     * @param tdelta time increment
      */
     public GeoDate(gov.noaa.pmel.util.GeoDate tstart,
        gov.noaa.pmel.util.GeoDate tend,
@@ -72,8 +72,7 @@ public abstract class SoTRange implements java.io.Serializable, Cloneable {
       this.delta = tdelta;
     }
     /**
-     * @deprecated use SoTRange
-     */
+     * L_deprecated use SoTRange
     public GeoDate(TimeRange trange) {
       start = new gov.noaa.pmel.util.GeoDate(trange.start.getTime());
       end = new gov.noaa.pmel.util.GeoDate(trange.end.getTime());
@@ -83,6 +82,8 @@ public abstract class SoTRange implements java.io.Serializable, Cloneable {
         delta = null;
       }
     }
+     */
+
     /**
      * Get start value
      */
@@ -313,13 +314,13 @@ public abstract class SoTRange implements java.io.Serializable, Cloneable {
       delta = ((SoTValue.Time)value).getValue();
     }
     public Object getStartObject() {
-      return new java.lang.Long(start);
+      return start;
     }
     public Object getEndObject() {
-      return new java.lang.Long(end);
+      return end;
     }
     public Object getDeltaObject() {
-      return new java.lang.Long(delta);
+      return delta;
     }
     /**
      * Adds the <code>SoTRange</code> object to this
@@ -490,13 +491,13 @@ public abstract class SoTRange implements java.io.Serializable, Cloneable {
       delta = ((SoTValue.Integer)value).getValue();
     }
     public Object getStartObject() {
-      return new java.lang.Integer(start);
+      return start;
     }
     public Object getEndObject() {
-      return new java.lang.Integer(end);
+      return end;
     }
     public Object getDeltaObject() {
-      return new java.lang.Integer(delta);
+      return delta;
     }
     /**
      * Adds the <code>SoTRange</code> object to this
@@ -667,13 +668,13 @@ public abstract class SoTRange implements java.io.Serializable, Cloneable {
       delta = ((SoTValue.Short)value).getValue();
     }
     public Object getStartObject() {
-      return new java.lang.Short(start);
+      return start;
     }
     public Object getEndObject() {
-      return new java.lang.Short(end);
+      return end;
     }
     public Object getDeltaObject() {
-      return new java.lang.Short(delta);
+      return delta;
     }
     /**
      * Adds the <code>SoTRange</code> object to this
@@ -844,13 +845,13 @@ public abstract class SoTRange implements java.io.Serializable, Cloneable {
       delta = ((SoTValue.Float)value).getValue();
     }
     public Object getStartObject() {
-      return new java.lang.Float(start);
+      return start;
     }
     public Object getEndObject() {
-      return new java.lang.Float(end);
+      return end;
     }
     public Object getDeltaObject() {
-      return new java.lang.Float(delta);
+      return delta;
     }
     /**
      * Adds the <code>SoTRange</code> object to this
@@ -1021,13 +1022,13 @@ public abstract class SoTRange implements java.io.Serializable, Cloneable {
       delta = ((SoTValue.Double)value).getValue();
     }
     public Object getStartObject() {
-      return new java.lang.Double(start);
+      return start;
     }
     public Object getEndObject() {
-      return new java.lang.Double(end);
+      return end;
     }
     public Object getDeltaObject() {
-      return new java.lang.Double(delta);
+      return delta;
     }
     /**
      * Adds the <code>SoTRange</code> object to this
