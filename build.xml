@@ -2050,7 +2050,8 @@
     <target name="bundle" depends="build_full">
         <!-- Import the AppBundlerTaks from ant lib directory -->
         <taskdef name="bundleapp"
-                 classname="com.oracle.appbundler.AppBundlerTask"/>
+                 classname="com.oracle.appbundler.AppBundlerTask"
+                 classpath="libs/commons-net-3.3.jar;libs/ant-libs/infinitekind-appbundler-last/appbundler/bin/appbundler-1.2.jar"/>
 
         <bundleapp outputdirectory="${app_osx}/"
                    name="Maud"
@@ -2213,7 +2214,8 @@
     <target name="bundle_arm64" depends="build_full">
         <!-- Import the AppBundlerTaks from ant lib directory -->
         <taskdef name="bundleapp"
-                 classname="com.radiographema.appbundler.AppBundlerTask"/>
+                 classname="com.radiographema.appbundler.AppBundlerTask"
+                 classpath="libs/commons-net-3.3.jar;libs/ant-libs/infinitekind-appbundler-arm/appbundler/bin/appbundler-1.2.jar"/>
 
         <bundleapp outputdirectory="${app_osx_arm}/"
                    name="Maud"
@@ -2375,7 +2377,8 @@
     <target name="bundle_alt295" depends="build_full">
         <!-- Import the AppBundlerTaks from ant lib directory -->
         <taskdef name="bundleapp"
-                 classname="com.oracle.appbundler.AppBundlerTask"/>
+                 classname="com.oracle.appbundler.AppBundlerTask"
+                 classpath="libs/commons-net-3.3.jar;libs/ant-libs/infinitekind-appbundler-last/appbundler/bin/appbundler-1.2.jar"/>
 
         <bundleapp outputdirectory="${app_osx_295}/"
                    name="Maud"

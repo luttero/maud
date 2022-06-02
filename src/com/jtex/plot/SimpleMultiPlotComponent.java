@@ -45,7 +45,7 @@ public class SimpleMultiPlotComponent extends JComponent implements
     private ColorMap.Name cmapname = Plotter.getDefaultColorMap().getName();
     private int ncolors = 200;
 
-    boolean equalCLim = false;
+    boolean equalCLim = true;
 
 //    JSlider s;
     public SimpleMultiPlotComponent() {
