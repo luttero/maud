@@ -137,13 +137,6 @@ public class Agent {
   }
 
   public void closeSession(String errorMessage) {
-    //shouldn't need to do this
-    /*try {
-        channel.close();
-    } catch (BEEPException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-    }*/
     session.terminate(errorMessage);
     isConnected = false;
   }
@@ -243,11 +236,11 @@ public class Agent {
     Task task = null;
     if (currentTaskCount < maxTaskCount) {
       long serialTaskRef = 0;
-      while (serialTaskRef < maxTaskCount && taskQueue.containsKey(new Long(serialTaskRef))) {
+      while (serialTaskRef < maxTaskCount && taskQueue.containsKey(serialTaskRef)) {
         serialTaskRef++;
       }
       task = new Task(this, command, arguments, inputFiles, inputStream, maximumCPUPower / maxTaskCount, serialTaskRef);
-      taskQueue.put(new Long(serialTaskRef), task);
+      taskQueue.put(serialTaskRef, task);
       currentTaskCount++;
       currentCPUPower += maximumCPUPower / maxTaskCount;
     }
@@ -261,7 +254,7 @@ public class Agent {
    * @return the task
    */
   public Task getTask(final long taskRef) {
-    return (Task) taskQueue.get(new Long(taskRef));
+    return (Task) taskQueue.get(taskRef);
   }
 
   /**
@@ -273,7 +266,7 @@ public class Agent {
     currentTaskCount--;
     currentCPUPower -= maximumCPUPower / maxTaskCount;
     getTask(taskRef).cleanUp();
-    taskQueue.remove(new Long(taskRef));
+    taskQueue.remove(taskRef);
   }
 
   // BEGIN getters and setters
