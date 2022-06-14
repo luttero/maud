@@ -1689,7 +1689,10 @@ public class DataD extends myJFrame {
 
   class summationRulesFrame extends myJFrame {
 
-    public summationRulesFrame(DataD aframe) {
+	  JTextField[] anglesTF;
+	  JCheckBox[] anglesCB;
+
+	  public summationRulesFrame(DataD aframe) {
 
       super(aframe);
 
@@ -1699,22 +1702,30 @@ public class DataD extends myJFrame {
 
       c1.setLayout(new BorderLayout(3, 3));
 
-	    JPanel panel3 = new JPanel();
-	    panel3.setLayout(new FlowLayout(FlowLayout.RIGHT, 6, 6));
-	    panel3.add(new JLabel("Sum range +- "));
+		JTabbedPane mainPanel = new JTabbedPane();
+	    c1.add(BorderLayout.CENTER, mainPanel);
+
+	    JPanel c2 = new JPanel();
+	    c2.setLayout(new BorderLayout(3, 3));
+	    mainPanel.addTab("Sum by one angle", c2);
+
+		  JPanel principalPanel = new JPanel();
+		  c2.add(BorderLayout.NORTH, principalPanel);
+
+		  principalPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
+	    JPanel panel2 = new JPanel();
+	    panel2.setLayout(new FlowLayout(FlowLayout.RIGHT, 6, 6));
+	    panel2.add(new JLabel("Sum range +- "));
 	    final JTextField angleTF = new JTextField("0.0");
 	    angleTF.setToolTipText("Specify the angle range for summation here");
-	    panel3.add(angleTF);
-	    c1.add(BorderLayout.NORTH, panel3);
+	    panel2.add(angleTF);
 
-      JPanel principalPanel = new JPanel();
-      c1.add(BorderLayout.CENTER, principalPanel);
+//		  c2.add(BorderLayout.CENTER, principalPanel);
 
-      principalPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
-
-      panel3 = new JPanel();
+		  JPanel panel3 = new JPanel();
       panel3.setLayout(new GridLayout(0, 1, 3, 3));
       principalPanel.add(panel3);
+		  principalPanel.add(panel2);
 
       panel3.add(new JLabel("Groups spectra by:"));
 
@@ -1732,9 +1743,10 @@ public class DataD extends myJFrame {
 
       panel3 = new JPanel();
       panel3.setLayout(new FlowLayout(FlowLayout.RIGHT, 6, 6));
-      c1.add(BorderLayout.SOUTH, panel3);
+		principalPanel.add(panel3);
 
       JButton startD = new JCloseButton();
+		  panel3.add(startD);
       startD.setToolTipText("Do the summation based on the specified angle ranges and save the file");
 
       final DataD adata = aframe;
@@ -1753,9 +1765,63 @@ public class DataD extends myJFrame {
           summationRulesFrame.this.dispose();
         }
       });
-      panel3.add(startD);
 
-      JButton stopD = new JCancelButton();
+	   JPanel panelMore = new JPanel();
+		mainPanel.addTab("Sum by more angles", panelMore);
+	    panelMore.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
+
+	    JPanel panel_new3 = new JPanel();
+	    panel_new3.setLayout(new GridLayout(0, 3, 3, 3));
+	    panelMore.add(panel_new3);
+
+	    panel_new3.add(new JLabel("Groups spectra by:"));
+	    panel_new3.add(new JLabel(""));
+	    panel_new3.add(new JLabel(""));
+
+		 final String[] angleLabels = {"omega", "chi", "phi", "eta", "2theta", "energy"};
+		 anglesTF = new JTextField[angleLabels.length]; // omega, chi, phi, eta, theta
+		  anglesCB = new JCheckBox[angleLabels.length];
+		  for (int i = 0; i < angleLabels.length; i++) {
+			  anglesCB[i] = new JCheckBox("same " + angleLabels[i]);
+			  anglesCB[i].setToolTipText("Sum the datafiles with different " + angleLabels[i] + " angle in different files");
+			  anglesCB[i].setSelected(true);
+			  panel_new3.add(anglesCB[i]);
+			  panel_new3.add(new JLabel(" +- "));
+			  anglesTF[i] = new JTextField(6);
+			  anglesTF[i].setText("0");
+			  panel_new3.add(anglesTF[i]);
+		  }
+
+	    panel_new3 = new JPanel();
+	    panel_new3.setLayout(new FlowLayout(FlowLayout.RIGHT, 6, 6));
+	    panelMore.add(BorderLayout.SOUTH, panel_new3);
+
+	    JButton startS = new JCloseButton();
+	    startS.setToolTipText("Do the summation based on the selected rules and save the file");
+
+	    final DataD adataFrame = aframe;
+	    startS.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent event) {
+			    summationRulesFrame.this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+				 boolean[] sameAngles = new boolean[angleLabels.length];
+			    double[] anglesValue = new double[angleLabels.length];
+				 for (int i = 0; i < angleLabels.length; i++) {
+					 sameAngles[i] = anglesCB[i].isSelected();
+					 anglesValue[i] = Double.parseDouble(anglesTF[i].getText());
+				 }
+			    adata.SumDatafileOutput(summationRulesFrame.this, sameAngles, anglesValue);
+			    summationRulesFrame.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+			    summationRulesFrame.this.setVisible(false);
+			    summationRulesFrame.this.dispose();
+		    }
+	    });
+	    panel_new3.add(startS);
+
+	    panel3 = new JPanel();
+	    panel3.setLayout(new FlowLayout(FlowLayout.RIGHT, 6, 6));
+	    c1.add(BorderLayout.SOUTH, panel3);
+
+	    JButton stopD = new JCancelButton();
       stopD.setToolTipText("Exit with no action");
       stopD.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent event) {

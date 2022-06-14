@@ -390,19 +390,12 @@
   <component name="ProjectResources">
     <default-html-doctype>http://www.w3.org/1999/xhtml</default-html-doctype>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_13" project-jdk-name="azul-18" project-jdk-type="JavaSDK" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_13" project-jdk-name="13" project-jdk-type="JavaSDK" />
   <component name="ResourceManagerContainer">
     <option name="myResourceBundles">
       <value>
         <list size="0" />
       </value>
-    </option>
-  </component>
-  <component name="RunConfigurationProducerService">
-    <option name="ignoredProducers">
-      <set>
-        <option value="com.android.tools.idea.compose.preview.runconfiguration.ComposePreviewRunConfigurationProducer" />
-      </set>
     </option>
   </component>
   <component name="VcsDirectoryMappings">
