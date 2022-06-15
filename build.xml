@@ -2483,8 +2483,14 @@
     </target>
 
     <target name="sign_bundle" depends="bundle" description="Sign the macOS application">
+        <exec dir="${app_osx}/Maud.app/Contents/PlugIns/Home" executable="rm" os="Mac OS X">
+            <arg line="-r legal"/>
+        </exec>
         <exec dir="${app_osx}/Maud.app/Contents/PlugIns/Home/lib/server" executable="chmod" os="Mac OS X">
-            <arg line="u+w *"/>
+            <arg line="u+w classes.jsa"/>
+        </exec>
+        <exec dir="${app_osx}/Maud.app/Contents/PlugIns/Home/lib/server" executable="chmod" os="Mac OS X">
+            <arg line="u+w classes_nocoops.jsa"/>
         </exec>
         <apply dir="${app_osx}" executable="codesign">
             <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; "/>
