@@ -2461,7 +2461,31 @@
         </exec>
     </target>
 
+    <target name="sign_jdk" description="Sign the jdk">
+        <apply dir="${java_openjdk}" executable="codesign">
+            <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; "/>
+            <fileset dir="${java_openjdk}" />
+        </apply>
+        <!--exec dir="${app_osx}" executable="codesign" os="Mac OS X">
+            <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; ${app_osx}/Maud.app"/>
+        </exec>
+        <exec dir="${java_openjdk}" executable="codesign" os="Mac OS X">
+            <arg line="-d ${java_openjdk}/Maud.app"/>
+        </exec-->
+        <!-- verify codesign -->
+        <exec executable="codesign" dir="${java_openjdk}" failonerror="true">
+            <arg line="-vv bin/java"/>
+        </exec>
+        <!-- verify gatekeeper -->
+        <exec executable="spctl" dir="${java_openjdk}" failonerror="true">
+            <arg line="-vv --assess --type execute bin/java"/>
+        </exec>
+    </target>
+
     <target name="sign_bundle" depends="bundle" description="Sign the macOS application">
+        <exec dir="${app_osx}/Maud.app/Contents/PlugIns/Home/lib/server" executable="chmod" os="Mac OS X">
+            <arg line="u+w *"/>
+        </exec>
         <apply dir="${app_osx}" executable="codesign">
             <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; "/>
             <fileset dir="${app_osx}/Maud.app/Contents/PlugIns" />
@@ -2496,6 +2520,54 @@
     <target name="build_installer_osx" depends="sign_bundle" description="Build the macos installers">
         <copy file="${app_osx}/.DS_Store_default" tofile="${app_osx}/.DS_Store"/>
         <exec dir="${app_osx}" executable="/Users/luca/bin/mkdmg.pl" os="Mac OS X">
+            <arg line="Maud.dmg.gz Maud.app .background .DS_Store"/>
+        </exec>
+    </target>
+
+    <target name="sign_bundle_arm64" depends="bundle_arm64" description="Sign the macOS for arm64 application">
+        <exec dir="${app_osx_arm}/Maud.app/Contents/PlugIns/Home" executable="rm" os="Mac OS X">
+            <arg line="-r legal"/>
+        </exec>
+        <exec dir="${app_osx_arm}/Maud.app/Contents/PlugIns/Home/lib/server" executable="chmod" os="Mac OS X">
+            <arg line="u+w classes.jsa"/>
+        </exec>
+        <exec dir="${app_osx_arm}/Maud.app/Contents/PlugIns/Home/lib/server" executable="chmod" os="Mac OS X">
+            <arg line="u+w classes_nocoops.jsa"/>
+        </exec>
+        <apply dir="${app_osx_arm}" executable="codesign">
+            <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; "/>
+            <fileset dir="${app_osx_arm}/Maud.app/Contents/PlugIns" />
+        </apply>
+        <apply dir="${app_osx_arm}" executable="codesign">
+            <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; "/>
+            <fileset dir="${app_osx_arm}/Maud.app/Contents/Java" />
+        </apply>
+        <!--apply dir="${app_osx_arm}" executable="codesign">
+            <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; "/>
+            <fileset dir="${app_osx_arm}/Maud.app/Contents/MacOS/mtex" />
+        </apply-->
+        <exec dir="${app_osx_arm}" executable="codesign" os="Mac OS X">
+            <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; ${app_osx_arm}/Maud.app/Contents/PlugIns/Home/release"/>
+        </exec>
+        <exec dir="${app_osx_arm}" executable="codesign" os="Mac OS X">
+            <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; ${app_osx_arm}/Maud.app"/>
+        </exec>
+        <exec dir="${app_osx_arm}" executable="codesign" os="Mac OS X">
+            <arg line="-d ${app_osx_arm}/Maud.app"/>
+        </exec>
+        <!-- verify codesign -->
+        <exec executable="codesign" dir="${app_osx_arm}" failonerror="true">
+            <arg line="-vv Maud.app"/>
+        </exec>
+        <!-- verify gatekeeper -->
+        <exec executable="spctl" dir="${app_osx_arm}" failonerror="true">
+            <arg line="-vv --assess --type execute Maud.app"/>
+        </exec>
+    </target>
+
+    <target name="build_installer_osx_arm64" depends="sign_bundle_arm64" description="Build the macos installers">
+        <copy file="${app_osx_arm}/.DS_Store_default" tofile="${app_osx_arm}/.DS_Store"/>
+        <exec dir="${app_osx_arm}" executable="/Users/luca/bin/mkdmg.pl" os="Mac OS X">
             <arg line="Maud.dmg.gz Maud.app .background .DS_Store"/>
         </exec>
     </target>

@@ -244,7 +244,7 @@ public class ContourLevels implements Cloneable {
    */
   public int getIndex(double val) {
     if(!sorted_) sort();
-    return getIndex(val);
+    return levels_.indexOf(val);
   }
   /**
    * Get the maximum level index.

@@ -144,7 +144,7 @@ public class LegendPoleFigureMap extends JPanel {
 		SGTMetaData zMeta = new SGTMetaData("", "");
 		SGTMetaData xMeta = new SGTMetaData("", "");
 
-		SGTMetaData yMeta = new SGTMetaData("Probability", label);
+		SGTMetaData yMeta = new SGTMetaData("Pole density", label);
 		SimpleGrid sg = new SimpleGrid(values, xaxis, yaxis, "");
 		sg.setXMetaData(xMeta);
 		sg.setYMetaData(yMeta);
