@@ -26,7 +26,12 @@ import java.util.Vector;
 import it.unitn.ing.jsginfo.*;
 import it.unitn.ing.rista.diffr.Reflection;
 
-import static it.unitn.ing.rista.util.Constants.cctbxNativeLibrary;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
+import java.util.Arrays;
+
+import static it.unitn.ing.rista.util.Constants.fpsmNativeLibrary;
 
 /**
  * The SpaceGroups is a class providing static methods for
@@ -90,20 +95,23 @@ public class SpaceGroups {
 
 	public static boolean loaded = false;
 
-/*	static {
+	static {
+		loaded = false;
 		try {
-//			cctbxNativeLibrary = MaudPreferences.getPref("cctbxNativeLibrary.pathToLibrary", cctbxNativeLibrary);
-			System.load(cctbxNativeLibrary); //"/Users/luca/Projects/maud/osx/Maud.app/Contents/Frameworks/libcctbxForMaud.dylib");
-			loaded = true;
+			fpsmNativeLibrary = MaudPreferences.getPref("fpsmNativeLibrary.pathToLibrary", fpsmNativeLibrary);
+//			System.loadLibrary(fpsmNativeLibrary);
+//			loaded = true;
 		} catch (UnsatisfiedLinkError err) {
-			System.out.println("cctbx native library not loaded, using SgInfo!");
+			System.out.println("fpsm native library not loaded, using SgInfo!");
 			err.printStackTrace(System.out);
-			loaded = false;
 //			throw new RuntimeException(err);
 		}
-	}*/
+	}
 
-	public static native int testCCTBXForMaud();
+	// const char *fullPatternSearchMatch(char *, char *, char *);
+	public static void testFPSMForMaud() {
+
+	}
 
 	public static native Vector<CrystalSystem> getAllSymmetriesAndSpaceGroups();
 

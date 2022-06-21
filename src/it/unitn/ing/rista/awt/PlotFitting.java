@@ -35,6 +35,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.lang.foreign.*;
 import java.util.Vector;
 
 /**
@@ -641,10 +642,10 @@ public class PlotFitting extends PlotDataFile {
     }
   }
 
-	public void exportOriginalDataFPSM() {
+	public String exportOriginalDataFPSM() {
 
 		if (thePlotPanel.datafile == null || thePlotPanel.datafile[0] == null)
-			return;
+			return null;
 
 		double omega = 0, chi = 0, phi = 0, eta = 0, theta2 = 0;
 		for (int i = 0; i < datafile.length; i++) {
@@ -665,7 +666,7 @@ public class PlotFitting extends PlotDataFile {
 		String filename = Utility.openFileDialog(this, "Save as CIF...",
 				FileDialog.SAVE, thePlotPanel.datafile[0].getFilePar().getDirectory(), null, "put a name.cif");
 		if (filename == null)
-			return;
+			return null;
 
 		String[] folderAndName = Misc.getFolderandName(filename);
 
@@ -718,11 +719,122 @@ public class PlotFitting extends PlotDataFile {
 				output.close();
 			} catch (IOException io) {
 			}
+			return folder + filename;
 		}
+		return null;
 	}
 
-	public void phaseIdentificationByFPSM() {
+	public String exportDatafileToFPSM_CIF() {
+			if (thePlotPanel.datafile == null || thePlotPanel.datafile[0] == null)
+				return null;
 
+			double omega = 0, chi = 0, phi = 0, eta = 0, theta2 = 0;
+			for (int i = 0; i < datafile.length; i++) {
+				omega += datafile[i].getOmegaValue();
+				chi += datafile[i].getChiValue();
+				phi += datafile[i].getPhiValue();
+				eta += datafile[i].getEtaValue();
+				theta2 += datafile[i].get2ThetaValue();
+			}
+			omega /= datafile.length;
+			chi /= datafile.length;
+			phi /= datafile.length;
+			eta /= datafile.length;
+			theta2 /= datafile.length;
+
+			double[][] dataToExport = DataFileSet.getSummedExperimentalComputedData(thePlotPanel.datafile, 0);
+
+			String filename = Constants.cachesDirectory + "fpsmDatafile.cif";
+			String[] folderAndName = Misc.getFolderandName(filename);
+
+			String folder = folderAndName[0];
+			filename = folderAndName[1];
+
+			if (!filename.endsWith(".cif"))
+				filename = filename + ".cif";
+
+			if (filename != null) {
+
+				BufferedWriter output = Misc.getWriter(folder, filename);
+				try {
+					int nPoints = dataToExport[0].length;
+					output.write("data_" + thePlotPanel.datafile[0]);
+					output.newLine();
+					datafile[0].getDataFileSet().getInstrument().exportInstrumentDataForFPSM(output);
+
+					output.write("_pd_meas_angle_omega " + Fmt.format(omega));
+					output.newLine();
+					output.write("_pd_meas_angle_chi " + Fmt.format(chi));
+					output.newLine();
+					output.write("_pd_meas_angle_phi " + Fmt.format(phi));
+					output.newLine();
+					output.write("_pd_meas_angle_eta " + Fmt.format(eta));
+					output.newLine();
+					output.write("_pd_meas_angle_2theta " + Fmt.format(theta2));
+					output.newLine();
+
+					output.write("_pd_meas_number_of_points " + Integer.toString(nPoints));
+					output.newLine();
+//        if (datafile[0].originalNotCalibrated)
+//          output.write("_riet_meas_datafile_calibrated false");
+//        else
+					output.write("_riet_meas_datafile_calibrated true");
+					output.newLine();
+					output.write("loop_");
+					output.newLine();
+					output.write("_pd_meas_2theta_scan");
+					output.newLine();
+					output.write("_pd_meas_intensity_total");
+					output.newLine();
+					for (int i = 0; i != nPoints; i++) {
+						output.write(" " + Fmt.format(dataToExport[0][i]) + " " + Fmt.format(dataToExport[1][i]));
+						output.newLine();
+					}
+				} catch (IOException io) {
+				}
+				try {
+					output.close();
+				} catch (IOException io) {
+				}
+				return folder + filename;
+			}
+			return null;
+	}
+
+	public String phaseIdentificationByFPSM() {
+		String results = null;
+		String filename = exportDatafileToFPSM_CIF();
+		if (filename != null && filename.length() > 4) {
+			String analysis = filename.substring(0, filename.length() - 4) + ".json";
+			String database = Constants.examplesDirectory + "database_fpsm.sqlite";
+			database = MaudPreferences.getPref("fpsm.database", database);
+			String[] folderAndName = Misc.getFolderandName(database);
+			if (MaudPreferences.getBoolean("fpsm.askForDatabase", true)) {
+				database = Utility.openFileDialog(this, "Select database of structures (.sqlite, .json",
+						FileDialog.LOAD, folderAndName[0], null, folderAndName[1]);
+			}
+			if (database != null) {
+				try {
+					var session0 = MemorySession.openConfined();
+					var filenameS = session0.allocateUtf8String(filename);
+					var session1 = MemorySession.openConfined();
+					var databaseS = session1.allocateUtf8String(database);
+					var session2 = MemorySession.openConfined();
+					var analysisS = session2.allocateUtf8String(analysis);
+					java.lang.foreign.MemoryAddress addr = com.radiographema.fpsm.fpsm_h.searchbyfpsm(
+							filenameS.address(), databaseS.address(), analysisS.address());
+					results = addr.getUtf8String(0);
+				} catch (Exception e) {
+				}
+			}
+			Misc.deleteFile(filename);
+		}
+/*		try {
+			com.radiographema.fpsm.fpsm_h.fpsmSearch();
+		} catch (Exception e) {
+		}*/
+
+		return results;
 	}
 
 	public void exportOriginalData() {

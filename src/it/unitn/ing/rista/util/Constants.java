@@ -409,7 +409,7 @@ public class Constants {
 	public static String userDirectory = "";
   public static String libraryDirectory = "";
 	public static String nativeLibraryDirectory = "";
-	public static String cctbxNativeLibrary = "";
+	public static String fpsmNativeLibrary = "fpsm_shared";
   public static String documentsDirectory = "";
 	public static String examplesDirectory = "";
   public static String cachesDirectory = "";
@@ -468,6 +468,32 @@ public class Constants {
 		documentsDirectory = applicationSupportDirectory + "doc" + fileSeparator;
 		cachesDirectory = applicationSupportDirectory + "caches" + fileSeparator;
 		logsDirectory = libraryDirectory + "Logs" + fileSeparator;
+	}
+
+	/**
+	 * Adds the specified path to the java library path
+	 *
+	 * @param pathToAdd the path to add
+	 * @throws Exception
+	 */
+	public static void addLibraryPath(String pathToAdd) throws Exception{
+		final Field usrPathsField = ClassLoader.class.getDeclaredField("usr_paths");
+		usrPathsField.setAccessible(true);
+
+		//get array of paths
+		final String[] paths = (String[])usrPathsField.get(null);
+
+		//check if the path to add is already present
+		for(String path : paths) {
+			if(path.equals(pathToAdd)) {
+				return;
+			}
+		}
+
+		//add the new path
+		final String[] newPaths = Arrays.copyOf(paths, paths.length + 1);
+		newPaths[newPaths.length-1] = pathToAdd;
+		usrPathsField.set(null, newPaths);
 	}
 
 	public static void initConstants() {
@@ -557,14 +583,14 @@ public class Constants {
 	  pathToMaudJar = Misc.getPathToMaudJar("Maud.jar");
 	  maudJar = pathToMaudJar + fileSeparator + "Maud.jar";
 
-	  if (pathToMaudJar.startsWith("/."))
+		if (pathToMaudJar.startsWith("/."))
 		  pathToMaudJar = pathToMaudJar.substring(1);
 	  if (maudJar.startsWith("/."))
 		  maudJar = maudJar.substring(1);
 	  System.out.println("Maud.jar located at: " + maudJar);
 	  System.out.println("Path to Maud jar: " + pathToMaudJar);
 
-	  if (macosx) {
+/*	  if (macosx) {
 	  	nativeLibraryDirectory = pathToMaudJar + fileSeparator + "../Frameworks" + fileSeparator;
 	  	cctbxNativeLibrary = nativeLibraryDirectory + "libcctbxForMaud.dylib";
 	  } else {
@@ -573,7 +599,7 @@ public class Constants {
 			  cctbxNativeLibrary = nativeLibraryDirectory + "libcctbxForMaud.dll";
 		  else
 			  cctbxNativeLibrary = nativeLibraryDirectory + "libcctbxForMaud.so";
-	  }
+	  }*/
 
 //	  String pathFile = pathToMaudJar + fileToLoad;
 
@@ -1462,7 +1488,7 @@ public class Constants {
       method.setAccessible(true);
       method.invoke(sysloader, new Object[]{u[0]});
     } catch (Throwable t) {
-    	System.out.println("Error, could not add URL to system classloader: " + f.getCanonicalPath());
+    	System.out.println("Error, could not add URL to system classloader: " + f.getCanonicalPath() + " " + f.getName());
       t.printStackTrace();
       throw new IOException("Error, could not add URL to system classloader");
     }//end try catch

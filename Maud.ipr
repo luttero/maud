@@ -5,7 +5,7 @@
       <additionalClassPath>
         <entry dir="file://$APPLICATION_HOME_DIR$/lib/ant/lib" />
       </additionalClassPath>
-      <customJdkName value="azul-18" />
+      <customJdkName value="zulu-19" />
       <maximumHeapSize value="2048" />
       <maximumStackSize value="4" />
     </buildFile>
@@ -102,7 +102,7 @@
       <entry name="?*.jpeg" />
       <entry name="?*.jpg" />
     </wildcardResourcePatterns>
-    <bytecodeTargetLevel target="11" />
+    <bytecodeTargetLevel target="13" />
   </component>
   <component name="CopyrightManager" default="" />
   <component name="DependenciesAnalyzeManager">
@@ -157,6 +157,11 @@
       </inspection_tool>
     </profile>
     <version value="1.0" />
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="Maud" options="--enable-preview --source=19" />
+    </option>
   </component>
   <component name="JavadocGenerationManager">
     <option name="OUTPUT_DIRECTORY" />
@@ -390,19 +395,12 @@
   <component name="ProjectResources">
     <default-html-doctype>http://www.w3.org/1999/xhtml</default-html-doctype>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_13" project-jdk-name="azul-18" project-jdk-type="JavaSDK" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_X" project-jdk-name="zulu-19" project-jdk-type="JavaSDK" />
   <component name="ResourceManagerContainer">
     <option name="myResourceBundles">
       <value>
         <list size="0" />
       </value>
-    </option>
-  </component>
-  <component name="RunConfigurationProducerService">
-    <option name="ignoredProducers">
-      <set>
-        <option value="com.android.tools.idea.compose.preview.runconfiguration.ComposePreviewRunConfigurationProducer" />
-      </set>
     </option>
   </component>
   <component name="VcsDirectoryMappings">

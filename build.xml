@@ -22,6 +22,8 @@
     <property name="app_osx_arm" location="${user.home}/Projects/maud/osx_arm"/>
     <!--property name="java_version" value="1.8"/-->
     <property name="java_openjdk" location="${openjdk}"/>
+    <property name="fpsm_build" location="${fpsmBuild}"/>
+    <property name="javac_options" value="--enable-preview --source=19"/>
 
     <target name="clean" description="Delete the build files.">
         <delete dir="${build_ant}"/>
@@ -49,9 +51,11 @@
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
         <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" source="${java_version}" encoding="UTF-8">
+            <compilerarg line="${javac_options}" />
             <src path="${src}"/>
             <!--exclude name="it/unitn/ing/jsginfo/**" /-->
             <!--exclude name="it/unitn/ing/jgraph/**" /-->
+            <!--exclude name="com/radiographema/fpsm/**"/-->
             <exclude name="it/unitn/ing/esqui/client/**"/>
             <exclude name="it/unitn/ing/esqui/server/**"/>
             <exclude name="it/unitn/ing/esqui/wizard/MeasurementWizard.java"/>
@@ -164,6 +168,7 @@
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
         <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" source="${java_version}" encoding="UTF-8">
+            <compilerarg line="${javac_options}" />
             <src path="${src}"/>
             <!--exclude name="it/unitn/ing/jsginfo/**" /-->
             <!--exclude name="it/unitn/ing/jgraph/**" /-->
@@ -1016,6 +1021,7 @@
         <mkdir dir="${build_ant}"/>
         <!-- Build everything -->
         <javac destdir="${build_ant}" optimize="on" debug="on" target="${java_version}" source="${java_version}" encoding="UTF-8">
+            <compilerarg line="${javac_options}" />
             <src path="${src}"/>
             <!--exclude name="it/unitn/ing/jsginfo/*" /-->
             <!--exclude name="it/unitn/ing/jgraph/*" /-->
@@ -2120,8 +2126,12 @@
             <option value="-Dcom.apple.macos.useScreenMenuBar=true"/>
             <option value="-Dapple.awt.application.name=Maud"/>
             <option value="-Dcom.apple.smallTabs=true"/>
-
             <option value="-Xmx16384M"/>
+            <option value="--enable-preview"/>
+            <option value="--enable-native-access=ALL-UNNAMED"/>
+            <option value="--add-opens"/>
+            <option value="java.base/java.net=ALL-UNNAMED"/>
+            <option value="-Djava.library.path=."/>
         </bundleapp>
 
         <mkdir dir="${app_osx}/Maud.app/Contents/Frameworks"/>
@@ -2209,6 +2219,11 @@
         <exec executable="chmod">
             <arg line=" -R a+x ${app_osx}/Maud.app/Contents/MacOS/mtex"/>
         </exec>
+        <copy file="${src}/com/radiographema/fpsm/maci64/libfpsm_shared.dylib"
+              tofile="${app_osx_arm}/Maud.app/Contents/PlugIns/Home/lib/libfpsm_shared.dylib"/>
+        <exec executable="chmod">
+            <arg line=" -R a+x ${app_osx}/Maud.app/Contents/PlugIns/Home/lib/libfpsm_shared.dylib"/>
+        </exec>
     </target>
 
     <target name="bundle_arm64" depends="build_full">
@@ -2283,11 +2298,15 @@
             <option value="-Dcom.apple.macos.useScreenMenuBar=true"/>
             <option value="-Dapple.awt.application.name=Maud"/>
             <option value="-Dcom.apple.smallTabs=true"/>
-
             <option value="-Xmx16384M"/>
+            <option value="--enable-preview"/>
+            <option value="--enable-native-access=ALL-UNNAMED"/>
+            <option value="--add-opens"/>
+            <option value="java.base/java.net=ALL-UNNAMED"/>
+            <option value="-Djava.library.path=."/>
         </bundleapp>
 
-        <mkdir dir="${app_osx}/Maud.app/Contents/Frameworks"/>
+        <mkdir dir="${app_osx_arm}/Maud.app/Contents/Frameworks"/>
         <!--copy file="cctbxForMaud/build/Debug/libcctbxForMaud.dylib" tofile="${inst}/Maud_mac/Maud.app/Contents/Plugins/Home/jre/lib/libcctbxForMaud.dylib" /-->
         <!--copy file="cctbxForMaud/libcctbxForMaud.dylib"
               tofile="${app_osx}/Maud.app/Contents/Frameworks/libcctbxForMaud.dylib"/-->
@@ -2365,12 +2384,17 @@
         <!--copy file="cctbxForMaud/build/Debug/libcctbxForMaud.dylib" tofile="${inst}/Maud_mac/Maud.app/Contents/Plugins/Home/jre/lib/libcctbxForMaud.dylib" /-->
         <!--copy file="cctbxForMaud/libcctbx.dylib" tofile="${inst}/Maud_mac/Maud.app/Contents/MacOS/lib/libcctbx.dylib" />
         <copy file="cctbxForMaud/libcctbxForMaud.dylib" tofile="${inst}/Maud_mac/Maud.app/Contents/MacOS/libcctbxForMaud.dylib" /-->
-        <mkdir dir="${app_osx}/Maud.app/Contents/MacOS/mtex" />
-        <copy todir="${app_osx}/Maud.app/Contents/MacOS/mtex" >
+        <mkdir dir="${app_osx_arm}/Maud.app/Contents/MacOS/mtex" />
+        <copy todir="${app_osx_arm}/Maud.app/Contents/MacOS/mtex" >
             <fileset dir="${src}/com/jtex/external/bin/maci64" includes="**"/>
         </copy>
         <exec executable="chmod">
-            <arg line=" -R a+x ${app_osx}/Maud.app/Contents/MacOS/mtex"/>
+            <arg line=" -R a+x ${app_osx_arm}/Maud.app/Contents/MacOS/mtex"/>
+        </exec>
+        <copy file="${src}/com/radiographema/fpsm/maca64/libfpsm_shared.dylib"
+              tofile="${app_osx_arm}/Maud.app/Contents/PlugIns/Home/lib/libfpsm_shared.dylib"/>
+        <exec executable="chmod">
+            <arg line=" -R a+x ${app_osx_arm}/Maud.app/Contents/PlugIns/Home/lib/libfpsm_shared.dylib"/>
         </exec>
     </target>
 

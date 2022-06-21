@@ -28,6 +28,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.foreign.MemorySession;
 
 /**
  * The PlotDataFile is a class
@@ -218,7 +219,10 @@ public class PlotDataFile extends GraphFrame {
 	  toolsMenu.add(menuitem = new JMenuItem("Run FPSM on data"));
 	  menuitem.addActionListener(new ActionListener() {
 		  public void actionPerformed(ActionEvent e) {
-			  phaseIdentificationByFPSM();
+			  String result = phaseIdentificationByFPSM();
+			  if (result != null) {
+				  System.out.println(result);
+			  }
 		  }
 	  });
 
@@ -307,12 +311,38 @@ public class PlotDataFile extends GraphFrame {
   public void setCustomPeakList(Phase aphase) {
   }
 
-	public void exportOriginalDataFPSM() {
-
+	public String exportOriginalDataFPSM() {
+		return null;
 	}
 
-	public void phaseIdentificationByFPSM() {
+	public String phaseIdentificationByFPSM() {
+		String results = null;
+		String filename = exportOriginalDataFPSM();
+		if (filename != null && filename.length() > 4) {
+			String analysis = filename.substring(0, filename.length() - 3) + ".json";
+			String database = Utility.openFileDialog(this, "Select database of structures (.sqlite, .json",
+					FileDialog.LOAD, Constants.documentsDirectory, null, Constants.documentsDirectory);
+			if (database != null) {
+				try {
+					var session0 = MemorySession.openConfined();
+					var filenameS = session0.allocateUtf8String(filename);
+					var session1 = MemorySession.openConfined();
+					var databaseS = session1.allocateUtf8String(database);
+					var session2 = MemorySession.openConfined();
+					var analysisS = session2.allocateUtf8String(analysis);
+					java.lang.foreign.MemoryAddress addr = com.radiographema.fpsm.fpsm_h.searchbyfpsm(
+							filenameS.address(), databaseS.address(), analysisS.address());
+					results = addr.getUtf8String(0);
+				} catch (Exception e) {
+				}
+			}
+		}
+/*		try {
+			com.radiographema.fpsm.fpsm_h.fpsmSearch();
+		} catch (Exception e) {
+		}*/
 
+		return results;
 	}
 
 	public void exportOriginalData() {

@@ -785,15 +785,7 @@ public class Misc {
   }
 
   public static boolean deleteFile(String fileToCheck) {
-    File f1 = null;
-/*    if (!it.unitn.ing.rista.MaudText.textonly && it.unitn.ing.rista.MaudApplet.fromApplet) { // || Constants.webStart) {
-			try {
-					f1 = new File((new URL(Constants.ourCodebase, fileToCheck)).getFile());
-	  	} catch (IOException e) {
-        e.printStackTrace();
-	  	}
-		} else*/
-    f1 = new File(fileToCheck);
+    File f1 = new File(fileToCheck);
 
     if (f1 != null && f1.exists())
       return f1.delete();
@@ -814,7 +806,7 @@ public class Misc {
     return false;
   }
 
-  public static boolean checkForFolderOrCreateIt(String fileToCheck) {
+	public static boolean checkForFolderOrCreateIt(String fileToCheck) {
     File f1 = null;
 /*    if (!it.unitn.ing.rista.MaudText.textonly && it.unitn.ing.rista.MaudApplet.fromApplet) { // || Constants.webStart) {
 			try {
