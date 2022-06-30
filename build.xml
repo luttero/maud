@@ -2220,7 +2220,7 @@
             <arg line=" -R a+x ${app_osx}/Maud.app/Contents/MacOS/mtex"/>
         </exec>
         <copy file="${src}/com/radiographema/fpsm/maci64/libfpsm_shared.dylib"
-              tofile="${app_osx_arm}/Maud.app/Contents/PlugIns/Home/lib/libfpsm_shared.dylib"/>
+              tofile="${app_osx}/Maud.app/Contents/PlugIns/Home/lib/libfpsm_shared.dylib"/>
         <exec executable="chmod">
             <arg line=" -R a+x ${app_osx}/Maud.app/Contents/PlugIns/Home/lib/libfpsm_shared.dylib"/>
         </exec>
