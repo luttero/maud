@@ -3167,6 +3167,33 @@ public class DataFileSet extends XRDcat {
 		return total;
 	}
 
+	public double[] getTotalIntensityForSelectedSpectra() {
+		update(false);
+
+		Vector datafiles = getSelectedDatafiles();
+		int numberDatafiles = datafiles.size();
+		double[] total = new double[numberDatafiles];
+		for (int i = 0; i < numberDatafiles; i++)
+			total[i] = ((DiffrDataFile) datafiles.elementAt(i)).getTotalIntensity();
+		return total;
+	}
+
+	public double[] getCoordinateForSelectedSpectra(int coord) {
+		update(false);
+
+		Vector datafiles = getSelectedDatafiles();
+		int numberDatafiles = datafiles.size();
+		double[] total = new double[numberDatafiles];
+		for (int i = 0; i < numberDatafiles; i++) {
+			double angle = ((DiffrDataFile) datafiles.elementAt(i)).getAngleValue(coord);
+			if (angle > -9999999)
+				total[i] = angle;
+			else
+				total[i] = i;
+		}
+		return total;
+	}
+
 	public void forceRangeCut() {
 
     double drange0 = getMinRangeD();
