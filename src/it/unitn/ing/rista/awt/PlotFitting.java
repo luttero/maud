@@ -806,7 +806,7 @@ public class PlotFitting extends PlotDataFile {
 		String filename = exportDatafileToFPSM_CIF();
 		if (filename != null && filename.length() > 4) {
 			String analysis = filename.substring(0, filename.length() - 4) + ".json";
-			String database = Constants.examplesDirectory + "database_fpsm.sqlite";
+			String database = Constants.examplesDirectory + "database_fpsm.json";
 			database = MaudPreferences.getPref("fpsm.database", database);
 			String[] folderAndName = Misc.getFolderandName(database);
 			if (MaudPreferences.getBoolean("fpsm.askForDatabase", true)) {
@@ -827,7 +827,7 @@ public class PlotFitting extends PlotDataFile {
 				} catch (Exception e) {
 				}
 			}
-			Misc.deleteFile(filename);
+//			Misc.deleteFile(filename);
 		}
 /*		try {
 			com.radiographema.fpsm.fpsm_h.fpsmSearch();

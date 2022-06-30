@@ -3030,6 +3030,7 @@ public static final String getSpaceGroup(int index, int sgconv) {
 	  Vector<Reflection> reflectionList = new Vector<Reflection>(100, 100);
 	  if (SpaceGroups.useCCTBX()) {
 // todo
+
 	  } else {
 		  int im, M2;
 //    char F_Convention;

@@ -21,8 +21,10 @@
 package it.unitn.ing.rista.diffr;
 
 import it.unitn.ing.rista.awt.SampleD;
+import it.unitn.ing.rista.io.JSONFileImport;
 import it.unitn.ing.rista.util.*;
 import it.unitn.ing.rista.io.cif.*;
+import org.json.simple.JSONArray;
 
 import java.awt.*;
 import java.io.*;
@@ -319,22 +321,29 @@ public class Sample extends Maincat {
   }
 
   public void loadPhase(String filename) {
-    getFilePar().loadingFile = true;
-    CIFParser phaseParser = (new CIFParser(filename, getFilePar().themainframe, this, "Phase"));
-    Object[] aphase = phaseParser.getMainCat();
-    if (aphase != null) {
-      for (int i = 0; i < aphase.length; i++) {
-        if (aphase[i] != null) {
-          addPhase((Phase) aphase[i]);
-          ((Phase) aphase[i]).fixAllParameters();
-          ((Phase) aphase[i]).moveAtomsToStructureModel();
-        }
-      }
-      getFilePar().loadingFile = false;
-      notifyUpObjectChanged(this, Constants.OBJECT_ADDED);
-      refreshAll(false);
-    }
-    getFilePar().loadingFile = false;
+		if (filename.endsWith(".json") || filename.endsWith(".JSON")) {
+			JSONFileImport jsonPhaseParser = new JSONFileImport();
+			jsonPhaseParser.readFile(filename);
+//			JSONArray phaseArray = jsonPhaseParser.getPhasesList();
+//			System.out.println (phaseArray);
+		} else {
+			getFilePar().loadingFile = true;
+			CIFParser phaseParser = (new CIFParser(filename, getFilePar().themainframe, this, "Phase"));
+			Object[] aphase = phaseParser.getMainCat();
+			if (aphase != null) {
+				for (int i = 0; i < aphase.length; i++) {
+					if (aphase[i] != null) {
+						addPhase((Phase) aphase[i]);
+						((Phase) aphase[i]).fixAllParameters();
+						((Phase) aphase[i]).moveAtomsToStructureModel();
+					}
+				}
+				getFilePar().loadingFile = false;
+				notifyUpObjectChanged(this, Constants.OBJECT_ADDED);
+				refreshAll(false);
+			}
+			getFilePar().loadingFile = false;
+		}
   }
 
   public void savePhase() {
