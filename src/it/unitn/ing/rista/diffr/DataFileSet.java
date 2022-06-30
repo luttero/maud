@@ -936,6 +936,20 @@ public class DataFileSet extends XRDcat {
 		notifyUpObjectChanged(this, 0);
 	}
 
+	public void removeDatafilesWithTotalLessThan(double number) {
+		Constants.refreshTreePermitted = false;
+		Vector datafiles = getSelectedDatafiles();
+		int numberDatafiles = datafiles.size();
+		for (int i = 0; i < numberDatafiles; i++) {
+			DiffrDataFile diffrDatafile = (DiffrDataFile) datafiles.elementAt(i);
+			double total = diffrDatafile.getTotalIntensity();
+			if (total < number)
+				disable(diffrDatafile);
+		}
+		Constants.refreshTreePermitted = true;
+		notifyUpObjectChanged(this, 0);
+	}
+
 	public void enableEvery(int number) {
 		Constants.refreshTreePermitted = false;
 		Vector datafiles = getSelectedDatafiles();
@@ -3139,12 +3153,17 @@ public class DataFileSet extends XRDcat {
     return total;
   }
 
-	public double[] get2ThetaForActiveSpectra() {
+	public double[] getCoordinateForActiveSpectra(int coord) {
 		update(false);
 
 		double[] total = new double[activedatanumber];
-		for (int i = 0; i < activedatanumber; i++)
-			total[i] = getActiveDataFile(i).getAngleValue(4) + getActiveDataFile(i).getAngleValue(0);
+		for (int i = 0; i < activedatanumber; i++) {
+			double angle = getActiveDataFile(i).getAngleValue(coord);
+			if (angle > -9999999)
+				total[i] = angle;
+			else
+				total[i] = i;
+		}
 		return total;
 	}
 

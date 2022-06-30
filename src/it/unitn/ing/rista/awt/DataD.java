@@ -1529,7 +1529,8 @@ public class DataD extends myJFrame {
    */
 
   public void plotIntensityHystogram() {
-    (new PlotSimpleData(this, thedata.get2ThetaForActiveSpectra(), thedata.getTotalIntensityForActiveSpectra())).setVisible(true);
+	  int coordinate = MaudPreferences.getInteger("plotIntensityHystogram.angleCoordinate", -1);
+	  (new PlotSimpleData(this, thedata.getCoordinateForActiveSpectra(coordinate), thedata.getTotalIntensityForActiveSpectra())).setVisible(true);
   }
 
   /**
@@ -2368,6 +2369,22 @@ public class DataD extends myJFrame {
 		    public void actionPerformed(ActionEvent event) {
 			    int every = Integer.parseInt(everyTF.getText());
 			    adata.groupEvery(every);
+
+			    RemoveByAnglesFrame.this.setVisible(false);
+			    RemoveByAnglesFrame.this.dispose();
+		    }
+	    });
+	    jp1.add(startD);
+
+	    jp1 = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 2));
+	    panel3.add(jp1);
+	    jp1.add(new JLabel("Datafiles with total intensity < "));
+	    jp1.add(everyTF = new JTextField("10000000000.0"));
+	    startD = new JButton("Disable");
+	    startD.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent event) {
+			    double every = Double.parseDouble(everyTF.getText());
+			    adata.removeDatafilesWithTotalLessThan(every);
 
 			    RemoveByAnglesFrame.this.setVisible(false);
 			    RemoveByAnglesFrame.this.dispose();

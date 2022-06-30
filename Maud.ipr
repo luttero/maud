@@ -5,7 +5,7 @@
       <additionalClassPath>
         <entry dir="file://$APPLICATION_HOME_DIR$/lib/ant/lib" />
       </additionalClassPath>
-      <customJdkName value="azul-19" />
+      <customJdkName value="zulu-19" />
       <maximumHeapSize value="2048" />
       <maximumStackSize value="4" />
     </buildFile>
@@ -401,13 +401,6 @@
       <value>
         <list size="0" />
       </value>
-    </option>
-  </component>
-  <component name="RunConfigurationProducerService">
-    <option name="ignoredProducers">
-      <set>
-        <option value="com.android.tools.idea.compose.preview.runconfiguration.ComposePreviewRunConfigurationProducer" />
-      </set>
     </option>
   </component>
   <component name="VcsDirectoryMappings">
