@@ -233,8 +233,6 @@ public class EDXRFInstrumentBroadening extends InstrumentBroadening {
    * Return the instrumental asymmetry for the convolution with the profile function.
    * The method here is called by Instrument and should not be modify in general.
    *
-   * @param x             the 2-theta or d-spacing (if the spectrum is in d-spacing) of the
-   *                      point for which the broadening should be computed.
    * @param diffrDataFile the spectrum
    * @return asymmetry parameter value
    */
