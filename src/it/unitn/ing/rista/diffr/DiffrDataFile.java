@@ -156,6 +156,8 @@ public class DiffrDataFile extends XRDcat {
   public double[] phasesfit = null;
   protected double[] bkgfit = null;
   protected double[] intbkgfit = null;
+
+	protected double[] expbkgfit = null;
   public Vector phaseFit = null;
   public int datanumber;
   public double measurementstep;
@@ -426,6 +428,7 @@ public class DiffrDataFile extends XRDcat {
     phasesfit = new double[datanumber];
     bkgfit = new double[datanumber];
     intbkgfit = new double[datanumber];
+	  expbkgfit = new double[datanumber];
     phaseFit = new Vector();
     startingindex = 0;
     finalindex = number;
@@ -462,6 +465,7 @@ public class DiffrDataFile extends XRDcat {
     phasesfit = shrinkRange(phasesfit, min, datanumber);
     bkgfit = shrinkRange(bkgfit, min, datanumber);
     intbkgfit = shrinkRange(intbkgfit, min, datanumber);
+	  expbkgfit = shrinkRange(expbkgfit, min, datanumber);
     for (int i = 0; i < phaseFit.size(); i++) {
       double[] fit = (double[]) phaseFit.elementAt(i);
       phaseFit.setElementAt(shrinkRange(fit, min, datanumber), i);
@@ -1175,6 +1179,7 @@ public class DiffrDataFile extends XRDcat {
     phasesfit = getReducedArray(phasesfit, datanumber, groupControlNumber);
     bkgfit = getReducedArray(bkgfit, datanumber, groupControlNumber);
     intbkgfit = getReducedArray(intbkgfit, datanumber, groupControlNumber);
+	  expbkgfit = getReducedArray(expbkgfit, datanumber, groupControlNumber);
     for (int i = 0; i < phaseFit.size(); i++) {
       double[] fit = (double[]) phaseFit.elementAt(i);
       phaseFit.setElementAt(getReducedArray(fit, datanumber, groupControlNumber), i);
@@ -2079,6 +2084,9 @@ public class DiffrDataFile extends XRDcat {
 	}
 
   public double getYData(int index) {
+/*		if (getAsBackgroundPermission()) {
+			return intensity[-1];
+		}*/
     return intensity[index];
   }
 
@@ -2244,10 +2252,14 @@ public class DiffrDataFile extends XRDcat {
   }
 
   public double getFit(int index) {
-    return finalIntensityCalibration(phasesfit[index] + bkgfit[index]) + intbkgfit[index];
+    return finalIntensityCalibration(phasesfit[index] + bkgfit[index]) + intbkgfit[index] + expbkgfit[index];
   }
 
-  public double getPhaseFit(int index, int phaseIndex) {
+	public double getPhaseFitNoCalibration(int index) {
+		return phasesfit[index];
+	}
+
+	public double getPhaseFit(int index, int phaseIndex) {
     if (phaseIndex > -1 && phaseIndex < phaseFit.size()) {
       double[] fit = (double[]) phaseFit.elementAt(phaseIndex);
       return finalIntensityCalibration(fit[index]);
@@ -2257,7 +2269,7 @@ public class DiffrDataFile extends XRDcat {
 
   public double getFitNoInterpolationBackground(int index) {
 //	  System.out.println(phasesfit[index] + bkgfit[index]);
-    return finalIntensityCalibration(phasesfit[index] + bkgfit[index]);
+    return finalIntensityCalibration(phasesfit[index] + bkgfit[index]) + expbkgfit[index];
   }
 
 //  Instrument theInstrument = null;
@@ -2387,11 +2399,11 @@ public class DiffrDataFile extends XRDcat {
   }
 
   public double getBkgFit(int index) {
-    return finalIntensityCalibration(bkgfit[index]) + intbkgfit[index];
+    return finalIntensityCalibration(bkgfit[index]) + intbkgfit[index] + expbkgfit[index];
   }
 
   public double getBkgFitNoInterpolation(int index) {
-    return finalIntensityCalibration(bkgfit[index]);
+    return finalIntensityCalibration(bkgfit[index]) + expbkgfit[index];
   }
 
   public double getBkgFitForStatistic(int index) {
@@ -2803,7 +2815,15 @@ public class DiffrDataFile extends XRDcat {
 	  return false;
   }
 
-  public boolean hasfit() {
+	protected boolean setExpBkgFit(int index, double value) {
+		if (index >= 0 && index < expbkgfit.length) {
+			expbkgfit[index] = value;
+			return true;
+		}
+		return false;
+	}
+
+	public boolean hasfit() {
     return hasfit;
   }
 
@@ -2829,7 +2849,23 @@ public class DiffrDataFile extends XRDcat {
   	return false;
   }
 
-  public double[] getXrangeInEnergy() {
+	public boolean addtoIntBkgFit(int index, double value) {
+		if (index >= 0 && index < intbkgfit.length) {
+			intbkgfit[index] += value;
+			return true;
+		}
+		return false;
+	}
+
+	public boolean addtoExpBkgFit(int index, double value) {
+		if (index >= 0 && index < expbkgfit.length) {
+			expbkgfit[index] += value;
+			return true;
+		}
+		return false;
+	}
+
+	public double[] getXrangeInEnergy() {
     int dtanumber = computeDataNumber();
     double q[] = new double[dtanumber];
 
@@ -3266,6 +3302,7 @@ public class DiffrDataFile extends XRDcat {
     int datanumb = getTotalNumberOfData();
     for (int i = 0; i < datanumb; i++) {
       setBkgFit(i, 0.0);
+	    setExpBkgFit(i, 0.0);
     }
   }
 
@@ -3664,13 +3701,13 @@ public class DiffrDataFile extends XRDcat {
   }
 
   public void postComputation() {
+	  resetBackgroundInterpolated();
     if (getDataFileSet().isBackgroundExperimental()) {
       addExperimentalBackground();
     }
     if (getDataFileSet().isBackgroundInterpolated()) {
       addInterpolatedBackgroundFromResiduals();
-    } else
-      resetBackgroundInterpolated();
+    }
 //    refreshBkgComputation = false;
 //    refreshSpectraComputation = false;
   }
@@ -3786,6 +3823,7 @@ public class DiffrDataFile extends XRDcat {
 	      if (setData)
           setPhasesFit(j + startingindex, getYData(j + startingindex));
         setBkgFit(j + startingindex, 0.0);
+	      setExpBkgFit(j + startingindex, 0.0);
       }
     }
   }
@@ -3843,14 +3881,14 @@ public class DiffrDataFile extends XRDcat {
             rightInt = sampledIntensity[index];
           }
           if (left > -1 && right > -1) {
-          double bkgIntensity = MoreMath.getLinearInterpolation(getXData(i),
-              getXData(left), getXData(right),
-              leftInt, rightInt);
-          intbkgfit[i] = bkgIntensity;
+	          double bkgIntensity = MoreMath.getLinearInterpolation(getXData(i),
+			          getXData(left), getXData(right),
+			          leftInt, rightInt);
+	          intbkgfit[i] = bkgIntensity;
           } else if (left <= 0)
-            intbkgfit[i] = leftInt;
+	          intbkgfit[i] = leftInt;
           else
-            intbkgfit[i] = leftInt;
+	          intbkgfit[i] = leftInt;
           }
         } else if (index < sampledPoints.length) {
           for (int i = startingindex; i < finalindex; i++) {
@@ -4127,11 +4165,14 @@ public class DiffrDataFile extends XRDcat {
 		double countTime = monitorCounts;
 		if (useCountTimeToScale())
 			countTime *= getCountTimeValue();
-    if (getDataFileSet().omogeneousDataset) {
+    if (getDataFileSet().omogeneous() && getDataFileSet().omogeneousDataset) {
       for (int i = startingindex; i < finalindex; i++) {
         double bkgIntensity = expDataFile.getInterpolatedIntensity(i) * countTime;
-//        System.out.println("Computing experimental background " + i + " " + bkgIntensity);
-        addtoBkgFit(i, bkgIntensity);
+//		  double cal = getIntensityCalibration(i);
+//	      System.out.println("Computing omogeneous experimental background " + i + " " + bkgIntensity + " " + cal);
+//	      bkgIntensity *= cal;
+
+	      addtoExpBkgFit(i, bkgIntensity);
       }
     } else {
       expDataFile.initializeInterpolation();
@@ -4139,8 +4180,11 @@ public class DiffrDataFile extends XRDcat {
       double bkgExpThermalShift = getDataFileSet().getParameterValue(DataFileSet.bkgExpThermalShift);
       for (int i = startingindex; i < finalindex; i++) {
         double bkgIntensity = expDataFile.getInterpolatedIntensity(getXData(i), bkgExpShift,
-            bkgExpThermalShift) * monitorCounts;
-        addtoBkgFit(i, bkgIntensity);
+            bkgExpThermalShift) * countTime;
+//	      double cal = getIntensityCalibration(i);
+//	      System.out.println("Computing experimental background " + i + " " + bkgIntensity + " " + cal);
+//	      bkgIntensity *= cal;
+	      addtoExpBkgFit(i, bkgIntensity);
       }
     }
 
@@ -4148,10 +4192,10 @@ public class DiffrDataFile extends XRDcat {
 
   public double getInterpolatedIntensity(int index) {
     if (index >= finalindex)
-      return getFit(finalindex - 1);
+      return getPhaseFitNoCalibration(finalindex - 1);
     if (index < startingindex)
-      return getFit(startingindex);
-    return getFit(index);
+      return getPhaseFitNoCalibration(startingindex);
+    return getPhaseFitNoCalibration(index);
   }
 
   double[] xdata = null;
@@ -4170,6 +4214,7 @@ public class DiffrDataFile extends XRDcat {
     double x = (x0 + bkgExpShift) * (1.0 + bkgExpThermalShift * 1.0E-4);
     int numberOfPoints = polinomialDegree + 1 + additionalPoints;
     int index = getOldNearestPoint(x);
+//	  return getYData(index) * monitorCounts;
     int startIndex = index;
     int stopIndex = index;
     boolean bounch = false;
@@ -4196,7 +4241,7 @@ public class DiffrDataFile extends XRDcat {
       xdata[j] = getXData(i);
       ydata[j++] = getYData(i);
     }
-    return MoreMath.getPolinomialValue(x, MoreMath.getPolinomialInterpolation(polinomialDegree, xdata, ydata)) * monitorCounts;
+    return MoreMath.getPolinomialValue(x, MoreMath.getPolinomialInterpolation(polinomialDegree, xdata, ydata)); // * monitorCounts;
   }
 
   public double getInterpolatedFit(double x0, double bkgExpShift, double bkgExpThermalShift) {
@@ -4267,12 +4312,13 @@ public class DiffrDataFile extends XRDcat {
 
   public void computeSmoothSpectrum(double bkgExpShift, double bkgExpThermalShift,
                                     DiffrDataFile adatafile) {
+//	  System.out.println("Spectrum " + toString() + " calculate smooth spectrum");
     initializeInterpolation();
     phasesfit = new double[adatafile.datanumber];
     startingindex = adatafile.startingindex;
     finalindex = adatafile.finalindex;
     for (int i = adatafile.startingindex; i < adatafile.finalindex; i++) {
-      double x = adatafile.getXDataForCalibration(i);
+      double x = adatafile.getXData(i);
       setPhasesFit(i, getInterpolatedIntensity(x, bkgExpShift, bkgExpThermalShift));
     }
   }
@@ -6554,6 +6600,8 @@ public class DiffrDataFile extends XRDcat {
 					bkgfit[j] += datafileToAdd.bkgfit[j];
 				if (intbkgfit != null)
 					intbkgfit[j] += datafileToAdd.intbkgfit[j];
+				if (expbkgfit != null)
+					expbkgfit[j] += datafileToAdd.expbkgfit[j];
 			}
 		}
 		for (int j = 0; j < minSetSize; j++) {
@@ -6570,6 +6618,8 @@ public class DiffrDataFile extends XRDcat {
 				bkgfit[j] /= total;
 			if (intbkgfit != null)
 				intbkgfit[j] /= total;
+			if (expbkgfit != null)
+				expbkgfit[j] /= total;
 		}
 
 		realRangeCut(0, minSetSize);  // careful we skip the check on calibration problem

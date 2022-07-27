@@ -59,6 +59,7 @@ public class DataFileSet extends XRDcat {
 		  "_riet_meas_dataset_random_texture", "_maud_background_add_automatic",
 		  "_maud_interpolated_background_iterations",
 		  "_pd_proc_ls_datafile_weight", "_riet_meas_dataset_no_strain",
+		  "_riet_meas_dataset_omogeneous",
 
 		  "_riet_par_background_exp_shift",
 		  "_riet_par_background_exp_thermal_shift",
@@ -91,6 +92,7 @@ public class DataFileSet extends XRDcat {
 		  "_riet_meas_dataset_random_texture", "_maud_background_add_automatic",
 		  "number of iteration for background interpolation",
 		  "_pd_proc_ls_datafile_weight", "_riet_meas_dataset_no_strain",
+		  "_riet_meas_dataset_omogeneous",
 
 /*    "_pd_meas_orientation_omega_offset",
     "_pd_meas_orientation_chi_offset",
@@ -140,9 +142,11 @@ public class DataFileSet extends XRDcat {
   Vector<Peak> thepeaklist = new Vector<Peak>(0, 1);
 
   int theindex = -1;
-	public boolean omogeneousDataset = true;
+	public boolean omogeneousDataset = MaudPreferences.getBoolean("background_experimental.dataset_omogeneous", true);
+	public boolean omogeneous = omogeneousDataset;
+	public static final int omogeneousID = 21;
 
-  int interpolatedPoints = 5;
+	int interpolatedPoints = 5;
   public final static int bkgExpShift = 0;
   public final static int bkgExpThermalShift = 1;
   public final static int sampleOmegaID = 2;
@@ -200,7 +204,7 @@ public class DataFileSet extends XRDcat {
 
   @Override
   public void initConstant() {
-    Nstring = 21;
+    Nstring = 22;
     Nstringloop = 0;
     Nparameter = 12;
     Nparameterloop = 3;
@@ -222,6 +226,7 @@ public class DataFileSet extends XRDcat {
     setLorentzRestricted("true");
     setBackgroundInterpolated("false");
     setEnabled("true");
+	    setOmogeneous(omogeneous);
     setReplaceDatafile(MaudPreferences.getPref("datafile.replaceOnAdd", "false"));
     setAutomaticPolynomialBackground(MaudPreferences.getPref("datafile.addOwnBackgroundPolynomial", "false"));
     setInterpolatedPoints(MaudPreferences.getInteger("backgroundSubtraction.interpolatedPointsInterval", 150));
@@ -254,7 +259,7 @@ public class DataFileSet extends XRDcat {
 
   double[] backgroundChi, backgroundEta, backgroundPol; // todo: background for 2theta and energy
   int nchibckgpar, netabckgpar, npolbckgpar;
-  Vector bkgDatafiles = new Vector(0, 1);
+//  Vector bkgDatafiles = new Vector(0, 1);
 
 	public void checkConsistencyForVersion(double version) {
 		if (version < 1.821) {
@@ -322,13 +327,13 @@ public class DataFileSet extends XRDcat {
     automaticPolynomialBackground = isAutomaticPolynomialBackground();
     randomTexture = hasRandomTexture();
     noStrain = hasNoStrain();
-	    bkgDatafiles.removeAllElements();
+/*	    bkgDatafiles.removeAllElements();
       for (int i = 0; i < datafilesnumber(); i++) {
         DiffrDataFile tmpDatafile = getDataFile(i);
         if (tmpDatafile.getAsBackgroundPermission()) {
           bkgDatafiles.add(tmpDatafile);
         }
-      }
+      }*/
 	    datasetWeight = Double.parseDouble(getString(datasetWeightFieldID));
     }
 
@@ -1819,14 +1824,17 @@ public class DataFileSet extends XRDcat {
 //    datafileTable = null;
 	}
 
-	public void SumDatafileOutput(Frame aframe, boolean[] sameAngle, double[] angle) {
+	public void SumDatafileOutput(Frame aframe, boolean[] sameAngle, double[] angle, boolean nativeFormat) {
     int datanumber = 0;
     double[] xcoord = null;
     double[] intensity = null;
     double[] angleRange = MoreMath.abs(angle);
 
-    String filename = Utility.openFileDialog(aframe, "Save summed datafile as (group CIF file)",
-        FileDialog.SAVE, getFilePar().getDirectory(), null, "put a name (with extension).cif");
+	 String filenameTemplate = "put a name (with extension).cif";
+	 if (nativeFormat)
+		 filenameTemplate = "put a name with proper extension";
+    String filename = Utility.openFileDialog(aframe, "Save summed datafile as ",
+        FileDialog.SAVE, getFilePar().getDirectory(), null, filenameTemplate);
     if (filename == null)
       return;
 
@@ -1834,7 +1842,7 @@ public class DataFileSet extends XRDcat {
     String folder = folderAndName[0];
     filename = folderAndName[1];
 
-    if (filename.endsWith(".cif"))
+    if (!nativeFormat && filename.endsWith(".cif"))
       filename = filename.substring(0, filename.length() - 4);
 
     DiffrDataFile tmpdatafile = null;
@@ -1904,24 +1912,34 @@ public class DataFileSet extends XRDcat {
         for (int ib = 0; ib < sameAngle.length; ib++)
           verifySameAngles[ib] = true;
         double[] firstTilt = null;
+		  int bank = 0;
+	      int bankFirst = 0;
         for (int i = 0; i < datafilenumber; i++) {
           tmpdatafile = datalist.elementAt(i);
           if (tmpdatafile.energyDispersive)
           	energyDispersive = true;
           double[] tilt = tmpdatafile.getTiltingAngle();
-          if (i == 0) {
+	        bank = tmpdatafile.getBankNumber();
+	        if (i == 0) {
             firstTilt = tilt;
             arraycopy(tilt, 0, meanAngles, 0, sameAngle.length);
+		        bankFirst = bank;
           }
-          for (int ib = 0; ib < sameAngle.length; ib++)
+	        int ib;
+          for (ib = 0; ib < sameAngle.length - 1; ib++)
             if (!(tilt[ib] >= firstTilt[ib] - angleRange[ib] && tilt[ib] <= firstTilt[ib] + angleRange[ib]))
               verifySameAngles[ib] = false;
+			 if (bank != bankFirst)
+				 verifySameAngles[ib] = false;
 //					if (tmpdatafile.getComputePermission()) {
           if (first) {
-	          for (int j = 0; j < sameAngle.length; j++)
-            if (sameAngle[j])
-              newfilename.append('_').append(Integer.toString((int) tilt[j]));
-            newfilename.append(".cif");
+				 for (int j = 0; j < sameAngle.length - 1; j++)
+					 if (sameAngle[j])
+						 newfilename.append('_').append(Integer.toString((int) tilt[j]));
+				 if (nativeFormat)
+					 newfilename.append(tmpdatafile.identifier);
+				 else
+				   newfilename.append(".cif");
             groupoutput.write(" '" + newfilename + '\'');
             groupoutput.newLine();
             first = false;
@@ -2342,7 +2360,31 @@ public class DataFileSet extends XRDcat {
     return enabled;
   }
 
-  public String getRandomTexture() {
+	public void setOmogeneous(String avalue) {
+		setString(omogeneousID, avalue);
+	}
+
+	public void setOmogeneous(boolean avalue) {
+		if (avalue)
+			setOmogeneous("true");
+		else
+			setOmogeneous("false");
+		omogeneous = isOmogeneous();
+	}
+
+	public String getOmogeneous() {
+		return getString(omogeneousID);
+	}
+
+	public boolean isOmogeneous() {
+		return getOmogeneous().equals("true");
+	}
+
+	public boolean omogeneous() {
+		return omogeneous;
+	}
+
+	public String getRandomTexture() {
     return getString(randomTextureID);
   }
 
@@ -3337,9 +3379,9 @@ public class DataFileSet extends XRDcat {
 
     // preparing background datafiles if any
 
-    for (int i = 0; i < datafilenumber; i++) {
+    for (int i = 0; i < datafilesnumber(); i++) {
 //      adatafile[i] = getActiveDataFile(i);
-      DiffrDataFile bdatafile = getActiveDataFile(i);
+      DiffrDataFile bdatafile = getDataFile(i);
       if (bdatafile.getAsBackgroundPermission()) {
         bdatafile.calibrateX();
 //        bdatafile.checkIncreasingX();
@@ -3451,14 +3493,6 @@ public class DataFileSet extends XRDcat {
             background += backgroundPol[k] * MoreMath.pow(thetaord, k);
           for (int k = 0; k < numberofpeak; k++)
             background += abkgPeak[k].computeIntensity(thetaord, chieta[0], chieta[1], chieta[2], chieta[3]);
-
-          if (bkgDatafiles.size() > 0) {
-            for (int k = 0; k < bkgDatafiles.size(); k++) {
-              DiffrDataFile bkgDatafile = (DiffrDataFile)bkgDatafiles.get(k);
-              double intensity = bkgDatafile.getIntensityAt(thetaord);
-              background += intensity * bkgDatafile.monitorCounts;
-            }
-          }
 
           background *= tmpDatafile.getIntensityCalibration(j);
           tmpDatafile.addtoBkgFit(j, background);
@@ -3575,13 +3609,11 @@ public class DataFileSet extends XRDcat {
 		  if (datafile.refreshSpectraComputation) {
 			  datafile.hasfit = true;
 			  datafile.spectrumModified = true;
-			  if (isBackgroundExperimental()) {
+			  datafile.resetBackgroundInterpolated();
+			  if (isBackgroundExperimental())
 				  datafile.addExperimentalBackground();
-			  }
-			  if (isBackgroundInterpolated()) {
+			  if (isBackgroundInterpolated())
 				  datafile.addInterpolatedBackgroundFromResiduals();
-			  } else
-				  datafile.resetBackgroundInterpolated();
 		  }
 
 	  }

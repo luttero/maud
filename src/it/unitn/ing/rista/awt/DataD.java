@@ -24,6 +24,7 @@ package it.unitn.ing.rista.awt;
 import ij.AreaImage;
 import it.unitn.ing.rista.diffr.*;
 import it.unitn.ing.rista.diffr.data.FdtTransformToMBin;
+import it.unitn.ing.rista.diffr.data.GSASNewDataFile;
 import it.unitn.ing.rista.util.*;
 
 import javax.swing.*;
@@ -84,6 +85,8 @@ public class DataD extends myJFrame {
   JCheckBox replaceCB;
 	JCheckBox randomCB;
 	JCheckBox noStrainCB;
+
+	JCheckBox omogeneousCB;
 
   JComboBox unitCB;
   JTextField countTimeTF;
@@ -201,6 +204,10 @@ public class DataD extends myJFrame {
 	  replaceCB = new JCheckBox("Replace datafile on add");
 	  replaceCB.setToolTipText("When adding a new datafile, the old one/ones is/are removed");
 	  p3.add(replaceCB);
+
+	  omogeneousCB = new JCheckBox("Omogeneous");
+	  omogeneousCB.setToolTipText("If marked, experimental background is fixed in coordinates");
+	  p3.add(omogeneousCB);
 
 	  jp6 = new JPanel(new FlowLayout());
     p3.add(jp6);
@@ -932,16 +939,12 @@ public class DataD extends myJFrame {
       }
     });
 
-/*    toolsMenu.add(menuitem = new JMenuItem("Convert SIS image to ASCII"));
+    toolsMenu.add(menuitem = new JMenuItem("Sum GSAS datafiles"));
     menuitem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        (new Thread() {
-          public void run() {
-            (new PhotoplateConversionToASCII()).performAnalysis();
-          }
-        }).start();
-      }
-    });*/
+	    public void actionPerformed(ActionEvent e) {
+		    sumGSASDatafiles();
+	    }
+    });
 
     toolsMenu.add(menuitem = new JMenuItem("Convert 3 column txt image to ASCII"));
     menuitem.addActionListener(new ActionListener() {
@@ -1058,6 +1061,12 @@ public class DataD extends myJFrame {
 	  noStrainCB.addActionListener(new ActionListener() {
 		  public void actionPerformed(ActionEvent e) {
 			  thedata.setNoStrain(noStrainCB.isSelected());
+		  }
+	  });
+	  omogeneousCB.setSelected(thedata.isOmogeneous());
+	  omogeneousCB.addActionListener(new ActionListener() {
+		  public void actionPerformed(ActionEvent e) {
+			  thedata.setOmogeneous(omogeneousCB.isSelected());
 		  }
 	  });
   }
@@ -1441,8 +1450,8 @@ public class DataD extends myJFrame {
    */
 
   public void SumDatafileOutput(Frame aframe, boolean[] sameAngles,
-                                double[] angles) {
-    thedata.SumDatafileOutput(aframe, sameAngles, angles);
+                                double[] angles, boolean nativeFormat) {
+    thedata.SumDatafileOutput(aframe, sameAngles, angles, nativeFormat);
   }
 
 	/**
@@ -1575,6 +1584,22 @@ public class DataD extends myJFrame {
 	}
 
 	/**
+	 * Sum GSAS datafiles.
+	 */
+	public void sumGSASDatafiles() {
+		String[] filename = Utility.browseFilenames(this, "Select the GSAS datafiles to sum");
+		if (filename != null) {
+			setCursor(new Cursor(Cursor.WAIT_CURSOR));
+			Constants.refreshTreePermitted = false;
+			String summedFilename = GSASNewDataFile.sumTheDatafiles(filename);
+			thedata.addDataFileforName(summedFilename, true);
+			Constants.refreshTreePermitted = true;
+			thedata.notifyUpObjectChanged(thedata, 0);
+			setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+		}
+	}
+
+	/**
    * Instrument setup methods.
    */
 
@@ -1693,6 +1718,8 @@ public class DataD extends myJFrame {
 	  JTextField[] anglesTF;
 	  JCheckBox[] anglesCB;
 
+	  JCheckBox nativeFormatCB;
+
 	  public summationRulesFrame(DataD aframe) {
 
       super(aframe);
@@ -1703,10 +1730,10 @@ public class DataD extends myJFrame {
 
       c1.setLayout(new BorderLayout(3, 3));
 
-		JTabbedPane mainPanel = new JTabbedPane();
+	/*	JTabbedPane mainPanel = new JTabbedPane();
 	    c1.add(BorderLayout.CENTER, mainPanel);
 
-	    JPanel c2 = new JPanel();
+		 JPanel c2 = new JPanel();
 	    c2.setLayout(new BorderLayout(3, 3));
 	    mainPanel.addTab("Sum by one angle", c2);
 
@@ -1765,11 +1792,14 @@ public class DataD extends myJFrame {
           summationRulesFrame.this.setVisible(false);
           summationRulesFrame.this.dispose();
         }
-      });
+      });*/
 
+		  final DataD adata = aframe;
 	   JPanel panelMore = new JPanel();
-		mainPanel.addTab("Sum by more angles", panelMore);
-	    panelMore.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
+	//	mainPanel.addTab("Sum by more angles", panelMore);
+		  c1.add(BorderLayout.CENTER, panelMore);
+
+		  panelMore.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
 
 	    JPanel panel_new3 = new JPanel();
 	    panel_new3.setLayout(new GridLayout(0, 3, 3, 3));
@@ -1779,12 +1809,12 @@ public class DataD extends myJFrame {
 	    panel_new3.add(new JLabel(""));
 	    panel_new3.add(new JLabel(""));
 
-		 final String[] angleLabels = {"omega", "chi", "phi", "eta", "2theta", "energy"};
+		 final String[] angleLabels = {"omega", "chi", "phi", "eta", "2theta", "energy", "bank (TOF)"};
 		 anglesTF = new JTextField[angleLabels.length]; // omega, chi, phi, eta, theta
 		  anglesCB = new JCheckBox[angleLabels.length];
 		  for (int i = 0; i < angleLabels.length; i++) {
 			  anglesCB[i] = new JCheckBox("same " + angleLabels[i]);
-			  anglesCB[i].setToolTipText("Sum the datafiles with different " + angleLabels[i] + " angle in different files");
+			  anglesCB[i].setToolTipText("Sum the datafiles with different " + angleLabels[i] + " properties in different files");
 			  anglesCB[i].setSelected(true);
 			  panel_new3.add(anglesCB[i]);
 			  panel_new3.add(new JLabel(" +- "));
@@ -1792,6 +1822,13 @@ public class DataD extends myJFrame {
 			  anglesTF[i].setText("0");
 			  panel_new3.add(anglesTF[i]);
 		  }
+/*		  nativeFormatCB = new JCheckBox("Use native format");
+		  nativeFormatCB.setToolTipText("Save in the native datafile format");
+		  nativeFormatCB.setSelected(false);
+		  panel_new3.add(nativeFormatCB);
+		  panel_new3.add(new JLabel(""));
+		  panel_new3.add(new JLabel(""));*/
+
 
 	    panel_new3 = new JPanel();
 	    panel_new3.setLayout(new FlowLayout(FlowLayout.RIGHT, 6, 6));
@@ -1800,7 +1837,7 @@ public class DataD extends myJFrame {
 	    JButton startS = new JCloseButton();
 	    startS.setToolTipText("Do the summation based on the selected rules and save the file");
 
-	    final DataD adataFrame = aframe;
+//	    final DataD adataFrame = aframe;
 	    startS.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent event) {
 			    summationRulesFrame.this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
@@ -1810,7 +1847,8 @@ public class DataD extends myJFrame {
 					 sameAngles[i] = anglesCB[i].isSelected();
 					 anglesValue[i] = Double.parseDouble(anglesTF[i].getText());
 				 }
-			    adata.SumDatafileOutput(summationRulesFrame.this, sameAngles, anglesValue);
+			    boolean nativeFormat = false; // nativeFormatCB.isSelected();
+			    adata.SumDatafileOutput(summationRulesFrame.this, sameAngles, anglesValue, nativeFormat);
 			    summationRulesFrame.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 			    summationRulesFrame.this.setVisible(false);
 			    summationRulesFrame.this.dispose();
@@ -1818,7 +1856,7 @@ public class DataD extends myJFrame {
 	    });
 	    panel_new3.add(startS);
 
-	    panel3 = new JPanel();
+	    JPanel panel3 = new JPanel();
 	    panel3.setLayout(new FlowLayout(FlowLayout.RIGHT, 6, 6));
 	    c1.add(BorderLayout.SOUTH, panel3);
 
