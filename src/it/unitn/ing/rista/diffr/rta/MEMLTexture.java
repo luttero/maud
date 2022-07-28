@@ -1738,9 +1738,9 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 		for (int i = 0; i < nbe; i++) {
 			for (int n = 0; n < nae; n++) {
 				for (int m = 0; m < nge; m++) {
-					mapToPlot[width + n][height + m] = ODFcoverage[ODFindex(n, m, i)];
+					mapToPlot[width + n][height + m] = ODFcoverage[ODFindex(n, i, m)];
 					if (IntensityMax < mapToPlot[width + n][height + m])
-						IntensityMax = (double) mapToPlot[width + n][height + m];
+						IntensityMax = mapToPlot[width + n][height + m];
 				}
 			}
 			column++;

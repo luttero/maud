@@ -2125,6 +2125,8 @@ public class DiffrDataFile extends XRDcat {
         case 19:
         case 22:
         case 25:
+	      case 28:
+	      case 29:
           break;
         case 2: // linear
         case 5:
@@ -2300,6 +2302,8 @@ public class DiffrDataFile extends XRDcat {
         case 19:
         case 22:
         case 25:
+	      case 28:
+	      case 29:
           break;
         case 2: // linear
         case 5:
@@ -2425,6 +2429,8 @@ public class DiffrDataFile extends XRDcat {
         case 19:
         case 22:
         case 25:
+	      case 28:
+	      case 29:
           break;
         case 2: // linear
         case 5:
@@ -2573,7 +2579,8 @@ public class DiffrDataFile extends XRDcat {
       else
         yint = getYData(index);
 //      System.out.println(yint);
-      if ((weightSwitch > 3 && weightSwitch < 7) || (weightSwitch > 18 && weightSwitch < 28))
+      if ((weightSwitch > 3 && weightSwitch < 7) || (weightSwitch > 18 && weightSwitch < 28)
+            || weightSwitch > 28)
         yint -=  - getBkgFit(index);
       if (weightSwitch > 6 && weightSwitch < 10)
         yint -=  - getBkgFitNoInterpolation(index);
@@ -2598,6 +2605,10 @@ public class DiffrDataFile extends XRDcat {
         case 22:
         case 25:
           value = qCorrection / Math.sqrt(yint);
+			 break;
+	      case 28:
+	      case 29:
+		      value = 1.0 / Math.sqrt(yint) / qCorrection;
           break;
         case 2:
         case 5:
@@ -4162,9 +4173,9 @@ public class DiffrDataFile extends XRDcat {
 	public void addExperimentalBackground() {
 
     DiffrDataFile expDataFile = getDataFileSet().getBackgroundDataFile(this);
-		double countTime = monitorCounts;
+		double countTime = expDataFile.monitorCounts;
 		if (useCountTimeToScale())
-			countTime *= getCountTimeValue();
+			countTime *= expDataFile.getCountTimeValue();
     if (getDataFileSet().omogeneous() && getDataFileSet().omogeneousDataset) {
       for (int i = startingindex; i < finalindex; i++) {
         double bkgIntensity = expDataFile.getInterpolatedIntensity(i) * countTime;

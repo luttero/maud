@@ -53,6 +53,8 @@ public class GSASbankIntCalibration extends IntensityCalibration {
                                      "_inst_inc_spectrum_coeff_6", "_inst_inc_spectrum_coeff_7",
                                      "_inst_inc_spectrum_coeff_8", "_inst_inc_spectrum_coeff_9",
                                      "_inst_inc_spectrum_coeff_10", "_inst_inc_spectrum_coeff_11",
+		                               "_inst_inc_spectrum_coeff_12", "_inst_inc_spectrum_coeff_13",
+		                               "_inst_inc_spectrum_coeff_14", "_inst_inc_spectrum_coeff_15",
                                      "_inst_inc_spectrum_scale_factor"
   };
   public static String[] diclistcrm = {"_inst_inc_parameter_file", "_instrument_counter_bank",
@@ -65,6 +67,8 @@ public class GSASbankIntCalibration extends IntensityCalibration {
                                      "incident spectrum coeff 6", "incident spectrum coeff 7",
                                      "incident spectrum coeff 8", "incident spectrum coeff 9",
                                      "incident spectrum coeff 10", "incident spectrum coeff 11",
+		                               "incident spectrum coeff 12", "incident spectrum coeff 13",
+		                               "incident spectrum coeff 14", "incident spectrum coeff 15",
                                      "incident spectrum scale factor"
   };
 
@@ -72,7 +76,9 @@ public class GSASbankIntCalibration extends IntensityCalibration {
   public static String[] classlistcs = {};
   public static String[] functiontype = {"0", "1", "2", "3", "4", "5", "10"};
   public static int functionnumber = functiontype.length;
-  static int numberIncSpectrumCoefficients = 12;
+  static int numberIncSpectrumCoefficients = 16;
+
+  double MINIMUM_INTENSITY_CALIBRATION_VALUE = 1.0E-9;
 
   double[][] difc = null;
   int[] typeNumber = null;
@@ -149,6 +155,7 @@ public class GSASbankIntCalibration extends IntensityCalibration {
     typeNumber = new int[banks];
     for (int bank = 0; bank < banks; bank++)
       typeNumber[bank] = getTypeNumber(bank);
+	  MINIMUM_INTENSITY_CALIBRATION_VALUE = MaudPreferences.getDouble("_TOF_incident_intensity_cal.minimumValue", MINIMUM_INTENSITY_CALIBRATION_VALUE);
   }
 
   public void updateParametertoDoubleBuffering(boolean firstLoading) {
@@ -736,7 +743,10 @@ public class GSASbankIntCalibration extends IntensityCalibration {
           wt = 1.0;
         }
     }
-    return wt * getCoeffD(bank, numberIncSpectrumCoefficients);
+    double cal = wt * getCoeffD(bank, numberIncSpectrumCoefficients);
+	 if (cal < MINIMUM_INTENSITY_CALIBRATION_VALUE)
+		 cal = MINIMUM_INTENSITY_CALIBRATION_VALUE;
+	 return cal;
   }
 
   public JOptionsDialog getOptionsDialog(Frame parent) {
