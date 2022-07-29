@@ -2127,6 +2127,8 @@ public class DiffrDataFile extends XRDcat {
         case 25:
 	      case 28:
 	      case 29:
+	      case 30:
+	      case 31:
           break;
         case 2: // linear
         case 5:
@@ -2304,6 +2306,8 @@ public class DiffrDataFile extends XRDcat {
         case 25:
 	      case 28:
 	      case 29:
+	      case 30:
+				case 31:
           break;
         case 2: // linear
         case 5:
@@ -2431,6 +2435,8 @@ public class DiffrDataFile extends XRDcat {
         case 25:
 	      case 28:
 	      case 29:
+	      case 30:
+	      case 31:
           break;
         case 2: // linear
         case 5:
@@ -2580,7 +2586,7 @@ public class DiffrDataFile extends XRDcat {
         yint = getYData(index);
 //      System.out.println(yint);
       if ((weightSwitch > 3 && weightSwitch < 7) || (weightSwitch > 18 && weightSwitch < 28)
-            || weightSwitch > 28)
+            || weightSwitch > 29)
         yint -=  - getBkgFit(index);
       if (weightSwitch > 6 && weightSwitch < 10)
         yint -=  - getBkgFitNoInterpolation(index);
@@ -2607,9 +2613,13 @@ public class DiffrDataFile extends XRDcat {
           value = qCorrection / Math.sqrt(yint);
 			 break;
 	      case 28:
-	      case 29:
+	      case 30:
 		      value = 1.0 / Math.sqrt(yint) / qCorrection;
           break;
+	      case 29:
+	      case 31:
+		      value = 1.0 / Math.sqrt(yint) / Math.sqrt(qCorrection);
+		      break;
         case 2:
         case 5:
         case 8:
