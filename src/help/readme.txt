@@ -43,7 +43,7 @@ from the older one.
 
 Maud Version notes:
 
-(25/05/2022):   2.994. The "Stout" release.
+(29/07/2022):   2.994. The "Stout" release.
                 You have to empty the beer keg while working on angles conversion.
                 That's why it takes so long.....
                 The angles conversion routine was re-done again as we spot some

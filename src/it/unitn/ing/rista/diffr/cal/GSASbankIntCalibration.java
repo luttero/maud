@@ -173,6 +173,8 @@ public class GSASbankIntCalibration extends IntensityCalibration {
   }
 
   public void setSplitPosition(double pos) {
+	  if (splitPosition != pos)
+		  notifyUpObjectChanged(this, Constants.INTENSITY_CALIBRATION);
 	  splitPosition = pos;
 	  stringField[2] = Double.toString(pos);
   }
@@ -298,6 +300,21 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 		    getSplitCoeff(numberIncSpectrumCoefficients, i).setRefinableCheckBound();
 	    }
     }
+  }
+
+  public void freeParametersForCalibration() {
+	  updateStringtoDoubleBuffering(false);
+	  getInstrument().getIntensity().setNotRefinableCheckBound();
+	  for (int i = 0; i < banknumbers(); i++) {
+		  if (bankIsActive(i)) {
+			  for (int j = 0; j < numberIncSpectrumCoefficients + 1; j++) {
+				  getCoeff(j, i).setRefinableCheckBound();
+				  if (splitPosition > 0) {
+					  getSplitCoeff(j, i).setRefinableCheckBound();
+				  }
+			  }
+		  }
+	  }
   }
 
   protected boolean bankIsActive(int bank) {

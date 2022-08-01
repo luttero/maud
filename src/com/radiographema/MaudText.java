@@ -21,6 +21,8 @@
 package com.radiographema;
 
 import java.lang.*;
+import java.util.Vector;
+import java.util.concurrent.TimeUnit;
 
 import it.unitn.ing.rista.util.*;
 //import com.deadmoo.xgridagent.*;
@@ -39,6 +41,30 @@ public class MaudText {
   public static final int JPVM = 1;
   public static final int XGRID = 2;
 //  public static final int XGRIDAGENT = 3;
+
+	public static Vector<Integer> threadRunning;
+
+	public static int addNewThread() {
+		int index = -1;
+		boolean present;
+		do {
+			present = false;
+			index++;
+			for (int i = 0; i < threadRunning.size(); i++)
+				if (threadRunning.get(i) == index)
+					present = true;
+		} while (present);
+		threadRunning.add(index);
+		return index;
+	}
+
+	public static void removeThread(int index) {
+		for (int i = 0; i < threadRunning.size(); i++)
+			if (threadRunning.get(i) == index) {
+				threadRunning.remove(i);
+				return;
+			}
+	}
 
   /**
    * Initialize program constants.
@@ -126,6 +152,14 @@ public class MaudText {
 		  // returns null as the cause is nonexistent or unknown.
 		  System.err.println("Cause = " + e.getCause());
 	  }
+	  while (threadRunning.size() > 0) {
+		  try {
+			  TimeUnit.MILLISECONDS.sleep(500);
+		  } catch (InterruptedException e) {
+			  e.printStackTrace();
+		  }
+	  }
+
     System.exit(0);
   }
 

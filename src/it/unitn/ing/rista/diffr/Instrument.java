@@ -718,6 +718,12 @@ public class Instrument extends XRDcat {
       ((GSASbankIntCalibration) acal).freeAllTOFSFParameters();
   }
 
+  public void refineAllIntensityBankCoefficientsForCalibration() {
+	  IntensityCalibration acal = getIntensityCalibration();
+	  if (acal instanceof GSASbankIntCalibration)
+		  ((GSASbankIntCalibration) acal).freeParametersForCalibration();
+  }
+
   public void plotFunction(Frame theframe, int index) {
     ParameterFunction function = new PolynomialFunction(parameterloopField[index], isTOF());
     (new PlotParameterFunction(theframe, function)).setVisible(true);

@@ -28,6 +28,7 @@ import java.io.*;
 import java.awt.*;
 import java.util.concurrent.TimeUnit;
 
+import com.radiographema.MaudText;
 import it.unitn.ing.rista.diffr.AtomSite;
 import it.unitn.ing.rista.diffr.instrument.DefaultInstrument;
 import it.unitn.ing.rista.io.cif.*;
@@ -2829,9 +2830,9 @@ public class DataFileSet extends XRDcat {
 		(new PersistentThread() {
 			@Override
 			public void executeJob() {
-
+				int index = MaudText.addNewThread();
 				try {
-					TimeUnit.MILLISECONDS.sleep(3000);
+					TimeUnit.MILLISECONDS.sleep(1000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -2847,18 +2848,24 @@ public class DataFileSet extends XRDcat {
 					g.clearRect(0, 0, comp.getWidth(), comp.getHeight());
 					comp.paint(g);
 					// write it out in the format you want
-					BeartexPFPlot.savePic(fileImage, "png", plotOutput2DFileName + label + ".png", comp);
+					String dst = plotOutput2DFileName + label + ".png";
+					BeartexPFPlot.savePic(fileImage, "png", dst, comp);
 
-					try {
-						TimeUnit.MILLISECONDS.sleep(3000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
+					boolean fileSaved = false;
+					while (!fileSaved) {
+						fileSaved = Misc.checkForFile(dst);
+						try {
+							TimeUnit.MILLISECONDS.sleep(500);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
 					}
 
 					//dispose of the graphics content
 					g.dispose();
 					plot.setVisible(false);
 					plot.dispose();
+					MaudText.removeThread(index);
 				}
 			}
 		}).start();
@@ -2873,13 +2880,14 @@ public class DataFileSet extends XRDcat {
 		}
 		final String label = DataFileSet.this.toXRDcatString();
 		PlotFitting plot = new PlotFitting(null, adfile, false);
+		plot.setSize(plot.defaultFrameW, plot.defaultFrameH);
 		plot.setVisible(true);
 		(new PersistentThread() {
 			@Override
 			public void executeJob() {
-
+				int index = MaudText.addNewThread();
 				try {
-					TimeUnit.MILLISECONDS.sleep(3000);
+					TimeUnit.MILLISECONDS.sleep(1000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -2895,18 +2903,24 @@ public class DataFileSet extends XRDcat {
 					g.clearRect(0, 0, comp.getWidth(), comp.getHeight());
 					comp.paint(g);
 					// write it out in the format you want
-					BeartexPFPlot.savePic(fileImage, "png", plotOutputFileName + label + ".png", comp);
+					String dst = plotOutputFileName + label + ".png";
+					BeartexPFPlot.savePic(fileImage, "png", dst, comp);
 
-					try {
-						TimeUnit.MILLISECONDS.sleep(3000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
+					boolean fileSaved = false;
+					while (!fileSaved) {
+						fileSaved = Misc.checkForFile(dst);
+						try {
+							TimeUnit.MILLISECONDS.sleep(500);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
 					}
 
 					//dispose of the graphics content
 					g.dispose();
 					plot.setVisible(false);
 					plot.dispose();
+					MaudText.removeThread(index);
 				}
 			}
 		}).start();
