@@ -1625,10 +1625,14 @@ public class DiffrDataFile extends XRDcat {
     int mode = PlotDataFile.checkScaleModeX();
     if (mode == 2)
       return "Q [Angstrom{^-1}]";
-    if (dspacingbase || mode == 1)
-      return "d [Angstrom]";
-    if (energyDispersive || mode == 3)
-      return "Energy [eV]";
+	 if (mode == 4)
+		 return "Uncalibrated (original)";
+	  if (mode == 5)
+		  return "Channel";
+	  if (dspacingbase || mode == 1)
+		  return "d [Angstrom]";
+	  if (energyDispersive || mode == 3)
+		  return "Energy [eV]";
     return "2-Theta [degrees]";
   }
 
@@ -1638,10 +1642,14 @@ public class DiffrDataFile extends XRDcat {
     int mode = PlotDataFile.checkScaleModeX();
     if (mode == 2)
       return "Q";
-    if (dspacingbase || mode == 1)
-      return "d";
-    if (energyDispersive || mode == 3)
-      return "Energy";
+	  if (mode == 4)
+		  return "Uncalibrated";
+	  if (mode == 5)
+		  return "Channel";
+	  if (dspacingbase || mode == 1)
+		  return "d";
+	  if (energyDispersive || mode == 3)
+		  return "Energy";
     return "2-Theta";
   }
 
@@ -1651,10 +1659,14 @@ public class DiffrDataFile extends XRDcat {
     int mode = PlotDataFile.checkScaleModeX();
     if (mode == 2)
       return "Angstrom^-1";
-    if (dspacingbase || mode == 1)
-      return "Angstrom";
-    if (energyDispersive || mode == 3)
-      return "eV";
+	  if (mode == 4)
+		  return "original";
+	  if (mode == 5)
+		  return "number";
+	  if (dspacingbase || mode == 1)
+		  return "Angstrom";
+	  if (energyDispersive || mode == 3)
+		  return "eV";
     return "degrees";
   }
 
@@ -1682,7 +1694,11 @@ public class DiffrDataFile extends XRDcat {
 		    return "Log10(Intensity) * Q^2";
 	    case 11:
 		    return "Log10(Intensity) * Q^4";
-      case 12:
+	    case 12:
+		    return "Intensity{^1/2} / Q^1/2";
+	    case 13:
+		    return "Intensity{^1/2} / Q";
+	    case 14:
       default: {
         return "Intensity{^1/2} [Count{^1/2}]";
       }
@@ -1839,6 +1855,10 @@ public class DiffrDataFile extends XRDcat {
         return getXInQ(getXData(index));
       case 3:
         return getXInEnergy(getXData(index));
+	    case 4:
+		    return getXDataOriginal(index);
+	    case 5:
+		    return index;
       default: {
         return getXData(index);
       }
@@ -1852,7 +1872,11 @@ public class DiffrDataFile extends XRDcat {
       case 2:
         return getXfromQ(value);
       case 3:
-        return getXfromEnergy(value);
+        return getXDataInvertCalibration(value);
+	    case 4:
+		    return getXfromEnergy(value);
+	    case 5:
+		    return getXData((int) value);
       default: {
         return value;
       }
@@ -3057,6 +3081,16 @@ public class DiffrDataFile extends XRDcat {
 			    intensity = -intensity;
 		    }
 		    return Math.log(intensity) * Constants.log10Conv * sign;
+	    case 12:
+			 double factor = Math.sqrt(Math.abs(getXInQ(x)));
+			 if (factor > 0)
+		      intensity /= factor;
+		    return intensity;
+	    case 13:
+		    double factor1 = getXInQ(x);
+		    if (factor1 > 0)
+			    intensity /= factor1;
+		    return intensity;
       case 0:
       default: {
         if (intensity < 0.0) {

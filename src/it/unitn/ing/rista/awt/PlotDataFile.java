@@ -62,8 +62,8 @@ public class PlotDataFile extends GraphFrame {
   public static int PhasesFontScale = 14;
 
   public static String[] plotMode = {"sqrt", "linear", "log10", "sqrt*q", "sqrt*q^2", "sqrt*q^4",
-		  "linear*q", "linear*q^2", "linear*q^4", "log10*q", "log10*q^2", "log10*q^4"};
-  public static String[] xplotMode = {"Default", "d-space", "Q space", "Energy"};
+		  "linear*q", "linear*q^2", "linear*q^4", "log10*q", "log10*q^2", "log10*q^4", "sqrt/sqrt(q)", "sqrt/q"};
+  public static String[] xplotMode = {"Default", "d-space", "Q space", "Energy", "Original", "Channels"};
   public static final String xaxisModePref = "plot.XaxisMode";
   public static final String plotNoBkg = "plot.backgroundSubtraction";
   public static boolean plotNoBkgDefault = false;
