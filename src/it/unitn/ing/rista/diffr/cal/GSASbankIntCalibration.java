@@ -102,7 +102,7 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 
   public static String[] classlistc = {};
   public static String[] classlistcs = {};
-  public static String[] functiontype = {"0", "1", "2", "3", "4", "5", "10"};
+  public static String[] functiontype = {"0", "1", "2", "3", "4", "5", "6", "10"};
   public static int functionnumber = functiontype.length;
   static int numberIncSpectrumCoefficients = 16;
 
@@ -969,6 +969,14 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 						wt += getCoeffD(bank, i) * ChebyshevPolynomial.getT(i, tx);
 
 					break;
+				case 6:
+					tx = 1.0 / x;
+					wt = 0.0;
+
+					for (int i = 0; i < numberIncSpectrumCoefficients; i++)
+						wt += getCoeffD(bank, i) * ChebyshevPolynomial.getT(i, tx);
+
+					break;
 				case 10:
 //		    System.out.println(this + " " + bank + " " + index + " " + incidentSpectrum.get(bank).length + " " + incidentSpectrum.size());
 					wt = incidentSpectrum.get(bank)[index];
@@ -1022,6 +1030,14 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 					break;
 				case 5:
 					tx = x / 10.0;
+					wt = 0.0;
+
+					for (int i = 0; i < numberIncSpectrumCoefficients; i++)
+						wt += getSplitCoeffD(bank, i) * ChebyshevPolynomial.getT(i, tx);
+
+					break;
+				case 6:
+					tx = 1.0 / x;
 					wt = 0.0;
 
 					for (int i = 0; i < numberIncSpectrumCoefficients; i++)

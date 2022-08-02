@@ -20,7 +20,11 @@
 
 package it.unitn.ing.rista.diffr;
 
+import it.unitn.ing.rista.diffr.cal.AngularCalibration;
+import it.unitn.ing.rista.diffr.cal.IntensityCalibration;
+import it.unitn.ing.rista.diffr.measurement.Theta2ThetaMeasurement;
 import it.unitn.ing.rista.util.Constants;
+import it.unitn.ing.rista.util.MaudPreferences;
 
 import java.util.*;
 import java.lang.*;
@@ -35,12 +39,19 @@ import java.lang.*;
 
 public class Background extends XRDcat {
 
-  protected static String[] diclistc = {"_riet_par_background_pol"};
-  protected static String[] diclistcrm = {"background value"};
+  protected static String[] diclistc = {
+		  "_riet_chebyshev_polynomial_background",
+		  "_riet_par_background_pol"};
+  protected static String[] diclistcrm = {
+		  "use Chebyshev polynomial for background",
+		  "background value"};
 
   protected static String[] classlistc = {};
 
-  public Background(XRDcat obj, String alabel) {
+	final static int useChebyshevPolynomialsID = 0;
+	boolean useChebyshevPolynomials = false;
+
+	public Background(XRDcat obj, String alabel) {
     super(obj, alabel);
     initXRD();
   }
@@ -52,7 +63,7 @@ public class Background extends XRDcat {
   public Background() {}
 
   public void initConstant() {
-    Nstring = 0;
+    Nstring = 1;
     Nstringloop = 0;
     Nparameter = 1;
     Nparameterloop = 0;
@@ -70,6 +81,7 @@ public class Background extends XRDcat {
 
   public void initParameters() {
     super.initParameters();
+	  useChebyshevPolynomials(false);
   }
 
   public void notifyParameterChanged(Parameter source) {
@@ -84,6 +96,27 @@ public class Background extends XRDcat {
     }
     super.notifyParameterChanged(source);
   }
+
+	public void updateStringtoDoubleBuffering(boolean firstLoading) {
+		super.updateStringtoDoubleBuffering(firstLoading);
+		useChebyshevPolynomials = useChebyshevPolynomialsString().equalsIgnoreCase("true");
+	}
+
+	public void useChebyshevPolynomials(boolean value)
+	{
+		if (value)
+			setString(useChebyshevPolynomialsID, "true");
+		else
+			setString(useChebyshevPolynomialsID, "false");
+	}
+
+	public String useChebyshevPolynomialsString() {
+		return getString(useChebyshevPolynomialsID);
+	}
+
+	public boolean useChebyshevPolynomials() {
+		return useChebyshevPolynomials;
+	}
 
 
 }

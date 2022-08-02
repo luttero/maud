@@ -60,7 +60,7 @@ public class DataFileSet extends XRDcat {
 		  "_riet_meas_dataset_random_texture", "_maud_background_add_automatic",
 		  "_maud_interpolated_background_iterations",
 		  "_pd_proc_ls_datafile_weight", "_riet_meas_dataset_no_strain",
-		  "_riet_meas_dataset_omogeneous",
+		  "_riet_meas_dataset_omogeneous", "_riet_chebyshev_polynomial_background",
 
 		  "_riet_par_background_exp_shift",
 		  "_riet_par_background_exp_thermal_shift",
@@ -93,7 +93,7 @@ public class DataFileSet extends XRDcat {
 		  "_riet_meas_dataset_random_texture", "_maud_background_add_automatic",
 		  "number of iteration for background interpolation",
 		  "_pd_proc_ls_datafile_weight", "_riet_meas_dataset_no_strain",
-		  "_riet_meas_dataset_omogeneous",
+		  "_riet_meas_dataset_omogeneous", "use Chebyshev polynomial for background",
 
 /*    "_pd_meas_orientation_omega_offset",
     "_pd_meas_orientation_chi_offset",
@@ -180,6 +180,10 @@ public class DataFileSet extends XRDcat {
 	protected int interpolationIterations;
 	static final int datasetWeightFieldID = 19;
 	static final int noStrainID = 20;
+
+	final static int useChebyshevPolynomialsID = 22;
+	boolean useChebyshevPolynomials = false;
+
 	double datasetWeight = 1.0;
 	boolean[] needRestore = null;
 	Vector overallVector = null;
@@ -205,7 +209,7 @@ public class DataFileSet extends XRDcat {
 
   @Override
   public void initConstant() {
-    Nstring = 22;
+    Nstring = 23;
     Nstringloop = 0;
     Nparameter = 12;
     Nparameterloop = 3;
@@ -243,7 +247,8 @@ public class DataFileSet extends XRDcat {
     stringField[0] = "Date/time meas"; // to avoid the notify staff
     setRandomTexture("false");
     setNoStrain("false");
-	  setBackgroundInterpolationIterations(MaudPreferences.getInteger("backgroundSubtraction.iterations", 10));
+	 useChebyshevPolynomials(false);
+	    setBackgroundInterpolationIterations(MaudPreferences.getInteger("backgroundSubtraction.iterations", 10));
 	  setString(datasetWeightFieldID, "1.0");
 	    for (int i = 0; i < Nparameter; i++)
 		    parameterField[i] = new Parameter(this, getParameterString(i), 0);
@@ -328,7 +333,9 @@ public class DataFileSet extends XRDcat {
     automaticPolynomialBackground = isAutomaticPolynomialBackground();
     randomTexture = hasRandomTexture();
     noStrain = hasNoStrain();
-/*	    bkgDatafiles.removeAllElements();
+	 useChebyshevPolynomials = useChebyshevPolynomialsString().equalsIgnoreCase("true");
+
+	 /*	    bkgDatafiles.removeAllElements();
       for (int i = 0; i < datafilesnumber(); i++) {
         DiffrDataFile tmpDatafile = getDataFile(i);
         if (tmpDatafile.getAsBackgroundPermission()) {
@@ -2451,6 +2458,22 @@ public class DataFileSet extends XRDcat {
 		}
 	}
 
+	public void useChebyshevPolynomials(boolean value)
+	{
+		if (value)
+			setString(useChebyshevPolynomialsID, "true");
+		else
+			setString(useChebyshevPolynomialsID, "false");
+	}
+
+	public String useChebyshevPolynomialsString() {
+		return getString(useChebyshevPolynomialsID);
+	}
+
+	public boolean useChebyshevPolynomials() {
+		return useChebyshevPolynomials;
+	}
+
 	public void setReplaceDatafile(boolean b) {
     if (b)
       setReplaceDatafile("true");
@@ -3503,8 +3526,13 @@ public class DataFileSet extends XRDcat {
         for (int j = tmpDatafile.startingindex; j < tmpDatafile.finalindex; j++) {
           double thetaord = tmpDatafile.getXData(j);
           double background = tbackgroundChi;
-          for (int k = 0; k < npolbckgpar; k++)
-            background += backgroundPol[k] * MoreMath.pow(thetaord, k);
+	        if (useChebyshevPolynomials()) {
+		        for (int k = 0; k < npolbckgpar; k++)
+			        background += backgroundPol[k] * ChebyshevPolynomial.getT(k, thetaord);
+	        } else {
+		        for (int k = 0; k < npolbckgpar; k++)
+			        background += backgroundPol[k] * Math.pow(thetaord, k);
+	        }
           for (int k = 0; k < numberofpeak; k++)
             background += abkgPeak[k].computeIntensity(thetaord, chieta[0], chieta[1], chieta[2], chieta[3]);
 

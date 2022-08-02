@@ -364,6 +364,8 @@ public class DiffrDataFile extends XRDcat {
     setDataType(DIFFRACTION_PATTERN);
     setImageIndex(-1);
 	  setString(datafileWeightFieldID, "1.0");
+	  useChebyshevPolynomials(false);
+
   }
 
 	@Override
@@ -3806,8 +3808,13 @@ public class DiffrDataFile extends XRDcat {
       for (int j = starti; j < finali; j++) {
         double thetaord = getXData(j);
         double background = 0.0;
-        for (int k = 0; k < numbercoef; k++)
-          background += backgcoef[k] * Math.pow(thetaord, k);
+		  if (useChebyshevPolynomials()) {
+			  for (int k = 0; k < numbercoef; k++)
+				  background += backgcoef[k] * ChebyshevPolynomial.getT(k, thetaord);
+		  } else {
+			  for (int k = 0; k < numbercoef; k++)
+				  background += backgcoef[k] * Math.pow(thetaord, k);
+		  }
         double oscillatorBack = 0.0;
         if (oscillatorsNumber > 0)
           oscillatorBack = 1.0;

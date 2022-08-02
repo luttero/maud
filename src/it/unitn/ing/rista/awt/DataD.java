@@ -92,6 +92,8 @@ public class DataD extends myJFrame {
   JTextField countTimeTF;
 
   JCheckBox lorentzRestrictedCB;
+
+  JCheckBox chebUseCB;
   JCheckBox backgroundInterpolatedCB;
   JTextField backgroundInterpolationPointsTF;
 	JTextField backgroundInterpolationIterationsTF;
@@ -811,8 +813,19 @@ public class DataD extends myJFrame {
     JTabbedPane tabPanel1 = new JTabbedPane();
     String tempString[] = {"Polynomial", "Interpolated", "Background peaks", "Chi dependent", "Eta dependent"};
 
+	 JPanel polinomialBkgPanel = new JPanel();
+	  polinomialBkgPanel.setLayout(new BorderLayout(3, 3));
+	  JPanel chebPanel = new JPanel();
+	  chebPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 1, 1));
+
+	  chebUseCB = new JCheckBox("Chebyshev polynomial");
+	  chebUseCB.setToolTipText(
+			  "Check this box to use Chebyshev polynomial instead of normal polynomial function");
+	  chebPanel.add(chebUseCB);
+	  polinomialBkgPanel.add(BorderLayout.NORTH, chebPanel);
     polynomialP = new JParameterListPane(this, false, true);
-    tabPanel1.addTab(tempString[0], null, polynomialP);
+    tabPanel1.addTab(tempString[0], null, polinomialBkgPanel);
+	 polinomialBkgPanel.add(BorderLayout.CENTER, polynomialP);
 
 	  JPanel bkgpTop = new JPanel();
 	  bkgpTop.setLayout(new FlowLayout(FlowLayout.LEFT, 1, 1));
@@ -982,7 +995,8 @@ public class DataD extends myJFrame {
       lorentzRestrictedCB.setSelected(true);
       lorentzRestrictedCB.setEnabled(false);
     }
-    backgroundInterpolatedCB.setSelected(thedata.isBackgroundInterpolated());
+	  chebUseCB.setSelected(thedata.useChebyshevPolynomials());
+	  backgroundInterpolatedCB.setSelected(thedata.isBackgroundInterpolated());
     backgroundInterpolationPointsTF.setText(thedata.getInterpolatedPoints());
 	  backgroundInterpolationIterationsTF.setText(thedata.getInterpolationIterations());
 	  dataidTF.setText(thedata.getDataFileSetID());
@@ -1111,6 +1125,7 @@ public class DataD extends myJFrame {
     thedata.setMinRange(minTF.getText());
     thedata.setMaxRange(maxTF.getText());
     thedata.setLorentzRestricted(lorentzRestrictedCB.isSelected());
+	 thedata.useChebyshevPolynomials(chebUseCB.isSelected());
     thedata.setBackgroundInterpolated(backgroundInterpolatedCB.isSelected());
     thedata.setInterpolatedPoints(backgroundInterpolationPointsTF.getText());
 	  thedata.setBackgroundInterpolationIterations(backgroundInterpolationIterationsTF.getText());
