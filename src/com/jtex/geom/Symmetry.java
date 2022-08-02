@@ -164,6 +164,14 @@ public class Symmetry extends Quaternion {
                 group = line.substring(30).trim();
             } else if (line.startsWith("_symmetry_point_group_name_H-M")) {
                 group = line.substring(30).trim();
+            } else if (line.startsWith("_space_group_name_H-M_alt")) {
+	            group = line.substring(25).trim();
+            } else if (line.startsWith("_space_group_name_Hall")) {
+	            group = line.substring(22).trim();
+            } else if (line.startsWith("_space_group_IT_number")) {
+	            group = line.substring(22).trim();
+            } else if (line.startsWith("_symmetry_Int_Tables_number")) {
+	            group = line.substring(27).trim();
             }
         }
 
