@@ -3523,7 +3523,7 @@ public class DataFileSet extends XRDcat {
     for (int i = 0; i < datafilenumber; i++) {
       DiffrDataFile tmpDatafile = getActiveDataFile(i);
       if (tmpDatafile != null)
-        tmpDatafile.exportExperimentalComputedData(output);
+        tmpDatafile.exportExperimentalComputedData(output,false);
     }
   }
 

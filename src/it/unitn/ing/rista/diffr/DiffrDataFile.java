@@ -6796,8 +6796,10 @@ public class DiffrDataFile extends XRDcat {
     }
 
   }
-
   public void exportExperimentalComputedData(BufferedWriter output) {
+	  exportExperimentalComputedData(output, true);
+  }
+  public void exportExperimentalComputedData(BufferedWriter output, boolean closeFile) {
 
     int numberphases = getFilePar().getActiveSample().phasesNumber();
 
@@ -6820,7 +6822,7 @@ public class DiffrDataFile extends XRDcat {
         output.newLine();
         output.write("# On the following loop you will have:");
         output.newLine();
-        output.write("#  2theta/d coordinate   experimental intensity  calculated intensity  background");
+        output.write("#  2theta/d_coordinate  experimental_intensity  calculated_intensity  background  esd    exp_calibrated_intensity  calc_calibrated_intensity");
         for (int j = 0; j < numberphases; j++)
           output.write("  intensity " + getFilePar().getActiveSample().getPhase(j));
         output.newLine();
@@ -6837,13 +6839,19 @@ public class DiffrDataFile extends XRDcat {
         output.newLine();
         output.write("_pd_proc_intensity_weight");
         output.newLine();
+        output.write("_pd_proc_intensity_total_cal");
+        output.newLine();
+        output.write(DiffrDataFile.intensityCalcCIFstring + "_cal");
+        output.newLine();
         for (int j = 0; j < numberphases; j++) {
           output.write(DiffrDataFile.intensityCalcCIFstring);
           output.newLine();
         }
         for (int i = startingindex; i < finalindex; i++) {
-          double intensE = getYData(i);
+	      double intensE = getYData(i);
+          double intensEcal = finalIntensityCalibration(intensE);
           double intens = getFit(i);
+          double intenscal = finalIntensityCalibration(intens);
           double xcoorddata = 0.0;
 //          if (datafile[0].originalNotCalibrated)
 //            xcoorddata = datafile[0].getXDataOriginal(i);
@@ -6852,15 +6860,19 @@ public class DiffrDataFile extends XRDcat {
           output.write(" " + Fmt.format(xcoorddata) + " " + Fmt.format(intensE) + " " + Fmt.format(intens));
           output.write(" " + Fmt.format(getBkgFit(i)));
           output.write(" " + Fmt.format(getWeight(i)));
+          output.write(" " + Fmt.format(intensEcal));
+          output.write(" " + Fmt.format(intenscal));
           for (int j = 0; j < numberphases; j++)
             output.write(" " + Fmt.format(getPhaseFit(i, j)));
           output.newLine();
         }
       } catch (IOException io) {
       }
-      try {
-        output.close();
-      } catch (IOException io) {
+	  if (closeFile) {
+        try {
+          output.close();
+        } catch (IOException io) {
+        }
       }
     }
   }

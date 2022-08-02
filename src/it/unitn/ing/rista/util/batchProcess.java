@@ -65,7 +65,7 @@ public class batchProcess {
   String titleField = null;
   String stressFilename = null;
   String sin2psiOptions = null;
-
+  String diffOutputDataFilename = null;
   public String[] diclist = {"_riet_analysis_file",
                              "_riet_analysis_iteration_number", "_riet_analysis_wizard_index",
                              "_riet_analysis_fileToSave", "_riet_meas_datafile_name",
@@ -78,7 +78,8 @@ public class batchProcess {
 		                       "_maud_export_pole_figures", "_maud_output_plot2D_filename",
 		                       "_maud_LCLS2_detector_config_file", "_publ_section_title",
 		                       "_maud_output_stress_filename", "_maud_output_stress_options",
-		                       "_riet_meas_datains_name", "_riet_meas_datafile_fitting"
+		                       "_riet_meas_datains_name", "_riet_meas_datafile_fitting",
+		                       "_maud_output_diff_data_filename"
   };
 
   public batchProcess(String insFileName) {
@@ -405,9 +406,13 @@ public class batchProcess {
         } else if (index == 24) { // "_riet_meas_datafile_fitting"
 //	        System.out.println(analysis + " " + item.thestring);
 	        if (analysis != null && lastDatafiles != null) {
-	        	  for (int jj = 0; jj < lastDatafiles.length; jj++)
-		           lastDatafiles[jj].setGeneratePlotfile(item.thestring.equalsIgnoreCase("true"));
+		        for (int jj = 0; jj < lastDatafiles.length; jj++)
+			        lastDatafiles[jj].setGeneratePlotfile(item.thestring.equalsIgnoreCase("true"));
 	        }
+	        avector.removeElementAt(i);
+	        loopitem--;
+        } else if (index == 25) { //"_maud_output_diff_data_filename"
+	        diffOutputDataFilename = workingDirectory + item.thestring;
 	        avector.removeElementAt(i);
 	        loopitem--;
         } else
@@ -648,6 +653,11 @@ public class batchProcess {
 				  }
 			  }
 		  }
+		if (diffOutputDataFilename != null && !diffOutputDataFilename.isEmpty()){
+			Sample asample = analysis.getSample(0);
+			exportExperimentalComputedData(analysis, "", diffOutputDataFilename);
+
+		}
 
 	  }
   }
@@ -693,3 +703,7 @@ public class batchProcess {
   }
 
 }
+//TODO
+//Make a wizard number run with wizard see FilePar.java line 287
+//
+//
