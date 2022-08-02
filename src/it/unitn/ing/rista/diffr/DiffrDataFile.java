@@ -6723,6 +6723,8 @@ public class DiffrDataFile extends XRDcat {
     JTextField displacementYTF = null;
     JTextField absorptionFactorTF = null;
 
+		JCheckBox chebUseCB;
+
     public JDataFileOptionsD(Frame parent, XRDcat obj) {
 
       super(parent, obj);
@@ -6734,8 +6736,23 @@ public class DiffrDataFile extends XRDcat {
       String p1String[] = {"Background pol.",
           "Error position pol.", "As bkg counts", "Sample par."};
 
-      polynomialP = new JParameterListPane[Nparameterloop];
-      for (int i = 0; i < Nparameterloop; i++) {
+
+	    JPanel polinomialBkgPanel = new JPanel();
+	    polinomialBkgPanel.setLayout(new BorderLayout(3, 3));
+	    JPanel chebPanel = new JPanel();
+	    chebPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 1, 1));
+
+	    chebUseCB = new JCheckBox("Chebyshev polynomial");
+	    chebUseCB.setToolTipText(
+			    "Check this box to use Chebyshev polynomial instead of normal polynomial function");
+	    chebPanel.add(chebUseCB);
+	    polinomialBkgPanel.add(BorderLayout.NORTH, chebPanel);
+	    polynomialP[0] = new JParameterListPane(this, false, true);
+	    p1.addTab(p1String[0], null, polinomialBkgPanel);
+	    polinomialBkgPanel.add(BorderLayout.CENTER, polynomialP[0]);
+
+	    polynomialP = new JParameterListPane[Nparameterloop];
+      for (int i = 1; i < Nparameterloop; i++) {
         polynomialP[i] = new JParameterListPane(this, false, true);
         p1.addTab(p1String[i], null, polynomialP[i]);
       }
@@ -6774,6 +6791,7 @@ public class DiffrDataFile extends XRDcat {
       addComponenttolist(displacementZTF, getParameter(sampleDisplacementZID));
 	    absorptionFactorTF.setText(getParameter(absorptionFactorID).getValue());
 	    addComponenttolist(absorptionFactorTF, getParameter(absorptionFactorID));
+	    chebUseCB.setSelected(useChebyshevPolynomials());
     }
 
     @Override
@@ -6786,7 +6804,7 @@ public class DiffrDataFile extends XRDcat {
       removeComponentfromlist(displacementZTF);
 	    getParameter(absorptionFactorID).setValue(absorptionFactorTF.getText());
 	    removeComponentfromlist(absorptionFactorTF);
-
+	    useChebyshevPolynomials(chebUseCB.isSelected());
     }
 
     @Override

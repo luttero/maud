@@ -816,7 +816,7 @@ public class DataD extends myJFrame {
 	 JPanel polinomialBkgPanel = new JPanel();
 	  polinomialBkgPanel.setLayout(new BorderLayout(3, 3));
 	  JPanel chebPanel = new JPanel();
-	  chebPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 1, 1));
+	  chebPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 1, 1));
 
 	  chebUseCB = new JCheckBox("Chebyshev polynomial");
 	  chebUseCB.setToolTipText(
