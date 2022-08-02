@@ -6742,6 +6742,8 @@ public class DiffrDataFile extends XRDcat {
 	    JPanel chebPanel = new JPanel();
 	    chebPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 1, 1));
 
+	    polynomialP = new JParameterListPane[Nparameterloop];
+
 	    chebUseCB = new JCheckBox("Chebyshev polynomial");
 	    chebUseCB.setToolTipText(
 			    "Check this box to use Chebyshev polynomial instead of normal polynomial function");
@@ -6751,7 +6753,6 @@ public class DiffrDataFile extends XRDcat {
 	    p1.addTab(p1String[0], null, polinomialBkgPanel);
 	    polinomialBkgPanel.add(BorderLayout.CENTER, polynomialP[0]);
 
-	    polynomialP = new JParameterListPane[Nparameterloop];
       for (int i = 1; i < Nparameterloop; i++) {
         polynomialP[i] = new JParameterListPane(this, false, true);
         p1.addTab(p1String[i], null, polynomialP[i]);
