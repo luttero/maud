@@ -1523,11 +1523,11 @@ public class LeastSquareFit extends OptimizationAlgorithm {
       iterationJS.setMinimum(1);
       iterationJS.setValue(maxIterations);
       iterationJS.setPaintTicks(true);
-      iterationJS.setMajorTickSpacing(5);
-      iterationJS.setMinorTickSpacing(1);
+      iterationJS.setMajorTickSpacing(maxIterations / 4);
+      iterationJS.setMinorTickSpacing(maxIterations / 20);
       iterationJS.setPaintLabels(true);
-      iterationJS.setSnapToTicks(true);
-      iterationJS.setLabelTable(iterationJS.createStandardLabels(5));
+      iterationJS.setSnapToTicks(false);
+      iterationJS.setLabelTable(iterationJS.createStandardLabels(maxIterations / 4));
 
       for (int i = 0; i < parsTF.length; i++)
         parsTF[i].setText(stringField[i + 1]);

@@ -22,6 +22,7 @@ package it.unitn.ing.rista.comp;
 
 import it.unitn.ing.rista.awt.JIconButton;
 import it.unitn.ing.rista.interfaces.Function;
+import it.unitn.ing.rista.util.MaudPreferences;
 import it.unitn.ing.rista.util.Misc;
 
 import javax.swing.*;
@@ -207,15 +208,16 @@ public class launchRefine extends launchBasic {
   }
 
   public void initIterationJS(JSlider iterationJS) {
-    iterationJS.setMaximum(21);
+	  int maxIterations = MaudPreferences.getInteger("analysis.maxIterationsSelectable", 21);
+    iterationJS.setMaximum(maxIterations);
     iterationJS.setMinimum(1);
-    iterationJS.setValue(21);
+    iterationJS.setValue(maxIterations);
     iterationJS.setPaintTicks(true);
-    iterationJS.setMajorTickSpacing(5);
-    iterationJS.setMinorTickSpacing(1);
+    iterationJS.setMajorTickSpacing(maxIterations / 4);
+    iterationJS.setMinorTickSpacing(maxIterations / 20);
     iterationJS.setPaintLabels(true);
-    iterationJS.setSnapToTicks(true);
-    iterationJS.setLabelTable(iterationJS.createStandardLabels(5));
+    iterationJS.setSnapToTicks(false);
+    iterationJS.setLabelTable(iterationJS.createStandardLabels(maxIterations / 4));
   }
 
   public void setIterationSliderValue(int value) {
