@@ -3651,6 +3651,7 @@ public class DataFileSet extends XRDcat {
 		  if (datafile.refreshSpectraComputation) {
 			  datafile.hasfit = true;
 			  datafile.spectrumModified = true;
+			  datafile.resetExperimentalBackground();
 			  datafile.resetBackgroundInterpolated();
 			  if (isBackgroundExperimental())
 				  datafile.addExperimentalBackground();

@@ -3357,13 +3357,22 @@ public class DiffrDataFile extends XRDcat {
     refreshInterpolatedBkgComputation = true;
     getParent().refreshComputation = true;
     int datanumb = getTotalNumberOfData();
+//	  System.out.println("Reset background for " + thelabel);
     for (int i = 0; i < datanumb; i++) {
       setBkgFit(i, 0.0);
-	    setExpBkgFit(i, 0.0);
+		setExpBkgFit(i, 0.0);
     }
   }
 
-  public int getTotalNumberOfData() {
+	public void resetExperimentalBackground() {
+		int datanumb = getTotalNumberOfData();
+//		System.out.println("Reset background for " + thelabel);
+		for (int i = 0; i < datanumb; i++) {
+			setExpBkgFit(i, 0.0);
+		}
+	}
+
+	public int getTotalNumberOfData() {
     return datanumber;
   }
 
@@ -3759,9 +3768,9 @@ public class DiffrDataFile extends XRDcat {
 
   public void postComputation() {
 	  resetBackgroundInterpolated();
-    if (getDataFileSet().isBackgroundExperimental()) {
+/*    if (getDataFileSet().isBackgroundExperimental()) {
       addExperimentalBackground();
-    }
+    }*/
     if (getDataFileSet().isBackgroundInterpolated()) {
       addInterpolatedBackgroundFromResiduals();
     }
@@ -4222,7 +4231,9 @@ public class DiffrDataFile extends XRDcat {
 	}
 
 	public void addExperimentalBackground() {
-
+//		System.out.println("Computing experimental background for " + thelabel);
+//		if (expbkgfit[(startingindex + finalindex) / 2] != 0)
+//			throw new RuntimeException("Experimental background not reset!");
     DiffrDataFile expDataFile = getDataFileSet().getBackgroundDataFile(this);
 		double countTime = expDataFile.monitorCounts;
 		if (useCountTimeToScale())
@@ -6233,8 +6244,9 @@ public class DiffrDataFile extends XRDcat {
 					double linearCorrection = 1.0;
 					if (isTOF) { // dspacingbase
 							double arg1 = abs * getWavelengthFromDSpace(positions[i][j][0]);
+							if (i == 50)
+//						      System.out.println(abs + " " + positions[i][j][0] + " " + arg1 + " " + layer_abs[0]);
 							if (arg1 != 0.0) {
-//								System.out.println(abs + " " + positions[i][j][0] + " " + getWavelengthFromDSpace(positions[i][j][0]));
 								if (arg1 < 200.0)
 									arg1 = Math.exp(-arg1);
 								else
