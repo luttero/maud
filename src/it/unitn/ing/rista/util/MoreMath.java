@@ -1342,7 +1342,8 @@ end;
 
 		for (int i = 0; i < elements; i++)
 			for (int j = 0; j < elements; j++)
-				rotMatrix[i][j] = matrix[i][elements - 1 - j];
+//				rotMatrix[i][j] = matrix[j][elements - 1 - i];
+		rotMatrix[i][j] = matrix[i][j];
 
 		return rotMatrix;
 	}

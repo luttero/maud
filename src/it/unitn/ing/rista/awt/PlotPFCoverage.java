@@ -178,7 +178,7 @@ public class PlotPFCoverage extends GraphFrame {
 							    if (angles[0] > 90.) {
 								    projection = Constants.sqrt2 * Math.sin((180. - angles[0]) * Constants.DEGTOPI / 2.0);
 							    }
-							    angles[1] += 90.0;    // test ODF beta angle problem
+//							    angles[1] += 90.0;    // test ODF beta angle problem
 							    data[0] = projection * Math.cos(angles[1] * Constants.DEGTOPI);
 							    data[1] = projection * Math.sin(angles[1] * Constants.DEGTOPI);
 
@@ -305,7 +305,7 @@ public class PlotPFCoverage extends GraphFrame {
 							    if (angles[0] > 90.) {
 								    projection = Constants.sqrt2 * Math.sin((180. - angles[0]) * Constants.DEGTOPI / 2.0);
 							    }
-							    angles[1] += 90.0;    // test ODF beta angle problem
+//							    angles[1] += 90.0;    // test ODF beta angle problem
 							    data[j] = projection * Math.cos(angles[1] * Constants.DEGTOPI);
 							    data[j + 1] = projection * Math.sin(angles[1] * Constants.DEGTOPI);
 
