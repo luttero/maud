@@ -2872,6 +2872,7 @@ public class DataFileSet extends XRDcat {
 					comp.paint(g);
 					// write it out in the format you want
 					String dst = plotOutput2DFileName + label + ".png";
+					Misc.deleteFile(dst);
 					BeartexPFPlot.savePic(fileImage, "png", dst, comp);
 
 					boolean fileSaved = false;
@@ -2927,6 +2928,7 @@ public class DataFileSet extends XRDcat {
 					comp.paint(g);
 					// write it out in the format you want
 					String dst = plotOutputFileName + label + ".png";
+					Misc.deleteFile(dst);
 					BeartexPFPlot.savePic(fileImage, "png", dst, comp);
 
 					boolean fileSaved = false;
