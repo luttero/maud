@@ -42,7 +42,7 @@ public class MaudText {
   public static final int XGRID = 2;
 //  public static final int XGRIDAGENT = 3;
 
-	public static Vector<Integer> threadRunning;
+	public static Vector<Integer> threadRunning = new Vector(0);
 
 	public static int addNewThread() {
 		int index = -1;
