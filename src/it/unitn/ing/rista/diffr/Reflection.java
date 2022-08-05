@@ -516,7 +516,8 @@ public class Reflection {
       value = texturemodel.getPoleFigureGrid(this, numberofPoints, maxAngle);
     if (value == null)
       return new double[numberofPoints][numberofPoints];
-    return value;
+
+    return MoreMath.rotate90anticlockwise(value);
   }
 
   public double[] getPoleFigureGrid(double[] x, double[] y) {
@@ -524,7 +525,7 @@ public class Reflection {
     Texture texturemodel = aphase.getActiveTexture();
     if (texturemodel != null)
       y = texturemodel.getPoleFigureGrid(this, x, y);
-    return y;
+    return y;  // todo rotate 90.0 for phi
   }
 
   public double[][] getExpPoleFigureGrid() {
@@ -558,7 +559,7 @@ public class Reflection {
 					if (!Double.isNaN(expTextureFactor)) {
 				  double[] texture_angles = dataFile.getTextureAngles(position);
 				  expTFAndAngles[0][numberOfGoodPoints] = texture_angles[0];
-				  expTFAndAngles[1][numberOfGoodPoints] = texture_angles[1];
+				  expTFAndAngles[1][numberOfGoodPoints] = texture_angles[1] + 90.0;
 				  expTFAndAngles[2][numberOfGoodPoints++] = expTextureFactor;
 					}
 			  }
@@ -575,8 +576,8 @@ public class Reflection {
       value = strainmodel.getPoleFigureGrid(this, numberofPoints, maxAngle);
     if (value == null)
       return new double[numberofPoints][numberofPoints];
-    return value;
-  }
+	  return MoreMath.rotate90anticlockwise(value);
+	}
 
   public double[][] getExpPoleFigureGridStrain(int numberofPoints, double maxAngle) {
     double[][] value = null;
@@ -586,7 +587,7 @@ public class Reflection {
       value = strainmodel.getExpPoleFigureGrid(this, numberofPoints, maxAngle);
     if (value == null)
       return new double[numberofPoints][numberofPoints];
-    return value;
+	  return MoreMath.rotate90anticlockwise(value);
   }
 
   public double[][] getShapeAbsorptionPoleFigureGrid(int numberofPoints, double maxAngle, Sample asample) {
@@ -595,7 +596,7 @@ public class Reflection {
       value = asample.getShapeAbsorptionPoleFigureGrid(this, numberofPoints, maxAngle);
     if (value == null)
       return new double[numberofPoints][numberofPoints];
-    return value;
+	  return MoreMath.rotate90anticlockwise(value);
   }
 
 /*  public double getShapeAbsorptionCorrection(DiffrDataFile adatafile, Sample asample) {

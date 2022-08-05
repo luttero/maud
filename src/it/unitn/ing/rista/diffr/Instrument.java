@@ -226,9 +226,9 @@ public class Instrument extends XRDcat {
     return getGeometry().getAlternateTextureAngles(datafile, tilting_angles, sampleAngles, twotheta);
   }
 
-  public void computeActiveTextureAngles(double[][] texture_angles, double[] sampleAngles, double position) {
+ /* public void computeActiveTextureAngles(double[][] texture_angles, double[] sampleAngles, double position) {
     getGeometry().computeActiveTextureAngles(texture_angles, sampleAngles, position);
-  }
+  }*/
 
   public int getthetaoffsetnumber() {
     return getThetaDisplacementList().size();

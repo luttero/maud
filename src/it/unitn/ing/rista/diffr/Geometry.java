@@ -278,8 +278,10 @@ public class Geometry extends XRDcat {
     double sinOmega = MoreMath.sind(tilting_angles0);
     double cosOmega = MoreMath.cosd(tilting_angles0);
     tilting_angles2 += sampleAngles[2];
-    double sinPhi = MoreMath.sind(tilting_angles2);
-    double cosPhi = MoreMath.cosd(tilting_angles2);
+//    double sinPhi = MoreMath.sind(tilting_angles2);
+//    double cosPhi = MoreMath.cosd(tilting_angles2);
+	  double sinPhi = MoreMath.sind(tilting_angles2 - 90.0);  // test ODF beta angle problem
+	  double cosPhi = MoreMath.cosd(tilting_angles2 - 90.0);  // test ODF beta angle problem
     double sinCsiSample = MoreMath.sind(sampleAngles[1]);
     double cosCsiSample = MoreMath.cosd(sampleAngles[1]);
     double sinCsi = MoreMath.sind(tilting_angles1);
@@ -433,8 +435,10 @@ public class Geometry extends XRDcat {
      double sinOmega = MoreMath.sind(tilting_angles0);
      double cosOmega = MoreMath.cosd(tilting_angles0);
      tilting_angles2 += sampleAngles[2];
-     double sinPhi = MoreMath.sind(tilting_angles2);
-     double cosPhi = MoreMath.cosd(tilting_angles2);
+//    double sinPhi = MoreMath.sind(tilting_angles2);
+//    double cosPhi = MoreMath.cosd(tilting_angles2);
+	  double sinPhi = MoreMath.sind(tilting_angles2 - 90.0);  // test ODF beta angle problem
+	  double cosPhi = MoreMath.cosd(tilting_angles2 - 90.0);  // test ODF beta angle problem
      double sinCsiSample = MoreMath.sind(sampleAngles[1]);
      double cosCsiSample = MoreMath.cosd(sampleAngles[1]);
      double sinCsi = MoreMath.sind(tilting_angles1);
@@ -607,8 +611,10 @@ public class Geometry extends XRDcat {
     double sinOmega = MoreMath.sind(tilting_angles0);
     double cosOmega = MoreMath.cosd(tilting_angles0);
     tilting_angles2 += sampleAngles[2];
-    double sinPhi = MoreMath.sind(tilting_angles2);
-    double cosPhi = MoreMath.cosd(tilting_angles2);
+//    double sinPhi = MoreMath.sind(tilting_angles2);
+//    double cosPhi = MoreMath.cosd(tilting_angles2);
+	  double sinPhi = MoreMath.sind(tilting_angles2 - 90.0);  // test ODF beta angle problem
+	  double cosPhi = MoreMath.cosd(tilting_angles2 - 90.0);  // test ODF beta angle problem
     double sinCsiSample = MoreMath.sind(sampleAngles[1]);
     double cosCsiSample = MoreMath.cosd(sampleAngles[1]);
     double sinCsi = MoreMath.sind(tilting_angles1);
@@ -743,22 +749,9 @@ public class Geometry extends XRDcat {
    * for the azimuthal and polar angles.
    */
 
-  public void computeActiveTextureAngles(double[][] tilting_angles, double[] sampleAngles, double position) {
-/*    if (Constants.useAltivec)
-      JNIAltivec.vComputeTextureAngles(tilting_angles[0],
-              tilting_angles[1],
-              tilting_angles[2],
-              tilting_angles[3],
-              sampleAngles, position);
-    else if (Constants.nativeComputation)
-      JNIAltivec.sComputeTextureAngles(tilting_angles[0],
-              tilting_angles[1],
-              tilting_angles[2],
-              tilting_angles[3],
-              sampleAngles, position);
-    else   */
+/*  public void computeActiveTextureAngles(double[][] tilting_angles, double[] sampleAngles, double position) {
       computeTextureAngles(tilting_angles, sampleAngles, position);
-  }
+  }*/
 
   /**
    * Called by computeActiveTextureAngles, this is the pure Java implementation of routine to
@@ -772,7 +765,7 @@ public class Geometry extends XRDcat {
    * for the azimuthal and polar angles.
    */
 
-  public void computeTextureAngles(double[][] tilting_angles, double[] sampleAngles, double position) {
+/*  public void computeTextureAngles(double[][] tilting_angles, double[] sampleAngles, double position) {
     // tilting_angles[0][] = Omega
     // tilting_angles[1][] = Chi
     // tilting_angles[2][] = Phi
@@ -798,8 +791,8 @@ public class Geometry extends XRDcat {
       tilting_angles[2][i] += sampleAngles[2];
       double sinOmega = Math.sin(tilting_angles[0][i]);
       double cosOmega = Math.cos(tilting_angles[0][i]);
-      double sinPhi = Math.sin(tilting_angles[2][i]);
-      double cosPhi = Math.cos(tilting_angles[2][i]);
+      double sinPhi = Math.sin(tilting_angles[2][i] - Constants.PI_2);  // test ODF beta angle problem
+      double cosPhi = Math.cos(tilting_angles[2][i] - Constants.PI_2);  // test ODF beta angle problem
       double sinCsi = Math.sin(tilting_angles[1][i]);
       double cosCsi = Math.cos(tilting_angles[1][i]);
       double sinEta = Math.sin(tilting_angles[3][i]);
@@ -862,7 +855,7 @@ public class Geometry extends XRDcat {
 
     }
 
-  }
+  }*/
 
   /**
    * Return an array of two floats containing the azimuthal and polar angles in pole

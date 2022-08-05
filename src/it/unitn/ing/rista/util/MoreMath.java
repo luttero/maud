@@ -1336,5 +1336,15 @@ end;
 		return res;
 	}
 
+	public static double[][] rotate90anticlockwise(double[][] matrix) {
+		int elements = matrix.length;
+		double[][] rotMatrix = new double[elements][elements];
+
+		for (int i = 0; i < elements; i++)
+			for (int j = 0; j < elements; j++)
+				rotMatrix[i][j] = matrix[i][elements - 1 - j];
+
+		return rotMatrix;
+	}
 
 }

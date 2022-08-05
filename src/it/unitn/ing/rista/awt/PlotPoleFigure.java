@@ -474,9 +474,9 @@ public class PlotPoleFigure extends myJFrame {
 		return numberofPoints * 2;
 	}
 
-	public double[][] getExpPoleFigureGridFake(int numberofPoints, double maxAngle) {
+/*	public double[][] getExpPoleFigureGridFake(int numberofPoints, double maxAngle) {
 		return getPoleFigureGrid(numberofPoints, maxAngle);
-	}
+	}*/
 
 	public static double[][] getExpPoleFigureGrid(double[][] expTextureFactorsAndAngles,
 	                                              int numberofPoints, double maxAngle) {
@@ -621,199 +621,11 @@ public class PlotPoleFigure extends myJFrame {
 		return PFreconstructed;
 	}
 
-	public static double[][] getExpPoleFigureGridOld(double[][] expTextureFactorsAndAngles,
-	                                                 int numberofPoints, double maxAngle) {
-
-		double[][] PFreconstructed = new double[numberofPoints][numberofPoints];
-		if (expTextureFactorsAndAngles != null) {
-			int mode = MaudPreferences.getInteger("plotExpPF.splineMode", 1);
-
-			double x, y;//, r;
-			int numberExpPoints = expTextureFactorsAndAngles[0].length;
-
-			int index = 0;
-			double[][] xyF = new double[3][numberExpPoints];
-			int[] wgt = new int[numberExpPoints];
-			for (int i = 0; i < numberExpPoints; i++) {
-				double projection = Constants.sqrt2 * Math.sin(expTextureFactorsAndAngles[0][i] * Constants.DEGTOPI / 2.0);
-				if (expTextureFactorsAndAngles[0][i] > 90.) {
-					projection = Constants.sqrt2 * Math.sin((180. - expTextureFactorsAndAngles[0][i]) * Constants.DEGTOPI / 2.0);
-				}
-
-				x = projection * Math.cos(expTextureFactorsAndAngles[1][i] * Constants.DEGTOPI);
-				y = projection * Math.sin(expTextureFactorsAndAngles[1][i] * Constants.DEGTOPI);
-
-				boolean overlapped = false;
-				for (int j = 0; j < index; j++) {
-					if (Math.abs(x - xyF[0][j]) < .00001 && Math.abs(y - xyF[1][j]) < .00001) {
-						overlapped = true;
-						xyF[2][j] += expTextureFactorsAndAngles[2][i];
-						wgt[j]++;
-					}
-					if (overlapped)
-						break;
-				}
-				if (!overlapped) {
-					xyF[0][index] = x;
-					xyF[1][index] = y;
-					xyF[2][index] = expTextureFactorsAndAngles[2][i];
-					wgt[index] = 1;
-					index++;
-				}
-			}
-			RealVectors measuredMesh = new DoubleVectors(2, index);
-			double[] expTF = new double[index];
-			for (int i = 0; i < index; i++) {
-				measuredMesh.set(i, 0, xyF[0][i]);
-				measuredMesh.set(i, 1, xyF[1][i]);
-				xyF[2][i] /= wgt[i];
-				expTF[i] = xyF[2][i];
-			}
-			double dxy = 2.0 * maxAngle / numberofPoints;
-			int k = 0;
-			double minDistance = MaudPreferences.getDouble("plotExpPF.minimumDistanceDeg", 5) * Constants.DEGTOPI;
-			minDistance *= minDistance;
-			double maxAngle2 = maxAngle * maxAngle;
-			int maxForInterpolation = MaudPreferences.getInteger("plotExpPF.maxInterpolatedPoints", 50);
-			if (index < numberofPoints) {
-
-				try {
-					ReducedMesh rMesh = new StrictScatteredMesh(measuredMesh);
-					Spline spl = GSplineCreator.createSpline(mode, rMesh, expTF);
-
-					RealVectors interpolatedMesh = new DoubleVectors(2, numberofPoints * numberofPoints);
-					for (int i = 0; i < numberofPoints; i++)
-						for (int j = 0; j < numberofPoints; j++, k++) {
-							x = (i + 0.5) * dxy - maxAngle;
-							y = (j + 0.5) * dxy - maxAngle;
-							interpolatedMesh.set(k, 0, x);
-							interpolatedMesh.set(k, 1, y);
-						}
-					RealPointers interpolatedPoint = new RealPointers(interpolatedMesh);
-
-					k = 0;
-					for (int i = 0; i < numberofPoints; i++)
-						for (int j = 0; j < numberofPoints; j++, k++) {
-							interpolatedPoint.select(k);
-							x = (i + 0.5) * dxy - maxAngle;
-							y = (j + 0.5) * dxy - maxAngle;
-							boolean near = false;
-							if (x * x + y * y <= maxAngle2) {
-								for (int ij = 0; ij < index; ij++) {
-									double dx1 = x - xyF[0][ij];
-									double dy1 = y - xyF[1][ij];
-									if (dx1 * dx1 + dy1 * dy1 < minDistance) {
-										near = true;
-										break;
-									}
-								}
-							}
-							if (near) {
-								PFreconstructed[i][j] = spl.value(interpolatedPoint);
-							} else {
-								PFreconstructed[i][j] = Double.NaN;
-							}
-						}
-				} catch (ru.sscc.util.CalculatingException ce) {
-					ce.printStackTrace();
-				}
-			} else {
-				boolean useSpline = true;
-				if (maxForInterpolation < 0) {
-					maxForInterpolation = -maxForInterpolation;
-					useSpline = false;
-				}
-				if (maxForInterpolation < 2) {
-					maxForInterpolation = 2;
-				}
-				int[] neighboor = new int[maxForInterpolation];
-				double[] distance = new double[maxForInterpolation];
-				for (int i = 0; i < numberofPoints; i++)
-					for (int j = 0; j < numberofPoints; j++, k++) {
-						x = (i + 0.5) * dxy - maxAngle;
-						y = (j + 0.5) * dxy - maxAngle;
-						boolean near = false;
-						for (int h = 0; h < maxForInterpolation; h++)
-							distance[h] = minDistance + 1.0;
-						if (x * x + y * y <= maxAngle2) {
-							for (int ij = 0; ij < index; ij++) {
-								double dx1 = x - xyF[0][ij];
-								double dy1 = y - xyF[1][ij];
-								double dist2 = dx1 * dx1 + dy1 * dy1;
-								if (dist2 < minDistance) {
-									near = true;
-									for (int h = 0; h < maxForInterpolation; h++) {
-										if (dist2 < distance[h]) {
-											for (int g = maxForInterpolation - 1; g > h; g--) {
-												distance[g] = distance[g - 1];
-												neighboor[g] = neighboor[g - 1];
-											}
-											distance[h] = dist2;
-											neighboor[h] = ij;
-											break;
-										}
-									}
-								}
-							}
-						}
-						if (near) {
-
-							int maxNeighboor = 0;
-							for (int h = 0; h < maxForInterpolation; h++)
-								if (distance[h] < minDistance)
-									maxNeighboor++;
-							PFreconstructed[i][j] = Double.NaN;
-							if (useSpline) {
-								try {
-									measuredMesh = new DoubleVectors(2, maxNeighboor);
-									double[] measTF = new double[maxNeighboor];
-									for (int h = 0; h < maxNeighboor; h++) {
-										measuredMesh.set(h, 0, xyF[0][neighboor[h]]);
-										measuredMesh.set(h, 1, xyF[1][neighboor[h]]);
-										measTF[h] = xyF[2][neighboor[h]];
-									}
-									ReducedMesh rMesh = new StrictScatteredMesh(measuredMesh);
-									Spline spl = GSplineCreator.createSpline(mode, rMesh, measTF);
-
-									RealVectors interpolatedMesh = new DoubleVectors(2, 1);
-									interpolatedMesh.set(0, 0, x);
-									interpolatedMesh.set(0, 1, y);
-									RealPointers interpolatedPoint = new RealPointers(interpolatedMesh);
-									interpolatedPoint.select(0);
-									PFreconstructed[i][j] = spl.value(interpolatedPoint);
-								} catch (ru.sscc.util.CalculatingException ce) {
-									ce.printStackTrace();
-								}
-							}
-							if (Double.isNaN(PFreconstructed[i][j])) {
-								double valueIntensity = 0;
-								double weight = 0;
-								for (int h = 0; h < maxNeighboor; h++) {
-									if (distance[h] < 1.0E-9) {
-										valueIntensity = xyF[2][neighboor[h]];
-										weight = 1.0;
-										break;
-									}
-									double partialWeight = 1.0 / Math.sqrt(Math.sqrt(distance[h]));
-									valueIntensity += xyF[2][neighboor[h]] * partialWeight;
-									weight += partialWeight;
-								}
-								PFreconstructed[i][j] = valueIntensity / weight;
-							}
-
-						} else {
-							PFreconstructed[i][j] = Double.NaN;
-						}
-					}
-			}
-		}
-		return PFreconstructed;
-	}
 
 	double[] value = null;
 	double[][] textureAngles = null;
 
-	public double[][] getPoleFigureGrid(int numberofPoints, double maxAngle) {
+/*	public double[][] getPoleFigureGrid(int numberofPoints, double maxAngle) {
 
 		double[][] PFreconstructed = null;
 		try {
@@ -908,7 +720,7 @@ public class PlotPoleFigure extends myJFrame {
 			ce.printStackTrace();
 		}
 		return PFreconstructed;
-	}
+	}*/
 
 	class LimitsDialog extends JDialog {
 
