@@ -613,8 +613,8 @@ public class Geometry extends XRDcat {
     tilting_angles2 += sampleAngles[2];
 //    double sinPhi = MoreMath.sind(tilting_angles2);
 //    double cosPhi = MoreMath.cosd(tilting_angles2);
-	  double sinPhi = MoreMath.sind(tilting_angles2 + 90.0);  // test ODF beta angle problem
-	  double cosPhi = MoreMath.cosd(tilting_angles2 + 90.0);  // test ODF beta angle problem
+	  double sinPhi = MoreMath.sind(tilting_angles2 - 90.0);  // test ODF beta angle problem
+	  double cosPhi = MoreMath.cosd(tilting_angles2 - 90.0);  // test ODF beta angle problem
     double sinCsiSample = MoreMath.sind(sampleAngles[1]);
     double cosCsiSample = MoreMath.cosd(sampleAngles[1]);
     double sinCsi = MoreMath.sind(tilting_angles1);
