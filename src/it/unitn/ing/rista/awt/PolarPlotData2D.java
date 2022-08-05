@@ -256,7 +256,7 @@ public class PolarPlotData2D extends myJFrame {
   public double[][] createGrid(DataFileSet adataset, int numberofPoints,
                                double maxAngle, int zoom, double filterWidth) {
     double PF[][] = null;
-    double[] texture_angles = null;
+//    double[] texture_angles = null;
 
     PF = getDatasetPoleFigureGrid(adataset.getPolarPlotData(), numberofPoints, maxAngle);
 //    if (zoom > 1 && filterWidth < 0.7)

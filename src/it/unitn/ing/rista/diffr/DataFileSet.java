@@ -2984,7 +2984,7 @@ public class DataFileSet extends XRDcat {
       double[][] texture_angles = adfile[i].getTextureAnglesAndIntensityNoBkg(experimental);
       for (int j = 0; j < adfile[i].getNumberOfData(); j++) {
         expTFAndAngles[0][index] = texture_angles[0][j];
-        expTFAndAngles[1][index] = texture_angles[1][j];
+        expTFAndAngles[1][index] = texture_angles[1][j] + 90.0;
         expTFAndAngles[2][index++] = texture_angles[2][j];
       }
       double[] textAngl = adfile[i].getTiltingAngle();
