@@ -517,7 +517,7 @@ public class Reflection {
     if (value == null)
       return new double[numberofPoints][numberofPoints];
 
-    return MoreMath.rotate90anticlockwise(value);
+    return Texture.rotatePoleFigure(value);
   }
 
   public double[] getPoleFigureGrid(double[] x, double[] y) {
@@ -576,7 +576,7 @@ public class Reflection {
       value = strainmodel.getPoleFigureGrid(this, numberofPoints, maxAngle);
     if (value == null)
       return new double[numberofPoints][numberofPoints];
-	  return MoreMath.rotate90anticlockwise(value);
+	  return Texture.rotatePoleFigure(value);
 	}
 
   public double[][] getExpPoleFigureGridStrain(int numberofPoints, double maxAngle) {
@@ -587,7 +587,7 @@ public class Reflection {
       value = strainmodel.getExpPoleFigureGrid(this, numberofPoints, maxAngle);
     if (value == null)
       return new double[numberofPoints][numberofPoints];
-	  return MoreMath.rotate90anticlockwise(value);
+	  return Texture.rotatePoleFigure(value);
   }
 
   public double[][] getShapeAbsorptionPoleFigureGrid(int numberofPoints, double maxAngle, Sample asample) {
@@ -596,7 +596,7 @@ public class Reflection {
       value = asample.getShapeAbsorptionPoleFigureGrid(this, numberofPoints, maxAngle);
     if (value == null)
       return new double[numberofPoints][numberofPoints];
-	  return MoreMath.rotate90anticlockwise(value);
+	  return Texture.rotatePoleFigure(value);
   }
 
 /*  public double getShapeAbsorptionCorrection(DiffrDataFile adatafile, Sample asample) {

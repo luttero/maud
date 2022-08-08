@@ -52,7 +52,10 @@ import fr.ensicaen.odfplot.isometricVisualizer.IsometricFrame;*/
 
 public class Texture extends XRDcat {
 
-  public static String[] prefs = {"texture.ODFdefaultResolution", "texture.PFintegrationStep",
+	public static double rotatePoleFigureDeg = getAngleFromPolarNotation(MaudPreferences.getPref("PlotPF.NWSE", "N"));
+	public static double rotateAlpha = MaudPreferences.getDouble("Texture.phiZero", 0.0);
+
+	public static String[] prefs = {"texture.ODFdefaultResolution", "texture.PFintegrationStep",
                                   "texture.fiberTextureGenStep", "texture.defaultTubeRadius",
                                   "texture.defaultTubeProjectionStatus", "texture.minimumPFIntensity",
                                   "texture.storeConversionInMemory", "texture.startingExponent"
@@ -88,7 +91,16 @@ public class Texture extends XRDcat {
   public Texture() {
   }
 
-  public void saveTextureFactor(Phase aphase, Sample asample) {
+	public void checkConsistencyForVersion(double version) {
+  	   if (version < 2.995) {
+  	   	rotateODFBy(270, 0, 0, 1 , 1, 1);
+      }
+	}
+
+	public void rotateODFBy(double alpha, double beta, double gamma, int multAlpha, int multBeta, int multGamma) {
+	}
+
+	public void saveTextureFactor(Phase aphase, Sample asample) {
     FilePar aparFile = getFilePar();
     if (!aparFile.isTextureComputationPermitted() || !Constants.textureOutput)
       return;
@@ -525,7 +537,47 @@ public class Texture extends XRDcat {
     }
   }
 
-  public JOptionsDialog getOptionsDialog(Frame parent) {
+  public static double getAngleFromPolarNotation(String orientation) {
+		if (orientation.toLowerCase().startsWith("e"))
+		  return 0.0;
+	  if (orientation.toLowerCase().startsWith("w"))
+		  return 180.0;
+	  if (orientation.toLowerCase().startsWith("s"))
+		  return 270.0;
+	  return 90.0;  // North
+  }
+
+	public static double[][] rotatePoleFigure(double[][] matrix) {
+		String orientation = MaudPreferences.getPref("PlotPF.NWSE", "N");
+
+		if (orientation.toLowerCase().startsWith("e"))
+			return matrix;
+
+		int elements = matrix.length;
+		double[][] rotMatrix = new double[elements][elements];
+
+		if (orientation.toLowerCase().startsWith("w")) {
+			for (int i = 0; i < elements; i++)
+				for (int j = 0; j < elements; j++)
+					rotMatrix[i][j] = matrix[i][elements - 1 - j];
+			return rotMatrix;
+		}
+		if (orientation.toLowerCase().startsWith("s")) {
+			for (int i = 0; i < elements; i++)
+				for (int j = 0; j < elements; j++)
+					rotMatrix[i][j] = matrix[elements - 1 - j][elements - 1 - i];
+			return rotMatrix;
+		}
+
+// North
+		for (int i = 0; i < elements; i++)
+			for (int j = 0; j < elements; j++)
+				rotMatrix[i][j] = matrix[j][elements - 1 - i];
+
+		return rotMatrix;
+	}
+
+	public JOptionsDialog getOptionsDialog(Frame parent) {
     JOptionsDialog adialog = new JTextureOptionsD(parent, this);
     return adialog;
   }

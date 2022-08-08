@@ -145,7 +145,20 @@ public class StandardFunctionTexture extends Texture {
     refreshComputation = true;
   }
 
-  public void notifyParameterChanged(Parameter source) {
+	public void rotateODFBy(double alpha, double beta, double gamma, int multAlpha, int multBeta, int multGamma) {
+		int numberOfFiberComponent = fiberTextureComponentsNumber();
+		for (int i = 0; i < numberOfFiberComponent; i++) {
+			FiberTextureComponent fiberComp = getFiberTextureComponent(i);
+			fiberComp.rotateODFBy(alpha, beta, gamma, multAlpha, multBeta, multGamma);
+		}
+		int numberOfSphericalComponent = sphericalTextureComponentsNumber();
+		for (int i = 0; i < numberOfSphericalComponent; i++) {
+			SphericalTextureComponent sphericalComp = getSphericalTextureComponent(i);
+			sphericalComp.rotateODFBy(alpha, beta, gamma, multAlpha, multBeta, multGamma);
+		}
+	}
+
+	public void notifyParameterChanged(Parameter source) {
     FilePar filepar = getFilePar();
     if ((filepar != null && !filepar.isLoadingFile()) && isAbilitatetoRefresh) {
       if (parameterField != null)

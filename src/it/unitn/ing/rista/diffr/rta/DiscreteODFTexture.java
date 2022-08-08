@@ -20,7 +20,6 @@
 
 package it.unitn.ing.rista.diffr.rta;
 
-import it.unitn.ing.rista.awt.principalJFrame;
 import it.unitn.ing.rista.diffr.*;
 import it.unitn.ing.rista.util.*;
 import it.unitn.ing.rista.io.cif.*;
@@ -82,6 +81,9 @@ public class DiscreteODFTexture extends Texture {
   public int sampleSymmetryValue = 0;
   int[] poleFigureIndex;
   int numberOfPoleFigureIzoveri = 0;
+  boolean needToRotate = false;
+  double[] anglesToRotate = new double[3];
+  int[] multAngles = new int[3];
 
   public DiscreteODFTexture(XRDcat obj, String alabel) {
     super(obj, alabel);
@@ -108,19 +110,98 @@ public class DiscreteODFTexture extends Texture {
   }
 
   public void sharpODF(double exponent) {
-
     if (odf == null) // || odfnotLoaded)
       return;
       for (int ng = 0; ng < alphama; ng++) {
         for (int nb = 0; nb < betama; nb++) {
           for (int na = 0; na < alphama; na++) {
-            odf[na][nb][ng] = (double) Math.pow(odf[na][nb][ng], exponent);
+            odf[na][nb][ng] = Math.pow(odf[na][nb][ng], exponent);
           }
         }
       }
   }
 
-  public void writeCustomObject(BufferedWriter out) {
+	public void rotateODFBy(double alpha, double beta, double gamma, int multAlpha, int multBeta, int multGamma) {
+		if (odf == null) {// || odfnotLoaded)
+			needToRotate = true;
+			anglesToRotate[0] = alpha;
+			anglesToRotate[1] = beta;
+			anglesToRotate[2] = gamma;
+			multAngles[0] = multAlpha;
+			multAngles[1] = multBeta;
+			multAngles[2] = multGamma;
+			return;
+		}
+		System.out.println("Legagy ODF, rotate by: " + alpha + " " + beta + " " + gamma);
+		textureInitialization();
+		double[][][] odfOr = new double[alphama][betama][alphama];
+		for (int ng = 0; ng < alphama; ng++) {
+			for (int nb = 0; nb < betama; nb++) {
+				for (int na = 0; na < alphama; na++) {
+					odfOr[na][nb][ng] = odf[na][nb][ng];
+				}
+			}
+		}
+
+		// rotate by alpha
+		if (alpha != 0 || multAlpha != 1) {
+			int cellStep = (int) (alpha / resolution);
+			for (int ng = 0; ng < alphama; ng++) {
+				for (int nb = 0; nb < betama; nb++) {
+					for (int na = 0; na < alphama; na++) {
+						int na1 = multAlpha * na + cellStep;
+						while (na1 >= alphama)
+							na1 -= alphama;
+						while (na1 < 0)
+							na1 += alphama;
+						odfOr[na1][nb][ng] = odf[na][nb][ng];
+					}
+				}
+			}
+		}
+
+		// rotate by beta
+		if (beta != 0 || multBeta != 1) {
+			int cellStep = (int) (beta / resolution);
+			for (int ng = 0; ng < alphama; ng++) {
+				for (int nb = 0; nb < betama; nb++) {
+					int nb1 = nb + cellStep;
+					if (nb1 >= betama)
+						nb1 -= betama;
+					for (int na = 0; na < alphama; na++) {
+						odfOr[na][nb1][ng] = odf[na][nb][ng];
+					}
+				}
+			}
+		}
+
+		// rotate by gamma
+		if (gamma != 0 || multGamma != 1) {
+			int cellStep = (int) (gamma / resolution);
+			for (int ng = 0; ng < alphama; ng++) {
+				int ng1 = multGamma * ng + cellStep;
+				while (ng1 >= alphama)
+					ng1 -= alphama;
+				while (ng1 < 0)
+					ng1 += alphama;
+				for (int nb = 0; nb < betama; nb++) {
+					for (int na = 0; na < alphama; na++) {
+						odfOr[na][nb][ng1] = odf[na][nb][ng];
+					}
+				}
+			}
+		}
+
+		for (int ng = 0; ng < alphama; ng++) {
+			for (int nb = 0; nb < betama; nb++) {
+				for (int na = 0; na < alphama; na++) {
+					odf[na][nb][ng] = odfOr[na][nb][ng];
+				}
+			}
+		}
+	}
+
+	public void writeCustomObject(BufferedWriter out) {
 
     if (odf == null) // || odfnotLoaded)
       return;
@@ -214,6 +295,10 @@ public class DiscreteODFTexture extends Texture {
     }
 
     fiottu();
+    if (needToRotate) {
+    	rotateODFBy(anglesToRotate[0], anglesToRotate[1], anglesToRotate[2], multAngles[0], multAngles[1], multAngles[2]);
+    	needToRotate = false;
+    }
 /*		if (theobj != null)
 			theobj.readall(ciffile);*/
   }

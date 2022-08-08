@@ -26,8 +26,7 @@ import it.unitn.ing.rista.util.*;
 
 import javax.swing.*;
 import java.awt.*;
-
-import static java.lang.Math.abs;
+import java.lang.Math;
 
 
 /**
@@ -193,7 +192,7 @@ public class Geometry extends XRDcat {
     double cosnu = MoreMath.cosd(nu);
     double sinnu = MoreMath.sind(nu);
     double cosk = 1.0;
-    if (abs(cosnu) > 1.0E-9)
+    if (Math.abs(cosnu) > 1.0E-9)
       cosk = MoreMath.cosd(twotheta) / cosnu;
     double sink = Math.sqrt(1.0 - cosk * cosk);
 
@@ -205,7 +204,7 @@ public class Geometry extends XRDcat {
     double costhetay = MoreMath.cosd(90.0 - thetayprime + tilting_angles1) * MoreMath.cosd(phiyprime - tilting_angles0);
     double thetay = MoreMath.acosd(costhetay);
     double sinphiy = 0.0;
-    if (abs(costhetay) < 0.999999999)
+    if (Math.abs(costhetay) < 0.999999999)
       sinphiy = MoreMath.sind(90.0 - thetayprime + tilting_angles1) / MoreMath.sind(thetay);
     double phiy = MoreMath.asind(sinphiy);
 
@@ -280,8 +279,8 @@ public class Geometry extends XRDcat {
     tilting_angles2 += sampleAngles[2];
 //    double sinPhi = MoreMath.sind(tilting_angles2);
 //    double cosPhi = MoreMath.cosd(tilting_angles2);
-	  double sinPhi = MoreMath.sind(tilting_angles2 - 90.0);  // test ODF beta angle problem
-	  double cosPhi = MoreMath.cosd(tilting_angles2 - 90.0);  // test ODF beta angle problem
+	  double sinPhi = MoreMath.sind(tilting_angles2 + Texture.rotateAlpha);  // test ODF beta angle problem
+	  double cosPhi = MoreMath.cosd(tilting_angles2 + Texture.rotateAlpha);  // test ODF beta angle problem
     double sinCsiSample = MoreMath.sind(sampleAngles[1]);
     double cosCsiSample = MoreMath.cosd(sampleAngles[1]);
     double sinCsi = MoreMath.sind(tilting_angles1);
@@ -301,19 +300,21 @@ public class Geometry extends XRDcat {
 	    double cc_OT = cosOmega*cosTheta;
 	    double ccc_EOT = cosEta*cc_OT;
 	    double cs_TE = cosTheta*sinEta;
-	    double k1 = ss_OT + ccc_EOT;
+	    double k1 = ss_OT + ccc_EOT;   // (ss_OT + ccc_EOT)
 	    double sk1 = sinCsi*k1;
 	    double ccs_CTE = cosCsi*cs_TE;
-	    double sk1_c = sk1 + ccs_CTE;
-	    double cs_cs = cs_OT - ccs_ETO;
-	    double k2 = cosCsi*k1 - sinCsi*cs_TE;
-	    double k3 = sinPhi*sk1_c - cosPhi*cs_cs;
-	    double k4 = cosPhi*sk1_c + sinPhi*cs_cs;
-	    double k5 = sinCsiSample*k4 - cosCsiSample*k2;
+	    double sk1_c = sk1 + ccs_CTE;  // (sk1 + ccs_CTE)
+	    double cs_cs = cs_OT - ccs_ETO; // (cs_OT - ccs_ETO)
+	    double k2 = cosCsi*k1 - sinCsi*cs_TE;  // (cosCsi*k1 - sinCsi*cs_TE)
+	    double k3 = sinPhi*sk1_c - cosPhi*cs_cs;  // (sinPhi*sk1_c - cosPhi*cs_cs)
+	    double k4 = cosPhi*sk1_c + sinPhi*cs_cs;  // (cosPhi*sk1_c + sinPhi*cs_cs)
+	    double k5 = sinCsiSample*k4 - cosCsiSample*k2;  // (sinCsiSample*k4 - cosCsiSample*k2)
 
-	    double m31 = cosOmegaSample*k3 - sinOmegaSample*k5; //cosOmegaSample*k3 + sinOmegaSample*k5; // sin(Alpha)*sin(Beta)
-	    double m32 = cosCsiSample*k4 + sinCsiSample*k2; // - cosCsiSample*k4 - sinCsiSample*k2; // -cos(Alpha)*sin(Beta)
-	    double m33 = - sinOmegaSample*k3 - cosOmegaSample*k5; // sinOmegaSample*k3 - cosOmegaSample*k5; // cos(Beta)
+	    double m31 = cosOmegaSample*k3 - sinOmegaSample*k5;
+	    double m32 = cosCsiSample*k4 + sinCsiSample*k2;
+	    double m33 = - sinOmegaSample*k3 - cosOmegaSample*k5;
+
+//	    m31 = -cos(Alpha)*sin(Beta), m32 = sin(Alpha)*sin(Beta), m33 = cos(Beta)
 
 	    if (m33 > 0.999999999) {
 		    textureAngles[0] = 0.0; // Beta
@@ -322,16 +323,16 @@ public class Geometry extends XRDcat {
 		    textureAngles[0] = 180.0; // Beta
 		    textureAngles[1] = 0.0; // Alpha
 	    } else {
-		    textureAngles[0] = MoreMath.acosd(m33);
+		    textureAngles[0] = MoreMath.acosd(m33);   // 0 to pi
 		    // sin(Beta) != 0
-		    if (m32 < 1.0E-9 && m32 > -1.0E-9) {  // sin(Alpha) == 0
-			    if (m31 >= 0.0)
+		    if (m31 < 1.0E-9 && m31 > -1.0E-9) {  // cos(Alpha) == 0
+			    if (m32 >= 0.0) // && (textureAngles[0] >= 0 && textureAngles[0] <= 180)) || (m32 < 0.0 && (textureAngles[0] < 0 || textureAngles[0] > 180)))
 				    textureAngles[1] = 90.0;
 			    else
 				    textureAngles[1] = 270.0;
-		    } else {
-			    textureAngles[1] = MoreMath.atand(-m31 / m32);
-			    if (m32 > 0.0)
+		    } else {   // cos(Alpha) != 0
+			    textureAngles[1] = MoreMath.atand(-m32 / m31);  // -pi/2  to pi/2
+			    if (m31 >= 0.0) // && textureAngles[0] >= 0) || (m32 < 0.0 && (textureAngles[0] < 0 || textureAngles[0] > 180)))
 				    textureAngles[1] += 180.0;
 			    if (textureAngles[1] < 0.0)
 				    textureAngles[1] += 360.0;
@@ -371,7 +372,7 @@ public class Geometry extends XRDcat {
 
 
 //    System.out.println("M13, M23: " + M13 + " " + M23);
-	    if (abs(M13) < 1.0E-9) {
+	    if (Math.abs(M13) < 1.0E-9) {
 		    if (M23 >= 0.0)
 			    textureAngles[1] = 90.0;
 		    else
@@ -382,7 +383,7 @@ public class Geometry extends XRDcat {
 		    else
 			    textureAngles[1] = 0.0;
 	    } else {
-		    if (abs(M23) < 1.0E-9)
+		    if (Math.abs(M23) < 1.0E-9)
 			    M23 = 0.0;
 		    textureAngles[1] = -MoreMath.atand(M23 / M13);
 		    if (M13 > 0.0)
@@ -437,8 +438,8 @@ public class Geometry extends XRDcat {
      tilting_angles2 += sampleAngles[2];
 //    double sinPhi = MoreMath.sind(tilting_angles2);
 //    double cosPhi = MoreMath.cosd(tilting_angles2);
-	  double sinPhi = MoreMath.sind(tilting_angles2 - 90.0);  // test ODF beta angle problem
-	  double cosPhi = MoreMath.cosd(tilting_angles2 - 90.0);  // test ODF beta angle problem
+	  double sinPhi = MoreMath.sind(tilting_angles2 + Texture.rotateAlpha);  // test ODF beta angle problem
+	  double cosPhi = MoreMath.cosd(tilting_angles2 + Texture.rotateAlpha);  // test ODF beta angle problem
      double sinCsiSample = MoreMath.sind(sampleAngles[1]);
      double cosCsiSample = MoreMath.cosd(sampleAngles[1]);
      double sinCsi = MoreMath.sind(tilting_angles1);
@@ -462,19 +463,19 @@ public class Geometry extends XRDcat {
 			  double cc_OT = cosOmega*cosTheta;
 			  double ccc_EOT = cosEta*cc_OT;
 			  double cs_TE = cosTheta*sinEta;
-			  double k1 = ss_OT + ccc_EOT;
+			  double k1 = ss_OT + ccc_EOT;   // (ss_OT + ccc_EOT)
 			  double sk1 = sinCsi*k1;
 			  double ccs_CTE = cosCsi*cs_TE;
-			  double sk1_c = sk1 + ccs_CTE;
-			  double cs_cs = cs_OT - ccs_ETO;
-			  double k2 = cosCsi*k1 - sinCsi*cs_TE;
-			  double k3 = sinPhi*sk1_c - cosPhi*cs_cs;
-			  double k4 = cosPhi*sk1_c + sinPhi*cs_cs;
-			  double k5 = sinCsiSample*k4 - cosCsiSample*k2;
+			  double sk1_c = sk1 + ccs_CTE;  // (sk1 + ccs_CTE)
+			  double cs_cs = cs_OT - ccs_ETO; // (cs_OT - ccs_ETO)
+			  double k2 = cosCsi*k1 - sinCsi*cs_TE;  // (cosCsi*k1 - sinCsi*cs_TE)
+			  double k3 = sinPhi*sk1_c - cosPhi*cs_cs;  // (sinPhi*sk1_c - cosPhi*cs_cs)
+			  double k4 = cosPhi*sk1_c + sinPhi*cs_cs;  // (cosPhi*sk1_c + sinPhi*cs_cs)
+			  double k5 = sinCsiSample*k4 - cosCsiSample*k2;  // (sinCsiSample*k4 - cosCsiSample*k2)
 
-			  double m31 = cosOmegaSample*k3 - sinOmegaSample*k5; //cosOmegaSample*k3 + sinOmegaSample*k5; // sin(Alpha)*sin(Beta)
-			  double m32 = cosCsiSample*k4 + sinCsiSample*k2; // - cosCsiSample*k4 - sinCsiSample*k2; // -cos(Alpha)*sin(Beta)
-			  double m33 = - sinOmegaSample*k3 - cosOmegaSample*k5; // sinOmegaSample*k3 - cosOmegaSample*k5; // cos(Beta)
+			  double m31 = cosOmegaSample*k3 - sinOmegaSample*k5;
+			  double m32 = cosCsiSample*k4 + sinCsiSample*k2;
+			  double m33 = - sinOmegaSample*k3 - cosOmegaSample*k5;
 
 			  if (m33 > 0.999999999) {
 				  textureAngles[0][i] = 0.0; // Beta
@@ -483,16 +484,16 @@ public class Geometry extends XRDcat {
 				  textureAngles[0][i] = 180.0; // Beta
 				  textureAngles[1][i] = 0.0; // Alpha
 			  } else {
-				  textureAngles[0][i] = MoreMath.acosd(m33);
+				  textureAngles[0][i] = MoreMath.acosd(m33);   // 0 to pi
 				  // sin(Beta) != 0
-				  if (m32 < 1.0E-9 && m32 > -1.0E-9) {  // sin(Alpha) == 0
-					  if (m31 >= 0.0)
+				  if (m31 < 1.0E-9 && m31 > -1.0E-9) {  // cos(Alpha) == 0
+					  if (m32 >= 0.0) // && (textureAngles[0][i] >= 0 && textureAngles[0][i] <= 180)) || (m32 < 0.0 && (textureAngles[0][i] < 0 || textureAngles[0] > 180)))
 						  textureAngles[1][i] = 90.0;
 					  else
 						  textureAngles[1][i] = 270.0;
-				  } else {
-					  textureAngles[1][i] = MoreMath.atand(-m31 / m32);
-					  if (m32 > 0.0)
+				  } else {   // cos(Alpha) != 0
+					  textureAngles[1][i] = MoreMath.atand(-m32 / m31);  // -pi/2  to pi/2
+					  if (m31 >= 0.0) // && textureAngles[0] >= 0) || (m32 < 0.0 && (textureAngles[0][i] < 0 || textureAngles[0][i] > 180)))
 						  textureAngles[1][i] += 180.0;
 					  if (textureAngles[1][i] < 0.0)
 						  textureAngles[1][i] += 360.0;
@@ -536,9 +537,9 @@ public class Geometry extends XRDcat {
 			  double cosPsi = -(const3 * cosOmega - const2 * sinOmega) * sinTheta + (const4 * sinEta +
 					  (const3 * sinOmega + const2 * cosOmega) * cosEta) * cosTheta; // res[2][2];
 
-			  if (abs(M23) < 1.0E-9)
+			  if (Math.abs(M23) < 1.0E-9)
 				  M23 = 0.0;
-			  if (abs(M13) < 1.0E-9) {
+			  if (Math.abs(M13) < 1.0E-9) {
 				  if (M23 >= 0.0)
 					  textureAngles[1][i] = 90.0f;
 				  else
@@ -613,8 +614,8 @@ public class Geometry extends XRDcat {
     tilting_angles2 += sampleAngles[2];
 //    double sinPhi = MoreMath.sind(tilting_angles2);
 //    double cosPhi = MoreMath.cosd(tilting_angles2);
-	  double sinPhi = MoreMath.sind(tilting_angles2 - 90.0);  // test ODF beta angle problem
-	  double cosPhi = MoreMath.cosd(tilting_angles2 - 90.0);  // test ODF beta angle problem
+	  double sinPhi = MoreMath.sind(tilting_angles2 + Texture.rotateAlpha);  // test ODF beta angle problem
+	  double cosPhi = MoreMath.cosd(tilting_angles2 + Texture.rotateAlpha);  // test ODF beta angle problem
     double sinCsiSample = MoreMath.sind(sampleAngles[1]);
     double cosCsiSample = MoreMath.cosd(sampleAngles[1]);
     double sinCsi = MoreMath.sind(tilting_angles1);
@@ -634,19 +635,19 @@ public class Geometry extends XRDcat {
 		  double cc_OT = cosOmega*cosTheta;
 		  double ccc_EOT = cosEta*cc_OT;
 		  double cs_TE = cosTheta*sinEta;
-		  double k1 = ss_OT + ccc_EOT;
+		  double k1 = ss_OT + ccc_EOT;   // (ss_OT + ccc_EOT)
 		  double sk1 = sinCsi*k1;
 		  double ccs_CTE = cosCsi*cs_TE;
-		  double sk1_c = sk1 + ccs_CTE;
-		  double cs_cs = cs_OT - ccs_ETO;
-		  double k2 = cosCsi*k1 - sinCsi*cs_TE;
-		  double k3 = sinPhi*sk1_c - cosPhi*cs_cs;
-		  double k4 = cosPhi*sk1_c + sinPhi*cs_cs;
-		  double k5 = sinCsiSample*k4 - cosCsiSample*k2;
+		  double sk1_c = sk1 + ccs_CTE;  // (sk1 + ccs_CTE)
+		  double cs_cs = cs_OT - ccs_ETO; // (cs_OT - ccs_ETO)
+		  double k2 = cosCsi*k1 - sinCsi*cs_TE;  // (cosCsi*k1 - sinCsi*cs_TE)
+		  double k3 = sinPhi*sk1_c - cosPhi*cs_cs;  // (sinPhi*sk1_c - cosPhi*cs_cs)
+		  double k4 = cosPhi*sk1_c + sinPhi*cs_cs;  // (cosPhi*sk1_c + sinPhi*cs_cs)
+		  double k5 = sinCsiSample*k4 - cosCsiSample*k2;  // (sinCsiSample*k4 - cosCsiSample*k2)
 
-		  double m31 = cosOmegaSample*k3 - sinOmegaSample*k5; //cosOmegaSample*k3 + sinOmegaSample*k5; // sin(Alpha)*sin(Beta)
-		  double m32 = cosCsiSample*k4 + sinCsiSample*k2; // - cosCsiSample*k4 - sinCsiSample*k2; // -cos(Alpha)*sin(Beta)
-		  double m33 = - sinOmegaSample*k3 - cosOmegaSample*k5; // sinOmegaSample*k3 - cosOmegaSample*k5; // cos(Beta)
+		  double m31 = cosOmegaSample*k3 - sinOmegaSample*k5;
+		  double m32 = cosCsiSample*k4 + sinCsiSample*k2;
+		  double m33 = - sinOmegaSample*k3 - cosOmegaSample*k5;
 
 		  if (m33 > 0.999999999) {
 			  textureAngles[0] = 0.0; // Beta
@@ -655,16 +656,16 @@ public class Geometry extends XRDcat {
 			  textureAngles[0] = Constants.PI; // Beta
 			  textureAngles[1] = 0.0; // Alpha
 		  } else {
-			  textureAngles[0] = Math.acos(m33);
+			  textureAngles[0] = Math.acos(m33);   // 0 to pi
 			  // sin(Beta) != 0
-			  if (m32 < 1.0E-9 && m32 > -1.0E-9) {  // sin(Alpha) == 0
-				  if (m31 >= 0.0)
+			  if (m31 < 1.0E-9 && m31 > -1.0E-9) {  // cos(Alpha) == 0
+				  if (m32 >= 0.0) // && (textureAngles[0] >= 0 && textureAngles[0] <= 180)) || (m32 < 0.0 && (textureAngles[0] < 0 || textureAngles[0] > 180)))
 					  textureAngles[1] = Constants.PI_2;
 				  else
 					  textureAngles[1] = Constants.PI_2 + Constants.PI;
-			  } else {
-				  textureAngles[1] = Math.atan(-m31 / m32);
-				  if (m32 > 0.0)
+			  } else {   // cos(Alpha) != 0
+				  textureAngles[1] = Math.atan(-m32 / m31);  // -pi/2  to pi/2
+				  if (m31 >= 0.0) // && textureAngles[0] >= 0) || (m32 < 0.0 && (textureAngles[0] < 0 || textureAngles[0] > 180)))
 					  textureAngles[1] += Constants.PI;
 				  if (textureAngles[1] < 0.0)
 					  textureAngles[1] += Constants.PI2;
@@ -700,9 +701,9 @@ public class Geometry extends XRDcat {
 		  double cosPsi = -(const3 * cosOmega - const2 * sinOmega) * sinTheta + (const4 * sinEta +
 				  (const3 * sinOmega + const2 * cosOmega) * cosEta) * cosTheta; // res[2][2];
 
-		  if (abs(M23) < 1.0E-9)
+		  if (Math.abs(M23) < 1.0E-9)
 			  M23 = 0.0;
-		  if (abs(M13) < 1.0E-9) {
+		  if (Math.abs(M13) < 1.0E-9) {
 			  if (M23 >= 0.0)
 				  textureAngles[1] = Constants.PI_2;
 			  else
@@ -1015,7 +1016,7 @@ public class Geometry extends XRDcat {
   public double LorentzPolarization(DiffrDataFile adatafile, Sample asample, double position,
                                     boolean dspacingbase, boolean energyDispersive) {
     position *= degtopi2;
-    return abs(polarization(adatafile, position) * Lorentz(adatafile, position));
+    return Math.abs(polarization(adatafile, position) * Lorentz(adatafile, position));
   }
 
   public double Lorentz(DiffrDataFile adatafile, double position) {
@@ -1166,3 +1167,282 @@ public class Geometry extends XRDcat {
   }
 
 }
+
+/*
+
+Matlab + verification
+
+% define rotation matrices
+
+syms OmegaSample Omega real
+syms CsiSample Csi real
+syms Phi real
+syms Theta Eta real
+
+% omega, omega_s rotate around Y
+% OmegaSample: rotation is CW for omega, thus negative, but in omega_s we
+% rotate the coordinate system, so OmegaSample become CW, positive
+m_omega = [ cos(Omega) 0 -sin(Omega) ; 0 1 0 ; sin(Omega) 0 cos(Omega) ]
+m_omega_s = [ cos(OmegaSample) 0 -sin(OmegaSample) ; 0 1 0 ; sin(OmegaSample) 0 cos(OmegaSample) ]
+
+% csi (csi), csi_s rotate around X
+% CsiSample: rotation is CCW for csi, thus positive, but in csi_s we
+% rotate the coordinate system, so CsiSample become CCW, negative
+m_csi = [ 1 0 0; 0 cos(Csi) -sin(Csi) ; 0 sin(Csi) cos(Csi) ]
+m_csi_s = [ 1 0 0; 0 cos(CsiSample) -sin(CsiSample) ; 0 sin(CsiSample) cos(CsiSample) ]
+
+% phi, phi_s rotate around Z
+% CsiSample: rotation is CCW for phi, thus positive, but in phi_s we
+% rotate the coordinate system, so PhiSample become CCW, negative
+% syms PhiSample Phi real
+% m_phi = [ cos(Phi) sin(Phi) 0 ; -sin(Phi) cos(Phi) 0 ; 0 0 1 ]
+% m_phi_s = [ cos(PhiSample) -sin(PhiSample) 0 ; sin(PhiSample) cos(PhiSample) 0 ; 0 0 1 ]
+% Phi = Phi + PhiSample        new definition
+m_phi = [ cos(Phi) -sin(Phi) 0 ; sin(Phi) cos(Phi) 0 ; 0 0 1 ]
+
+% theta, rotates around Y CW, hence negative
+% eta, rotates around X CW, hence negative
+m_theta = [ cos(Theta) 0 sin(Theta) ; 0 1 0 ; -sin(Theta) 0 cos(Theta) ]
+m_eta = [ 1 0 0; 0 cos(Eta) -sin(Eta) ; 0 sin(Eta) cos(Eta) ]
+
+%M = m_theta * m_eta * m_omega * m_csi * m_phi * m_phi_s * m_csi_s * m_omega_s
+M = m_theta * m_eta * m_omega * m_csi * m_phi * m_csi_s * m_omega_s
+%M = m_omega_s * m_csi_s * m_phi * m_csi * m_omega * m_eta * m_theta
+
+% pole figure angles alpha (0-360), beta (0-90)
+% alpha, rotates around Z CCW, hence positive
+% beta, rotates around X CCW, hence positive, X is up in the pole figure
+syms Alpha Beta Gamma real
+m_alpha = [ cos(Alpha) -sin(Alpha) 0 ; sin(Alpha) cos(Alpha) 0 ; 0 0 1 ]
+m_beta = [ cos(Beta) 0 sin(Beta); 0 1 0; -sin(Beta) 0 cos(Beta) ]
+m_gamma = [ cos(Gamma) -sin(Gamma) 0 ; sin(Gamma) cos(Gamma) 0 ; 0 0 1 ]
+
+M1 =  m_gamma * m_beta * m_alpha
+
+simplify(M(1,1)) % l
+simplify(M(1,2))
+simplify(M(1,3)) % l
+simplify(M(2,1))
+simplify(M(2,2)) % s
+simplify(M(2,3))
+simplify(M(3,1)) % l
+simplify(M(3,2))
+simplify(M(3,3)) % l
+
+Csi = 45 * pi / 180
+CsiSample = 0 * pi / 180
+Omega = 30 * pi / 180
+OmegaSample = 0 * pi / 180
+Phi = 0 * pi / 180
+PhiSample = 0 * pi / 180
+Eta = 0 * pi / 180
+Theta = 30 * pi / 180
+
+Alpha = 90.0 * pi / 180
+Beta = 45 * pi / 180
+Gamma = -90 * pi / 180
+
+eval(M)
+eval(M1)
+
+>> maud_geometry_texture_angles_final
+
+m_omega =
+
+[cos(Omega), 0, -sin(Omega)]
+[         0, 1,           0]
+[sin(Omega), 0,  cos(Omega)]
+
+
+m_omega_s =
+
+[cos(OmegaSample), 0, -sin(OmegaSample)]
+[               0, 1,                 0]
+[sin(OmegaSample), 0,  cos(OmegaSample)]
+
+
+m_csi =
+
+[1,        0,         0]
+[0, cos(Csi), -sin(Csi)]
+[0, sin(Csi),  cos(Csi)]
+
+
+m_csi_s =
+
+[1,              0,               0]
+[0, cos(CsiSample), -sin(CsiSample)]
+[0, sin(CsiSample),  cos(CsiSample)]
+
+
+m_phi =
+
+[cos(Phi), -sin(Phi), 0]
+[sin(Phi),  cos(Phi), 0]
+[       0,         0, 1]
+
+
+m_theta =
+
+[ cos(Theta), 0, sin(Theta)]
+[          0, 1,          0]
+[-sin(Theta), 0, cos(Theta)]
+
+
+m_eta =
+
+[1,        0,         0]
+[0, cos(Eta), -sin(Eta)]
+[0, sin(Eta),  cos(Eta)]
+
+
+M =
+
+[cos(OmegaSample)*(cos(Phi)*(cos(Omega)*cos(Theta) + cos(Eta)*sin(Omega)*sin(Theta)) - sin(Phi)*(sin(Csi)*(cos(Theta)*sin(Omega) - cos(Eta)*cos(Omega)*sin(Theta)) - cos(Csi)*sin(Eta)*sin(Theta))) + sin(OmegaSample)*(sin(CsiSample)*(cos(Phi)*(sin(Csi)*(cos(Theta)*sin(Omega) - cos(Eta)*cos(Omega)*sin(Theta)) - cos(Csi)*sin(Eta)*sin(Theta)) + sin(Phi)*(cos(Omega)*cos(Theta) + cos(Eta)*sin(Omega)*sin(Theta))) - cos(CsiSample)*(cos(Csi)*(cos(Theta)*sin(Omega) - cos(Eta)*cos(Omega)*sin(Theta)) + sin(Csi)*sin(Eta)*sin(Theta))), - cos(CsiSample)*(cos(Phi)*(sin(Csi)*(cos(Theta)*sin(Omega) - cos(Eta)*cos(Omega)*sin(Theta)) - cos(Csi)*sin(Eta)*sin(Theta)) + sin(Phi)*(cos(Omega)*cos(Theta) + cos(Eta)*sin(Omega)*sin(Theta))) - sin(CsiSample)*(cos(Csi)*(cos(Theta)*sin(Omega) - cos(Eta)*cos(Omega)*sin(Theta)) + sin(Csi)*sin(Eta)*sin(Theta)),   cos(OmegaSample)*(sin(CsiSample)*(cos(Phi)*(sin(Csi)*(cos(Theta)*sin(Omega) - cos(Eta)*cos(Omega)*sin(Theta)) - cos(Csi)*sin(Eta)*sin(Theta)) + sin(Phi)*(cos(Omega)*cos(Theta) + cos(Eta)*sin(Omega)*sin(Theta))) - cos(CsiSample)*(cos(Csi)*(cos(Theta)*sin(Omega) - cos(Eta)*cos(Omega)*sin(Theta)) + sin(Csi)*sin(Eta)*sin(Theta))) - sin(OmegaSample)*(cos(Phi)*(cos(Omega)*cos(Theta) + cos(Eta)*sin(Omega)*sin(Theta)) - sin(Phi)*(sin(Csi)*(cos(Theta)*sin(Omega) - cos(Eta)*cos(Omega)*sin(Theta)) - cos(Csi)*sin(Eta)*sin(Theta)))]
+[                                                                                                                                                                                                                          cos(OmegaSample)*(sin(Phi)*(cos(Csi)*cos(Eta) - cos(Omega)*sin(Csi)*sin(Eta)) - cos(Phi)*sin(Eta)*sin(Omega)) - sin(OmegaSample)*(cos(CsiSample)*(cos(Eta)*sin(Csi) + cos(Csi)*cos(Omega)*sin(Eta)) + sin(CsiSample)*(cos(Phi)*(cos(Csi)*cos(Eta) - cos(Omega)*sin(Csi)*sin(Eta)) + sin(Eta)*sin(Omega)*sin(Phi))),                                                                                                                                        cos(CsiSample)*(cos(Phi)*(cos(Csi)*cos(Eta) - cos(Omega)*sin(Csi)*sin(Eta)) + sin(Eta)*sin(Omega)*sin(Phi)) - sin(CsiSample)*(cos(Eta)*sin(Csi) + cos(Csi)*cos(Omega)*sin(Eta)),                                                                                                                                                                                                                           - cos(OmegaSample)*(cos(CsiSample)*(cos(Eta)*sin(Csi) + cos(Csi)*cos(Omega)*sin(Eta)) + sin(CsiSample)*(cos(Phi)*(cos(Csi)*cos(Eta) - cos(Omega)*sin(Csi)*sin(Eta)) + sin(Eta)*sin(Omega)*sin(Phi))) - sin(OmegaSample)*(sin(Phi)*(cos(Csi)*cos(Eta) - cos(Omega)*sin(Csi)*sin(Eta)) - cos(Phi)*sin(Eta)*sin(Omega))]
+[cos(OmegaSample)*(sin(Phi)*(sin(Csi)*(sin(Omega)*sin(Theta) + cos(Eta)*cos(Omega)*cos(Theta)) + cos(Csi)*cos(Theta)*sin(Eta)) - cos(Phi)*(cos(Omega)*sin(Theta) - cos(Eta)*cos(Theta)*sin(Omega))) - sin(OmegaSample)*(sin(CsiSample)*(cos(Phi)*(sin(Csi)*(sin(Omega)*sin(Theta) + cos(Eta)*cos(Omega)*cos(Theta)) + cos(Csi)*cos(Theta)*sin(Eta)) + sin(Phi)*(cos(Omega)*sin(Theta) - cos(Eta)*cos(Theta)*sin(Omega))) - cos(CsiSample)*(cos(Csi)*(sin(Omega)*sin(Theta) + cos(Eta)*cos(Omega)*cos(Theta)) - sin(Csi)*cos(Theta)*sin(Eta))),   cos(CsiSample)*(cos(Phi)*(sin(Csi)*(sin(Omega)*sin(Theta) + cos(Eta)*cos(Omega)*cos(Theta)) + cos(Csi)*cos(Theta)*sin(Eta)) + sin(Phi)*(cos(Omega)*sin(Theta) - cos(Eta)*cos(Theta)*sin(Omega))) + sin(CsiSample)*(cos(Csi)*(sin(Omega)*sin(Theta) + cos(Eta)*cos(Omega)*cos(Theta)) - sin(Csi)*cos(Theta)*sin(Eta)), - sin(OmegaSample)*(sin(Phi)*(sin(Csi)*(sin(Omega)*sin(Theta) + cos(Eta)*cos(Omega)*cos(Theta)) + cos(Csi)*cos(Theta)*sin(Eta)) - cos(Phi)*(cos(Omega)*sin(Theta) - cos(Eta)*cos(Theta)*sin(Omega))) - cos(OmegaSample)*(sin(CsiSample)*(cos(Phi)*(sin(Csi)*(sin(Omega)*sin(Theta) + cos(Eta)*cos(Omega)*cos(Theta)) + cos(Csi)*cos(Theta)*sin(Eta)) + sin(Phi)*(cos(Omega)*sin(Theta) - cos(Eta)*cos(Theta)*sin(Omega))) - cos(CsiSample)*(cos(Csi)*(sin(Omega)*sin(Theta) + cos(Eta)*cos(Omega)*cos(Theta)) - sin(Csi)*cos(Theta)*sin(Eta)))]
+
+
+m_alpha =
+
+[cos(Alpha), -sin(Alpha), 0]
+[sin(Alpha),  cos(Alpha), 0]
+[         0,           0, 1]
+
+
+m_beta =
+
+[ cos(Beta), 0, sin(Beta)]
+[         0, 1,         0]
+[-sin(Beta), 0, cos(Beta)]
+
+
+m_gamma =
+
+[cos(Gamma), -sin(Gamma), 0]
+[sin(Gamma),  cos(Gamma), 0]
+[         0,           0, 1]
+
+
+M1 =
+
+[cos(Alpha)*cos(Beta)*cos(Gamma) - sin(Alpha)*sin(Gamma), - cos(Alpha)*sin(Gamma) - cos(Beta)*cos(Gamma)*sin(Alpha), cos(Gamma)*sin(Beta)]
+[cos(Gamma)*sin(Alpha) + cos(Alpha)*cos(Beta)*sin(Gamma),   cos(Alpha)*cos(Gamma) - cos(Beta)*sin(Alpha)*sin(Gamma), sin(Beta)*sin(Gamma)]
+[                                  -cos(Alpha)*sin(Beta),                                      sin(Alpha)*sin(Beta),            cos(Beta)]
+
+
+ans =
+
+cos(OmegaSample)*(cos(Phi)*(cos(Omega)*cos(Theta) + cos(Eta)*sin(Omega)*sin(Theta)) - sin(Phi)*(sin(Csi)*(cos(Theta)*sin(Omega) - cos(Eta)*cos(Omega)*sin(Theta)) - cos(Csi)*sin(Eta)*sin(Theta))) + sin(OmegaSample)*(sin(CsiSample)*(cos(Phi)*(sin(Csi)*(cos(Theta)*sin(Omega) - cos(Eta)*cos(Omega)*sin(Theta)) - cos(Csi)*sin(Eta)*sin(Theta)) + sin(Phi)*(cos(Omega)*cos(Theta) + cos(Eta)*sin(Omega)*sin(Theta))) - cos(CsiSample)*(cos(Csi)*(cos(Theta)*sin(Omega) - cos(Eta)*cos(Omega)*sin(Theta)) + sin(Csi)*sin(Eta)*sin(Theta)))
+
+
+ans =
+
+- cos(CsiSample)*(cos(Phi)*(sin(Csi)*(cos(Theta)*sin(Omega) - cos(Eta)*cos(Omega)*sin(Theta)) - cos(Csi)*sin(Eta)*sin(Theta)) + sin(Phi)*(cos(Omega)*cos(Theta) + cos(Eta)*sin(Omega)*sin(Theta))) - sin(CsiSample)*(cos(Csi)*(cos(Theta)*sin(Omega) - cos(Eta)*cos(Omega)*sin(Theta)) + sin(Csi)*sin(Eta)*sin(Theta))
+
+
+ans =
+
+cos(OmegaSample)*(sin(CsiSample)*(cos(Phi)*(sin(Csi)*(cos(Theta)*sin(Omega) - cos(Eta)*cos(Omega)*sin(Theta)) - cos(Csi)*sin(Eta)*sin(Theta)) + sin(Phi)*(cos(Omega)*cos(Theta) + cos(Eta)*sin(Omega)*sin(Theta))) - cos(CsiSample)*(cos(Csi)*(cos(Theta)*sin(Omega) - cos(Eta)*cos(Omega)*sin(Theta)) + sin(Csi)*sin(Eta)*sin(Theta))) - sin(OmegaSample)*(cos(Phi)*(cos(Omega)*cos(Theta) + cos(Eta)*sin(Omega)*sin(Theta)) - sin(Phi)*(sin(Csi)*(cos(Theta)*sin(Omega) - cos(Eta)*cos(Omega)*sin(Theta)) - cos(Csi)*sin(Eta)*sin(Theta)))
+
+
+ans =
+
+cos(OmegaSample)*(sin(Phi)*(cos(Csi)*cos(Eta) - cos(Omega)*sin(Csi)*sin(Eta)) - cos(Phi)*sin(Eta)*sin(Omega)) - sin(OmegaSample)*(cos(CsiSample)*(cos(Eta)*sin(Csi) + cos(Csi)*cos(Omega)*sin(Eta)) + sin(CsiSample)*(cos(Phi)*(cos(Csi)*cos(Eta) - cos(Omega)*sin(Csi)*sin(Eta)) + sin(Eta)*sin(Omega)*sin(Phi)))
+
+
+ans =
+
+cos(CsiSample)*(cos(Phi)*(cos(Csi)*cos(Eta) - cos(Omega)*sin(Csi)*sin(Eta)) + sin(Eta)*sin(Omega)*sin(Phi)) - sin(CsiSample)*(cos(Eta)*sin(Csi) + cos(Csi)*cos(Omega)*sin(Eta))
+
+
+ans =
+
+- cos(OmegaSample)*(cos(CsiSample)*(cos(Eta)*sin(Csi) + cos(Csi)*cos(Omega)*sin(Eta)) + sin(CsiSample)*(cos(Phi)*(cos(Csi)*cos(Eta) - cos(Omega)*sin(Csi)*sin(Eta)) + sin(Eta)*sin(Omega)*sin(Phi))) - sin(OmegaSample)*(sin(Phi)*(cos(Csi)*cos(Eta) - cos(Omega)*sin(Csi)*sin(Eta)) - cos(Phi)*sin(Eta)*sin(Omega))
+
+
+ans =
+
+cos(OmegaSample)*(sin(Phi)*(sin(Csi)*(sin(Omega)*sin(Theta) + cos(Eta)*cos(Omega)*cos(Theta)) + cos(Csi)*cos(Theta)*sin(Eta)) - cos(Phi)*(cos(Omega)*sin(Theta) - cos(Eta)*cos(Theta)*sin(Omega))) - sin(OmegaSample)*(sin(CsiSample)*(cos(Phi)*(sin(Csi)*(sin(Omega)*sin(Theta) + cos(Eta)*cos(Omega)*cos(Theta)) + cos(Csi)*cos(Theta)*sin(Eta)) + sin(Phi)*(cos(Omega)*sin(Theta) - cos(Eta)*cos(Theta)*sin(Omega))) - cos(CsiSample)*(cos(Csi)*(sin(Omega)*sin(Theta) + cos(Eta)*cos(Omega)*cos(Theta)) - sin(Csi)*cos(Theta)*sin(Eta)))
+
+
+ans =
+
+cos(CsiSample)*(cos(Phi)*(sin(Csi)*(sin(Omega)*sin(Theta) + cos(Eta)*cos(Omega)*cos(Theta)) + cos(Csi)*cos(Theta)*sin(Eta)) + sin(Phi)*(cos(Omega)*sin(Theta) - cos(Eta)*cos(Theta)*sin(Omega))) + sin(CsiSample)*(cos(Csi)*(sin(Omega)*sin(Theta) + cos(Eta)*cos(Omega)*cos(Theta)) - sin(Csi)*cos(Theta)*sin(Eta))
+
+
+ans =
+
+- sin(OmegaSample)*(sin(Phi)*(sin(Csi)*(sin(Omega)*sin(Theta) + cos(Eta)*cos(Omega)*cos(Theta)) + cos(Csi)*cos(Theta)*sin(Eta)) - cos(Phi)*(cos(Omega)*sin(Theta) - cos(Eta)*cos(Theta)*sin(Omega))) - cos(OmegaSample)*(sin(CsiSample)*(cos(Phi)*(sin(Csi)*(sin(Omega)*sin(Theta) + cos(Eta)*cos(Omega)*cos(Theta)) + cos(Csi)*cos(Theta)*sin(Eta)) + sin(Phi)*(cos(Omega)*sin(Theta) - cos(Eta)*cos(Theta)*sin(Omega))) - cos(CsiSample)*(cos(Csi)*(sin(Omega)*sin(Theta) + cos(Eta)*cos(Omega)*cos(Theta)) - sin(Csi)*cos(Theta)*sin(Eta)))
+
+
+Csi =
+
+    0.7854
+
+
+CsiSample =
+
+     0
+
+
+Omega =
+
+    0.5236
+
+
+OmegaSample =
+
+     0
+
+
+Phi =
+
+     0
+
+
+PhiSample =
+
+     0
+
+
+Eta =
+
+     0
+
+
+Theta =
+
+    0.5236
+
+
+Alpha =
+
+    1.5708
+
+
+Beta =
+
+    0.7854
+
+
+Gamma =
+
+   -1.5708
+
+
+ans =
+
+    1.0000         0         0
+         0    0.7071   -0.7071
+         0    0.7071    0.7071
+
+
+ans =
+
+    1.0000    0.0000    0.0000
+    0.0000    0.7071   -0.7071
+   -0.0000    0.7071    0.7071
+
+>>
+*/

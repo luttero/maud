@@ -137,6 +137,8 @@ public class Xraylib {
       ByteBuffer byte_buffer = ByteBuffer.wrap(bytes);
       byte_buffer.order(ByteOrder.LITTLE_ENDIAN);
       ZMAX = byte_buffer.getInt();
+      System.out.println("XrayLib max atomic number: " + (ZMAX + 1));
+
       SHELLNUM = byte_buffer.getInt();
       SHELLNUM_K = byte_buffer.getInt();
       SHELLNUM_A = byte_buffer.getInt();

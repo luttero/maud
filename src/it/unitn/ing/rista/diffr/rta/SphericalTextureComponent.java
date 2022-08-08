@@ -138,7 +138,28 @@ C          IGL  = 2 LORENTZ-SHAPED CURVE (B OR T INPUT IS POSSIBLE)
     parameterField[5].setPositiveOnly();
   }
 
-  public Parameter getIntensity() {
+	public void rotateODFBy(double alpha, double beta, double gamma, int multAlpha, int multBeta, int multGamma) {
+  	  alpha = multAlpha * parameterField[1].getValueD() + alpha;
+  	  while (alpha < 0)
+  	  	alpha += 360;
+		while (alpha >= 360)
+			alpha -= 360;
+  	  parameterField[1].setValue(alpha);
+		beta = multBeta * parameterField[2].getValueD() + beta;
+		while (beta < 0)
+			beta += 180;
+		while (beta >= 180)
+			beta -= 180;
+		parameterField[2].setValue(beta);
+		gamma = multGamma * parameterField[3].getValueD() + gamma;
+		while (gamma < 0)
+			gamma += 360;
+		while (gamma >= 360)
+			gamma -= 360;
+		parameterField[3].setValue(gamma);
+	}
+
+	public Parameter getIntensity() {
     return parameterField[0];
   }
 

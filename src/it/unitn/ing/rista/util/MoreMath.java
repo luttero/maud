@@ -20,6 +20,7 @@
 
 package it.unitn.ing.rista.util;
 
+import it.unitn.ing.rista.diffr.Texture;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.EigenDecomposition;
 import org.la4j.Matrix;
@@ -1334,18 +1335,6 @@ end;
 			for (int j = 0; j < p[i].length; j++)
 				 res[i][j] = d[1].get(i, j);
 		return res;
-	}
-
-	public static double[][] rotate90anticlockwise(double[][] matrix) {
-		int elements = matrix.length;
-		double[][] rotMatrix = new double[elements][elements];
-
-		for (int i = 0; i < elements; i++)
-			for (int j = 0; j < elements; j++)
-				rotMatrix[i][j] = matrix[j][elements - 1 - i];
-//		rotMatrix[i][j] = matrix[i][j];
-
-		return rotMatrix;
 	}
 
 }

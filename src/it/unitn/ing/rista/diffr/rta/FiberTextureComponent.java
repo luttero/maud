@@ -124,7 +124,36 @@ public class FiberTextureComponent extends XRDcat {
     parameterField[6].setPositiveOnly();
   }
 
-  public Parameter getIntensity() {
+	public void rotateODFBy(double alpha, double beta, double gamma, int multAlpha, int multBeta, int multGamma) {
+		double alpha_a = parameterField[1].getValueD();
+		beta = multBeta * parameterField[1].getValueD() + beta;
+		while (beta >= 360)
+			beta -= 360;
+		while (beta < -90) {
+			beta += 180;
+			alpha_a += 180;
+		}
+		while (beta >= 180) {
+			beta -= 180;
+			alpha_a += 180;
+		}
+		while (beta > 90) {
+			beta = 180 - beta;
+			alpha_a += 180;
+		}
+		if (beta < -90) {
+			beta = 90 + beta;
+		}
+		parameterField[1].setValue(beta);
+		alpha = multAlpha * alpha_a + alpha;
+		while (alpha < 0)
+			alpha += 360;
+		while (alpha >= 360)
+			alpha -= 360;
+		parameterField[2].setValue(alpha);
+	}
+
+	public Parameter getIntensity() {
     return parameterField[0];
   }
 
