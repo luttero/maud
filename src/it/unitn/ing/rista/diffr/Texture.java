@@ -93,7 +93,7 @@ public class Texture extends XRDcat {
 
 	public void checkConsistencyForVersion(double version) {
   	   if (version < 2.995) {
-  	   	rotateODFBy(270, 0, 0, 1 , 1, 1);
+  	   	rotateODFBy(90, 0, 0, -1 , 1, 1);
       }
 	}
 

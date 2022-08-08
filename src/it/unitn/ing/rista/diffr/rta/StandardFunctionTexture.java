@@ -154,7 +154,7 @@ public class StandardFunctionTexture extends Texture {
 		int numberOfSphericalComponent = sphericalTextureComponentsNumber();
 		for (int i = 0; i < numberOfSphericalComponent; i++) {
 			SphericalTextureComponent sphericalComp = getSphericalTextureComponent(i);
-			sphericalComp.rotateODFBy(alpha, beta, gamma, multAlpha, multBeta, multGamma);
+			sphericalComp.rotateODFBy(360 - alpha, beta, gamma, -multAlpha, multBeta, multGamma);
 		}
 	}
 
