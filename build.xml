@@ -2668,9 +2668,9 @@
         <exec dir="${app_osx}" executable="/Users/luca/bin/mkdmg.pl" os="Mac OS X">
             <arg line="Maud.dmg.gz Maud.app .background .DS_Store"/>
         </exec>
-        <delete file="${inst}/linux64/Maud.tar.gz"/>
+        <delete file="${inst}/Maud_linux64/Maud.tar.gz"/>
         <exec dir="${inst}/Maud_linux64/" executable="tar" os="Mac OS X">
-            <arg line="cfz ${inst}/linux64/Maud.tar.gz Maud"/>
+            <arg line="cfz ${inst}/Maud_linux64/Maud.tar.gz Maud"/>
         </exec>
         <delete file="${inst}/Maud_linux64_ojdk/Maud.tar.gz"/>
         <exec dir="${inst}/Maud_linux64_ojdk/" executable="tar" os="Mac OS X">
