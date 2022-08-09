@@ -658,6 +658,29 @@ public class StandardFunctionTexture extends Texture {
     return getPoleFigureGrid(refl, numberofPoints, maxAngle);
   }
 
+  public void addTextureBroadening() {
+  	Sample asample = getFilePar().getActiveSample();
+	  int fnumber = fiberTextureComponentsNumber();
+	  int snumber = sphericalTextureComponentsNumber();
+
+	  double betaBroad = 0;
+	  for (int i = 0; i < asample.activeDatasetsNumber(); i++) {
+		  DataFileSet adataset = asample.getActiveDataSet(i);
+		  betaBroad += adataset.getInstrument().getInstrumentBroadening().getTextureBroadeningAt(0);
+	  }
+	  betaBroad /= asample.activeDatasetsNumber();
+	  if (betaBroad >= 0.0) {
+		  for (int ig = 0; ig < fnumber; ig++) {
+			  FiberTextureComponent fiberComp = getFiberTextureComponent(ig);
+			  fiberComp.PARFP(fiberComp.betag + betaBroad);
+		  }
+		  for (int ig = 0; ig < snumber; ig++) {
+			  SphericalTextureComponent sphericalComp = getSphericalTextureComponent(ig);
+			  sphericalComp.PARGLP(sphericalComp.betag + betaBroad);
+		  }
+	  }
+  }
+
   public double[][] getPoleFigureGrid(Reflection refl, int numberofPoints, double maxAngle) {
 
     double[][] PFreconstructed = new double[numberofPoints][numberofPoints];
@@ -670,6 +693,7 @@ public class StandardFunctionTexture extends Texture {
 //		Phase aphase = (Phase) refl.getParent();
     applySymmetryRules();
 //		aphase.sghklcompute(false);
+	  addTextureBroadening();
 
     for (int i = 0; i < numberofPoints; i++)
       for (int j = 0; j < numberofPoints; j++) {
@@ -714,6 +738,7 @@ public class StandardFunctionTexture extends Texture {
 //		Phase aphase = (Phase) refl.getParent();
     applySymmetryRules();
 //		aphase.sghklcompute(false);
+	  addTextureBroadening();
 
     for (int i = 0; i < x.length; i++) {
         r = Math.sqrt(x[i] * x[i] + y[i] * y[i]);
@@ -759,6 +784,7 @@ public class StandardFunctionTexture extends Texture {
 //		Phase aphase = (Phase) refl.getParent();
     applySymmetryRules();
 //		aphase.sghklcompute(false);
+	  addTextureBroadening();
 
     for (int i = 0; i < phiPointNumber; i++)
       for (int j = 0; j < betaPointNumber; j++) {
@@ -779,6 +805,7 @@ public class StandardFunctionTexture extends Texture {
 //		Phase aphase = (Phase) refl.getParent();
     applySymmetryRules();
 //		aphase.sghklcompute(false);
+	  addTextureBroadening();
 
     for (int i = 0; i < pointNumber; i++)
       PFreconstructed[i] = computeTextureFactor(phibeta[0][i], phibeta[1][i],

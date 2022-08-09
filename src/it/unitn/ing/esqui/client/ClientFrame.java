@@ -130,7 +130,6 @@ class ClientFrame extends JFrame {
         helpFrame.getContentPane().add(helpPanel);
         helpFrame.addWindowListener(new WindowAdapter() {
           public void windowClosing(WindowEvent e) {
-            myJFrame.prepareForDisposal(helpFrame);
             helpFrame.dispose();
           }
         });
@@ -398,7 +397,6 @@ class ClientFrame extends JFrame {
     for (int i = 0; i < finalsettings.length; i++)
       finalsettings[i] = Client.clientsettingsdefinition[i] + Client.clientsettings[i];
     ClientMisc.logInformation(Client.DEFAULT_PREFS_FILE, finalsettings, true, this, JOptionPane.ERROR_MESSAGE);
-    myJFrame.prepareForDisposal(serverSettingsFrame);
     serverSettingsFrame.setVisible(false);
     serverSettingsFrame.dispose();
     serverSettingsFrame = null;
@@ -418,7 +416,6 @@ class ClientFrame extends JFrame {
       }
     if (!Client.isForMaud)
       System.exit(0);
-    myJFrame.prepareForDisposal(this);
     setVisible(false);
     dispose();
   }

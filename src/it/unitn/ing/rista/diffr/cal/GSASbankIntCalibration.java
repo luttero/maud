@@ -1403,6 +1403,8 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 			  removeParameterFields();
 			  removeBank(bankToRemove);
 			  bankCB.removeItemAt(selectedIndex);
+			  setVisible(false);
+			  dispose();
 			  resetParameters();
 			  removingBank = false;
 		  }

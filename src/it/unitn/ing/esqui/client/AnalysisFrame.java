@@ -152,7 +152,6 @@ public class AnalysisFrame extends JFrame {
   }
 
   public void exitAnalysisFrame() {
-    myJFrame.prepareForDisposal(this);
     setVisible(false);
     dispose();
   }

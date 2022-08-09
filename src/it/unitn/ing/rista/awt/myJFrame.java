@@ -990,23 +990,5 @@ public class myJFrame extends iconJFrame implements ParentFrame, ClipboardOwner,
     return new Dimension(defaultFrameW, defaultFrameH);
   }
 
-  protected void finalize() throws Throwable {
-//    if (Constants.testing)
-//      System.out.println("DEBUG: frame " + this.getTitle() + " finalizing");
-
-    super.finalize();
-
-  }
-
-  public static void prepareForDisposal(JFrame jframe) {
-/*    if (!Constants.macosx || jframe.getJMenuBar() == null)
-      return;
-    jframe.setJMenuBar(null);
-//    System.out.println("JMenuBar workaround called");
-    if (Maud.appMainFrame != null)
-      Maud.appMainFrame.requestFocus();
-    jframe.requestFocus();*/
-  }
-
 }
 

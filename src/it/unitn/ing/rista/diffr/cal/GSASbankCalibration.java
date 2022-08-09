@@ -993,6 +993,8 @@ public class GSASbankCalibration extends AngularCalibration {
             removeParameterFields();
           removeBank(bankToRemove);
           bankCB.removeItemAt(selectedIndex);
+	        setVisible(false);
+	        dispose();
         } catch (Exception e) {
           e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }

@@ -69,7 +69,6 @@ public class AnglesGeneratorD extends JFrame {
     JButton closeButton = new JButton("Exit", getImage("images/Exit.gif"));
     closeButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        myJFrame.prepareForDisposal(AnglesGeneratorD.this);
         setVisible(false);
         dispose();
       }

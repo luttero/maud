@@ -47,7 +47,6 @@ class AuthenticationFrame extends JFrame {
     JButton exitButton = ClientMisc.createButton(ClientMisc.EXIT_BUTTON, null);
     exitButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        myJFrame.prepareForDisposal(AuthenticationFrame.this);
         setVisible(false);
         dispose();
       }
@@ -101,7 +100,6 @@ class AuthenticationFrame extends JFrame {
         } catch (Exception exc) {
           System.out.println("Error on authentication procedure!");
         }
-        myJFrame.prepareForDisposal(AuthenticationFrame.this);
         setVisible(false);
         dispose();
       }

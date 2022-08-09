@@ -86,7 +86,6 @@ class AuthenticationConnection extends Connection {
     } catch (Exception exc) {
       ClientMisc.messageBox(authenticationFrame, "Alert", "Unable to send messages! Check the server status.", JOptionPane.WARNING_MESSAGE);
     }
-    myJFrame.prepareForDisposal(authenticationFrame);
     authenticationFrame.setVisible(false);
     authenticationFrame.dispose();
     try {
