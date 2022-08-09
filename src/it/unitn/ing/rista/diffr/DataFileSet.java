@@ -3654,11 +3654,12 @@ public class DataFileSet extends XRDcat {
 			  datafile.hasfit = true;
 			  datafile.spectrumModified = true;
 			  datafile.resetExperimentalBackground();
-			  datafile.resetBackgroundInterpolated();
 			  if (isBackgroundExperimental())
 				  datafile.addExperimentalBackground();
 			  if (isBackgroundInterpolated())
 				  datafile.addInterpolatedBackgroundFromResiduals();
+			  else
+				  datafile.resetBackgroundInterpolated();
 		  }
 
 	  }

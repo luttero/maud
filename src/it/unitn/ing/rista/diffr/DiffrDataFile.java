@@ -177,6 +177,7 @@ public class DiffrDataFile extends XRDcat {
   boolean calibrated = false;
   boolean refreshBkgComputation = true;
   boolean refreshInterpolatedBkgComputation = true;
+	boolean refreshExperimentalBkgComputation = true;
   boolean refreshSpectraComputation = true;
 //  boolean computeSpectrum = true;
   public boolean spectrumModified = false;
@@ -1028,8 +1029,10 @@ public class DiffrDataFile extends XRDcat {
             notifyParameterChanged(source, Constants.BKG_FILE_CHANGED);
             return;
           } else {
+          	notifyParameterChanged(source, Constants.BKG_FILE_CHANGED);
+          	notifyParameterChanged(source, Constants.BEAM_INTENSITY_CHANGED);
             notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED);
-	          notifyParameterChanged(source, Constants.ANGULAR_CALIBRATION);
+            notifyParameterChanged(source, Constants.ANGULAR_CALIBRATION);
             return;
           }
         }
@@ -1044,6 +1047,7 @@ public class DiffrDataFile extends XRDcat {
     refreshBkgComputation = true;
     refreshSpectraComputation = true;
     refreshInterpolatedBkgComputation = true;
+	  refreshExperimentalBkgComputation = true;
   }
 
   @Override
@@ -3355,6 +3359,7 @@ public class DiffrDataFile extends XRDcat {
     indexesComputed = false;
     refreshBkgComputation = true;
     refreshInterpolatedBkgComputation = true;
+	  refreshExperimentalBkgComputation = true;
     getParent().refreshComputation = true;
     int datanumb = getTotalNumberOfData();
 //	  System.out.println("Reset background for " + thelabel);
@@ -3767,13 +3772,13 @@ public class DiffrDataFile extends XRDcat {
   }
 
   public void postComputation() {
-	  resetBackgroundInterpolated();
 /*    if (getDataFileSet().isBackgroundExperimental()) {
       addExperimentalBackground();
     }*/
-    if (getDataFileSet().isBackgroundInterpolated()) {
+    if (getDataFileSet().isBackgroundInterpolated())
       addInterpolatedBackgroundFromResiduals();
-    }
+    else
+	    resetBackgroundInterpolated();
 //    refreshBkgComputation = false;
 //    refreshSpectraComputation = false;
   }
@@ -3927,7 +3932,16 @@ public class DiffrDataFile extends XRDcat {
     }
   }
 
-  public void addInterpolatedBackgroundFromResiduals() {
+	public void resetBackgroundExperimental() {
+		if (refreshExperimentalBkgComputation) {
+			for (int i = 0; i < expbkgfit.length; i++) {
+				expbkgfit[i] = 0;
+			}
+			refreshExperimentalBkgComputation = false;
+		}
+	}
+
+	public void addInterpolatedBackgroundFromResiduals() {
 //    System.out.println("Check interpolation bkg: " + refreshInterpolatedBkgComputation + " "+ getFilePar().isBackgroundInterpolationPermitted() + " "+ firstComputation);
     if (refreshInterpolatedBkgComputation) {
       if (getFilePar().isBackgroundInterpolationPermitted() || firstComputation) {
@@ -4234,32 +4248,39 @@ public class DiffrDataFile extends XRDcat {
 //		System.out.println("Computing experimental background for " + thelabel);
 //		if (expbkgfit[(startingindex + finalindex) / 2] != 0)
 //			throw new RuntimeException("Experimental background not reset!");
-    DiffrDataFile expDataFile = getDataFileSet().getBackgroundDataFile(this);
-		double countTime = expDataFile.monitorCounts;
-		if (useCountTimeToScale())
-			countTime *= expDataFile.getCountTimeValue();
-    if (getDataFileSet().omogeneous() && getDataFileSet().omogeneousDataset) {
-      for (int i = startingindex; i < finalindex; i++) {
-        double bkgIntensity = expDataFile.getInterpolatedIntensity(i) * countTime;
+			if (refreshExperimentalBkgComputation) {
+				DiffrDataFile expDataFile = getDataFileSet().getBackgroundDataFile(this);
+				expDataFile.startingindex = 0;
+				expDataFile.finalindex = expDataFile.datanumber;
+				double countTime = expDataFile.monitorCounts;
+				if (useCountTimeToScale())
+					countTime *= expDataFile.getCountTimeValue();
+				if (getDataFileSet().omogeneous() && getDataFileSet().omogeneousDataset) {
+//					System.out.println("Computing omogeneous experimental background " + expDataFile.startingindex + " " + expDataFile.finalindex + " " + countTime);
+					for (int i = startingindex; i < finalindex; i++) {
+						double bkgIntensity = expDataFile.getInterpolatedIntensity(i) * countTime;
 //		  double cal = getIntensityCalibration(i);
 //	      System.out.println("Computing omogeneous experimental background " + i + " " + bkgIntensity + " " + cal);
 //	      bkgIntensity *= cal;
 
-	      addtoExpBkgFit(i, bkgIntensity);
-      }
-    } else {
-      expDataFile.initializeInterpolation();
-      double bkgExpShift = getDataFileSet().getParameterValue(DataFileSet.bkgExpShift);
-      double bkgExpThermalShift = getDataFileSet().getParameterValue(DataFileSet.bkgExpThermalShift);
-      for (int i = startingindex; i < finalindex; i++) {
-        double bkgIntensity = expDataFile.getInterpolatedIntensity(getXData(i), bkgExpShift,
-            bkgExpThermalShift) * countTime;
+						addtoExpBkgFit(i, bkgIntensity);
+					}
+				} else {
+					expDataFile.initializeInterpolation();
+					double bkgExpShift = getDataFileSet().getParameterValue(DataFileSet.bkgExpShift);
+					double bkgExpThermalShift = getDataFileSet().getParameterValue(DataFileSet.bkgExpThermalShift);
+//					System.out.println("Computing experimental background " + expDataFile.startingindex + " " + expDataFile.finalindex + " " + countTime + " " + bkgExpShift + " " + bkgExpThermalShift);
+					for (int i = startingindex; i < finalindex; i++) {
+						double bkgIntensity = expDataFile.getInterpolatedIntensity(getXData(i), bkgExpShift,
+								bkgExpThermalShift) * countTime;
 //	      double cal = getIntensityCalibration(i);
 //	      System.out.println("Computing experimental background " + i + " " + bkgIntensity + " " + cal);
 //	      bkgIntensity *= cal;
-	      addtoExpBkgFit(i, bkgIntensity);
-      }
-    }
+						addtoExpBkgFit(i, bkgIntensity);
+					}
+				}
+			}
+		refreshExperimentalBkgComputation = false;
 
   }
 
