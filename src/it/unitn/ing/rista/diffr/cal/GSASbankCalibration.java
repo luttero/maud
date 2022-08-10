@@ -629,7 +629,7 @@ public class GSASbankCalibration extends AngularCalibration {
 	              token = st.nextToken();
 						double eta = Double.parseDouble(token);
 						boolean invert = MaudPreferences.getBoolean("testing.HippoInvertDetzmInImport", true);
-						double shift = MaudPreferences.getDouble("testing.HippoShiftDetzmInImport", -180.0);
+						double shift = MaudPreferences.getDouble("testing.HippoShiftDetzmInImport", 180.0);
 						int sign = 1;
 						if (invert) sign = -1;
 						eta = eta * sign + shift;

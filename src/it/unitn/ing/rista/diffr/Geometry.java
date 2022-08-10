@@ -314,7 +314,7 @@ public class Geometry extends XRDcat {
 	    double m32 = cosCsiSample*k4 + sinCsiSample*k2;
 	    double m33 = - sinOmegaSample*k3 - cosOmegaSample*k5;
 
-//	    m31 = -cos(Alpha)*sin(Beta), m32 = sin(Alpha)*sin(Beta), m33 = cos(Beta)
+//	    m31 = cos(Alpha)*sin(Beta), m32 = sin(Alpha)*sin(Beta), m33 = cos(Beta)
 
 	    if (m33 > 0.999999999) {
 		    textureAngles[0] = 0.0; // Beta
@@ -331,8 +331,8 @@ public class Geometry extends XRDcat {
 			    else
 				    textureAngles[1] = 270.0;
 		    } else {   // cos(Alpha) != 0
-			    textureAngles[1] = MoreMath.atand(-m32 / m31);  // -pi/2  to pi/2
-			    if (m31 >= 0.0) // && textureAngles[0] >= 0) || (m32 < 0.0 && (textureAngles[0] < 0 || textureAngles[0] > 180)))
+			    textureAngles[1] = MoreMath.atand(m32 / m31);  // -pi/2  to pi/2
+			    if (m31 < 0.0) // && textureAngles[0] >= 0) || (m32 < 0.0 && (textureAngles[0] < 0 || textureAngles[0] > 180)))
 				    textureAngles[1] += 180.0;
 			    if (textureAngles[1] < 0.0)
 				    textureAngles[1] += 360.0;
@@ -492,8 +492,8 @@ public class Geometry extends XRDcat {
 					  else
 						  textureAngles[1][i] = 270.0;
 				  } else {   // cos(Alpha) != 0
-					  textureAngles[1][i] = MoreMath.atand(-m32 / m31);  // -pi/2  to pi/2
-					  if (m31 >= 0.0) // && textureAngles[0] >= 0) || (m32 < 0.0 && (textureAngles[0][i] < 0 || textureAngles[0][i] > 180)))
+					  textureAngles[1][i] = MoreMath.atand(m32 / m31);  // -pi/2  to pi/2
+					  if (m31 < 0.0) // && textureAngles[0] >= 0) || (m32 < 0.0 && (textureAngles[0][i] < 0 || textureAngles[0][i] > 180)))
 						  textureAngles[1][i] += 180.0;
 					  if (textureAngles[1][i] < 0.0)
 						  textureAngles[1][i] += 360.0;
@@ -664,8 +664,8 @@ public class Geometry extends XRDcat {
 				  else
 					  textureAngles[1] = Constants.PI_2 + Constants.PI;
 			  } else {   // cos(Alpha) != 0
-				  textureAngles[1] = Math.atan(-m32 / m31);  // -pi/2  to pi/2
-				  if (m31 >= 0.0) // && textureAngles[0] >= 0) || (m32 < 0.0 && (textureAngles[0] < 0 || textureAngles[0] > 180)))
+				  textureAngles[1] = Math.atan(m32 / m31);  // -pi/2  to pi/2
+				  if (m31 < 0.0) // && textureAngles[0] >= 0) || (m32 < 0.0 && (textureAngles[0] < 0 || textureAngles[0] > 180)))
 					  textureAngles[1] += Constants.PI;
 				  if (textureAngles[1] < 0.0)
 					  textureAngles[1] += Constants.PI2;
@@ -1305,16 +1305,16 @@ M =
 
 m_alpha =
 
-[cos(Alpha), -sin(Alpha), 0]
-[sin(Alpha),  cos(Alpha), 0]
+[cos(Alpha), sin(Alpha), 0]
+[-sin(Alpha),  cos(Alpha), 0]
 [         0,           0, 1]
 
 
 m_beta =
 
-[ cos(Beta), 0, sin(Beta)]
+[ cos(Beta), 0, -sin(Beta)]
 [         0, 1,         0]
-[-sin(Beta), 0, cos(Beta)]
+[sin(Beta), 0, cos(Beta)]
 
 
 m_gamma =
@@ -1328,7 +1328,7 @@ M1 =
 
 [cos(Alpha)*cos(Beta)*cos(Gamma) - sin(Alpha)*sin(Gamma), - cos(Alpha)*sin(Gamma) - cos(Beta)*cos(Gamma)*sin(Alpha), cos(Gamma)*sin(Beta)]
 [cos(Gamma)*sin(Alpha) + cos(Alpha)*cos(Beta)*sin(Gamma),   cos(Alpha)*cos(Gamma) - cos(Beta)*sin(Alpha)*sin(Gamma), sin(Beta)*sin(Gamma)]
-[                                  -cos(Alpha)*sin(Beta),                                      sin(Alpha)*sin(Beta),            cos(Beta)]
+[                                  cos(Alpha)*sin(Beta),                                      sin(Alpha)*sin(Beta),            cos(Beta)]
 
 
 ans =
