@@ -2572,10 +2572,10 @@
             <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; "/>
             <fileset dir="${app_osx_arm}/Maud.app/Contents/Java" />
         </apply>
-        <!--apply dir="${app_osx_arm}" executable="codesign">
+        <apply dir="${app_osx_arm}" executable="codesign">
             <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; "/>
             <fileset dir="${app_osx_arm}/Maud.app/Contents/MacOS/mtex" />
-        </apply-->
+        </apply>
         <exec dir="${app_osx_arm}" executable="codesign" os="Mac OS X">
             <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; ${app_osx_arm}/Maud.app/Contents/PlugIns/Home/release"/>
         </exec>
