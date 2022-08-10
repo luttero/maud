@@ -3396,7 +3396,7 @@ public class DataFileSet extends XRDcat {
       bdatafile.checkIncreasingX();
       minindex[i] = bdatafile.getMinIndexforValue(drange[0], drange[1]);
       maxindex[i] = bdatafile.getMaxIndexforValue(drange[0], drange[1]);
-//      System.out.println("Datafile #" + i + ": " + bdatafile + " , minmax " + minindex[i] + " " + maxindex[i]);
+//      System.out.println("Datafile #" + i + ": " + bdatafile + " , minmax " + minindex[i] + " " + maxindex[i] + " " + drange[0] + " " + drange[1]);
       bdatafile.setMinMaxIndices(minindex[i], maxindex[i]);
       if (i > 0) {
         if (minindex[0] != minindex[i])
@@ -3445,7 +3445,7 @@ public class DataFileSet extends XRDcat {
           if (newdrangeMax > drangeMax)
             drangeMax = newdrangeMax;
         } else {
-          double newdrangeMin = drangeMin / (1.0 + getParameterValue(bkgExpThermalShift) * 1.0E-4) -
+/*          double newdrangeMin = drangeMin / (1.0 + getParameterValue(bkgExpThermalShift) * 1.0E-4) -
               getParameterValue(bkgExpShift);
           if (newdrangeMin < drangeMin)
             drangeMin = newdrangeMin;
@@ -3453,9 +3453,33 @@ public class DataFileSet extends XRDcat {
               getParameterValue(bkgExpShift);
           if (newdrangeMax > drangeMax)
             drangeMax = newdrangeMax;
+
+	        double radiation = getInstrument().getRadiationType().getMeanRadiationWavelength();
+			        if (radiation == 0.0)
+				        System.out.println("Error, unable to get radiation wavelength!");
+			        else {
+//	        System.out.println(rangemin + " - " + rangemax);
+				        if (drangeMax > 0.0 && drangeMax < 180.0)
+					        drangeMax = radiation / (2 * Math.sin(drangeMax / 2 * Constants.DEGTOPI));
+				        else if (drangeMax <= 0.0)
+					        drangeMax = 1.0E+10;
+				        else if (drangeMax >= 180.0)
+					        drangeMax = 1.0E-01;
+				        if (drangeMin > 0.0 && drangeMin < 180.0)
+					        drangeMin = radiation / (2 * Math.sin(drangeMin / 2 * Constants.DEGTOPI));
+				        else if (drangeMin <= 0.0)
+					        drangeMin = 1.0E+10;
+				        else if (drangeMin >= 180.0)
+					        drangeMin = 1.0E-01;
+			        }*/
+	        drangeMin = 0;
+	        drangeMax = 0;
+
         }
+
         int minindex1 = bdatafile.getMinIndexforValue(drangeMin, drangeMax);
         int maxindex1 = bdatafile.getMaxIndexforValue(drangeMin, drangeMax);
+//	      System.out.println(minindex1 + " " + maxindex1 + " " + drangeMin + " " + drangeMax);
         bdatafile.setMinMaxIndices(minindex1, maxindex1);
         bdatafile.computeSmoothSpectrum(getParameterValue(bkgExpShift),
             getParameterValue(bkgExpThermalShift), bdatafile);

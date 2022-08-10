@@ -4250,8 +4250,8 @@ public class DiffrDataFile extends XRDcat {
 //			throw new RuntimeException("Experimental background not reset!");
 			if (refreshExperimentalBkgComputation) {
 				DiffrDataFile expDataFile = getDataFileSet().getBackgroundDataFile(this);
-				expDataFile.startingindex = 0;
-				expDataFile.finalindex = expDataFile.datanumber;
+//				expDataFile.startingindex = 0;
+//				expDataFile.finalindex = expDataFile.datanumber;
 				double countTime = expDataFile.monitorCounts;
 				if (useCountTimeToScale())
 					countTime *= expDataFile.getCountTimeValue();
