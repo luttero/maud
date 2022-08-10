@@ -2404,8 +2404,9 @@ public class FilePar extends XRDcat implements lFilePar, Function {
     if (Constants.testtime)
       Constants.tmpTime = System.currentTimeMillis();
 
+	  refreshAll(false);
+	 // refreshAll = MaudPreferences.getBoolean("testing.computeWithRefresh", false);
     if (refreshAll) {
-      refreshAll(false);
 //b		else
 //b			refreshPartially = true;  // speedModification
 
@@ -3098,8 +3099,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 
   public void computeFit() {
     setParameters();
-    boolean refreshAll = MaudPreferences.getBoolean("testing.computeWithRefresh", false);
-    mainfunction(false, refreshAll);
+    mainfunction(false, false);
 //    getFit();
 
     refreshFit = false;

@@ -3933,12 +3933,12 @@ public class DiffrDataFile extends XRDcat {
   }
 
 	public void resetBackgroundExperimental() {
-		if (refreshExperimentalBkgComputation) {
+//		if (refreshExperimentalBkgComputation) {
 			for (int i = 0; i < expbkgfit.length; i++) {
 				expbkgfit[i] = 0;
 			}
-			refreshExperimentalBkgComputation = false;
-		}
+//			refreshExperimentalBkgComputation = false;
+//		}
 	}
 
 	public void addInterpolatedBackgroundFromResiduals() {
@@ -4249,6 +4249,7 @@ public class DiffrDataFile extends XRDcat {
 //		if (expbkgfit[(startingindex + finalindex) / 2] != 0)
 //			throw new RuntimeException("Experimental background not reset!");
 			if (refreshExperimentalBkgComputation) {
+				resetBackgroundExperimental();
 				DiffrDataFile expDataFile = getDataFileSet().getBackgroundDataFile(this);
 //				expDataFile.startingindex = 0;
 //				expDataFile.finalindex = expDataFile.datanumber;

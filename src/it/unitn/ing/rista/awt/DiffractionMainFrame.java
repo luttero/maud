@@ -1434,7 +1434,7 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
     refreshTreeTable = false;
     if (treeTable.setValueAt(newValue)) {
       parameterfile.prepareComputation();
-      parameterfile.mainfunction(false, false);
+      parameterfile.mainfunction(false, true);
       updateDataFilePlot(true);
     }
     refreshTreeTable = true;
