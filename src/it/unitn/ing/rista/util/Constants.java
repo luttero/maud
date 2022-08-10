@@ -371,7 +371,7 @@ public class Constants {
 	public static boolean testing = false;
   public static boolean testtime = false;
   public static boolean esquienabled = false;
-  public static boolean angleConversionUseLegacy = true;
+//  public static boolean angleConversionUseLegacy = true;
 
   public static boolean webStart = false;
   public static URL ourCodebase = null;
@@ -1089,7 +1089,7 @@ public class Constants {
 //    if (Misc.checkTesting())
       testing = MaudPreferences.getBoolean("newFeatures.testing", testing);
     testtime = MaudPreferences.getBoolean("debug.computeTime", testtime);
-	  angleConversionUseLegacy = MaudPreferences.getBoolean("testing.angleConversionLegacy", true);
+//	  angleConversionUseLegacy = MaudPreferences.getBoolean("testing.angleConversionLegacy", true);
 
 //    useAltivec = MaudPreferences.getBoolean("debug.useG4Altivec", useAltivec);
 	  nativeComputation = false;

@@ -1067,7 +1067,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 	  if (Constants.testing)
 		  System.out.println("End refresh");
 
-	  Constants.angleConversionUseLegacy = MaudPreferences.getBoolean("testing.angleConversionLegacy", true);
+//	  Constants.angleConversionUseLegacy = MaudPreferences.getBoolean("testing.angleConversionLegacy", true);
 
 
 	  saved = true;
