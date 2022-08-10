@@ -182,10 +182,10 @@ public class Theta2ThetaMeasurement extends Measurement {
   }
 
   public double getOmega(double omega, double twotheta) {
-  	 if (Constants.angleConversionUseLegacy)
+//  	 if (Constants.angleConversionUseLegacy)
       return omega + twotheta / 2;
-  	 else
-  	 	return omega - twotheta / 2;
+//  	 else
+//  	 	return omega - twotheta / 2;
   }
 
 }
