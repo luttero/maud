@@ -20,10 +20,13 @@
 
 package it.unitn.ing.rista.diffr;
 
+import com.github.tschoonj.xraylib.Xraylib;
 import it.unitn.ing.rista.chemistry.AtomInfo;
 import it.unitn.ing.rista.chemistry.XRayDataSqLite;
 import it.unitn.ing.rista.util.AtomQuantity;
 import it.unitn.ing.rista.util.Constants;
+
+import java.util.Vector;
 
 /**
  * The AtomScatterer is a class ....
@@ -34,6 +37,10 @@ import it.unitn.ing.rista.util.Constants;
  */
 
 public class AtomScatterer extends Scatterer {
+
+	protected static boolean initIsDone = false;
+
+	public int atomPropertiesNumber = -1;
 
 	/**
 	 * The atomic weight
@@ -201,6 +208,9 @@ public class AtomScatterer extends Scatterer {
 			radius = Math.abs(AtomInfo.retrieveAtomRadius(AtomSite.stripIsotopeNumber(symbol)));
 			//		System.out.println(magneticSF[0]);
 			loadedSymbol = symbol;
+//			System.out.println("Loading atom properties for: " + symbol);
+			atomPropertiesNumber = AtomProperties.insertAtomScatterer(atomNumber);
+//			System.out.println("Loaded!");
 		}
 	}
 
@@ -277,6 +287,8 @@ public class AtomScatterer extends Scatterer {
 
 	public double getSiteAbsorption(double energyInKeV) {
 //	  System.out.println("Atom: " + getAtomicNumber() + ", absorption: " + XRayDataSqLite.getTotalAbsorptionForAtomAndEnergy(getAtomicNumber(), energyInKeV));
+		if (Constants.useXrayLib)
+			return getSiteWeight() * AtomProperties.getAtomPropertiesFor(atomPropertiesNumber).getMassAbsorption(energyInKeV);
 		return getSiteWeight() * XRayDataSqLite.getTotalAbsorptionForAtomAndEnergy(getAtomicNumber(), energyInKeV);
 	}
 
@@ -366,40 +378,59 @@ public class AtomScatterer extends Scatterer {
 			// x-ray radiation
 			int atomNumber = getAtomicNumber();
 			double energyInKeV = 12.398424 / rad.getWavelengthValue();
-			fu = XRayDataSqLite.getF1F2FromHenkeForAtomAndEnergy(atomNumber, energyInKeV);
-			fu[0] -= atomNumber;
+			if (Constants.useXrayLib) {
+				double q = 0;
+				if (dspacing != 0)
+					q = 0.5 / dspacing;
+//				System.out.println(atomNumber + " " + q + " " + Xraylib.FF_Rayl(atomNumber, q));
+				fu[0] = Xraylib.FF_Rayl(atomNumber, q) + AtomProperties.getAtomPropertiesFor(atomPropertiesNumber).getFPrime(energyInKeV); // Xraylib.Fi(atomNumber, energyInKeV);
+				fu[1] = AtomProperties.getAtomPropertiesFor(atomPropertiesNumber).getFSecond(energyInKeV); // -Xraylib.Fii(atomNumber, energyInKeV);;
+			} else {
+				fu = XRayDataSqLite.getF1F2FromHenkeForAtomAndEnergy(atomNumber, energyInKeV);
+				fu[0] -= atomNumber;
 //			double img1 = fu[0];
-			fu[0] += Radiation.xraySF[atomicListNumber][8];
+				fu[0] += Radiation.xraySF[atomicListNumber][8];
 
-			if (dspacing == 0)
-				for (int j = 0; j < 4; j++)
-					fu[0] += Radiation.xraySF[atomicListNumber][j];
-			else
-				for (int j = 0; j < 4; j++)
-					fu[0] += Radiation.xraySF[atomicListNumber][j] * Math.exp(-Radiation.xraySF[atomicListNumber][j + 4] /
-							(4 * dspacing * dspacing));
+				if (dspacing == 0)
+					for (int j = 0; j < 4; j++)
+						fu[0] += Radiation.xraySF[atomicListNumber][j];
+				else
+					for (int j = 0; j < 4; j++)
+						fu[0] += Radiation.xraySF[atomicListNumber][j] * Math.exp(-Radiation.xraySF[atomicListNumber][j + 4] /
+								(4 * dspacing * dspacing));
+			}
 //			System.out.println(atomNumber + ": " + energyInKeV + ", " + (fu[0] - img1) + ", " + img1 + ", " + fu[1]);
 		}
 		return fu;
 	}
 
 	public double[] scatfactor(double dspacing, double energyInKeV) {
-    
-    int atomicListNumber = getAtomicListNumber();
-			// x-ray radiation
-			int atomNumber = getAtomicNumber();
-    double[] fu = XRayDataSqLite.getF1F2FromHenkeForAtomAndEnergy(atomNumber, energyInKeV);
-			fu[0] -= atomNumber;
-			fu[0] += Radiation.xraySF[atomicListNumber][8];
+    if (Constants.useXrayLib) {
+	    double q = 0;
+	    if (dspacing != 0)
+		    q = 0.5 / dspacing;
+		 int Z = getAtomicNumber();
+		 double f0 = Xraylib.FF_Rayl(Z, q);
+		 double f_prime = AtomProperties.getAtomPropertiesFor(atomPropertiesNumber).getFPrime(energyInKeV); // Xraylib.Fi(Z, energyInKeV);
+		 double f_prime2 = AtomProperties.getAtomPropertiesFor(atomPropertiesNumber).getFSecond(energyInKeV); // -Xraylib.Fii(Z, energyInKeV);
+		 return new double[]{f0 + f_prime, f_prime2};
+    } else {
+	    int atomicListNumber = getAtomicListNumber();
+	    // x-ray radiation
+	    int atomNumber = getAtomicNumber();
+	    double[] fu = XRayDataSqLite.getF1F2FromHenkeForAtomAndEnergy(atomNumber, energyInKeV);
+	    fu[0] -= atomNumber;
+	    fu[0] += Radiation.xraySF[atomicListNumber][8];
 
-			if (dspacing == 0)
-				for (int j = 0; j < 4; j++)
-					fu[0] += Radiation.xraySF[atomicListNumber][j];
-			else
-				for (int j = 0; j < 4; j++)
-					fu[0] += Radiation.xraySF[atomicListNumber][j] * Math.exp(-Radiation.xraySF[atomicListNumber][j + 4] /
-							(4 * dspacing * dspacing));
-		return fu;
+	    if (dspacing == 0)
+		    for (int j = 0; j < 4; j++)
+			    fu[0] += Radiation.xraySF[atomicListNumber][j];
+	    else
+		    for (int j = 0; j < 4; j++)
+			    fu[0] += Radiation.xraySF[atomicListNumber][j] * Math.exp(-Radiation.xraySF[atomicListNumber][j + 4] /
+					    (4 * dspacing * dspacing));
+	    return fu;
+    }
 	}
 
 	/**

@@ -127,7 +127,6 @@ public class XRayDataSqLite {
 	public static Vector<Vector<String>> transitionShellIDlabels = null;
 	public static Vector<Vector<double[]>> transitionEnergies = null;
 	public static Vector<double[][]> henkeEnergyf1f2 = null;
-	public static double linesMinimumEnergy = 0.1;
    public static Vector<Vector<Vector<double[]>>> auger_transition = null;
 	public static boolean ebelAndShellLoaded = false;
 	public static boolean useCascadeForSensitivity = true;
@@ -139,7 +138,7 @@ public class XRayDataSqLite {
 		if (ebelElastic != null && !forceReload)
 			return true;
 
-		linesMinimumEnergy = MaudPreferences.getDouble("fluorescenceLines.minimum_keV", linesMinimumEnergy);
+		Constants.linesMinimumEnergy = MaudPreferences.getDouble("fluorescenceLines.minimum_keV", Constants.linesMinimumEnergy);
 		useCascadeForSensitivity = MaudPreferences.getBoolean("fluorescenceLines.use_cascade_for_sensitivity",
 				useCascadeForSensitivity);
 
@@ -781,15 +780,7 @@ public class XRayDataSqLite {
 	}
 
 	public static Vector<FluorescenceLine> getFluorescenceLinesFor(int atomNumber, double energyInKeV) {
-		return getFluorescenceLinesFor(atomNumber, energyInKeV, linesMinimumEnergy);
-	}
-
-	public static void checkMinimumEnergy() {
-		linesMinimumEnergy = MaudPreferences.getDouble("fluorescenceLines.minimum_keV", linesMinimumEnergy);
-		if (linesMinimumEnergy < 1.0) {
-			linesMinimumEnergy = 1.0;
-			MaudPreferences.setPref("fluorescenceLines.minimum_keV", linesMinimumEnergy);
-		}
+		return getFluorescenceLinesFor(atomNumber, energyInKeV, Constants.linesMinimumEnergy);
 	}
 
 	public static Vector<FluorescenceLine> getFluorescenceLinesFor(int atomNumber, double energyInKeV,
@@ -825,7 +816,7 @@ public class XRayDataSqLite {
 
 	public static Vector<FluorescenceLine> getFluorescenceLinesNoSensitivityFor(int atomNumber, double energyInKeV) {
 //		linesMinimumEnergy = MaudPreferences.getDouble("fluorescenceLines.minimum_keV", linesMinimumEnergy);
-		return getFluorescenceLinesNoSensitivityFor(atomNumber, energyInKeV, linesMinimumEnergy);
+		return getFluorescenceLinesNoSensitivityFor(atomNumber, energyInKeV, Constants.linesMinimumEnergy);
 	}
 
 	public static Vector<FluorescenceLine> getFluorescenceLinesNoSensitivityFor(int atomNumber, double energyInKeV,

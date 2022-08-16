@@ -129,7 +129,7 @@ public class TubeSpectrumTransmission extends FluorescenceBase {
 
 	public void computeFluorescence(Sample asample, DiffrDataFile adatafile) {
 
-		XRayDataSqLite.checkMinimumEnergy();
+		Constants.checkMinimumEnergy();
 
 		Instrument ainstrument = adatafile.getDataFileSet().getInstrument();
 		double incidentIntensity = ainstrument.getIntensityValue();

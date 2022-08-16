@@ -2963,7 +2963,7 @@ public class DiffrDataFile extends XRDcat {
     if (!dspacingbase) {
       return 4.0 * Math.PI * MoreMath.sind(x / 2) / lambda;
     } else {
-      return 2.0 * Math.PI / x;
+      return Constants.PI2 / x;
     }
   }
 

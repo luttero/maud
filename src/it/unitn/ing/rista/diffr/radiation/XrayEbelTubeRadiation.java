@@ -20,6 +20,7 @@
 
 package it.unitn.ing.rista.diffr.radiation;
 
+import com.github.tschoonj.xraylib.Xraylib;
 import it.unitn.ing.rista.awt.*;
 import it.unitn.ing.rista.chemistry.AtomInfo;
 import it.unitn.ing.rista.chemistry.XRayDataSqLite;
@@ -482,8 +483,12 @@ public class XrayEbelTubeRadiation extends RadiationType {
 
 	double computeMhuTotal(double energyInKeV) {
 		double mu_tot = 0;
-		for (int i = 0; i < anodeElementNumber; i++)
-			mu_tot += XRayDataSqLite.getTotalAbsorptionForAtomAndEnergy(atomNumber[i], energyInKeV) * atomFraction[i];
+		for (int i = 0; i < anodeElementNumber; i++) {
+			if (Constants.useXrayLib)
+				mu_tot += Xraylib.CS_Total(atomNumber[i], energyInKeV) * atomFraction[i];
+			else
+				mu_tot += XRayDataSqLite.getTotalAbsorptionForAtomAndEnergy(atomNumber[i], energyInKeV) * atomFraction[i];
+		}
 		return mu_tot;
 	}
 

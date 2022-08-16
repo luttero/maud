@@ -134,7 +134,7 @@ public class QuantitativeXRF extends Fluorescence {
 
 	public void computeFluorescence(Sample asample, DiffrDataFile adatafile) {
 
-		XRayDataSqLite.checkMinimumEnergy();
+		Constants.checkMinimumEnergy();
 
 //		boolean checkSensitivity = MaudPreferences.getBoolean("xrf.sensitivityNoEnergy", false);
 		Instrument ainstrument = adatafile.getDataFileSet().getInstrument();

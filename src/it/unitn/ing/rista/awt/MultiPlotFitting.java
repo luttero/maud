@@ -87,7 +87,7 @@ public class MultiPlotFitting extends PlotFitting {
 	  int mode = PlotDataFile.checkScaleModeX();
 	  PlotDataFile.checkCalibrateIntensity();
 	  PlotDataFile.checkBackgroundSubtraction();
-	  XRayDataSqLite.checkMinimumEnergy();
+	  Constants.checkMinimumEnergy();
 
     datafile = afile;
     boolean markExcludedRegion = MaudPreferences.getBoolean("excludedRegion.setZeroForPlot", true);

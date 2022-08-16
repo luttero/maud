@@ -26,6 +26,7 @@ import java.awt.event.ActionListener;
 import java.lang.*;
 import java.util.Vector;
 
+import com.github.tschoonj.xraylib.Xraylib;
 import it.unitn.ing.rista.awt.*;
 import it.unitn.ing.rista.chemistry.AtomInfo;
 import it.unitn.ing.rista.chemistry.XRayDataSqLite;
@@ -332,11 +333,17 @@ public class XRFDetector extends Detector {
 			int atomNumber = AtomInfo.retrieveAtomNumber(atomLabel);
 			for (int j = 0; j < energy.length; j++) {
 				double energyKeV = energy[j] * 0.001;
-				absorption[j] += atomFraction * XRayDataSqLite.getTotalAbsorptionForAtomAndEnergy(atomNumber, energyKeV);
+				if (Constants.useXrayLib)
+					absorption[j] += atomFraction * Xraylib.CS_Total(atomNumber, energyInKeV);
+				else
+					absorption[j] += atomFraction * XRayDataSqLite.getTotalAbsorptionForAtomAndEnergy(atomNumber, energyKeV);
 			}
 			for (int j = 0; j < linesForSubtraction.size(); j++) {
 				FluorescenceLine lineSemiconductor = linesForSubtraction.get(j);
-				absorptionSi[j] += atomFraction * XRayDataSqLite.getTotalAbsorptionForAtomAndEnergy(atomNumber,
+				if (Constants.useXrayLib)
+					absorptionSi[j] += atomFraction * Xraylib.CS_Total(atomNumber, lineSemiconductor.getEnergy());
+				else
+					absorptionSi[j] += atomFraction * XRayDataSqLite.getTotalAbsorptionForAtomAndEnergy(atomNumber,
 						lineSemiconductor.getEnergy());
 			}
 		}
@@ -439,7 +446,10 @@ public class XRFDetector extends Detector {
 			String atomLabel = ((CompositionElement) subordinateloopField[semiconductor_composition_id].elementAt(i)).getString(0);
 			double atomFraction = ((CompositionElement) subordinateloopField[semiconductor_composition_id].elementAt(i)).getParameterValue(0) / totalFraction;
 			int atomNumber = AtomInfo.retrieveAtomNumber(atomLabel);
-			absorption += atomFraction * XRayDataSqLite.getTotalAbsorptionForAtomAndEnergy(atomNumber, energyInKeV);
+			if (Constants.useXrayLib)
+				absorption += atomFraction * Xraylib.CS_Total(atomNumber, energyInKeV);
+			else
+				absorption += atomFraction * XRayDataSqLite.getTotalAbsorptionForAtomAndEnergy(atomNumber, energyInKeV);
 		}
 		absorption *= getSemiconductorDensity() * getSemiconductorThickness(); // linear absorption
 		absorption = Math.abs(absorption);

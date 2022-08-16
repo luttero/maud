@@ -21,8 +21,7 @@
 package it.unitn.ing.rista.awt;
 
 import it.unitn.ing.rista.chemistry.XRayDataSqLite;
-import it.unitn.ing.rista.diffr.AtomScatterer;
-import it.unitn.ing.rista.diffr.AtomSite;
+import it.unitn.ing.rista.diffr.*;
 import it.unitn.ing.rista.util.*;
 import it.unitn.ing.rista.models.xyzTableModel;
 import it.unitn.ing.rista.interfaces.AtomsStructureI;
@@ -397,16 +396,16 @@ public class AtomPanel extends JPanel {
 		AtomScatterer atomScat = (AtomScatterer) atomSite.subordinateloopField[AtomSite.scattererLoopID].selectedElement();
 		if (atomScat == null)
 			return;
-		int atomicNumber = atomScat.getAtomicNumber();
 
-		int plotCounts = 3000;
+
+		int plotCounts = Constants.energiesMaxNumber;
 		double[] x = new double[plotCounts];
 		double[] y = new double[plotCounts];
-		double xstart = 1.01;
-		double xstep = 0.01;
+		double xstart = Constants.BASE_ENERGY_IN_KEV;
+		double xstep = Constants.INV_MULTIPLE_ENERGY_TO_INT;
 		for (int i = 0; i < plotCounts; i++) {
 			x[i] = xstart + i * xstep;
-			y[i] = XRayDataSqLite.getTotalAbsorptionForAtomAndEnergy(atomicNumber, x[i]);
+			y[i] = atomScat.getSiteAbsorption(x[i]) / atomScat.getSiteWeight(); // XRayDataSqLite.getTotalAbsorptionForAtomAndEnergy(atomicNumber, x[i]);
 //			x[i] = MoreMath.log10(x[i]);
 			if (y[i] > 0)
 				y[i] = MoreMath.log10(y[i]);

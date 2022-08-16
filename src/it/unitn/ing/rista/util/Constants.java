@@ -404,6 +404,17 @@ public class Constants {
 	public static it.unitn.ing.fortran.Formatter efmt = null;
 
 	public static boolean allXrayTablesLoaded = false;
+	public static double linesMinimumEnergy = 1.0;
+	public static double BASE_ENERGY_IN_KEV = linesMinimumEnergy;
+	public static double MULTIPLE_ENERGY_TO_INT = 10.0;
+	public static double INV_MULTIPLE_ENERGY_TO_INT = 1.0 / MULTIPLE_ENERGY_TO_INT;
+
+	public static double MAX_ENERGY_IN_KEV = 50.0;
+	public static int ZMAX_LIMITED = 90;
+
+	public static int energiesMaxNumber = (int) ((MAX_ENERGY_IN_KEV - BASE_ENERGY_IN_KEV) * MULTIPLE_ENERGY_TO_INT + 0.499);
+
+	public static boolean useXrayLib = false;
 
 	public static String userHomeDirectory = "";
 	public static String userDirectory = "";
@@ -869,8 +880,12 @@ public class Constants {
 	    (new Thread() {
 		    @Override
 		    public void run() {
+			    useXrayLib = MaudPreferences.getBoolean("atomProperties.useXrayLib", true);
 			    AtomInfo.loadAtomConstants();
-			    allXrayTablesLoaded = XRayDataSqLite.loadEbelAndShellTables(true);
+				 if (!useXrayLib)
+					 allXrayTablesLoaded = XRayDataSqLite.loadEbelAndShellTables(true);
+				 else
+					 allXrayTablesLoaded = true;
 			    Sla33Constants.initConstants();
 		    }
 	    }).start();
@@ -1500,6 +1515,14 @@ public class Constants {
 	  if (!textonly && outputConsole != null)
 		  outputConsole.setVisible(false);
   }
+
+	public static void checkMinimumEnergy() {
+		linesMinimumEnergy = MaudPreferences.getDouble("fluorescenceLines.minimum_keV", linesMinimumEnergy);
+		if (linesMinimumEnergy < 1.0) {
+			linesMinimumEnergy = 1.0;
+			MaudPreferences.setPref("fluorescenceLines.minimum_keV", linesMinimumEnergy);
+		}
+	}
 
 /*  public static void warnAboutThreads() {
     boolean warning = MaudPreferences.getBoolean("warning.threads_more_than_one", false);

@@ -963,7 +963,11 @@ public class Layer extends XRDcat {
 		double meanAtomicMass = 0;
 		for (int i = 0; i < chemicalComposition.size(); i++) {
 			int atomNumber = AtomInfo.retrieveAtomNumber(chemicalComposition.elementAt(i).label);
-			double[] f1f2 = XRayDataSqLite.getF1F2FromHenkeForAtomAndEnergy(atomNumber, energyInKeV);
+			double[] f1f2 = new double[2];
+			if (Constants.useXrayLib)
+				f1f2  = XRayDataSqLite.getF1F2FromHenkeForAtomAndEnergy(atomNumber, energyInKeV); // todo : use XRayLib
+			else
+				f1f2  = XRayDataSqLite.getF1F2FromHenkeForAtomAndEnergy(atomNumber, energyInKeV);
 //			System.out.println(i + " " + composition.elementAt(i).label + " " + atomicFractions[i] + " " + f1f2[0]);
 			meanScatteringF1 += f1f2[0] * atomicFractions[i];
 			meanScatteringF2 += f1f2[1] * atomicFractions[i];

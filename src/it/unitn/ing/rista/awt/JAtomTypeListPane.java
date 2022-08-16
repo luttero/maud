@@ -20,6 +20,7 @@
 
 package it.unitn.ing.rista.awt;
 
+import com.github.tschoonj.xraylib.Xraylib;
 import it.unitn.ing.rista.chemistry.XRayDataSqLite;
 import it.unitn.ing.rista.diffr.*;
 import it.unitn.ing.rista.util.Constants;
@@ -108,15 +109,15 @@ public class JAtomTypeListPane extends JSubordListPane {
 			return;
 		int atomicNumber = scatterer.getAtomicNumber();
 
-		int plotCounts = 3000;
+		int plotCounts = Constants.energiesMaxNumber;
 		double[] x = new double[plotCounts];
-
 		double[] y = new double[plotCounts];
-		double xstart = 1.01;
-		double xstep = 0.01;
+		double xstart = Constants.BASE_ENERGY_IN_KEV;
+		double xstep = Constants.INV_MULTIPLE_ENERGY_TO_INT;
 		for (int i = 0; i < plotCounts; i++) {
 			x[i] = xstart + i * xstep;
-			y[i] = XRayDataSqLite.getTotalAbsorptionForAtomAndEnergy(atomicNumber, x[i]);
+			y[i] = scatterer.getSiteAbsorption(x[i]) / scatterer.getSiteWeight(); // XRayDataSqLite.getTotalAbsorptionForAtomAndEnergy(atomicNumber, x[i]);
+//			x[i] = MoreMath.log10(x[i]);
 			if (y[i] > 0)
 				y[i] = MoreMath.log10(y[i]);
 			else
@@ -126,7 +127,10 @@ public class JAtomTypeListPane extends JSubordListPane {
 
 		for (int i = 0; i < plotCounts; i++) {
 			x[i] = xstart + i * xstep;
-			y[i] = XRayDataSqLite.getCoherentScatteringForAtomAndEnergy(atomicNumber, x[i]);
+			if (Constants.useXrayLib)
+				y[i] = Xraylib.CS_Rayl(atomicNumber, x[i]);
+			else
+				y[i] = XRayDataSqLite.getCoherentScatteringForAtomAndEnergy(atomicNumber, x[i]);
 			if (y[i] > 0)
 				y[i] = MoreMath.log10(y[i]);
 			else
@@ -136,7 +140,10 @@ public class JAtomTypeListPane extends JSubordListPane {
 
 		for (int i = 0; i < plotCounts; i++) {
 			x[i] = xstart + i * xstep;
-			y[i] = XRayDataSqLite.getIncoherentScatteringForAtomAndEnergy(atomicNumber, x[i]);
+			if (Constants.useXrayLib)
+				y[i] = Xraylib.CS_Compt(atomicNumber, x[i]);
+			else
+				y[i] = XRayDataSqLite.getIncoherentScatteringForAtomAndEnergy(atomicNumber, x[i]);
 			if (y[i] > 0)
 				y[i] = MoreMath.log10(y[i]);
 			else
@@ -146,7 +153,10 @@ public class JAtomTypeListPane extends JSubordListPane {
 
 		for (int i = 0; i < plotCounts; i++) {
 			x[i] = xstart + i * xstep;
-			y[i] = XRayDataSqLite.getPhotoAbsorptionForAtomAndEnergy(atomicNumber, x[i]);
+			if (Constants.useXrayLib)
+				y[i] = Xraylib.CS_Photo_Total(atomicNumber, x[i]);
+			else
+				y[i] = XRayDataSqLite.getPhotoAbsorptionForAtomAndEnergy(atomicNumber, x[i]);
 			if (y[i] > 0)
 				y[i] = MoreMath.log10(y[i]);
 			else

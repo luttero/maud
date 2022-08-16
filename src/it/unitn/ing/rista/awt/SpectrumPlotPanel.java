@@ -438,7 +438,7 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 		int mode = PlotDataFile.checkScaleModeX();
 		PlotDataFile.checkCalibrateIntensity();
 		PlotDataFile.checkBackgroundSubtraction();
-		XRayDataSqLite.checkMinimumEnergy();
+		Constants.checkMinimumEnergy();
 
 		if (dataset == null) {
 			return new NoDatafileCanvas();
@@ -1008,7 +1008,7 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 		int mode = PlotDataFile.checkScaleModeX();
 		PlotDataFile.checkCalibrateIntensity();
 		PlotDataFile.checkBackgroundSubtraction();
-		XRayDataSqLite.checkMinimumEnergy();
+		Constants.checkMinimumEnergy();
 
 //    if (peaks != null)
     peaksList = peaks;
@@ -1726,7 +1726,7 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 	  int mode = PlotDataFile.checkScaleModeX();
 	  PlotDataFile.checkCalibrateIntensity();
 	  PlotDataFile.checkBackgroundSubtraction();
-	  XRayDataSqLite.checkMinimumEnergy();
+	  Constants.checkMinimumEnergy();
 
 //    datafile[0] = afile;
 //    if (peaks != null)

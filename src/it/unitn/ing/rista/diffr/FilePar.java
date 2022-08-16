@@ -461,7 +461,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
   public void refreshAll(boolean firstLoading) {
   	if (firstLoading) {
   		int checkNumber = 0;
-  		while (!Constants.allXrayTablesLoaded && checkNumber < 10) {
+  		while (!Constants.allXrayTablesLoaded && checkNumber++ < 10) {
 		   try {
 			   Thread.currentThread().sleep(1000);
 		   } catch (InterruptedException ie) {

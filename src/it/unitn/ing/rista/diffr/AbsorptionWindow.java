@@ -20,6 +20,7 @@
 
 package it.unitn.ing.rista.diffr;
 
+import com.github.tschoonj.xraylib.Xraylib;
 import it.unitn.ing.rista.awt.ElementalTableModel;
 import it.unitn.ing.rista.awt.JOptionsDialog;
 import it.unitn.ing.rista.chemistry.AtomInfo;
@@ -183,7 +184,11 @@ public class AbsorptionWindow extends XRDcat {
 			double atomFraction = ((CompositionElement) subordinateloopField[window_composition_id].elementAt(i)).getParameterValue(0) /
 					totalAtomFraction;
 			int atomNumber = AtomInfo.retrieveAtomNumber(atomLabel);
-			double absAtom = XRayDataSqLite.getTotalAbsorptionForAtomAndEnergy(atomNumber, energyInKeV);
+			double absAtom = 0;
+			if (Constants.useXrayLib)
+				absAtom = Xraylib.CS_Total(atomNumber, energyInKeV);
+			else
+				absAtom = XRayDataSqLite.getTotalAbsorptionForAtomAndEnergy(atomNumber, energyInKeV);
 			absorption += atomFraction * absAtom;
 //			System.out.println(absorption + " " + absAtom + " " + energyInKeV + " " + atomNumber + " " + atomLabel + " " + atomFraction);
 		}
