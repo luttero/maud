@@ -263,13 +263,13 @@ public class Constants {
   public static String resultsFile = "results.txt";
   public static String userName = null;
   public static String startPath = "/";
-  public static String maudReleaseBuilt = "$Revision: 2.995 $";
-  public static String maudDateBuilt = "$Date: 2022/08/05 11:11:11 $";
+  public static String maudReleaseBuilt = "$Revision: 2.996 $";
+  public static String maudDateBuilt = "$Date: 2022/08/16 14:37:51 $";
 
   public static final double arg2PIover3 = PI2 / 3.;
   public static final double sinArg2PIover3 = Math.sin(arg2PIover3);
   public static final double cosArg2PIover3 = Math.cos(arg2PIover3);
-  public static double maud_version = 2.995;
+  public static double maud_version = 2.996;
   public static boolean useOpenCL = false;
   public static Vector<OpenCLDevice> openClDevices= null;
   public static OpenCLDevice openclDevice = null;
@@ -409,7 +409,7 @@ public class Constants {
 	public static double MULTIPLE_ENERGY_TO_INT = 10.0;
 	public static double INV_MULTIPLE_ENERGY_TO_INT = 1.0 / MULTIPLE_ENERGY_TO_INT;
 
-	public static double MAX_ENERGY_IN_KEV = 50.0;
+	public static double MAX_ENERGY_IN_KEV = 100.0;
 	public static int ZMAX_LIMITED = 90;
 
 	public static int energiesMaxNumber = (int) ((MAX_ENERGY_IN_KEV - BASE_ENERGY_IN_KEV) * MULTIPLE_ENERGY_TO_INT + 0.499);
@@ -881,6 +881,12 @@ public class Constants {
 		    @Override
 		    public void run() {
 			    useXrayLib = MaudPreferences.getBoolean("atomProperties.useXrayLib", true);
+			    MAX_ENERGY_IN_KEV = MaudPreferences.getDouble("atomProperties.maxEnergyInKeV", 100.0);
+			    BASE_ENERGY_IN_KEV = MaudPreferences.getDouble("atomProperties.minEnergyInKeV", 1.0);
+			    INV_MULTIPLE_ENERGY_TO_INT = MaudPreferences.getDouble("atomProperties.energyStepInKeV", 0.1);
+			    MULTIPLE_ENERGY_TO_INT = (int) (1.0 / INV_MULTIPLE_ENERGY_TO_INT);
+			    energiesMaxNumber = (int) ((MAX_ENERGY_IN_KEV - BASE_ENERGY_IN_KEV) / INV_MULTIPLE_ENERGY_TO_INT + 0.499);
+
 			    AtomInfo.loadAtomConstants();
 				 if (!useXrayLib)
 					 allXrayTablesLoaded = XRayDataSqLite.loadEbelAndShellTables(true);

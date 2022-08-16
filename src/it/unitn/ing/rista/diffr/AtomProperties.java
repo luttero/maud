@@ -33,6 +33,8 @@ public class AtomProperties {
 
 	public static int energyKeVToInt(double energyInKeV) {
 		int index = (int) ((energyInKeV  - Constants.BASE_ENERGY_IN_KEV) * Constants.MULTIPLE_ENERGY_TO_INT + 0.499);
+		if (index >= Constants.energiesMaxNumber)
+			return Constants.energiesMaxNumber - 1;
 		if (index > 0)
 			return index;
 		return 0;
