@@ -366,8 +366,10 @@ public class GSASNewDataFile extends MultDiffrDataFile {
 		  String[] folderAndNamef = Misc.getFolderandName(filename[filesNumber - 1]);
 		  String filenameOnly = folderAndName[1].substring(0, folderAndName[1].length() - 4) +
 				  "-" + folderAndNamef[1].substring(0, folderAndNamef[1].length() - 4);
+		  finalName = folderAndName[0] + filenameOnly + "_sum.gda";
 		  output = Misc.getWriter(folderAndName[0], filenameOnly + "_sum.gda");
 	  } catch(Exception e) {
+		  return "";
 	  }
 
 		  BufferedReader[] readers = new BufferedReader[filesNumber];

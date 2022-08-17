@@ -44,7 +44,7 @@ import javax.swing.*;
 public class GSASbankIntCalibration extends IntensityCalibration {
 
   public static String[] diclistc = {"_inst_inc_parameter_file", "_instrument_counter_bank",
-		                               "_inst_incident_spectrum_plit_position",
+		                               "_inst_incident_spectrum_split_position",
 
                                      "_instrument_counter_bank_ID", "_inst_incident_spectrum_type",
 		                               "_inst_incident_split_type",
@@ -72,7 +72,7 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 
   };
   public static String[] diclistcrm = {"_inst_inc_parameter_file", "_instrument_counter_bank",
-		                                 "_inst_incident_spectrum_plit_position",
+		                                 "_inst_incident_spectrum_split_position",
 
                                      "_instrument_counter_bank_ID", "_inst_incident_spectrum_type",
 		                               "_inst_incident_spectrum_split_type",
@@ -260,18 +260,18 @@ public class GSASbankIntCalibration extends IntensityCalibration {
     Parameter[] apar = new Parameter[nparameter];
     try {
       int index = 0;
-      int selBankNumber = getBankNumber(getBankID());
+//      int selBankNumber = getBankNumber(getBankID());
       for (int i = 0; i < Nparameterloop; i++)
-        apar[index++] = (Parameter) parameterloopField[i].elementAt(selBankNumber);
+        apar[index++] = (Parameter) parameterloopField[i].elementAt(0);
 
-      for (int bank = 0; bank < banks; bank++) {
-        if (bank != selBankNumber) {
+      for (int bank = 1; bank < banks; bank++) {
+//        if (bank != selBankNumber) {
           for (int i = 0; i < Nparameterloop; i++) {
             ((Parameter) parameterloopField[i].elementAt(bank)).setEqualTo(apar[i], 1.0, 0.0);
           }
-          setFunctionType(bank, getFunctionType(selBankNumber));
-			 setSplitFunctionType(bank, getSplitFunctionType(selBankNumber));
-        }
+          setFunctionType(bank, getFunctionType(0));
+			 setSplitFunctionType(bank, getSplitFunctionType(0));
+//        }
       }
     } catch (Exception e) {
       e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -318,7 +318,7 @@ public class GSASbankIntCalibration extends IntensityCalibration {
   }
 
   protected boolean bankIsActive(int bank) {
-    DataFileSet data = (DataFileSet) ((Instrument) getParent()).getParent();
+    DataFileSet data = (DataFileSet) getParent().getParent();
     int datafiles = data.activedatafilesnumber();
     return datafiles > 0;
   }
@@ -1079,7 +1079,7 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 	  JTextField splitCoeffTF[], splitScaleTF;
 	  int selectedBank = 0;
 
-	  boolean removingBank = false;
+//	  boolean removingBank = false;
 
     public JBankOptionsD(Frame parent, XRDcat obj) {
 
@@ -1234,9 +1234,22 @@ public class GSASbankIntCalibration extends IntensityCalibration {
       pack();
     }
 
-    public void initParameters() {
-		 if (removingBank)
-			 return;
+	  boolean doRefreshBank = true;
+
+	  public void initBankList() {
+		  doRefreshBank = false;
+		  if (bankCB.getItemCount() > 0)
+			  bankCB.removeAllItems();
+		  for (int i = 0; i < banknumbers(); i++)
+			  bankCB.addItem(getBankID(i));
+		  doRefreshBank = true;
+		  selectedBank = getBankNumber();
+		  bankCB.setSelectedItem(getBankID(selectedBank));
+	  }
+
+	  public void initParameters() {
+//		 if (removingBank)
+//			 return;
 /*      isAbilitatetoRefresh = false;
       checkConsistency(false);
       isAbilitatetoRefresh = true;*/
@@ -1254,7 +1267,7 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 	    splitPosTF.setText(getSplitPosition());
     }
 
-	  public void resetParameters() {
+/*	  public void resetParameters() {
 		  filenameL.setText(getFileName());
 		  selectedBank = 0;
 		  initBankList();
@@ -1264,26 +1277,27 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 			  initParameterFields();
 		  }
 		  splitPosTF.setText(getSplitPosition());
-	  }
+	  }*/
 
 	  public void initParameterFields() {
-	    if (removingBank)
-		    return;
+//	    if (removingBank)
+//		    return;
 //	    System.out.println(getBankNumber() + " " + banknumbers());
-      if (getBankNumber() >= 0) {
+		  int bank = selectedBank;
+      if (bank >= 0) {
 //	      if (getTypeNumber(getBankNumber()) > 0) {
 		      for (int i = 0; i < numberIncSpectrumCoefficients; i++) {
 //			      System.out.println(i + " ---- " + getCoeff(i));
-			      coeffTF[i].setText(getCoeff(i));
-			      addComponenttolist(coeffTF[i], getCoeff(i, getBankNumber()));
-			      splitCoeffTF[i].setText(getSplitCoeff(i));
-			      addComponenttolist(splitCoeffTF[i], getSplitCoeff(i, getBankNumber()));
+			      coeffTF[i].setText(getCoeff(i, bank).getValue());
+			      addComponenttolist(coeffTF[i], getCoeff(i, bank));
+			      splitCoeffTF[i].setText(getSplitCoeff(i, bank).getValue());
+			      addComponenttolist(splitCoeffTF[i], getSplitCoeff(i, bank));
 		      }
 //	      }
-        scaleTF.setText(getCoeff(numberIncSpectrumCoefficients));
-        addComponenttolist(scaleTF, getCoeff(numberIncSpectrumCoefficients, getBankNumber()));
-	      splitScaleTF.setText(getCoeff(numberIncSpectrumCoefficients));
-	      addComponenttolist(splitScaleTF, getSplitCoeff(numberIncSpectrumCoefficients, getBankNumber()));
+        scaleTF.setText(getCoeff(numberIncSpectrumCoefficients, bank).getValue());
+        addComponenttolist(scaleTF, getCoeff(numberIncSpectrumCoefficients, bank));
+	      splitScaleTF.setText(getCoeff(numberIncSpectrumCoefficients, bank).getValue());
+	      addComponenttolist(splitScaleTF, getSplitCoeff(numberIncSpectrumCoefficients, bank));
       }
     }
 
@@ -1297,58 +1311,46 @@ public class GSASbankIntCalibration extends IntensityCalibration {
     }
 
     public void retrieveParameters() {
-	    if (removingBank)
-		    return;
+//	    if (removingBank)
+//		    return;
 		 setSplitPosition(Double.parseDouble(splitPosTF.getText()));
-      setBank(selectedBank);
+//      setBank(selectedBank);
 //      String type = typeCB.getSelectedItem().toString();
 //      if (!type.equals(getFunctionType(bank)))
 //          setFunctionType(type);
 	    String scaleText = scaleTF.getText();
 	    if (scaleText.length() > 0)
-		    setCoeff(numberIncSpectrumCoefficients, scaleText);
+		    getCoeff(numberIncSpectrumCoefficients, selectedBank).setValue(scaleText);
 	    String splitScaleText = splitScaleTF.getText();
 	    if (splitScaleText.length() > 0)
-		    setSplitCoeff(numberIncSpectrumCoefficients, splitScaleText);
+		    getSplitCoeff(numberIncSpectrumCoefficients, selectedBank).setValue(splitScaleText);
 	    if (getBankNumber() >= 0) {
 		    for (int i = 0; i < numberIncSpectrumCoefficients; i++)
-			    setCoeff(i, coeffTF[i].getText());
+			    getCoeff(i, selectedBank).setValue(coeffTF[i].getText());
 		    for (int i = 0; i < numberIncSpectrumCoefficients; i++)
-			    setSplitCoeff(i, splitCoeffTF[i].getText());
+			    getSplitCoeff(i, selectedBank).setValue(splitCoeffTF[i].getText());
 	    }
 
     }
 
-	  boolean doRefreshBank = true;
-
-    public void initBankList() {
-	    doRefreshBank = false;
-	    if (bankCB.getItemCount() > 0)
-		    bankCB.removeAllItems();
-	    for (int i = 0; i < banknumbers(); i++)
-		    bankCB.addItem(getBankID(i));
-	    doRefreshBank = true;
-	    bankCB.setSelectedItem(getBankID(selectedBank));
-    }
-
     public void browsethefile() {
-	    if (removingBank)
-		    return;
+	//    if (removingBank)
+//		    return;
 	    removeParameterFields();
 	    isAbilitatetoRefresh = false;
 	    String filename = loadDataFile(this);
 	    filenameL.setText(getFileName());
-	    selectedBank = 0;
-	    initBankList();
+//	    selectedBank = 0;
 	    initParameterFields();
+	    initBankList();
 	    typeCB.setSelectedItem(getFunctionType(selectedBank));
 	    splitTypeCB.setSelectedItem(getSplitFunctionType(selectedBank));
 	    isAbilitatetoRefresh = true;
     }
 
     public void bankchanged() {
-	    if (removingBank)
-		    return;
+//	    if (removingBank)
+//		    return;
 	    Object sbank = bankCB.getSelectedItem();
 	    if (doRefreshBank && sbank != null) {
 		    String bank = sbank.toString();
@@ -1364,8 +1366,8 @@ public class GSASbankIntCalibration extends IntensityCalibration {
     }
 
     public void typechanged() {
-	    if (removingBank)
-		    return;
+//	    if (removingBank)
+//		    return;
 	    Object stype = typeCB.getSelectedItem();
 	    if (stype != null) {
 		    String bank = bankCB.getSelectedItem().toString();
@@ -1376,8 +1378,8 @@ public class GSASbankIntCalibration extends IntensityCalibration {
     }
 
 	  public void splitTypechanged() {
-		  if (removingBank)
-			  return;
+//		  if (removingBank)
+//			  return;
 		  Object stype = splitTypeCB.getSelectedItem();
 		  if (stype != null) {
 			  String bank = bankCB.getSelectedItem().toString();
@@ -1390,29 +1392,30 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 	  public void removeSelectedBank() {
 		  if (bankCB.getSelectedItem() != null) {
 			  String bankToRemove = (String) bankCB.getSelectedItem();
-			  removingBank = true;
+//			  removingBank = true;
 			  int selectedIndex = bankCB.getSelectedIndex();
-/*			  int newIndex = selectedIndex;
+			  int newIndex = selectedIndex;
 			  if (newIndex < bankCB.getItemCount() - 1)
 				  newIndex++;
 			  else
 				  newIndex--;
-			  if (newIndex >= 0)
+			  if (newIndex >= 0) {
 				  bankCB.setSelectedItem(getBankID(newIndex));
-			  else*/
-			  removeParameterFields();
+				  bankchanged();
+			  } else
+			   removeParameterFields();
 			  removeBank(bankToRemove);
 			  bankCB.removeItemAt(selectedIndex);
-			  setVisible(false);
-			  dispose();
-			  resetParameters();
-			  removingBank = false;
+//			  setVisible(false);
+//			  dispose();
+//			  resetParameters();
+//			  removingBank = false;
 		  }
 	  }
 
 	  public void copyToSplit() {
-		  if (removingBank)
-			  return;
+//		  if (removingBank)
+//			  return;
 		 retrieveParameters();
 		 updateStringtoDoubleBuffering(false);
 		 copyAllParametersToSplit();
@@ -1421,8 +1424,8 @@ public class GSASbankIntCalibration extends IntensityCalibration {
     }
 
 	  public void plotSpectrum() {
-		  if (removingBank)
-			  return;
+//		  if (removingBank)
+//			  return;
 		  retrieveParameters();
 		  updateStringtoDoubleBuffering(false);
 		  refreshComputation = true;
@@ -1445,8 +1448,8 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 	  }
 
 	  public void plotSplitSpectrum() {
-		  if (removingBank)
-			  return;
+//		  if (removingBank)
+//			  return;
 		  retrieveParameters();
 		  updateStringtoDoubleBuffering(false);
 		  refreshComputation = true;

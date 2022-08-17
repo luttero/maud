@@ -1607,7 +1607,8 @@ public class DataD extends myJFrame {
 			setCursor(new Cursor(Cursor.WAIT_CURSOR));
 			Constants.refreshTreePermitted = false;
 			String summedFilename = GSASNewDataFile.sumTheDatafiles(filename);
-			thedata.addDataFileforName(summedFilename, true);
+			if (summedFilename.length() > 0)
+				thedata.addDataFileforName(summedFilename, true);
 			Constants.refreshTreePermitted = true;
 			thedata.notifyUpObjectChanged(thedata, 0);
 			setCursor(new Cursor(Cursor.DEFAULT_CURSOR));

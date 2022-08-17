@@ -120,7 +120,7 @@ public class GSASbankCalibration extends AngularCalibration {
   public void initParameters() {
     super.initParameters();
     setFileName("");
-    setBank("");
+	 setBank("");
     stringField[2] = "9.07617";
   }
 
@@ -210,7 +210,7 @@ public class GSASbankCalibration extends AngularCalibration {
   }
 
   protected boolean bankIsActive(int bank) {
-    DataFileSet data = (DataFileSet) ((Instrument) getParent()).getParent();
+    DataFileSet data = (DataFileSet) getParent().getParent();
     int datafiles = data.activedatafilesnumber();
     return datafiles > 0;
   }
@@ -233,12 +233,12 @@ public class GSASbankCalibration extends AngularCalibration {
       int nparameter = Nparameterloop;
       Parameter[] apar = new Parameter[nparameter];
       int index = 0;
-      int selBankNumber = getBankNumber(getBankID());
+//      int selBankNumber = getBankNumber(getBankID());
       for (int i = 0; i < Nparameterloop; i++)
-        apar[index++] = (Parameter) parameterloopField[i].elementAt(selBankNumber);
+        apar[index++] = (Parameter) parameterloopField[i].elementAt(0);
 
-      for (int bank = 0; bank < banks; bank++) {
-        if (bank != selBankNumber) {
+      for (int bank = 1; bank < banks; bank++) {
+//        if (bank != selBankNumber) {
           for (int i = 0; i < Nparameterloop; i++) {
             if (i < 3)
               ((Parameter) parameterloopField[i].elementAt(bank)).setEqualTo(apar[i], 1.0, 0.0);
@@ -247,7 +247,7 @@ public class GSASbankCalibration extends AngularCalibration {
                 ((Parameter) parameterloopField[i].elementAt(bank)).setEqualTo(apar[i], 1.0, 0.0);
             }
           }
-        }
+//        }
       }
     } catch (Exception e) {
       e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -317,19 +317,11 @@ public class GSASbankCalibration extends AngularCalibration {
       return "0";
   }
 
-  public double getTthetaValue(DiffrDataFile datafile, double twotheta) {
-    return theta[getBankNumber(datafile)];
-  }
-
-  public String getEta() {
+    public String getEta() {
     if (getBankNumber() >= 0)
       return getEta(getBankNumber()).getValue();
     else
       return "0";
-  }
-
-  public double getEtaValue(DiffrDataFile datafile) {
-    return eta[getBankNumber(datafile)];
   }
 
   public String getDetectorDistance() {
@@ -337,6 +329,14 @@ public class GSASbankCalibration extends AngularCalibration {
       return getDetectorDistance(getBankNumber()).getValue();
     else
       return "1";
+  }
+
+  public double getTthetaValue(DiffrDataFile datafile, double twotheta) {
+    return theta[getBankNumber(datafile)];
+  }
+
+  public double getEtaValue(DiffrDataFile datafile) {
+    return eta[getBankNumber(datafile)];
   }
 
   public double getDetectorDistanceValue(DiffrDataFile datafile) {
@@ -463,6 +463,7 @@ public class GSASbankCalibration extends AngularCalibration {
       return null;
   }
 
+/*
   public void setDifc(String value) {
     if (getBankNumber() >= 0)
       getDifc(getBankNumber()).setValue(value);
@@ -491,7 +492,7 @@ public class GSASbankCalibration extends AngularCalibration {
   public void setDetectorDistance(String value) {
     if (getBankNumber() >= 0)
       getDetectorDistance(getBankNumber()).setValue(value);
-  }
+  }*/
 
   public void setBank(String value) {
     stringField[1] = new String(value);
@@ -536,13 +537,13 @@ public class GSASbankCalibration extends AngularCalibration {
     for (int i = 0; i < banknumbers(); i++)
       if (getBankID(i).equalsIgnoreCase(bankID))
         return i;
-    if (bankID.equalsIgnoreCase(getBankID())) {
+/*    if (bankID.equalsIgnoreCase(getBankID())) {
       setBank(0);
       for (int i = 0; i < banknumbers(); i++) {
         if (getBankID(i).equalsIgnoreCase(bankID))
           return i;
       }
-    }
+    }*/
     printBank();
     throw new Exception(bankID + ": The bank ID is not corresponding, reload the instrument parameter file for angular calibration!");
   }
@@ -780,6 +781,8 @@ public class GSASbankCalibration extends AngularCalibration {
     JTextField ddistanceTF;
     JTextField fpTF;
 
+	 int selectedBank = 0;
+
     public JBankOptionsD(Frame parent, XRDcat obj) {
 
       super(parent, obj);
@@ -894,31 +897,45 @@ public class GSASbankCalibration extends AngularCalibration {
       pack();
     }
 
-    public void initParameters() {
+	  boolean doRefreshBank = true;
+
+	  public void initBankList() {
+		  doRefreshBank = false;
+		  if (bankCB.getItemCount() > 0)
+			  bankCB.removeAllItems();
+		  for (int i = 0; i < banknumbers(); i++)
+			  bankCB.addItem(getBankID(i));
+		  doRefreshBank = true;
+		  selectedBank = getBankNumber();
+		  bankCB.setSelectedItem(getBankID(selectedBank));
+	  }
+
+	  public void initParameters() {
       isAbilitatetoRefresh = false;
       checkConsistency(false);
       isAbilitatetoRefresh = true;
       filenameL.setText(getFileName());
       initBankList();
-      initParameterFields();
+		if (banknumbers() > 0)
+         initParameterFields();
       fpTF.setText(stringField[2]);
     }
 
     public void initParameterFields() {
 	    if (banknumbers() > 0) {
-		    int bank = getBankNumber();
+		    int bank = selectedBank;
 		    if (bank >= 0) {
-			    difcTF.setText(getDifc());
+			    difcTF.setText(getDifc(bank).getValue());
 			    addComponenttolist(difcTF, getDifc(bank));
-			    difaTF.setText(getDifa());
+			    difaTF.setText(getDifa(bank).getValue());
 			    addComponenttolist(difaTF, getDifa(bank));
-			    zeroTF.setText(getZero());
+			    zeroTF.setText(getZero(bank).getValue());
 			    addComponenttolist(zeroTF, getZero(bank));
-			    tthetaTF.setText(getTtheta());
+			    tthetaTF.setText(getTtheta(bank).getValue());
 			    addComponenttolist(tthetaTF, getTtheta(bank));
-			    etaTF.setText(getEta());
+			    etaTF.setText(getEta(bank).getValue());
 			    addComponenttolist(etaTF, getEta(bank));
-			    ddistanceTF.setText(getDetectorDistance());
+			    ddistanceTF.setText(getDetectorDistance(bank).getValue());
 			    addComponenttolist(ddistanceTF, getDetectorDistance(bank));
 		    }
 	    }
@@ -934,26 +951,14 @@ public class GSASbankCalibration extends AngularCalibration {
     }
 
     public void retrieveParameters() {
-      setDifc(difcTF.getText());
-      setDifa(difaTF.getText());
-      setZero(zeroTF.getText());
-      setTtheta(tthetaTF.getText());
-      setEta(etaTF.getText());
-      setDetectorDistance(ddistanceTF.getText());
+      getDifc(selectedBank).setValue(difcTF.getText());
+      getDifa(selectedBank).setValue(difaTF.getText());
+      getZero(selectedBank).setValue(zeroTF.getText());
+      getTtheta(selectedBank).setValue(tthetaTF.getText());
+      getEta(selectedBank).setValue(etaTF.getText());
+      getDetectorDistance(selectedBank).setValue(ddistanceTF.getText());
 //			if (bankCB.getSelectedItem() != null)
       stringField[2] = fpTF.getText();
-    }
-
-	  boolean doRefreshBank = true;
-
-	  public void initBankList() {
-		  doRefreshBank = false;
-      if (bankCB.getItemCount() > 0)
-        bankCB.removeAllItems();
-      for (int i = 0; i < banknumbers(); i++)
-        bankCB.addItem(getBankID(i));
-		  doRefreshBank = true;
-      bankCB.setSelectedItem(getBankID());
     }
 
     public void browsethefile() {
@@ -971,7 +976,8 @@ public class GSASbankCalibration extends AngularCalibration {
       if (doRefreshBank && bankCB.getSelectedItem() != null) {
         retrieveParameters();
         removeParameterFields();
-	      setBank(bankCB.getSelectedItem().toString());
+	     selectedBank = bankCB.getSelectedIndex();
+		  setBank(selectedBank);
         initParameterFields();
       }
     }
@@ -980,21 +986,23 @@ public class GSASbankCalibration extends AngularCalibration {
       if (bankCB.getSelectedItem() != null) {
         try {
           String bankToRemove = (String) bankCB.getSelectedItem();
-          int bankSelected = getBankNumber(bankToRemove);
           int selectedIndex = bankCB.getSelectedIndex();
           int newIndex = selectedIndex;
           if (newIndex < bankCB.getItemCount() - 1)
             newIndex++;
           else
             newIndex--;
-          if (newIndex >= 0)
-            bankCB.setSelectedItem(getBankID(newIndex));
-          else
+          if (newIndex >= 0) {
+	          bankCB.setSelectedIndex(newIndex);
+	          bankchanged();
+//				 selectedBank = newIndex;
+          } else
             removeParameterFields();
           removeBank(bankToRemove);
           bankCB.removeItemAt(selectedIndex);
-	        setVisible(false);
-	        dispose();
+
+//	        setVisible(false);
+//	        dispose();
         } catch (Exception e) {
           e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }

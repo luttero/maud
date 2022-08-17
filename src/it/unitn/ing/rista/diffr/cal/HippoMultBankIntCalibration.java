@@ -62,7 +62,7 @@ public class HippoMultBankIntCalibration extends GSASbankIntCalibration {
   }
 
   protected boolean bankIsActive(int bank) {
-    DataFileSet data = (DataFileSet) ((Instrument) getParent()).getParent();
+    DataFileSet data = (DataFileSet) getParent().getParent();
     int datafiles = data.activedatafilesnumber();
     boolean isActive = false;
     for (int i = 0; i < datafiles && !isActive; i++) {

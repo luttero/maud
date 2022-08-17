@@ -43,6 +43,17 @@ from the older one.
 
 Maud Version notes:
 
+(16/08/2022):   2.996. The "Arches" release.
+                Lot of Arches and red rocks in the weekend.
+                Maud is using XrayLib for all scattering and absorption properties
+                calculations. Now the number of available atoms from periodic
+                table goes to 109.
+
+(12/08/2022):   2.995. The "Matt & Dan" release.
+                Thanks to them for the bugs hunting.....
+                A lot of improvements, bug fixing. Not released because needed
+                extensive testing.
+
 (29/07/2022):   2.994. The "Stout" release.
                 You have to empty the beer keg while working on angles conversion.
                 That's why it takes so long.....
