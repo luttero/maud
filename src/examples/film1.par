@@ -1,11 +1,11 @@
 data_global
 _audit_creation_date 'Mon Oct 12 15:11:53 PDT 1998'
-_audit_creation_method 'Maud, version 2.6'
-_audit_update_record 'Last update Wed Jun 22 15:50:25 CEST 2016'
-_computing_structure_refinement 'Maud, version 2.6'
-_refine_ls_R_factor_all 0.012212841
-_refine_ls_wR_factor_all 0.021186983
-_refine_ls_goodness_of_fit_all 0.09853876
+_audit_creation_method 'Maud version 2.996'
+_audit_update_record 'Tue Aug 16 15:15:41 MDT 2022'
+_computing_structure_refinement 'Maud, version 2.996'
+_refine_ls_R_factor_all 0.012506268
+_refine_ls_wR_factor_all 0.020676812
+_refine_ls_goodness_of_fit_all 0.09859573
 _publ_contact_author_name 'Luca Lutterotti'
 _publ_section_title 'Ni3Al ball milled at Cambridge'
 _pd_proc_ls_extract_int never
@@ -18,7 +18,7 @@ _pd_proc_ls_extract_Fhkl 'end of iteration'
 _pd_proc_ls_Fhkl_comp 'end of iteration'
 _pd_proc_ls_weight_scheme sqrt
 _refine_ls_weighting_scheme WgtSS
-_refine_ls_WSS_factor 48.208378
+_refine_ls_WSS_factor 45.91466
 _maud_store_spectra_with_analysis true
 _riet_remove_phases_under 0.001
 _riet_refine_cell_over 0.1
@@ -46,7 +46,7 @@ _riet_refine_ls_double_derivative false
 
 
 
-data_sample_Ni3Almilled
+data_Sample_Ni3Almilled
 _pd_spec_description 'Sample description'
 _riet_thin_film_phase_refinement films
 _reflectivity_layer_qc_from_phases false
@@ -128,6 +128,9 @@ _riet_meas_dataset_random_texture false
 _maud_background_add_automatic false
 _maud_interpolated_background_iterations 10
 _pd_proc_ls_datafile_weight 1.0
+_riet_meas_dataset_no_strain false
+_riet_meas_dataset_omogeneous true
+_riet_chebyshev_polynomial_background false
 _riet_par_background_exp_shift 0 #min 0.0 #max 0.0
 _riet_par_background_exp_thermal_shift 0 #min 0.0 #max 0.0
 _pd_spec_orientation_omega 0 #min 0.0 #max 0.0
@@ -143,12 +146,12 @@ _riet_par_spec_displac_z 0 #min 0.0 #max 0.0
 
 loop_
 _riet_par_background_pol
-  69.074356(3074.295) #min -74.40632 #max 10413.303
-  -0.272298(12.656137) #min -77.26483 #max 0.0
-  0.0013256397(0.07373592) #min -77.26483 #max 0.0
-  3.0255162E-5(0.0014478017) #min -77.26483 #max 0.0
-  -6.701349E-8(3.5542043E-6) #min -77.26483 #max 0.0
-  -3.0570085E-10(1.44267105E-8) #min -77.26483 #max 0.0
+  75.23288(3995.0977) #min -74.40632 #max 10413.303
+  -0.28836703(15.693177) #min -77.26483 #max 0.0
+  9.816468E-4(0.061926078) #min -77.26483 #max 0.035720613
+  3.2355543E-5(0.0017811508) #min -77.26483 #max 0.035720613
+  -4.334239E-8(2.7460637E-6) #min -77.26483 #max 0.0
+  -4.404017E-10(2.3977256E-8) #min -77.26483 #max 0.0
 
 
 #subordinateObject_none ie
@@ -181,12 +184,7 @@ _diffrn_measurement_device 'Diffraction Instrument'
 
 _diffrn_measurement_device_type 'Diffraction Instrument'
 _maud_optional_intensity_factor 1.0
-_pd_proc_intensity_incident 2.02402(92.43371) #positive #min 0.0 #max 10000.0
-
-loop_
-_riet_par_2-theta_offset
-  0.36233386(0.0122946985) #min -0.114964165 #max 0.14051175
-  0.0019629283(2.283661E-4) #min -0.02784936 #max 0.02278584
+_pd_proc_intensity_incident 0.35890335(19.43571) #positive #min 0.0 #max 10000.0
 
 
 #subordinateObject_Film Calibration
@@ -196,22 +194,28 @@ _inst_intensity_calibration 'Film Calibration'
 
 loop_
 _inst_intensity_cal_coeff
-  215.6539(2.9275138) #min 0.0 #max 2260.3354
-  5.8076634(40945.266) #min -48.157665 #max 58.859367
-  0.006251187(24.603798) #min -48.157665 #max 58.859367
-  1.0194491(0.30553854) #min -48.157665 #max 58.859367
+  228.14745(6.878099) #min 0.0 #max 2260.3354
+  4.624581(52360.223) #min -48.157665 #max 58.859367
+  0.005467964(40.35134) #min -48.157665 #max 58.859367
+  1.0533388(0.40252697) #min -48.157665 #max 58.859367
   1.5 #min -48.157665 #max 58.859367
 
 
 #end_subordinateObject_Film Calibration
 
 
-#subordinateObject_none
+#subordinateObject_Instrument disalignment
 
-_inst_angular_calibration 'none'
+_inst_angular_calibration 'Instrument disalignment'
 
 
-#end_subordinateObject_none
+loop_
+_riet_par_2-theta_offset
+  -0.36233386 #min -5.679102 #max 0.1
+  -0.0019629283 #min -0.003675314 #max 0.00449205
+
+
+#end_subordinateObject_Instrument disalignment
 
 
 #subordinateObject_Debye-Scherrer
@@ -286,18 +290,18 @@ _riet_caglioti_d_dep true
 _riet_asymmetry_tan_dep true
 _riet_omega/chi_broadening_convoluted false
 _riet_par_asymmetry_truncation 0.4
-_riet_par_asymmetry_reciprocal ?
+_riet_par_asymmetry_reciprocal false
 
 loop_
 _riet_par_asymmetry_value
-  69.38498(12.570927) #min 5.0 #max 1000.0
-  -1.0571114(0.23735777) #min -83.39512 #max 2.064033
+  54.371845(4.7166057) #min 5.0 #max 1000.0
+  -0.7633253(0.097542636) #min -83.39512 #max 2.064033
 
 loop_
 _riet_par_caglioti_value
-  0.1250058(0.026433678) #min -0.1 #max 0.1
-  -0.2842535(0.07002778) #min -12.053001 #max 2.6195843
-  0.072226614(0.04283545) #min -12.053001 #max 2.6195843
+  0.08927872(0.014218516) #min -0.1 #max 0.1
+  -0.1378093(0.033259813) #min -12.053001 #max 2.6195843
+  0.03857389(0.00956281) #min -12.053001 #max 2.6195843
 
 loop_
 _riet_par_gaussian_value
@@ -327,6 +331,14 @@ _fluorescence_model_type 'none fluorescence'
 #end_subordinateObject_none fluorescence
 
 
+#subordinateObject_Basic diffraction
+
+_diffraction_model_type 'Basic diffraction'
+
+
+#end_subordinateObject_Basic diffraction
+
+
 #subordinateObject_Region 1
 
 _pd_proc_info_excluded_regions 'Region 1'
@@ -343,9 +355,9 @@ _riet_par_background_peak_id 'peak1'
 
 _riet_par_background_peak_id Background_peak
 _riet_par_background_peak_exponent 0.0
-_riet_par_background_peak_height 454.71347(20622.973) #min 0.0 #max 1000000.0
-_riet_par_background_peak_2th 23.825636(1.7569174) #min -11.0 #max 22000.0
-_riet_par_background_peak_hwhm 8.526847(1.5450145) #min -12.6 #max 15.4
+_riet_par_background_peak_height 420.67456(22804.396) #min 0.0 #max 1000000.0
+_riet_par_background_peak_2th 23.953682(1.231809) #min -11.0 #max 22000.0
+_riet_par_background_peak_hwhm 8.150332(1.1606208) #min -12.6 #max 15.4
 _riet_par_background_peak_gaussian 0 #min -16.852491 #max 20.597488
 _riet_par_background_peak_omega_position 0 #min 0.0 #max 0.0
 _riet_par_background_peak_omega_hwhm 0 #min 0.0 #max 0.0
@@ -369,9 +381,9 @@ _riet_par_background_peak_id 'peak2'
 
 _riet_par_background_peak_id Background_peak
 _riet_par_background_peak_exponent 0.0
-_riet_par_background_peak_height 89.59704(3931.6182) #min 0.0 #max 1000000.0
-_riet_par_background_peak_2th 71.971794(1.4508984) #min -11.0 #max 22000.0
-_riet_par_background_peak_hwhm 12.114891(2.4622939) #min -12.6 #max 15.4
+_riet_par_background_peak_height 85.9014(4655.0923) #min 0.0 #max 1000000.0
+_riet_par_background_peak_2th 72.94851(1.1062554) #min -11.0 #max 22000.0
+_riet_par_background_peak_hwhm 11.086939(1.8984096) #min -12.6 #max 15.4
 _riet_par_background_peak_gaussian 0 #min -16.852491 #max 20.597488
 _riet_par_background_peak_omega_position 0 #min 0.0 #max 0.0
 _riet_par_background_peak_omega_hwhm 0 #min 0.0 #max 0.0
@@ -394,11 +406,11 @@ _riet_par_background_peak_eta_gaussian 0 #min 0.0 #max 0.0
 _riet_meas_datafile_name 'film1.cif'
 
 _riet_meas_datafile_format ?
-_pd_meas_orientation_omega 0.0
-_pd_meas_orientation_chi 0.0
-_pd_meas_orientation_phi 0.0
-_pd_meas_orientation_eta 0.0
-_pd_meas_orientation_2theta 0.0
+_pd_meas_angle_omega 0.0
+_pd_meas_angle_chi 0.0
+_pd_meas_angle_phi 0.0
+_pd_meas_angle_eta -0.0
+_pd_meas_angle_2theta 0.0
 _pd_meas_energy_kev 0.0
 _riet_meas_datafile_compute true
 _riet_meas_datafile_fitting false
@@ -414,10 +426,12 @@ _riet_background_interpolated_manual false
 _pd_meas_datetime_initiated 1984-01-01T00:00:00
 _pd_proc_ls_datafile_weight 1.0
 _riet_use_count_time false
+_riet_chebyshev_polynomial_background false
 _pd_meas_counts_monitor 1.0 #positive #min 0.0 #max 10.0
 _riet_par_spec_displac_x_2R 0 #min -10.0 #max 10.0
 _riet_par_spec_displac_z_2R 0 #min -10.0 #max 10.0
 _riet_par_fluo_diffr_scale 1.0 #positive #min 0.0 #max 100.0
+_rita_shape_abs_velocity_corr_factor 0 #positive #min 0.0 #max 10000.0
 
 
 #custom_object_intensity_data
@@ -1716,39 +1730,68 @@ _pd_meas_position _pd_meas_intensity_total _pd_meas_intensity_sigma
 
 #custom_object_texture_factors
 _rita_texture_points_number 1
+_rita_texture_radiations_number 2
 
 data_phase_Ni3Al
 
 loop_
-_refln_index_h _refln_index_k _refln_index_l _rita_texture_factor_meas _rita_texture_factor_calc _rita_texture_point_index
-1 0 0 1.0 1.0 0
-1 1 0 1.0 1.0 0
-1 1 1 1.0 1.0 0
-2 0 0 1.0 1.0 0
-2 1 0 1.0 1.0 0
-2 1 1 1.0 1.0 0
-2 2 0 1.0 1.0 0
-2 2 1 1.0 1.0 0
-3 0 0 1.0 1.0 0
-3 1 0 1.0 1.0 0
-3 1 1 1.0 1.0 0
-2 2 2 1.0 1.0 0
-3 2 0 1.0 1.0 0
-3 2 1 1.0 1.0 0
-4 0 0 1.0 1.0 0
-3 2 2 1.0 1.0 0
-4 1 0 1.0 1.0 0
-4 1 1 1.0 1.0 0
-3 3 0 1.0 1.0 0
-3 3 1 1.0 1.0 0
-4 2 0 1.0 1.0 0
-4 2 1 1.0 1.0 0
-3 3 2 1.0 1.0 0
-4 2 2 1.0 1.0 0
-4 3 0 1.0 1.0 0
-5 0 0 1.0 1.0 0
-4 3 1 1.0 1.0 0
-5 1 0 1.0 1.0 0
+_refln_index_h _refln_index_k _refln_index_l _rita_texture_factor_meas _rita_texture_factor_calc _rita_texture_point_index _rita_texture_radiation_index
+1 0 0 1.0 1.0 0 0
+1 0 0 1.0 1.0 0 1
+1 1 0 1.0 1.0 0 0
+1 1 0 1.0 1.0 0 1
+1 1 1 1.0 1.0 0 0
+1 1 1 1.0 1.0 0 1
+2 0 0 1.0 1.0 0 0
+2 0 0 1.0 1.0 0 1
+2 1 0 1.0 1.0 0 0
+2 1 0 1.0 1.0 0 1
+2 1 1 1.0 1.0 0 0
+2 1 1 1.0 1.0 0 1
+2 2 0 1.0 1.0 0 0
+2 2 0 1.0 1.0 0 1
+2 2 1 1.0 1.0 0 0
+2 2 1 1.0 1.0 0 1
+3 0 0 1.0 1.0 0 0
+3 0 0 1.0 1.0 0 1
+3 1 0 1.0 1.0 0 0
+3 1 0 1.0 1.0 0 1
+3 1 1 1.0 1.0 0 0
+3 1 1 1.0 1.0 0 1
+2 2 2 1.0 1.0 0 0
+2 2 2 1.0 1.0 0 1
+3 2 0 1.0 1.0 0 0
+3 2 0 1.0 1.0 0 1
+3 2 1 1.0 1.0 0 0
+3 2 1 1.0 1.0 0 1
+4 0 0 1.0 1.0 0 0
+4 0 0 1.0 1.0 0 1
+3 2 2 1.0 1.0 0 0
+3 2 2 1.0 1.0 0 1
+4 1 0 1.0 1.0 0 0
+4 1 0 1.0 1.0 0 1
+3 3 0 1.0 1.0 0 0
+3 3 0 1.0 1.0 0 1
+4 1 1 1.0 1.0 0 0
+4 1 1 1.0 1.0 0 1
+3 3 1 1.0 1.0 0 0
+3 3 1 1.0 1.0 0 1
+4 2 0 1.0 1.0 0 0
+4 2 0 1.0 1.0 0 1
+4 2 1 1.0 1.0 0 0
+4 2 1 1.0 1.0 0 1
+3 3 2 1.0 1.0 0 0
+3 3 2 1.0 1.0 0 1
+4 2 2 1.0 1.0 0 0
+4 2 2 1.0 1.0 0 1
+4 3 0 1.0 1.0 0 0
+4 3 0 1.0 1.0 0 1
+5 0 0 1.0 1.0 0 0
+5 0 0 1.0 1.0 0 1
+4 3 1 1.0 1.0 0 0
+4 3 1 1.0 1.0 0 1
+5 1 0 1.0 1.0 0 0
+5 1 0 1.0 1.0 0 1
 
 
 #end_custom_object_texture_factors
@@ -1763,34 +1806,34 @@ data_phase_Ni3Al
 
 loop_
 _refln_index_h _refln_index_k _refln_index_l _refln_F_squared_meas _refln_F_squared_calc _refln_F_squared_sigma 
-1 0 0 448.85123 448.85123 0.0
-1 1 0 783.10016 783.10016 0.0
-1 1 1 23189.393 23189.393 0.0
-2 0 0 16315.304 16315.304 0.0
-2 1 0 1056.3339 1056.3339 0.0
-2 1 1 937.64124 937.64124 0.0
-2 2 0 27775.674 27775.674 0.0
-2 2 1 687.29236 687.29236 0.0
-3 0 0 171.82309 171.82309 0.0
-3 1 0 629.84265 629.84265 0.0
-3 1 1 51801.375 51801.375 0.0
-2 2 2 16980.283 16980.283 0.0
-3 2 0 507.3942 507.3942 0.0
-3 2 1 957.59344 957.59344 0.0
-4 0 0 12231.931 12231.931 0.0
-3 2 2 417.5894 417.5894 0.0
-4 1 0 417.5894 417.5894 0.0
-4 1 1 403.54504 403.54504 0.0
-3 3 0 201.77252 201.77252 0.0
-3 3 1 48642.047 48642.047 0.0
-4 2 0 48749.348 48749.348 0.0
-4 2 1 750.81116 750.81116 0.0
-3 3 2 369.89993 369.89993 0.0
-4 2 2 50125.59 50125.59 0.0
-4 3 0 362.78455 362.78455 0.0
-5 0 0 90.69614 90.69614 0.0
-4 3 1 726.3999 726.3999 0.0
-5 1 0 363.19995 363.19995 0.0
+1 0 0 613.16284 613.16284 0.0
+1 1 0 1173.0444 1173.0444 0.0
+1 1 1 27345.021 27345.021 0.0
+2 0 0 21046.969 21046.969 0.0
+2 1 0 2088.0586 2088.0586 0.0
+2 1 1 2033.7675 2033.7675 0.0
+2 2 0 51277.63 51277.63 0.0
+2 2 1 1981.3317 1981.3317 0.0
+3 0 0 495.33292 495.33292 0.0
+3 1 0 1996.9932 1996.9932 0.0
+3 1 1 124732.664 124732.664 0.0
+2 2 2 44671.145 44671.145 0.0
+3 2 0 2136.7236 2136.7236 0.0
+3 2 1 4428.2896 4428.2896 0.0
+4 0 0 45820.21 45820.21 0.0
+3 2 2 2544.7937 2544.7937 0.0
+4 1 0 2544.7937 2544.7937 0.0
+3 3 0 1347.6013 1347.6013 0.0
+4 1 1 2695.2026 2695.2026 0.0
+3 3 1 237638.75 237638.75 0.0
+4 2 0 260211.03 260211.03 0.0
+4 2 1 6586.5254 6586.5254 0.0
+3 3 2 3551.0747 3551.0747 0.0
+4 2 2 381411.12 381411.12 0.0
+4 3 0 4559.532 4559.532 0.0
+5 0 0 1139.883 1139.883 0.0
+4 3 1 9987.8545 9987.8545 0.0
+5 1 0 4993.9272 4993.9272 0.0
 
 
 #end_custom_object_Fhkl
@@ -1813,10 +1856,12 @@ _refine_ls_d_res_high 5000
 _reflns_d_resolution_low 0.3
 _reflns_d_resolution_high 50
 _maud_sg_centering_type P
+_chemical_name_mineral Unknown
+_chemical_name_systematic Unknown
 
-_cell_length_a 3.5693922(2.4263993E-4) #positive #min 0.1 #max 100.0
-_cell_length_b 3.5693922 #positive #min 5.0 #max 30.0
-_cell_length_c 3.5693922 #positive #min 5.0 #max 30.0
+_cell_length_a 3.5693939(5.7163743E-5) #positive #min 0.1 #max 100.0
+_cell_length_b 3.5693939 #positive #min 5.0 #max 30.0
+_cell_length_c 3.5693939 #positive #min 5.0 #max 30.0
 _cell_angle_alpha 90.0 #positive #min 90.0 #max 120.0
 _cell_angle_beta 90.0 #positive #min 90.0 #max 120.0
 _cell_angle_gamma 90.0 #positive #min 90.0 #max 120.0
@@ -1913,13 +1958,13 @@ _atom_site_label 'Ni1'
 
 _atom_site_type_symbol dummy
 _atom_site_constraints 0
-_atom_type_number_in_cell 0.46222293
+_atom_type_number_in_cell 3.0
 _atom_site_calc_flag .
-_atom_site_occupancy 0.15407431(0.0066027706) #positive #min 0.0 #max 1.0
+_atom_site_occupancy 0.108489126(0.0065297717) #positive #min 0.0 #max 1.0
 _atom_site_fract_x .5 #min 0.0 #max 1.0
 _atom_site_fract_y .5 #min 0.0 #max 1.0
 _atom_site_fract_z 0 #min 0.0 #max 1.0
-_atom_site_B_iso_or_equiv -1.683807(0.049484927) #min -1.0 #max 10.0 #ref0
+_atom_site_B_iso_or_equiv -3.9305582(0.040518314) #min -1.0 #max 10.0 #ref0
 _atom_site_aniso_B_11 0 #min -1.0 #max 10.0
 _atom_site_aniso_B_22 0 #min -1.0 #max 10.0
 _atom_site_aniso_B_33 0 #min -1.0 #max 10.0
@@ -1932,7 +1977,7 @@ _atom_site_aniso_B_23 0 #min -1.0 #max 10.0
 _rg_site_scatterer 'Ni'
 
 _atom_type_symbol Ni
-_atom_site_occupancy 0.15407431 #positive #min 0.0 #max 1.0
+_atom_site_occupancy 1.0 #positive #min 0.0 #max 1.0
 
 #end_subordinateObject_Ni
 
@@ -1946,13 +1991,13 @@ _atom_site_label 'Al1'
 
 _atom_site_type_symbol dummy
 _atom_site_constraints 0
-_atom_type_number_in_cell 0.03859596
+_atom_type_number_in_cell 1.0
 _atom_site_calc_flag .
 _atom_site_occupancy 0.03859596 #positive #min 0.0 #max 1.0
 _atom_site_fract_x 0 #min 0.0 #max 1.0
 _atom_site_fract_y 0 #min 0.0 #max 1.0
 _atom_site_fract_z 0 #min 0.0 #max 1.0
-_atom_site_B_iso_or_equiv -1.683807 #min -1.0 #max 10.0 #equalTo 0 + 1 * #ref0
+_atom_site_B_iso_or_equiv -3.9305582 #min -1.0 #max 10.0 #equalTo 0 + 1 * #ref0
 _atom_site_aniso_B_11 0 #min -1.0 #max 10.0
 _atom_site_aniso_B_22 0 #min -1.0 #max 10.0
 _atom_site_aniso_B_33 0 #min -1.0 #max 10.0
@@ -1965,7 +2010,7 @@ _atom_site_aniso_B_23 0 #min -1.0 #max 10.0
 _rg_site_scatterer 'Al'
 
 _atom_type_symbol Al
-_atom_site_occupancy 0.03859596 #positive #min 0.0 #max 1.0
+_atom_site_occupancy 1.0 #positive #min 0.0 #max 1.0
 
 #end_subordinateObject_Al
 
@@ -1979,13 +2024,13 @@ _atom_site_label 'Ni2'
 
 _atom_site_type_symbol dummy
 _atom_site_constraints 0
-_atom_type_number_in_cell 0.961404
+_atom_type_number_in_cell 1.0
 _atom_site_calc_flag .
 _atom_site_occupancy 0.96140403 #positive #min 0.0 #max 1.0
 _atom_site_fract_x 0 #min 0.0 #max 1.0
 _atom_site_fract_y 0 #min 0.0 #max 1.0
 _atom_site_fract_z 0 #min 0.0 #max 1.0
-_atom_site_B_iso_or_equiv -1.683807 #min -1.0 #max 10.0 #equalTo 0 + 1 * #ref0
+_atom_site_B_iso_or_equiv -3.9305582 #min -1.0 #max 10.0 #equalTo 0 + 1 * #ref0
 _atom_site_aniso_B_11 0 #min -1.0 #max 10.0
 _atom_site_aniso_B_22 0 #min -1.0 #max 10.0
 _atom_site_aniso_B_33 0 #min -1.0 #max 10.0
@@ -1998,7 +2043,7 @@ _atom_site_aniso_B_23 0 #min -1.0 #max 10.0
 _rg_site_scatterer 'Ni'
 
 _atom_type_symbol Ni
-_atom_site_occupancy 0.961404 #positive #min 0.0 #max 1.0
+_atom_site_occupancy 1.0 #positive #min 0.0 #max 1.0
 
 #end_subordinateObject_Ni
 
@@ -2012,13 +2057,13 @@ _atom_site_label 'Al2'
 
 _atom_site_type_symbol dummy
 _atom_site_constraints 0
-_atom_type_number_in_cell 2.6526363
+_atom_type_number_in_cell 3.0
 _atom_site_calc_flag .
 _atom_site_occupancy 0.88421210 #positive #min 0.0 #max 1.0
 _atom_site_fract_x .5 #min 0.0 #max 1.0
 _atom_site_fract_y .5 #min 0.0 #max 1.0
 _atom_site_fract_z 0 #min 0.0 #max 1.0
-_atom_site_B_iso_or_equiv -1.683807 #min -1.0 #max 10.0 #equalTo 0 + 1 * #ref0
+_atom_site_B_iso_or_equiv -3.9305582 #min -1.0 #max 10.0 #equalTo 0 + 1 * #ref0
 _atom_site_aniso_B_11 0 #min -1.0 #max 10.0
 _atom_site_aniso_B_22 0 #min -1.0 #max 10.0
 _atom_site_aniso_B_33 0 #min -1.0 #max 10.0
@@ -2031,7 +2076,7 @@ _atom_site_aniso_B_23 0 #min -1.0 #max 10.0
 _rg_site_scatterer 'Al'
 
 _atom_type_symbol Al
-_atom_site_occupancy 0.8842121 #positive #min 0.0 #max 1.0
+_atom_site_occupancy 1.0 #positive #min 0.0 #max 1.0
 
 #end_subordinateObject_Al
 

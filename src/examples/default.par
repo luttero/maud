@@ -1,8 +1,8 @@
 data_global
-_audit_creation_date 'Mon Oct 12 15:11:53 PDT 1998'
-_audit_creation_method 'Maud, version 2.61'
-_audit_update_record 'Last update Thu Jun 23 11:01:04 CEST 2016'
-_computing_structure_refinement 'Maud, version 2.61'
+_audit_creation_date 'Tue Aug 16 15:17:38 MDT 2022'
+_audit_creation_method 'Maud, version 2.996'
+_audit_update_record 'Tue Aug 16 15:18:27 MDT 2022'
+_computing_structure_refinement 'Maud, version 2.996'
 _refine_ls_R_factor_all 0
 _refine_ls_wR_factor_all 0
 _refine_ls_goodness_of_fit_all 0
@@ -46,7 +46,7 @@ _riet_refine_ls_double_derivative false
 
 
 
-data_sample_Sample_x
+data_Sample_Sample_x
 _pd_spec_description 'Sample description'
 _riet_thin_film_phase_refinement automatic
 _reflectivity_layer_qc_from_phases false
@@ -124,6 +124,9 @@ _riet_meas_dataset_random_texture false
 _maud_background_add_automatic false
 _maud_interpolated_background_iterations 10
 _pd_proc_ls_datafile_weight 1.0
+_riet_meas_dataset_no_strain false
+_riet_meas_dataset_omogeneous true
+_riet_chebyshev_polynomial_background false
 _riet_par_background_exp_shift 0 #min 0.0 #max 0.0
 _riet_par_background_exp_thermal_shift 0 #min 0.0 #max 0.0
 _pd_spec_orientation_omega 0 #min 0.0 #max 0.0
@@ -182,10 +185,6 @@ _diffrn_measurement_device_type 'Diffraction Instrument'
 _maud_optional_intensity_factor 1.0
 _pd_proc_intensity_incident 2.0 #positive #min 0.0 #max 10000.0
 
-loop_
-_riet_par_2-theta_offset
-  0 #min -0.114964165 #max 0.14051175
-
 
 #subordinateObject_none cal
 
@@ -195,12 +194,17 @@ _inst_intensity_calibration 'none cal'
 #end_subordinateObject_none cal
 
 
-#subordinateObject_no ang
+#subordinateObject_Instrument disalignment
 
-_inst_angular_calibration 'no ang'
+_inst_angular_calibration 'Instrument disalignment'
 
 
-#end_subordinateObject_no ang
+loop_
+_riet_par_2-theta_offset
+  0 #min -5.679102 #max 0.1
+
+
+#end_subordinateObject_Instrument disalignment
 
 
 #subordinateObject_Bragg-Brentano
@@ -275,7 +279,7 @@ _riet_caglioti_d_dep true
 _riet_asymmetry_tan_dep true
 _riet_omega/chi_broadening_convoluted true
 _riet_par_asymmetry_truncation 0.4
-_riet_par_asymmetry_reciprocal ?
+_riet_par_asymmetry_reciprocal false
 
 loop_
 _riet_par_asymmetry_value
@@ -314,6 +318,14 @@ _fluorescence_model_type 'none fluorescence'
 
 
 #end_subordinateObject_none fluorescence
+
+
+#subordinateObject_Basic diffraction
+
+_diffraction_model_type 'Basic diffraction'
+
+
+#end_subordinateObject_Basic diffraction
 
 
 #custom_object_Fhkl

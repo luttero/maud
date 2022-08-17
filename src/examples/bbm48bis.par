@@ -1,11 +1,11 @@
 data_global
 _audit_creation_date 'Mon Oct 12 15:11:53 PDT 1998'
-_audit_creation_method 'Maud, version 2.6'
-_audit_update_record 'Last update Wed Jun 22 15:03:40 CEST 2016'
-_computing_structure_refinement 'Maud, version 2.6'
-_refine_ls_R_factor_all 0.059903674
-_refine_ls_wR_factor_all 0.07711795
-_refine_ls_goodness_of_fit_all 0.061817862
+_audit_creation_method 'Maud version 2.996'
+_audit_update_record 'Tue Aug 16 15:01:13 MDT 2022'
+_computing_structure_refinement 'Maud, version 2.996'
+_refine_ls_R_factor_all 0.059846997
+_refine_ls_wR_factor_all 0.07678136
+_refine_ls_goodness_of_fit_all 0.061835226
 _publ_contact_author_name 'Luca Lutterotti'
 _publ_section_title 'Al2O3 - ZrO2 standard'
 _pd_proc_ls_extract_int 'end of iteration'
@@ -18,7 +18,7 @@ _pd_proc_ls_extract_Fhkl 'end of iteration'
 _pd_proc_ls_Fhkl_comp 'end of iteration'
 _pd_proc_ls_weight_scheme sqrt
 _refine_ls_weighting_scheme WgtSS
-_refine_ls_WSS_factor 2770.1482
+_refine_ls_WSS_factor 2746.0198
 _maud_store_spectra_with_analysis true
 _riet_remove_phases_under 0.001
 _riet_refine_cell_over 0.1
@@ -46,7 +46,7 @@ _riet_refine_ls_double_derivative false
 
 
 
-data_sample_brassbb48bis
+data_Sample_brassbb48bis
 _pd_spec_description 'Sample description'
 _riet_thin_film_phase_refinement films
 _reflectivity_layer_qc_from_phases false
@@ -98,8 +98,8 @@ _reflectivity_layer_roughness 2.00000000 #positive #min 0.01 #max 100.0
 
 loop_
 _pd_phase_atom_%
-  0.5273421 #positive #min -6.1745715 #max 7.5466986
-  0.4726579(0.011913327) #positive #min -2.3269634 #max 2.8440664
+  0.52500784 #positive #min -6.1745715 #max 7.5466986
+  0.47499216(0.012135442) #positive #min -2.3269634 #max 2.8440664
 
 
 #end_subordinateObject_layer1
@@ -129,6 +129,9 @@ _riet_meas_dataset_random_texture false
 _maud_background_add_automatic false
 _maud_interpolated_background_iterations 10
 _pd_proc_ls_datafile_weight 1.0
+_riet_meas_dataset_no_strain false
+_riet_meas_dataset_omogeneous true
+_riet_chebyshev_polynomial_background false
 _riet_par_background_exp_shift 0 #min 0.0 #max 0.0
 _riet_par_background_exp_thermal_shift 0 #min 0.0 #max 0.0
 _pd_spec_orientation_omega 0 #min 0.0 #max 0.0
@@ -144,9 +147,9 @@ _riet_par_spec_displac_z 0 #min 0.0 #max 0.0
 
 loop_
 _riet_par_background_pol
-  121.485634(3.065927) #min -74.40632 #max 10413.303
-  1.2425169(0.09998108) #min -77.26483 #max 0.0
-  -0.0026398306(7.23301E-4) #min -77.26483 #max 0.0
+  119.98688(3.0826979) #min -74.40632 #max 10413.303
+  1.2868937(0.10062253) #min -77.26483 #max 0.035720613
+  -0.0028947727(7.2710315E-4) #min -77.26483 #max 0.0
 
 
 #subordinateObject_none ie
@@ -179,11 +182,7 @@ _diffrn_measurement_device 'Diffraction Instrument'
 
 _diffrn_measurement_device_type 'Diffraction Instrument'
 _maud_optional_intensity_factor 1.0
-_pd_proc_intensity_incident 15.301672(0.13120456) #positive #min 0.0 #max 10000.0
-
-loop_
-_riet_par_2-theta_offset
-  -0.100967295(0.0064112637) #min -0.114964165 #max 0.14051175
+_pd_proc_intensity_incident 7.625429(0.06397264) #positive #min 0.0 #max 10000.0
 
 
 #subordinateObject_none cal
@@ -194,12 +193,17 @@ _inst_intensity_calibration 'none cal'
 #end_subordinateObject_none cal
 
 
-#subordinateObject_none
+#subordinateObject_Instrument disalignment
 
-_inst_angular_calibration 'none'
+_inst_angular_calibration 'Instrument disalignment'
 
 
-#end_subordinateObject_none
+loop_
+_riet_par_2-theta_offset
+  0.100967295 #min -5.679102 #max 0.1
+
+
+#end_subordinateObject_Instrument disalignment
 
 
 #subordinateObject_Bragg-Brentano
@@ -274,7 +278,7 @@ _riet_caglioti_d_dep true
 _riet_asymmetry_tan_dep true
 _riet_omega/chi_broadening_convoluted false
 _riet_par_asymmetry_truncation 0.4
-_riet_par_asymmetry_reciprocal ?
+_riet_par_asymmetry_reciprocal false
 
 loop_
 _riet_par_asymmetry_value
@@ -315,6 +319,14 @@ _fluorescence_model_type 'none fluorescence'
 #end_subordinateObject_none fluorescence
 
 
+#subordinateObject_Basic diffraction
+
+_diffraction_model_type 'Basic diffraction'
+
+
+#end_subordinateObject_Basic diffraction
+
+
 #subordinateObject_Region 1
 
 _pd_proc_info_excluded_regions 'Region 1'
@@ -330,11 +342,11 @@ _riet_excl_2theta_range_max 0
 _riet_meas_datafile_name 'bbm48bis.dat'
 
 _riet_meas_datafile_format ?
-_pd_meas_orientation_omega 0.0
-_pd_meas_orientation_chi 0.0
-_pd_meas_orientation_phi 0.0
-_pd_meas_orientation_eta 0.0
-_pd_meas_orientation_2theta 0.0
+_pd_meas_angle_omega 0.0
+_pd_meas_angle_chi 0.0
+_pd_meas_angle_phi 0.0
+_pd_meas_angle_eta -0.0
+_pd_meas_angle_2theta 0.0
 _pd_meas_energy_kev 0.0
 _riet_meas_datafile_compute true
 _riet_meas_datafile_fitting false
@@ -350,10 +362,12 @@ _riet_background_interpolated_manual false
 _pd_meas_datetime_initiated 1984-01-01T00:00:00
 _pd_proc_ls_datafile_weight 1.0
 _riet_use_count_time false
+_riet_chebyshev_polynomial_background false
 _pd_meas_counts_monitor 1.0 #positive #min 0.0 #max 10.0
 _riet_par_spec_displac_x_2R 0 #min -10.0 #max 10.0
 _riet_par_spec_displac_z_2R 0 #min -10.0 #max 10.0
 _riet_par_fluo_diffr_scale 1.0 #positive #min 0.0 #max 100.0
+_rita_shape_abs_velocity_corr_factor 0 #positive #min 0.0 #max 10000.0
 
 
 #custom_object_intensity_data
@@ -2170,37 +2184,58 @@ _pd_meas_position _pd_meas_intensity_total _pd_meas_intensity_sigma
 
 #custom_object_texture_factors
 _rita_texture_points_number 1
+_rita_texture_radiations_number 2
 
 data_phase_beta-brass
 
 loop_
-_refln_index_h _refln_index_k _refln_index_l _rita_texture_factor_meas _rita_texture_factor_calc _rita_texture_point_index
-1 0 0 1.0 1.0 0
-1 1 0 1.0 1.0 0
-1 1 1 1.0 1.0 0
-2 0 0 1.0 1.0 0
-2 1 0 1.0 1.0 0
-2 1 1 1.0 1.0 0
-2 2 0 1.0 1.0 0
-2 2 1 1.0 1.0 0
-3 0 0 1.0 1.0 0
-3 1 0 1.0 1.0 0
-3 1 1 1.0 1.0 0
-2 2 2 1.0 1.0 0
+_refln_index_h _refln_index_k _refln_index_l _rita_texture_factor_meas _rita_texture_factor_calc _rita_texture_point_index _rita_texture_radiation_index
+1 0 0 1.0 1.0 0 0
+1 0 0 1.0 1.0 0 1
+1 1 0 1.0 1.0 0 0
+1 1 0 1.0 1.0 0 1
+1 1 1 1.0 1.0 0 0
+1 1 1 1.0 1.0 0 1
+2 0 0 1.0 1.0 0 0
+2 0 0 1.0 1.0 0 1
+2 1 0 1.0 1.0 0 0
+2 1 0 1.0 1.0 0 1
+2 1 1 1.0 1.0 0 0
+2 1 1 1.0 1.0 0 1
+2 2 0 1.0 1.0 0 0
+2 2 0 1.0 1.0 0 1
+2 2 1 1.0 1.0 0 0
+2 2 1 1.0 1.0 0 1
+3 0 0 1.0 1.0 0 0
+3 0 0 1.0 1.0 0 1
+3 1 0 1.0 1.0 0 0
+3 1 0 1.0 1.0 0 1
+3 1 1 1.0 1.0 0 0
+3 1 1 1.0 1.0 0 1
+2 2 2 1.0 1.0 0 0
+2 2 2 1.0 1.0 0 1
 
 
 data_phase_alpha-brass
 
 loop_
-_refln_index_h _refln_index_k _refln_index_l _rita_texture_factor_meas _rita_texture_factor_calc _rita_texture_point_index
-1 1 1 1.0 1.0 0
-2 0 0 1.0 1.0 0
-2 2 0 1.0 1.0 0
-3 1 1 1.0 1.0 0
-2 2 2 1.0 1.0 0
-4 0 0 1.0 1.0 0
-3 3 1 1.0 1.0 0
-4 2 0 1.0 1.0 0
+_refln_index_h _refln_index_k _refln_index_l _rita_texture_factor_meas _rita_texture_factor_calc _rita_texture_point_index _rita_texture_radiation_index
+1 1 1 1.0 1.0 0 0
+1 1 1 1.0 1.0 0 1
+2 0 0 1.0 1.0 0 0
+2 0 0 1.0 1.0 0 1
+2 2 0 1.0 1.0 0 0
+2 2 0 1.0 1.0 0 1
+3 1 1 1.0 1.0 0 0
+3 1 1 1.0 1.0 0 1
+2 2 2 1.0 1.0 0 0
+2 2 2 1.0 1.0 0 1
+4 0 0 1.0 1.0 0 0
+4 0 0 1.0 1.0 0 1
+3 3 1 1.0 1.0 0 0
+3 3 1 1.0 1.0 0 1
+4 2 0 1.0 1.0 0 0
+4 2 0 1.0 1.0 0 1
 
 
 #end_custom_object_texture_factors
@@ -2215,32 +2250,32 @@ data_phase_beta-brass
 
 loop_
 _refln_index_h _refln_index_k _refln_index_l _refln_F_squared_meas _refln_F_squared_calc _refln_F_squared_sigma 
-1 0 0 10.95078 10.95078 0.0
-1 1 0 19005.24 19005.24 0.0
-1 1 1 22.996271 22.996271 0.0
-2 0 0 6067.4204 6067.4204 0.0
-2 1 0 85.583664 85.583664 0.0
-2 1 1 16488.275 16488.275 0.0
-2 2 0 5851.66 5851.66 0.0
-2 2 1 89.348045 89.348045 0.0
-3 0 0 22.337011 22.337011 0.0
-3 1 0 8595.842 8595.842 0.0
-3 1 1 85.25236 85.25236 0.0
-2 2 2 2163.296 2163.296 0.0
+1 0 0 10.736107 10.736107 0.0
+1 1 0 19072.78 19072.78 0.0
+1 1 1 22.760387 22.760387 0.0
+2 0 0 6088.341 6088.341 0.0
+2 1 0 84.30442 84.30442 0.0
+2 1 1 16555.299 16555.299 0.0
+2 2 0 5878.576 5878.576 0.0
+2 2 1 87.61242 87.61242 0.0
+3 0 0 21.903105 21.903105 0.0
+3 1 0 8633.213 8633.213 0.0
+3 1 1 83.31807 83.31807 0.0
+2 2 2 2171.1714 2171.1714 0.0
 
 
 data_phase_alpha-brass
 
 loop_
 _refln_index_h _refln_index_k _refln_index_l _refln_F_squared_meas _refln_F_squared_calc _refln_F_squared_sigma 
-1 1 1 52132.914 52132.914 0.0
-2 0 0 33706.785 33706.785 0.0
-2 2 0 40287.637 40287.637 0.0
-3 1 1 57911.004 57911.004 0.0
-2 2 2 17434.576 17434.576 0.0
-4 0 0 8998.706 8998.706 0.0
-3 3 1 28012.068 28012.068 0.0
-4 2 0 25889.17 25889.17 0.0
+1 1 1 52226.695 52226.695 0.0
+2 0 0 33753.508 33753.508 0.0
+2 2 0 40270.25 40270.25 0.0
+3 1 1 57856.65 57856.65 0.0
+2 2 2 17415.836 17415.836 0.0
+4 0 0 8975.511 8975.511 0.0
+3 3 1 27896.465 27896.465 0.0
+4 2 0 25772.508 25772.508 0.0
 
 
 #end_custom_object_Fhkl
@@ -2263,10 +2298,12 @@ _refine_ls_d_res_high 5000
 _reflns_d_resolution_low 0.3
 _reflns_d_resolution_high 50
 _maud_sg_centering_type P
+_chemical_name_mineral Unknown
+_chemical_name_systematic Unknown
 
-_cell_length_a 2.9498537(3.9904704E-4) #positive #min 0.1 #max 100.0
-_cell_length_b 2.9498537 #positive #min 5.0 #max 30.0
-_cell_length_c 2.9498537 #positive #min 5.0 #max 30.0
+_cell_length_a 2.9498024(1.5751613E-4) #positive #min 0.1 #max 100.0
+_cell_length_b 2.9498024 #positive #min 5.0 #max 30.0
+_cell_length_c 2.9498024 #positive #min 5.0 #max 30.0
 _cell_angle_alpha 90.0 #positive #min 90.0 #max 120.0
 _cell_angle_beta 90.0 #positive #min 90.0 #max 120.0
 _cell_angle_gamma 90.0 #positive #min 90.0 #max 120.0
@@ -2299,13 +2336,13 @@ _rita_harmonic_expansion_degree 4
 
 loop_
 _riet_par_anisocryst_size
-  471.5727(122.76156) #min 5.0 #max 10000.0
-  198.23758(384.7622) #min 0.0 #max 11872.505
+  472.5054(135.1567) #min 5.0 #max 10000.0
+  203.70639(528.06085) #min 0.0 #max 11872.505
 
 loop_
 _riet_par_aniso_microstrain
-  0.0054992186(3.686806E-5) #min -0.1 #max 0.1
-  -0.0055307704(1.0650726E-4) #min -3.813031E-4 #max 0.016657751
+  0.0056018257(8.481519E-4) #min -0.1 #max 0.1
+  -0.005714527(8.4381003E-4) #min -1.7000024 #max 0.016657751
 
 
 #end_subordinateObject_Popa rules
@@ -2323,9 +2360,9 @@ _riet_antiphase_boundary 'none abm'
 
 _riet_planar_defect 'Warren'
 
-_riet_deformation_fault_intrinsic 0.0033612906(0.13834721) #positive #min 0.0 #max 0.01
+_riet_deformation_fault_intrinsic 0.0032227226(0.138513) #positive #min 0.0 #max 0.01
 _riet_deformation_fault_extrinsic 0 #positive #min 0.0 #max 0.01
-_riet_twin_fault_probability 0.007896774(0.20781626) #positive #min 0.0 #max 0.01
+_riet_twin_fault_probability 0.0077073295(0.20788527) #positive #min 0.0 #max 0.01
 
 #end_subordinateObject_Warren
 
@@ -2382,7 +2419,7 @@ _atom_site_occupancy 1 #positive #min 0.0 #max 1.0
 _atom_site_fract_x 0 #min 0.0 #max 1.0
 _atom_site_fract_y 0 #min 0.0 #max 1.0
 _atom_site_fract_z 0 #min 0.0 #max 1.0
-_atom_site_B_iso_or_equiv 0.8530185(0.18503407) #min -1.0 #max 10.0
+_atom_site_B_iso_or_equiv 0.8410226(0.18454938) #min -1.0 #max 10.0
 _atom_site_aniso_B_11 0 #min -1.0 #max 10.0
 _atom_site_aniso_B_22 0 #min -1.0 #max 10.0
 _atom_site_aniso_B_33 0 #min -1.0 #max 10.0
@@ -2405,7 +2442,7 @@ _atom_site_occupancy 1 #positive #min 0.0 #max 1.0
 _rg_site_scatterer 'Zn'
 
 _atom_type_symbol Zn
-_atom_site_occupancy 0.0 #positive #min 0.0 #max 1.0
+_atom_site_occupancy 0 #positive #min 0.0 #max 1.0
 
 #end_subordinateObject_Zn
 
@@ -2506,10 +2543,12 @@ _refine_ls_d_res_high 5000
 _reflns_d_resolution_low 0.3
 _reflns_d_resolution_high 50
 _maud_sg_centering_type P
+_chemical_name_mineral Unknown
+_chemical_name_systematic Unknown
 
-_cell_length_a 3.71751(6.245111E-4) #positive #min 0.1 #max 100.0
-_cell_length_b 3.71751 #positive #min 5.0 #max 30.0
-_cell_length_c 3.71751 #positive #min 5.0 #max 30.0
+_cell_length_a 3.7128422(3.5716288E-4) #positive #min 0.1 #max 100.0
+_cell_length_b 3.7128422 #positive #min 5.0 #max 30.0
+_cell_length_c 3.7128422 #positive #min 5.0 #max 30.0
 _cell_angle_alpha 90.0 #positive #min 90.0 #max 120.0
 _cell_angle_beta 90.0 #positive #min 90.0 #max 120.0
 _cell_angle_gamma 90.0 #positive #min 90.0 #max 120.0
@@ -2542,13 +2581,13 @@ _rita_harmonic_expansion_degree 4
 
 loop_
 _riet_par_anisocryst_size
-  1831.3339(1375.1278) #min 5.0 #max 10000.0
-  -142.30272(1492.6405) #min -3738.1367 #max 11872.505
+  1835.3972(3244.3755) #min 5.0 #max 10000.0
+  -146.6338(2759.5618) #min -3738.1367 #max 11872.505
 
 loop_
 _riet_par_aniso_microstrain
-  0.0139300665(2.8413677E-5) #min -0.1 #max 0.1
-  -0.010136662(1.11072666E-4) #min -3.813031E-4 #max 0.016657751
+  0.01393464(3.5023427E-4) #min -0.1 #max 0.1
+  -0.010190255(2.3728593E-4) #min -1.7000024 #max 0.016657751
 
 
 #end_subordinateObject_Popa rules
@@ -2566,9 +2605,9 @@ _riet_antiphase_boundary 'none abm'
 
 _riet_planar_defect 'Warren'
 
-_riet_deformation_fault_intrinsic 0.023252964(0.0024207602) #positive #min 0.0 #max 0.01
-_riet_deformation_fault_extrinsic 5.210914E-4(3.0428977E-5) #positive #min 0.0 #max 0.01
-_riet_twin_fault_probability 0.0021240008(0.0011324587) #positive #min 0.0 #max 0.01
+_riet_deformation_fault_intrinsic 0.02103423(0.0028549703) #positive #min 0.0 #max 0.01
+_riet_deformation_fault_extrinsic 0.004610297(6.4851315E-4) #positive #min 0.0 #max 0.01
+_riet_twin_fault_probability 6.150424E-5(0.0026449137) #positive #min 0.0 #max 0.01
 
 #end_subordinateObject_Warren
 

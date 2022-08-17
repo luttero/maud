@@ -1,11 +1,11 @@
 data_global
 _audit_creation_date 'Mon Oct 12 15:11:53 PDT 1998'
-_audit_creation_method 'Maud, version 2.61'
-_audit_update_record 'Last update Thu Jun 23 14:26:46 CEST 2016'
-_computing_structure_refinement 'Maud, version 2.61'
-_refine_ls_R_factor_all 0.099110685
-_refine_ls_wR_factor_all 0.13740185
-_refine_ls_goodness_of_fit_all 0.07479165
+_audit_creation_method 'Maud version 2.996'
+_audit_update_record 'Wed Aug 17 10:02:48 MDT 2022'
+_computing_structure_refinement 'Maud, version 2.996'
+_refine_ls_R_factor_all 0.09815828
+_refine_ls_wR_factor_all 0.13773857
+_refine_ls_goodness_of_fit_all 0.07481989
 _publ_contact_author_name 'Luca Lutterotti'
 _publ_section_title 'Al2O3 - ZrO2 standard'
 _pd_proc_ls_extract_int 'end of iteration'
@@ -18,7 +18,7 @@ _pd_proc_ls_extract_Fhkl 'end of iteration'
 _pd_proc_ls_Fhkl_comp 'end of iteration'
 _pd_proc_ls_weight_scheme default
 _refine_ls_weighting_scheme WgtSS
-_refine_ls_WSS_factor 4468.5527
+_refine_ls_WSS_factor 4490.4814
 _maud_store_spectra_with_analysis true
 _riet_remove_phases_under 0.05
 _riet_refine_cell_over 0.1
@@ -46,7 +46,7 @@ _riet_refine_ls_double_derivative false
 
 
 
-data_sample_AV7
+data_Sample_AV7
 _pd_spec_description 'Sample description'
 _riet_thin_film_phase_refinement phases
 _reflectivity_layer_qc_from_phases false
@@ -128,6 +128,9 @@ _riet_meas_dataset_random_texture false
 _maud_background_add_automatic false
 _maud_interpolated_background_iterations 10
 _pd_proc_ls_datafile_weight 1.0
+_riet_meas_dataset_no_strain false
+_riet_meas_dataset_omogeneous true
+_riet_chebyshev_polynomial_background false
 _riet_par_background_exp_shift 0 #min 0.0 #max 0.0
 _riet_par_background_exp_thermal_shift 0 #min 0.0 #max 0.0
 _pd_spec_orientation_omega 0 #min 0.0 #max 0.0
@@ -143,10 +146,10 @@ _riet_par_spec_displac_z 0 #min 0.0 #max 0.0
 
 loop_
 _riet_par_background_pol
-  92.48241(17.46916) #min 0.0 #max 694.52594
-  -3.571141(0.78634906) #min 0.0 #max 0.0
-  0.05569039(0.011332514) #min 0.0 #max 0.0
-  -2.6896197E-4(5.2336167E-5) #min 0.0 #max 0.0
+  93.3801(18.408846) #min 0.0 #max 694.52594
+  -3.5854096(0.82735544) #min -14.375965 #max 0.035720613
+  0.055647895(0.011882927) #min -14.375965 #max 0.035720613
+  -2.6749118E-4(5.4658947E-5) #min -14.375965 #max 0.035720613
 
 
 #subordinateObject_none ie
@@ -179,11 +182,7 @@ _diffrn_measurement_device 'Diffraction Instrument'
 
 _diffrn_measurement_device_type 'Diffraction Instrument'
 _maud_optional_intensity_factor 1.0
-_pd_proc_intensity_incident 46.17118(0.5035282) #positive #min 0.0 #max 10000.0
-
-loop_
-_riet_par_2-theta_offset
-  -0.041619882(0.003915392) #min -0.11756466 #max 0.096189275
+_pd_proc_intensity_incident 23.84101(0.2646526) #positive #min 0.0 #max 10000.0
 
 
 #subordinateObject_none cal
@@ -194,12 +193,17 @@ _inst_intensity_calibration 'none cal'
 #end_subordinateObject_none cal
 
 
-#subordinateObject_none
+#subordinateObject_Instrument disalignment
 
-_inst_angular_calibration 'none'
+_inst_angular_calibration 'Instrument disalignment'
 
 
-#end_subordinateObject_none
+loop_
+_riet_par_2-theta_offset
+  0.041619882 #min -5.679102 #max 0.1
+
+
+#end_subordinateObject_Instrument disalignment
 
 
 #subordinateObject_Bragg-Brentano
@@ -274,7 +278,7 @@ _riet_caglioti_d_dep true
 _riet_asymmetry_tan_dep true
 _riet_omega/chi_broadening_convoluted false
 _riet_par_asymmetry_truncation 0.4
-_riet_par_asymmetry_reciprocal ?
+_riet_par_asymmetry_reciprocal false
 
 loop_
 _riet_par_asymmetry_value
@@ -315,6 +319,14 @@ _fluorescence_model_type 'none fluorescence'
 #end_subordinateObject_none fluorescence
 
 
+#subordinateObject_Basic diffraction
+
+_diffraction_model_type 'Basic diffraction'
+
+
+#end_subordinateObject_Basic diffraction
+
+
 #subordinateObject_Region 1
 
 _pd_proc_info_excluded_regions 'Region 1'
@@ -330,11 +342,11 @@ _riet_excl_2theta_range_max 0
 _riet_meas_datafile_name '../../../../../analysis/Maud_users/UABclass/Faulting test/AV7B.dat'
 
 _riet_meas_datafile_format ?
-_pd_meas_orientation_omega 0.0
-_pd_meas_orientation_chi 0.0
-_pd_meas_orientation_phi 0.0
-_pd_meas_orientation_eta 0.0
-_pd_meas_orientation_2theta 0.0
+_pd_meas_angle_omega 0.0
+_pd_meas_angle_chi 0.0
+_pd_meas_angle_phi 0.0
+_pd_meas_angle_eta -0.0
+_pd_meas_angle_2theta 0.0
 _pd_meas_energy_kev 0.0
 _riet_meas_datafile_compute true
 _riet_meas_datafile_fitting false
@@ -350,10 +362,12 @@ _riet_background_interpolated_manual false
 _pd_meas_datetime_initiated 1984-01-01T00:00:00
 _pd_proc_ls_datafile_weight 1.0
 _riet_use_count_time false
+_riet_chebyshev_polynomial_background false
 _pd_meas_counts_monitor 1.0 #positive #min 0.0 #max 10.0
 _riet_par_spec_displac_x_2R 0 #min -10.0 #max 10.0
 _riet_par_spec_displac_z_2R 0 #min -10.0 #max 10.0
 _riet_par_fluo_diffr_scale 1.0 #positive #min 0.0 #max 100.0
+_rita_shape_abs_velocity_corr_factor 0 #positive #min 0.0 #max 10000.0
 
 
 #custom_object_intensity_data
@@ -1710,25 +1724,40 @@ _pd_meas_position _pd_meas_intensity_total _pd_meas_intensity_sigma
 
 #custom_object_texture_factors
 _rita_texture_points_number 1
+_rita_texture_radiations_number 2
 
 data_phase_Ni3Al
 
 loop_
-_refln_index_h _refln_index_k _refln_index_l _rita_texture_factor_meas _rita_texture_factor_calc _rita_texture_point_index
-1 1 0 1.0 1.0 0
-1 1 1 1.0 1.0 0
-2 0 0 1.0 1.0 0
-2 1 0 1.0 1.0 0
-2 1 1 1.0 1.0 0
-2 2 0 1.0 1.0 0
-2 2 1 1.0 1.0 0
-3 0 0 1.0 1.0 0
-3 1 0 1.0 1.0 0
-3 1 1 1.0 1.0 0
-2 2 2 1.0 1.0 0
-3 2 0 1.0 1.0 0
-3 2 1 1.0 1.0 0
-4 0 0 1.0 1.0 0
+_refln_index_h _refln_index_k _refln_index_l _rita_texture_factor_meas _rita_texture_factor_calc _rita_texture_point_index _rita_texture_radiation_index
+1 1 0 1.0 1.0 0 0
+1 1 0 1.0 1.0 0 1
+1 1 1 1.0 1.0 0 0
+1 1 1 1.0 1.0 0 1
+2 0 0 1.0 1.0 0 0
+2 0 0 1.0 1.0 0 1
+2 1 0 1.0 1.0 0 0
+2 1 0 1.0 1.0 0 1
+2 1 1 1.0 1.0 0 0
+2 1 1 1.0 1.0 0 1
+2 2 0 1.0 1.0 0 0
+2 2 0 1.0 1.0 0 1
+2 2 1 1.0 1.0 0 0
+2 2 1 1.0 1.0 0 1
+3 0 0 1.0 1.0 0 0
+3 0 0 1.0 1.0 0 1
+3 1 0 1.0 1.0 0 0
+3 1 0 1.0 1.0 0 1
+3 1 1 1.0 1.0 0 0
+3 1 1 1.0 1.0 0 1
+2 2 2 1.0 1.0 0 0
+2 2 2 1.0 1.0 0 1
+3 2 0 1.0 1.0 0 0
+3 2 0 1.0 1.0 0 1
+3 2 1 1.0 1.0 0 0
+3 2 1 1.0 1.0 0 1
+4 0 0 1.0 1.0 0 0
+4 0 0 1.0 1.0 0 1
 
 
 #end_custom_object_texture_factors
@@ -1743,20 +1772,20 @@ data_phase_Ni3Al
 
 loop_
 _refln_index_h _refln_index_k _refln_index_l _refln_F_squared_meas _refln_F_squared_calc _refln_F_squared_sigma 
-1 1 0 706.9434 706.9434 0.0
-1 1 1 26908.973 26908.973 0.0
-2 0 0 17106.58 17106.58 0.0
-2 1 0 740.2509 740.2509 0.0
-2 1 1 604.6138 604.6138 0.0
-2 2 0 19387.328 19387.328 0.0
-2 2 1 345.40784 345.40784 0.0
-3 0 0 86.35196 86.35196 0.0
-3 1 0 291.24173 291.24173 0.0
-3 1 1 26896.637 26896.637 0.0
-2 2 2 8003.9673 8003.9673 0.0
-3 2 0 182.5301 182.5301 0.0
-3 2 1 316.68387 316.68387 0.0
-4 0 0 3946.8828 3946.8828 0.0
+1 1 0 573.80023 573.80023 0.0
+1 1 1 26235.701 26235.701 0.0
+2 0 0 16673.006 16673.006 0.0
+2 1 0 597.35785 597.35785 0.0
+2 1 1 486.51956 486.51956 0.0
+2 2 0 18849.412 18849.412 0.0
+2 2 1 277.22556 277.22556 0.0
+3 0 0 69.30639 69.30639 0.0
+3 1 0 233.71657 233.71657 0.0
+3 1 1 26066.574 26066.574 0.0
+2 2 2 7747.731 7747.731 0.0
+3 2 0 146.38478 146.38478 0.0
+3 2 1 253.80978 253.80978 0.0
+4 0 0 3800.3147 3800.3147 0.0
 
 
 #end_custom_object_Fhkl
@@ -1779,10 +1808,12 @@ _refine_ls_d_res_high 5000
 _reflns_d_resolution_low 0.7
 _reflns_d_resolution_high 50
 _maud_sg_centering_type P
+_chemical_name_mineral Unknown
+_chemical_name_systematic Unknown
 
-_cell_length_a 3.565198(2.3887807E-4) #positive #min 5.0 #max 30.0
-_cell_length_b 3.565198 #positive #min 5.0 #max 30.0
-_cell_length_c 3.565198 #positive #min 5.0 #max 30.0
+_cell_length_a 3.5645175(7.917012E-5) #positive #min 5.0 #max 30.0
+_cell_length_b 3.5645175 #positive #min 5.0 #max 30.0
+_cell_length_c 3.5645175 #positive #min 5.0 #max 30.0
 _cell_angle_alpha 90.0 #positive #min 90.0 #max 120.0
 _cell_angle_beta 90.0 #positive #min 90.0 #max 120.0
 _cell_angle_gamma 90.0 #positive #min 90.0 #max 120.0
@@ -1815,13 +1846,13 @@ _rita_harmonic_expansion_degree 4
 
 loop_
 _riet_par_anisocryst_size
-  1500.4747(420.59778) #min 5.0 #max 10000.0
-  -68.29067(369.79538) #min -1000.0 #max 1000.0
+  1536.4694(466.17902) #min 5.0 #max 10000.0
+  -148.81992(357.54114) #min -1000.0 #max 1000.0
 
 loop_
 _riet_par_aniso_microstrain
-  0.004022823(9.1180635E-5) #min -0.1 #max 0.1
-  -0.0020007307(1.2872761E-4) #min -0.1 #max 0.1
+  0.0040368345(9.379118E-5) #min -0.1 #max 0.1
+  -0.0019598226(1.3460036E-4) #min -0.1 #max 0.1
 
 
 #end_subordinateObject_Popa rules
@@ -1831,7 +1862,7 @@ _riet_par_aniso_microstrain
 
 _riet_antiphase_boundary 'Warren'
 
-_riet_antiphase_boundary_probability 1.3177666E-4(-1.0) #positive #min 1.0E-7 #max 0.1
+_riet_antiphase_boundary_probability 1.3177666E-4 #positive #min 1.0E-7 #max 0.1
 
 #end_subordinateObject_Warren
 
@@ -1840,9 +1871,9 @@ _riet_antiphase_boundary_probability 1.3177666E-4(-1.0) #positive #min 1.0E-7 #m
 
 _riet_planar_defect 'Warren'
 
-_riet_deformation_fault_intrinsic 0.0061407327(7.2386384E-4) #positive #min 0.0 #max 0.01
-_riet_deformation_fault_extrinsic 5.84936E-4(6.773392E-5) #positive #min 0.0 #max 0.01
-_riet_twin_fault_probability 3.4657517E-6(2.0137696E-4) #positive #min 0.0 #max 0.01
+_riet_deformation_fault_intrinsic 0.005788557(9.999995E-4) #positive #min 0.0 #max 0.01
+_riet_deformation_fault_extrinsic 9.1853994E-4(4.4558517E-4) #positive #min 0.0 #max 0.01
+_riet_twin_fault_probability 5.236777E-6(0.0016417481) #positive #min 0.0 #max 0.01
 
 #end_subordinateObject_Warren
 
@@ -1899,7 +1930,7 @@ _atom_site_occupancy 1 #positive #min 0.0 #max 1.0
 _atom_site_fract_x .5 #min 0.0 #max 1.0
 _atom_site_fract_y .5 #min 0.0 #max 1.0
 _atom_site_fract_z 0 #min 0.0 #max 1.0
-_atom_site_B_iso_or_equiv 0.55898076(0.03758534) #min -1.0 #max 10.0 #ref1
+_atom_site_B_iso_or_equiv 0.59399915(0.037470654) #min -1.0 #max 10.0 #ref1
 _atom_site_aniso_B_11 0 #min -1.0 #max 10.0
 _atom_site_aniso_B_22 0 #min -1.0 #max 10.0
 _atom_site_aniso_B_33 0 #min -1.0 #max 10.0
@@ -1912,7 +1943,7 @@ _atom_site_aniso_B_23 0 #min -1.0 #max 10.0
 _rg_site_scatterer 'Ni'
 
 _atom_type_symbol Ni
-_atom_site_occupancy 0.8999997(0.010037993) #positive #min 0.0 #max 1.0 #ref0
+_atom_site_occupancy 0.8593499(0.0107149) #positive #min 0.0 #max 1.0 #ref0
 
 #end_subordinateObject_Ni
 
@@ -1922,7 +1953,7 @@ _atom_site_occupancy 0.8999997(0.010037993) #positive #min 0.0 #max 1.0 #ref0
 _rg_site_scatterer 'Al'
 
 _atom_type_symbol Al
-_atom_site_occupancy 0.1000003 #positive #min 0.0 #max 1.0 #ref2 #equalTo 1 + -1 * #ref0
+_atom_site_occupancy 0.1406501 #positive #min 0.0 #max 1.0 #ref2 #equalTo 1 + -1 * #ref0
 
 #end_subordinateObject_Al
 
@@ -1942,7 +1973,7 @@ _atom_site_occupancy 1.0 #positive #min 0.0 #max 1.0
 _atom_site_fract_x 0 #min 0.0 #max 1.0
 _atom_site_fract_y 0 #min 0.0 #max 1.0
 _atom_site_fract_z 0 #min 0.0 #max 1.0
-_atom_site_B_iso_or_equiv 0.55898076 #min -1.0 #max 10.0 #equalTo 0 + 1 * #ref1
+_atom_site_B_iso_or_equiv 0.59399915 #min -1.0 #max 10.0 #equalTo 0 + 1 * #ref1
 _atom_site_aniso_B_11 0 #min -1.0 #max 10.0
 _atom_site_aniso_B_22 0 #min -1.0 #max 10.0
 _atom_site_aniso_B_33 0 #min -1.0 #max 10.0
@@ -1955,7 +1986,7 @@ _atom_site_aniso_B_23 0 #min -1.0 #max 10.0
 _rg_site_scatterer 'Al'
 
 _atom_type_symbol Al
-_atom_site_occupancy 0.8999997 #positive #min 0.0 #max 1.0 #equalTo 0 + 1 * #ref0
+_atom_site_occupancy 0.8593499 #positive #min 0.0 #max 1.0 #equalTo 0 + 1 * #ref0
 
 #end_subordinateObject_Al
 
@@ -1965,7 +1996,7 @@ _atom_site_occupancy 0.8999997 #positive #min 0.0 #max 1.0 #equalTo 0 + 1 * #ref
 _rg_site_scatterer 'Ni'
 
 _atom_type_symbol Ni
-_atom_site_occupancy 0.1000003 #positive #min 0.0 #max 1.0 #equalTo 0 + 1 * #ref2
+_atom_site_occupancy 0.1406501 #positive #min 0.0 #max 1.0 #equalTo 0 + 1 * #ref2
 
 #end_subordinateObject_Ni
 
