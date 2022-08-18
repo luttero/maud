@@ -2611,42 +2611,42 @@
     </target>
 
     <target name="sign_bundle_10.6" depends="bundle_10.6" description="Sign the macOS for arm64 application">
-        <exec dir="${app_osx_arm}/Maud.app/Contents/PlugIns/Home" executable="rm" os="Mac OS X">
+        <exec dir="${app_osx_10.6}/Maud.app/Contents/PlugIns/Home" executable="rm" os="Mac OS X">
             <arg line="-r legal"/>
         </exec>
-        <exec dir="${app_osx_arm}/Maud.app/Contents/PlugIns/Home/lib/server" executable="chmod" os="Mac OS X">
+        <exec dir="${app_osx_10.6}/Maud.app/Contents/PlugIns/Home/lib/server" executable="chmod" os="Mac OS X">
             <arg line="u+w classes.jsa"/>
         </exec>
-        <exec dir="${app_osx_arm}/Maud.app/Contents/PlugIns/Home/lib/server" executable="chmod" os="Mac OS X">
+        <exec dir="${app_osx_10.6}/Maud.app/Contents/PlugIns/Home/lib/server" executable="chmod" os="Mac OS X">
             <arg line="u+w classes_nocoops.jsa"/>
         </exec>
-        <apply dir="${app_osx_arm}" executable="codesign">
+        <apply dir="${app_osx_10.6}" executable="codesign">
             <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; "/>
-            <fileset dir="${app_osx_arm}/Maud.app/Contents/PlugIns" />
+            <fileset dir="${app_osx_10.6}/Maud.app/Contents/PlugIns" />
         </apply>
-        <apply dir="${app_osx_arm}" executable="codesign">
+        <apply dir="${app_osx_10.6}" executable="codesign">
             <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; "/>
-            <fileset dir="${app_osx_arm}/Maud.app/Contents/Java" />
+            <fileset dir="${app_osx_10.6}/Maud.app/Contents/Java" />
         </apply>
-        <apply dir="${app_osx_arm}" executable="codesign">
+        <apply dir="${app_osx_10.6}" executable="codesign">
             <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; "/>
-            <fileset dir="${app_osx_arm}/Maud.app/Contents/MacOS/mtex" />
+            <fileset dir="${app_osx_10.6}/Maud.app/Contents/MacOS/mtex" />
         </apply>
-        <exec dir="${app_osx_arm}" executable="codesign" os="Mac OS X">
-            <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; ${app_osx_arm}/Maud.app/Contents/PlugIns/Home/release"/>
+        <exec dir="${app_osx_10.6}" executable="codesign" os="Mac OS X">
+            <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; ${app_osx_10.6}/Maud.app/Contents/PlugIns/Home/release"/>
         </exec>
-        <exec dir="${app_osx_arm}" executable="codesign" os="Mac OS X">
-            <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; ${app_osx_arm}/Maud.app"/>
+        <exec dir="${app_osx_10.6}" executable="codesign" os="Mac OS X">
+            <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; ${app_osx_10.6}/Maud.app"/>
         </exec>
-        <exec dir="${app_osx_arm}" executable="codesign" os="Mac OS X">
-            <arg line="-d ${app_osx_arm}/Maud.app"/>
+        <exec dir="${app_osx_10.6}" executable="codesign" os="Mac OS X">
+            <arg line="-d ${app_osx_10.6}/Maud.app"/>
         </exec>
         <!-- verify codesign -->
-        <exec executable="codesign" dir="${app_osx_arm}" failonerror="true">
+        <exec executable="codesign" dir="${app_osx_10.6}" failonerror="true">
             <arg line="-vv Maud.app"/>
         </exec>
         <!-- verify gatekeeper -->
-        <exec executable="spctl" dir="${app_osx_arm}" failonerror="true">
+        <exec executable="spctl" dir="${app_osx_10.6}" failonerror="true">
             <arg line="-vv --assess --type execute Maud.app"/>
         </exec>
     </target>
@@ -2740,7 +2740,7 @@
         <exec executable="chmod">
             <arg line=" -R a+x ${app_osx_10.6}/Maud.app/Contents/MacOS/mtex"/>
         </exec>
-        <copy file="${src}/com/radiographema/fpsm/maca64/libfpsm_shared.dylib"
+        <copy file="${src}/com/radiographema/fpsm/maci64/libfpsm_shared.dylib"
               tofile="${app_osx_10.6}/Maud.app/Contents/PlugIns/Home/lib/libfpsm_shared.dylib"/>
         <exec executable="chmod">
             <arg line=" -R a+x ${app_osx_10.6}/Maud.app/Contents/PlugIns/Home/lib/libfpsm_shared.dylib"/>
