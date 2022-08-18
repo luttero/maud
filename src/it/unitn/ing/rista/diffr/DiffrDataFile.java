@@ -2180,6 +2180,10 @@ public class DiffrDataFile extends XRDcat {
         case 21:
         case 24:
         case 27:
+	      case 32:
+	      case 33:
+	      case 34:
+	      case 35:
           yint = Math.log10(yint);
           break;
       }
@@ -2602,12 +2606,16 @@ public class DiffrDataFile extends XRDcat {
       double qCorrection = 1.0;
       if (weightSwitch > 9) {
         qCorrection = Math.abs(getXInQ(getXData(index)));
-        if ((weightSwitch > 12 && weightSwitch < 19) || (weightSwitch > 21 && weightSwitch < 28)) {
+        if ((weightSwitch > 12 && weightSwitch < 19) || (weightSwitch > 27 && weightSwitch < 34)) {
           qCorrection *= qCorrection;
-          if ((weightSwitch > 15 && weightSwitch < 19) || (weightSwitch > 24 && weightSwitch < 28)) {
+          if ((weightSwitch > 15 && weightSwitch < 19) || (weightSwitch > 30 && weightSwitch < 34)) {
             qCorrection *= qCorrection;
           }
         }
+		  if ((weightSwitch > 18 && weightSwitch < 25) || (weightSwitch > 33 && weightSwitch < 40))
+			  qCorrection = 1.0 / qCorrection;
+		  if ((weightSwitch > 21 && weightSwitch < 25) || (weightSwitch > 36 && weightSwitch < 40))
+			  qCorrection = Math.sqrt(qCorrection);
       }
       double yint;
       if (theoreticalWeights)
@@ -2615,11 +2623,10 @@ public class DiffrDataFile extends XRDcat {
       else
         yint = getYData(index);
 //      System.out.println(yint);
-      if ((weightSwitch > 3 && weightSwitch < 7) || (weightSwitch > 18 && weightSwitch < 28)
-            || weightSwitch > 29)
-        yint -=  - getBkgFit(index);
+      if ((weightSwitch > 3 && weightSwitch < 7) || (weightSwitch > 24 && weightSwitch < 40))
+        yint -= getBkgFit(index);
       if (weightSwitch > 6 && weightSwitch < 10)
-        yint -=  - getBkgFitNoInterpolation(index);
+        yint -= getBkgFitNoInterpolation(index);
 
       if (yint < 0)
         yint = -yint;
@@ -2640,16 +2647,12 @@ public class DiffrDataFile extends XRDcat {
         case 19:
         case 22:
         case 25:
+	      case 28:
+	      case 31:
+	      case 34:
+	      case 37:
           value = qCorrection / Math.sqrt(yint);
 			 break;
-	      case 28:
-	      case 30:
-		      value = 1.0 / Math.sqrt(yint) / qCorrection;
-          break;
-	      case 29:
-	      case 31:
-		      value = 1.0 / Math.sqrt(yint) / Math.sqrt(qCorrection);
-		      break;
         case 2:
         case 5:
         case 8:
@@ -2659,9 +2662,12 @@ public class DiffrDataFile extends XRDcat {
         case 20:
         case 23:
         case 26:
+	      case 29:
+	      case 32:
+	      case 35:
+	      case 38:
           value = qCorrection * Math.sqrt(corr);
           break;
-
         case 3:
         case 6:
         case 9:
@@ -2671,6 +2677,10 @@ public class DiffrDataFile extends XRDcat {
         case 21:
         case 24:
         case 27:
+	      case 30:
+	      case 33:
+	      case 36:
+	      case 39:
           value = qCorrection * Math.sqrt(corr);
           break;
       }

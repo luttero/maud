@@ -128,16 +128,19 @@ public class FilePar extends XRDcat implements lFilePar, Function {
   public static int ComputationOptionNumber = 3;
 
   public static String[] COMP_STATUS = {"never", "end of iteration", "always"};
-  public static String[] weights = {"default", "sqrt", "linear", "log10",
-      "sqrt, no bkg", "linear, no bkg", "log10, no bkg",
-      "sqrt, no bkg(-int)", "linear, no bkg(-int)", "log10, no bkg(-int)",
-      "sqrt*q", "linear*q", "log10*q",
-      "sqrt*q^2", "linear*q^2", "log10*q^2",
-      "sqrt*q^4", "linear*q^4", "log10*q^4",
-      "sqrt*q, no bkg", "linear*q, no bkg", "log10*q, no bkg",
-      "sqrt*q^2, no bkg", "linear*q^2, no bkg", "log10*q^2, no bkg",
-      "sqrt*q^4, no bkg", "linear*q^4, no bkg", "log10*q^4, no bkg",
-		  "sqrt*q^-1", "sqrt*q^-1/2", "sqrt*q^-1, no bkg", "sqrt*q^-1/2, no bkg"};
+  public static String[] weights = {"default", "sqrt", "linear", "log10", // 0-3
+      "sqrt, no bkg", "linear, no bkg", "log10, no bkg", // 4-6
+      "sqrt, no bkg(-int)", "linear, no bkg(-int)", "log10, no bkg(-int)", // 7-9
+      "sqrt*q", "linear*q", "log10*q", // 10-12
+      "sqrt*q^2", "linear*q^2", "log10*q^2", // 13-15
+      "sqrt*q^4", "linear*q^4", "log10*q^4", // 16-18
+		  "sqrt/q", "linear/q", "log10/q", // 19-21
+		  "sqrt/q^1/2", "linear/q^1/2", "log10/q^1/2", // 22-24
+		  "sqrt*q, no bkg", "linear*q, no bkg", "log10*q, no bkg", // 25-27
+      "sqrt*q^2, no bkg", "linear*q^2, no bkg", "log10*q^2, no bkg", // 28-30
+      "sqrt*q^4, no bkg", "linear*q^4, no bkg", "log10*q^4, no bkg", // 31-33
+		  "sqrt/q, no bkg", "linear/q, no bkg", "log10/q, no bkg", // 34-36
+		  "sqrt/q^1/2, no bkg", "linear/q^1/2, no bkg", "log10/q^1/2, no bkg"}; // 37-39
   public static String[] minimizeQuantity = {"WgtSS", "Rwp"}; //, "Rwp-bkg"};
 /*  public static String[] differenceQuantity = {"default", "sqrt", "linear", "log10",
       "sqrt*q", "linear*q", "log10*q",

@@ -20,6 +20,7 @@
     <property name="application_OSX.title" value="Maud.app"/>
     <property name="app_osx_295" location="${user.home}/Projects/maud/osx_295"/>
     <property name="app_osx_arm" location="${user.home}/Projects/maud/osx_arm"/>
+    <property name="app_osx_10.6" location="${user.home}/Projects/maud/osx_10.6"/>
     <!--property name="java_version" value="1.8"/-->
     <property name="java_openjdk" location="${openjdk}"/>
     <property name="fpsm_build" location="${fpsmBuild}"/>
@@ -2599,6 +2600,150 @@
         <copy file="${app_osx_arm}/.DS_Store_default" tofile="${app_osx_arm}/.DS_Store"/>
         <exec dir="${app_osx_arm}" executable="/Users/luca/bin/mkdmg.pl" os="Mac OS X">
             <arg line="Maud.dmg.gz Maud.app .background .DS_Store"/>
+        </exec>
+    </target>
+
+    <target name="build_installer_osx_10.6" depends="sign_bundle_10.6" description="Build the macos installers">
+        <copy file="${app_osx_10.6}/.DS_Store_default" tofile="${app_osx_10.6}/.DS_Store"/>
+        <exec dir="${app_osx_10.6}" executable="/Users/luca/bin/mkdmg.pl" os="Mac OS X">
+            <arg line="Maud.dmg.gz Maud.app .background .DS_Store"/>
+        </exec>
+    </target>
+
+    <target name="sign_bundle_10.6" depends="bundle_10.6" description="Sign the macOS for arm64 application">
+        <exec dir="${app_osx_arm}/Maud.app/Contents/PlugIns/Home" executable="rm" os="Mac OS X">
+            <arg line="-r legal"/>
+        </exec>
+        <exec dir="${app_osx_arm}/Maud.app/Contents/PlugIns/Home/lib/server" executable="chmod" os="Mac OS X">
+            <arg line="u+w classes.jsa"/>
+        </exec>
+        <exec dir="${app_osx_arm}/Maud.app/Contents/PlugIns/Home/lib/server" executable="chmod" os="Mac OS X">
+            <arg line="u+w classes_nocoops.jsa"/>
+        </exec>
+        <apply dir="${app_osx_arm}" executable="codesign">
+            <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; "/>
+            <fileset dir="${app_osx_arm}/Maud.app/Contents/PlugIns" />
+        </apply>
+        <apply dir="${app_osx_arm}" executable="codesign">
+            <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; "/>
+            <fileset dir="${app_osx_arm}/Maud.app/Contents/Java" />
+        </apply>
+        <apply dir="${app_osx_arm}" executable="codesign">
+            <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; "/>
+            <fileset dir="${app_osx_arm}/Maud.app/Contents/MacOS/mtex" />
+        </apply>
+        <exec dir="${app_osx_arm}" executable="codesign" os="Mac OS X">
+            <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; ${app_osx_arm}/Maud.app/Contents/PlugIns/Home/release"/>
+        </exec>
+        <exec dir="${app_osx_arm}" executable="codesign" os="Mac OS X">
+            <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; ${app_osx_arm}/Maud.app"/>
+        </exec>
+        <exec dir="${app_osx_arm}" executable="codesign" os="Mac OS X">
+            <arg line="-d ${app_osx_arm}/Maud.app"/>
+        </exec>
+        <!-- verify codesign -->
+        <exec executable="codesign" dir="${app_osx_arm}" failonerror="true">
+            <arg line="-vv Maud.app"/>
+        </exec>
+        <!-- verify gatekeeper -->
+        <exec executable="spctl" dir="${app_osx_arm}" failonerror="true">
+            <arg line="-vv --assess --type execute Maud.app"/>
+        </exec>
+    </target>
+
+    <target name="bundle_10.6" depends="build_full">
+        <!-- Import the AppBundlerTaks from ant lib directory -->
+        <taskdef name="bundleapp"
+                 classname="com.radiographema.appbundler.AppBundlerTask"
+                 classpath="libs/commons-net-3.3.jar;libs/ant-libs/infinitekind-appbundler-old/appbundler/bin/appbundler-1.2.jar"/>
+
+        <bundleapp outputdirectory="${app_osx_10.6}/"
+                   name="Maud"
+                   displayname="Maud"
+                   identifier="com.radiographema.maud"
+                   executableName="Maud"
+                   shortversion="${maud_version}"
+                   icon="${icon}"
+                   mainclassname="com.radiographema.Maud"
+                   copyright="Maud, for materials analysis, Copyright 1997-2022 Luca Lutterotti"
+                   applicationCategory="public.app-category.productivity">
+
+            <!-- The directory where your OpenJDK runtime is. -->
+            <runtime dir="${java_openjdk}/"/>
+
+            <!-- The bundleapp task doesn't support classpathref so all
+                the run classpath entries must be stated here too.
+            -->
+            <classpath file="${build}/Maud.jar"/>
+            <classpath file="libs/current/Files.jar"/>
+            <classpath file="libs/current/Examples.jar"/>
+            <classpath file="libs/current/jmol.jar"/>
+            <classpath file="libs/current/Help.jar"/>
+            <classpath file="libs/current/Images.jar"/>
+            <classpath file="libs/current/miscLib.jar"/>
+            <classpath file="libs/current/HTTPClient.jar"/>
+            <classpath file="libs/current/jdom.jar"/>
+            <classpath file="libs/current/ij.jar"/>
+            <classpath file="libs/current/jgap.jar"/>
+            <classpath file="libs/current/jogl.all.jar"/>
+            <classpath file="libs/current/joone-engine.jar"/>
+            <classpath file="libs/current/jgaec.jar"/>
+            <classpath file="libs/current/jsplines.jar"/>
+            <classpath file="libs/current/jnlp.jar"/>
+            <classpath file="libs/current/MySQL-ConnectorJ.jar"/>
+            <classpath file="libs/current/swingx.jar"/>
+            <classpath file="libs/current/sqlite-jdbc.jar"/>
+            <classpath file="libs/current/newt.all.jar"/>
+            <classpath file="libs/current/nativewindow.all.jar"/>
+            <classpath file="libs/current/sqlite-jdbc.jar"/>
+            <classpath file="libs/current/xgridagent.jar"/>
+            <classpath file="libs/current/xgridlib.jar"/>
+            <classpath file="libs/current/com.github.tschoonj.xraylib.jar"/>
+            <classpath file="libs/current/commons-math.jar"/>
+
+            <!-- Workaround since the icon parameter for bundleapp
+                 doesn't work. (It's not a bug in AppBundler but
+                 in the JavaAppLauncher, see Known Problems).
+            -->
+            <option value="-Xdock:icon=Contents/Resources/${bundle.icon}"/>
+
+            <!-- Specify which architectures you want to support -->
+            <arch name="x86_64"/>
+            <arch name="i386"/>
+
+            <!-- Register the application as an editor for PNG and JPG files -->
+            <bundledocument extensions="par"
+                            icon="${bundle.icon}"
+                            name="Analysis"
+                            role="editor">
+            </bundledocument>
+
+            <!-- OSX specific options, optional -->
+            <option value="-Dapple.laf.useScreenMenuBar=true"/>
+            <option value="-Dcom.apple.macos.use-file-dialog-packages=true"/>
+            <option value="-Dcom.apple.macos.useScreenMenuBar=true"/>
+            <option value="-Dapple.awt.application.name=Maud"/>
+            <option value="-Dcom.apple.smallTabs=true"/>
+            <option value="-Xmx8192M"/>
+            <option value="--enable-preview"/>
+            <option value="--enable-native-access=ALL-UNNAMED"/>
+            <option value="--add-opens"/>
+            <option value="java.base/java.net=ALL-UNNAMED"/>
+            <option value="-Djava.library.path=."/>
+        </bundleapp>
+
+        <mkdir dir="${app_osx_10.6}/Maud.app/Contents/Frameworks"/>
+        <mkdir dir="${app_osx_10.6}/Maud.app/Contents/MacOS/mtex" />
+        <copy todir="${app_osx_10.6}/Maud.app/Contents/MacOS/mtex" >
+            <fileset dir="${src}/com/jtex/external/bin/maci64" includes="**"/>
+        </copy>
+        <exec executable="chmod">
+            <arg line=" -R a+x ${app_osx_10.6}/Maud.app/Contents/MacOS/mtex"/>
+        </exec>
+        <copy file="${src}/com/radiographema/fpsm/maca64/libfpsm_shared.dylib"
+              tofile="${app_osx_10.6}/Maud.app/Contents/PlugIns/Home/lib/libfpsm_shared.dylib"/>
+        <exec executable="chmod">
+            <arg line=" -R a+x ${app_osx_10.6}/Maud.app/Contents/PlugIns/Home/lib/libfpsm_shared.dylib"/>
         </exec>
     </target>
 
