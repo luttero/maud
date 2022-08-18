@@ -90,7 +90,7 @@ questions.
             <arg value="${javahome}/../.."/>
             <arg value="-isysroot"/>
             <arg value="${osx.sdk.dir}"/>
-            <arg value="-mmacosx-version-min=10.6"/> 
+            <arg value="-mmacosx-version-min=10.15"/> 
             <arg value="-fobjc-exceptions"/>
             <arg value="-std=c99"/>
             <arg value="appbundler_old/native/main.m"/>
