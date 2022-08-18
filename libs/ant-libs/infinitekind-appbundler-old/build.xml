@@ -25,7 +25,7 @@ or visit www.oracle.com if you need additional information or have any
 questions.
 -->
 
-<project name="appbundler" default="package">
+<project name="appbundler_old" default="package">
     <property environment="env"/>
 
     <property file="build.properties"/>
@@ -82,7 +82,7 @@ questions.
             <arg value="-I"/>
             <arg value="${javahome}/include/darwin"/>
             <arg value="-o"/>
-            <arg value="${ant.project.name}/${folder.classes}/com/oracle/appbundler/JavaAppLauncher"/>
+            <arg value="${ant.project.name}/${folder.classes}/com/oracle/appbundler_old/JavaAppLauncher"/>
             <arg value='-DLIBJLI_DYLIB="${javahome}/../MacOS/libjli.dylib"'/>
             <arg value="-framework"/>
             <arg value="Cocoa"/>
@@ -93,7 +93,7 @@ questions.
             <arg value="-mmacosx-version-min=10.6"/> 
             <arg value="-fobjc-exceptions"/>
             <arg value="-std=c99"/>
-            <arg value="appbundler/native/main.m"/>
+            <arg value="appbundler_old/native/main.m"/>
         </exec>
     </target>
 
@@ -104,7 +104,7 @@ questions.
 
     <!-- Package target -->
     <target name="package" depends="compile">
-        <zip destfile="${ant.project.name}/${folder.classes}/com/oracle/appbundler/res.zip">
+        <zip destfile="${ant.project.name}/${folder.classes}/com/oracle/appbundler_old/res.zip">
             <fileset dir="${ant.project.name}/${folder.res}"/>
         </zip>
 
@@ -125,7 +125,7 @@ questions.
 
     <!-- Test targets -->
     <target name="test" depends="package">
-        <taskdef name="bundleapp" classname="com.oracle.appbundler.AppBundlerTask"
+        <taskdef name="bundleapp" classname="com.oracle.appbundler_old.AppBundlerTask"
             classpath="${ant.project.name}/${folder.bin}/${ant.project.name}-${version}.jar"/>
 
         <bundleapp outputdirectory="."
@@ -144,7 +144,7 @@ questions.
     </target>
 
     <target name="test-plugin" depends="package">
-        <taskdef name="bundleapp" classname="com.oracle.appbundler.AppBundlerTask"
+        <taskdef name="bundleapp" classname="com.oracle.appbundler_old.AppBundlerTask"
             classpath="${ant.project.name}/${folder.bin}/${ant.project.name}-${version}.jar"/>
 
         <bundleapp outputdirectory="."
