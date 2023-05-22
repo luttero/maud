@@ -24,7 +24,7 @@ package it.unitn.ing.rista.awt;
 import ij.AreaImage;
 import it.unitn.ing.rista.diffr.*;
 import it.unitn.ing.rista.diffr.data.FdtTransformToMBin;
-import it.unitn.ing.rista.diffr.data.GSASNewDataFile;
+import it.unitn.ing.rista.diffr.data.GSASDataFile;
 import it.unitn.ing.rista.util.*;
 
 import javax.swing.*;
@@ -1606,7 +1606,7 @@ public class DataD extends myJFrame {
 		if (filename != null) {
 			setCursor(new Cursor(Cursor.WAIT_CURSOR));
 			Constants.refreshTreePermitted = false;
-			String summedFilename = GSASNewDataFile.sumTheDatafiles(filename);
+			String summedFilename = GSASDataFile.sumTheDatafiles(filename);
 			if (summedFilename.length() > 0)
 				thedata.addDataFileforName(summedFilename, true);
 			Constants.refreshTreePermitted = true;

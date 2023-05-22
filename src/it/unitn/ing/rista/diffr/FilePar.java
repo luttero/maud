@@ -327,7 +327,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
     return saved;
   }
 
-  protected void finalize() throws Throwable {
+/*  protected void finalize() throws Throwable {
 //    if (Constants.testing)
 //      System.out.println("DEBUG: " + this.toXRDcatString() + " finalizing");
 
@@ -336,13 +336,6 @@ public class FilePar extends XRDcat implements lFilePar, Function {
     loadingFile = true;
 
     dispose();
-
-/*    if (infLglobv != null)
-    	for (i = 0; i < infLglobv.length; i++) {
-				infLglobv[i].dispose();
-    		infLglobv[i] = null;
-    	}
-		infLglobv = null;*/
 
     outputframe = null;
     computation = null;
@@ -359,7 +352,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
     loadingFile = false;
 
     super.finalize();
-  }
+  }*/
 
 /*	public void merge(basicObj obj) {
 	}
@@ -2408,7 +2401,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
       Constants.tmpTime = System.currentTimeMillis();
 
 	  refreshAll(false);
-	 // refreshAll = MaudPreferences.getBoolean("testing.computeWithRefresh", false);
+//	  refreshAll = MaudPreferences.getBoolean("testing.computeWithRefresh", false);
     if (refreshAll) {
 //b		else
 //b			refreshPartially = true;  // speedModification

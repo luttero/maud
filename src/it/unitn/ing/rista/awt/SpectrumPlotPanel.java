@@ -1314,10 +1314,11 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 			    numberofPeaks = 0;
 			    double energyInKeV = Constants.ENERGY_LAMBDA / adataset.getInstrument().getRadiationType().
 					    getShortestWavelengthForFluorescence() * 0.001;
+//			    System.out.println("energyInKeV: " + energyInKeV);
 			    if (peaksInfoXRF == null || energyUsedForPeakInfoXRF < energyInKeV) {
 				    energyUsedForPeakInfoXRF = energyInKeV;
 				    peaksInfoXRF = new Vector<PeakInfo>(10000, 1000);
-				    double threasholdXRFLines = MaudPreferences.getDouble("fluorescenceLinesPeaksInfo.thresholdOnMinors", 0.001);
+				    double threasholdXRFLines = MaudPreferences.getDouble("fluorescenceLinesPeaksInfo.thresholdOnMinors", 1.0E-6);
 				    for (int atomNumber = 0; atomNumber < XRayDataSqLite.atomsNumber; atomNumber++) {
 					    String atomLabel = AtomInfo.atomLabels[atomNumber];
 					    Vector<FluorescenceLine> linesForAtom = XRayDataSqLite.getFluorescenceLinesFor(
@@ -1980,10 +1981,11 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 		    numberofPeaks = 0;
 		    double energyInKeV = Constants.ENERGY_LAMBDA / adataset.getInstrument().getRadiationType().
 				    getRadiationWavelengthForFluorescence(0) * 0.001;
+//		    System.out.println("energyInKeV: " + energyInKeV);
 		    if (peaksInfoXRF == null || energyUsedForPeakInfoXRF < energyInKeV) {
 			    energyUsedForPeakInfoXRF = energyInKeV;
 			    peaksInfoXRF = new Vector<PeakInfo>(10000, 1000);
-			    double threasholdXRFLines = MaudPreferences.getDouble("fluorescenceLinesPlot.thresholdOnMinors", 0.001);
+			    double threasholdXRFLines = MaudPreferences.getDouble("fluorescenceLinesPlot.thresholdOnMinors", 1.0E-6);
 			    for (int atomNumber = 0; atomNumber < XRayDataSqLite.atomsNumber; atomNumber++) {
 				    String atomLabel = AtomInfo.atomLabels[atomNumber];
 				    Vector<FluorescenceLine> linesForAtom = XRayDataSqLite.getFluorescenceLinesFor(
@@ -2525,10 +2527,11 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 	public static Vector<PeakInfo> getFluorescencePeakInfos(double energyInKeV) {
 		if (energyInKeV <= 0)
 			energyInKeV = energyUsedForPeakInfoXRF;
+//		System.out.println("energyInKeV static: " + energyInKeV);
 		if (peaksInfoXRF == null || energyUsedForPeakInfoXRF < energyInKeV) {
 			energyUsedForPeakInfoXRF = energyInKeV;
 			peaksInfoXRF = new Vector<>(10000, 1000);
-			double threasholdXRFLines = MaudPreferences.getDouble("fluorescenceLinesPeaksInfo.thresholdOnMinors", 0.001);
+			double threasholdXRFLines = MaudPreferences.getDouble("fluorescenceLinesPeaksInfo.thresholdOnMinors", 1.0E-6);
 			for (int atomNumber = 0; atomNumber < XRayDataSqLite.atomsNumber; atomNumber++) {
 				String atomLabel = AtomInfo.atomLabels[atomNumber];
 				Vector<FluorescenceLine> linesForAtom = XRayDataSqLite.getFluorescenceLinesFor(
@@ -2540,7 +2543,9 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 						peakInfo.info = atomLabel + " " + line.toString();
 						peakInfo.coordinate = line.getEnergy() * 1000;
 						peaksInfoXRF.add(peakInfo);
-					}
+					}/* else {
+						System.out.println("Not added: " + atomLabel + " " + line.toString() + " " + line.getEnergy() + " " + line.getIntensity());
+					}*/
 				}
 			}
 		}
