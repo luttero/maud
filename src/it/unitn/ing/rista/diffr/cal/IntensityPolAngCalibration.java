@@ -118,7 +118,7 @@ public class IntensityPolAngCalibration extends IntensityCalibration {
     return (Parameter) parameterloopField[0].elementAt(index);
   }*/
 
-  public double calibrateData(DiffrDataFile datafile, double x, int index) {
+  public double calibrateData(DiffrDataFile datafile, double x, int index, double coord) {
 
     updateParametertoDoubleBuffering(false);
 

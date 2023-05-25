@@ -102,7 +102,8 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 
   public static String[] classlistc = {};
   public static String[] classlistcs = {};
-  public static String[] functiontype = {"0", "1", "2", "3", "4", "5", "6", "10"};
+  public static String[] functiontype = {"0", "1", "2", "3", "4", "5", "6", "10",
+		  "-1", "-2", "-3", "-4", "-5", "-6"};
   public static int functionnumber = functiontype.length;
   static int numberIncSpectrumCoefficients = 16;
 
@@ -908,19 +909,34 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 		incidentSpectrum.set(bank, incidentData);
 	}
 
-	public double calibrateData(DiffrDataFile datafile, double x, int index) {
+	public double calibrateData(DiffrDataFile datafile, double x, int index, double d) {
 //    updateStringtoDoubleBuffering(false);
 		int bank = getBankNumber(datafile);
-		return calibrateData(bank, x, index);
+		return calibrateData(bank, x, index, d);
 	}
 
-	public double calibrateData(int bank, double x, int index) {
+	public double calibrateData(int bank, double x, int index, double d) {
 //    updateStringtoDoubleBuffering(false);
 //		System.out.println(bank + " " + x + " " + index);
-		double wt = 0.0, tx = 0.0, cal = 0.0;
+		double wt = 0.0, tx = 0.0, cal = 0.0, timeCorr = 0.0, distDiff = 0;
 		x /= 1000.0;
+		int typeBankFunction = typeNumber[bank];
+		if (typeBankFunction < 0) {
+			typeBankFunction = -typeBankFunction;
+			GSASbankCalibration calib = (GSASbankCalibration) getInstrument().getAngularCalibration();
+			try {
+				int bNumber = calib.getBankNumber(getBankID(bank));
+				distDiff = calib.getDetectorDistance(bNumber).getValueD() -
+						calib.getDetectorDistance(0).getValueD();
+				timeCorr = 2.0 * distDiff * Constants.LAMBDA_SPEED_NEUTRON_CONV_ANG * d *
+						MoreMath.sind(calib.getTtheta(bNumber).getValueD() * 0.5);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		x += timeCorr;
 		if (index > splitPosition) {
-			switch (typeNumber[bank]) {
+			switch (typeBankFunction) {
 				case 1:
 					wt = getCoeffD(bank, 0);
 					double w4 = 1.0;
@@ -1442,7 +1458,7 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 		  double[] y = new double[lineCounts];
 		  for (int i = datafile.startingindex; i < datafile.finalindex; i++) {
 			  x[i] = datafile.getXDataOriginal(i);
-			  y[i] = calibrateData(datafile, x[i], i);
+			  y[i] = calibrateData(datafile, x[i], i, datafile.getXData(i));
 		  }
 		  (new PlotSimpleData(this, x, y, true)).setVisible(true);
 	  }
@@ -1466,7 +1482,7 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 		  double[] y = new double[lineCounts];
 		  for (int i = datafile.startingindex; i < datafile.finalindex; i++) {
 			  x[i] = datafile.getXDataOriginal(i);
-			  y[i] = calibrateData(datafile, x[i], i);
+			  y[i] = calibrateData(datafile, x[i], i, datafile.getXData(i));
 		  }
 		  (new PlotSimpleData(this, x, y, true)).setVisible(true);
 	  }

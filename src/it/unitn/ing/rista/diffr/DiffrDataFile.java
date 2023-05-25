@@ -2188,72 +2188,6 @@ public class DiffrDataFile extends XRDcat {
           break;
       }
       return yint;
-/*    if (reflectivityStats) {
-      if (yint > 0.0)
-        return (double) MoreMath.log10(yint);
-      else
-        return (double) 1.0E-79;
-    } else
-      return getYData(index);*/
-/*    double corr = (double) Math.sqrt(getCountTimeValue());
-    double yint = 0.0;
-    switch (getFilePar().getWeightingSchemeSwitch()) {
-      case 6:
-        if (getYData(index) > 0.0) {
-          double x = getXData(index);
-          return (double) MoreMath.log10(getYData(index) * MoreMath.pow(getXInQ(x), 4));
-        } else
-          return (double) 1.0E-79;
-      case 3: // log10
-        if (getYData(index) > 0.0)
-          return (double) MoreMath.log10(getYData(index));
-        else
-          return (double) 1.0E-79;
-      case 8:
-        double value = Math.sqrt(Math.abs(getYData(index)));
-        value *= Math.abs(getXInQ(getXData(index)));
-        if (value != 0.0)
-          yint = corr / value;
-        return (double) yint;
-      case 9:
-        value = Math.sqrt(Math.abs(getYData(index)));
-        value *= MoreMath.pow(getXInQ(getXData(index)), 2);
-        if (value != 0.0)
-          yint = corr / value;
-        return (double) yint;
-      case 10:
-        value = Math.sqrt(Math.abs(getYData(index)));
-        value *= MoreMath.pow(getXInQ(getXData(index)), 4);
-        if (value != 0.0)
-          yint = corr / value;
-        return (double) yint;
-      case 11:
-        value = Math.sqrt(Math.abs(getYData(index) - getBkgFit(index)));
-        value *= Math.abs(getXInQ(getXData(index)));
-        if (value != 0.0)
-          yint = corr / value;
-        return (double) yint;
-      case 12:
-        value = Math.sqrt(Math.abs(getYData(index) - getBkgFit(index)));
-        value *= MoreMath.pow(getXInQ(getXData(index)), 2);
-        if (value != 0.0)
-          yint = corr / value;
-        return (double) yint;
-      case 13:
-        value = Math.sqrt(Math.abs(getYData(index) - getBkgFit(index)));
-        value *= MoreMath.pow(getXInQ(getXData(index)), 4);
-        if (value != 0.0)
-          yint = corr / value;
-        return (double) yint;
-      case 4:
-      case 5:
-      case 0: // default
-      case 1: // sqrt
-      case 2: // linear
-      default: {
-        return (double) getYData(index);
-      }
-    }*/
   }
 
   public void setYData(int index, double value) {
@@ -2610,7 +2544,6 @@ public class DiffrDataFile extends XRDcat {
 
       int weightSwitch = getFilePar().getWeightingSchemeSwitch();
 
-
       double qCorrection = 1.0;
       if (weightSwitch > 9) {
         qCorrection = Math.abs(getXInQ(getXData(index)));
@@ -2642,7 +2575,7 @@ public class DiffrDataFile extends XRDcat {
 
       if (yint > 1.0E-8) {
 
-      switch (weightSwitch) {
+	      switch (weightSwitch) {
         case 0: // default
 	        value = qCorrection * weight[index] * Math.sqrt(corr);
 	        break;
@@ -3758,7 +3691,7 @@ public class DiffrDataFile extends XRDcat {
   public double computeIntensityCalibration(int j) {
     double xc = getXDataOriginal(j);
     Instrument ainstrument = getDataFileSet().getInstrument();
-    return ainstrument.getIntensityCalibration().calibrateData(this, xc, j);
+    return ainstrument.getIntensityCalibration().calibrateData(this, xc, j, getXData(j));
   }
 
   public int getBankNumber() {

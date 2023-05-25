@@ -140,7 +140,8 @@ public class FilePar extends XRDcat implements lFilePar, Function {
       "sqrt*q^2, no bkg", "linear*q^2, no bkg", "log10*q^2, no bkg", // 28-30
       "sqrt*q^4, no bkg", "linear*q^4, no bkg", "log10*q^4, no bkg", // 31-33
 		  "sqrt/q, no bkg", "linear/q, no bkg", "log10/q, no bkg", // 34-36
-		  "sqrt/q^1/2, no bkg", "linear/q^1/2, no bkg", "log10/q^1/2, no bkg"}; // 37-39
+		  "sqrt/q^1/2, no bkg", "linear/q^1/2, no bkg", "log10/q^1/2, no bkg"}; // 37-39}
+
   public static String[] minimizeQuantity = {"WgtSS", "Rwp"}; //, "Rwp-bkg"};
 /*  public static String[] differenceQuantity = {"default", "sqrt", "linear", "log10",
       "sqrt*q", "linear*q", "log10*q",

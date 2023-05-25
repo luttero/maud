@@ -209,7 +209,7 @@ public class IntensityFileCalibration extends IntensityCalibration {
 
   }
 
-  public double calibrateData(DiffrDataFile datafile, double x, int index) {
+  public double calibrateData(DiffrDataFile datafile, double x, int index, double coord) {
     if (calintensity == null) {
       if (getFileName() != null && !getFileName().equals("")) {
       } else

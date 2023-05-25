@@ -296,7 +296,7 @@ double lpcomp(double w3,int ij1)
 
 */
 
-  public double calibrateData(DiffrDataFile datafile, double x, int index) {
+  public double calibrateData(DiffrDataFile datafile, double x, int index, double coord) {
     double wt = getCoeffD(0);
     double w4 = 1.0;
 //		System.out.println("x:");
