@@ -45,6 +45,8 @@ import it.unitn.ing.rista.interfaces.*;
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 
+import static com.github.tschoonj.xraylib.Xraylib.XRayInit;
+
 /**
  * The Constants is a class providing general constants used by the program.
  *
@@ -888,15 +890,19 @@ public class Constants {
 			    MULTIPLE_ENERGY_TO_INT = (int) (1.0 / INV_MULTIPLE_ENERGY_TO_INT);
 			    energiesMaxNumber = (int) ((MAX_ENERGY_IN_KEV - BASE_ENERGY_IN_KEV) / INV_MULTIPLE_ENERGY_TO_INT + 0.499);
 
-			    AtomInfo.loadAtomConstants();
-				 if (!useXrayLib)
-					 allXrayTablesLoaded = XRayDataSqLite.loadEbelAndShellTables(true);
-				 else
-					 allXrayTablesLoaded = true;
-			    Sla33Constants.initConstants();
+			    try {
+					 AtomInfo.loadAtomConstants();
+				    if (!useXrayLib)
+					    allXrayTablesLoaded = XRayDataSqLite.loadEbelAndShellTables(true);
+				    else
+					    allXrayTablesLoaded = XRayInit();
+				    Sla33Constants.initConstants();
+			    } catch (java.lang.Exception e) {
+				    e.printStackTrace(System.out);
+			    }
 		    }
 	    }).start();
-    } catch (Exception e) {
+    } catch (java.lang.Exception e) {
     	e.printStackTrace(System.out);
     }
 

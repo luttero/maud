@@ -3654,7 +3654,6 @@ public class DiffrDataFile extends XRDcat {
   boolean needRealCalibration = true;
 
   public double getIntensityCalibration(int j) {
-
     if (checkForRealCalibration) {
       Instrument ainstrument = getDataFileSet().getInstrument();
       if (ainstrument.provideRealCalibration())
@@ -3670,19 +3669,31 @@ public class DiffrDataFile extends XRDcat {
 	  countTime *= monitorCounts;
     if (!needRealCalibration)
       return countTime;
-    if (intensityNotCalibrated)
-      calibrateIntensity();
     return intensityCalibrated[j] * countTime;
   }
+
+	public void calculateIntensityCalibration() {
+		if (checkForRealCalibration) {
+			Instrument ainstrument = getDataFileSet().getInstrument();
+			if (ainstrument.provideRealCalibration())
+				needRealCalibration = true;
+			else {
+				needRealCalibration = false;
+				intensityCalibrated = null;
+			}
+		}
+		if (intensityNotCalibrated)  // to check, for now is always true
+			calibrateIntensity();
+	}
 
   public void calibrateIntensity() {
     int dtanumber = getTotalNumberOfData();
     if (intensityCalibrated == null || intensityCalibrated.length != dtanumber)
       intensityCalibrated = new double[dtanumber];
 
-    intensityNotCalibrated = false;
+//    intensityNotCalibrated = false;
 
-// check Luca	  getDataFileSet().getInstrument().getIntensityCalibration().updateStringtoDoubleBuffering(false);
+// check Luca getDataFileSet().getInstrument().getIntensityCalibration().updateStringtoDoubleBuffering(false);
 
     for (int j = 0; j < dtanumber; j++)
       intensityCalibrated[j] = computeIntensityCalibration(j);

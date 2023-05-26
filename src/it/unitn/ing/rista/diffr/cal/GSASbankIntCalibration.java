@@ -918,21 +918,21 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 	public double calibrateData(int bank, double x, int index, double d) {
 //    updateStringtoDoubleBuffering(false);
 //		System.out.println(bank + " " + x + " " + index);
-		double wt = 0.0, tx = 0.0, cal = 0.0, timeCorr = 0.0, distDiff = 0;
+		double wt = 0.0, tx = 0.0, cal = 0.0, timeCorr = 0.0;
 		x /= 1000.0;
 		int typeBankFunction = typeNumber[bank];
-		if (typeBankFunction < 0) {
+		int typeSplitBankFunction = typeSplitNumber[bank];
+		if (typeBankFunction < 0 && typeSplitBankFunction < 0) {
 			typeBankFunction = -typeBankFunction;
+			typeSplitBankFunction = -typeSplitBankFunction;
 			GSASbankCalibration calib = (GSASbankCalibration) getInstrument().getAngularCalibration();
-			try {
-				int bNumber = calib.getBankNumber(getBankID(bank));
-				distDiff = calib.getDetectorDistance(bNumber).getValueD() -
-						calib.getDetectorDistance(0).getValueD();
-				timeCorr = 2.0 * distDiff * Constants.LAMBDA_SPEED_NEUTRON_CONV_ANG * d *
-						MoreMath.sind(calib.getTtheta(bNumber).getValueD() * 0.5);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			DataFileSet dataset = getFilePar().getActiveSample().getActiveDataSet(0);
+			GSASbankCalibration calib_ref = (GSASbankCalibration) dataset.getInstrument().getAngularCalibration();
+			double distDiff = calib.getDetectorDistanceValue(bank) -
+						calib_ref.getDetectorDistanceValue(bank);
+			timeCorr = 2.0 * distDiff * Constants.LAMBDA_SPEED_NEUTRON_CONV_ANG * d *
+						MoreMath.sind(calib.getTtheta(bank).getValueD() * 0.5);
+//			System.out.println(bank + " " + x + " " + timeCorr + " " + distDiff + " " + d);
 		}
 		x += timeCorr;
 		if (index > splitPosition) {
@@ -1003,7 +1003,7 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 			}
 			cal = wt * getCoeffD(bank, numberIncSpectrumCoefficients);
 		} else {
-			switch (typeSplitNumber[bank]) {
+			switch (typeSplitBankFunction) {
 				case 1:
 					wt = getSplitCoeffD(bank, 0);
 					double w4 = 1.0;

@@ -3527,7 +3527,8 @@ public class DataFileSet extends XRDcat {
 
     for (int i = 0; i < datafilenumber; i++) {
       DiffrDataFile tmpDatafile = getActiveDataFile(i);
-      if (tmpDatafile.refreshBkgComputation) {
+		tmpDatafile.calculateIntensityCalibration();
+	    if (tmpDatafile.refreshBkgComputation) {
 //        System.out.println("Refreshing backg: " + tmpDatafile.toXRDcatString());
 //        System.out.println("Min, max: " + minindex[i] + " " + maxindex[i]);
 //        System.out.println("Max: " + tmpDatafile.twothetacalibrated.length);

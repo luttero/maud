@@ -343,7 +343,11 @@ public class GSASbankCalibration extends AngularCalibration {
     return dist[getBankNumber(datafile)];
   }
 
-  public String getDifc(String bank) {
+	public double getDetectorDistanceValue(int bank) {
+		return dist[bank];
+	}
+
+	public String getDifc(String bank) {
     for (int i = 0; i < banknumbers(); i++)
       if (getBankID(i).equals(bank))
         return getDifc(i).getValue();

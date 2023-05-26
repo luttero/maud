@@ -29,16 +29,7 @@ import org.apache.commons.math3.complex.Complex;
 
 public class Xraylib {
 
-  static {
-    try {
-      XRayInit();
-    }
-    catch (Exception e){
-      e.printStackTrace();
-      System.exit(1);
-    }
-  }
-
+	protected static boolean initialised = false;
   protected static String readString(ByteBuffer byte_buffer) {
     ArrayList<Byte> al = new ArrayList<>();
     while (true) {
@@ -128,7 +119,10 @@ public class Xraylib {
     return rv;
   }
 
-  private static void XRayInit() throws Exception {
+  public static boolean XRayInit() throws Exception {
+
+	  if (initialised) return true;
+
     try {
       DataInputStream inputStream = new DataInputStream(Xraylib.class.getClassLoader().getResourceAsStream("xraylib.dat"));
       int bytes_total = inputStream.available();
@@ -279,12 +273,14 @@ public class Xraylib {
         throw new RuntimeException("byte_buffer not empty when closing!");
       }
 
+	    initialised = true;
       inputStream.close();
     }
     catch (IOException | RuntimeException e ) {
       e.printStackTrace();
       throw new Exception(e.getMessage());
     }
+	 return true;
   }
 
   public static double AtomicWeight(int Z) {
