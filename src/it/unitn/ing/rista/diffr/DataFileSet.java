@@ -2730,7 +2730,7 @@ public class DataFileSet extends XRDcat {
 
   public double[] getWeight() {
     int dnumber = 0;
-    double dta[] = new double[getNumberOfData()];
+    double finalWgt[] = new double[getNumberOfData()];
 
     int datafilenumber = activedatafilesnumber();
     double sumDataWeighted = 1.0;
@@ -2747,12 +2747,12 @@ public class DataFileSet extends XRDcat {
           break;
       }
       int apnumber = adfile.getNumberOfData();
-      double adta[] = adfile.getWeight();
+      double wgt[] = adfile.getWeight();
       for (int j = 0; j < apnumber; j++)
-        dta[dnumber + j] = adta[j] / sumDataWeighted;
+	      finalWgt[dnumber + j] = wgt[j] / sumDataWeighted;
       dnumber += apnumber;
     }
-    return dta;
+    return finalWgt;
   }
 
   public double[] getFit() {

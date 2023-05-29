@@ -507,7 +507,7 @@ public class Parameter extends Object implements Cloneable, basicObj {
 	}
 
 	public void setRatio(String avalue) {
-		ratio = new String(avalue);
+		ratio = avalue;
 	}
 
 	public String getRatio() {
@@ -515,7 +515,7 @@ public class Parameter extends Object implements Cloneable, basicObj {
 	}
 
 	public void setConstant(String avalue) {
-		constant = new String(avalue);
+		constant = avalue;
 	}
 
 	public String getConstant() {
@@ -524,8 +524,8 @@ public class Parameter extends Object implements Cloneable, basicObj {
 
 	private void notifyChangedValue() {
 		double newvalue = Double.parseDouble(getRefparameter().getValue()); // we need to avoid the update method
-		double aratio = Double.valueOf(getRatio()).doubleValue();
-		double aconstant = Double.valueOf(getConstant()).doubleValue();
+		double aratio = Double.parseDouble(getRatio());
+		double aconstant = Double.parseDouble(getConstant());
 		double newvalued = newvalue * aratio + aconstant;
 		if (!(positiveDefinite && newvalued < 0.0))
 			setValue(newvalue * aratio + aconstant);

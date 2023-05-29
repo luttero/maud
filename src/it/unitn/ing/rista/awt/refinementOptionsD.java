@@ -48,7 +48,9 @@ public class refinementOptionsD extends myJFrame {
   JComboBox backgroundInterpolationCB;
   JComboBox computationAlgorithmCB;
   JCheckBox memoryControlCB;
-  JCheckBox theoreticalWeightCB;
+  JCheckBox subtractBackgroundCB;
+  JTextField qExponentTF;
+	JCheckBox theoreticalWeightCB;
   JComboBox minimizeCB;
   JComboBox weightsCB;
   JCheckBox addStatisticalErrorCB;
@@ -193,7 +195,6 @@ public class refinementOptionsD extends myJFrame {
     });
     jPanel9.add(jb);
 
-
     jPanel9 = new JPanel();
     jPanel9.setLayout(new FlowLayout(FlowLayout.RIGHT, 6, 6));
     optionsP.add(jPanel9);
@@ -223,7 +224,23 @@ public class refinementOptionsD extends myJFrame {
     weightsCB.setToolTipText("Specify the kind of weights to be used in the non linear least squares routine");
     jPanel9.add(weightsCB);
 
-    jPanel9 = new JPanel();
+	  jPanel9 = new JPanel();
+	  jPanel9.setLayout(new FlowLayout(FlowLayout.RIGHT, 6, 6));
+	  texturePanel.add(jPanel9);
+	  subtractBackgroundCB = new JCheckBox("Subtract background for weights");
+	  subtractBackgroundCB.setToolTipText("The statistical weights are calculated subtracting the background");
+	  jPanel9.add(subtractBackgroundCB);
+
+	  jPanel9 = new JPanel();
+	  jPanel9.setLayout(new FlowLayout(FlowLayout.RIGHT, 6, 6));
+	  texturePanel.add(jPanel9);
+
+	  jPanel9.add(new JLabel("Correct weights for Q ^ "));
+	  qExponentTF = new JTextField(8);
+	  qExponentTF.setToolTipText("Specify the exponent for Q correction of weights");
+	  jPanel9.add(qExponentTF);
+
+	  jPanel9 = new JPanel();
     jPanel9.setLayout(new FlowLayout(FlowLayout.RIGHT, 6, 6));
     optionsP.add(jPanel9);
     theoreticalWeightCB = new JCheckBox("Use theoretical weights");
@@ -317,6 +334,8 @@ public class refinementOptionsD extends myJFrame {
     storeSpectraCB.setSelected(parameterfile.storeSpectraWithAnalysis());
 	  storeStructureCB.setSelected(!parameterfile.compactSavingStructureFactors());
 	  storeTextureCB.setSelected(!parameterfile.compactSavingTextureFactors());
+	  qExponentTF.setText(parameterfile.getQexpForWeightingSchemeS());
+	  subtractBackgroundCB.setSelected(parameterfile.useNoBkgForWeightingScheme());
   }
 
   public void retrieveParameters() {
@@ -345,6 +364,8 @@ public class refinementOptionsD extends myJFrame {
       MaudPreferences.setPref("analysis_default.storeSpectraWithParameters", store);
 	  parameterfile.setCompactSavingStructureFactors(!storeStructureCB.isSelected());
 	  parameterfile.setCompactSavingTextureFactors(!storeTextureCB.isSelected());
+	  parameterfile.setQexpForWeightingScheme(qExponentTF.getText()); //qExponentTF.setText(.getQexpForWeightingSchemeS());
+	  parameterfile.setBkgForWeightingScheme(subtractBackgroundCB.isSelected());
   }
 
 

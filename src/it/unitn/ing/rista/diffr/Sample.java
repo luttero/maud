@@ -746,19 +746,19 @@ public class Sample extends Maincat {
 
   public double[] getWeight() {
     int dnumber = 0;
-    double dta[] = new double[getNumberOfData()];
+    double finalWgt[] = new double[getNumberOfData()];
 
     for (int i = 0; i < activeDatasetsNumber(); i++) {
       DataFileSet adataset = getActiveDataSet(i);
       if (adataset != null) {
         int apnumber = adataset.getNumberOfData();
-        double adta[] = adataset.getWeight();
+        double wgt[] = adataset.getWeight();
         for (int j = 0; j < apnumber; j++)
-          dta[dnumber + j] = adta[j];
+	        finalWgt[dnumber + j] = wgt[j];
         dnumber += apnumber;
       }
     }
-    return dta;
+    return finalWgt;
   }
 
   public double[] getFit() {

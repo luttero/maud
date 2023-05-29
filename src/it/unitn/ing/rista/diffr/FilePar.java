@@ -64,7 +64,8 @@ public class FilePar extends XRDcat implements lFilePar, Function {
     "_riet_remove_phases_under", "_riet_refine_cell_over", "_riet_refine_sizestrain_over",
     "_riet_refine_crystal_structure_over", "_riet_refine_texture_over", "_riet_refine_strain_over",
     "_pd_proc_ls_interpolation_comp", "_maud_analysis_name", "_maud_analysis_prog_number",
-		"_maud_store_structure_factors_with_analysis", "_maud_store_texture_factors_with_analysis",
+	 "_maud_store_structure_factors_with_analysis", "_maud_store_texture_factors_with_analysis",
+	 "_maud_refine_weight_no_bkg", "_maud_refine_weight_q_exp",
 
     "_computing_refinement_algorithm",
 
@@ -83,6 +84,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
     "_riet_refine_crystal_structure_over", "_riet_refine_texture_over", "_riet_refine_strain_over",
     "_pd_proc_ls_interpolation_comp", "name of the analysis file", "progressive number of refinements",
 		  "_maud_store_structure_factors_with_analysis", "_maud_store_texture_factors_with_analysis",
+		  "_maud_refine_weight_no_bkg", "_maud_refine_weight_q_exp",
 
     "_computing_refinement_algorithm",
 
@@ -128,19 +130,19 @@ public class FilePar extends XRDcat implements lFilePar, Function {
   public static int ComputationOptionNumber = 3;
 
   public static String[] COMP_STATUS = {"never", "end of iteration", "always"};
-  public static String[] weights = {"default", "sqrt", "linear", "log10", // 0-3
-      "sqrt, no bkg", "linear, no bkg", "log10, no bkg", // 4-6
-      "sqrt, no bkg(-int)", "linear, no bkg(-int)", "log10, no bkg(-int)", // 7-9
-      "sqrt*q", "linear*q", "log10*q", // 10-12
-      "sqrt*q^2", "linear*q^2", "log10*q^2", // 13-15
-      "sqrt*q^4", "linear*q^4", "log10*q^4", // 16-18
-		  "sqrt/q", "linear/q", "log10/q", // 19-21
-		  "sqrt/q^1/2", "linear/q^1/2", "log10/q^1/2", // 22-24
-		  "sqrt*q, no bkg", "linear*q, no bkg", "log10*q, no bkg", // 25-27
-      "sqrt*q^2, no bkg", "linear*q^2, no bkg", "log10*q^2, no bkg", // 28-30
-      "sqrt*q^4, no bkg", "linear*q^4, no bkg", "log10*q^4, no bkg", // 31-33
-		  "sqrt/q, no bkg", "linear/q, no bkg", "log10/q, no bkg", // 34-36
-		  "sqrt/q^1/2, no bkg", "linear/q^1/2, no bkg", "log10/q^1/2, no bkg"}; // 37-39}
+  public static String[] weights = {"default", "sqrt", "linear", "log10"}; // 0-3
+//      "sqrt, no bkg", "linear, no bkg", "log10, no bkg", // 4-6
+//      "sqrt, no bkg(-int)", "linear, no bkg(-int)", "log10, no bkg(-int)", // 7-9
+//      "sqrt*q", "linear*q", "log10*q", // 10-12
+//      "sqrt*q^2", "linear*q^2", "log10*q^2", // 13-15
+//      "sqrt*q^4", "linear*q^4", "log10*q^4", // 16-18
+//		  "sqrt/q", "linear/q", "log10/q", // 19-21
+//		  "sqrt/q^1/2", "linear/q^1/2", "log10/q^1/2", // 22-24
+//		  "sqrt*q, no bkg", "linear*q, no bkg", "log10*q, no bkg", // 25-27
+//      "sqrt*q^2, no bkg", "linear*q^2, no bkg", "log10*q^2, no bkg", // 28-30
+//      "sqrt*q^4, no bkg", "linear*q^4, no bkg", "log10*q^4, no bkg", // 31-33
+//		  "sqrt/q, no bkg", "linear/q, no bkg", "log10/q, no bkg", // 34-36
+//		  "sqrt/q^1/2, no bkg", "linear/q^1/2, no bkg", "log10/q^1/2, no bkg"}; // 37-39}
 
   public static String[] minimizeQuantity = {"WgtSS", "Rwp"}; //, "Rwp-bkg"};
 /*  public static String[] differenceQuantity = {"default", "sqrt", "linear", "log10",
@@ -154,6 +156,8 @@ public class FilePar extends XRDcat implements lFilePar, Function {
   public boolean loadingFile = false;
   boolean reduceMemory = false;
   boolean theoreticalWeightingScheme = false;
+  double weightingSchemeQExp = 0;
+  boolean useNoBkgForWeights = false;
   public boolean addStatisticalError = false;
 
   int numberOfData = 0;
@@ -190,6 +194,9 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 	public static int refinementNumberID = 29;
 	public static int saveStructureFactorsID = 30;
 	public static int saveTextureFactorsID = 31;
+	public static int weightingSchemeNoBkgID = 32;
+	public static int weightingSchemeQExpID = 33;
+
 
 	public FilePar(String name) {
     super(null, name);
@@ -216,7 +223,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
   }
 
   public void initConstant() {
-    Nstring = 32;
+    Nstring = 34;
     Nstringloop = 0;
     Nparameter = 0;
     Nparameterloop = 0;
@@ -286,6 +293,9 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 	  else
 		  stringField[saveTextureFactorsID] = "false";
     setOptimizationAlgorithm("Marqardt Least Squares");
+	  setBkgForWeightingScheme(false);
+	  setQexpForWeightingScheme(0.0);
+
   }
 
   public void setLimitsForWizard(double phaseLimitForRemove,
@@ -506,7 +516,12 @@ public class FilePar extends XRDcat implements lFilePar, Function {
       theoreticalWeightingScheme = true;
     else
       theoreticalWeightingScheme = false;
-    logOutput = MaudPreferences.getBoolean("log_output.saveInFile", Constants.stdoutput != Constants.NO_OUTPUT);
+    weightingSchemeQExp = Double.parseDouble(stringField[weightingSchemeQExpID]);
+	  if (stringField[weightingSchemeNoBkgID].equalsIgnoreCase("true"))
+		  useNoBkgForWeights = true;
+	  useNoBkgForWeights = false;
+
+	  logOutput = MaudPreferences.getBoolean("log_output.saveInFile", Constants.stdoutput != Constants.NO_OUTPUT);
     phaseLimitForRemove = Double.parseDouble(stringField[phaseLimitForRemoveID]);
     phaseLimitForCellParameters = Double.parseDouble(stringField[phaseLimitForCellParametersID]);
     phaseLimitForMicrostructure = Double.parseDouble(stringField[phaseLimitForMicrostructureID]);
@@ -584,7 +599,36 @@ public class FilePar extends XRDcat implements lFilePar, Function {
     return weightSchemeSwitch;
   }
 
-  int minimizingQuantity = 0;
+  public void setBkgForWeightingScheme(boolean value) {
+  	   if (value)
+	      stringField[weightingSchemeNoBkgID] = "true";
+  	   else
+  		   stringField[weightingSchemeNoBkgID] = "false";
+  }
+
+	public String getNoBkgForWeightingScheme() {
+		return stringField[weightingSchemeNoBkgID];
+	}
+
+	public boolean useNoBkgForWeightingScheme() {
+  	  return useNoBkgForWeights;
+	}
+
+	public void setQexpForWeightingScheme(double value) {
+  	   stringField[weightingSchemeQExpID] = Fmt.format(value);
+   }
+	public void setQexpForWeightingScheme(String value) {
+		stringField[weightingSchemeQExpID] = value;
+	}
+
+	public double getQexpForWeightingScheme() {
+		return weightingSchemeQExp;
+	}
+	public String getQexpForWeightingSchemeS() {
+		return stringField[weightingSchemeQExpID].toString();
+	}
+
+	int minimizingQuantity = 0;
 
   public void setMinimizeQuantity(String scheme) {
     if (stringField[18] == null || !stringField[18].equalsIgnoreCase(scheme)) {
@@ -610,9 +654,9 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 
   public void setTheoreticalWeightingScheme(boolean control) {
     if (control)
-      stringField[12] = new String("true");
+      stringField[12] = "true";
     else
-      stringField[12] = new String("false");
+      stringField[12] = "false";
   }
 
   public void setTheoreticalWeightingScheme(String control) {
@@ -2140,6 +2184,9 @@ public class FilePar extends XRDcat implements lFilePar, Function {
   }
 
   public void launchrefine(OutputPanel aframe) {
+	  if (Constants.testtime)
+		  Constants.tmpTime = System.currentTimeMillis();
+
 	  boolean canGo = validate();
     if (!canGo) {
       System.out.println("Validation not passed");
@@ -2165,6 +2212,9 @@ public class FilePar extends XRDcat implements lFilePar, Function {
       fittingFileOutput();
       endOfComputation();
     }
+	  if (Constants.testtime)
+		  System.out.println("Time for total refinement was: " + (System.currentTimeMillis() - Constants.tmpTime) +
+				  " millisecs.");
   }
 
   public void refineWizard(OutputPanel aframe, int wizardindex) {
@@ -2622,10 +2672,10 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 //        if (forceNoWeight)
 //          wgt[dnumber + j] = 1.0f;
 //        else
-        wgt[dnumber + j] = (double) (adta[j] / Ncorrection);
+        wgt[dnumber + j] = (adta[j] / Ncorrection);
       }
       for (int j = apnumber; j < apnumber + asample.phasesNumber(); j++)
-        wgt[dnumber + j] = (double) asample.getPhase(j - apnumber).getActiveStructureModel().getEnergyWeight();
+        wgt[dnumber + j] = asample.getPhase(j - apnumber).getActiveStructureModel().getEnergyWeight();
       dnumber += apnumber + asample.phasesNumber();
     }
 
