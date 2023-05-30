@@ -22,8 +22,7 @@ package it.unitn.ing.rista.comp;
 
 import it.unitn.ing.rista.awt.JIconButton;
 import it.unitn.ing.rista.interfaces.Function;
-import it.unitn.ing.rista.util.MaudPreferences;
-import it.unitn.ing.rista.util.Misc;
+import it.unitn.ing.rista.util.*;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -87,6 +86,7 @@ public class launchRefine extends launchBasic {
 
     reset();
 
+	  Constants.totalTime = System.currentTimeMillis();
     print("Start rita/rista refinement");
 
     if (parameterfile != null) {
@@ -106,6 +106,8 @@ public class launchRefine extends launchBasic {
 
   public void endOfRun() {
     sol = null;
+    System.out.println("Time for total refinement was: " + (System.currentTimeMillis() - Constants.totalTime) +
+			  " millisecs.");
 
     if (parameterfile != null)
       parameterfile.fittingFileOutput();

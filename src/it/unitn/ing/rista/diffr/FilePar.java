@@ -2207,8 +2207,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
   }
 
   public void launchrefine(OutputPanel aframe) {
-	  if (Constants.testtime)
-		  Constants.tmpTime = System.currentTimeMillis();
+//	  if (Constants.testtime)
 
 	  boolean canGo = validate();
     if (!canGo) {
@@ -2235,9 +2234,9 @@ public class FilePar extends XRDcat implements lFilePar, Function {
       fittingFileOutput();
       endOfComputation();
     }
-	  if (Constants.testtime)
-		  System.out.println("Time for total refinement was: " + (System.currentTimeMillis() - Constants.tmpTime) +
-				  " millisecs.");
+//	  if (Constants.testtime)
+//	  System.out.println("Time for total refinement was: " + (System.currentTimeMillis() - Constants.totalTime) +
+//				  " millisecs.");
   }
 
   public void refineWizard(OutputPanel aframe, int wizardindex) {

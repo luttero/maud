@@ -305,6 +305,7 @@ public class Constants {
   public static boolean forceOverwrite = true;
 
   public static long tmpTime = 0l;
+	public static long totalTime = 0l;
 
   public static final int COMPUTED = 0, EXPERIMENTAL = 1, UNITARY = 2;
   public static final double ENTIRE_RANGE = 1.0;
