@@ -564,11 +564,11 @@ public class launchRefineWizard extends launchRefine {
   }
 
   public void endOfRun() {
-    super.endOfRun();
+	  if (parameterfile != null) {
+		  ((FilePar) parameterfile).resetWizard();
+	  }
 
-    if (parameterfile != null) {
-      ((FilePar) parameterfile).resetWizard();
-    }
+	  super.endOfRun();
 
   }
 
