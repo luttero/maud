@@ -374,6 +374,8 @@ public class Constants {
 	public static boolean testing = false;
   public static boolean testtime = false;
   public static boolean esquienabled = false;
+
+  public static boolean testIntensityModForWeighting = false; // to test if to modify also intensity with wgt on statistic
 //  public static boolean angleConversionUseLegacy = true;
 
   public static boolean webStart = false;

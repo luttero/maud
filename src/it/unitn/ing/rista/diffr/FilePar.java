@@ -527,7 +527,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 	  else
 		  intensityCalibratedForWeights = false;
 
-
+	  Constants.testIntensityModForWeighting = MaudPreferences.getBoolean("testing.useIntensityModifiedForStatistic", false);
 
 	  logOutput = MaudPreferences.getBoolean("log_output.saveInFile", Constants.stdoutput != Constants.NO_OUTPUT);
     phaseLimitForRemove = Double.parseDouble(stringField[phaseLimitForRemoveID]);

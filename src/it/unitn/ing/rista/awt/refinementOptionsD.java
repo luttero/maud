@@ -373,7 +373,7 @@ public class refinementOptionsD extends myJFrame {
 	  parameterfile.setCompactSavingTextureFactors(!storeTextureCB.isSelected());
 	  parameterfile.setQexpForWeightingScheme(qExponentTF.getText()); //qExponentTF.setText(.getQexpForWeightingSchemeS());
 	  parameterfile.setNoBkgForWeightingScheme(subtractBackgroundCB.isSelected());
-	  parameterfile.setNoBkgForWeightingScheme(intensityCalibratedCB.isSelected());
+	  parameterfile.setIntensityCalibratedForWeights(intensityCalibratedCB.isSelected());
   }
 
 

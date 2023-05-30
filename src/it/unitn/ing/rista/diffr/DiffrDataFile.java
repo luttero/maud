@@ -234,8 +234,13 @@ public class DiffrDataFile extends XRDcat {
 //  int monitorAsBackgroundN = 0;
 
   boolean reflectivityStats = false;
+  int weightSwitch = 0;
+	boolean theoreticalWeights = false;
+	boolean useNoBkg = false;
+	boolean calibratedData = false;
 
-  boolean firstComputation = true;
+
+	boolean firstComputation = true;
 
   public boolean dataLoaded = false;
   //  public boolean readLater = false;
@@ -1080,6 +1085,11 @@ public class DiffrDataFile extends XRDcat {
       getBkgOscillator(i).preparecomputing();
 
     reflectivityStats = needReflectivityStatistic();
+	  weightSwitch = getFilePar().getWeightingSchemeSwitch();
+	  theoreticalWeights = getFilePar().theoreticalWeight();
+	  useNoBkg = getFilePar().useNoBkgForWeightingScheme();
+	  calibratedData = getFilePar().useIntensityCalibratedForWeights();
+
     if (ainstrument != null) {
       IntensityCalibration intcal = ainstrument.getIntensityCalibration();
       if (intcal != null)
@@ -2133,10 +2143,10 @@ public class DiffrDataFile extends XRDcat {
     return total;
   }
 
-  public double getYDataForStatistic(int index, boolean calibratedIntensity) {
-		if (calibratedIntensity)
-			return getIntensityForStatistic(getYData(index) / intensityCalibrated[index]);
-	  return getIntensityForStatistic(getYData(index));
+  public double getYDataForStatistic(int index, double qExp) {
+		if (calibratedData)
+			return getIntensityForStatistic(index, getYData(index) / intensityCalibrated[index], qExp);
+	  return getIntensityForStatistic(index, getYData(index), qExp);
 
 	  /*
 
@@ -2247,7 +2257,7 @@ public class DiffrDataFile extends XRDcat {
     return getDataFileSet().getInstrument().getIntensityCalibration().calibrateData(value);
   }
 
-	public double getIntensityForStatistic(double intensity) {
+	public double getIntensityForStatistic(int index, double intensity, double qExp) {
 		if (reflectivityStats) {
 			if (intensity > 0.0)
 				return MoreMath.log10(intensity);
@@ -2255,47 +2265,47 @@ public class DiffrDataFile extends XRDcat {
 				return 1.0E-79;
 		}
 
-		double yint = intensity;
-
 		double corr = getCountTimeValueForStatistic() * getDatafileWeight();
 		if (corr < 1.0E-9 && corr > 1.0E-9)
 			corr = 1.0;
-		yint *= corr;
+		intensity *= corr;
 
-		return yint;
+		if (Constants.testIntensityModForWeighting) {
+			double qCorrection = Math.pow(Math.abs(getXInQ(getXData(index))), qExp);
+
+			if (useNoBkg)
+				intensity -= getBkgFit(index);
+//      if (weightSwitch > 6 && weightSwitch < 10)
+//        yint -= getBkgFitNoInterpolation(index);
+
+			if (intensity < 0)
+				intensity = -intensity;
+			intensity *= corr;
+
+			if (intensity > 1.0E-9) {
+
+				switch (weightSwitch) {
+					case 0: // default
+					case 1: // sqrt
+						intensity = Math.sqrt(intensity); // * Math.sqrt(corr);
+						break;
+					case 3:
+						intensity = MoreMath.log10(intensity); // * MoreMath.log10(corr);
+						break;
+				}
+			}
+			intensity *= qCorrection;
+
+		}
+
+		return intensity;
 	}
 
-	public double getFitForStatistic(int index, boolean calibrated) {
-		if (calibrated)
-			return getIntensityForStatistic(getFit(index) / intensityCalibrated[index]);
-		return getIntensityForStatistic(getFit(index));
+	public double getFitForStatistic(int index, double qExp) {
+		if (calibratedData)
+			return getIntensityForStatistic(index, getFit(index) / intensityCalibrated[index], qExp);
+		return getIntensityForStatistic(index, getFit(index), qExp);
 
-/*	  int weightSwitch = getFilePar().getWeightingSchemeSwitch();
-	  double qCorrection = Math.pow(Math.abs(getXInQ(getXData(index))), getFilePar().getQexpForWeightingScheme());
-
-	  boolean useNoBkg = getFilePar().useNoBkgForWeightingScheme();
-
-	  if (useNoBkg)
-		  yint -= getBkgFit(index);
-
-
-	  if (yint > 1.0E-8) {
-
-		  switch (weightSwitch) {
-			  case 0: // default
-				  value = qCorrection * weight[index]; // * Math.sqrt(corr);
-				  break;
-			  case 1: // sqrt
-				  value = qCorrection / Math.sqrt(yint); // * Math.sqrt(corr);
-				  break;
-			  case 2:
-				  value = qCorrection / yint; // * corr;
-				  break;
-			  case 3:
-				  value = qCorrection / MoreMath.log10(yint); // * MoreMath.log10(corr);
-				  break;
-		  }
-	  }*/
   }
 
   public double getBkgFit(int index) {
@@ -2315,73 +2325,6 @@ public class DiffrDataFile extends XRDcat {
 			  corr = 1;
 
       return getBkgFit(index) * corr;
-
-      //    double corr = (double) Math.sqrt(getCountTimeValue());
-//    double yint = getBkgFit(index); // / corr;
-/*    if (reflectivityStats) {
-      if (yint > 0.0)
-        return (double) MoreMath.log10(yint);
-      else
-        return (double) 1.0E-79;
-    } else
-      return getBkgFit(index);*/
-/*    switch (getFilePar().getWeightingSchemeSwitch()) {
-      case 6:
-        if (yint > 0.0) {
-          double x = getXData(index);
-          return (double) MoreMath.log10(yint * MoreMath.pow(getXInQ(x), 4));
-        } else
-          return (double) 1.0E-79;
-      case 3: // log10
-        if (yint > 0.0)
-          return (double) MoreMath.log10(yint);
-        else
-          return (double) 1.0E-79;
-      case 8:
-        double value = Math.sqrt(Math.abs(getYData(index)));
-        value *= Math.abs(getXInQ(getXData(index)));
-        if (value != 0.0)
-          yint = corr / value;
-        return (double) yint;
-      case 9:
-        value = Math.sqrt(Math.abs(getYData(index)));
-        value *= MoreMath.pow(getXInQ(getXData(index)), 2);
-        if (value != 0.0)
-          yint = corr / value;
-        return (double) yint;
-      case 10:
-        value = Math.sqrt(Math.abs(getYData(index)));
-        value *= MoreMath.pow(getXInQ(getXData(index)), 4);
-        if (value != 0.0)
-          yint = corr / value;
-        return (double) yint;
-      case 11:
-        value = Math.sqrt(Math.abs(getYData(index) - getBkgFit(index)));
-        value *= Math.abs(getXInQ(getXData(index)));
-        if (value != 0.0)
-          yint = corr / value;
-        return (double) yint;
-      case 12:
-        value = Math.sqrt(Math.abs(getYData(index) - getBkgFit(index)));
-        value *= MoreMath.pow(getXInQ(getXData(index)), 2);
-        if (value != 0.0)
-          yint = corr / value;
-        return (double) yint;
-      case 13:
-        value = Math.sqrt(Math.abs(getYData(index) - getBkgFit(index)));
-        value *= MoreMath.pow(getXInQ(getXData(index)), 4);
-        if (value != 0.0)
-          yint = corr / value;
-        return (double) yint;
-      case 0: // default
-      case 1: // sqrt
-      case 2: // linear
-      case 4:
-      case 5:
-      default: {
-        return (double) yint;
-      }
-    }*/
   }
 
 	public double[] getWeight() {
@@ -2421,7 +2364,6 @@ public class DiffrDataFile extends XRDcat {
       double corr = getCountTimeValueForStatistic() * getDatafileWeight();
       if (corr == 0)
         corr = 1;
-      boolean theoreticalWeights = getFilePar().theoreticalWeight();
 
       double yint;
       if (theoreticalWeights)
@@ -2430,10 +2372,8 @@ public class DiffrDataFile extends XRDcat {
         yint = getYData(index);
 //      System.out.println(yint);
 
-	    int weightSwitch = getFilePar().getWeightingSchemeSwitch();
 	    double qCorrection = Math.pow(Math.abs(getXInQ(getXData(index))), getFilePar().getQexpForWeightingScheme());
 
-	    boolean useNoBkg = getFilePar().useNoBkgForWeightingScheme();
 
 	    if (useNoBkg)
         yint -= getBkgFit(index);
@@ -2444,35 +2384,38 @@ public class DiffrDataFile extends XRDcat {
         yint = -yint;
       yint *= corr;
 
-      yint *= qCorrection;
-
 	    if (yint > 1.0E-8) {
 
-	      switch (weightSwitch) {
-        case 0: // default
-	        value = weight[index]; // * Math.sqrt(corr);
-	        break;
-		      case 1: // sqrt
-          value = 1.0 / Math.sqrt(yint); // * Math.sqrt(corr);
-			 break;
-	      case 2:
-          value = 1.0 / yint; // * corr;
-          break;
-		   case 3:
-		   	value = 1.0 / MoreMath.log10(yint); // * MoreMath.log10(corr);
-			   break;
-      }
-      }
+		    switch (weightSwitch) {
+			    case 0: // default
+				    value = weight[index]; // * Math.sqrt(corr);
+				    break;
+			    case 1: // sqrt
+				    value = 1.0 / Math.sqrt(yint); // * Math.sqrt(corr);
+				    break;
+			    case 2:
+				    value = 1.0 / yint; // * corr;
+				    break;
+			    case 3:
+				    value = 1.0 / MoreMath.log10(yint); // * MoreMath.log10(corr);
+				    break;
+			    default: {
+				    value = 1.0 / Math.sqrt(yint);
+			    }
+		    }
+		    value *= qCorrection;
+
+	    }
     }
       return value;
   }
 
   public double getDataWeightSum() {
     double sum = 0.0, wgt, dta;
-	 boolean calibratedData = getFilePar().useIntensityCalibratedForWeights();
+	 double qExp = getFilePar().getQexpForWeightingScheme();
     for (int i = startingindex; i < finalindex; i++) {
       wgt = getWeight(i);
-      dta = getYDataForStatistic(i, calibratedData);
+      dta = getYDataForStatistic(i, qExp);
       sum += dta * dta * wgt * wgt;
     }
     return sum;
@@ -2486,9 +2429,9 @@ public class DiffrDataFile extends XRDcat {
     int dtanumber = computeDataNumber();
     double dta[] = new double[dtanumber];
 
-	  boolean calibratedData = getFilePar().useIntensityCalibratedForWeights();
+	  double qExp = getFilePar().getQexpForWeightingScheme();
     for (int j = 0; j < dtanumber; j++)
-      dta[j] = getYDataForStatistic(j + startingindex, calibratedData);
+      dta[j] = getYDataForStatistic(j + startingindex, qExp);
 
     return dta;
   }
@@ -2500,10 +2443,9 @@ public class DiffrDataFile extends XRDcat {
   public double[] getFit() {
     int dtanumber = computeDataNumber();
     double dta[] = new double[dtanumber];
-
-	  boolean calibratedData = getFilePar().useIntensityCalibratedForWeights();
+    FilePar analysis = getFilePar();
     for (int j = 0; j < dtanumber; j++)
-      dta[j] = getFitForStatistic(j + startingindex, calibratedData);
+      dta[j] = getFitForStatistic(j + startingindex, analysis.getQexpForWeightingScheme());
 
     return dta;
   }
@@ -2541,15 +2483,16 @@ public class DiffrDataFile extends XRDcat {
       double rw = 0.0, r = 0.0, rwb1 = 0, rwb2 = 0, r1 = 0, r2 = 0, den = 0.0, rden = 0.0,
 		      denb = 0.0, rdenb = 0.0;
 
-	    boolean calibratedData = getFilePar().useIntensityCalibratedForWeights();
+      double qExp = getFilePar().getQexpForWeightingScheme();
+
       for (int i = startingindex; i < finalindex; i++) {
         wgt = getWeight(i);
         wgt2 = wgt * wgt;
-        dta = getYDataForStatistic(i, calibratedData);
+        dta = getYDataForStatistic(i, qExp);
         dta2 = dta * dta;
         dtanb = Math.abs(dta - getBkgFitForStatistic(i));
         dtanb2 = dtanb * dtanb;
-        diff = Math.abs(dta - getFitForStatistic(i, calibratedData));
+        diff = Math.abs(dta - getFitForStatistic(i, qExp));
 	      double modb = 1;
         if (dta > 0)
 	        modb = Math.abs(dtanb / dta);
