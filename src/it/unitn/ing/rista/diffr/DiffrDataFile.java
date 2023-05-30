@@ -2133,8 +2133,9 @@ public class DiffrDataFile extends XRDcat {
     return total;
   }
 
-  public double getYDataForStatistic(int index) {
-
+  public double getYDataForStatistic(int index, boolean calibratedIntensity) {
+		if (calibratedIntensity)
+			return getIntensityForStatistic(getYData(index) / intensityCalibrated[index]);
 	  return getIntensityForStatistic(getYData(index));
 
 	  /*
@@ -2264,8 +2265,9 @@ public class DiffrDataFile extends XRDcat {
 		return yint;
 	}
 
-	public double getFitForStatistic(int index) {
-
+	public double getFitForStatistic(int index, boolean calibrated) {
+		if (calibrated)
+			return getIntensityForStatistic(getFit(index) / intensityCalibrated[index]);
 		return getIntensityForStatistic(getFit(index));
 
 /*	  int weightSwitch = getFilePar().getWeightingSchemeSwitch();
@@ -2467,9 +2469,10 @@ public class DiffrDataFile extends XRDcat {
 
   public double getDataWeightSum() {
     double sum = 0.0, wgt, dta;
+	 boolean calibratedData = getFilePar().useIntensityCalibratedForWeights();
     for (int i = startingindex; i < finalindex; i++) {
       wgt = getWeight(i);
-      dta = getYDataForStatistic(i);
+      dta = getYDataForStatistic(i, calibratedData);
       sum += dta * dta * wgt * wgt;
     }
     return sum;
@@ -2483,8 +2486,9 @@ public class DiffrDataFile extends XRDcat {
     int dtanumber = computeDataNumber();
     double dta[] = new double[dtanumber];
 
+	  boolean calibratedData = getFilePar().useIntensityCalibratedForWeights();
     for (int j = 0; j < dtanumber; j++)
-      dta[j] = getYDataForStatistic(j + startingindex);
+      dta[j] = getYDataForStatistic(j + startingindex, calibratedData);
 
     return dta;
   }
@@ -2497,8 +2501,9 @@ public class DiffrDataFile extends XRDcat {
     int dtanumber = computeDataNumber();
     double dta[] = new double[dtanumber];
 
+	  boolean calibratedData = getFilePar().useIntensityCalibratedForWeights();
     for (int j = 0; j < dtanumber; j++)
-      dta[j] = getFitForStatistic(j + startingindex);
+      dta[j] = getFitForStatistic(j + startingindex, calibratedData);
 
     return dta;
   }
@@ -2536,14 +2541,15 @@ public class DiffrDataFile extends XRDcat {
       double rw = 0.0, r = 0.0, rwb1 = 0, rwb2 = 0, r1 = 0, r2 = 0, den = 0.0, rden = 0.0,
 		      denb = 0.0, rdenb = 0.0;
 
+	    boolean calibratedData = getFilePar().useIntensityCalibratedForWeights();
       for (int i = startingindex; i < finalindex; i++) {
         wgt = getWeight(i);
         wgt2 = wgt * wgt;
-        dta = getYDataForStatistic(i);
+        dta = getYDataForStatistic(i, calibratedData);
         dta2 = dta * dta;
         dtanb = Math.abs(dta - getBkgFitForStatistic(i));
         dtanb2 = dtanb * dtanb;
-        diff = Math.abs(dta - getFitForStatistic(i));
+        diff = Math.abs(dta - getFitForStatistic(i, calibratedData));
 	      double modb = 1;
         if (dta > 0)
 	        modb = Math.abs(dtanb / dta);

@@ -21,7 +21,6 @@
 package it.unitn.ing.rista.awt;
 
 import it.unitn.ing.rista.diffr.FilePar;
-import it.unitn.ing.rista.util.Constants;
 import it.unitn.ing.rista.util.MaudPreferences;
 
 import javax.swing.*;
@@ -49,6 +48,7 @@ public class refinementOptionsD extends myJFrame {
   JComboBox computationAlgorithmCB;
   JCheckBox memoryControlCB;
   JCheckBox subtractBackgroundCB;
+	JCheckBox intensityCalibratedCB;
   JTextField qExponentTF;
 	JCheckBox theoreticalWeightCB;
   JComboBox minimizeCB;
@@ -234,11 +234,17 @@ public class refinementOptionsD extends myJFrame {
 	  jPanel9 = new JPanel();
 	  jPanel9.setLayout(new FlowLayout(FlowLayout.RIGHT, 6, 6));
 	  texturePanel.add(jPanel9);
-
 	  jPanel9.add(new JLabel("Correct weights for Q ^ "));
 	  qExponentTF = new JTextField(8);
 	  qExponentTF.setToolTipText("Specify the exponent for Q correction of weights");
 	  jPanel9.add(qExponentTF);
+
+	  jPanel9 = new JPanel();
+	  jPanel9.setLayout(new FlowLayout(FlowLayout.RIGHT, 6, 6));
+	  texturePanel.add(jPanel9);
+	  intensityCalibratedCB = new JCheckBox("Calibrate intensity for weights");
+	  intensityCalibratedCB.setToolTipText("The statistical weights are calculated after calibrating the intensity");
+	  jPanel9.add(intensityCalibratedCB);
 
 	  jPanel9 = new JPanel();
     jPanel9.setLayout(new FlowLayout(FlowLayout.RIGHT, 6, 6));
@@ -336,6 +342,7 @@ public class refinementOptionsD extends myJFrame {
 	  storeTextureCB.setSelected(!parameterfile.compactSavingTextureFactors());
 	  qExponentTF.setText(parameterfile.getQexpForWeightingSchemeS());
 	  subtractBackgroundCB.setSelected(parameterfile.useNoBkgForWeightingScheme());
+	  intensityCalibratedCB.setSelected(parameterfile.useIntensityCalibratedForWeights());
   }
 
   public void retrieveParameters() {
@@ -365,7 +372,8 @@ public class refinementOptionsD extends myJFrame {
 	  parameterfile.setCompactSavingStructureFactors(!storeStructureCB.isSelected());
 	  parameterfile.setCompactSavingTextureFactors(!storeTextureCB.isSelected());
 	  parameterfile.setQexpForWeightingScheme(qExponentTF.getText()); //qExponentTF.setText(.getQexpForWeightingSchemeS());
-	  parameterfile.setBkgForWeightingScheme(subtractBackgroundCB.isSelected());
+	  parameterfile.setNoBkgForWeightingScheme(subtractBackgroundCB.isSelected());
+	  parameterfile.setNoBkgForWeightingScheme(intensityCalibratedCB.isSelected());
   }
 
 

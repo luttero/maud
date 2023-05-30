@@ -25,7 +25,6 @@ import it.unitn.ing.rista.comp.*;
 import it.unitn.ing.rista.diffr.cal.*;
 import it.unitn.ing.rista.diffr.detector.XRFDetector;
 import it.unitn.ing.rista.interfaces.Function;
-import it.unitn.ing.rista.interfaces.basicObj;
 import it.unitn.ing.rista.io.cif.CIFItem;
 import it.unitn.ing.rista.io.cif.CIFParser;
 import it.unitn.ing.rista.io.cif.CIFtoken;
@@ -65,7 +64,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
     "_riet_refine_crystal_structure_over", "_riet_refine_texture_over", "_riet_refine_strain_over",
     "_pd_proc_ls_interpolation_comp", "_maud_analysis_name", "_maud_analysis_prog_number",
 	 "_maud_store_structure_factors_with_analysis", "_maud_store_texture_factors_with_analysis",
-	 "_maud_refine_weight_no_bkg", "_maud_refine_weight_q_exp",
+	 "_maud_refine_weight_no_bkg", "_maud_refine_weight_q_exp", "_maud_refine_weight_intensity_cal",
 
     "_computing_refinement_algorithm",
 
@@ -84,7 +83,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
     "_riet_refine_crystal_structure_over", "_riet_refine_texture_over", "_riet_refine_strain_over",
     "_pd_proc_ls_interpolation_comp", "name of the analysis file", "progressive number of refinements",
 		  "_maud_store_structure_factors_with_analysis", "_maud_store_texture_factors_with_analysis",
-		  "_maud_refine_weight_no_bkg", "_maud_refine_weight_q_exp",
+		  "_maud_refine_weight_no_bkg", "_maud_refine_weight_q_exp", "_maud_refine_weight_intensity_cal",
 
     "_computing_refinement_algorithm",
 
@@ -158,6 +157,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
   boolean theoreticalWeightingScheme = false;
   double weightingSchemeQExp = 0;
   boolean useNoBkgForWeights = false;
+	public boolean intensityCalibratedForWeights = false;
   public boolean addStatisticalError = false;
 
   int numberOfData = 0;
@@ -196,6 +196,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 	public static int saveTextureFactorsID = 31;
 	public static int weightingSchemeNoBkgID = 32;
 	public static int weightingSchemeQExpID = 33;
+	public static int intensityCalibratedForWeightID = 34;
 
 
 	public FilePar(String name) {
@@ -223,7 +224,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
   }
 
   public void initConstant() {
-    Nstring = 34;
+    Nstring = 35;
     Nstringloop = 0;
     Nparameter = 0;
     Nparameterloop = 0;
@@ -273,7 +274,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
     setBackgroundInterpolationStatus(1);
     setWeightingScheme(weights[0]);
     setMinimizeQuantity(minimizeQuantity[0]);
-    stringField[19] = new String("0");
+    stringField[19] = "0";
     if (MaudPreferences.getBoolean("analysis_default.storeSpectraWithParameters", true))
       stringField[20] = "true";
     else
@@ -293,9 +294,9 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 	  else
 		  stringField[saveTextureFactorsID] = "false";
     setOptimizationAlgorithm("Marqardt Least Squares");
-	  setBkgForWeightingScheme(false);
+	  setNoBkgForWeightingScheme(false);
 	  setQexpForWeightingScheme(0.0);
-
+	setIntensityCalibratedForWeights(false);
   }
 
   public void setLimitsForWizard(double phaseLimitForRemove,
@@ -519,7 +520,14 @@ public class FilePar extends XRDcat implements lFilePar, Function {
     weightingSchemeQExp = Double.parseDouble(stringField[weightingSchemeQExpID]);
 	  if (stringField[weightingSchemeNoBkgID].equalsIgnoreCase("true"))
 		  useNoBkgForWeights = true;
-	  useNoBkgForWeights = false;
+	  else
+	   useNoBkgForWeights = false;
+	  if (stringField[intensityCalibratedForWeightID].equalsIgnoreCase("true"))
+		  intensityCalibratedForWeights = true;
+	  else
+		  intensityCalibratedForWeights = false;
+
+
 
 	  logOutput = MaudPreferences.getBoolean("log_output.saveInFile", Constants.stdoutput != Constants.NO_OUTPUT);
     phaseLimitForRemove = Double.parseDouble(stringField[phaseLimitForRemoveID]);
@@ -599,7 +607,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
     return weightSchemeSwitch;
   }
 
-  public void setBkgForWeightingScheme(boolean value) {
+  public void setNoBkgForWeightingScheme(boolean value) {
   	   if (value)
 	      stringField[weightingSchemeNoBkgID] = "true";
   	   else
@@ -612,6 +620,21 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 
 	public boolean useNoBkgForWeightingScheme() {
   	  return useNoBkgForWeights;
+	}
+
+	public void setIntensityCalibratedForWeights(boolean value) {
+		if (value)
+			stringField[intensityCalibratedForWeightID] = "true";
+		else
+			stringField[intensityCalibratedForWeightID] = "false";
+	}
+
+	public String getIntensityCalibratedForWeights() {
+		return stringField[intensityCalibratedForWeightID];
+	}
+
+	public boolean useIntensityCalibratedForWeights() {
+		return intensityCalibratedForWeights;
 	}
 
 	public void setQexpForWeightingScheme(double value) {
