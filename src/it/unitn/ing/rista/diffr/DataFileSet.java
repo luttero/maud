@@ -29,7 +29,6 @@ import java.awt.*;
 import java.util.concurrent.TimeUnit;
 
 import com.radiographema.MaudText;
-import it.unitn.ing.rista.diffr.AtomSite;
 import it.unitn.ing.rista.diffr.instrument.DefaultInstrument;
 import it.unitn.ing.rista.io.cif.*;
 import it.unitn.ing.rista.util.*;
@@ -529,6 +528,10 @@ public class DataFileSet extends XRDcat {
 						datafitForPlot[is2 + 1] /= totalFit;
 				}
 			}
+//			if (datafile[0].hasfit()) {
+//				datafitForPlot[1] = datafitForPlot[3]; // Luca: to check, workaround
+//				datafitForPlot[np * 2 - 1] = datafitForPlot[np * 2 - 3]; // Luca: to check, workaround
+//			}
 
 // Phases fit
 
@@ -548,7 +551,7 @@ public class DataFileSet extends XRDcat {
 									xendmax = datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode);
 								if (xstartmin > datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode))
 									xstartmin = datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode);
-								if (datafitForPlot[j] >= xstartmin && datafitForPlot[j] <= xendmax) {
+								if (datafitForPlot[j] >= xstartmin && datafitForPlot[j] < xendmax) {
 									double value = datafile[sn].getInterpolatedFitSqrtIntensity(datafitForPlot[j], 2, mode, s);
 									if (!Double.isNaN(value)) {
 										dataphaseForPlot[s][j + 1] += value;
@@ -3319,7 +3322,7 @@ public class DataFileSet extends XRDcat {
       getActiveDataFile(i).refreshSpectraComputation = false;
   }
 
-  public void finalOutput(OutputStream out) throws IOException {
+  public void finalOutput(OutputStream out, boolean outputGraph) throws IOException {
     double[] indexes = getRefinementIndexes();
     printLine(out, "DataSet " + toXRDcatString() + " :");
     printLine(out, "DataSet Rwp: " + Fmt.format(indexes[0]));
@@ -3334,7 +3337,7 @@ public class DataFileSet extends XRDcat {
     printLine(out, "Refinement final output indices for single spectra:");
     int datafilenumber = activedatafilesnumber();
     for (int i = 0; i < datafilenumber; i++)
-      getActiveDataFile(i).finalOutput(out);
+      getActiveDataFile(i).finalOutput(out, outputGraph);
     out.flush();
   }
 
@@ -3351,7 +3354,7 @@ public class DataFileSet extends XRDcat {
       int datafilenumber = activedatafilesnumber();
       for (int i = 0; i < datafilenumber; i++) {
 
-        double[] refIndex = getActiveDataFile(i).getRefinementIndexes();
+        double[] refIndex = getActiveDataFile(i).getRefinementIndexes(false);
         for (int j = 8; j < 18; j++)
           refinementIndexes[j] += refIndex[j];
       }

@@ -100,7 +100,7 @@ public class EvolutionarySmartIndexing implements Function {
     int maxIntRange = 0;
     for (int s = 0; s < thespectra.length; s++) {
       double[] arange = thespectra[s].getRange(thespectra[s].startingindex, thespectra[s].finalindex);
-      int intRange = thespectra[s].finalindex - thespectra[s].startingindex + 1;
+      int intRange = thespectra[s].finalindex - thespectra[s].startingindex;
       if (intRange > maxIntRange)
         maxIntRange = intRange;
       if (dspacemin > arange[0])

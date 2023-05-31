@@ -21,7 +21,6 @@
 package it.unitn.ing.rista.awt;
 
 import it.unitn.ing.jgraph.*;
-import it.unitn.ing.rista.chemistry.XRayDataSqLite;
 import it.unitn.ing.rista.diffr.*;
 import it.unitn.ing.rista.util.*;
 import it.unitn.ing.rista.interfaces.Peak;
@@ -210,7 +209,10 @@ public class MultiPlotFitting extends PlotFitting {
             else
               data[j + 1] = Double.NaN;
           }
-          if (debug)
+//	        data[1] = data[3]; // Luca: to check, workaround
+//	        data[np * 2 - 1] = data[np * 2 - 3]; // Luca: to check, workaround
+
+	        if (debug)
             System.out.println("Fit computed");
           dataFitm[sn] = lgraph.loadDataSet(data, np);
           if (debug)
@@ -440,7 +442,10 @@ public class MultiPlotFitting extends PlotFitting {
           else
             data[j + 1] = Double.NaN;
         }
-        if (debug)
+//	      data[1] = data[3]; // Luca: to check, workaround
+//	      data[np * 2 - 1] = data[np * 2 - 3]; // Luca: to check, workaround
+
+	      if (debug)
           System.out.println("Residual loaded");
         DataSet datar = residuals.loadDataSet(data, np);
         if (debug)
@@ -586,6 +591,9 @@ public class MultiPlotFitting extends PlotFitting {
             else
               data[j + 1] = Double.NaN;
           }
+//		        data[1] = data[3]; // Luca: to check, workaround
+//		        data[np * 2 - 1] = data[np * 2 - 3]; // Luca: to check, workaround
+
           dataFitm[sn].deleteData();
           dataFitm[sn].append(data, np);
 
@@ -845,6 +853,7 @@ public class MultiPlotFitting extends PlotFitting {
 		String folder = folderAndName[0];
 		filename = folderAndName[1];
 		int numberphases = datafile[0].getFilePar().getActiveSample().phasesNumber();
+		double qExp = datafile[0].getFilePar().getQexpForWeightingScheme();
 
 		if (!filename.endsWith(".cif"))
 			filename = filename + ".cif";
@@ -905,7 +914,7 @@ public class MultiPlotFitting extends PlotFitting {
 						xcoorddata = datafile[datj].getXData(i);
 						output.write(" " + Fmt.format(xcoorddata) + " " + Fmt.format(intensE) + " " + Fmt.format(intens));
 						output.write(" " + Fmt.format(datafile[datj].getBkgFit(i)));
-						output.write(" " + Fmt.format(datafile[datj].getWeight(i)));
+						output.write(" " + Fmt.format(datafile[datj].getWeight(i, qExp)));
 						for (int j = 0; j < numberphases; j++)
 							output.write(" " + Fmt.format(datafile[datj].getPhaseFit(i, j)));
 						output.newLine();

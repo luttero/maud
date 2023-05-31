@@ -20,9 +20,7 @@
 
 package it.unitn.ing.rista.diffr;
 
-import it.unitn.ing.rista.awt.JOptionsDialog;
-import it.unitn.ing.rista.awt.JParameterListPane;
-import it.unitn.ing.rista.awt.PlotDataFile;
+import it.unitn.ing.rista.awt.*;
 import it.unitn.ing.rista.diffr.cal.*;
 import it.unitn.ing.rista.diffr.measurement.Theta2ThetaMeasurement;
 import it.unitn.ing.rista.io.cif.*;
@@ -1203,7 +1201,7 @@ public class DiffrDataFile extends XRDcat {
     datanumber /= groupControlNumber;
     startingindex = 0;
     finalindex = datanumber;
-	  i_deltaX = Math.abs(1.0 / (getXData(finalindex) - getXData(startingindex)));
+	  i_deltaX = Math.abs(1.0 / (getXData(finalindex - 1) - getXData(startingindex)));
 
   }
 
@@ -2144,86 +2142,11 @@ public class DiffrDataFile extends XRDcat {
   }
 
   public double getYDataForStatistic(int index, double qExp) {
-		if (calibratedData)
-			return getIntensityForStatistic(index, getYData(index) / intensityCalibrated[index], qExp);
 	  return getIntensityForStatistic(index, getYData(index), qExp);
 
-	  /*
-
-      int weightSwitch = getFilePar().getWeightingSchemeSwitch();
-      double yint = getYData(index) * corr;
-      switch (weightSwitch) {
-        case 0: // sqrt
-        case 1:
-        case 4:
-        case 7:
-        case 10:
-        case 13:
-        case 16:
-        case 19:
-        case 22:
-        case 25:
-	      case 28:
-	      case 29:
-	      case 30:
-	      case 31:
-          break;
-        case 2: // linear
-        case 5:
-        case 8:
-        case 11:
-        case 14:
-        case 17:
-        case 20:
-        case 23:
-        case 26:
-          break;
-
-        case 3: // log10
-        case 6:
-        case 9:
-        case 12:
-        case 15:
-        case 18:
-        case 21:
-        case 24:
-        case 27:
-	      case 32:
-	      case 33:
-	      case 34:
-	      case 35:
-          yint = Math.log10(yint);
-          break;
-      }*/
   }
 
   public void setYData(int index, double value) {
-
-/*		if (tobeloaded) {
-		  tobeloaded = false;
-			boolean notut = true;
-			if (value == 49 && toXRDcatString().equalsIgnoreCase("alzrc.dat"))
-				notut = false;
-			else if (value == 142 && toXRDcatString().equalsIgnoreCase("bbm48bis.dat"))
-				notut = false;
-			else if (value == 70 && toXRDcatString().equalsIgnoreCase("sio250.raw"))
-				notut = false;
-			else if (toXRDcatString().startsWith("gtial1.F1B") && title.startsWith("13-JUL-98"))
-				notut = false;
-			else if (toXRDcatString().startsWith("GPPD69") && title.startsWith("Limestone"))
-				notut = false;
-
-			if (notut)
-				Constants.datareset();
-			else
-				Constants.datatutorial();
-		}*/
-
-// To be paranoid we check also for negative intensity
-
-//    if (value < 0.0) // we will not accept it, we suppose is an error
-//      value = 0.0;
-
 
     intensity[index] = (double) value;
 
@@ -2278,6 +2201,9 @@ public class DiffrDataFile extends XRDcat {
 //      if (weightSwitch > 6 && weightSwitch < 10)
 //        yint -= getBkgFitNoInterpolation(index);
 
+			if (calibratedData)
+				intensity /= intensityCalibrated[index];
+
 			if (intensity < 0)
 				intensity = -intensity;
 			intensity *= corr;
@@ -2302,8 +2228,6 @@ public class DiffrDataFile extends XRDcat {
 	}
 
 	public double getFitForStatistic(int index, double qExp) {
-		if (calibratedData)
-			return getIntensityForStatistic(index, getFit(index) / intensityCalibrated[index], qExp);
 		return getIntensityForStatistic(index, getFit(index), qExp);
 
   }
@@ -2329,15 +2253,17 @@ public class DiffrDataFile extends XRDcat {
 
 	public double[] getWeight() {
 		int dtanumber = computeDataNumber();
-		double dta[] = new double[dtanumber];
+		double wgt[] = new double[dtanumber];
+
+		double qExp = getFilePar().getQexpForWeightingScheme();
 
 		for (int j = 0; j < dtanumber; j++)
-			dta[j] = getWeight(j + startingindex);
+			wgt[j] = getWeight(j + startingindex, qExp);
 
-		return dta;
+		return wgt;
 	}
 
-	public double getWeight(int index) {
+	public double getWeight(int index, double qExp) {
 
     // this routine must be optimized
 
@@ -2372,15 +2298,19 @@ public class DiffrDataFile extends XRDcat {
         yint = getYData(index);
 //      System.out.println(yint);
 
-	    double qCorrection = Math.pow(Math.abs(getXInQ(getXData(index))), getFilePar().getQexpForWeightingScheme());
-
+	    double qCorrection = Math.pow(Math.abs(getXInQ(getXData(index))), qExp);
+	    if (qCorrection < 1.0E-9)
+	    	qCorrection = 1.0;
 
 	    if (useNoBkg)
         yint -= getBkgFit(index);
 //      if (weightSwitch > 6 && weightSwitch < 10)
 //        yint -= getBkgFitNoInterpolation(index);
 
-      if (yint < 0)
+	    if (calibratedData)
+		    yint /= intensityCalibrated[index];
+
+	    if (yint < 0)
         yint = -yint;
       yint *= corr;
 
@@ -2403,18 +2333,18 @@ public class DiffrDataFile extends XRDcat {
 				    value = 1.0 / Math.sqrt(yint);
 			    }
 		    }
-		    value *= qCorrection;
+		    value /= qCorrection;
 
 	    }
     }
-      return value;
+    return value;
   }
 
   public double getDataWeightSum() {
     double sum = 0.0, wgt, dta;
 	 double qExp = getFilePar().getQexpForWeightingScheme();
     for (int i = startingindex; i < finalindex; i++) {
-      wgt = getWeight(i);
+      wgt = getWeight(i, qExp);
       dta = getYDataForStatistic(i, qExp);
       sum += dta * dta * wgt * wgt;
     }
@@ -2443,9 +2373,9 @@ public class DiffrDataFile extends XRDcat {
   public double[] getFit() {
     int dtanumber = computeDataNumber();
     double dta[] = new double[dtanumber];
-    FilePar analysis = getFilePar();
+    double qExp = getFilePar().getQexpForWeightingScheme();
     for (int j = 0; j < dtanumber; j++)
-      dta[j] = getFitForStatistic(j + startingindex, analysis.getQexpForWeightingScheme());
+      dta[j] = getFitForStatistic(j + startingindex, qExp);
 
     return dta;
   }
@@ -2454,8 +2384,8 @@ public class DiffrDataFile extends XRDcat {
     return getFit();
   }
 
-  public void finalOutput(OutputStream out) throws IOException {
-    double[] indexes = getRefinementIndexes();
+  public void finalOutput(OutputStream out, boolean outputGraph) throws IOException {
+    double[] indexes = getRefinementIndexes(outputGraph);
     printString(out, "Datafile " + toXRDcatString() + " : ");
     printString(out, "Rwp: " + Fmt.format(indexes[0]) + ", ");
     printString(out, "Rp: " + Fmt.format(indexes[4]) + ", ");
@@ -2466,6 +2396,18 @@ public class DiffrDataFile extends XRDcat {
 	  printString(out, "Rpnb1: " + Fmt.format(indexes[6]));
 	  printString(out, "Rpnb2: " + Fmt.format(indexes[7]));
     newLine(out);
+
+	  if (outputGraph) {
+		  double[] dataS = getData();
+		  double[] fitS = getFit();
+		  double[] wgtS = getWeight();
+		  printString(out, "Showing data, fit and weights used for refinement");
+		  Frame tmpFrame = getFilePar().getMainFrame(); // new Frame();
+		  (new PlotSimpleData(tmpFrame, dataS, "Channel", "data")).setVisible(true);
+		  (new PlotSimpleData(tmpFrame, fitS, "Channel", "fit")).setVisible(true);
+		  (new PlotSimpleData(tmpFrame, wgtS, "Channel", "wgt")).setVisible(true);
+	  }
+
   }
 
 /*	public double getWss(int index) {
@@ -2476,7 +2418,7 @@ public class DiffrDataFile extends XRDcat {
   boolean indexesComputed = false;
   double[] refinementIndexes = new double[18];
 
-  public double[] getRefinementIndexes() {
+  public double[] getRefinementIndexes(boolean outputGraph) {
 
     if (!indexesComputed) {
       double diff, wgt, dta, diff2, wgt2, dta2, dtanb, dtanb2;
@@ -2486,7 +2428,7 @@ public class DiffrDataFile extends XRDcat {
       double qExp = getFilePar().getQexpForWeightingScheme();
 
       for (int i = startingindex; i < finalindex; i++) {
-        wgt = getWeight(i);
+        wgt = getWeight(i, qExp);
         wgt2 = wgt * wgt;
         dta = getYDataForStatistic(i, qExp);
         dta2 = dta * dta;
@@ -3461,11 +3403,11 @@ public class DiffrDataFile extends XRDcat {
   }
 
   public void computeReflectivityBroadening(Sample asample) {
-    computeReflectivityBroadening(asample, phasesfit, startingindex, finalindex - 1);
+    computeReflectivityBroadening(asample, phasesfit, startingindex, finalindex);
   }
 
 	public void postComputation(Sample asample) {
-    postComputation(asample, phasesfit, startingindex, finalindex - 1);
+    postComputation(asample, phasesfit, startingindex, finalindex);
 /*    if (!getFilePar().isComputingDerivate()) {
       for (int i = 0; i < phaseFit.size(); i++)
         postComputation(asample, (double[])phaseFit.elementAt(i), startingindex, finalindex);
@@ -3473,7 +3415,7 @@ public class DiffrDataFile extends XRDcat {
   }
 
   public void postComputation(Sample asample, double[] expfit) {
-    postComputation(asample, expfit, startingindex, finalindex - 1);
+    postComputation(asample, expfit, startingindex, finalindex);
   }
 
   public void postComputation(Sample asample, double[] expfit, int min, int max) {
@@ -4207,6 +4149,7 @@ public class DiffrDataFile extends XRDcat {
 		SavitzkyGolay.initialM = MaudPreferences.getInteger("Savitzky-Golay.initialM",
 				SavitzkyGolay.initialM + 1) - 1;
 
+		double qExp = getFilePar().getQexpForWeightingScheme();
 		int dtanumber = computeDataNumber();
 
 		double dta[] = new double[dtanumber];
@@ -4214,7 +4157,7 @@ public class DiffrDataFile extends XRDcat {
 		int index[] = new int[dtanumber];
 		for (int j =  0; j < dtanumber; j++) {
 			dta[j] = getYData(j);
-			wgt[j] = getWeight(j);
+			wgt[j] = getWeight(j, qExp);
 			index[j] = SavitzkyGolay.initialM;
 		}
 		double[] smooth = SavitzkyGolay.smoothPattern(dta, wgt, index, true);
@@ -6616,6 +6559,7 @@ public class DiffrDataFile extends XRDcat {
           output.write(DiffrDataFile.intensityCalcCIFstring);
           output.newLine();
         }
+	      double qExp = getFilePar().getQexpForWeightingScheme();
         for (int i = startingindex; i < finalindex; i++) {
 	      double intensE = getYData(i);
           double intensEcal = finalIntensityCalibration(intensE);
@@ -6628,7 +6572,7 @@ public class DiffrDataFile extends XRDcat {
           xcoorddata = getXData(i);
           output.write(" " + Fmt.format(xcoorddata) + " " + Fmt.format(intensE) + " " + Fmt.format(intens));
           output.write(" " + Fmt.format(getBkgFit(i)));
-          output.write(" " + Fmt.format(getWeight(i)));
+          output.write(" " + Fmt.format(getWeight(i, qExp)));
           output.write(" " + Fmt.format(intensEcal));
           output.write(" " + Fmt.format(intenscal));
           for (int j = 0; j < numberphases; j++)

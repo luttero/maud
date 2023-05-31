@@ -24,7 +24,6 @@ import it.unitn.ing.rista.awt.SampleD;
 import it.unitn.ing.rista.io.JSONFileImport;
 import it.unitn.ing.rista.util.*;
 import it.unitn.ing.rista.io.cif.*;
-import org.json.simple.JSONArray;
 
 import java.awt.*;
 import java.io.*;
@@ -921,7 +920,7 @@ public class Sample extends Maincat {
     return radiusDimensionY;
   }
 
-  public void finalOutput(OutputStream out) throws IOException {
+  public void finalOutput(OutputStream out, boolean outputGraph) throws IOException {
     double[] indexes = getRefinementIndexes();
     printLine(out, "Sample " + toXRDcatString() + " :");
 	  printLine(out, "Sample Rwp: " + Fmt.format(indexes[0]));
@@ -937,7 +936,7 @@ public class Sample extends Maincat {
     printLine(out, "Refinement final output indices for single datasets:");
     out.flush();
     for (int i = 0; i < activeDatasetsNumber(); i++) {
-      getActiveDataSet(i).finalOutput(out);
+      getActiveDataSet(i).finalOutput(out, outputGraph);
     }
   }
 

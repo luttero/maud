@@ -206,7 +206,7 @@ public class DiffractionBase extends Diffraction {
 		}
 		int[] tmpminmax = new int[2];
 		int[] minmaxindex = new int[2];
-		minmaxindex[0] = datafile.finalindex - 1;
+		minmaxindex[0] = datafile.finalindex;
 		minmaxindex[1] = datafile.startingindex;
 		arraycopy(minmaxindex, 0, tmpminmax, 0, 2);
 
@@ -244,10 +244,10 @@ public class DiffractionBase extends Diffraction {
 	}
 
 	public void computeasymmetry(Sample asample, DiffrDataFile datafile) {
-		computeasymmetry(asample, datafile, datafile.phasesfit, datafile.startingindex, datafile.finalindex - 1);
+		computeasymmetry(asample, datafile, datafile.phasesfit, datafile.startingindex, datafile.finalindex);
 		if (!getFilePar().isComputingDerivate()) {
 			for (int i = 0; i < datafile.phaseFit.size(); i++)
-				computeasymmetry(asample, datafile, (double[]) datafile.phaseFit.elementAt(i), datafile.startingindex, datafile.finalindex - 1);
+				computeasymmetry(asample, datafile, (double[]) datafile.phaseFit.elementAt(i), datafile.startingindex, datafile.finalindex);
 		}
 		refreshComputation = false;
 	}

@@ -1098,7 +1098,7 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 					    if (xstartmin > datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode))
 						    xstartmin = datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode);
 					    if (datafit[is2] >= xstartmin && datafit[is2] <= xendmax) {
-						    double value = datafile[sn].getInterpolatedFitSqrtIntensity(datafit[is2], 2, mode);
+						    double value = datafile[sn].getInterpolatedFitSqrtIntensity(datafit[is2], 1, mode);
 						    if (!Double.isNaN(value)) {
 							    datafit[is2 + 1] += value;
 							    totalFit++;
@@ -1109,7 +1109,10 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 					    datafit[is2 + 1] /= totalFit;
 			    }
 		    }
-
+//		    if (datafile[0].hasfit()) {
+//			    datafit[1] = datafit[3]; // Luca: to check, workaround
+//			    datafit[np * 2 - 1] = datafit[np * 2 - 3]; // Luca: to check, workaround
+//		    }
 
 	    setTitle(datafile[0].getTitle());
 	    fullGraphPanel = new CopyPrintPanelNoBkg();

@@ -80,10 +80,10 @@ public class Fluorescence extends XRDcat {
 	}
 
 	public void computeasymmetry(Sample asample, DiffrDataFile datafile) {
-		computeasymmetry(asample, datafile, datafile.phasesfit, datafile.startingindex, datafile.finalindex - 1);
+		computeasymmetry(asample, datafile, datafile.phasesfit, datafile.startingindex, datafile.finalindex);
 		if (!getFilePar().isComputingDerivate()) {
 			for (int i = 0; i < datafile.phaseFit.size(); i++)
-				computeasymmetry(asample, datafile, (double[]) datafile.phaseFit.elementAt(i), datafile.startingindex, datafile.finalindex - 1);
+				computeasymmetry(asample, datafile, (double[]) datafile.phaseFit.elementAt(i), datafile.startingindex, datafile.finalindex);
 		}
 		refreshComputation = false;
 	}

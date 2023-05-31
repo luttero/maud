@@ -1014,6 +1014,7 @@ public class PlotFitting extends PlotDataFile {
     String folder = folderAndName[0];
     filename = folderAndName[1];
     int numberphases = thePlotPanel.datafile[0].getFilePar().getActiveSample().phasesNumber();
+	  double qExp = thePlotPanel.datafile[0].getFilePar().getQexpForWeightingScheme();
 
     if (!filename.endsWith(".cif"))
       filename = filename + ".cif";
@@ -1069,7 +1070,7 @@ public class PlotFitting extends PlotDataFile {
 			      xcoorddata = thePlotPanel.datafile[datj].getXData(i);
 			      output.write(" " + Fmt.format(xcoorddata) + " " + Fmt.format(intensE) + " " + Fmt.format(intens));
 			      output.write(" " + Fmt.format(thePlotPanel.datafile[datj].getBkgFit(i)));
-			      output.write(" " + Fmt.format(thePlotPanel.datafile[datj].getWeight(i)));
+			      output.write(" " + Fmt.format(thePlotPanel.datafile[datj].getWeight(i, qExp)));
 			      for (int j = 0; j < numberphases; j++)
 				      output.write(" " + Fmt.format(thePlotPanel.datafile[datj].getPhaseFit(i, j)));
 			      output.newLine();
@@ -1212,6 +1213,8 @@ public class PlotFitting extends PlotDataFile {
           else
             data[j + 1] = Double.NaN;
         }
+//	      data[1] = data[3]; // Luca: to check, workaround
+//	      data[thePlotPanel.np * 2 - 1] = data[thePlotPanel.np * 2 - 3]; // Luca: to check, workaround
         thePlotPanel.dataFit.deleteData();
         thePlotPanel.dataFit.append(data, thePlotPanel.np);
 
@@ -1347,7 +1350,10 @@ public class PlotFitting extends PlotDataFile {
         else
           data[j + 1] = Double.NaN;
       }
-      if (thePlotPanel.dataFit == null) {
+//	    data[1] = data[3]; // Luca: to check, workaround
+//	    data[thePlotPanel.np * 2 - 1] = data[thePlotPanel.np * 2 - 3]; // Luca: to check, workaround
+
+	    if (thePlotPanel.dataFit == null) {
         thePlotPanel.dataFit = lgraph.loadDataSet(data, thePlotPanel.np);
         thePlotPanel.xaxis.attachDataSet(thePlotPanel.dataFit);
         thePlotPanel.yaxis.attachDataSet(thePlotPanel.dataFit);

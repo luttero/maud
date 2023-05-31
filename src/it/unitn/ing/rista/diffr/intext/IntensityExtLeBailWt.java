@@ -78,8 +78,10 @@ public class IntensityExtLeBailWt extends IntensityExtLeBail {
     int datanumber = datafile.getTotalNumberOfData();
     double[] expfit = new double[datanumber];
     double[] fit = new double[datanumber];
+    double qExp = getFilePar().getQexpForWeightingScheme();
 
-    boolean useHKL = getUseHklB();
+
+	  boolean useHKL = getUseHklB();
 
     double delta = getDeltaMax();
     if (delta == 0.0)
@@ -164,14 +166,14 @@ public class IntensityExtLeBailWt extends IntensityExtLeBail {
             double expfitnorm = 0.0;
 						if (useBKG)
             for (int k = minmaxindex[0]; k < minmaxindex[1]; k++) {
-              double wgt = datafile.getWeight(k);
+              double wgt = datafile.getWeight(k, qExp);
               lebailfactor += expfit[k] * Math.abs((datafile.getYData(k) + minBkg) * wgt / (datafile.getFit(k) + minBkg));
               expfitnorm += expfit[k] * wgt;
             }
 						else
 							for (int k = minmaxindex[0]; k < minmaxindex[1]; k++) {
 								bkg = datafile.getBkgFit(k);
-								double wgt = datafile.getWeight(k);
+								double wgt = datafile.getWeight(k, qExp);
 								lebailfactor += expfit[k] * Math.abs(Math.abs(datafile.getYData(k) - bkg) * wgt
 															/ (datafile.getFit(k) - bkg));
 								expfitnorm += expfit[k] * wgt;

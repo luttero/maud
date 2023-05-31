@@ -2388,8 +2388,9 @@ public class FilePar extends XRDcat implements lFilePar, Function {
   }
 
   public void fittingFileOutput() {
+	  boolean outputGraph = MaudPreferences.getBoolean("fittingFileOutput.weightsAndDataPlot", false);
     try {
-      finalOutput(System.out);
+      finalOutput(System.out, outputGraph);
     } catch (IOException ioe) {
       ioe.printStackTrace();
     }
@@ -2964,7 +2965,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
     return computingDerivate;
   }
 
-  public void finalOutput(OutputStream out) throws IOException {
+  public void finalOutput(OutputStream out, boolean outputGraph) throws IOException {
     double[] indexes = getRefinementIndexes();
     printLine(out, "Refinement final output indices:");
 	  printLine(out, "Global Rwp: " + Fmt.format(indexes[0]));
@@ -2980,7 +2981,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
     printLine(out, "Refinement final output indices for single samples:");
     out.flush();
     for (int i = 0; i < samplesNumber(); i++) {
-      getSample(i).finalOutput(out);
+      getSample(i).finalOutput(out, outputGraph);
     }
   }
 
@@ -3332,7 +3333,8 @@ public class FilePar extends XRDcat implements lFilePar, Function {
     }
 
     newLine(out);
-    finalOutput(out);
+	  boolean outputGraph = MaudPreferences.getBoolean("fittingFileOutput.weightsAndDataPlot", true);
+    finalOutput(out, outputGraph);
     newLine(out);
     for (int s = 0; s < samplesNumber(); s++) {
       Sample asample = getSample(s);

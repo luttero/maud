@@ -69,6 +69,19 @@ public class PlotSimpleData extends GraphFrame {
 
   }
 
+	public PlotSimpleData(Frame parent, double[] function, String xTitleValue, String yTitleValue) {
+
+		super(parent);
+
+		initializeFrame();
+
+		setXaxisTitle(xTitleValue);
+		setYaxisTitle(yTitleValue);
+
+		createGraph(function);
+
+	}
+
 	public PlotSimpleData(Frame parent, double[] x, double[] function, boolean dots) {
 
 		super(parent);

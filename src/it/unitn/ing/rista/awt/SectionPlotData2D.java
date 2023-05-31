@@ -25,11 +25,9 @@ package it.unitn.ing.rista.awt;
 		import java.awt.event.ActionListener;
 		import java.io.BufferedWriter;
 		import java.io.IOException;
-		import java.util.Vector;
 
 		import it.unitn.ing.jgraph.*;
 		import it.unitn.ing.rista.diffr.*;
-		import it.unitn.ing.rista.interfaces.Peak;
 		import it.unitn.ing.rista.util.*;
 
 		import javax.swing.*;
@@ -329,6 +327,7 @@ public class SectionPlotData2D extends myJFrame {
 
 			BufferedWriter output = Misc.getWriter(folder, filename);
 			try {
+				double qExp = thePlotPanel.datafile[0].getFilePar().getQexpForWeightingScheme();
 				int nPoints = thePlotPanel.datafile[0].computeDataNumber();
 				output.write("_pd_meas_number_of_points " + Integer.toString(nPoints));
 				output.newLine();
@@ -371,7 +370,7 @@ public class SectionPlotData2D extends myJFrame {
 					xcoorddata = thePlotPanel.datafile[0].getXData(i);
 					output.write(" " + Fmt.format(xcoorddata) + " " + Fmt.format(intensE) + " " + Fmt.format(intens));
 					output.write(" " + Fmt.format(thePlotPanel.datafile[0].getBkgFit(i)));
-					output.write(" " + Fmt.format(thePlotPanel.datafile[0].getWeight(i)));
+					output.write(" " + Fmt.format(thePlotPanel.datafile[0].getWeight(i, qExp)));
 					for (int j = 0; j < numberphases; j++)
 						output.write(" " + Fmt.format(thePlotPanel.datafile[0].getPhaseFit(i, j)));
 					output.newLine();
