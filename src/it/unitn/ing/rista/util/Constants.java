@@ -773,7 +773,7 @@ public class Constants {
     checkMaudPreferences();
 	  threadingGranularity = MaudPreferences.getInteger("parallel_processing.granularity(0-3)", MEDIUM_GRANULARITY);
     maxNumberOfThreads = MaudPreferences.getInteger("parallel_processing.threads_maxNumber",
-        Runtime.getRuntime().availableProcessors());
+        /*Runtime.getRuntime().availableProcessors()*/ 1);
     debugThreads = MaudPreferences.getBoolean("parallel_processing.threads_debug", false);
     STARTING_STRUCTURE_FACTOR = MaudPreferences.getDouble("structure_factors.default_value",
         STARTING_STRUCTURE_FACTOR);
