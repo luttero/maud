@@ -2058,7 +2058,7 @@
     </target>
 
 
-    <target name="bundle" depends="build_full">
+    <target name="bundle" depends="copy_full">
         <!-- Import the AppBundlerTaks from ant lib directory -->
         <taskdef name="bundleapp"
                  classname="com.oracle.appbundler.AppBundlerTask"
@@ -2792,27 +2792,27 @@
             <arg line="Maud.dmg.gz Maud"/>
         </exec-->
         <!--delete dir="${inst}/Maud_MacOSX64/Maud/Maud.app"/-->
-        <delete file="${dropbox}/macosx64/Maud.dmg.gz"/>
+        <delete file="${dropbox}/macosx64/Maud_intel64.dmg.gz"/>
          <exec dir="${app_osx}/" executable="/Users/luca/bin/mkdmg.pl" os="Mac OS X">
             <arg line="Maud.dmg.gz Maud.app"/>
         </exec>
-        <copy file="${app_osx}/Maud.dmg.gz" tofile="${dropbox}/macosx64/Maud.dmg.gz"/>
-        <delete file="${dropbox}/linux64/Maud.tar.gz"/>
+        <copy file="${app_osx}/Maud.dmg.gz" tofile="${dropbox}/macosx64/Maud_intel64.dmg.gz"/>
+        <!--delete file="${dropbox}/linux64/Maud.tar.gz"/>
         <exec dir="${inst}/Maud_linux64/" executable="tar" os="Mac OS X">
             <arg line="cfz ${dropbox}/linux64/Maud.tar.gz Maud"/>
-        </exec>
-        <delete file="${dropbox}/linux64_openjdk/Maud.tar.gz"/>
+        </exec-->
+        <delete file="${dropbox}/linux64/Maud.tar.gz"/>
         <exec dir="${inst}/Maud_linux64_ojdk/" executable="tar" os="Mac OS X">
-            <arg line="cfz ${dropbox}/linux64_openjdk/Maud.tar.gz Maud"/>
+            <arg line="cfz ${dropbox}/linux64/Maud.tar.gz Maud"/>
         </exec>
         <delete file="${dropbox}/windows64/Maud.zip"/>
-        <exec dir="${inst}/Maud_windows64/" executable="zip" os="Mac OS X">
+        <exec dir="${inst}/Maud_windows64_ojdk/" executable="zip" os="Mac OS X">
             <arg line="-r ${dropbox}/windows64/Maud.zip Maud"/>
         </exec>
-        <delete file="${dropbox}/windows64_openjdk/Maud.zip"/>
+        <!--delete file="${dropbox}/windows64_openjdk/Maud.zip"/>
         <exec dir="${inst}/Maud_windows64_ojdk/" executable="zip" os="Mac OS X">
             <arg line="-r ${dropbox}/windows64_openjdk/Maud.zip Maud"/>
-        </exec>
+        </exec-->
     </target>
 
     <target name="build_installers_only" description="build installers">

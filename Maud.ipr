@@ -4,6 +4,7 @@
     <buildFile url="file://$PROJECT_DIR$/build.xml">
       <additionalClassPath>
         <entry dir="file://$APPLICATION_HOME_DIR$/lib/ant/lib" />
+        <entry path="file://$PROJECT_DIR$/libs/ant-libs/infinitekind-appbundler-last/appbundler/bin/appbundler-1.2.jar" />
       </additionalClassPath>
       <customJdkName value="zulu-19" />
       <maximumHeapSize value="2048" />
