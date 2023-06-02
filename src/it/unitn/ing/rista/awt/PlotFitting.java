@@ -28,6 +28,7 @@ import it.unitn.ing.rista.diffr.sdpd.BasicIndexingUtilities;
 import it.unitn.ing.rista.interfaces.basicObj;
 import it.unitn.ing.rista.interfaces.Peak;
 import it.unitn.ing.rista.util.*;
+import org.jtransforms.dst.DoubleDST_1D;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -478,6 +479,8 @@ public class PlotFitting extends PlotDataFile {
 			}
 			gr[i] *= normalization;
 		}
+		DoubleDST_1D dst = new DoubleDST_1D(gr.length);
+		dst.forward(gr, true);
 
 //		exportComputedPDF(r, gr);
 /*		fftlength = MoreMath.getNextPowerof2(dtanumber);

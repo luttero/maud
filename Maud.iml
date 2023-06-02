@@ -5,7 +5,7 @@
     <option name="LOCAL_VCS_PURGING_PERIOD" value="259200000" />
     <option name="SHOW_CHANGES_ONLY" value="false" />
   </component>
-  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_X">
+  <component name="NewModuleRootManager">
     <output url="file://$MODULE_DIR$/build" />
     <javadoc-paths>
       <root url="file:///System/Library/Frameworks/JavaVM.framework/Home/docs" />
@@ -203,5 +203,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="JTransforms-3.1-with-dependencies" level="project" />
   </component>
 </module>

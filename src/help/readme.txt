@@ -43,6 +43,18 @@ from the older one.
 
 Maud Version notes:
 
+(02/06/2023):   2.997. The "Siegfried" release.
+                It is so sad we have lost this year such a brilliant mind. Probably
+                there wouldn't be Maud as it is now without him or at all.
+                Fixing some old bugs and refactoring the weighting schemes. Now you
+                can independently set if to subtract background or use calibrated
+                data in the weighting for refinement. Other options are to modify
+                them by Q (for PDF like fitting) or choosing between linear, sqrt
+                or log. Not only the weights but also the real data/fit intensity
+                is modified in the WSS depending on the Maud preference:
+                testing.intensityModifiedForStatistic (true by default, use false
+                if you want to affect only weights).
+
 (16/08/2022):   2.996. The "Arches" release.
                 Lot of Arches and red rocks in the weekend.
                 Maud is using XrayLib for all scattering and absorption properties

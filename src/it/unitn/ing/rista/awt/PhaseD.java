@@ -21,6 +21,7 @@
 package it.unitn.ing.rista.awt;
 
 import it.unitn.ing.rista.diffr.*;
+import it.unitn.ing.rista.diffr.pdf.PDFUtilitiesUI;
 import it.unitn.ing.rista.diffr.rsa.TensorHomogenization;
 import it.unitn.ing.rista.diffr.sdpd.*;
 import it.unitn.ing.rista.io.*;
@@ -735,9 +736,16 @@ public class PhaseD extends myJFrame {
       }
     });
 
+    if (Constants.testing) {
+	    optionsMenu.add(menuitem = new JMenuItem("Generate pattern for G(r) PDF calculation"));
+	    menuitem.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+			    (new PDFUtilitiesUI(getData(), true)).setVisible(true);
+		    }
+	    });
+    }
 
-
-    return optionsMenu;
+	  return optionsMenu;
   }
 
   public Phase getData() {

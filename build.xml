@@ -143,6 +143,7 @@
                 <pathelement location="libs/current/swingx.jar"/>
                 <pathelement location="libs/current/com.github.tschoonj.xraylib.jar"/>
                 <pathelement location="libs/current/commons-math.jar"/>
+                <pathelement location="libs/current/JTransforms-3.1-with-dependencies.jar"/>
                 <!--pathelement location="${build}/jdic.jar"/>
         <pathelement location="${build}/jhdf.jar"/>
         <pathelement location="${build}/jhdf4obj.jar"/>
@@ -254,6 +255,7 @@
                 <pathelement location="libs/current/swingx.jar"/>
                 <pathelement location="libs/current/com.github.tschoonj.xraylib.jar"/>
                 <pathelement location="libs/current/commons-math.jar"/>
+                <pathelement location="libs/current/JTransforms-3.1-with-dependencies.jar"/>
                 <!--pathelement location="${build}/jdic.jar"/>
               <pathelement location="${build}/jhdf.jar"/>
               <pathelement location="${build}/jhdf4obj.jar"/>
@@ -630,6 +632,7 @@
                 <pathelement location="libs/current/swingx.jar"/>
                 <pathelement location="libs/current/com.github.tschoonj.xraylib.jar"/>
                 <pathelement location="libs/current/commons-math.jar"/>
+                <pathelement location="libs/current/JTransforms-3.1-with-dependencies.jar"/>
                 <!--pathelement location="${build}/jdic.jar"/>
           <pathelement location="${build}/jhdf.jar"/>
           <pathelement location="${build}/jhdf4obj.jar"/>
@@ -1111,6 +1114,7 @@
                 <pathelement location="libs/current/swingx.jar"/>
                 <pathelement location="libs/current/com.github.tschoonj.xraylib.jar"/>
                 <pathelement location="libs/current/commons-math.jar"/>
+                <pathelement location="libs/current/JTransforms-3.1-with-dependencies.jar"/>
                 <!--pathelement location="${build}/jdic.jar"/>
           <pathelement location="${build}/jhdf.jar"/>
           <pathelement location="${build}/jhdf4obj.jar"/>
@@ -2103,6 +2107,7 @@
             <classpath file="libs/current/xgridlib.jar"/>
             <classpath file="libs/current/com.github.tschoonj.xraylib.jar"/>
             <classpath file="libs/current/commons-math.jar"/>
+            <classpath file="libs/current/JTransforms-3.1-with-dependencies.jar"/>
 
             <!-- Workaround since the icon parameter for bundleapp
                  doesn't work. (It's not a bug in AppBundler but
@@ -2276,6 +2281,7 @@
             <classpath file="libs/current/xgridlib.jar"/>
             <classpath file="libs/current/com.github.tschoonj.xraylib.jar"/>
             <classpath file="libs/current/commons-math.jar"/>
+            <classpath file="libs/current/JTransforms-3.1-with-dependencies.jar"/>
 
             <!-- Workaround since the icon parameter for bundleapp
                  doesn't work. (It's not a bug in AppBundler but
@@ -2448,6 +2454,7 @@
             <classpath file="libs/current/xgridlib.jar"/>
             <classpath file="libs/current/com.github.tschoonj.xraylib.jar"/>
             <classpath file="libs/current/commons-math.jar"/>
+            <classpath file="libs/current/JTransforms-3.1-with-dependencies.jar"/>
 
             <!-- Workaround since the icon parameter for bundleapp
                  doesn't work. (It's not a bug in AppBundler but
@@ -2700,6 +2707,7 @@
             <classpath file="libs/current/xgridlib.jar"/>
             <classpath file="libs/current/com.github.tschoonj.xraylib.jar"/>
             <classpath file="libs/current/commons-math.jar"/>
+            <classpath file="libs/current/JTransforms-3.1-with-dependencies.jar"/>
 
             <!-- Workaround since the icon parameter for bundleapp
                  doesn't work. (It's not a bug in AppBundler but

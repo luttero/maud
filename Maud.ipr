@@ -424,6 +424,15 @@
       </value>
     </option>
   </component>
+  <component name="libraryTable">
+    <library name="JTransforms-3.1-with-dependencies">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/libs/current/JTransforms-3.1-with-dependencies.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+  </component>
   <component name="uidesigner-configuration">
     <option name="INSTRUMENT_CLASSES" value="false" />
   </component>

@@ -20,6 +20,8 @@
 
 package it.unitn.ing.rista.util;
 
+import org.jtransforms.dst.DoubleDST_1D;
+
 /**
  * The FFT is a class to perform fast fourier transform
  *
@@ -507,4 +509,66 @@ public class FFT {
             .00004793689960306688454900399049465887274686668768
           };
 
+//}
+
+/*
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Random;
+import org.jtransforms.utils.CommonUtils;
+import pl.edu.icm.jlargearrays.ConcurrencyUtils;
+import org.jtransforms.utils.IOUtils;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+import pl.edu.icm.jlargearrays.DoubleLargeArray;
+import pl.edu.icm.jlargearrays.LargeArray;
+import static org.apache.commons.math3.util.FastMath.*;
+*/
+// @RunWith(value = Parameterized.class)
+//public class DoubleDST_1DTest
+//{
+
+//	private final DoubleDST_1D dst;
+
+//	private final int n;
+
+//	private final Random random;
+
+//	private final int numThreads;
+
+	public static void fft_sin(/* final int n, final int numThreads,*/ double[] actual)
+	{
+		DoubleDST_1D dst = new DoubleDST_1D(actual.length);
+//		LargeArray.setMaxSizeOf32bitArray(1);
+//		this.dst = new DoubleDST_1D(n);
+//		this.random = new Random(seed);
+//		CommonUtils.setThreadsBeginN_1D_FFT_2Threads(1024);
+//		CommonUtils.setThreadsBeginN_1D_FFT_4Threads(1024);
+//		ConcurrencyUtils.setNumberOfThreads(numThreads);
+//		this.numThreads = ConcurrencyUtils.getNumberOfThreads();
+
+//		final double[] actual = new double[n];
+//		final double[] expected = new double[n];
+		dst.forward(actual, true);
+//		dst.inverse(actual, true);
+	}
+
+/*	public void testScaled()
+	{
+		final double[] actual = new double[n];
+		final double[] expected = new double[n];
+		for (int i = 0; i < n; i++) {
+			actual[i] = 2. * random.nextDouble() - 1.;
+			expected[i] = actual[i];
+		}
+		dst.forward(actual, true);
+		dst.inverse(actual, true);
+		double rmse = IOUtils.computeRMSE(actual, expected);
+		Assert.assertEquals(String.format(DEFAULT_MESSAGE, numThreads, n) + ", rmse = " + rmse, 0.0, rmse, EPS);
+	}*/
 }
+
