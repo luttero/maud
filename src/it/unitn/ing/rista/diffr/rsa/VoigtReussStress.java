@@ -140,7 +140,7 @@ public class VoigtReussStress extends Strain {
 
   public VoigtReussStress(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Voigt-Reuss Stress";
     IDlabel = "Voigt-Reuss Stress";
     description = "select this to apply the Voigt-Reuss mean stress model";

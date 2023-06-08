@@ -21,13 +21,6 @@
 package it.unitn.ing.rista.diffr.rta;
 
 import it.unitn.ing.rista.diffr.*;
-import it.unitn.ing.rista.util.Misc;
-import it.unitn.ing.rista.util.Fmt;
-import it.unitn.ing.rista.io.cif.*;
-
-import java.io.*;
-import java.util.StringTokenizer;
-import java.util.Vector;
 
 /**
  *  The ArbitraryTexture is a class that implements an arbitrary correction of the
@@ -49,7 +42,7 @@ public class ArbitraryTexture extends Texture {
 
   public ArbitraryTexture(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "arbitrary tex";
     IDlabel = "arbitrary tex";
     description = "select this for arbitrary correction of intensities";

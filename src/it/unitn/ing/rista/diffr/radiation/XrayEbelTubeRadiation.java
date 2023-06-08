@@ -106,7 +106,7 @@ public class XrayEbelTubeRadiation extends RadiationType {
 			setLabel(alabel);
 		setParent(aobj);
 		parametersV = new Vector(0, 1);
-		initXRD();
+		initBaseObject();
 	}
 
 	public XrayEbelTubeRadiation(XRDcat aobj) {
@@ -135,7 +135,7 @@ public class XrayEbelTubeRadiation extends RadiationType {
 		System.arraycopy(classlistcs, 0, classlists, 0, totsubordinate - totparameterloop);
 	}
 
-	public void initXRD() {
+	public void initBaseObject() {
 		initConstant();
 		computeConstant();
 		initDictionary();

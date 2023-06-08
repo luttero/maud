@@ -64,7 +64,7 @@ public class BkgPeak extends XRDcat {
 
   public BkgPeak(XRDcat obj, String alabel) {
     super(obj, alabel);
-    initXRD();
+    initBaseObject();
   }
 
   public BkgPeak(XRDcat afile) {

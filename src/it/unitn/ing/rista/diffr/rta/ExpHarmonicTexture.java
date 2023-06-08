@@ -42,7 +42,7 @@ public class ExpHarmonicTexture extends HarmonicTexture {
 
   public ExpHarmonicTexture(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = identifierS;
     IDlabel = IDlabelS;
     description = descriptionS;

@@ -39,7 +39,7 @@ public class StructureFactorStandardModel extends StructureFactorModel {
   //insert class definition here
 	public StructureFactorStandardModel(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "atomic standard model";
     IDlabel = "atomic standard model";
     description = "select this for standard atomic structure factors";

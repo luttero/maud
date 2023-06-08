@@ -54,7 +54,7 @@ public class ImageBadPixelsMask extends it.unitn.ing.rista.diffr.DataMask {
 
 	public ImageBadPixelsMask(XRDcat aobj, String alabel) {
 		super(aobj, alabel);
-		initXRD();
+		initBaseObject();
 		identifier = "Bad pixels mask";
 		IDlabel = "Bad pixels mask";
 	}

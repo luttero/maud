@@ -57,7 +57,7 @@ public class AngularPolCalibration extends AngularCalibration {
 
   public AngularPolCalibration(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Polynomial Angular";
     IDlabel = "Polynomial Angular";
   }

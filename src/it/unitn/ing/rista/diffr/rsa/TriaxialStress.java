@@ -23,14 +23,11 @@ package it.unitn.ing.rista.diffr.rsa;
 import it.unitn.ing.rista.awt.JOptionsDialog;
 import it.unitn.ing.rista.diffr.*;
 import it.unitn.ing.rista.util.*;
-import org.apache.commons.math3.linear.Array2DRowRealMatrix;
-import org.apache.commons.math3.linear.RealMatrix;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.util.Vector;
 
 /**
  *  The TriaxialStress is a class to compute the diffraction shift from
@@ -85,7 +82,7 @@ public class TriaxialStress extends Strain {
   // **********************************************************************************
   public TriaxialStress(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = id;
     IDlabel = id;
     description = desc;

@@ -61,7 +61,7 @@ public class SingleLayerDWBARefl extends Reflectivity {
 
 	public SingleLayerDWBARefl(XRDcat aobj, String alabel) {
 		super(aobj, alabel);
-		initXRD();
+		initBaseObject();
 		identifier = "DWBA Single Layer";
 		IDlabel = "DWBA Single Layer";
 		description = "Use the DBWA method for single layer reflectivity computation";

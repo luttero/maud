@@ -54,7 +54,7 @@ public class StructureFactorLeBailExtractor extends StructureFactorExtractor {
 
   public StructureFactorLeBailExtractor(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Le Bail";
     IDlabel = "Le Bail";
     description = "select this to apply Le Bail method for structure factor extraction";

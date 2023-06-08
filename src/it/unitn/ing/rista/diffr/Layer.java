@@ -68,7 +68,7 @@ public class Layer extends XRDcat {
 
   public Layer(XRDcat afile, String alabel) {
     super(afile, alabel);
-    initXRD();
+    initBaseObject();
   }
 
   public Layer(XRDcat afile) {

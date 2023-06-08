@@ -21,17 +21,8 @@
 package it.unitn.ing.rista.diffr.reflectivity;
 
 import it.unitn.ing.rista.diffr.*;
-import it.unitn.ing.rista.awt.*;
 
-import java.awt.*;
-import java.io.*;
 import java.lang.*;
-import java.util.*;
-import java.awt.event.*;
-import javax.swing.*;
-
-import it.unitn.ing.rista.util.*;
-import it.unitn.ing.rista.io.cif.*;
 
 /**
  *  The LayerNoSolution is a generic model for working out heterostructures
@@ -46,7 +37,7 @@ public class LayerNoSolution extends LayerSolutionMethod {
 
   public LayerNoSolution(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "None Layer workout";
     IDlabel = "None Layer workout";
     description = "select this to not workout layers structure";

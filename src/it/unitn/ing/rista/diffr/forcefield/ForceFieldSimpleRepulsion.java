@@ -67,7 +67,7 @@ public class ForceFieldSimpleRepulsion extends ForceField {
 
 	public ForceFieldSimpleRepulsion(XRDcat aobj, String alabel) {
 		super(aobj, alabel);
-		initXRD();
+		initBaseObject();
 		identifier = "Simple Repulsion Force Field";
 		IDlabel = "Simple Repulsion Force Field";
 		description = "Simple Repulsion Force Field";

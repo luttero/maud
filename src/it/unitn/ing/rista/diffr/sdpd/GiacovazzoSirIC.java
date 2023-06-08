@@ -23,8 +23,6 @@ import it.unitn.ing.rista.diffr.*;
 import it.unitn.ing.rista.util.*;
 import it.unitn.ing.rista.awt.JOptionsDialog;
 import it.unitn.ing.jsginfo.T_SgInfo;
-import it.unitn.ing.fortran.Format;
-import it.unitn.ing.fortran.Formatter;
 
 import javax.swing.*;
 import java.io.*;
@@ -69,7 +67,7 @@ public class GiacovazzoSirIC extends StructureSolutionMethod {
 
   public GiacovazzoSirIC(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Disabled Sir201x (Giacovazzo et al.)";
     IDlabel = "Sir201x (Giacovazzo et al.)";
     description = "select this to use Sir201x (Giacovazzo et al.) for structure solution and structure factor comp.";

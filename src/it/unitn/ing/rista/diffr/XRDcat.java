@@ -168,7 +168,7 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
     super();
   }
 
-  public void initXRD() {
+  public void initBaseObject() {
     initConstant();
     computeConstant();
     initDictionary();

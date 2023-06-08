@@ -25,7 +25,6 @@ import it.unitn.ing.rista.awt.JPopaSSListPane;
 import it.unitn.ing.rista.awt.myJFrame;
 import it.unitn.ing.rista.diffr.*;
 import it.unitn.ing.rista.interfaces.Shape3D;
-import it.unitn.ing.rista.io.cif.CIFtoken;
 import it.unitn.ing.rista.render3d.*;
 import it.unitn.ing.rista.util.*;
 
@@ -91,7 +90,7 @@ public class SampleShapePopa extends SampleShape implements Shape3D {
 
   public SampleShapePopa(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Disabled Popa shape";
     IDlabel = "Popa shape";
     description = "Shape described by harmonic coefficients";

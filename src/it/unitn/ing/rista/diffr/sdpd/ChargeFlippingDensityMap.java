@@ -92,7 +92,7 @@ public class ChargeFlippingDensityMap extends StructureSolutionMethod {
 
   public ChargeFlippingDensityMap(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Disabled Charge Flipping";
     IDlabel = "Charge Flipping";
     description = "select this to obtain Density Maps by Charge Flipping";

@@ -71,7 +71,7 @@ public class GeneticAlgorithmAltRefinement extends OptimizationAlgorithm {
 
   public GeneticAlgorithmAltRefinement(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Genetic Algorithm Refinement";
     IDlabel = "Genetic Algorithm Refinement";
     description = "select this to use Genetic Algorithm of jgap";

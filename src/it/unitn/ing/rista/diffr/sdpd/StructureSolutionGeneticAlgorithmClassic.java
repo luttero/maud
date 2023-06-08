@@ -87,7 +87,7 @@ public class StructureSolutionGeneticAlgorithmClassic extends StructureSolutionM
   
 	public StructureSolutionGeneticAlgorithmClassic(XRDcat aobj, String alabel) {
 		super(aobj, alabel);
-		initXRD();
+		initBaseObject();
 		identifier = "Disabled Genetic Algorithm SDPD Classic";
   	IDlabel = "Genetic Algorithm SDPD Classic";
   	description = "select this to use a Genetic Algorithm";

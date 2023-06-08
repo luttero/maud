@@ -542,7 +542,7 @@ public class MomentPoleStress extends Strain {
 
   public MomentPoleStress(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Moment Pole Stress";
     IDlabel = "Moment Pole Stress";
     description = "select this to apply the Moment Pole Stress method of Siegfried Matthies";

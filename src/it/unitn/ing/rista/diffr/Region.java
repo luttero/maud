@@ -39,7 +39,7 @@ public class Region extends XRDcat {
 
   public Region(XRDcat obj, String alabel) {
     super(obj, alabel);
-    initXRD();
+    initBaseObject();
   }
 
   public Region(XRDcat afile) {

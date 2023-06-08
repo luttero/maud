@@ -60,7 +60,7 @@ public class ConeMagneticStructure extends MagneticStructure {
 
   public ConeMagneticStructure(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Cone model";
     IDlabel = "Cone model";
     description = "select this for a simple magnetic cone model";

@@ -98,7 +98,7 @@ public class InstrumentBroadeningGSAS1f extends InstrumentBroadening {
 
 	public InstrumentBroadeningGSAS1f(XRDcat afile, String alabel) {
     super(afile, alabel);
-    initXRD();
+    initBaseObject();
     identifier = modelID;
     IDlabel = modelID;
   }

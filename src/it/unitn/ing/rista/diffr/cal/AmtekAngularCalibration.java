@@ -63,7 +63,7 @@ public class AmtekAngularCalibration extends AngularCalibration {
 
   public AmtekAngularCalibration(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Amtek polynomial";
     IDlabel = "Amtek polynomial";
   }

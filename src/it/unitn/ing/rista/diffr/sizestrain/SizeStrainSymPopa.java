@@ -22,7 +22,6 @@ package it.unitn.ing.rista.diffr.sizestrain;
 
 import it.unitn.ing.rista.diffr.*;
 import it.unitn.ing.rista.interfaces.*;
-import it.unitn.ing.rista.io.cif.CIFtoken;
 import it.unitn.ing.rista.util.*;
 import it.unitn.ing.rista.awt.*;
 
@@ -73,7 +72,7 @@ public class SizeStrainSymPopa extends SizeStrainSymModel implements Shape3D {
 
   public SizeStrainSymPopa(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Popa rules";
     IDlabel = "Popa rules";
     description = "select this to apply Popa model";

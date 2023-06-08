@@ -37,7 +37,7 @@ public class NoStrain extends Strain {
 
   public NoStrain(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "no strain";
     IDlabel = "no strain";
     description = "select this for unstrained phase";

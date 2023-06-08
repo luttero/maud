@@ -57,7 +57,7 @@ public class LinearAbsorptionCorrection extends SampleShape {
 
 	public LinearAbsorptionCorrection(XRDcat aobj, String alabel) {
 		super(aobj, alabel);
-		initXRD();
+		initBaseObject();
 		identifier = "Linear Absorption";
 		IDlabel = "Linear Absorption";
 		description = "Linear Absorption";

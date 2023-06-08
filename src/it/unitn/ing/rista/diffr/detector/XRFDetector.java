@@ -87,7 +87,7 @@ public class XRFDetector extends Detector {
 
 	public XRFDetector(XRDcat aobj, String alabel) {
 		super(aobj, alabel);
-		initXRD();
+		initBaseObject();
 		identifier = "XRF Detector";
 		IDlabel = "XRF Detector";
 		description = "XRF Detector";

@@ -48,7 +48,7 @@ public class LinearInterpolation extends Interpolation {
 
   public LinearInterpolation(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Linear";
     IDlabel = "Linear";
     description = "select this to apply Linear interpolation";

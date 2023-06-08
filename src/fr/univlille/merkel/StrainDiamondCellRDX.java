@@ -22,9 +22,8 @@ package fr.univlille.merkel;
 
 import it.unitn.ing.rista.awt.JOptionsDialog;
 import it.unitn.ing.rista.diffr.*;
-import it.unitn.ing.rista.io.cif.CIFtoken;
 import it.unitn.ing.rista.util.*;
-import java.util.Vector;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -62,7 +61,7 @@ final static String desc = "select this to for radial diffraction in the diamond
 // **********************************************************************************
 public StrainDiamondCellRDX(XRDcat aobj, String alabel) {
 	super(aobj, alabel);
-	initXRD();
+	initBaseObject();
 	identifier = id;
 	IDlabel = id;
 	description = desc;

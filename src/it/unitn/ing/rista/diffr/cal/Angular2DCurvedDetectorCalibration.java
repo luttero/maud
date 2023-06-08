@@ -53,7 +53,7 @@ public class Angular2DCurvedDetectorCalibration extends AngularCalibration {
 
 	public Angular2DCurvedDetectorCalibration(XRDcat aobj, String alabel) {
 		super(aobj, alabel);
-		initXRD();
+		initBaseObject();
 		identifier = "2D curved image";
 		IDlabel = "2D curved image";
 	}

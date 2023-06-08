@@ -28,7 +28,6 @@ import it.unitn.ing.rista.chemistry.XRayDataSqLite;
 import it.unitn.ing.rista.util.*;
 
 import javax.swing.*;
-import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -77,7 +76,7 @@ public class AbsorptionWindow extends XRDcat {
 
 	public AbsorptionWindow(XRDcat aobj, String alabel) {
 		super(aobj, alabel);
-		initXRD();
+		initBaseObject();
 		identifier = "Absorption window";
 		IDlabel = "Absorption window";
 		description = "Absorption window description and composition";

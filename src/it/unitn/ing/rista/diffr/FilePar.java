@@ -202,7 +202,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 	public FilePar(String name) {
     super(null, name);
 
-    initXRD();
+    initBaseObject();
     identifier = new String(name);
     setFileName(name, true);
   }

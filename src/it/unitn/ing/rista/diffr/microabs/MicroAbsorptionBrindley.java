@@ -23,7 +23,6 @@ package it.unitn.ing.rista.diffr.microabs;
 import java.lang.*;
 import java.awt.*;
 
-import it.unitn.ing.rista.util.*;
 import it.unitn.ing.rista.awt.*;
 import it.unitn.ing.rista.diffr.*;
 
@@ -60,7 +59,7 @@ public class MicroAbsorptionBrindley extends MicroAbsorption {
     identifier = "Brindley microabsorption";
     IDlabel = "Brindley microabsorption";
     description = "Brindley microabsorption correction is performed";
-    initXRD();
+    initBaseObject();
   }
 
   public MicroAbsorptionBrindley(XRDcat aobj) {

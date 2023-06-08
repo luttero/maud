@@ -21,7 +21,6 @@
 package it.unitn.ing.rista.diffr.rta;
 
 import it.unitn.ing.rista.diffr.*;
-import it.unitn.ing.rista.awt.*;
 
 /**
  *  The NoneTexture is a class that implements a default (random) texture model
@@ -38,7 +37,7 @@ public class NoneTexture extends Texture {
 
   public NoneTexture(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "none tex";
     IDlabel = "none tex";
     description = "select this for untextured phase";

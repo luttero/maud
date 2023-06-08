@@ -108,7 +108,7 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 
 	public MEMLTexture(XRDcat aobj, String alabel) {
 		super(aobj, alabel);
-		initXRD();
+		initBaseObject();
 		identifier = "E-WIMV";
 		IDlabel = "E-WIMV";
 		description = "select this to apply the arbitrary grid E-WIMV method";

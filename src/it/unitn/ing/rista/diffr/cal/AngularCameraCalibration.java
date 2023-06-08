@@ -60,7 +60,7 @@ public class AngularCameraCalibration extends AngularCalibration {
 
   public AngularCameraCalibration(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Camera angular";
     IDlabel = "Camera angular";
   }

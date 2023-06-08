@@ -22,7 +22,6 @@ package it.unitn.ing.rista.diffr.rta;
 
 import it.unitn.ing.rista.awt.*;
 import it.unitn.ing.rista.diffr.*;
-import it.unitn.ing.rista.io.cif.CIFtoken;
 import it.unitn.ing.rista.util.*;
 import it.unitn.ing.rista.comp.*;
 import it.unitn.ing.rista.interfaces.Function;
@@ -113,7 +112,7 @@ public class HarmonicTexture extends Texture implements Function {
 
   public HarmonicTexture(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Harmonic";
     IDlabel = "Harmonic";
     description = "select this to apply Harmonic model";

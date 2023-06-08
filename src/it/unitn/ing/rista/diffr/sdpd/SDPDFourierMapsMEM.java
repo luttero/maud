@@ -100,7 +100,7 @@ public class SDPDFourierMapsMEM extends StructureFactorSolveCrystalStructure imp
 
   public SDPDFourierMapsMEM(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Disabled MEM Electron Maps";
     IDlabel = "MEM Electron Maps";
     description = "select this to use Electron Density Maps by Maximum Entropy Method";

@@ -22,7 +22,6 @@ package it.unitn.ing.rista.diffr.sizestrain;
 
 import it.unitn.ing.rista.diffr.*;
 import it.unitn.ing.rista.util.*;
-import it.unitn.ing.rista.interfaces.Peak;
 
 /**
  *  The SizeStrainOnlyVoigt is a class
@@ -38,7 +37,7 @@ public class SizeStrainOnlyVoigt extends SizeStrainModel {
 
   public SizeStrainOnlyVoigt(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Disabled Voigt microstrain";
     IDlabel = "Voigt microstrain";
     description = "select this to apply the Voigt microstrain model";

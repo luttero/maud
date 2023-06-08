@@ -70,7 +70,7 @@ public class FiberTextureComponent extends XRDcat {
 
   public FiberTextureComponent(XRDcat obj, String alabel) {
     super(obj, alabel);
-    initXRD();
+    initBaseObject();
   }
 
   public FiberTextureComponent(XRDcat afile) {

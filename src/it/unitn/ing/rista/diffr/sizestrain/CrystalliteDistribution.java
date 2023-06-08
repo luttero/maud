@@ -58,7 +58,7 @@ public class CrystalliteDistribution extends XRDcat {
 
   public CrystalliteDistribution(XRDcat obj, String alabel) {
     super(obj, alabel);
-    initXRD();
+    initBaseObject();
   }
 
   public CrystalliteDistribution(XRDcat afile) {

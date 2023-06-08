@@ -29,7 +29,6 @@ import it.unitn.ing.rista.io.cif.*;
 import it.unitn.ing.rista.util.*;
 import it.unitn.ing.rista.awt.*;
 import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
 
 /**
@@ -123,7 +122,7 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 
   public GSASbankIntCalibration(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "IPNS/LANSCE Incident Spectrum";
     IDlabel = "IPNS/LANSCE Incident Spectrum";
   }

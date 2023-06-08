@@ -21,7 +21,6 @@
 package it.unitn.ing.rista.diffr.rsa;
 
 import it.unitn.ing.rista.diffr.*;
-import it.unitn.ing.rista.awt.*;
 
 /**
  *  The NoStress is a class that implements a default (zero) stress model
@@ -38,7 +37,7 @@ public class NoStress extends Stress {
 
   public NoStress(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "no stress";
     IDlabel = "no stress";
     description = "select this for unstressed phase";

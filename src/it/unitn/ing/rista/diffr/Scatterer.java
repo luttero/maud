@@ -34,7 +34,7 @@ public class Scatterer extends XRDcat {
 
 	public Scatterer(XRDcat obj, String alabel) {
 		super(obj, alabel);
-		initXRD();
+		initBaseObject();
 	}
 
 	public Scatterer(XRDcat afile) {

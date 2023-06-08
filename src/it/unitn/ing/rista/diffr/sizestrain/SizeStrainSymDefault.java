@@ -61,7 +61,7 @@ public class SizeStrainSymDefault extends SizeStrainSymModel {
 
   public SizeStrainSymDefault(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Anisotropic no rules";
     IDlabel = "Anisotropic no rules";
     description = "select this to have anisotropic model without rules, use the equal to property instead";

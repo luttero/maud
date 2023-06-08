@@ -35,7 +35,7 @@ public class LaueMicroAbsorption  extends MicroAbsorption {
     identifier = "Disabled Laue microabsorption";
     IDlabel = "Laue microabsorption";
     description = "Laue microabsorption correction is performed (only for Laue transmission camera)";
-    initXRD();
+    initBaseObject();
   }
 
   public LaueMicroAbsorption(XRDcat aobj) {

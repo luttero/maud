@@ -39,7 +39,7 @@ public class StructureFactorSolveCrystalStructure extends StructureFactorModel {
 
   public StructureFactorSolveCrystalStructure(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Disabled structure solution model";
     IDlabel = "structure solution model";
     description = "select this to solve the structure and use structure factors from solution";

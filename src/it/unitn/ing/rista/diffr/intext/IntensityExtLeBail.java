@@ -54,7 +54,7 @@ public class IntensityExtLeBail extends IntensityExtractor {
 
   public IntensityExtLeBail(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Le Bail";
     IDlabel = "Le Bail";
     description = "select this to apply Le Bail method for intensity extraction";

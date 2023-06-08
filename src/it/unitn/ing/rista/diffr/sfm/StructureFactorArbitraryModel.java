@@ -48,7 +48,7 @@ public class StructureFactorArbitraryModel extends StructureFactorModel {
 
   public StructureFactorArbitraryModel(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "extracted sf model";
     IDlabel = "extracted sf model";
     description = "select this to use extracted or experimental structure factors";

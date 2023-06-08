@@ -63,7 +63,7 @@ public class StructureSolutionReverseMontecarlo extends StructureSolutionMethod 
 
   public StructureSolutionReverseMontecarlo(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Disabled Reverse Montecarlo SDPD";
     IDlabel = "Reverse Montecarlo SDPD";
     description = "select this to use a Reverse Montecarlo";

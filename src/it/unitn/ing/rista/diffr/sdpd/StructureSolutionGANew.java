@@ -94,7 +94,7 @@ public class StructureSolutionGANew extends StructureSolutionMethod {
 
 	public StructureSolutionGANew(XRDcat aobj, String alabel) {
 		super(aobj, alabel);
-		initXRD();
+		initBaseObject();
 		identifier = "Disabled Genetic Algorithm NEW";
 		IDlabel = "Genetic Algorithm NEW";
 		description = "select this to use a Genetic Algorithm";

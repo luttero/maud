@@ -51,7 +51,7 @@ public class HippoSpecimenPrecessionError extends SpecimenPrecessionError {
 
   public HippoSpecimenPrecessionError(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Hippo precession";
     IDlabel = "Hippo precession";
     description = "Hippo specimen precession error in the omega rotation plane";

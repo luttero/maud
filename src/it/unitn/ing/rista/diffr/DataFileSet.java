@@ -192,7 +192,7 @@ public class DataFileSet extends XRDcat {
 
 	public DataFileSet(XRDcat afile, String alabel) {
     super(afile, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "dataset";
   }
 

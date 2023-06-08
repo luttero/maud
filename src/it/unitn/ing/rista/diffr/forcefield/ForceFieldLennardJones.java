@@ -61,7 +61,7 @@ public class ForceFieldLennardJones extends ForceField {
 		identifier = "Lennard-Jones Force Field";
 		IDlabel = "Lennard-Jones Force Field";
 		description = "Lennard-Jones Force Field";
-		initXRD();
+		initBaseObject();
 	}
 
 	public ForceFieldLennardJones(XRDcat aobj) {

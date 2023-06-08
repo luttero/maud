@@ -68,7 +68,7 @@ public class SimplexMethodRefinement extends OptimizationAlgorithm {
 
   public SimplexMethodRefinement(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Simplex (Nelder-Mead) Refinement";
     IDlabel = "Simplex (Nelder-Mead) Refinement";
     description = "select this to use Simplex (Nelder-Mead) method";

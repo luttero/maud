@@ -22,8 +22,6 @@ package it.unitn.ing.rista.diffr;
 
 import it.unitn.ing.rista.util.Constants;
 
-import java.util.Vector;
-
 /**
  *  The Bond is a 
  *
@@ -49,7 +47,7 @@ public class Bond extends XRDcat {
 
 	public Bond(XRDcat aobj, String alabel) {
 		super(aobj, alabel);
-		initXRD();
+		initBaseObject();
 	}
 
 	public Bond(XRDcat aobj) {
@@ -58,7 +56,7 @@ public class Bond extends XRDcat {
 
 	public Bond() {
 		super("bond_x");
-		initXRD();
+		initBaseObject();
 	}
 
 	public void initConstant() {

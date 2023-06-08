@@ -111,7 +111,7 @@ public class GeneticAlgorithmRefinement extends OptimizationAlgorithm implements
 
   public GeneticAlgorithmRefinement(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Evolutionary Refinement";
     IDlabel = "Evolutionary Refinement";
     description = "select this to use an evolutionary approach";

@@ -27,8 +27,6 @@ import it.unitn.ing.rista.util.*;
 import javax.swing.*;
 import java.awt.*;
 
-import static java.lang.System.out;
-
 /**
  *  The ReflectivityMatrix is a class to compute reflectivity using the
  *  Matrix method. See A. Gibaud book .....
@@ -57,7 +55,7 @@ public class ReflectivityMatrix extends Reflectivity {
 
 	public ReflectivityMatrix(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-		initXRD();
+		initBaseObject();
     identifier = idString;
     IDlabel = idString;
     description = idDescription;

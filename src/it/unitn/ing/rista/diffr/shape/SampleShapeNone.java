@@ -22,8 +22,6 @@ package it.unitn.ing.rista.diffr.shape;
 
 import it.unitn.ing.rista.diffr.*;
 
-import java.util.*;
-
 /**
  *  The SampleShapePopa is a class
  *
@@ -45,7 +43,7 @@ public class SampleShapeNone extends SampleShape {
 
   public SampleShapeNone(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "No shape";
     IDlabel = "No shape";
     description = "Shape has no effect";

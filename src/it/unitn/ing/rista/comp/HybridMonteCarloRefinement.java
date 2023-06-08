@@ -81,7 +81,7 @@ public class HybridMonteCarloRefinement extends OptimizationAlgorithm {
 
   public HybridMonteCarloRefinement(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Lamarckian MonteCarlo Refinement";
     IDlabel = "Lamarckian MonteCarlo Refinement";
     description = "select this to use a Lamarckian MonteCarlo approach";

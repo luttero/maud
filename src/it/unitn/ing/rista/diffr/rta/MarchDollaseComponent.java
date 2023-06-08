@@ -44,7 +44,7 @@ public class MarchDollaseComponent extends XRDcat {
 
     public MarchDollaseComponent(XRDcat aobj, String alabel) {
       super(aobj, alabel);
-      initXRD();
+      initBaseObject();
 
       identifier = new String("March-Dollase component");
       IDlabel = new String("March-Dollase component");

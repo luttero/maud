@@ -20,13 +20,7 @@
 
 package it.unitn.ing.rista.diffr.PrecessionError;
 
-import java.awt.*;
-
-import it.unitn.ing.rista.awt.*;
 import it.unitn.ing.rista.diffr.*;
-import it.unitn.ing.rista.util.*;
-
-import javax.swing.*;
 
 /**
  *  The SpecimenPrecessionErrorNone is a class
@@ -49,7 +43,7 @@ public class SpecimenPrecessionErrorNone extends SpecimenPrecessionError {
 
   public SpecimenPrecessionErrorNone(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "No precession";
     IDlabel = "No precession";
     description = "No specimen precession error applied";

@@ -54,7 +54,7 @@ public class AngularSplineCalibration extends AngularCalibration {
 
   public AngularSplineCalibration(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Spline Angular";
     IDlabel = "Spline Angular";
   }

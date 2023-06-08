@@ -20,10 +20,7 @@
 
 package it.unitn.ing.rista.diffr;
 
-import it.unitn.ing.rista.diffr.XRDcat;
 import it.unitn.ing.rista.util.Constants;
-
-import java.util.Vector;
 
 /**
  * The DataSetSample is a class
@@ -45,7 +42,7 @@ public class DataSetSample extends XRDcat {
 
   public DataSetSample(XRDcat afile, String alabel) {
     super(afile, alabel);
-    initXRD();
+    initBaseObject();
   }
 
   public DataSetSample(XRDcat afile) {

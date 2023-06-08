@@ -20,7 +20,6 @@
 
 package it.unitn.ing.rista.diffr;
 
-import java.util.*;
 import java.lang.*;
 
 import it.unitn.ing.rista.util.*;
@@ -49,7 +48,7 @@ public class PoleFigure extends XRDcat {
 
   public PoleFigure(XRDcat obj, String alabel) {
     super(obj, alabel);
-    initXRD();
+    initBaseObject();
   }
 
   public PoleFigure(XRDcat afile) {

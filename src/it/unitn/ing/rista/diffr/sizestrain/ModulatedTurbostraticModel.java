@@ -100,7 +100,7 @@ public class ModulatedTurbostraticModel extends PlanarDefects {
 
 	public ModulatedTurbostraticModel(XRDcat aobj, String alabel) {
 		super(aobj, alabel);
-		initXRD();
+		initBaseObject();
 		identifier = id;
 		IDlabel = id;
 		description = desc;

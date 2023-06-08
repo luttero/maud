@@ -21,13 +21,8 @@
 package it.unitn.ing.rista.diffr.sizestrain;
 
 import java.lang.*;
-import java.awt.*;
 
-import it.unitn.ing.rista.util.*;
-import it.unitn.ing.rista.awt.*;
 import it.unitn.ing.rista.diffr.*;
-
-import javax.swing.*;
 
 
 /**
@@ -50,7 +45,7 @@ public class AntiphaseBoundaryNone extends AntiphaseBoundary {
 
   public AntiphaseBoundaryNone(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "none abm";
     IDlabel = "none abm";
     description = "no antiphase boundary with this model";

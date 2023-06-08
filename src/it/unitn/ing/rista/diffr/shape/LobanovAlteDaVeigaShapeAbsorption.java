@@ -22,8 +22,6 @@ package it.unitn.ing.rista.diffr.shape;
 
 import it.unitn.ing.rista.diffr.SampleShape;
 import it.unitn.ing.rista.diffr.XRDcat;
-import it.unitn.ing.rista.diffr.*;
-import java.util.*;
 
 /**
  *  The LobanovAlteDaVeigaShapeAbsorption is a class
@@ -46,7 +44,7 @@ public class LobanovAlteDaVeigaShapeAbsorption extends SampleShape {
 
 	public LobanovAlteDaVeigaShapeAbsorption(XRDcat aobj, String alabel) {
 		super(aobj, alabel);
-		initXRD();
+		initBaseObject();
 		identifier = "Lobanov-AlteDaVeiga Shape Absorption";
 		IDlabel = "Lobanov-AlteDaVeiga Shape Absorption";
 		description = "Lobanov-AlteDaVeiga Shape Absorption";

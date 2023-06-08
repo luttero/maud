@@ -127,7 +127,7 @@ public class WIMVTexture extends DiscreteODFTexture {
 
   public WIMVTexture(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "WIMV";
     IDlabel = "WIMV";
     description = "select this to apply WIMV model";

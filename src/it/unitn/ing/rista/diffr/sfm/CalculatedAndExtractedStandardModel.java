@@ -39,7 +39,7 @@ public class CalculatedAndExtractedStandardModel extends StructureFactorStandard
 
 	public CalculatedAndExtractedStandardModel(XRDcat aobj, String alabel) {
 		super(aobj, alabel);
-		initXRD();
+		initBaseObject();
 		identifier = "calculated and extracted";
 		IDlabel = "calculated and extracted";
 		description = "select this for calculated and extracted structure factors";

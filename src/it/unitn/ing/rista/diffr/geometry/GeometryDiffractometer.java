@@ -67,7 +67,7 @@ public class GeometryDiffractometer extends Geometry {
 
   public GeometryDiffractometer(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "General diffractometer";
     IDlabel = "General diffractometer";
     description = "General diffractometer instrument geometry";

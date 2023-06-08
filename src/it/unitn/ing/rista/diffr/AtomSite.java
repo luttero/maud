@@ -162,7 +162,7 @@ public class AtomSite extends XRDcat {
    */
   public AtomSite(XRDcat obj, String alabel) {
     super(obj, alabel);
-    initXRD();
+    initBaseObject();
   }
 
   /**

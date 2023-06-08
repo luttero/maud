@@ -54,7 +54,7 @@ public class AntiphaseBoundaryWarren extends AntiphaseBoundary {
 
   public AntiphaseBoundaryWarren(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Warren";
     IDlabel = "Warren";
     description = "select this to apply the Warren model for antiphase boundary";

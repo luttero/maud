@@ -80,7 +80,7 @@ public class LeastSquareFit extends OptimizationAlgorithm {
 
   public LeastSquareFit(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Marqardt Least Squares";
     IDlabel = "Marqardt Least Squares";
     description = "select this to use the Marqardt Least Squares";

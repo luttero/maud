@@ -21,13 +21,8 @@
 package it.unitn.ing.rista.diffr.sizestrain;
 
 import java.lang.*;
-import java.awt.*;
 
-import it.unitn.ing.rista.util.*;
-import it.unitn.ing.rista.awt.*;
 import it.unitn.ing.rista.diffr.*;
-
-import java.awt.*;
 
 
 /**
@@ -50,7 +45,7 @@ public class PlanarDefectsNone extends PlanarDefects {
 
   public PlanarDefectsNone(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "none pd";
     IDlabel = "none pd";
     description = "no planar defects with this model";

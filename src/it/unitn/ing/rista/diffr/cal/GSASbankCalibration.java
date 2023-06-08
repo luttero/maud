@@ -84,7 +84,7 @@ public class GSASbankCalibration extends AngularCalibration {
 
   public GSASbankCalibration(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = modelID;
     IDlabel = modelID;
   }

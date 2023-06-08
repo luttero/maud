@@ -48,7 +48,7 @@ public class SaturationIntensityCalibration extends IntensityCalibration {
 
   public SaturationIntensityCalibration(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Saturation Intensity Calibration";
     IDlabel = "Saturation Intensity Calibration";
   }

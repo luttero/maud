@@ -24,7 +24,6 @@ import it.unitn.ing.rista.diffr.FilePar;
 import it.unitn.ing.rista.diffr.XRDcat;
 import it.unitn.ing.rista.awt.JOptionsDialog;
 import it.unitn.ing.rista.interfaces.Function;
-import it.unitn.ing.rista.util.Misc;
 
 import javax.swing.*;
 import java.awt.*;
@@ -98,7 +97,7 @@ public class SimulatedAnnealingRefinement extends OptimizationAlgorithm {
 
   public SimulatedAnnealingRefinement(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Simulated Annealing Refinement";
     IDlabel = "Simulated Annealing Refinement";
     description = "select this to use Simulated Annealing ";

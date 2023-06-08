@@ -44,7 +44,7 @@ public class DiffractionBase extends Diffraction {
 
 	public DiffractionBase(XRDcat aobj, String alabel) {
 		super(aobj, alabel);
-		initXRD();
+		initBaseObject();
 		identifier = "Basic diffraction";
 		IDlabel = identifier;
 		description = identifier;

@@ -58,7 +58,7 @@ public class TOFDetector extends Detector {
 
   public TOFDetector(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = modelID;
     IDlabel = modelID;
     description = modelID + " detector";

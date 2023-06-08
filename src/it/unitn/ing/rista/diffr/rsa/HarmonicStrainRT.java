@@ -25,7 +25,6 @@ import javax.swing.*;
 
 import it.unitn.ing.rista.diffr.*;
 import it.unitn.ing.rista.awt.*;
-import it.unitn.ing.rista.io.cif.CIFtoken;
 import it.unitn.ing.rista.util.*;
 import it.unitn.ing.rista.diffr.rta.*;
 
@@ -100,7 +99,7 @@ public class HarmonicStrainRT extends Strain {
 
   public HarmonicStrainRT(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Harmonic Texture Weighted Strain";
     IDlabel = "Harmonic Texture Weighted Strain";
     description = "select this to apply Harmonic model for WSODF";

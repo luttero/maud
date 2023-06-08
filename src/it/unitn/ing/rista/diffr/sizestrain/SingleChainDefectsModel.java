@@ -82,7 +82,7 @@ public class SingleChainDefectsModel extends PlanarDefects {
 
 	public SingleChainDefectsModel(XRDcat aobj, String alabel) {
 		super(aobj, alabel);
-		initXRD();
+		initBaseObject();
 		identifier = id;
 		IDlabel = id;
 		description = desc;

@@ -37,7 +37,7 @@ public class AngleEnergyMapDetector extends XRFDetector {
 
 	public AngleEnergyMapDetector(XRDcat aobj, String alabel) {
 		super(aobj, alabel);
-		initXRD();
+		initBaseObject();
 		identifier = "Angle-energy map detector";
 		IDlabel = identifier;
 		description = identifier;

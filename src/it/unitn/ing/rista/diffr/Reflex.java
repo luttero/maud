@@ -51,7 +51,7 @@ public class Reflex extends XRDcat {
 
   public Reflex(XRDcat obj, String alabel) {
     super(obj, alabel);
-    initXRD();
+    initBaseObject();
   }
 
   public Reflex(XRDcat afile) {

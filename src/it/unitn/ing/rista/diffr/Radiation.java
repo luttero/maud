@@ -21,7 +21,6 @@
 package it.unitn.ing.rista.diffr;
 
 import it.unitn.ing.rista.awt.JOptionsDialog;
-import it.unitn.ing.rista.awt.JSubordListPane;
 import it.unitn.ing.rista.util.*;
 import it.unitn.ing.rista.chemistry.AtomInfo;
 
@@ -55,7 +54,7 @@ public class Radiation extends XRDcat {
 
   public Radiation(XRDcat afile, String alabel) {
     super(afile, alabel);
-    initXRD();
+    initBaseObject();
   }
 
   public Radiation(XRDcat afile) {

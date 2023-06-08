@@ -26,14 +26,8 @@ import it.unitn.ing.rista.util.*;
 
 import java.awt.*;
 import javax.swing.*;
-import java.awt.event.*;
 
-import ec.util.*;
 import ec.*;
-import ec.simple.*;
-import ec.vector.*;
-
-import java.io.IOException;
 
 import it.unitn.ing.rista.interfaces.*;
 
@@ -115,7 +109,7 @@ public class ReflectivityGeneticAlgorithm extends LayerSolutionMethod
 
   public ReflectivityGeneticAlgorithm(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Genetic Algorithm Reflectivity";
     IDlabel = "Genetic Algorithm Reflectivity";
     description = "select this to use a Genetic Algorithm";

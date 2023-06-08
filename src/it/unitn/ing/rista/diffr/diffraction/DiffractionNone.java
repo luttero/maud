@@ -36,7 +36,7 @@ public class DiffractionNone extends Diffraction {
 
 	public DiffractionNone(XRDcat aobj, String alabel) {
 		super(aobj, alabel);
-		initXRD();
+		initBaseObject();
 		identifier = "none diffraction";
 		IDlabel = identifier;
 		description = identifier;

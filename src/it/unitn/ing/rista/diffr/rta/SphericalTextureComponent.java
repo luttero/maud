@@ -87,7 +87,7 @@ C          IGL  = 2 LORENTZ-SHAPED CURVE (B OR T INPUT IS POSSIBLE)
 
   public SphericalTextureComponent(XRDcat obj, String alabel) {
     super(obj, alabel);
-    initXRD();
+    initBaseObject();
   }
 
   public SphericalTextureComponent(XRDcat afile) {

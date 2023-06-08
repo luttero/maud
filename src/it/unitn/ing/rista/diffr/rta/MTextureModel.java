@@ -78,7 +78,7 @@ public class MTextureModel extends DiscreteODFTexture {
 
 	public MTextureModel(XRDcat aobj, String alabel) {
 		super(aobj, alabel);
-		initXRD();
+		initBaseObject();
 		identifier = modelID;
 		IDlabel = modelID;
 		description = "select this to apply the Mtex model";

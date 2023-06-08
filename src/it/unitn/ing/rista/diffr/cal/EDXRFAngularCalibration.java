@@ -51,7 +51,7 @@ public class EDXRFAngularCalibration extends AngularCalibration {
 
   public EDXRFAngularCalibration(XRDcat obj, String alabel) {
     super(obj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = modelID;
     IDlabel = modelID;
     description = descriptionID;

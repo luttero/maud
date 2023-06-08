@@ -26,8 +26,6 @@ import it.unitn.ing.rista.chemistry.XRayDataSqLite;
 import it.unitn.ing.rista.util.AtomQuantity;
 import it.unitn.ing.rista.util.Constants;
 
-import java.util.Vector;
-
 /**
  * The AtomScatterer is a class ....
  *
@@ -83,7 +81,7 @@ public class AtomScatterer extends Scatterer {
 
 		public AtomScatterer(XRDcat obj, String alabel) {
 			super(obj, alabel);
-			initXRD();
+			initBaseObject();
 			if (alabel != null && alabel.length() > 0)
 				stringField[0] = alabel;
 			loadAtomProperties();

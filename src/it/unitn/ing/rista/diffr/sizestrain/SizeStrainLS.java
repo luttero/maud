@@ -36,7 +36,7 @@ public class SizeStrainLS extends SizeStrainModel {
 
   public SizeStrainLS(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Disabled Trento";
     IDlabel = "Trento";
     description = "select this to apply the Trento model";

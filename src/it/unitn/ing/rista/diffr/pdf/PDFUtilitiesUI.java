@@ -26,7 +26,6 @@ import it.unitn.ing.rista.diffr.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.io.PrintStream;
 import java.util.Vector;
 
@@ -44,6 +43,19 @@ public class PDFUtilitiesUI extends JFrame {
 
 	Phase thePhase;
 	boolean saveInFile = false;
+	private Vector listData = null;
+
+	JComboBox radiationCB;
+	JTextField[] allTFs;
+
+	String[] properties = {"PDFgenerateGr.radiation",
+			"PDFgenerateGr.minQ",
+			"PDFgenerateGr.maxQ",
+			"PDFgenerateGr.stepQ"};
+	String[] defValue = {GeneratePatternAndPDF.radiationType[0],
+			"0.5",
+			"40.0",
+			"0.01"};
 
 	public PDFUtilitiesUI(Phase aphase, boolean toFile) {
 		thePhase = aphase;
@@ -60,26 +72,17 @@ public class PDFUtilitiesUI extends JFrame {
 		JPanel rightGeneralPane = new JPanel(new GridLayout(0, 1, 3, 3));
 		panelUp.add(BorderLayout.CENTER, rightGeneralPane);
 
-		leftGeneralPane.add(new JLabel("Symmetry:"));
+		leftGeneralPane.add(new JLabel("Radiation:"));
 		JPanel tmpPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 3));
 		rightGeneralPane.add(tmpPanel);
-/*		symmetrychoice = new JComboBox();
-		for (int i = 0; i < symmetryString.length; i++)
-			symmetrychoice.addItem(symmetryString[i]);
-		symmetrychoice.setEditable(false);
-		symmetrychoice.setMaximumRowCount(symmetryString.length);
-		tmpPanel.add(symmetrychoice);
+		radiationCB = new JComboBox();
+		for (int i = 0; i < GeneratePatternAndPDF.radiationType.length; i++)
+			radiationCB.addItem(GeneratePatternAndPDF.radiationType[i]);
+		radiationCB.setEditable(false);
+		radiationCB.setMaximumRowCount(GeneratePatternAndPDF.radiationType.length);
+		tmpPanel.add(radiationCB);
 
-		leftGeneralPane.add(new JLabel("Space group:"));
-		rightGeneralPane.add(tmpPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 3)));
-		spacegrouplist = new JComboBox();
-		spacegrouplist.setMaximumRowCount(symmetryString.length);
-		tmpPanel.add(spacegrouplist);
-
-		String[] textField = {"Minimum volume", "Maximum volume", "Minimum a,b,c",
-				"Maximum a,b,c", "Minimum alpha,beta,gamma", "Maximum alpha,beta,gamma",
-				"Maximum error (0=no error)", "Total number of training cells",
-				"Number of lines", "Number of extra lines", "Number of missing lines"};
+		String[] textField = {"Minimum Q", "Maximum Q", "Q step"};
 		allTFs = new JTextField[textField.length];
 		for (int i = 0; i < textField.length; i++) {
 			leftGeneralPane.add(new JLabel(textField[i] + ": "));
@@ -91,48 +94,39 @@ public class PDFUtilitiesUI extends JFrame {
 
 		JButton jbok2 = new JCancelButton();
 		panelDown.add(jbok2);
-		jbok2.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				setVisible(false);
-				dispose();
-			}
-
+		jbok2.addActionListener(e -> {
+			setVisible(false);
+			dispose();
 		});
 		JButton jbok1 = new JCloseButton();
 		panelDown.add(jbok1);
-		jbok1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				(new PersistentThread() {
-					public void executeJob() {
-						retrieveParameters();
-						generateAndSaveData();
-					}
-				}).start();
-				setVisible(false);
-				dispose();
-			}
-
+		jbok1.addActionListener(e -> {
+			(new PersistentThread() {
+				public void executeJob() {
+					retrieveParameters();
+				}
+			}).start();
+			setVisible(false);
+			dispose();
 		});
 		getRootPane().setDefaultButton(jbok1);
 
 		initParameters();
-		initListener();*/
-		setTitle("Generate indexing data");
+		setTitle("Generate G(r) from phase crystal structure");
 		pack();
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 	}
 
-	public void generateAndSaveData() {
-/*		GenerateIndexingData gen = new GenerateIndexingData(theSample, linesNumber, extraLines, missingPeaks,
-				amin, amax, anmin, anmax, trialNumber, cellmin, cellmax);
-		gen.generateData(symmetry, spaceGroup);
-		listData = gen.getData();*/
+	public void generateAndSaveData(String radiation, double minQ, double maxQ, double stepQ) {
+		GeneratePatternAndPDF gen = new GeneratePatternAndPDF(thePhase, minQ, maxQ, stepQ);
+		gen.generateData(radiation);
+		listData = gen.getGr();
 
 		if (saveInFile) {
-			String filename = Utility.browseFilenametoSave(this, "Save Neural Network training data for indexing");
+			String filename = Utility.browseFilenametoSave(this, "Save G(r) to file");
 			if (filename != null) {
 				PrintStream printStream = new PrintStream(Misc.getOutputStream(filename));
-//				saveList(printStream, listData);
+				saveList(printStream, listData);
 				printStream.flush();
 				printStream.close();
 			}
@@ -140,14 +134,14 @@ public class PDFUtilitiesUI extends JFrame {
 	}
 
 	public Vector getData() {
-/*		while (listData == null) {
+		while (listData == null) {
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-		}*/
-		return null; // listData;
+		}
+		return listData;
 	}
 
 	private void saveList(PrintStream printStream, Vector data) {
@@ -166,6 +160,26 @@ public class PDFUtilitiesUI extends JFrame {
 			printStream.print(" # " + row[0] + " " + row[1]);
 			printStream.print(Constants.lineSeparator);
 		}
+	}
+
+	public void initParameters() {
+		radiationCB.setSelectedItem(LastInputValues.getPref(properties[0], defValue[0]));
+		for (int i = 0; i < allTFs.length; i++) {
+			allTFs[i].setText(defValue[i + 1] = LastInputValues.getPref(properties[i + 1], defValue[i + 1]));
+		}
+	}
+
+	public void retrieveParameters() {
+		defValue[0] = GeneratePatternAndPDF.radiationType[radiationCB.getSelectedIndex()];
+		for (int i = 0; i < allTFs.length; i++) {
+			defValue[i + 1] = allTFs[i].getText();
+			LastInputValues.setPref(properties[i + 1], defValue[i + 1]);
+		}
+		String radiation = defValue[0];
+		double minQ = Double.parseDouble(defValue[1]);
+		double maxQ = Double.parseDouble(defValue[2]);
+		double stepQ = Double.parseDouble(defValue[3]);
+		generateAndSaveData(radiation, minQ, maxQ, stepQ);
 	}
 
 }

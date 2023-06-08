@@ -20,13 +20,8 @@
 
 package it.unitn.ing.rista.diffr;
 
-import it.unitn.ing.rista.diffr.cal.AngularCalibration;
-import it.unitn.ing.rista.diffr.cal.IntensityCalibration;
-import it.unitn.ing.rista.diffr.measurement.Theta2ThetaMeasurement;
 import it.unitn.ing.rista.util.Constants;
-import it.unitn.ing.rista.util.MaudPreferences;
 
-import java.util.*;
 import java.lang.*;
 
 /**
@@ -53,7 +48,7 @@ public class Background extends XRDcat {
 
 	public Background(XRDcat obj, String alabel) {
     super(obj, alabel);
-    initXRD();
+    initBaseObject();
   }
 
   public Background(XRDcat afile) {

@@ -56,7 +56,7 @@ public class MarchDollaseTexture extends Texture {
 
   public MarchDollaseTexture(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
 
     identifier = new String("March-Dollase");
     IDlabel = new String("March-Dollase");

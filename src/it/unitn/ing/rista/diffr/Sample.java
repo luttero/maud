@@ -109,7 +109,7 @@ public class Sample extends Maincat {
 
 	public Sample(XRDcat afile, String alabel) {
     super(afile, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Sample";
   }
 

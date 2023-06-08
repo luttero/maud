@@ -23,12 +23,6 @@ package it.unitn.ing.rista.diffr.intext;
 import java.lang.*;
 
 import it.unitn.ing.rista.diffr.*;
-import it.unitn.ing.rista.awt.*;
-import it.unitn.ing.rista.util.*;
-
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.event.*;
 
 /**
  *  The IntensityExtnone is a class
@@ -48,7 +42,7 @@ public class IntensityExtnone extends IntensityExtractor {
 
   public IntensityExtnone(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "none ie";
     IDlabel = "none ie";
     description = "select this to disable intensity extraction";

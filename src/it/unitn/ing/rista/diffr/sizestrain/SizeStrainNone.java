@@ -36,7 +36,7 @@ public class SizeStrainNone extends SizeStrainModel {
 
   public SizeStrainNone(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "None";
     IDlabel = "None";
     description = "select this to apply any LB model";

@@ -81,7 +81,7 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
 
   public InstrumentBroadeningPVCaglioti(XRDcat afile, String alabel) {
     super(afile, alabel);
-    initXRD();
+    initBaseObject();
     identifier = modelID;
     IDlabel = modelID;
   }

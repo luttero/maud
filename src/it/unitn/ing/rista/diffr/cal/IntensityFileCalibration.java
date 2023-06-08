@@ -59,7 +59,7 @@ public class IntensityFileCalibration extends IntensityCalibration {
 
   public IntensityFileCalibration(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Exp Intensity";
     IDlabel = "Exp Intensity";
   }

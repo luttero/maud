@@ -30,7 +30,6 @@ import javax.swing.border.BevelBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.util.Vector;
 
 
 /**
@@ -99,7 +98,7 @@ public class StandardFunctionTexture extends Texture {
 
   public StandardFunctionTexture(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Standard Functions";
     IDlabel = "Standard Functions";
     description = "select this to apply Standard Functions model";

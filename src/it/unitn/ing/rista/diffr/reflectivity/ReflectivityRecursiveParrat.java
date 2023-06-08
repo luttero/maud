@@ -21,7 +21,6 @@
 package it.unitn.ing.rista.diffr.reflectivity;
 
 import it.unitn.ing.rista.awt.JOptionsDialog;
-import it.unitn.ing.rista.awt.JParameterListPane;
 import it.unitn.ing.rista.diffr.*;
 import it.unitn.ing.rista.util.*;
 
@@ -57,7 +56,7 @@ public class ReflectivityRecursiveParrat extends Reflectivity {
 
 	public ReflectivityRecursiveParrat(XRDcat aobj, String alabel) {
 		super(aobj, alabel);
-		initXRD();
+		initBaseObject();
 		identifier = idString;
 		IDlabel = idString;
 		description = idDescription;

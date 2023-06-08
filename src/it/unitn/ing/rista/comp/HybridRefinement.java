@@ -137,7 +137,7 @@ public class HybridRefinement extends OptimizationAlgorithm implements GAProblem
 
   public HybridRefinement(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Lamarckian Refinement";
     IDlabel = "Lamarckian Refinement";
     description = "select this to use a Lamarckian evolutionary approach";

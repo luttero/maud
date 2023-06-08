@@ -46,7 +46,7 @@ public class FEMRodriguezTexture extends Texture {
 
   public FEMRodriguezTexture(XRDcat obj, String alabel) {
     super(obj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Disabled FEM Rodriguez Space";
     IDlabel = "FEM Rodriguez Space";
     description = "select this to apply the FEM over Rodriguez Space";

@@ -25,10 +25,8 @@ import it.unitn.ing.rista.diffr.*;
 import it.unitn.ing.rista.diffr.detector.XRFDetector;
 import it.unitn.ing.rista.diffr.geometry.GeometryXRFInstrument;
 import it.unitn.ing.rista.diffr.radiation.XrayEbelTubeRadiation;
-import it.unitn.ing.rista.io.cif.CIFtoken;
 import it.unitn.ing.rista.util.*;
 
-import java.util.Hashtable;
 import java.util.Vector;
 
 import static java.lang.System.out;
@@ -63,7 +61,7 @@ public class GIXRFModel extends Fluorescence {
 
 	public GIXRFModel(XRDcat obj, String alabel) {
 		super(obj, alabel);
-		initXRD();
+		initBaseObject();
 		identifier = modelID;
 		IDlabel = modelID;
 		description = descriptionID;

@@ -21,21 +21,6 @@
 package it.unitn.ing.rista.diffr.sdpd;
 
 import it.unitn.ing.rista.diffr.*;
-import it.unitn.ing.rista.awt.*;
-import it.unitn.ing.rista.util.*;
-
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.event.*;
-
-import ec.util.*;
-import ec.*;
-import ec.simple.*;
-import ec.vector.*;
-
-import java.io.IOException;
-
-import it.unitn.ing.rista.interfaces.*;
 
 /**
  *  The StructureSolutionNone is a fake method to solve the Crystal
@@ -51,7 +36,7 @@ public class StructureSolutionNone extends StructureSolutionMethod {
 
   public StructureSolutionNone(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "None SDPD";
     IDlabel = "None SDPD";
     description = "select this to not solve structure";

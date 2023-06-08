@@ -23,7 +23,6 @@ package it.unitn.ing.rista.diffr.shape;
 import it.unitn.ing.rista.awt.*;
 import it.unitn.ing.rista.diffr.*;
 import it.unitn.ing.rista.interfaces.*;
-import it.unitn.ing.rista.io.cif.CIFtoken;
 import it.unitn.ing.rista.render3d.*;
 import it.unitn.ing.rista.util.*;
 import it.unitn.ing.rista.comp.*;
@@ -95,7 +94,7 @@ public class SampleShapeIntegral extends SampleShape implements Shape3D, SimpleF
 
   public SampleShapeIntegral(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Harmonic Integration";
     IDlabel = "Harmonic Integration";
     description = "Shape described by harmonic coefficients, numerical integration";

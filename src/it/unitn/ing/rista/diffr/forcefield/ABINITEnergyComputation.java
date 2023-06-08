@@ -189,7 +189,7 @@ public class ABINITEnergyComputation extends ForceField {
 
   public ABINITEnergyComputation(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = idString;
     IDlabel = idString;
     description = idString;

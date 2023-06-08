@@ -60,7 +60,7 @@ public class AngularFileCalibration extends AngularCalibration {
 
   public AngularFileCalibration(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = ".acal";
     IDlabel = "Exp angular";
   }

@@ -22,9 +22,6 @@ package it.unitn.ing.rista.diffr.sizestrain;
 
 import it.unitn.ing.rista.diffr.SizeStrainModel;
 import it.unitn.ing.rista.diffr.XRDcat;
-import it.unitn.ing.rista.diffr.Reflection;
-import it.unitn.ing.rista.diffr.FourierTransformPeak;
-import it.unitn.ing.rista.interfaces.Peak;
 
 
 /**
@@ -39,7 +36,7 @@ public class SizeStrainWarrenAverbach extends SizeStrainModel {
 
   public SizeStrainWarrenAverbach(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Disabled Warren-Averbach";
     IDlabel = "Warren-Averbach";
     description = "select this to apply the Warren-Averbach model";

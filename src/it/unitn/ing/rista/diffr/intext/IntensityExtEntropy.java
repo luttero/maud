@@ -54,7 +54,7 @@ public class IntensityExtEntropy extends IntensityExtractor {
 
   public IntensityExtEntropy(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "EntropyL";
     IDlabel = "EntropyL";
     description = "select this to apply an entropy method for intensity extraction";

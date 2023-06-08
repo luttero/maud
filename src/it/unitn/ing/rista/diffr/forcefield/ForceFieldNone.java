@@ -22,8 +22,6 @@ package it.unitn.ing.rista.diffr.forcefield;
 
 import it.unitn.ing.rista.diffr.*;
 
-import java.util.*;
-
 /**
  *  The ForceFieldNone is a fake method for determining potential energy
  *
@@ -45,7 +43,7 @@ public class ForceFieldNone extends ForceField {
 
 	public ForceFieldNone(XRDcat aobj, String alabel) {
 		super(aobj, alabel);
-		initXRD();
+		initBaseObject();
 		identifier = "No force field";
 		IDlabel = "No force field";
 		description = "Force Field has no effect";

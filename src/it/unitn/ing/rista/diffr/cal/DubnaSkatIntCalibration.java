@@ -57,7 +57,7 @@ public class DubnaSkatIntCalibration extends IntensityCalibration {
 
   public DubnaSkatIntCalibration(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Dubna/SKAT Incident Spectrum";
     IDlabel = "Dubna/SKAT Incident Spectrum";
   }

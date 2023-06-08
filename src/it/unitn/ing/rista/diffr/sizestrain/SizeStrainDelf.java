@@ -22,7 +22,6 @@ package it.unitn.ing.rista.diffr.sizestrain;
 
 import it.unitn.ing.rista.diffr.*;
 import it.unitn.ing.rista.util.*;
-import it.unitn.ing.rista.interfaces.Peak;
 
 /**
  *  The SizeStrainDelf is a class to model profile function with the
@@ -39,7 +38,7 @@ public class SizeStrainDelf extends SizeStrainModel {
 
   public SizeStrainDelf(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Delft";
     IDlabel = "Delft";
     description = "select this to apply the Delft model";

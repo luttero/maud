@@ -27,7 +27,6 @@ import java.util.Vector;
 import it.unitn.ing.rista.util.*;
 import it.unitn.ing.rista.awt.*;
 import it.unitn.ing.rista.diffr.*;
-import it.unitn.ing.rista.interfaces.Peak;
 
 import javax.swing.*;
 
@@ -66,7 +65,7 @@ public class PlanarDefectsWarren extends PlanarDefects {
 
   public PlanarDefectsWarren(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Warren";
     IDlabel = "Warren";
     description = "select this to apply the Warren model for planar defects";

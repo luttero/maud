@@ -29,7 +29,6 @@ import it.unitn.ing.rista.io.StringNumber;
 import it.unitn.ing.rista.util.*;
 
 import javax.swing.*;
-import javax.swing.border.BevelBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -87,7 +86,7 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 
 	public AngularInclinedFlatImageCalibration(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = modelID;
     IDlabel = modelID;
   }

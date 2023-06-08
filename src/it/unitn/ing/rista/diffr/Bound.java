@@ -20,10 +20,7 @@
 
 package it.unitn.ing.rista.diffr;
 
-import java.util.*;
 import java.lang.*;
-
-import it.unitn.ing.rista.util.ListVector;
 
 /**
  *  The Bound is a class for binding parameters input/output.
@@ -43,7 +40,7 @@ public class Bound extends Maincat {
 
   public Bound(XRDcat afile, String alabel) {
     super(afile, alabel);
-    initXRD();
+    initBaseObject();
     identifier = new String("bound");
   }
 

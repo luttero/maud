@@ -62,7 +62,7 @@ public class RadiationType extends XRDcat {
 
   public RadiationType(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
   }
 
   public RadiationType(XRDcat aobj) {

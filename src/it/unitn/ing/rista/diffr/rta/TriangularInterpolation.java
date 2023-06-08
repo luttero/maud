@@ -27,9 +27,6 @@ import java.awt.*;
 import javax.swing.*;
 
 import it.unitn.ing.rista.util.*;
-import it.unitn.ing.rista.io.*;
-
-import java.awt.event.*;
 
 /**
  *  The TriangularInterpolation is a class
@@ -56,7 +53,7 @@ public class TriangularInterpolation extends Interpolation {
 
   public TriangularInterpolation(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Triangular";
     IDlabel = "Triangular";
     description = "select this to apply Triangular interpolation";

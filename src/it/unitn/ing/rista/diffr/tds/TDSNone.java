@@ -39,7 +39,7 @@ public class TDSNone extends TDSModel {
 
   public TDSNone(XRDcat obj, String alabel) {
     super(obj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "None TDS";
     IDlabel = "None TDS";
   }

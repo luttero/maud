@@ -98,7 +98,7 @@ public class StructureAtomic extends StructureModel implements AtomsStructureI {
 
   public StructureAtomic(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Atomic Structure";
     IDlabel = "Atomic Structure";
     description = "Atomic Structure";

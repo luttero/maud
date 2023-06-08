@@ -21,7 +21,6 @@ package it.unitn.ing.rista.diffr.forcefield;
 
 import it.unitn.ing.rista.diffr.*;
 import it.unitn.ing.rista.diffr.structure.StructureAtomic;
-import it.unitn.ing.rista.chemistry.AtomInfo;
 import it.unitn.ing.rista.util.*;
 import it.unitn.ing.rista.awt.JOptionsDialog;
 
@@ -65,7 +64,7 @@ public class DistanceAngleBondRestraints extends ForceField {
 
   public DistanceAngleBondRestraints(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Distance & Angles Restraints";
     IDlabel = "Distance & Angles Restraints";
     description = "Distance & Angles Restraints";

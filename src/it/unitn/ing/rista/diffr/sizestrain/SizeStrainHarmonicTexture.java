@@ -97,7 +97,7 @@ public class SizeStrainHarmonicTexture extends SizeStrainSymModel {
 
   public SizeStrainHarmonicTexture(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = modelIDstring;
     IDlabel = modelIDstring;
     description = "select this to have an anisotropic model for different sample direction based on harmonic expansion";

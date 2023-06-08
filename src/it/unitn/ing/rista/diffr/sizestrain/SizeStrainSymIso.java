@@ -50,7 +50,7 @@ public class SizeStrainSymIso extends SizeStrainSymModel {
 
   public SizeStrainSymIso(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Isotropic";
     IDlabel = "Isotropic";
     description = "select this to have an isotropic model";

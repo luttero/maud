@@ -23,9 +23,7 @@ package it.unitn.ing.rista.diffr;
 import it.unitn.ing.rista.awt.*;
 import it.unitn.ing.rista.util.*;
 
-import javax.swing.table.AbstractTableModel;
 import java.awt.*;
-import java.util.*;
 
 /**
  *  The CompositionElement is a class
@@ -51,7 +49,7 @@ public class CompositionElement extends XRDcat {
 
 	public CompositionElement(XRDcat aobj, String alabel) {
 		super(aobj, alabel);
-		initXRD();
+		initBaseObject();
 	}
 
 	public CompositionElement(XRDcat aobj) {

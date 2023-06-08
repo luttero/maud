@@ -23,12 +23,7 @@ package it.unitn.ing.rista.diffr.measurement;
 import java.lang.*;
 
 import it.unitn.ing.rista.diffr.*;
-import it.unitn.ing.rista.awt.*;
 import it.unitn.ing.rista.util.*;
-
-import java.awt.*;
-import java.awt.*;
-import java.awt.event.*;
 
 /**
  *  The Theta2ThetaMeasurement is a class
@@ -49,7 +44,7 @@ public class Theta2ThetaMeasurement extends Measurement {
 
   public Theta2ThetaMeasurement(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Theta-2Theta";
     IDlabel = "Theta-2Theta";
     description = "Theta-2Theta measurement method";

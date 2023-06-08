@@ -44,7 +44,7 @@ public class ExpHarmonicTextureGPU extends HarmonicTexture {
 
   public ExpHarmonicTextureGPU(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = identifierS;
     IDlabel = IDlabelS;
     description = descriptionS;

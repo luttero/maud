@@ -23,12 +23,6 @@ package it.unitn.ing.rista.diffr.detector;
 import java.lang.*;
 
 import it.unitn.ing.rista.diffr.*;
-import it.unitn.ing.rista.awt.*;
-import it.unitn.ing.rista.util.*;
-
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.event.*;
 
 /**
  *  The CurvedPSDetector is a class
@@ -49,7 +43,7 @@ public class CurvedPSDetector extends Detector {
 
   public CurvedPSDetector(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Curved Position Sensitive";
     IDlabel = "Curved Position Sensitive";
     description = "Curved Position Sensitivedetector";

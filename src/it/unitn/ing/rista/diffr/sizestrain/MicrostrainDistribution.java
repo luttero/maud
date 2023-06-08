@@ -52,7 +52,7 @@ public class MicrostrainDistribution extends XRDcat {
 
   public MicrostrainDistribution(XRDcat obj, String alabel) {
     super(obj, alabel);
-    initXRD();
+    initBaseObject();
   }
 
   public MicrostrainDistribution(XRDcat afile) {

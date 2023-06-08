@@ -23,12 +23,6 @@ package it.unitn.ing.rista.diffr.absorption;
 import java.lang.*;
 
 import it.unitn.ing.rista.diffr.*;
-import it.unitn.ing.rista.awt.*;
-import it.unitn.ing.rista.util.*;
-
-import java.awt.*;
-import java.awt.*;
-import java.awt.event.*;
 
 /**
  *  The NoneAbsorption is a class
@@ -49,7 +43,7 @@ public class NoneAbsorption extends Absorption {
 
   public NoneAbsorption(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "none abs";
     IDlabel = "none abs";
     description = "none absorption model";

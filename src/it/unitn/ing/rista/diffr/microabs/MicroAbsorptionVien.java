@@ -21,13 +21,8 @@
 package it.unitn.ing.rista.diffr.microabs;
 
 import java.lang.*;
-import java.awt.*;
 
-import it.unitn.ing.rista.util.*;
-import it.unitn.ing.rista.awt.*;
 import it.unitn.ing.rista.diffr.*;
-
-import javax.swing.*;
 
 
 /**
@@ -48,7 +43,7 @@ public class MicroAbsorptionVien extends MicroAbsorption {
     identifier = "Vien microabsorption";
     IDlabel = "Vien microabsorption";
     description = "Vien microabsorption correction is performed";
-    initXRD();
+    initBaseObject();
   }
 
   public MicroAbsorptionVien(XRDcat aobj) {

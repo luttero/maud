@@ -90,7 +90,7 @@ public class FullProfStructureModel extends StructureFactorModel {
 
   public FullProfStructureModel(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "FullProf (J. Rodrigues-Carvajal)";
     IDlabel = "FullProf (J. Rodrigues-Carvajal)";
     description = "select this to use FullProf (J. Rodrigues-Carvajal) for structure factor computation";

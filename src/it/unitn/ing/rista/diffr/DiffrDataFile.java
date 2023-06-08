@@ -236,6 +236,7 @@ public class DiffrDataFile extends XRDcat {
 	boolean theoreticalWeights = false;
 	boolean useNoBkg = false;
 	boolean calibratedData = false;
+	boolean useCalibratedData = false;
 
 
 	boolean firstComputation = true;
@@ -283,7 +284,7 @@ public class DiffrDataFile extends XRDcat {
 	public DiffrDataFile(XRDcat aobj, String alabel) {
 		super(aobj, alabel);
 		setParent(aobj);
-		initXRD();
+		initBaseObject();
 		initDatafile(alabel);
   }
 
@@ -675,7 +676,7 @@ public class DiffrDataFile extends XRDcat {
       int tokentype;
       boolean endofInput = false;
       int aindex = 0, bindex = 0, posindex = -1, xposindex = -1, yposindex = -1, intindex = 0, sigindex = 0;
-      boolean calibratedData = false;
+      calibratedData = false;
       boolean loopStart = false;
 
 //      System.out.println("Custom " + this.toXRDcatString());
@@ -1086,7 +1087,8 @@ public class DiffrDataFile extends XRDcat {
 	  weightSwitch = getFilePar().getWeightingSchemeSwitch();
 	  theoreticalWeights = getFilePar().theoreticalWeight();
 	  useNoBkg = getFilePar().useNoBkgForWeightingScheme();
-	  calibratedData = getFilePar().useIntensityCalibratedForWeights();
+	  useCalibratedData = getFilePar().useIntensityCalibratedForWeights() &&
+			  getDataFileSet().getInstrument().getIntensityCalibration() != null && intensityCalibrated != null;
 
     if (ainstrument != null) {
       IntensityCalibration intcal = ainstrument.getIntensityCalibration();
@@ -2196,31 +2198,25 @@ public class DiffrDataFile extends XRDcat {
 		if (Constants.testIntensityModForWeighting) {
 			double qCorrection = Math.pow(Math.abs(getXInQ(getXData(index))), qExp);
 
-			if (useNoBkg)
-				intensity -= getBkgFit(index);
-//      if (weightSwitch > 6 && weightSwitch < 10)
-//        yint -= getBkgFitNoInterpolation(index);
-
-			if (calibratedData)
+			if (useCalibratedData && intensityCalibrated != null)
 				intensity /= intensityCalibrated[index];
 
 			if (intensity < 0)
 				intensity = -intensity;
-			intensity *= corr;
+			intensity *= qCorrection;
 
 			if (intensity > 1.0E-9) {
 
 				switch (weightSwitch) {
 					case 0: // default
 					case 1: // sqrt
-						intensity = Math.sqrt(intensity); // * Math.sqrt(corr);
+//						intensity = intensity; // * Math.sqrt(corr);
 						break;
 					case 3:
 						intensity = MoreMath.log10(intensity); // * MoreMath.log10(corr);
 						break;
 				}
 			}
-			intensity *= qCorrection;
 
 		}
 
@@ -2307,14 +2303,15 @@ public class DiffrDataFile extends XRDcat {
 //      if (weightSwitch > 6 && weightSwitch < 10)
 //        yint -= getBkgFitNoInterpolation(index);
 
-	    if (calibratedData)
+	    if (useCalibratedData && intensityCalibrated != null)
 		    yint /= intensityCalibrated[index];
 
 	    if (yint < 0)
         yint = -yint;
-      yint *= corr;
+	    value = yint * corr;
+	    value *= qCorrection;
 
-	    if (yint > 1.0E-8) {
+	    if (yint > 1.0E-32) {
 
 		    switch (weightSwitch) {
 			    case 0: // default
@@ -2333,8 +2330,6 @@ public class DiffrDataFile extends XRDcat {
 				    value = 1.0 / Math.sqrt(yint);
 			    }
 		    }
-		    value /= qCorrection;
-
 	    }
     }
     return value;

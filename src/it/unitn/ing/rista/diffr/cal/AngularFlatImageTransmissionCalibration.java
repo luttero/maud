@@ -56,7 +56,7 @@ public class AngularFlatImageTransmissionCalibration extends AngularCalibration 
 
   public AngularFlatImageTransmissionCalibration(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Flat Image Transmission";
     IDlabel = "Flat Image Transmission";
   }

@@ -61,7 +61,7 @@ public class EDXRFInstrumentBroadening extends InstrumentBroadening {
 
 	public EDXRFInstrumentBroadening(XRDcat obj, String alabel) {
     super(obj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = modelID;
     IDlabel = modelID;
     description = descriptionID;

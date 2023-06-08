@@ -80,7 +80,7 @@ public class PlanarDefectsSingleLayerModel extends PlanarDefects {
 
   public PlanarDefectsSingleLayerModel(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = id;
     IDlabel = id;
     description = desc;

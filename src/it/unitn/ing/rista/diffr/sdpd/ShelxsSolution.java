@@ -70,7 +70,7 @@ public class ShelxsSolution extends StructureSolutionMethod {
 
   public ShelxsSolution(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Disabled Shelxs (Sheldrick)";
     IDlabel = "Shelxs (Sheldrick)";
     description = "select this to obtain a structure solution by Shelxs (Sheldrick)";

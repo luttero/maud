@@ -20,11 +20,8 @@
 
 package it.unitn.ing.rista.diffr;
 
-import java.io.*;
 import java.lang.*;
 import java.util.*;
-
-import it.unitn.ing.rista.io.BasicInput;
 
 /**
  * The Plane is a class
@@ -42,7 +39,7 @@ public class Plane extends XRDcat {
 
   public Plane(XRDcat obj, String alabel) {
     super(obj, alabel);
-    initXRD();
+    initBaseObject();
   }
 
   public Plane(XRDcat afile) {

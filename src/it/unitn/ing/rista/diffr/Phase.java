@@ -249,7 +249,7 @@ public class Phase extends XRDcat {
 
   public Phase(XRDcat afile, String alabel) {
     super(afile, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Phase";
   }
 

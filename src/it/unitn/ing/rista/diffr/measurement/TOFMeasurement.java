@@ -23,12 +23,6 @@ package it.unitn.ing.rista.diffr.measurement;
 import java.lang.*;
 
 import it.unitn.ing.rista.diffr.*;
-import it.unitn.ing.rista.awt.*;
-import it.unitn.ing.rista.util.*;
-
-import java.awt.*;
-import java.awt.*;
-import java.awt.event.*;
 
 /**
  *  The TOFMeasurement is a class
@@ -51,7 +45,7 @@ public class TOFMeasurement extends Measurement {
 
   public TOFMeasurement(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = modelID;
     IDlabel = modelID;
     description = "TOF measurement";

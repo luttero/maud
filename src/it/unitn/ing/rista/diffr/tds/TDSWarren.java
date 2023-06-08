@@ -50,7 +50,7 @@ public class TDSWarren extends TDSModel {
 
   public TDSWarren(XRDcat obj, String alabel) {
     super(obj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Warren TDS";
     IDlabel = "Warren TDS";
   }

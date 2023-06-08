@@ -43,6 +43,11 @@ from the older one.
 
 Maud Version notes:
 
+(08/06/2023):   2.998. The "Rattle snake" release.
+                Someone you don't want to meet.
+                Fixing a bug on the new routines to modify statistical weights for
+                refinement.
+
 (02/06/2023):   2.997. The "Siegfried" release.
                 It is so sad we have lost this year such a brilliant mind. Probably
                 there wouldn't be Maud as it is now without him or at all.

@@ -20,7 +20,6 @@
 package it.unitn.ing.rista.diffr.sizestrain;
 
 import it.unitn.ing.rista.diffr.*;
-import it.unitn.ing.rista.interfaces.Peak;
 import it.unitn.ing.rista.util.*;
 import it.unitn.ing.rista.awt.JOptionsDialog;
 
@@ -78,7 +77,7 @@ public class PlanarDefectsReciprocalModel extends PlanarDefects {
 
 	public PlanarDefectsReciprocalModel(XRDcat aobj, String alabel) {
 		super(aobj, alabel);
-		initXRD();
+		initBaseObject();
 		identifier = id;
 		IDlabel = id;
 		description = desc;

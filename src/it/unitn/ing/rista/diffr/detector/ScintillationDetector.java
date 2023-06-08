@@ -43,7 +43,7 @@ public class ScintillationDetector extends StandardDetector {
 
   public ScintillationDetector(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Scintillation";
     IDlabel = "Scintillation";
     description = "Scintillation detector";

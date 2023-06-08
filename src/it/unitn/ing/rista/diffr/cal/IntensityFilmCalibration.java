@@ -58,7 +58,7 @@ public class IntensityFilmCalibration extends IntensityCalibration {
 
   public IntensityFilmCalibration(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Film Calibration";
     IDlabel = "Film Calibration";
   }

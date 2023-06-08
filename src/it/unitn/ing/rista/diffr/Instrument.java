@@ -84,7 +84,7 @@ public class Instrument extends XRDcat {
 
   public Instrument(XRDcat afile, String alabel) {
     super(afile, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Diffraction Instrument";
   }
 

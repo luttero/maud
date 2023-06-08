@@ -409,7 +409,7 @@ END;
         DiffrDataFile fakedatafile = null;
         if (indexSkip[2] > 0) {
           fakedatafile = new DiffrDataFile();
-          fakedatafile.initXRD();
+          fakedatafile.initBaseObject();
         }
 
         int toSkip = 0;

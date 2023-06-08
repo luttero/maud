@@ -21,13 +21,8 @@
 package it.unitn.ing.rista.diffr.magnetic;
 
 import java.lang.*;
-import java.awt.*;
 
 import it.unitn.ing.rista.diffr.*;
-import it.unitn.ing.rista.util.*;
-import it.unitn.ing.rista.awt.*;
-
-import java.awt.*;
 
 
 /**
@@ -45,7 +40,7 @@ public class NoneMagneticStructure extends MagneticStructure {
 
   public NoneMagneticStructure(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "no magnetic";
     IDlabel = "no magnetic";
     description = "select this for diamagnetic phase";

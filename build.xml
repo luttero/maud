@@ -16,7 +16,7 @@
     <property name="myself" value="myself"/>
     <property name="bundle.icon" value="maud.icns"/>
     <property name="icon" value="src/images/${bundle.icon}"/>
-    <property name="maud_version" value="2.996"/>
+    <property name="maud_version" value="2.998"/>
     <property name="application_OSX.title" value="Maud.app"/>
     <property name="app_osx_295" location="${user.home}/Projects/maud/osx_295"/>
     <property name="app_osx_arm" location="${user.home}/Projects/maud/osx_arm"/>

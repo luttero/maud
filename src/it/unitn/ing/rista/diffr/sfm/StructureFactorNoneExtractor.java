@@ -35,7 +35,7 @@ public class StructureFactorNoneExtractor extends StructureFactorExtractor {
 
 	public StructureFactorNoneExtractor(XRDcat aobj, String alabel) {
 		super(aobj, alabel);
-		initXRD();
+		initBaseObject();
 		identifier = "None";
 		IDlabel = "None";
 		description = "select this to not use any structure factor extraction";

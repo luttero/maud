@@ -97,7 +97,7 @@ public class Fragment extends XRDcat implements AtomsStructureI {
 
   public Fragment(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     //atomRelativeCoordinates = new Vector();
     //fragmentRelativeCoordinates = new Vector();
     //fragmentRelativeOrientation = new Vector();

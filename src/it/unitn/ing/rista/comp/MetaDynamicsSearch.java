@@ -161,7 +161,7 @@ public class MetaDynamicsSearch extends OptimizationAlgorithm {
 
   public MetaDynamicsSearch(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "MetaDynamics optimization";
     IDlabel = "MetaDynamics optimization";
     description = "select this to use the MetaDynamics-Marqardt Least Squares optimization";

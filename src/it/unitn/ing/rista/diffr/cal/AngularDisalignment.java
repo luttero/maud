@@ -52,7 +52,7 @@ public class AngularDisalignment extends AngularCalibration {
 
   public AngularDisalignment(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Instrument disalignment";
     IDlabel = "Instrument disalignment";
   }

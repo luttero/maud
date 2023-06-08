@@ -56,7 +56,7 @@ public class StructureFactorPawleyMethod extends StructureFactorExtractor implem
 
   public StructureFactorPawleyMethod(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = id;
     IDlabel = id;
     description = desc;

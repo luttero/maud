@@ -57,7 +57,7 @@ public class IntensityPolAngCalibration extends IntensityCalibration {
 
   public IntensityPolAngCalibration(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Polynomial Angular Intensity";
     IDlabel = "Polynomial Angular Intensity";
   }

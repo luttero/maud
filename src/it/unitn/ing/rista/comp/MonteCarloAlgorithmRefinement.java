@@ -23,11 +23,7 @@ package it.unitn.ing.rista.comp;
 import it.unitn.ing.rista.interfaces.Function;
 import it.unitn.ing.rista.diffr.XRDcat;
 import it.unitn.ing.rista.diffr.FilePar;
-import it.unitn.ing.rista.util.Misc;
-import it.unitn.ing.rista.util.Constants;
 import it.unitn.ing.rista.awt.JOptionsDialog;
-import it.unitn.ing.xgridclient.XGridClient;
-import it.unitn.ing.xgridclient.Client;
 
 import javax.swing.*;
 import java.util.*;
@@ -58,7 +54,7 @@ public class MonteCarloAlgorithmRefinement extends OptimizationAlgorithm {
 
   public MonteCarloAlgorithmRefinement(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "MonteCarlo Refinement";
     IDlabel = "MonteCarlo Refinement";
     description = "select this to use a MonteCarlo approach";

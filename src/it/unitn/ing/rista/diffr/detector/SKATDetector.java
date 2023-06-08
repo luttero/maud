@@ -28,7 +28,6 @@ import it.unitn.ing.rista.util.*;
 
 import java.awt.*;
 import javax.swing.*;
-import java.awt.event.*;
 
 /**
  *  The SKATDetector is a class
@@ -52,7 +51,7 @@ public class SKATDetector extends Detector {
 
   public SKATDetector(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "SKAT detector";
     IDlabel = "SKAT detector";
     description = "SKAT detector";

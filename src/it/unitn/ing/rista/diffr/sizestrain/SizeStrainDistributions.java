@@ -63,7 +63,7 @@ public class SizeStrainDistributions extends SizeStrainModel {
 
   public SizeStrainDistributions(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Distributions";
     IDlabel = "Distributions";
     description = "select this to apply the Distributions model";

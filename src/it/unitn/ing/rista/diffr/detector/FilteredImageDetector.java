@@ -26,7 +26,6 @@ import java.lang.*;
 import it.unitn.ing.rista.awt.JOptionsDialog;
 import it.unitn.ing.rista.awt.JSubordinateLoopListPane;
 import it.unitn.ing.rista.diffr.*;
-import it.unitn.ing.rista.util.Constants;
 
 /**
  *  The FilteredImageDetector is a class
@@ -55,7 +54,7 @@ public class FilteredImageDetector extends Detector {
 
 	public FilteredImageDetector(XRDcat aobj, String alabel) {
 		super(aobj, alabel);
-		initXRD();
+		initBaseObject();
 		identifier = "Filtered Image Detector";
 		IDlabel = "Filtered Image Detector";
 		description = "Filtered Image Detector";

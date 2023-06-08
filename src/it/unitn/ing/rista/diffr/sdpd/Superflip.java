@@ -82,7 +82,7 @@ public class Superflip extends StructureFactorSolveCrystalStructure {
 
   public Superflip(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = "Superflip (Palatinus)";
     IDlabel = "Superflip (Palatinus)";
     description = "select this to obtain Density Maps by Superflip (Palatinus)";
