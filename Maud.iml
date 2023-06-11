@@ -204,5 +204,7 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="JTransforms-3.1-with-dependencies" level="project" />
+    <orderEntry type="library" name="commons-math" level="project" />
+    <orderEntry type="library" name="com.github.tschoonj.xraylib" level="project" />
   </component>
 </module>

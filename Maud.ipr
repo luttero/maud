@@ -59,6 +59,7 @@
     <option name="USE_PER_PROJECT_SETTINGS" value="true" />
   </component>
   <component name="CompilerConfiguration">
+    <option name="USE_RELEASE_OPTION" value="false" />
     <excludeFromCompile>
       <directory url="file://$PROJECT_DIR$/src/jnt" includeSubdirectories="true" />
       <directory url="file://$PROJECT_DIR$/src/HTTPClient" includeSubdirectories="true" />
@@ -89,6 +90,7 @@
       <file url="file://$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Stress.java" />
       <file url="file://$PROJECT_DIR$/src/it/unitn/ing/rista/interfaces/myObj.java" />
       <file url="file://$PROJECT_DIR$/src/it/unitn/ing/rista/io/ZIPNLextractor.java" />
+      <file url="file://$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sizestrain/DiffaXLayerModel.java" />
     </excludeFromCompile>
     <resourceExtensions>
       <entry name=".+\.(properties|xml|html)" />
@@ -103,7 +105,7 @@
       <entry name="?*.jpeg" />
       <entry name="?*.jpg" />
     </wildcardResourcePatterns>
-    <bytecodeTargetLevel target="13" />
+    <bytecodeTargetLevel target="19" />
   </component>
   <component name="CopyrightManager" default="" />
   <component name="DependenciesAnalyzeManager">
@@ -161,25 +163,11 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="Maud" options="--enable-preview --source=19" />
+      <module name="Maud" options="--source=19" />
     </option>
   </component>
   <component name="JavadocGenerationManager">
-    <option name="OUTPUT_DIRECTORY" />
-    <option name="OPTION_SCOPE" value="protected" />
-    <option name="OPTION_HIERARCHY" value="true" />
-    <option name="OPTION_NAVIGATOR" value="true" />
-    <option name="OPTION_INDEX" value="true" />
-    <option name="OPTION_SEPARATE_INDEX" value="true" />
-    <option name="OPTION_DOCUMENT_TAG_USE" value="false" />
-    <option name="OPTION_DOCUMENT_TAG_AUTHOR" value="false" />
-    <option name="OPTION_DOCUMENT_TAG_VERSION" value="false" />
-    <option name="OPTION_DOCUMENT_TAG_DEPRECATED" value="true" />
-    <option name="OPTION_DEPRECATED_LIST" value="true" />
     <option name="OTHER_OPTIONS" value="" />
-    <option name="HEAP_SIZE" />
-    <option name="LOCALE" />
-    <option name="OPEN_IN_BROWSER" value="true" />
   </component>
   <component name="KotlinCommonCompilerArguments">
     <option name="apiVersion" value="1.1" />
@@ -396,7 +384,7 @@
   <component name="ProjectResources">
     <default-html-doctype>http://www.w3.org/1999/xhtml</default-html-doctype>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_X" default="true" project-jdk-name="zulu-19" project-jdk-type="JavaSDK" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_17_PREVIEW" default="true" project-jdk-name="azul-19 (2)" project-jdk-type="JavaSDK" />
   <component name="ResourceManagerContainer">
     <option name="myResourceBundles">
       <value>
@@ -429,6 +417,59 @@
     <library name="JTransforms-3.1-with-dependencies">
       <CLASSES>
         <root url="jar://$PROJECT_DIR$/libs/current/JTransforms-3.1-with-dependencies.jar!/" />
+        <root url="jar://$PROJECT_DIR$/libs/current/aparapi.jar!/" />
+        <root url="jar://$PROJECT_DIR$/libs/current/com.github.tschoonj.xraylib.jar!/" />
+        <root url="jar://$PROJECT_DIR$/libs/current/commons-math.jar!/" />
+        <root url="jar://$PROJECT_DIR$/libs/current/gluegen-rt.jar!/" />
+        <root url="jar://$PROJECT_DIR$/libs/current/ij.jar!/" />
+        <root url="jar://$PROJECT_DIR$/libs/current/jdom.jar!/" />
+        <root url="jar://$PROJECT_DIR$/libs/current/jgaec.jar!/" />
+        <root url="jar://$PROJECT_DIR$/libs/current/jgap.jar!/" />
+        <root url="jar://$PROJECT_DIR$/libs/current/jmol.jar!/" />
+        <root url="jar://$PROJECT_DIR$/libs/current/jogl.all.jar!/" />
+        <root url="jar://$PROJECT_DIR$/libs/current/joone-engine.jar!/" />
+        <root url="jar://$PROJECT_DIR$/libs/current/MySQL-ConnectorJ.jar!/" />
+        <root url="jar://$PROJECT_DIR$/libs/current/nativewindow.all.jar!/" />
+        <root url="jar://$PROJECT_DIR$/libs/current/sqlite-jdbc.jar!/" />
+        <root url="jar://$PROJECT_DIR$/libs/current/swingx.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES>
+        <root url="jar://$PROJECT_DIR$/libs/current/jogl.all.jar!/" />
+        <root url="jar://$PROJECT_DIR$/libs/current/sqlite-jdbc.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="com.github.tschoonj.xraylib">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/com.github.tschoonj.xraylib.jar!/" />
+        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/HTTPClient.jar!/" />
+        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/ij.jar!/" />
+        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/jdom.jar!/" />
+        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/jgaec.jar!/" />
+        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/jgap.jar!/" />
+        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/jmol.jar!/" />
+        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/jogl.all.jar!/" />
+        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/joone-engine.jar!/" />
+        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/Maud.jar!/" />
+        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/miscLib.jar!/" />
+        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/MySQL-ConnectorJ.jar!/" />
+        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/nativewindow.all.jar!/" />
+        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/newt.all.jar!/" />
+        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/sqlite-jdbc.jar!/" />
+        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/swingx.jar!/" />
+        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/xgridagent.jar!/" />
+        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/xgridlib.jar!/" />
+        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/Images.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES>
+        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/jogl.all.jar!/" />
+        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/sqlite-jdbc.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="commons-math">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/libs/current/commons-math.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />

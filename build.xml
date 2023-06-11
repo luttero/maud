@@ -212,6 +212,7 @@
             <exclude name="it/unitn/ing/rista/diffr/sdpd/StructureSolutionGeneticAlgorithmClassic.java"/>
             <exclude name="it/unitn/ing/rista/diffr/sdpd/StructureSolutionReverseMontecarlo.java"/>
             <exclude name="it/unitn/ing/rista/diffr/sdpd/GiacovazzoSirIC.java"/>
+            <exclude name="it/unitn/ing/rista/util/MathExpression.java"/>
             <!--exclude name="it/unitn/ing/rista/diffr/forcefield/ABINITEnergyComputation.java" /-->
             <exclude name="it/unitn/ing/rista/interfaces/myObj.java"/>
             <exclude name="it/unitn/ing/rista/io/ZIPNLextractor.java"/>
