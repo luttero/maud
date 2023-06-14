@@ -2367,7 +2367,6 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 
 	}
 
-
 	public void applyCrystalSymmetryAndCheck(int[] index) {
 
 //    int fold, lphiturn;
@@ -2381,7 +2380,6 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 			index[0] += betama1;
 			index[2] += betama1;
 		}
-
 
 		if (index[0] >= alphama1)
 			index[0] -= alphama1;
@@ -2437,42 +2435,6 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 // Sample symmetry
 		if (getSampleSymmetryValue() == 7)
 			index[0] = 0;
-/*    switch (getSampleSymmetryValue()) {
-/ *			case 1:
-			case 2:
-			case 3:
-				fold = multiplicity + 1;
-				lphiturn = (alphama1) / fold;
-        while (index[0] > lphiturn)
-          index[0] -= lphiturn;
-				break;
-			case 4:
-				fold = 6;
-				lphiturn = (alphama1) / fold;
-        while (index[0] > lphiturn)
-          index[0] -= lphiturn;
-				break;
-			case 5:
-        if (index[0] >= (alphama1) / 2)
-          index[0] = (alphama1) - index[0];
-				break;
-			case 6: // orthorhombic
-        if (index[0] < (alphama1) / 4)
-          break;
-        else if (index[0] <= (alphama1) / 2)
-					index[0] = (alphama1) / 2 - index[0];
-        else if (index[0] <= (alphama1) * 3 / 4)
-					index[0] = index[0] - (alphama1) / 2;
-        else
-          index[0] = (alphama1) - na;
-				break;* /
-      case 7:
-        index[0] = 0;
-        break;
-      default:
-        {
-        }
-    } */
 	}
 
 	public void applyCrystalSymmetry(int[] index) {

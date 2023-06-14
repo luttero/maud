@@ -61,7 +61,6 @@
   <component name="CompilerConfiguration">
     <option name="USE_RELEASE_OPTION" value="false" />
     <excludeFromCompile>
-      <directory url="file://$PROJECT_DIR$/src/jnt" includeSubdirectories="true" />
       <directory url="file://$PROJECT_DIR$/src/HTTPClient" includeSubdirectories="true" />
       <directory url="file://$PROJECT_DIR$/src/gl4java" includeSubdirectories="true" />
       <directory url="file://$PROJECT_DIR$/src/ec" includeSubdirectories="true" />
@@ -71,9 +70,6 @@
       <directory url="file://$PROJECT_DIR$/src/it/unitn/ing/fortran" includeSubdirectories="true" />
       <file url="file://$PROJECT_DIR$/src/org/java/misc/GL4Installer/MSJVMVersionApplet.java" />
       <file url="file://$PROJECT_DIR$/src/ij/gui/PlotWindow.java" />
-      <directory url="file://$PROJECT_DIR$/src/it/unitn/ing/xgridagent" includeSubdirectories="true" />
-      <directory url="file://$PROJECT_DIR$/src/it/unitn/ing/esqui/client" includeSubdirectories="true" />
-      <directory url="file://$PROJECT_DIR$/src/it/unitn/ing/esqui/server" includeSubdirectories="true" />
       <file url="file://$PROJECT_DIR$/src/it/unitn/ing/esqui/wizard/AnalysisMeasurementWizard.java" />
       <file url="file://$PROJECT_DIR$/src/it/unitn/ing/esqui/wizard/AnalysisWizard.java" />
       <file url="file://$PROJECT_DIR$/src/it/unitn/ing/esqui/wizard/MeasurementWizard.java" />
@@ -91,6 +87,8 @@
       <file url="file://$PROJECT_DIR$/src/it/unitn/ing/rista/interfaces/myObj.java" />
       <file url="file://$PROJECT_DIR$/src/it/unitn/ing/rista/io/ZIPNLextractor.java" />
       <file url="file://$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sizestrain/DiffaXLayerModel.java" />
+      <directory url="file://$PROJECT_DIR$/src/it/unitn/ing/esqui/client" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/src/it/unitn/ing/esqui/server" includeSubdirectories="true" />
     </excludeFromCompile>
     <resourceExtensions>
       <entry name=".+\.(properties|xml|html)" />
@@ -163,7 +161,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="Maud" options="--source=19" />
+      <module name="Maud" options="--enable-preview --source=19" />
     </option>
   </component>
   <component name="JavadocGenerationManager">
@@ -384,19 +382,26 @@
   <component name="ProjectResources">
     <default-html-doctype>http://www.w3.org/1999/xhtml</default-html-doctype>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_17_PREVIEW" default="true" project-jdk-name="azul-19 (2)" project-jdk-type="JavaSDK" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_X" default="true" project-jdk-name="zulu-19" project-jdk-type="JavaSDK" />
+  <component name="ProjectRunConfigurationManager">
+    <configuration default="false" name="Maud" type="Application" factoryName="Application" show_console_on_std_err="true" show_console_on_std_out="true">
+      <classpathModifications>
+        <entry path="$PROJECT_DIR$/../../maud/osx_arm/Maud.app/Contents/Java/Maud.jar" />
+        <entry path="$PROJECT_DIR$/../../maud/osx_arm/Maud.app/Contents/Java/Images.jar" />
+      </classpathModifications>
+      <option name="MAIN_CLASS_NAME" value="com.radiographema.Maud" />
+      <module name="Maud" />
+      <option name="VM_PARAMETERS" value=" -mx16384M --enable-preview --enable-native-access=ALL-UNNAMED --add-opens java.base/java.net=ALL-UNNAMED" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
   <component name="ResourceManagerContainer">
     <option name="myResourceBundles">
       <value>
         <list size="0" />
       </value>
-    </option>
-  </component>
-  <component name="RunConfigurationProducerService">
-    <option name="ignoredProducers">
-      <set>
-        <option value="com.android.tools.idea.compose.preview.runconfiguration.ComposePreviewRunConfigurationProducer" />
-      </set>
     </option>
   </component>
   <component name="VcsDirectoryMappings">
@@ -414,62 +419,146 @@
     </option>
   </component>
   <component name="libraryTable">
+    <library name="EsquiClient">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/libs/current/EsquiClient.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
     <library name="JTransforms-3.1-with-dependencies">
       <CLASSES>
         <root url="jar://$PROJECT_DIR$/libs/current/JTransforms-3.1-with-dependencies.jar!/" />
-        <root url="jar://$PROJECT_DIR$/libs/current/aparapi.jar!/" />
-        <root url="jar://$PROJECT_DIR$/libs/current/com.github.tschoonj.xraylib.jar!/" />
-        <root url="jar://$PROJECT_DIR$/libs/current/commons-math.jar!/" />
-        <root url="jar://$PROJECT_DIR$/libs/current/gluegen-rt.jar!/" />
-        <root url="jar://$PROJECT_DIR$/libs/current/ij.jar!/" />
-        <root url="jar://$PROJECT_DIR$/libs/current/jdom.jar!/" />
-        <root url="jar://$PROJECT_DIR$/libs/current/jgaec.jar!/" />
-        <root url="jar://$PROJECT_DIR$/libs/current/jgap.jar!/" />
-        <root url="jar://$PROJECT_DIR$/libs/current/jmol.jar!/" />
-        <root url="jar://$PROJECT_DIR$/libs/current/jogl.all.jar!/" />
-        <root url="jar://$PROJECT_DIR$/libs/current/joone-engine.jar!/" />
-        <root url="jar://$PROJECT_DIR$/libs/current/MySQL-ConnectorJ.jar!/" />
-        <root url="jar://$PROJECT_DIR$/libs/current/nativewindow.all.jar!/" />
-        <root url="jar://$PROJECT_DIR$/libs/current/sqlite-jdbc.jar!/" />
-        <root url="jar://$PROJECT_DIR$/libs/current/swingx.jar!/" />
       </CLASSES>
       <JAVADOC />
-      <SOURCES>
-        <root url="jar://$PROJECT_DIR$/libs/current/jogl.all.jar!/" />
-        <root url="jar://$PROJECT_DIR$/libs/current/sqlite-jdbc.jar!/" />
-      </SOURCES>
+      <SOURCES />
+    </library>
+    <library name="MySQL-ConnectorJ">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/libs/current/MySQL-ConnectorJ.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="aparapi">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/libs/current/aparapi.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
     </library>
     <library name="com.github.tschoonj.xraylib">
       <CLASSES>
-        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/com.github.tschoonj.xraylib.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/HTTPClient.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/ij.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/jdom.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/jgaec.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/jgap.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/jmol.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/jogl.all.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/joone-engine.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/Maud.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/miscLib.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/MySQL-ConnectorJ.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/nativewindow.all.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/newt.all.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/sqlite-jdbc.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/swingx.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/xgridagent.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/xgridlib.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/Images.jar!/" />
+        <root url="jar://$PROJECT_DIR$/libs/current/com.github.tschoonj.xraylib.jar!/" />
       </CLASSES>
       <JAVADOC />
-      <SOURCES>
-        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/jogl.all.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../maud/osx/lib/sqlite-jdbc.jar!/" />
-      </SOURCES>
+      <SOURCES />
     </library>
     <library name="commons-math">
       <CLASSES>
         <root url="jar://$PROJECT_DIR$/libs/current/commons-math.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="gluegen-rt">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/libs/current/gluegen-rt.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="ij">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/libs/current/ij.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="jdom">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/libs/current/jdom.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="jgaec">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/libs/current/jgaec.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="jgap">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/libs/current/jgap.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="jmol">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/libs/current/jmol.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="jogl.all">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/libs/current/jogl.all.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES>
+        <root url="jar://$PROJECT_DIR$/libs/current/jogl.all.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="joone-engine">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/libs/current/joone-engine.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="miscLib">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/libs/current/miscLib.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="nativewindow.all">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/libs/current/nativewindow.all.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="newt.all">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/libs/current/newt.all.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="rome">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/libs/current/rome.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="sqlite-jdbc">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/libs/current/sqlite-jdbc.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES>
+        <root url="jar://$PROJECT_DIR$/libs/current/sqlite-jdbc.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="swingx">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/libs/current/swingx.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />

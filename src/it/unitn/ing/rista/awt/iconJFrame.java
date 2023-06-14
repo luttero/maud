@@ -44,6 +44,7 @@ public class iconJFrame extends JFrame {
   }
 
   public Image getProgramIcon() {
+//	  System.out.println("Opening icon at: " + Constants.imagefolder + Constants.programIcon);
     return (new ImageIcon(Misc.getResourceURL(Constants.imagesJar, Constants.imagefolder + Constants.programIcon))).getImage();
         // Toolkit.getDefaultToolkit().getImage(Misc.getResource(Constants.programIcon));
   }

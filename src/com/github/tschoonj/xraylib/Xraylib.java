@@ -120,9 +120,10 @@ public class Xraylib {
   }
 
   public static boolean XRayInit() throws Exception {
+//	  System.out.println("Init XrayLib start");
 
 	  if (initialised) return true;
-
+// System.out.println("Init XrayLib");
     try {
       DataInputStream inputStream = new DataInputStream(Xraylib.class.getClassLoader().getResourceAsStream("xraylib.dat"));
       int bytes_total = inputStream.available();

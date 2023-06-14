@@ -110,10 +110,19 @@ public class ChebyshevPolynomial {
 		if (n > 15)
 			return 0;
 
-		double t = 0.0;
-
-		for (int i = n; i >= 0; i -= 2) {
-			t += Cm[n][i] * MoreMath.pow(x, i);
+		int i = 0;
+		double xv = 1, t = 0.0, x2 = 1;
+		if (MoreMath.odd(n)) {
+			i++;
+			xv *= x;
+		}
+		t += Cm[n][i] * xv;
+		i += 2;
+		if (n > 1)
+			x2 = x * x;
+		for (; i <= n; i += 2) {
+			xv *= x2;
+			t += Cm[n][i] * xv;
 		}
 
 		return t;

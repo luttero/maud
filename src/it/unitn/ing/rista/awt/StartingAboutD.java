@@ -53,9 +53,9 @@ public class StartingAboutD extends Window {
 /*    if (Constants.ITS)
       abutton.setIcon(new ImageIcon(Misc.getResource(Constants.imagefolder + "MaudIcon_ITS.jpg")));
     else */
-    if (third && !Constants.testing)
-      abutton.setIcon(new ImageIcon(Misc.getResourceURL(Constants.imagesJar, Constants.imagefolder + "Peaks.jpg")));
-    else if (!third && Constants.testing) {
+    if (third && !Constants.testing) {
+	    abutton.setIcon(new ImageIcon(Misc.getResourceURL(Constants.imagesJar, Constants.imagefolder + "Peaks.jpg")));
+    } else if (!third && Constants.testing) {
       abutton.setIcon(new ImageIcon(Misc.getResourceURL(Constants.imagesJar, Constants.imagefolder + "Peaksleos.jpg")));
     } else {
 	    abutton.setIcon(new ImageIcon(Misc.getResourceURL(Constants.imagesJar, Constants.imagefolder + "maud_logo.gif")));

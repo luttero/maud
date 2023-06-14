@@ -12,11 +12,9 @@
     </javadoc-paths>
     <content url="file://$MODULE_DIR$/src">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/it/unitn/ing/xgridagent" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/src/com/hypernex" />
       <excludeFolder url="file://$MODULE_DIR$/src/com/nova" />
-      <excludeFolder url="file://$MODULE_DIR$/src/jnt/scimark2" />
-      <excludeFolder url="file://$MODULE_DIR$/src/net/objecthunter/exp4j" />
-      <excludeFolder url="file://$MODULE_DIR$/src/uk/co/cogitolearning/cogpar" />
       <excludeFolder url="file://$MODULE_DIR$/src/web" />
     </content>
     <orderEntry type="inheritedJdk" />
@@ -206,5 +204,22 @@
     <orderEntry type="library" name="JTransforms-3.1-with-dependencies" level="project" />
     <orderEntry type="library" name="commons-math" level="project" />
     <orderEntry type="library" name="com.github.tschoonj.xraylib" level="project" />
+    <orderEntry type="library" name="aparapi" level="project" />
+    <orderEntry type="library" name="joone-engine" level="project" />
+    <orderEntry type="library" name="sqlite-jdbc" level="project" />
+    <orderEntry type="library" name="gluegen-rt" level="project" />
+    <orderEntry type="library" name="miscLib" level="project" />
+    <orderEntry type="library" name="nativewindow.all" level="project" />
+    <orderEntry type="library" name="swingx" level="project" />
+    <orderEntry type="library" name="rome" level="project" />
+    <orderEntry type="library" name="jdom" level="project" />
+    <orderEntry type="library" name="jgaec" level="project" />
+    <orderEntry type="library" name="jgap" level="project" />
+    <orderEntry type="library" name="ij" level="project" />
+    <orderEntry type="library" name="jmol" level="project" />
+    <orderEntry type="library" name="jogl.all" level="project" />
+    <orderEntry type="library" name="MySQL-ConnectorJ" level="project" />
+    <orderEntry type="library" name="newt.all" level="project" />
+    <orderEntry type="library" name="EsquiClient" level="project" />
   </component>
 </module>

@@ -344,9 +344,9 @@ public class GSASbankIntCalibration extends IntensityCalibration {
     }
   }
 
-  public double getCoeffD(int bank, int index) {
-    return difc[bank][index];
-  }
+//  public double getCoeffD(int bank, int index) {
+//    return difc[bank][index];
+//  }
 
 /*  public String getCoeff(int index, String bank) {
     for (int i = 0; i < banknumbers(); i++)
@@ -401,9 +401,9 @@ public class GSASbankIntCalibration extends IntensityCalibration {
     }
   }
 
-	public double getSplitCoeffD(int bank, int index) {
-		return difc2[bank][index];
-	}
+//	public double getSplitCoeffD(int bank, int index) {
+//		return difc2[bank][index];
+//	}
 
 /*	public String getSplitCoeff(int index, String bank) {
 		for (int i = 0; i < banknumbers(); i++)
@@ -484,7 +484,7 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 
 	public void copyAllParametersToSplit(int bank) {
 		for (int i = 0; i < numberIncSpectrumCoefficients + 1; i++) {
-			setSplitCoeff(i, bank, getCoeffD(bank, i));
+			setSplitCoeff(i, bank, difc[bank][i]);
 		}
 	}
 
@@ -937,23 +937,23 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 		if (index > splitPosition) {
 			switch (typeBankFunction) {
 				case 1:
-					wt = getCoeffD(bank, 0);
+					wt = difc[bank][0];
 					double w4 = 1.0;
 					for (int i = 1; i <= 5; i++) {
 						w4 *= x;
 						int i1 = i * 2;
-						wt += getCoeffD(bank, i1 - 1) * Math.exp(-getCoeffD(bank, i1) * w4);
+						wt += difc[bank][i1 - 1] * Math.exp(-difc[bank][i1] * w4);
 					}
 					break;
 				case 2:
-					wt = getCoeffD(bank, 0);
+					wt = difc[bank][0];
 					w4 = x * x;
-					wt += getCoeffD(bank, 1) * Math.exp(-getCoeffD(bank, 2) / w4) / (w4 * w4 * x);
+					wt += difc[bank][1] * Math.exp(-difc[bank][2] / w4) / (w4 * w4 * x);
 					w4 = x;
 					for (int i = 2; i <= 5; i++) {
 						w4 *= x;
 						int i1 = i * 2;
-						wt += getCoeffD(bank, i1 - 1) * Math.exp(-getCoeffD(bank, i1) * w4);
+						wt += difc[bank][i1 - 1] * Math.exp(-difc[bank][i1] * w4);
 					}
 					break;
 				case 3:
@@ -962,18 +962,18 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 					wt = 0.0;
 
 					for (int i = 0; i < numberIncSpectrumCoefficients; i++)
-						wt += getCoeffD(bank, i) * ChebyshevPolynomial.getT(i, tx);
+						wt += difc[bank][i] * ChebyshevPolynomial.getT(i, tx);
 
 					break;
 				case 4:
 
 					tx = 2.0 / x - 1.0;
-					wt = getCoeffD(bank, 0);
+					wt = difc[bank][0];
 					w4 = x * x;
-					wt += getCoeffD(bank, 1) * Math.exp(-getCoeffD(bank, 2) / w4) / (w4 * w4 * x);
+					wt += difc[bank][1] * Math.exp(-difc[bank][2] / w4) / (w4 * w4 * x);
 //        w4 = x;
 					for (int i = 3; i < numberIncSpectrumCoefficients; i++)
-						wt += getCoeffD(bank, i) * ChebyshevPolynomial.getT(i - 2, tx);
+						wt += difc[bank][i] * ChebyshevPolynomial.getT(i - 2, tx);
 
 					break;
 				case 5:
@@ -981,7 +981,7 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 					wt = 0.0;
 
 					for (int i = 0; i < numberIncSpectrumCoefficients; i++)
-						wt += getCoeffD(bank, i) * ChebyshevPolynomial.getT(i, tx);
+						wt += difc[bank][i] * ChebyshevPolynomial.getT(i, tx);
 
 					break;
 				case 6:
@@ -989,7 +989,7 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 					wt = 0.0;
 
 					for (int i = 0; i < numberIncSpectrumCoefficients; i++)
-						wt += getCoeffD(bank, i) * ChebyshevPolynomial.getT(i, tx);
+						wt += difc[bank][i] * ChebyshevPolynomial.getT(i, tx);
 
 					break;
 				case 10:
@@ -1000,27 +1000,27 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 					wt = 1.0;
 				}
 			}
-			cal = wt * getCoeffD(bank, numberIncSpectrumCoefficients);
+			cal = wt * difc[bank][numberIncSpectrumCoefficients];
 		} else {
 			switch (typeSplitBankFunction) {
 				case 1:
-					wt = getSplitCoeffD(bank, 0);
+					wt = difc2[bank][0];
 					double w4 = 1.0;
 					for (int i = 1; i <= 5; i++) {
 						w4 *= x;
 						int i1 = i * 2;
-						wt += getSplitCoeffD(bank, i1 - 1) * Math.exp(-getSplitCoeffD(bank, i1) * w4);
+						wt += difc2[bank][i1 - 1] * Math.exp(-difc2[bank][i1] * w4);
 					}
 					break;
 				case 2:
-					wt = getSplitCoeffD(bank, 0);
+					wt = difc2[bank][0];
 					w4 = x * x;
-					wt += getSplitCoeffD(bank, 1) * Math.exp(-getSplitCoeffD(bank, 2) / w4) / (w4 * w4 * x);
+					wt += difc2[bank][1] * Math.exp(-difc2[bank][2] / w4) / (w4 * w4 * x);
 					w4 = x;
 					for (int i = 2; i <= 5; i++) {
 						w4 *= x;
 						int i1 = i * 2;
-						wt += getSplitCoeffD(bank, i1 - 1) * Math.exp(-getSplitCoeffD(bank, i1) * w4);
+						wt += difc2[bank][i1 - 1] * Math.exp(-difc2[bank][i1] * w4);
 					}
 					break;
 				case 3:
@@ -1029,18 +1029,18 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 					wt = 0.0;
 
 					for (int i = 0; i < numberIncSpectrumCoefficients; i++)
-						wt += getSplitCoeffD(bank, i) * ChebyshevPolynomial.getT(i, tx);
+						wt += difc2[bank][i] * ChebyshevPolynomial.getT(i, tx);
 
 					break;
 				case 4:
 
 					tx = 2.0 / x - 1.0;
-					wt = getSplitCoeffD(bank, 0);
+					wt = difc2[bank][0];
 					w4 = x * x;
-					wt += getSplitCoeffD(bank, 1) * Math.exp(-getSplitCoeffD(bank, 2) / w4) / (w4 * w4 * x);
+					wt += difc2[bank][1] * Math.exp(-difc2[bank][2] / w4) / (w4 * w4 * x);
 //        w4 = x;
 					for (int i = 3; i < numberIncSpectrumCoefficients; i++)
-						wt += getSplitCoeffD(bank, i) * ChebyshevPolynomial.getT(i - 2, tx);
+						wt += difc2[bank][i] * ChebyshevPolynomial.getT(i - 2, tx);
 
 					break;
 				case 5:
@@ -1048,7 +1048,7 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 					wt = 0.0;
 
 					for (int i = 0; i < numberIncSpectrumCoefficients; i++)
-						wt += getSplitCoeffD(bank, i) * ChebyshevPolynomial.getT(i, tx);
+						wt += difc2[bank][i] * ChebyshevPolynomial.getT(i, tx);
 
 					break;
 				case 6:
@@ -1056,7 +1056,7 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 					wt = 0.0;
 
 					for (int i = 0; i < numberIncSpectrumCoefficients; i++)
-						wt += getSplitCoeffD(bank, i) * ChebyshevPolynomial.getT(i, tx);
+						wt += difc2[bank][i] * ChebyshevPolynomial.getT(i, tx);
 
 					break;
 				case 10:
@@ -1068,7 +1068,7 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 					wt = 1.0;
 				}
 			}
-			cal = wt * getSplitCoeffD(bank, numberIncSpectrumCoefficients);
+			cal = wt * difc2[bank][numberIncSpectrumCoefficients];
 
 		}
 	 if (cal < MINIMUM_INTENSITY_CALIBRATION_VALUE)

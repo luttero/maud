@@ -690,6 +690,7 @@ public class Constants {
     }
 //	  filesJar = libDirname + "Files.jar";
 	  imagesJar = libDirname + "Images.jar";
+	  System.out.println("Images at:" + imagesJar);
 	  helpJar = libDirname + "Help.jar";
 
 //	  jarFileList = null;
