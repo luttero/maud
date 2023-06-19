@@ -18,7 +18,11 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
+<<<<<<< HEAD
 title: MAUD - Materials Analysis Using Diffraction (and more)
+=======
+title:MAUD - Materials Analysis Using Diffraction and not only
+>>>>>>> fcc15bd5920df57e5020ec1e3fca6d38f1473cf6
 email: luca.lutterotti@unitn.it
 description: >- # this means to ignore newlines until "baseurl:"
   Write an awesome description for your new site here. You can edit this
@@ -26,11 +30,15 @@ description: >- # this means to ignore newlines until "baseurl:"
   Google search results) and in your feed.xml site description.
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
+<<<<<<< HEAD
 twitter_username: maud_program
+=======
+twitter_username: maud
+>>>>>>> fcc15bd5920df57e5020ec1e3fca6d38f1473cf6
 github_username:  luttero
 
 # Build settings
-theme: minima
+theme: merlot
 plugins:
   - jekyll-feed
 
