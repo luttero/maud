@@ -30,7 +30,7 @@ twitter_username: MaudProgram
 github_username: luttero
 
 # Build settings
-theme: jekyll-theme-merlot
+remote_theme: "mmistakes/jekyll-theme-basically-basic@1.4.5"
 plugins:
   - jekyll-feed
 
