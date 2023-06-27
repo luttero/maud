@@ -102,7 +102,7 @@ public class StructureFactorPawleyMethod extends StructureFactorExtractor implem
       if (parameterField != null)
       for (int i = 0; i < parameterField.length; i++) {
         if (parameterField[i] == source) {
-            notifyParameterChanged(source, Constants.STRUCTURE_FACTOR_CHANGED);
+            notifyParameterChanged(source, Constants.STRUCTURE_FACTOR_CHANGED, -1);
             return;
         }
       }
@@ -110,7 +110,7 @@ public class StructureFactorPawleyMethod extends StructureFactorExtractor implem
       for (int j = 0; j < parameterloopField.length; j++)
         for (int i = 0; i < parameterloopField[j].size(); i++)
           if (source == parameterloopField[j].elementAt(i)) {
-            notifyParameterChanged(source, Constants.STRUCTURE_FACTOR_CHANGED);
+            notifyParameterChanged(source, Constants.STRUCTURE_FACTOR_CHANGED, -1);
             return;
           }
 

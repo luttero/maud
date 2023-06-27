@@ -100,7 +100,7 @@ public class TDSWarren extends TDSModel {
       if (parameterField != null)
       for (int i = 0; i < parameterField.length; i++) {
         if (parameterField[i] == source) {
-          notifyParameterChanged(source, Constants.TDS_CHANGED);
+          notifyParameterChanged(source, Constants.TDS_CHANGED, -1);
           return;
         }
       }
@@ -108,7 +108,7 @@ public class TDSWarren extends TDSModel {
       for (int j = 0; j < parameterloopField.length; j++)
         for (int i = 0; i < parameterloopField[j].size(); i++)
           if (source == parameterloopField[j].elementAt(i)) {
-            notifyParameterChanged(source, Constants.TDS_CHANGED);
+            notifyParameterChanged(source, Constants.TDS_CHANGED, -1);
             return;
           }
 

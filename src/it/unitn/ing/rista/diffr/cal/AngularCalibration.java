@@ -69,7 +69,7 @@ public class AngularCalibration extends it.unitn.ing.rista.diffr.Calibration {
       if (parameterField != null)
       for (int i = 0; i < parameterField.length; i++) {
         if (source == parameterField[i]) {
-          notifyParameterChanged(source, Constants.ANGULAR_CALIBRATION);
+          notifyParameterChanged(source, Constants.ANGULAR_CALIBRATION, -1);
           return;
         }
       }
@@ -77,7 +77,7 @@ public class AngularCalibration extends it.unitn.ing.rista.diffr.Calibration {
       for (int j = 0; j < parameterloopField.length; j++)
         for (int i = 0; i < parameterloopField[j].size(); i++)
           if (source == parameterloopField[j].elementAt(i)) {
-            notifyParameterChanged(source, Constants.ANGULAR_CALIBRATION);
+            notifyParameterChanged(source, Constants.ANGULAR_CALIBRATION, -1);
             return;
           }
       super.notifyParameterChanged(source);
@@ -89,7 +89,7 @@ public class AngularCalibration extends it.unitn.ing.rista.diffr.Calibration {
   }
 
   public void notifyObjectChanged(XRDcat source) {
-    notifyUpObjectChanged(source, Constants.ANGULAR_CALIBRATION);
+    notifyUpObjectChanged(source, Constants.ANGULAR_CALIBRATION, -1);
   }
 
   public boolean freeAllBasicParameters() {

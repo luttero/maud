@@ -190,7 +190,7 @@ public class ModulatedTurbostraticModel extends PlanarDefects {
 			for (int i = 0; i < parameterField.length; i++) {
 				if (parameterField[i] == source) {
 					if (i > 1) {
-						notifyParameterChanged(source, Constants.STRUCTURE_FACTOR_CHANGED);
+						notifyParameterChanged(source, Constants.STRUCTURE_FACTOR_CHANGED, -1);
 						((Phase) getParent()).refreshReflectionv = true;
 						return;
 					}

@@ -271,12 +271,12 @@ public class Instrument extends XRDcat {
     FilePar filepar = getFilePar();
     if ((filepar != null && !filepar.isLoadingFile()) && isAbilitatetoRefresh) {
         if (source == parameterField[0]) {
-          notifyParameterChanged(source, Constants.BEAM_INTENSITY_CHANGED);
+          notifyParameterChanged(source, Constants.BEAM_INTENSITY_CHANGED, -1);
           return;
         }
       for (int i = 0; i < parameterloopField[0].size(); i++)
         if (source == parameterloopField[0].elementAt(i)) {
-	        notifyParameterChanged(source, Constants.ANGULAR_CALIBRATION);
+	        notifyParameterChanged(source, Constants.ANGULAR_CALIBRATION, -1);
 	        return;
         }
       super.notifyParameterChanged(source);
@@ -336,7 +336,7 @@ public class Instrument extends XRDcat {
       isAbilitatetoRefresh = false;
       setsubordinateField(getIntensityCalibrationID(), value);
       isAbilitatetoRefresh = oldvalue;
-      notifyUpObjectChanged(this, Constants.INTENSITY_CALIBRATION);
+      notifyUpObjectChanged(this, Constants.INTENSITY_CALIBRATION, -1);
     }
   }
 
@@ -369,7 +369,7 @@ public class Instrument extends XRDcat {
       isAbilitatetoRefresh = false;
       setsubordinateField(getAngularCalibrationID(), value);
       isAbilitatetoRefresh = oldvalue;
-      notifyUpObjectChanged(this, Constants.ANGULAR_CALIBRATION);
+      notifyUpObjectChanged(this, Constants.ANGULAR_CALIBRATION, -1);
     }
   }
 
@@ -674,7 +674,7 @@ public class Instrument extends XRDcat {
       getThetaDisplacement(i).setRefinableCheckBound();
   }
 
-  public void boundAllBankCoefficients() {
+  public void boundAllBankShiftsCoefficients() {
     AngularCalibration acal = getAngularCalibration();
     if (acal instanceof GSASbankCalibration)
       ((GSASbankCalibration) acal).boundAllBankCoefficients();

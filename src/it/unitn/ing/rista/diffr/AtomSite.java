@@ -284,12 +284,12 @@ public class AtomSite extends XRDcat {
       for (int i = 0; i < parameterField.length; i++) {
         if (parameterField[i] == source) {
           if (i > 0 && i < 4) {
-            notifyParameterChanged(source, Constants.ATOM_POSITION_CHANGED);
+            notifyParameterChanged(source, Constants.ATOM_POSITION_CHANGED, -1);
 	          refreshPositions = true;
-            notifyParameterChanged(source, Constants.STRUCTURE_FACTOR_CHANGED);
+            notifyParameterChanged(source, Constants.STRUCTURE_FACTOR_CHANGED, -1);
             return;
           } else {
-            notifyParameterChanged(source, Constants.STRUCTURE_FACTOR_CHANGED);
+            notifyParameterChanged(source, Constants.STRUCTURE_FACTOR_CHANGED, -1);
             return;
           }
         }

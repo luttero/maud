@@ -220,7 +220,7 @@ public class ImageBadPixelsMask extends it.unitn.ing.rista.diffr.DataMask {
 			isAbilitatetoRefresh = false;
 			for (it.unitn.ing.rista.util.ListVector listVector : stringloopField) listVector.removeItemAt(index);
 			isAbilitatetoRefresh = isAbilitate;
-			notifyUpObjectChanged(this, Constants.ANGULAR_CALIBRATION);
+			notifyUpObjectChanged(this, Constants.ANGULAR_CALIBRATION, -1);
 		} catch (Exception e) {
 			e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
 		}

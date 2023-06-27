@@ -151,13 +151,13 @@ public class InstrumentBroadeningGSAS1f extends InstrumentBroadening {
       for (int j = 0; j < parameterloopField.length - 1; j++)
         for (int i = 0; i < parameterloopField[j].size(); i++)
           if (source == parameterloopField[j].elementAt(i)) {
-            notifyParameterChanged(source, Constants.INSTRUMENT_BROADENING);
+            notifyParameterChanged(source, Constants.INSTRUMENT_BROADENING, -1);
             return;
           }
 
 	    for (int i = 0; i < parameterloopField[broadeningTextureID].size(); i++)
 		    if (source == parameterloopField[broadeningTextureID].elementAt(i)) {
-			    notifyParameterChanged(source, Constants.TEXTURE_CHANGED);
+			    notifyParameterChanged(source, Constants.TEXTURE_CHANGED, -1);
 			    return;
 		    }
       }
@@ -266,7 +266,7 @@ public class InstrumentBroadeningGSAS1f extends InstrumentBroadening {
       for (int i = 0; i < parameterloopField.length; i++)
         parameterloopField[i].removeItemAt(indexToRemove);
       isAbilitatetoRefresh = isAbilitate;
-      notifyUpObjectChanged(this, Constants.INSTRUMENT_BROADENING);
+      notifyUpObjectChanged(this, Constants.INSTRUMENT_BROADENING, -1);
   }
 
   public void setFileName(String filename) {
@@ -484,7 +484,7 @@ public class InstrumentBroadeningGSAS1f extends InstrumentBroadening {
     }
     isAbilitatetoRefresh = isAbilitate;
     checkConsistency();
-    notifyUpObjectChanged(this, Constants.INSTRUMENT_BROADENING);
+    notifyUpObjectChanged(this, Constants.INSTRUMENT_BROADENING, -1);
   }
 
   void checkConsistency() {

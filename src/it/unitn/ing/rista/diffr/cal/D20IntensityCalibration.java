@@ -32,7 +32,6 @@ import it.unitn.ing.rista.awt.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.border.*;
 
 
 /**
@@ -130,7 +129,7 @@ public class D20IntensityCalibration extends IntensityFileCalibration {
       }
     }
     isAbilitatetoRefresh = isAbilitate;
-    notifyUpObjectChanged(this, Constants.INTENSITY_CALIBRATION);
+    notifyUpObjectChanged(this, Constants.INTENSITY_CALIBRATION, -1);
 
   }
 

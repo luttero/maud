@@ -22,9 +22,7 @@ package it.unitn.ing.rista.diffr.cal;
 
 import it.unitn.ing.rista.diffr.*;
 
-import java.io.*;
 import java.lang.*;
-import java.util.*;
 
 import it.unitn.ing.rista.util.*;
 
@@ -70,7 +68,7 @@ public class IntensityCalibration extends it.unitn.ing.rista.diffr.Calibration {
         if (parameterField != null)
         for (int i = 0; i < parameterField.length; i++) {
           if (source == parameterField[i]) {
-            notifyParameterChanged(source, Constants.INTENSITY_CALIBRATION);
+            notifyParameterChanged(source, Constants.INTENSITY_CALIBRATION, -1);
             return;
           }
         }
@@ -78,7 +76,7 @@ public class IntensityCalibration extends it.unitn.ing.rista.diffr.Calibration {
         for (int j = 0; j < parameterloopField.length; j++)
           for (int i = 0; i < parameterloopField[j].size(); i++)
             if (source == parameterloopField[j].elementAt(i)) {
-              notifyParameterChanged(source, Constants.INTENSITY_CALIBRATION);
+              notifyParameterChanged(source, Constants.INTENSITY_CALIBRATION, -1);
               return;
             }
         super.notifyParameterChanged(source);
@@ -90,7 +88,7 @@ public class IntensityCalibration extends it.unitn.ing.rista.diffr.Calibration {
   }
 
   public void notifyObjectChanged(XRDcat source) {
-    notifyUpObjectChanged(source, Constants.INTENSITY_CALIBRATION);
+    notifyUpObjectChanged(source, Constants.INTENSITY_CALIBRATION, -1);
   }
 
 }

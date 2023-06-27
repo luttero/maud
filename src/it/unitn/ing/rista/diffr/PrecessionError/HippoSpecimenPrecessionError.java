@@ -96,7 +96,7 @@ public class HippoSpecimenPrecessionError extends SpecimenPrecessionError {
     if ((filepar != null && !filepar.isLoadingFile()) && isAbilitatetoRefresh) {
       for (int i = 0; i < parameterField.length; i++) {
         if (source == parameterField[i]) {
-          notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED);
+          notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED, -1);
           return;
         }
       }

@@ -174,17 +174,17 @@ public class GSASbankCalibration extends AngularCalibration {
 			for (int bank = 0; bank < banks; bank++) {
 				for (int i = 0; i < 3; i++)
 					if (source == getParameterFromLoop(i, bank)) {
-						notifyParameterChanged(source, Constants.ANGULAR_CALIBRATION);
+						notifyParameterChanged(source, Constants.ANGULAR_CALIBRATION, -1);
 						return;
 					}
 				for (int i = 3; i < 5; i++)
 					if (source == getParameterFromLoop(i, bank)) {
-						notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED);
-						notifyParameterChanged(source, Constants.TEXTURE_CHANGED);
+						notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED, -1);
+						notifyParameterChanged(source, Constants.TEXTURE_CHANGED, -1);
 						return;
 					}
 				if (source == getParameterFromLoop(5, bank)) {
-					notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED);
+					notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED, -1);
 					return;
 				}
 			}
@@ -269,7 +269,7 @@ public class GSASbankCalibration extends AngularCalibration {
       for (int i = 0; i < parameterloopField.length; i++)
         parameterloopField[i].removeItemAt(indexToRemove);
       isAbilitatetoRefresh = isAbilitate;
-      notifyUpObjectChanged(this, Constants.ANGULAR_CALIBRATION);
+      notifyUpObjectChanged(this, Constants.ANGULAR_CALIBRATION, -1);
     } catch (Exception e) {
       e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
     }
@@ -658,7 +658,7 @@ public class GSASbankCalibration extends AngularCalibration {
     checkConsistency(true);
 
     isAbilitatetoRefresh = isAbilitate;
-    notifyUpObjectChanged(this, Constants.ANGULAR_CALIBRATION);
+    notifyUpObjectChanged(this, Constants.ANGULAR_CALIBRATION, -1);
   }
 
   public Parameter getCoeff(int loop, int index) {

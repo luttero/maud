@@ -175,7 +175,7 @@ public class TOFPanelIntensityCalibration extends IntensityCalibration {
 
 	public void setSplitPosition(double pos) {
 		if (splitPosition != pos)
-			notifyUpObjectChanged(this, Constants.INTENSITY_CALIBRATION);
+			notifyUpObjectChanged(this, Constants.INTENSITY_CALIBRATION, -1);
 		splitPosition = pos;
 		stringField[2] = Double.toString(pos);
 	}
@@ -729,7 +729,7 @@ public class TOFPanelIntensityCalibration extends IntensityCalibration {
 			}
 		}
 		isAbilitatetoRefresh = isAbilitate;
-		notifyUpObjectChanged(this, Constants.INTENSITY_CALIBRATION);
+		notifyUpObjectChanged(this, Constants.INTENSITY_CALIBRATION, -1);
 	}
 
 	@Override
@@ -893,7 +893,7 @@ public class TOFPanelIntensityCalibration extends IntensityCalibration {
 			for (int i = 0; i < parameterloopField.length; i++)
 				parameterloopField[i].removeItemAt(indexToRemove);
 			isAbilitatetoRefresh = isAbilitate;
-			notifyUpObjectChanged(this, Constants.INTENSITY_CALIBRATION);
+			notifyUpObjectChanged(this, Constants.INTENSITY_CALIBRATION, -1);
 		} catch (Exception e) {
 			e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
 		}

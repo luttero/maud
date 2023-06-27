@@ -549,26 +549,26 @@ public class Phase extends XRDcat {
       for (int i = 0; i < parameterField.length; i++)
         if (source == parameterField[i]) {
           if (i < 6 && !isRefreshingCell) {
-            notifyParameterChanged(source, Constants.CELL_CHANGED);
+            notifyParameterChanged(source, Constants.CELL_CHANGED, -1);
             return;
           }
           if (i == 6) {
-            notifyParameterChanged(source, Constants.THERMAL_SHIFT_CHANGED);
-            notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED);
+            notifyParameterChanged(source, Constants.THERMAL_SHIFT_CHANGED, -1);
+            notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED, -1);
             return;
           }
           if (i == 7) {
-            notifyParameterChanged(source, Constants.PHASE_WEIGHT_CHANGED);
-	          notifyParameterChanged(source, Constants.STRUCTURE_FACTOR_CHANGED);
+            notifyParameterChanged(source, Constants.PHASE_WEIGHT_CHANGED, -1);
+	          notifyParameterChanged(source, Constants.STRUCTURE_FACTOR_CHANGED, -1);
             return;
           }
           if (i == 8) {
-            notifyParameterChanged(source, Constants.BEAM_INTENSITY_CHANGED);
+            notifyParameterChanged(source, Constants.BEAM_INTENSITY_CHANGED, -1);
             return;
           }
         }
 
-      super.notifyParameterChanged(source, Constants.PARAMETER_CHANGED);
+      super.notifyParameterChanged(source, Constants.PARAMETER_CHANGED, -1);
     }
   }
 
@@ -590,7 +590,7 @@ public class Phase extends XRDcat {
 //    getActiveTexture().refreshComputation = true;
   }
 
-  public void refreshForNotificationUp(XRDcat source, int reason) {
+  public void refreshForNotificationUp(XRDcat source, int reason, int paramNumber) {
     refreshComputation = true;
     if (source == null)
       return;
@@ -1056,7 +1056,7 @@ public class Phase extends XRDcat {
 			  refreshCrystMicrostrain = true;
 			  getActiveTexture().refreshComputation = true;
 			  getActiveStrain().refreshComputation = true;
-			  notifyUpObjectChanged(this, Constants.STRING_CHANGED);
+			  notifyUpObjectChanged(this, Constants.STRING_CHANGED, -1);
 		  }
 	  } else {
 		  String newsg = null;
@@ -1182,7 +1182,7 @@ public class Phase extends XRDcat {
 				  refreshCrystMicrostrain = true;
 				  getActiveTexture().refreshComputation = true;
 				  getActiveStrain().refreshComputation = true;
-				  notifyUpObjectChanged(this, Constants.STRING_CHANGED);
+				  notifyUpObjectChanged(this, Constants.STRING_CHANGED, -1);
 			  } catch (NullPointerException e) {
 				  e.printStackTrace();
 				  stringField[5] = sg;

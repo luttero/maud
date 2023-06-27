@@ -85,12 +85,12 @@ public class DataSetSample extends XRDcat {
     if (filepar != null && !filepar.isLoadingFile() && isAbilitatetoRefresh) {
       for (int i = 0; i < 3; i++)
         if (source == parameterField[i]) {
-          notifyParameterChanged(source, Constants.SAMPLE_ORIENTATION_CHANGED);
+          notifyParameterChanged(source, Constants.SAMPLE_ORIENTATION_CHANGED, -1);
           return;
         }
       for (int i = 3; i < 6; i++)
         if (source == parameterField[i]) {
-          notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED);
+          notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED, -1);
           return;
         }
     }

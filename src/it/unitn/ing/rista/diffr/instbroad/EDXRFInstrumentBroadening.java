@@ -174,7 +174,7 @@ public class EDXRFInstrumentBroadening extends InstrumentBroadening {
       for (int j = 0; j < parameterloopField.length; j++)
         for (int i = 0; i < parameterloopField[j].size(); i++)
           if (source == parameterloopField[j].elementAt(i)) {
-            notifyParameterChanged(source, Constants.INSTRUMENT_BROADENING);
+            notifyParameterChanged(source, Constants.INSTRUMENT_BROADENING, -1);
             return;
           }
 

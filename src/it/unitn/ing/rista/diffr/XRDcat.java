@@ -933,7 +933,7 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
 
   public void addparameterloopField(int numberlist, Parameter aparameter) {
     parameterloopField[numberlist].addItem(aparameter);
-    notifyUpObjectChanged(this, Constants.PARAMETER_ADDED);
+    notifyUpObjectChanged(this, Constants.PARAMETER_ADDED, -1);
   }
 
   public XRDcat setsubordinateField(int numberlist, XRDcat obj) {
@@ -942,7 +942,7 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
       subordinateField[numberlist] = null;
     }
     subordinateField[numberlist] = obj;
-    notifyUpObjectChanged(this, Constants.OBJECT_CHANGED);
+    notifyUpObjectChanged(this, Constants.OBJECT_CHANGED, -1);
     return obj;
   }
 
@@ -958,7 +958,7 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
     }
     try {
       subordinateField[numberlist] = (XRDcat) factory(this, alabel, filterClass(classlists[numberlist], alabel));
-      notifyUpObjectChanged(this, Constants.OBJECT_CHANGED);
+      notifyUpObjectChanged(this, Constants.OBJECT_CHANGED, -1);
     } catch (CannotCreateXRDcat e) {
       e.printStackTrace();
     } catch (PrototypeNotFound ex) {
@@ -974,7 +974,7 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
     if (!obj.mustRemoved) {
 //    System.out.println("The sub: " + obj + ", " + obj.getTheRealOne());
       subordinateloopField[numberlist].addItem(obj.getTheRealOne());
-      notifyUpObjectChanged(this, Constants.OBJECT_ADDED);
+      notifyUpObjectChanged(this, Constants.OBJECT_ADDED, -1);
 //			System.out.println(obj.toXRDcatString() + " added");
       return obj;
     } else {
@@ -986,7 +986,7 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
   public XRDcat addsubordinateloopField(int numberlist, XRDcat obj, int index) {
     if (!obj.mustRemoved) {
       subordinateloopField[numberlist].insertItem(obj.getTheRealOne(), index);
-      notifyUpObjectChanged(this, Constants.OBJECT_ADDED);
+      notifyUpObjectChanged(this, Constants.OBJECT_ADDED, -1);
 //			System.out.println(obj.toXRDcatString() + " added");
       return obj;
     } else {
@@ -1024,42 +1024,42 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
 
   public boolean removeselSLField(int numberlist) {
     boolean res = stringloopField[numberlist].removeSelElement();
-    notifyUpObjectChanged(this, Constants.STRING_REMOVED);
+    notifyUpObjectChanged(this, Constants.STRING_REMOVED, -1);
     return res;
   }
 
   public boolean removeselPLField(int numberlist) {
     boolean res = parameterloopField[numberlist].removeSelElement();
-    notifyUpObjectChanged(this, Constants.PARAMETER_REMOVED);
+    notifyUpObjectChanged(this, Constants.PARAMETER_REMOVED, -1);
     return res;
   }
 
   public boolean removeAllPLField(int numberlist) {
     parameterloopField[numberlist].removeAllItems();
-    notifyUpObjectChanged(this, Constants.PARAMETER_REMOVED);
+    notifyUpObjectChanged(this, Constants.PARAMETER_REMOVED, -1);
     return true;
   }
 
   public boolean removesPLField(int numberlist, int index) {
     parameterloopField[numberlist].removeItemAt(index);
-    notifyUpObjectChanged(this, Constants.PARAMETER_REMOVED);
+    notifyUpObjectChanged(this, Constants.PARAMETER_REMOVED, -1);
     return true;
   }
 
   public boolean removeselSubLField(int numberlist) {
     boolean res = subordinateloopField[numberlist].removeSelElement();
-    notifyUpObjectChanged(this, Constants.OBJECT_REMOVED);
+    notifyUpObjectChanged(this, Constants.OBJECT_REMOVED, -1);
     return res;
   }
 
   public void removeSubLFieldAt(int numberlist, int element) {
     subordinateloopField[numberlist].removeItemAt(element);
-    notifyUpObjectChanged(this, Constants.OBJECT_REMOVED);
+    notifyUpObjectChanged(this, Constants.OBJECT_REMOVED, -1);
   }
 
   public void removeSubLField(int numberlist, int index) {
     subordinateloopField[numberlist].removeItemAt(index);
-    notifyUpObjectChanged(this, Constants.OBJECT_REMOVED);
+    notifyUpObjectChanged(this, Constants.OBJECT_REMOVED, -1);
   }
 
   public int numberofelementSL(int numberlist) {
@@ -1101,14 +1101,14 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
       super.notifyParameterChanged(source);
     }
 */
-    notifyParameterChanged(source, Constants.PARAMETER_CHANGED);
+    notifyParameterChanged(source, Constants.PARAMETER_CHANGED, -1);
   }
 
-  public void notifyParameterChanged(Parameter source, int reason) {
+  public void notifyParameterChanged(Parameter source, int reason, int paramNumber) {
     FilePar filepar = getFilePar();
     if ((filepar != null && !filepar.isLoadingFile()) && isAbilitatetoRefresh) {
 //      updateParametertoDoubleBuffering();
-      notifyUpObjectChanged(this, reason);
+      notifyUpObjectChanged(this, reason, paramNumber);
     }
   }
 
@@ -1120,24 +1120,24 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
     FilePar filepar = getFilePar();
     if (filepar != null && !filepar.isLoadingFile() && isAbilitatetoRefresh) {
 //      updateStringtoDoubleBuffering();
-      notifyUpObjectChanged(this, reason);
+      notifyUpObjectChanged(this, reason, -1);
     }
   }
 
   public void notifyObjectChanged(XRDcat source) {
-    notifyUpObjectChanged(source, Constants.OBJECT_CHANGED);
+    notifyUpObjectChanged(source, Constants.OBJECT_CHANGED, -1);
   }
 
-  public void notifyUpObjectChanged(XRDcat source, int reason) {
+  public void notifyUpObjectChanged(XRDcat source, int reason, int paramNumber) {
     FilePar filepar = getFilePar();
     if (filepar != null && !filepar.isLoadingFile() && isAbilitatetoRefresh) {
-      refreshForNotificationUp(source, reason);
+      refreshForNotificationUp(source, reason, paramNumber);
       if (source == this)
         update(false);
       if (shouldNotifyParent(source, reason)) {
         XRDcat obj = getParent();
         if (obj != null)
-          obj.notifyUpObjectChanged(source, reason);
+          obj.notifyUpObjectChanged(source, reason, paramNumber);
       }
     }
   }
@@ -1170,7 +1170,7 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
 	public void checkConsistencyForVersion(double version) {
 	}
 
-	public void refreshForNotificationUp(XRDcat source, int reason) {
+	public void refreshForNotificationUp(XRDcat source, int reason, int paramNumber) {
     if (!getFilePar().isComputingDerivate() || source == this)
       refreshComputation = true;
   }

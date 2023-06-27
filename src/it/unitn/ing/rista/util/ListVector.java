@@ -73,9 +73,9 @@ public class ListVector extends Vector {
     XRDcat parent = ((basicObj) obj).getParent();
     if (parent != null) {
       if (obj instanceof Parameter)
-        parent.notifyUpObjectChanged(parent, Constants.PARAMETER_ADDED);
+        parent.notifyUpObjectChanged(parent, Constants.PARAMETER_ADDED, -1);
       else
-        parent.notifyUpObjectChanged(parent, Constants.OBJECT_ADDED);
+        parent.notifyUpObjectChanged(parent, Constants.OBJECT_ADDED, -1);
     }
     }
     updateList();
@@ -87,9 +87,9 @@ public class ListVector extends Vector {
     XRDcat parent = ((basicObj) obj).getParent();
     if (parent != null) {
       if (obj instanceof Parameter)
-        parent.notifyUpObjectChanged(parent, Constants.PARAMETER_ADDED);
+        parent.notifyUpObjectChanged(parent, Constants.PARAMETER_ADDED, -1);
       else
-        parent.notifyUpObjectChanged(parent, Constants.OBJECT_ADDED);
+        parent.notifyUpObjectChanged(parent, Constants.OBJECT_ADDED, -1);
     }
     }
     updateList();
@@ -101,9 +101,9 @@ public class ListVector extends Vector {
     XRDcat parent = ((basicObj) obj).getParent();
     if (parent != null) {
       if (obj instanceof Parameter)
-        parent.notifyUpObjectChanged(parent, Constants.PARAMETER_CHANGED);
+        parent.notifyUpObjectChanged(parent, Constants.PARAMETER_CHANGED, -1);
       else
-        parent.notifyUpObjectChanged(parent, Constants.OBJECT_CHANGED);
+        parent.notifyUpObjectChanged(parent, Constants.OBJECT_CHANGED, -1);
     }
     }
     updateList();
@@ -122,7 +122,7 @@ public class ListVector extends Vector {
     xrdobj.setLabel(alabel);
     XRDcat parent = xrdobj.getParent();
     if (parent != null)
-      parent.notifyUpObjectChanged(parent, Constants.OBJECT_CHANGED);
+      parent.notifyUpObjectChanged(parent, Constants.OBJECT_CHANGED, -1);
     updateList();
   }
 
@@ -137,9 +137,9 @@ public class ListVector extends Vector {
 //        System.out.println("Removed the peaks " + index);
         if (parent != null) {
           if (obj instanceof Parameter)
-            parent.notifyUpObjectChanged(parent, Constants.PARAMETER_REMOVED);
+            parent.notifyUpObjectChanged(parent, Constants.PARAMETER_REMOVED, -1);
           else
-            parent.notifyUpObjectChanged(parent, Constants.OBJECT_REMOVED);
+            parent.notifyUpObjectChanged(parent, Constants.OBJECT_REMOVED, -1);
         }
         ((basicObj) obj).dispose();
       } else
@@ -159,7 +159,7 @@ public class ListVector extends Vector {
         ((basicObj) obj1).merge((basicObj) obj2);
         XRDcat parent = ((basicObj) obj1).getParent();
         if (parent != null)
-          parent.notifyUpObjectChanged(parent, Constants.OBJECT_CHANGED);
+          parent.notifyUpObjectChanged(parent, Constants.OBJECT_CHANGED, -1);
       }
     }
   }
@@ -174,12 +174,12 @@ public class ListVector extends Vector {
       if (firstobj instanceof basicObj) {
         XRDcat parent = ((basicObj) firstobj).getParent();
         if (parent != null)
-          parent.notifyUpObjectChanged(parent, Constants.OBJECT_CHANGED);
+          parent.notifyUpObjectChanged(parent, Constants.OBJECT_CHANGED, -1);
       }
       if (secondobj instanceof basicObj) {
         XRDcat parent = ((basicObj) secondobj).getParent();
         if (parent != null)
-          parent.notifyUpObjectChanged(parent, Constants.OBJECT_CHANGED);
+          parent.notifyUpObjectChanged(parent, Constants.OBJECT_CHANGED, -1);
       }
       updateList();
     }

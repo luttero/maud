@@ -256,12 +256,12 @@ public class Layer extends XRDcat {
       for (int i = 0; i < Nparameter; i++)
         if (source == parameterField[i]) {
           if (i == 0) {
-            notifyParameterChanged(source, Constants.THICKNESS_CHANGED);
-            notifyParameterChanged(source, Constants.REFLECTIVITY_PARAMETER_CHANGED);
+            notifyParameterChanged(source, Constants.THICKNESS_CHANGED, -1);
+            notifyParameterChanged(source, Constants.REFLECTIVITY_PARAMETER_CHANGED, -1);
 //ll	          resetTables();
 	          return;
           } else {
-            notifyParameterChanged(source, Constants.REFLECTIVITY_PARAMETER_CHANGED);
+            notifyParameterChanged(source, Constants.REFLECTIVITY_PARAMETER_CHANGED, -1);
             return;
           }
         }
@@ -269,7 +269,7 @@ public class Layer extends XRDcat {
         for (int j = 0; j < numberofelementPL(i); j++) {
           Parameter apar = (Parameter) parameterloopField[i].elementAt(j);
           if (apar == source) {
-            notifyParameterChanged(source, Constants.PHASE_WEIGHT_CHANGED);
+            notifyParameterChanged(source, Constants.PHASE_WEIGHT_CHANGED, -1);
 	          chemicalComposition = null;
 //ll	          resetTables();
             return;

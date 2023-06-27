@@ -174,7 +174,7 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 
   public void setSplitPosition(double pos) {
 	  if (splitPosition != pos)
-		  notifyUpObjectChanged(this, Constants.INTENSITY_CALIBRATION);
+		  notifyUpObjectChanged(this, Constants.INTENSITY_CALIBRATION, -1);
 	  splitPosition = pos;
 	  stringField[2] = Double.toString(pos);
   }
@@ -338,7 +338,7 @@ public class GSASbankIntCalibration extends IntensityCalibration {
       for (int i = 0; i < parameterloopField.length; i++)
         parameterloopField[i].removeItemAt(indexToRemove);
       isAbilitatetoRefresh = isAbilitate;
-      notifyUpObjectChanged(this, Constants.INTENSITY_CALIBRATION);
+      notifyUpObjectChanged(this, Constants.INTENSITY_CALIBRATION, -1);
     } catch (Exception e) {
       e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
     }
@@ -759,7 +759,7 @@ public class GSASbankIntCalibration extends IntensityCalibration {
       }
     }
     isAbilitatetoRefresh = isAbilitate;
-    notifyUpObjectChanged(this, Constants.INTENSITY_CALIBRATION);
+    notifyUpObjectChanged(this, Constants.INTENSITY_CALIBRATION, -1);
   }
 
 	@Override
@@ -1076,6 +1076,26 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 	 return cal;
   }
 
+	public void notifyParameterChanged(Parameter source) {
+		FilePar filepar = getFilePar();
+		if ((filepar != null && !filepar.isLoadingFile()) && isAbilitatetoRefresh) {
+			if (parameterField != null)
+				for (int i = 0; i < parameterField.length; i++) {
+					if (source == parameterField[i]) {
+						notifyParameterChanged(source, Constants.INTENSITY_CALIBRATION, -1);
+						return;
+					}
+				}
+			if (parameterloopField != null)
+				for (int j = 0; j < parameterloopField.length; j++)
+					for (int i = 0; i < parameterloopField[j].size(); i++)
+						if (source == parameterloopField[j].elementAt(i)) {
+							notifyParameterChanged(source, Constants.INTENSITY_CALIBRATION, i);
+							return;
+						}
+			super.notifyParameterChanged(source);
+		}
+	}
   public JOptionsDialog getOptionsDialog(Frame parent) {
     JOptionsDialog adialog = new JBankOptionsD(parent, this);
     return adialog;

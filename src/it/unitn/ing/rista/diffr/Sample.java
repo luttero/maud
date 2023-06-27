@@ -338,7 +338,7 @@ public class Sample extends Maincat {
 					}
 				}
 				getFilePar().loadingFile = false;
-				notifyUpObjectChanged(this, Constants.OBJECT_ADDED);
+				notifyUpObjectChanged(this, Constants.OBJECT_ADDED, -1);
 				refreshAll(false);
 			}
 			getFilePar().loadingFile = false;
@@ -360,7 +360,7 @@ public class Sample extends Maincat {
         }
       }
       getFilePar().loadingFile = false;
-      notifyUpObjectChanged(this, Constants.OBJECT_ADDED);
+      notifyUpObjectChanged(this, Constants.OBJECT_ADDED, -1);
       refreshAll(false);
     }
     getFilePar().loadingFile = false;
@@ -505,7 +505,7 @@ public class Sample extends Maincat {
 			}
 		}
 		Constants.refreshTreePermitted = true;
-		notifyUpObjectChanged(this, 0);
+		notifyUpObjectChanged(this, 0, -1);
 	}
 
 /*  public DataFileSet newData() {
@@ -1425,16 +1425,16 @@ public class Sample extends Maincat {
       for (int i = 0; i < parameterField.length; i++) {
         if (source == parameterField[i]) {
           if (i < 3) {
-            notifyParameterChanged(source, Constants.SAMPLE_ORIENTATION_CHANGED);
+            notifyParameterChanged(source, Constants.SAMPLE_ORIENTATION_CHANGED, -1);
             return;
           }
           if (i > 2 && i < 6) {
-            notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED);
+            notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED, -1);
             return;
           }
           if (i > 5 && i < 11) {
-            notifyParameterChanged(source, Constants.ANGULAR_CALIBRATION);
-            notifyParameterChanged(source, Constants.LORENTZ_POLARIZATION_CHANGED);
+            notifyParameterChanged(source, Constants.ANGULAR_CALIBRATION, -1);
+            notifyParameterChanged(source, Constants.LORENTZ_POLARIZATION_CHANGED, -1);
             return;
           }
         }
@@ -2509,7 +2509,7 @@ public class Sample extends Maincat {
         }
       }
       getFilePar().loadingFile = false;
-      notifyUpObjectChanged(this, Constants.OBJECT_ADDED);
+      notifyUpObjectChanged(this, Constants.OBJECT_ADDED, -1);
       refreshAll(false);
     }
     getFilePar().loadingFile = false;

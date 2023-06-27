@@ -206,7 +206,7 @@ public class AngularFileCalibration extends AngularCalibration {
       }
     }
     isAbilitatetoRefresh = isAbilitate;
-    notifyUpObjectChanged(this, Constants.ANGULAR_CALIBRATION);
+    notifyUpObjectChanged(this, Constants.ANGULAR_CALIBRATION, -1);
 
   }
 

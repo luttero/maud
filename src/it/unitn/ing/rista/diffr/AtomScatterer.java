@@ -126,7 +126,7 @@ public class AtomScatterer extends Scatterer {
 	}
 
 	public void notifyObjectChanged(XRDcat source) {
-		notifyUpObjectChanged(source, Constants.STRUCTURE_FACTOR_CHANGED);
+		notifyUpObjectChanged(source, Constants.STRUCTURE_FACTOR_CHANGED, -1);
 	}
 
 	public void notifyParameterChanged(Parameter source) {
@@ -136,7 +136,7 @@ public class AtomScatterer extends Scatterer {
 				if (parameterField != null)
 					for (int i = 0; i < parameterField.length; i++) {
 						if (parameterField[i] == source) {
-							notifyParameterChanged(source, Constants.STRUCTURE_FACTOR_CHANGED);
+							notifyParameterChanged(source, Constants.STRUCTURE_FACTOR_CHANGED, -1);
 							return;
 						}
 					}

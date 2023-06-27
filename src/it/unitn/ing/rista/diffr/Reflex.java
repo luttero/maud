@@ -94,7 +94,7 @@ public class Reflex extends XRDcat {
       if (parameterField != null)
       for (int i = 0; i < parameterField.length; i++) {
         if (parameterField[i] == source) {
-          notifyParameterChanged(source, Constants.PEAKS_PARAMETER_CHANGED);
+          notifyParameterChanged(source, Constants.PEAKS_PARAMETER_CHANGED, -1);
           return;
         }
       }

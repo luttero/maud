@@ -140,7 +140,7 @@ public class SampleShapePopa extends SampleShape implements Shape3D {
       if (parameterField != null)
       for (int i = 0; i < parameterField.length; i++) {
         if (parameterField[i] == source) {
-            notifyParameterChanged(source, Constants.SHAPE_ABSORPTION_CHANGED);
+            notifyParameterChanged(source, Constants.SHAPE_ABSORPTION_CHANGED, -1);
             return;
         }
       }
@@ -148,7 +148,7 @@ public class SampleShapePopa extends SampleShape implements Shape3D {
       for (int j = 0; j < parameterloopField.length; j++)
         for (int i = 0; i < parameterloopField[j].size(); i++)
           if (source == parameterloopField[j].elementAt(i)) {
-            notifyParameterChanged(source, Constants.SHAPE_ABSORPTION_CHANGED);
+            notifyParameterChanged(source, Constants.SHAPE_ABSORPTION_CHANGED, -1);
             return;
           }
 

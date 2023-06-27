@@ -126,7 +126,7 @@ public class GeometryDiffractometer extends Geometry {
     if ((filepar != null && !filepar.isLoadingFile()) && isAbilitatetoRefresh) {
       for (int i = 0; i < parameterField.length; i++) {
         if (source == parameterField[i]) {
-            notifyParameterChanged(source, Constants.LORENTZ_POLARIZATION_CHANGED);
+            notifyParameterChanged(source, Constants.LORENTZ_POLARIZATION_CHANGED, -1);
             return;
         }
       }

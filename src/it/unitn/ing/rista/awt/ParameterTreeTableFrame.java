@@ -237,13 +237,13 @@ public class ParameterTreeTableFrame extends myJFrame {
 	  cmdB.setToolTipText("Use this to fix all spectra linear absorption parameters (only TOF)");
 	  jp.add(cmdB);
 
-    cmdB = new JButton("Bound all banks coeffs");
+    cmdB = new JButton("Bound all banks coeffs/shifts");
     cmdB.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
-        getFileParent().boundAllBankCoefficients();
+        getFileParent().boundAllBankShiftsCoefficients();
       }
     });
-    cmdB.setToolTipText("Use this to bound togheter all banks similar coefficients");
+    cmdB.setToolTipText("Use this to bound togheter all banks or shifts similar coefficients");
     jp.add(cmdB);
     cmdB = new JButton("Uniform all banks");
     cmdB.addActionListener(new ActionListener() {

@@ -1264,9 +1264,9 @@ public class Fragment extends XRDcat implements AtomsStructureI {
       for (int i = 0; i < 6; i++) {
         if (parameterField[i] == source) {
 //          System.out.println("Constants.FRAGMENT_POSITION_CHANGED");
-          notifyParameterChanged(source, Constants.FRAGMENT_POSITION_CHANGED);
-          notifyParameterChanged(source, Constants.ATOM_POSITION_CHANGED);
-          notifyParameterChanged(source, Constants.STRUCTURE_FACTOR_CHANGED);
+          notifyParameterChanged(source, Constants.FRAGMENT_POSITION_CHANGED, -1);
+          notifyParameterChanged(source, Constants.ATOM_POSITION_CHANGED, -1);
+          notifyParameterChanged(source, Constants.STRUCTURE_FACTOR_CHANGED, -1);
           return;
         }
       }

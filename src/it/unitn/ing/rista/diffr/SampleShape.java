@@ -90,7 +90,7 @@ public class SampleShape extends XRDcat {
     return adialog;
   }
 
-  public void refreshForNotificationUp(XRDcat source, int reason) {
+  public void refreshForNotificationUp(XRDcat source, int reason, int paramNumber) {
     if (!getFilePar().isComputingDerivate() || source == this)
       refreshComputation = true;
 //    System.out.println("SampleShape up: " + refreshComputation);

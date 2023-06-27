@@ -179,7 +179,7 @@ public class DubnaSkatIntCalibration extends IntensityCalibration {
       }
     }
     isAbilitatetoRefresh = isAbilitate;
-    notifyUpObjectChanged(this, Constants.INTENSITY_CALIBRATION);
+    notifyUpObjectChanged(this, Constants.INTENSITY_CALIBRATION, -1);
   }
 
 /*

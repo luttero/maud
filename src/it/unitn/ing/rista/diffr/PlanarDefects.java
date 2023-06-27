@@ -27,8 +27,6 @@ import java.util.Vector;
 import it.unitn.ing.jsginfo.Sghkl;
 import it.unitn.ing.rista.awt.*;
 import it.unitn.ing.rista.util.Constants;
-import it.unitn.ing.rista.util.MoreMath;
-import it.unitn.ing.rista.interfaces.Peak;
 
 import javax.swing.*;
 
@@ -64,8 +62,8 @@ public class PlanarDefects extends XRDcat {
       if (parameterField != null)
       for (int i = 0; i < parameterField.length; i++) {
         if (parameterField[i] == source) {
-          notifyParameterChanged(source, Constants.SAMPLE_BROADENING);
-          notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED);
+          notifyParameterChanged(source, Constants.SAMPLE_BROADENING, -1);
+          notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED, -1);
           return;
         }
       }
@@ -73,8 +71,8 @@ public class PlanarDefects extends XRDcat {
       for (int j = 0; j < parameterloopField.length; j++)
         for (int i = 0; i < parameterloopField[j].size(); i++)
           if (source == parameterloopField[j].elementAt(i)) {
-            notifyParameterChanged(source, Constants.SAMPLE_BROADENING);
-            notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED);
+            notifyParameterChanged(source, Constants.SAMPLE_BROADENING, -1);
+            notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED, -1);
             return;
           }
 

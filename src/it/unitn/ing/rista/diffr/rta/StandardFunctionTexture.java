@@ -163,7 +163,7 @@ public class StandardFunctionTexture extends Texture {
       if (parameterField != null)
       for (int i = 0; i < parameterField.length; i++) {
         if (parameterField[i] == source) {
-          notifyParameterChanged(source, Constants.TEXTURE_CHANGED);
+          notifyParameterChanged(source, Constants.TEXTURE_CHANGED, -1);
           return;
         }
       }
@@ -171,7 +171,7 @@ public class StandardFunctionTexture extends Texture {
       for (int j = 0; j < parameterloopField.length; j++)
         for (int i = 0; i < parameterloopField[j].size(); i++)
           if (source == parameterloopField[j].elementAt(i)) {
-            notifyParameterChanged(source, Constants.TEXTURE_CHANGED);
+            notifyParameterChanged(source, Constants.TEXTURE_CHANGED, -1);
             return;
           }
 
@@ -268,8 +268,8 @@ public class StandardFunctionTexture extends Texture {
     }
   }
 
-  public void refreshForNotificationUp(XRDcat source, int reason) {
-    super.refreshForNotificationUp(source, reason);
+  public void refreshForNotificationUp(XRDcat source, int reason, int paramNumber) {
+    super.refreshForNotificationUp(source, reason, paramNumber);
 //    System.out.println("Refreshing texture: " + reason + " " + Constants.TEXTURE_CHANGED);
     if (reason == Constants.TEXTURE_CHANGED)
       refreshComputation = true;

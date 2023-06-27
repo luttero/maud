@@ -171,7 +171,7 @@ public class Angular2DCurvedDetectorCalibration extends AngularCalibration {
 		if (!getFilePar().isComputingDerivate() || (source == this ||
 				(reason == Constants.ERROR_POSITION_CHANGED))) {
 			refreshComputation = true;
-			getParent().getParent().refreshForNotificationUp(this, Constants.ANGULAR_CALIBRATION);
+			getParent().getParent().refreshForNotificationUp(this, Constants.ANGULAR_CALIBRATION, -1);
 		}
 	}
 

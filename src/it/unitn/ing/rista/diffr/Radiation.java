@@ -139,19 +139,19 @@ public class Radiation extends XRDcat {
     FilePar filepar = getFilePar();
     if ((filepar != null && !filepar.isLoadingFile()) && isAbilitatetoRefresh) {
       if (parameterField[0] == source) {
-        notifyParameterChanged(source, Constants.RADIATION_WAVELENGTH_CHANGED);
-        notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED);
+        notifyParameterChanged(source, Constants.RADIATION_WAVELENGTH_CHANGED, -1);
+        notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED, -1);
         return;
       }
       if (parameterField[1] == source) {
-        notifyParameterChanged(source, Constants.BEAM_INTENSITY_CHANGED);
+        notifyParameterChanged(source, Constants.BEAM_INTENSITY_CHANGED, -1);
         return;
       }
       super.notifyParameterChanged(source);
     }
   }
 
-  public void refreshForNotificationUp(XRDcat source, int reason) {
+  public void refreshForNotificationUp(XRDcat source, int reason, int paramNumber) {
     if (!getFilePar().isComputingDerivate() && reason == Constants.RADIATION_WAVELENGTH_CHANGED) {
       refreshComputation = true;
     }

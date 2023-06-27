@@ -1013,14 +1013,14 @@ public class DiffrDataFile extends XRDcat {
           Parameter apar = (Parameter) parameterloopField[i].elementAt(j);
           if (apar == source) {
             if (i == 0) {
-              notifyParameterChanged(source, Constants.BKG_PARAMETER_CHANGED);
+              notifyParameterChanged(source, Constants.BKG_PARAMETER_CHANGED, -1);
               return;
             } else if (i == 2) {
-	            notifyParameterChanged(source, Constants.BKG_FILE_CHANGED);
+	            notifyParameterChanged(source, Constants.BKG_FILE_CHANGED, -1);
 	            return;
             } else {
-              notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED);
-	            notifyParameterChanged(source, Constants.ANGULAR_CALIBRATION);
+              notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED, -1);
+	            notifyParameterChanged(source, Constants.ANGULAR_CALIBRATION, -1);
               return;
             }
           }
@@ -1029,14 +1029,14 @@ public class DiffrDataFile extends XRDcat {
       for (int i = 0; i < Nparameter; i++) {
         if (parameterField[i] == source) {
           if (i == 0) {
-            notifyParameterChanged(source, Constants.BKG_PARAMETER_CHANGED);
-            notifyParameterChanged(source, Constants.BKG_FILE_CHANGED);
+            notifyParameterChanged(source, Constants.BKG_PARAMETER_CHANGED, -1);
+            notifyParameterChanged(source, Constants.BKG_FILE_CHANGED, -1);
             return;
           } else {
-          	notifyParameterChanged(source, Constants.BKG_FILE_CHANGED);
-          	notifyParameterChanged(source, Constants.BEAM_INTENSITY_CHANGED);
-            notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED);
-            notifyParameterChanged(source, Constants.ANGULAR_CALIBRATION);
+          	notifyParameterChanged(source, Constants.BKG_FILE_CHANGED, -1);
+          	notifyParameterChanged(source, Constants.BEAM_INTENSITY_CHANGED, -1);
+            notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED, -1);
+            notifyParameterChanged(source, Constants.ANGULAR_CALIBRATION, -1);
             return;
           }
         }
@@ -1917,7 +1917,7 @@ public class DiffrDataFile extends XRDcat {
 
   public double getXfromDspace(double value) {
     if (dspacingbase || !calibrated)
-      return (double) value;
+      return value;
     if (energyDispersive)
       return 12398.424121 / value;
     double wave = getMeanRadiationWavelength();
@@ -3366,21 +3366,22 @@ public class DiffrDataFile extends XRDcat {
 				intensityCalibrated = null;
 			}
 		}
-		if (intensityNotCalibrated)  // to check, for now is always true
+		if (needRealCalibration && intensityNotCalibrated)  // to check, for now is always true
 			calibrateIntensity();
 	}
 
   public void calibrateIntensity() {
+//	  System.out.println("Calibrating intensity");
     int dtanumber = getTotalNumberOfData();
     if (intensityCalibrated == null || intensityCalibrated.length != dtanumber)
       intensityCalibrated = new double[dtanumber];
-
-//    intensityNotCalibrated = false;
 
 // check Luca getDataFileSet().getInstrument().getIntensityCalibration().updateStringtoDoubleBuffering(false);
 
     for (int j = 0; j < dtanumber; j++)
       intensityCalibrated[j] = computeIntensityCalibration(j);
+
+	  intensityNotCalibrated = false;
   }
 
   public double computeIntensityCalibration(int j) {
@@ -4978,6 +4979,14 @@ public class DiffrDataFile extends XRDcat {
     for (int i = 0; i < getthetaoffsetnumber(); i++)
       getThetaDisplacement(i).setRefinableCheckBound();
   }
+
+	public void  boundAllShiftsParameters(DiffrDataFile datafileToBoundTo) {
+		for (int i = 0; i < getthetaoffsetnumber(); i++) {
+			Parameter apar1 = datafileToBoundTo.getThetaDisplacement(i);
+			if (apar1 != null)
+				getThetaDisplacement(i).setEqualTo(apar1, 1.0, 0.0);
+		}
+	}
 
   public void refineAllXYSampleDisplacements() {
     getParameter(sampleDisplacementYID).setRefinableCheckBound();

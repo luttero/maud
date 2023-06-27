@@ -163,7 +163,7 @@ public class HarmonicTexture extends Texture implements Function {
       if (parameterField != null)
       for (int i = 0; i < parameterField.length; i++) {
         if (parameterField[i] == source) {
-          notifyParameterChanged(source, Constants.TEXTURE_CHANGED);
+          notifyParameterChanged(source, Constants.TEXTURE_CHANGED, -1);
           return;
         }
       }
@@ -171,7 +171,7 @@ public class HarmonicTexture extends Texture implements Function {
       for (int j = 0; j < parameterloopField.length; j++)
         for (int i = 0; i < parameterloopField[j].size(); i++)
           if (source == parameterloopField[j].elementAt(i)) {
-            notifyParameterChanged(source, Constants.TEXTURE_CHANGED);
+            notifyParameterChanged(source, Constants.TEXTURE_CHANGED, -1);
             return;
           }
 

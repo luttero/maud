@@ -31,8 +31,6 @@ import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 import javax.swing.*;
 
-import org.apache.commons.math3.linear.*;
-
 /**
  * The Strain is a general class to obtain strain maps from spectra.
  * This class does nothing, and applied theories must be implemented in subclasses
@@ -387,10 +385,10 @@ public class Strain extends XRDcat {
   }
 
   public void notifyObjectChanged(XRDcat source) {
-    notifyUpObjectChanged(source, Constants.STRAIN_CHANGED);
+    notifyUpObjectChanged(source, Constants.STRAIN_CHANGED, -1);
   }
 
-  public void refreshForNotificationUp(XRDcat source, int reason) {
+  public void refreshForNotificationUp(XRDcat source, int reason, int paramNumber) {
     if (!getFilePar().isComputingDerivate() || source == this || reason == Constants.STRAIN_CHANGED)
       refreshComputation = true;
   }
@@ -401,8 +399,8 @@ public class Strain extends XRDcat {
 			if (parameterField != null)
 				for (int i = 0; i < parameterField.length; i++) {
 					if (parameterField[i] == source) {
-						notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED);
-						notifyParameterChanged(source, Constants.STRAIN_CHANGED);
+						notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED, -1);
+						notifyParameterChanged(source, Constants.STRAIN_CHANGED, -1);
 						return;
 					}
 				}
@@ -410,8 +408,8 @@ public class Strain extends XRDcat {
 				for (int j = 0; j < parameterloopField.length; j++)
 					for (int i = 0; i < parameterloopField[j].size(); i++)
 						if (source == parameterloopField[j].elementAt(i)) {
-							notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED);
-							notifyParameterChanged(source, Constants.STRAIN_CHANGED);
+							notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED, -1);
+							notifyParameterChanged(source, Constants.STRAIN_CHANGED, -1);
 							return;
 						}
 

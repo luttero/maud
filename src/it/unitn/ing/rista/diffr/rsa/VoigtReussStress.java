@@ -203,8 +203,8 @@ public class VoigtReussStress extends Strain {
       if (parameterField != null)
       for (int i = 0; i < parameterField.length; i++) {
         if (parameterField[i] == source) {
-            notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED);
-            notifyParameterChanged(source, Constants.STRAIN_CHANGED);
+            notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED, -1);
+            notifyParameterChanged(source, Constants.STRAIN_CHANGED, -1);
             return;
         }
       }
@@ -212,8 +212,8 @@ public class VoigtReussStress extends Strain {
       for (int j = 0; j < parameterloopField.length; j++)
         for (int i = 0; i < parameterloopField[j].size(); i++)
           if (source == parameterloopField[j].elementAt(i)) {
-            notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED);
-            notifyParameterChanged(source, Constants.STRAIN_CHANGED);
+            notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED, -1);
+            notifyParameterChanged(source, Constants.STRAIN_CHANGED, -1);
             return;
           }
 

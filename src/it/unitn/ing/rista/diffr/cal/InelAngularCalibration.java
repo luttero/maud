@@ -27,12 +27,6 @@ import java.lang.*;
 import java.util.*;
 
 import it.unitn.ing.rista.util.*;
-import it.unitn.ing.rista.awt.*;
-
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.border.*;
 
 
 /**
@@ -147,7 +141,7 @@ public class InelAngularCalibration extends D20AngularCalibration {
       }
     }
     isAbilitatetoRefresh = isAbilitate;
-    notifyUpObjectChanged(this, Constants.ANGULAR_CALIBRATION);
+    notifyUpObjectChanged(this, Constants.ANGULAR_CALIBRATION, -1);
 
   }
 

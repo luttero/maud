@@ -34,8 +34,6 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.util.StringTokenizer;
-import java.util.Vector;
 
 /**
  * Dialog for data file parsing and loading.
@@ -1221,7 +1219,7 @@ public class DataD extends myJFrame {
       for (int i = 0; i < filename.length; i++)
         thedata.addDataFileforName(filename[i], true);
       Constants.refreshTreePermitted = true;
-      thedata.notifyUpObjectChanged(thedata, 0);
+      thedata.notifyUpObjectChanged(thedata, 0, -1);
       setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
     }
   }
@@ -1610,7 +1608,7 @@ public class DataD extends myJFrame {
 			if (summedFilename.length() > 0)
 				thedata.addDataFileforName(summedFilename, true);
 			Constants.refreshTreePermitted = true;
-			thedata.notifyUpObjectChanged(thedata, 0);
+			thedata.notifyUpObjectChanged(thedata, 0, -1);
 			setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 		}
 	}

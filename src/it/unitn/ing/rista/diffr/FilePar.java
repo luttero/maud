@@ -450,7 +450,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 
   public Object lock = new Object(); // for synchronization
 
-  public void refreshForNotificationUp(XRDcat source, int reason) {
+  public void refreshForNotificationUp(XRDcat source, int reason, int paramNumber) {
     refreshComputation = true;
     saved = false;
     notifyDownObjectChanged(source, reason);
@@ -1770,11 +1770,11 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 		}
 	}
 
-	public void boundAllBankCoefficients() {
+	public void boundAllBankShiftsCoefficients() {
     for (int k = 0; k < samplesNumber(); k++) {
       Sample asample = getSample(k);
       for (int j = 0; j < asample.datasetsNumber(); j++) {
-        asample.getDataSet(j).getInstrument().boundAllBankCoefficients();
+        asample.getDataSet(j).boundAllBankShiftsCoefficients();
       }
     }
   }

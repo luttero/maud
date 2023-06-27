@@ -29,6 +29,8 @@ import java.awt.*;
 import java.util.concurrent.TimeUnit;
 
 import com.radiographema.MaudText;
+import it.unitn.ing.rista.diffr.cal.GSASbankIntCalibration;
+import it.unitn.ing.rista.diffr.cal.IntensityCalibration;
 import it.unitn.ing.rista.diffr.instrument.DefaultInstrument;
 import it.unitn.ing.rista.io.cif.*;
 import it.unitn.ing.rista.util.*;
@@ -187,6 +189,9 @@ public class DataFileSet extends XRDcat {
 	boolean[] needRestore = null;
 	Vector overallVector = null;
 
+	public boolean intensityExtractionMethodSelected = false;
+	public boolean positionExtractionMethodSelected = false;
+
 	private Map<Phase, double[][]> phaseStructureFactors = new Hashtable<Phase, double[][]>();
 	private Map<Phase, double[][][][]> phaseScatFactors = new Hashtable<Phase, double[][][][]>();
 
@@ -333,6 +338,8 @@ public class DataFileSet extends XRDcat {
     randomTexture = hasRandomTexture();
     noStrain = hasNoStrain();
 	 useChebyshevPolynomials = useChebyshevPolynomialsString().equalsIgnoreCase("true");
+	 intensityExtractionMethodSelected = !getIntensityExtractorMethod().equalsIgnoreCase("none ie");
+	 positionExtractionMethodSelected = !getPositionExtractorMethod().equalsIgnoreCase("none pe");
 
 	 /*	    bkgDatafiles.removeAllElements();
       for (int i = 0; i < datafilesnumber(); i++) {
@@ -673,7 +680,7 @@ public class DataFileSet extends XRDcat {
         getFilePar().loadingFile = true;
         subordinateField[getInstrumentID()] = (XRDcat) ainstrument[0];
         getFilePar().loadingFile = false;
-        notifyUpObjectChanged(this, Constants.OBJECT_ADDED);
+        notifyUpObjectChanged(this, Constants.OBJECT_ADDED, -1);
         refreshAll(true);
       }      
   }
@@ -828,7 +835,7 @@ public class DataFileSet extends XRDcat {
 			}
 		}
 		Constants.refreshTreePermitted = true;
-		notifyUpObjectChanged(this, 0);
+		notifyUpObjectChanged(this, 0, -1);
 	}
 
 	public void checkOwnPolynomial() {
@@ -841,7 +848,7 @@ public class DataFileSet extends XRDcat {
     Constants.refreshTreePermitted = false;
     removeselSubLField(2);
     Constants.refreshTreePermitted = true;
-    notifyUpObjectChanged(this, 0);
+    notifyUpObjectChanged(this, 0, -1);
   }
 
   public void disableByAngles(int angleNumber, double startingAngle, double finalAngle) {
@@ -856,7 +863,7 @@ public class DataFileSet extends XRDcat {
         disable(diffrDatafile);
     }
     Constants.refreshTreePermitted = true;
-    notifyUpObjectChanged(this, 0);
+    notifyUpObjectChanged(this, 0, -1);
   }
 
 	public void disableByAngles(int angleNumber, double startingAngle, double finalAngle, double everyAngle) {
@@ -873,7 +880,7 @@ public class DataFileSet extends XRDcat {
 			}
 		}
     Constants.refreshTreePermitted = true;
-    notifyUpObjectChanged(this, 0);
+    notifyUpObjectChanged(this, 0, -1);
 	}
 
 	public void groupByAngles(int angleNumber, double startingAngle, double finalAngle, double everyAngle) { // todo
@@ -890,7 +897,7 @@ public class DataFileSet extends XRDcat {
 			}
 		}
 		Constants.refreshTreePermitted = true;
-		notifyUpObjectChanged(this, 0);
+		notifyUpObjectChanged(this, 0, -1);
 	}
 
 	public void generateByAngles(double[] startingAngle, double[] finalAngle, double[] everyAngle) {
@@ -911,7 +918,7 @@ public class DataFileSet extends XRDcat {
 				diffrDatafile.setAngleValue(j, originalAngles[j]);
 		}
 		Constants.refreshTreePermitted = true;
-		notifyUpObjectChanged(this, 0);
+		notifyUpObjectChanged(this, 0, -1);
 	}
 
 	public void generateOutputForAngles(DiffrDataFile diffrDatafile, int angleNumber, int angleMax,
@@ -949,7 +956,7 @@ public class DataFileSet extends XRDcat {
 			}
 		}
 		Constants.refreshTreePermitted = true;
-		notifyUpObjectChanged(this, 0);
+		notifyUpObjectChanged(this, 0, -1);
 	}
 
 	public void removeDatafilesWithTotalLessThan(double number) {
@@ -963,7 +970,7 @@ public class DataFileSet extends XRDcat {
 				disable(diffrDatafile);
 		}
 		Constants.refreshTreePermitted = true;
-		notifyUpObjectChanged(this, 0);
+		notifyUpObjectChanged(this, 0, -1);
 	}
 
 	public void enableEvery(int number) {
@@ -980,7 +987,7 @@ public class DataFileSet extends XRDcat {
 				disable(diffrDatafile);
 		}
 		Constants.refreshTreePermitted = true;
-		notifyUpObjectChanged(this, 0);
+		notifyUpObjectChanged(this, 0, -1);
 	}
 
 	public void groupEvery(int number) {  // todo
@@ -1000,7 +1007,7 @@ public class DataFileSet extends XRDcat {
 			}
 		}
 		Constants.refreshTreePermitted = true;
-		notifyUpObjectChanged(this, 0);
+		notifyUpObjectChanged(this, 0, -1);
 	}
 
 	private void groupAndRemove(Vector<DiffrDataFile> groupOfDatafiles) {
@@ -1067,7 +1074,7 @@ public class DataFileSet extends XRDcat {
         removeDataFile(i - 1);
     }
     Constants.refreshTreePermitted = true;
-    notifyUpObjectChanged(this, 0);
+    notifyUpObjectChanged(this, 0, -1);
 //		updateStringtoDoubleBuffering();
   }
 
@@ -1080,7 +1087,7 @@ public class DataFileSet extends XRDcat {
       removeDataFile(i - 1);
     }
     Constants.refreshTreePermitted = true;
-    notifyUpObjectChanged(this, 0);
+    notifyUpObjectChanged(this, 0, -1);
 //		updateStringtoDoubleBuffering();
   }
 
@@ -3053,30 +3060,30 @@ public class DataFileSet extends XRDcat {
 	  if (filepar != null && !filepar.isLoadingFile() && isAbilitatetoRefresh) {
       for (int i = 0; i < sampleOmegaID; i++)
         if (source == parameterField[i]) {
-          notifyParameterChanged(source, Constants.THERMAL_SHIFT_CHANGED);
+          notifyParameterChanged(source, Constants.THERMAL_SHIFT_CHANGED, -1);
           return;
         }
       for (int i = sampleOmegaID; i < sampleOmegaID + 3; i++)
         if (source == parameterField[i]) {
-          notifyParameterChanged(source, Constants.SAMPLE_ORIENTATION_CHANGED);
-          notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED);
+          notifyParameterChanged(source, Constants.SAMPLE_ORIENTATION_CHANGED, -1);
+          notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED, -1);
           return;
         }
 		  for (int i = displacementxID; i < displacementxID + 3; i++)
 			  if (source == parameterField[i]) {
-				  notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED);
+				  notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED, -1);
 				  return;
 			  }
 	    for (int i = disalignementOmegaID; i < disalignementOmegaID + 4; i++)
 		    if (source == parameterField[i]) {
-			    notifyParameterChanged(source, Constants.TEXTURE_CHANGED);
+			    notifyParameterChanged(source, Constants.TEXTURE_CHANGED, -1);
 			    return;
 		    }
       for (int i = 0; i < Nparameterloop; i++) {
         for (int j = 0; j < numberofelementPL(i); j++) {
           Parameter apar = (Parameter) parameterloopField[i].elementAt(j);
           if (apar == source) {
-            notifyParameterChanged(source, Constants.BKG_PARAMETER_CHANGED);
+            notifyParameterChanged(source, Constants.BKG_PARAMETER_CHANGED, -1);
             return;
           }
         }
@@ -3088,7 +3095,7 @@ public class DataFileSet extends XRDcat {
   // todo: check notification up and down after moving instrument
 
   @Override
-  public void refreshForNotificationUp(XRDcat source, int reason) {
+  public void refreshForNotificationUp(XRDcat source, int reason, int paramNumber) {
     refreshComputation = true;
 //    if (source instanceof DiffrDataFile)
 //      System.out.println("Notification received from " + source + " , reason " + reason);
@@ -3105,11 +3112,23 @@ public class DataFileSet extends XRDcat {
     } else if (reason == Constants.INTENSITY_CALIBRATION) {
       refreshComputation = true;
       int datafilenumber = datafilesnumber();
-      for (int i = 0; i < datafilenumber; i++) {
-        getDataFile(i).setIntensityUncalibrated();
-        getDataFile(i).refreshBkgComputation = true;
-        getDataFile(i).refreshSpectraComputation = true;
-      }
+		if (source instanceof GSASbankIntCalibration && paramNumber >= 0) {
+			for (int i = 0; i < datafilenumber; i++) {
+				DiffrDataFile adatafile = getDataFile(i);
+				if (adatafile.getBankNumber() == paramNumber) {
+					adatafile.setIntensityUncalibrated();
+					adatafile.refreshBkgComputation = true;
+					adatafile.refreshSpectraComputation = true;
+				}
+			}
+	    } else {
+			for (int i = 0; i < datafilenumber; i++) {
+				DiffrDataFile adatafile = getDataFile(i);
+				adatafile.setIntensityUncalibrated();
+				adatafile.refreshBkgComputation = true;
+				adatafile.refreshSpectraComputation = true;
+			}
+		}
       reason = 0;
     } else if (reason == Constants.BKG_FILE_CHANGED) {
       int datafilenumber = datafilesnumber();
@@ -3743,11 +3762,11 @@ public class DataFileSet extends XRDcat {
   }
 
 	public boolean extractIntensity() {
-    return !getIntensityExtractorMethod().equalsIgnoreCase("none ie") && getFilePar().isTextureFactorsExtractionPermitted();
+    return intensityExtractionMethodSelected && getFilePar().isTextureFactorsExtractionPermitted();
   }
 
   public boolean isRandomTexture() {
-    return !getIntensityExtractorMethod().equalsIgnoreCase("none ie");
+    return intensityExtractionMethodSelected;
   }
 
   public boolean isTextureFactorsExtractionPermitted() {
@@ -3755,7 +3774,7 @@ public class DataFileSet extends XRDcat {
   }
 
   public boolean extractPosition() {
-    return !getPositionExtractorMethod().equalsIgnoreCase("none pe");
+    return positionExtractionMethodSelected;
   }
 
   boolean computed = false;
@@ -4099,7 +4118,18 @@ public class DataFileSet extends XRDcat {
         getActiveDataFile(i).freeThetaParameters();
   }
 
-  public void freeAllShiftsParameters() {
+	public void boundAllShiftsParameters() {
+	  for (int i = 1; i < activedatafilesnumber(); i++)
+		  getActiveDataFile(i).boundAllShiftsParameters(getActiveDataFile(0));
+		freeAllShiftsParameters(false);
+	}
+
+	public void boundAllBankShiftsCoefficients() {
+	  boundAllShiftsParameters();
+	  getInstrument().boundAllBankShiftsCoefficients();
+	}
+
+	public void freeAllShiftsParameters() {
     for (int i = 0; i < activedatafilesnumber(); i++)
       getActiveDataFile(i).freeThetaParameters();
 	}

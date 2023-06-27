@@ -512,7 +512,7 @@ public class Texture extends XRDcat {
   }
 
   public void notifyParameterChanged(Parameter source) {
-    notifyParameterChanged(source, Constants.TEXTURE_CHANGED);
+    notifyParameterChanged(source, Constants.TEXTURE_CHANGED, -1);
   }
 
   public void notifyStringChanged(String source) {
@@ -520,10 +520,10 @@ public class Texture extends XRDcat {
   }
 
   public void notifyObjectChanged(XRDcat source) {
-    notifyUpObjectChanged(source, Constants.TEXTURE_CHANGED);
+    notifyUpObjectChanged(source, Constants.TEXTURE_CHANGED, -1);
   }
 
-  public void refreshForNotificationUp(XRDcat source, int reason) {
+  public void refreshForNotificationUp(XRDcat source, int reason, int paramNumber) {
     if (!getFilePar().isComputingDerivate() || source == this || reason == Constants.TEXTURE_CHANGED) {
 	    update(false);
 	    refreshComputation = true;

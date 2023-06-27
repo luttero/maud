@@ -108,15 +108,15 @@ public class TOFDetector extends Detector {
       for (int i = 0; i < parameterField.length; i++) {
         if (parameterField[i] == source) {
           if (i < 2) {
-            notifyParameterChanged(source, Constants.SAMPLE_ORIENTATION_CHANGED);
+            notifyParameterChanged(source, Constants.SAMPLE_ORIENTATION_CHANGED, -1);
             return;
           }
           if (i == 2) {
-            notifyParameterChanged(source, Constants.BEAM_INTENSITY_CHANGED);
+            notifyParameterChanged(source, Constants.BEAM_INTENSITY_CHANGED, -1);
             return;
           }
           if (i == 3) {
-            notifyParameterChanged(source, Constants.ANGULAR_CALIBRATION);
+            notifyParameterChanged(source, Constants.ANGULAR_CALIBRATION, -1);
             return;
           }
         }

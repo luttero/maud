@@ -103,7 +103,7 @@ public class BkgPeak extends XRDcat {
     if ((filepar != null && !filepar.isLoadingFile()) && isAbilitatetoRefresh) {
       for (int i = 0; i < parameterField.length; i++) {
         if (parameterField[i] == source) {
-          notifyParameterChanged(source, Constants.BKG_PARAMETER_CHANGED);
+          notifyParameterChanged(source, Constants.BKG_PARAMETER_CHANGED, -1);
           return;
         }
       }

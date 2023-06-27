@@ -107,7 +107,7 @@ public class ConeMagneticStructure extends MagneticStructure {
     if ((filepar != null && !filepar.isLoadingFile()) && isAbilitatetoRefresh) {
       for (int i = 0; i < parameterField.length; i++) {
         if (source == parameterField[i]) {
-            notifyParameterChanged(source, Constants.STRUCTURE_FACTOR_CHANGED);
+            notifyParameterChanged(source, Constants.STRUCTURE_FACTOR_CHANGED, -1);
             return;
         }
       }
