@@ -254,9 +254,8 @@ PLATFORMS
 
 DEPENDENCIES
   github-pages
-  jekyll-feed (>= 0.12)
-  minima (>= 2.5)
-  webrick (>= 1.8)
+  jekyll-feed
+  webrick
 
 BUNDLED WITH
    2.4.14
