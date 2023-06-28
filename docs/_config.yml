@@ -28,8 +28,8 @@ description: >- # this means to ignore newlines until "baseurl:"
   and strains, crystallographic texture and planar defects. It works for amorphous or 
   nanomaterials too. Can use X-ray, neutron or electron data, diffraction, reflectivity
   or fluorescence.
-baseurl: "" # the subpath of your site, e.g. /blog
-url: "https://luttero.github.io/maud" # the base hostname & protocol for your site, e.g. http://example.com
+baseurl: "/maud" # the subpath of your site, e.g. /blog
+url: "https://luttero.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: MaudProgram
 github_username:  luttero
 
