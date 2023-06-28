@@ -1,0 +1,1 @@
+<a href="{{ include.link }}"{% if include.link contains "://" %} target="_blank"{% endif %}{% if include.download %} download{% endif %} class="{% if include.no_icon %}no_icon {% endif %}{{ include.class }}"{% if include.attr %} {{ include.attr }}{% endif %}>{{ include.content }}</a>
