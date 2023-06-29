@@ -6,83 +6,15 @@ layout: home
 keywords: Homepage, home, news, tutorial, examples, MAUD, Rietveld method, diffraction, fluorescence, x-ray, xray, neutron, electron, documentation, latest publications, requirements, licensing
 ---
 
-<b>MAUD</b> is a free software to analyse diffraction data using a combined Rietveld method. Its capabilities extend beyond diffraction and include fluorescence and reflectivity. It can analyse data from X-ray sources as well as neutrons, TOF, electrons from TEM.
+
+{% include bar.md %}
 
 <br>
-[![](https://badgen.net/badge/icon/github?icon=github&label)](https://github.com/luttero/maud)&nbsp;
-[![](https://img.shields.io/badge/Research-Gate-9cf)](https://www.researchgate.net/lab/X-Ray-Lab-UNITN-Luca-Lutterotti)&nbsp;
-[![](https://img.shields.io/twitter/follow/MaudProgram)](https://twitter.com/MaudProgram)&nbsp;
-[![](https://img.shields.io/badge/Youtube-MAUD)](https://www.youtube.com/@MaudRietveldProgram)&nbsp;
-![](https://img.shields.io/github/languages/top/luttero/maud)&nbsp;
-![](https://img.shields.io/github/downloads/luttero/maud/total)&nbsp;
-![](https://img.shields.io/github/contributors/luttero/maud)&nbsp;
+<b>MAUD</b> is a free software to analyse diffraction data using a combined Rietveld method. Its capabilities extend beyond diffraction and include fluorescence and reflectivity. It can analyse data from X-ray sources as well as neutrons, TOF, electrons from TEM.
 
-<div class="row">
-    <div id="home-news" class="col-md-6">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <i class="fa fa-newspaper-o"></i>
-                News
-                <i class="fa fa-angle-double-right"></i>
-                {% include reference.html link="changelog" content="Complete&nbsp;changelog" %}
-            </div>
-            <div class="panel-body">
-                <ul class="no_bullet">
-					<li>
-                        June 28, 2023 &minus;
-							{% include reference.html link="https://github.com/luttero/maud/releases/tag/v2.998" content="Download MAUD latest version" download=true %}
-                        released:
-                        {% include reference.html link="changelog#1" content="Release Notes" %}
-                    </li>
-					<li>
-                        June 28, 2023 &minus;
-							{% include reference.html link="http://www.ecole.ensicaen.fr/~chateign/formation/flyers/2023-Flyer-13th-workshop.pdf" content="Combined Analysis School 2023 in Caen" download=true %}
-                    </li>
-                    <li>
-                        June 28, 2023 &minus; new homepage on Github.io
-                    </li>
-                 </ul>
-            </div>
-        </div>
-    </div>
-    <div id="home-community" class="col-md-6">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <i class="fa fa-comments-o"></i>
-                Community
-            </div>
-            <div class="panel-body">
-                <ul>
-                    <li>
-                        {% include reference.html link="https://github.com/luttero/maud/discussions" content="Forum" %}
-                        - Do you have a question or something to share about MAUD and analyses?
-                    </li>
-                    <li>
-                        {% include reference.html link="https://github.com/luttero/maud/issues" content="Bugs" %}
-                        - Report bugs if you like them being fixed.
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>
+![Alt text](/maud/Images/Maudv2.png "MAUD program interface")
 
-<div class="row">
-    <div id="home-documentation" class="col-md-12">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <i class="fa fa-book"></i>
-                Documentation
-                <i class="fa fa-angle-double-right"></i>
-                {% include reference.html link="Documentation" content="Documentation" %}
-                | {% include reference.html link="tutorials" content="Tutorials" %}
-                | {% include reference.html link="download#installation" content="Installation" no_icon=true %}
-                | {% include reference.html link="examples" content="Examples" %}
-                | {% include reference.html link="videos" content="Videos" %}
-            </div>
-        </div>
-    </div>
-</div>
+{% include nav.md %}
 
 <!--div class="row">
     <div class="col-md-4">
@@ -164,23 +96,5 @@ keywords: Homepage, home, news, tutorial, examples, MAUD, Rietveld method, diffr
     </div>
 </div-->
 
-<div class="row">
-    <div id="home-requirements-and-licensing" class="col-md-12">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <i class="fa fa-copyright"></i>
-                Licensing
-            </div>
-            <div class="panel-body">
-                <ul>
-                    <li>
-                        MAUD is a free software running in a Java Virtual Machine (included). Is a standalone software and can be used as it is. 
-                    </li>
-                    <li>
-                        You are permitted to use it for the purposes it was build (scientific analyses of materials and compounds) and the author is not responsible for different or improper use of it. You are not permitted to re-distribute or sell the MAUD software, share instead the link to its home page here.
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>
+{% include license.md %}
+
