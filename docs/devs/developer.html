@@ -1,0 +1,562 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+	<title> The MAUD program </title>
+	<meta name="Author" content="Luca Lutterotti (Luca.Lutterotti@ing.unitn.it)">
+	<meta name="Description" content="University of Trento, Department Materials Engineering and Industrial Technologies, Program 'Maud' for material analysis by diffraction/reflectivity">
+	<meta name="Keywords" content="program, developer, java, diffraction, development, Java, Maud, texture, Rietveld, download, program, structure, refinement, ab-initio, solution, crystal, crystallography, powder, powder diffraction, TOF, neutron, x-ray, synchrotron, radiation, reflectivity, stress, residual stress, ODF, calculation, fitting, spectrum, spectra, phase, phase analysis, quantitative, quantitative phase analysis, amorphous, material, analysis, layer, multilayer, thickness, WIMV, Harmonic, stacking fault, twin fault, crystallite, microstrain,
+preferred orientation, WIMV, EWIMV, Harmonic, Popa, distribution, atom, atomic structure, film, thin film, intermetallic, ceramic,
+polymer, metal, microstructure, least squares, Le Bail, indexing, background, images, Laue, image plate, CCD, detector">
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <link rel="shortcut icon" href="Images/favicon.ico" type="image/x-icon" />
+  <link rel="alternate" type="application/rss+xml" title="Maud RSS
+  feeds" href="feed/MaudRSSfeed.xml" />
+	<link rel=stylesheet type="text/css" href="styles/basic.css">
+</head>
+<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" leftmargin="0" topmargin="0">
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+	<tr>
+		<td bgcolor="#0b2775" valign="top" align="center" width="180" rowspan="4">
+			<a href="Images/Maud_ladybug2_full66.png"> <img alt="Maud ladybug icon" src="Images/Maud_ladybug2_full20.png" border=0 width=180> </a>
+		</td>
+		<td>
+			<img alt="none" src="Images/null.gif" border="0" width="1" height="4">
+		</td>
+		<td>
+			<img alt="none" src="Images/null.gif" border=0 width=10 height=1>
+		</td>
+		<td colspan="2">
+			<img alt="none" src="Images/null.gif" border=0 width=1 height=4>
+		</td>
+		<td>
+			<img alt="none" src="Images/null.gif" border=0 width=10 height=1>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<img alt="none" src="Images/null.gif" border=0 width=10 height=1>
+		</td>
+		<td valign="bottom">
+			<img alt="none" src="Images/null.gif" border=0 width=1 height=2>
+			<br>
+			<span class="nav-title"> <strong> Maud - Materials Analysis Using Diffraction - Developer </strong> &nbsp; </span>
+		</td>
+		<td class="re" align="right" valign="bottom">
+			<a href="http://www.ing.unitn.it/~maud"><img alt="none" src="Images/button-up.gif" border=0></a> <img alt="none" src="Images/null.gif" border=0 width=8 height=1> <a href="download.html"><img alt="none" src="Images/button-prev.gif" border=0></a> <a href="forum.html"><img alt="none" src="Images/button-next.gif" border=0></a> 
+		</td>
+		<td>
+			<img alt="none" src="Images/null.gif" border=0 width=10 height=1>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<img alt="none" src="Images/null.gif" border="0" width="10" height="1">
+		</td>
+		<td class="re" align="right" valign="top" colspan="2" width="100%">
+			<hr size=1>
+      <a class=nav href="index.html"> Maud </a> <img alt="none" src="Images/nav-dot.gif" border=0> <a class=nav href="news.html"> News </a> <img alt="none" src="Images/nav-dot.gif" border=0> <a class=nav href="facts.html"> Maud in action </a> <img alt="none" src="Images/nav-dot.gif" border=0> <a class=nav href="tutorial.html"> Tutorial </a> <img alt="none" src="Images/nav-dot.gif" border=0> <a class=nav href="download.html"> Download </a> <img alt="none" src="Images/nav-dot.gif" border=0> <a class=nav href="developer.html"> Developer </a> <img alt="none" src="Images/nav-dot.gif" border=0> <a class=nav href="forum.html"> Maud forum </a> <img alt="none" src="Images/nav-dot.gif" border=0> <a class=nav href="bugzilla.html"> Bug Reporter </a> <img alt="none" src="Images/nav-dot.gif" border=0> <a class=nav href="links.html"> Maud helper </a>
+		</td>
+		<td rowspan="2">
+			<img alt="none" src="Images/null.gif" border=0 width=10 height=1>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<img alt="none" src="Images/null.gif" border="0" width="10" height="80">
+		</td>
+		<td colspan="2" align="right">
+		</td>
+	</tr>
+	<tr>
+		<td bgcolor="#0b2775" align="left" valign="top" width="180">
+			<table border="0" cellspacing="0" cellpadding="0">
+				<tr>
+					<td class="re" bgcolor="#0b2775">
+						<img alt="none" src="Images/null.gif" border="0" width="1" height="14">
+						<br>
+						<span class="menu-group"> Diffraction&nbsp; </span>
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="Images/menu-gi.gif" border="0">
+						<br>
+						<img alt="none" src="Images/null.gif" border="0" width="1" height="10">
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="Images/null.gif" border="0" width="1" height="2">
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<a href="index.html"> <span class="menu-reference"> &nbsp;&nbsp;&nbsp;Maud&nbsp;&nbsp;&nbsp;</span> </a>
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="Images/null.gif" border="0" width="1" height="2">
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="Images/null.gif" border="0" width="1" height="2">
+					</td>
+				</tr>
+				<tr>
+					<td background="Images/menu-s.gif">
+						<a href="download.html"> <span class="menu-highlight"> &nbsp;&nbsp;&nbsp;Download Maud&nbsp;&nbsp;&nbsp;</span> </a>
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="Images/null.gif" border="0" width="1" height="2">
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="Images/null.gif" border="0" width="1" height="2">
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<a href="http://www.ing.unitn.it/~maud/maud/maudWebStart.html"> <span class="menu-reference"> &nbsp;&nbsp;&nbsp;Maud old version 1.993&nbsp;&nbsp;&nbsp;</span> </a>
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="Images/null.gif" border="0" width="1" height="2">
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="Images/null.gif" border="0" width="1" height="2">
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<a href="http://www.ing.unitn.it/~luttero/rietquan/rietquan_20.html"> <span class="menu-reference"> &nbsp;&nbsp;&nbsp;Rietquan&nbsp;&nbsp;&nbsp;</span> </a>
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="Images/null.gif" border="0" width="1" height="2">
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="Images/null.gif" border="0" width="1" height="2">
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<a href="http://www.ing.unitn.it/~luttero/udftoref/udftoref.html"> <span class="menu-reference"> &nbsp;&nbsp;&nbsp;UDFtoRef (Reflectivity)&nbsp;&nbsp;&nbsp;</span> </a>
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="Images/null.gif" border="0" width="1" height="2">
+					</td>
+				</tr>
+				<tr>
+					<td class="re" bgcolor="#0b2775">
+						<img alt="none" src="Images/null.gif" border="0" width="1" height="14">
+						<br>
+						<span class="menu-group"> Links&nbsp; </span>
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="Images/menu-gi.gif" border="0">
+						<br>
+						<img alt="none" src="Images/null.gif" border="0" width="1" height="10">
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="Images/null.gif" border="0" width="1" height="2">
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<a href="news.html#caen_2010"> <span class="menu-reference"> &nbsp;&nbsp;&nbsp;Maud Rietveld school&nbsp;&nbsp;&nbsp;</span> </a>
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="Images/null.gif" border="0" width="1" height="2">
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="Images/null.gif" border="0" width="1" height="2">
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<a href="http://www.seismo.berkeley.edu/~wenk/beartex.htm"> <span class="menu-reference"> &nbsp;&nbsp;&nbsp;Beartex&nbsp;&nbsp;&nbsp;</span> </a>
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="Images/null.gif" border="0" width="1" height="2">
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="Images/null.gif" border="0" width="1" height="2">
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<a href="http://www.crystallography.net"> <span class="menu-reference"> &nbsp;&nbsp;&nbsp;COD (Crystallography Open Database)&nbsp;&nbsp;&nbsp;</span> </a>
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="Images/null.gif" border="0" width="1" height="2">
+					</td>
+				</tr>
+				<tr>
+					<td class="re" bgcolor="#0b2775">
+						<img alt="none" src="Images/null.gif" border="0" width="1" height="14">
+						<br>
+						<span class="menu-group"> The author&nbsp; </span>
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="Images/menu-gi.gif" border="0">
+						<br>
+						<img alt="none" src="Images/null.gif" border="0" width="1" height="10">
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="Images/null.gif" border="0" width="1" height="2">
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<a href="http://www.ing.unitn.it/~luttero/index.html"> <span class="menu-reference"> &nbsp;&nbsp;&nbsp;Home page&nbsp;&nbsp;&nbsp;</span> </a>
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="Images/null.gif" border="0" width="1" height="2">
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="Images/null.gif" border="0" width="1" height="2">
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<a href="http://www.ing.unitn.it/~maud/esqui/index.html"> <span class="menu-reference"> &nbsp;&nbsp;&nbsp;Esqui Project&nbsp;&nbsp;&nbsp;</span> </a>
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="Images/null.gif" border="0" width="1" height="10">
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="Images/null.gif" border="0" width="1" height="2">
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<a href="mailto:maud@ing.unitn.it"> <span class="menu-reference"> &nbsp;&nbsp;&nbsp;Cont@ct&nbsp;&nbsp;&nbsp;</span> </a>
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="Images/null.gif" border="0" width="1" height="2">
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="Images/null.gif" border="0" width="1" height="2">
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<a href="http://www.ing.unitn.it/~dima"> <span class="menu-reference"> &nbsp;&nbsp;&nbsp;Materials Engineering Dept.&nbsp;&nbsp;&nbsp;</span> </a>
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="Images/null.gif" border="0" width="1" height="2">
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="Images/null.gif" border="0" width="1" height="2">
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<a href="http://www.ing.unitn.it"> <span class="menu-reference"> &nbsp;&nbsp;&nbsp;Engineering Faculty&nbsp;&nbsp;&nbsp;</span> </a>
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="Images/null.gif" border="0" width="1" height="2">
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="Images/null.gif" border="0" width="1" height="2">
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775" align="center">
+						<a href="http://www.unitn.it"> <img alt="none" src="Images/univer.gif" border=0> </a>
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="Images/null.gif" border="0" width="1" height="10">
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="Images/null.gif" border="0" width="1" height="2">
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<a href="http://www.seismo.berkeley.edu"> <span class="menu-reference"> &nbsp;&nbsp;&nbsp;Hearth and Planetary Science Dept.&nbsp;&nbsp;&nbsp;</span> </a>
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="Images/null.gif" border="0" width="1" height="2">
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="Images/null.gif" border="0" width="1" height="2">
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<a href="http://www.berkeley.edu"> <span class="menu-reference"> &nbsp;&nbsp;&nbsp;University of Cal. at Berkeley&nbsp;&nbsp;&nbsp;</span> </a>
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="Images/null.gif" border="0" width="1" height="2">
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="Images/null.gif" border="0" width="1" height="2">
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775" align="center">
+						<img alt="none" src="Images/team.jpg" border=0>
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="Images/null.gif" border="0" width="1" height="10">
+					</td>
+				</tr>
+			</table>
+		</td>
+
+
+		<td colspan="3" valign="top" width="100%">
+			<table border="0" cellspacing="0" cellpadding="10">
+				<tr>
+					<td width="50%" align="left" valign="top">
+						<p class="justify">
+							<span class="abstract"> In this page we will show how to develop by yourself new models for Maud and how to compile and integrate them in the program. The needed tools and documentation are available. This section will expand more in the future with some more examples. Before to start be sure to have the latest Maud version installed. The Maud development kit here always refers to the last version.</span>
+							<br>
+							&nbsp; <a name="jre"> </a> <h2> step&nbsp;1:&nbsp;get&nbsp;&nbsp;Java&nbsp;Development&nbsp;Kit (to develop new models you need a Java compiler)</h2>
+						<p class="justify">
+							Check if you have already a Java Development Kit (it is different from the normal Java Runtime Technology
+              as it permits also to develop and compile Java code). Open a console or a DOS window and type
+              <strong> javac </strong>; if you get the <strong> usage </strong> message than you are already set.
+              The latest version of the JDK (Java Development Kit) can be found on the website of Sun&nbsp;Microsystems
+              at (not needed for Mac OS X users and most of Linux users):
+						<p>
+            <img alt="none" src="Images/null.gif" border="0" width="90" height="1">
+							<a href="http://java.sun.com/j2se/1.5.0/download.jsp" target="_blank" title="J2SE JDK Download"><img src="Images/jSE_jdk_dwnld.gif" alt="J2SE JDK Download" border="0"></a>
+							<br>
+						<p class="justify">
+            on the Java Technology page at sun that will be open do the following:
+            <ul class="justify">
+            <li>Click on "Download JDK 5.0 update X" (X stand for the subversion number that change time by time).
+            Do not download the "JRE 5.0......" as it does not contain the java compiler</li>
+            <li>In the new appearing page I would advice to choose the installer for your platform, for the Windows one
+              there is one for offline download (bigger) where you download the complete installer and copy it to the
+              computer where you need to install the jdk or a online installer (smaller) for installing directly from
+              the internet.</li>
+            </ul>
+            Note for Mac OS X users: it may be helpful to have installed the developer tools you got with your Mac OS X
+            installation DVD or CDs; they are not installed by default, so it is a good time to install them if you
+            haven't already done; they provide a lot of additional bonus.
+<a name="download"> </a> <h2> step&nbsp;2:&nbsp;Download </h2>
+						<p class="justify">
+							Download the following:
+						<p>
+						<table border="0" width="100%" cellpadding="1" cellspacing="10">
+							<tr>
+								<td valign="top" nowrap>
+									<img alt="none" src="Images/siehe.gif" border=0> <a href="developer/dev_kit.zip"> Download developer kit. </a>
+								</td>
+								<td valign="top" width="100%">
+									<p class="justify">
+								</td>
+							</tr>
+							<tr>
+								<td valign="top" nowrap>
+									<img alt="none" src="Images/siehe.gif" border=0> <a href="developer/apache-ant-1.6.5-bin.zip"> Download ant tool (optional). </a>
+								</td>
+								<td valign="top" width="100%">
+									<p class="justify">
+								</td>
+							</tr>
+						</table>
+						Notes: the ant tool is not stricly necessary but it will save a lot of time by automatically compile what you develop and will put everything in the correct place (one step for compiling and deploying). For Mac OS X the ant tool is already included if you have installed the Apple Developers Tools, so you can skip this step. The ant tool need to be installed and it is a general version for Linux/Unix/Windows/Mac OS X systems. You may wish to go on the internet and search for the latest version. When writing these notes the 1.6.5 was the last version. 
+						<a name="install"></a><h2> step&nbsp;3:&nbsp;Installation </h2>
+						<p class="justify">
+							To install the developer kit, you have to uncompress the <strong> dev_kit.zip </strong> into your Maud installation directory/folder, keeping the same directory structure as in the zip file (this is important if you use the ant build file to automatize the development work). In Mac OS X, the <strong> dev_kit </strong> folder must be in the same folder as the <strong> Maud.app </strong> application. In Linux and Windows the <strong> dev_kit </strong> directory must be in the directory where the <strong> maud.sh </strong> or <strong> maud.bat </strong> is. In the same folder or directory where you put the <strong>dev_kit</strong> create also a folder/directory with the name <strong> plugins </strong>. Be careful to lower/upper case. The reason for this directory structure is that the <strong> build.xml </strong> ant build file compile the java code files you create using the <strong> Maud.jar </strong> library in your Maud installation folder (see for example in the build file where the Maud.jar is supposed to be; for Mac OS X it looks in the Maud.app). Also, at the end, it creates a jar file and it copies it in the plugins folder/directory in the Maud program folder were Maud will look for it. You may aso modify this structure, but remember to specify to the compiler the Maud.jar and to put at the end the jar archive with your classes in the plugins folder in the starting Maud directory otherwise Maud will not use them.
+							<br>
+In the <strong> dev_kit </strong> folder you will find also the Maud api in the <strong> java-docs </strong> directory. At the moment only few method and classes are documented (see for example the Atom class), more in the future, but at least you will find all the public and protected methods listed.
+							<br>
+Two additional folder are presents. The <strong> src </strong> folder to be used for the java code under development; as an example a couple of different residual stress models are present, ready to be compiled. The second one, <strong> selected_Maud_Sources </strong> contains the Maud <strong> strain.java </strong> source code (the superclass for all residual strain models in Maud). So you can see which methods are overwrited and which one not in the two different models depending on the needs.
+<br>
+At the present only an example for residual strain models is available, more in the future (one for data/spectra loading and format is nearly ready).
+							<br>
+Install the ant tool if you don't have it. Refer to the manual for the installation. Basically it just need to be extracted from the zip. Move the extracted ant-1.6.5 directory where you wish to keep it and add to the system path the location of the ant command line tool.
+            </p>
+						<a name="test"> </a> <h2> step&nbsp;4:&nbsp;Compile/deploy the example and test it with Maud </h2>
+						<p class="justify">
+							To complete this step you should have already completed the installation step, ant included. If you do not want to use ant, you can figure out the step to do by looking at the build.xml file.
+						<p class="justify">
+							Open a terminal or a DOS window and navigate up to the dev_kit directory, go inside it. 
+						<p class="justify">
+							Type <strong>ant</strong> on the command line and press <strong>enter</strong>. The ant tool will start (if properly installed) and use the build.xml file to compile all the java source files inside the <strong>src</strong> directory, it will archive them in a jar file with the name my_plugin.jar and copy the archive in the plugins directory in the Maud program directory.
+						<p class="justify">
+							Now start up Maud, open one example, select one phase or create one if no one is present in the phase list tab panel. Edit the phase and go to the <strong> Advanced models </strong> tab panel. For the Strain click on the combo box and scroll at the end, you will find two new models (Example Triaxial Stress Isotropic E and WSODF Popa-Balzar unfinished). Select one and try the options button, the model is ready to be used. You can have a look at the code for the triaxial stress model (a simple one). The Popa-Balzar model is included just to show how complex a model could be and how to use a list of parameters that can shrink or grow depending on crystal symmetries and user choice; it has also some options. The triaxial stress model instead has a fixed number of parameters and one option (not used). The triaxial stress model only overwrite one method for computation (the computeStrain method). The rest of the code is needed just to define names and parameters, initialize the object and provide a simple dialog that actually is the one opened when the user press the options button. All the rest (saving, changing, managing, listing etc.) is done automatically by the superclasses. You may see how to get a full working model you don't need to write to much, basically cut and paste the initialization methods, change the class name and parameter identifiers and write the method doing the real computation.
+					</td>
+					<td width="50%" align="left" valign="top">
+<a name="work"> </a> <h2> step&nbsp;5:&nbsp;Develop your residual stress model </h2>
+						<p class="justify">
+							<strong> ATTENTION</strong>: make a copy of the dev_kit directory (mainly the src directory and build.xml file, the rest is only for documentation). So if you mess up something you can check as it was originally.
+						<p class="justify">
+							Delete (or move out) from the src directory the examples files with the entire directory structure (dot/bar/foo). Create your package with a unique directory structure (I personally use my internet address inverted as most of the Java developers: it.unitn.ing, and then I add other substructures to divide the different object/classes based on what they do; just have a look at the Maud api documents). Create the java file for your model with a proper name (same name as the class). My advice is to use the ExampleTriaxialStress.java file as a template; modify the name and inside the package and what you need. <br>
+What you need to modify or rewrite from the ExampleTriaxialStress.java file is the following:
+								<br>
+- <code>package dot.bar.foo;</code> change the package name to reflect your directory structure.
+								<br>
+- <code>public class ExampleTriaxialStress ......</code> change the name of the class; use the same name for the file.
+								<br>
+- <code>public static String[] diclistc = ......</code> change CIF name for the options and parameter you need; in the diclistcrm Strings put the corresponding labels you want to appear in the interface.
+								<br>
+- <code>final static String id = ......</code> change the identifier here; it is the one appearing in the combo box. It is extremely important that the identifier here is unique as it is used wide in the program to identify the model. Change also the subsequent desc (for description) string.
+								<br>
+- Do not modify nothing apart the Constructor names in the subsequent methods (between the two rows of stars). For example change ExampleTriaxialStress with myPersonalModelName.
+								<br>
+- In the <code>initConstant()</code> method change the number of Nstring etc. to reflect your options and parameters number.
+								<br>
+- In the <code>initParameters()</code> method initialize the options and parameters that need to initialized (for parameters it is necessary if their default value should be different than zero; otherwise by default they will initialize to zero).
+								<br>
+- Change the <code>computeStrain()</code> method that it the one called by the program to compute the strain for each reflection at a different tilting angles (see the Strain.java file how the partly it works). For example in the triaxial method provided in the example, the strain in the 33 direction is computed from the parameters for provided angles.
+								<br>
+- Finally change the JTSStrainOptionsD inner class to reflect your own parameters and options editing. Be careful that the <strong>addComponenttolist</strong> is a special method to add parameters that automatically take care of creating the magenta text field where if you click the right mouse button it permits to change the parameter status. Also this special textfield are automatically updated if the parameter value is changed elsewhere.
+								<br>
+As you see the parameters are managed as Strings, but when a computation is under way you can use the parameterValues[] values that contain the double value obtained from each parameter String. This is done by a special routine once for all before computation start to avoid to convert Strings in double everytime athe computeStrain method (and all computation method for other calsses) is called. So durig a computation use the parameterValues[], in the dialog box for editing use the parameterField variable instead. Options (stringField) are always managed as String instead. See in case the Popa-Balzar example for more complex managing of options and parameters if needed.
+<br>
+
+When the editing is finished, go to the dev_kit root folder and edit the build.xml file to change the name to your jar archive before compiling. In the example the jar archive is called my_plugin. You may call it as you like. Just change the value for the package.name in the 7th line of the file.
+From the terminal or DOS window in the dev_kit directory type <strong>ant</strong> to build and deploy your classes to the Maud plugins directory. Then you are ready to run Maud and test your model.
+
+<a name="finish"> </a> <h2> When you have finish ..... </h2>
+						<p class="justify">
+							If you wish to share your models with other you may consider sending the jar archive (and source code if you wish) to the Maud author for inclusion in the Maud program. We may think to prepare a special page for Maud extensions where the plugins developed may be stored or a link to a web page where the plugins is developed and distribuited.
+
+<a name="additions"> </a> <h2> New additions </h2>
+						<p class="justify">
+							Some new models from the Maud source code has been added to show how to develop other parts of the program. You can find them in the selected_Maud_Sources directory. In particular:
+<br>
+- Few examples for datafiles format. If your datafile format is not included in Maud you can add your own. Start to look first at the VeneziaDataFile.java , it contains also some instructions. If you need to load multiple spectra from a single datafile, then check also the others, for example the D1BIIDataFile load multiple spectra (when you need to load multiple spectra, you need to subclass MultDiffrDataFile instead of DiffrDataFile; check the difference with the VeneziaDataFile that load only one spectrum). The FdtDataFile.java is an example to load binary data. Instead the XRDMLDataFile shows how to load xml files. ATTENTION: Maud recognize the file format from the extension, so you should choose an extension for your format that it is not used already by the program. Look at the help on datafile format supported by Maud in the dataset edit window.<br>
+- GeometryDebyeScherrer.java shows how to write a model for different Lorentz-polarization corrections <br>
+- in the sizestrain folder you will find two models for size-strain modeling and one example for isotropic size-strains as well as the Popa model for anisotropic broadening. Some additional classes for spherical harmonics are included in util. <br>
+- under the cal folder some examples (only the polynomial) are reported on how to add a model for calibrating intensities and angular/d-space coordinates for the data. <br>
+
+<a name="problems"> </a> <h2> Problems and errors </h2>
+						<p class="justify">
+							In case something does not seem to work you may refer to the author. I hope in the future the <a href="forum.html"> Forum </a> can be used for development suggestion/exchange (at the present is down as it got an attack last year, no time to put it back online). Bugs or requests should be addressed to the <a href="bugzilla.html"> Maud Bug Reporter</a>. This will help to improve the program and enhance its features. If accessing that sections is not practical or you wish to deal directly with the author use the contact e-mail on the left column.
+					</td>
+				</tr>
+			</table>
+		</td>
+		<td>
+			<img alt="none" src="Images/null.gif" border="0" width="10" height="10">
+		</td>
+	</tr>
+
+
+  <tr>
+    <td bgcolor="#0b2775">
+      <img alt="none" src="Images/null.gif" border="0" width="1" height="10">
+    </td>
+    <td>
+      <img alt="none" src="Images/null.gif" border="0" width="10" height="1">
+    </td>
+    <td colspan="2" valign="bottom">
+      <table border="0" cellspacing="0" cellpadding="0" width="100%">
+        <tr>
+          <td>
+          </td>
+          <td>
+            <img alt="none" src="Images/null.gif" border="0" width="1" height="10">
+          </td>
+        </tr>
+        <tr>
+          <td bgcolor="#0b2775">
+            <img alt="none" src="Images/null.gif" border="0" width="1" height="1">
+          </td>
+        </tr>
+        <tr>
+          <td nowrap>
+            <span class="trademark">
+              <p>Copyright (c) 1997-2011 Luca Lutterotti All Rights Reserved.</p>
+              <p>This software is the research result of Luca Lutterotti and it is <br>
+              provided as it is as confidential and proprietary information. <br>
+              You shall not disclose such Confidential Information and shall use <br>
+              it only in accordance with the terms of the license agreement you <br>
+              entered into with Luca Lutterotti. <br></p>
+              <p><a href="license_maud.txt">Maud license</a></p>
+            </span><a href="style/TM-.inc"> </a>
+          </td>
+          <td width="100%">
+          </td>
+        </tr>
+      </table>
+    </td>
+    <td>
+      <img alt="none" src="Images/null.gif" border="0" width="10" height="1">
+    </td>
+  </tr>
+</table>
+<!-- Start of StatCounter Code -->
+<script type="text/javascript" language="javascript">
+var sc_project=1376406;
+var sc_invisible=1;
+var sc_partition=12;
+var sc_security="2e253a39";
+</script>
+
+<script type="text/javascript" language="javascript" src="http://www.statcounter.com/counter/counter.js"></script><noscript><a href="http://www.statcounter.com/" target="_blank"><img  src="http://c13.statcounter.com/counter.php?sc_project=1376406&amp;java=0&amp;security=2e253a39&amp;invisible=0" alt="hit counter code" border="0"></a> </noscript>
+<!-- End of StatCounter Code --><!--br><a href="http://my.statcounter.com/project/standard/stats.php?project_id=1376406&amp;guest=1">View Maud Stats</a-->
+</body>
+</html>

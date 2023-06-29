@@ -1,0 +1,91 @@
+<html>
+
+<head>
+<title>Step FIVE</title>
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<link REL="StyleSheet" HREF="MAUDtutorial.css">
+</head>
+
+<body>
+
+<h1>Setting up the analysis (step 5)</h1>
+
+<hr>
+
+<ol>
+  <li>We are now ready to set up some parameters before starting the quantitative analysis.
+    The main idea is to guide in the right direction the final solution for what concearning
+    the parameters that are easy to be checked by viewing the spectrum.</li>
+  <li>From the 'Refinement' menu, click on the 'Compute spectrum' option. This will allow the
+    program to compute a spectrum with the actual values of the parameters.</li>
+  <li>Now, go to the &quot;Datasets&quot; tabPanel in the main MAUD window and select our
+    dataset. Click on the 'Edit' button and go to the &quot;Datafiles' tabPanel. Select the
+    file you loaded before and click on the 'View' button. A new window will appear showing
+    the experimental datapoint (blue) and the fitting (black).</li>
+  <li>Click on the 'Change parameter' option in the 'Update' menu and a new window called
+    &quot;Live parameters&quot; will show up (see the next figure).<br>
+    <br>
+    <img src="images/liveparameters_window.jpg" WIDTH="541" HEIGHT="349"><br>
+    <em>Live parameters frame</em><br>
+    <br>
+    Now, you will be able to modify real time the fitting increasing or decreasing the value
+    of the parameters. Arrange the plot and the &quot;Live parameters&quot; windows in order to
+    see both at the same time. In the &quot;Our dataset&quot; object, select the
+    &quot;riet_par_background_pol0&quot; field. Input an increment of
+    10 in the &quot;Increment&quot; field and&nbsp; increment the intensity to
+    40 by using the
+    right arrow.</li>
+  <li>Now scroll up to the beginning of the &quot;Live parameters&quot; frame. In the &quot;RigakuIIIDmax&quot; object select the
+    &quot;pd_proc_intensity_incident&quot; field (incident intensity). Input an increment of
+    10 in the &quot;Increment&quot; field and&nbsp; increment the intensity value by using the
+    right arrow. The following figure shows you what you should have obtained after this first
+    step.<br>
+    <br>
+    <img src="images/fullplot_window.jpg" WIDTH="689" HEIGHT="416"><br>
+    <em>Plot frame</em><br>
+    <br>
+    As you notice, the T-PSZ peaks are shifted due to wrong cell parameters for this phase. We
+    can zoom in a small region of the spectrum to control more efficientely what is going on.
+    Drag a rectangular window using the mouse to zoom in around the peaks between 70 and 80
+    degrees, as shown in the previous figure.</li>
+  <li>Once you have zoomed in, go back to the &quot;Live parameters&quot; window and scroll
+    down to the T-PSZ object. Select the &quot;_cell_length_c&quot; cell parameter, input an
+    increment of 0.005 in the &quot;Increment&quot; field and start shifting the 400 peak by
+    clicking on the right arrow (we are increasing the parameter's value). After a good
+    overlapping of the experimental and calculated peaks, select the
+    &quot;_cell_length_a&quot; cell parameter of the T-PSZ. Repeat the same procedure until
+    you get a good overlapping for the 220 reflection. The two following figures show the
+    fitted profile before and after the procedures.<br>
+    <br>
+    <img src="images/zoomedbeforeplot_window.jpg" WIDTH="609" HEIGHT="296"><br>
+    <em>Zoomed-in plot window before changes</em><br>
+    <br>
+    <img src="images/zoomedafterplot_window.jpg" WIDTH="611" HEIGHT="298"><br>
+    <em>Zoomed-in plot window after changes</em><br>
+    <br>
+    Close the &quot;Live parameters&quot; window and zoom out&nbsp; the plot window by
+    double-clicking on it. Your plot should be similar to the one in the next figure.<br>
+    <br>
+    <img src="images/goodfullplot_window.jpg" width="687" height="419"><br>
+    <em>Good fitting after changing the T-PSZ cell parameters<br>
+    <br>
+    </em>Close the plot window and then the &quot;Datasets&quot; tabPanel by clicking on 'OK'
+    button. Now, you are ready for the analysis.</li>
+</ol>
+
+<hr>
+<div align="right">
+  <table border="0" width="30%">
+  <tr>
+    <td width="10%">
+      <p align="center"><a href="stepfour.html"><img src="images/Back_Arrow.gif" width="51" height="31" border="0"></a></p>
+    </td>
+    <td width="10%">
+      <p align="center"><a href="stepsix.html"><img src="images/Forward_Arrow.gif" width="51" height="31"border="0"></a></p>
+    </td>
+  </tr>
+</table>
+</div>
+
+</body>
+</html>

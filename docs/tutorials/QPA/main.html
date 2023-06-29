@@ -1,0 +1,72 @@
+<html>
+
+<head>
+<title>MAUD Tutorial</title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+<meta name="Microsoft Border" content="none, default">
+</head>
+<script language="JAVASCRIPT">
+
+<!-- Begin
+
+var clocktext;
+var pagetitle = document.title;
+
+function incrementTime() {
+now = new Date();
+sec = now.getSeconds();
+hr = now.getHours();
+min = now.getMinutes();
+if (hr <= 9) hr = "0" + hr;
+if (min <= 9) min = "0" + min;
+if (sec <= 9) sec = "0" + sec;
+var clocktext = "Current time: " + hr + ":" + min + ":" + sec;
+var connectingtime = new Date(now - start);
+window.status = clocktext + " - connected for " + connectingtime.getSeconds() + " seconds";
+setTimeout("incrementTime()", 1000);
+}
+
+start = new Date();
+if (document.all) incrementTime();
+
+//  End -->
+
+</script>
+
+
+<frameset frameborder="0" framespacing="1" border="false" cols="145,*">
+  <frame name="leftFrame" src="content.html" target="rightFrame" scrolling="no"
+  marginwidth="0" noresize>
+  <frame name="rightFrame" src="introduction.html">
+  <noframes>
+  <body bgcolor="#000080" link="#FFFF00" vlink="#FFFFFF" alink="#FF0000" text="#C0C0C0">
+  <p align="center">Welcome to <font color="#FFFF80"><strong>MAUD tutorial</strong></font>
+  for x-ray quantitative analysis.</p>
+  <p align="center">&nbsp;</p>
+  <p align="center">This site is best viewed at any resolution, BUT you have to enable
+  frames.<br>
+  You can download a frames-enabled browser from the following sites.</p>
+  <table border="0" width="100%">
+    <tr>
+      <td width="50%" align="center" style="border: none"><a
+      href="http://www.microsoft.com/windows/ie/default.htm"><img src="images/Logo_IE.gif"
+      border="none" WIDTH="32" HEIGHT="30"></a></td>
+      <td width="50%" align="center" style="border: none"><a
+      href="http://www.netscape.com/computing/download/"><img src="images/Logo_Netscape.gif"
+      border="none" WIDTH="32" HEIGHT="30"></a></td>
+    </tr>
+    <tr>
+      <td width="50%" align="center" style="border: none"><a
+      href="http://www.microsoft.com/windows/ie/default.htm"><em>Internet Explorer</em></a></td>
+      <td width="50%" align="center" style="border: none"><a
+      href="http://www.netscape.com/computing/download/"><em>Netscape Communicator</em></a></td>
+    </tr>
+  </table>
+  <p align="center">&nbsp;</p>
+  <p align="center"><a href="mailto:Leonardo.Cont@ing.unitn.it"><img
+  src="images/E-mail_alternative_icon.gif" width="55" height="54" border="0"></a></p>
+  <p align="center"><em><font color="#FF0000">For any problem or question, click above.</font></em></p>
+  </body>
+  </noframes>
+</frameset>
+</html>

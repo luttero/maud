@@ -1,0 +1,49 @@
+H2 { font-family: sans-serif; font-style: normal; color: rgb(0,0,96); font-size:100% }
+
+.nav { text-decoration: none }
+.nav { font-family: Arial; font-style: normal; font-size: 75%; color: rgb(0, 0, 96) }
+
+.menu-highlight { text-decoration: none }
+.menu-reference { text-decoration: none }
+.menu-reference { font-family: Arial; font-style: normal; font-size: 85%; color: white }
+
+.menu-group { font-family: Arial; font-style: normal; font-size: 100%; color: gray; align: right }
+.menu-highlight { font-family: Arial; font-style: normal; font-size: 85%; color: rgb(0, 0, 96) }
+
+.menu-reference:link { color: white }  /* for unvisited links */
+.menu-reference:visited { color: white) } /* for visited links */
+.menu-reference:active { color: white } /* when link is clicked */
+.menu-reference:hover { color: gray } /* when mouse is over link */
+
+.justify { text-decoration: none }
+.justify { font-family: Arial; font-style: normal; font-size: 85%; color: black }
+.justify:link { color: red }  /* for unvisited links */
+.justify:visited { color: red) } /* for visited links */
+.justify:active { color: red } /* when link is clicked */
+.justify:hover { color: green } /* when mouse is over link */
+.abstract { color: blue }
+.abstract { text-decoration: none }
+.abstract:link { color: red }  /* for unvisited links */
+.abstract:visited { color: red) } /* for visited links */
+.abstract:active { color: red } /* when link is clicked */
+.abstract:hover { color: green } /* when mouse is over link */
+
+.trademark { font-family: Arial; font-style: normal; font-size: 85%; color: black }
+
+BODY { background-color: white; font-family: Arial, Helvetica, sans-serif; font-size: 80% }
+
+
+
+/* H1, H2, H3, H4, H5 { color: red }
+BODY { background-color: #cccccc; font-family: Arial, Helvetica, sans-serif }
+P { line-height: 200% }
+UL LI { font-size: 70% }
+.red { color: red }
+.green { color: green }
+.blue { color: blue }
+#big { font-size: 120% }
+#upper { text-transform: uppercase }
+
+
+BODY { background-color: #000000; font-family: Courier, monospace; color: #eeeeee } */
+

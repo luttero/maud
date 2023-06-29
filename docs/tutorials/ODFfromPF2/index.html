@@ -1,0 +1,98 @@
+<html>
+
+	<head>
+		<meta http-equiv="content-type" content="text/html;charset=ISO-8859-1">
+		<meta name="generator" content="L. L.">
+		<title>ODF from PF tutorial</title>
+	</head>
+
+	<body bgcolor="#ffffff">
+		<div align="center">
+			<p><b><font size="5">MAUD tutorial - Computing ODF from traditional Pole Figures using WIMV</font></b></p>
+		</div>
+		<p><b>Note: </b>This tutorial is available also in PDF format: <a href="ODFfromPF.pdf">ODFfromPF.pdf</a>, but you will need also the archive containing the example files: <a href="ODFfromPF.zip">ODFfromPF.zip</a></p>
+		<p><i><b>Introduction and purpose</b></i></p>
+		<p>In this tutorial we will see how Maud can be used to compute an ODF from some traditional Pole Figures using the WIMV method. After that we will use the graphical routines of Maud to display the reconstructed Pole Figures from the computed ODF. In addition the so obtained ODF can be used to correct the spectra for a subsequent Rietveld refinement. To this scope we will use an already prepared analysis file concerning a Cu-Fe codeformed sample. Some spectra were collected at the TOF source of IPNS with the GPPD instrument and are already specified in the analysis file. To concentrate the tutorial on the original goals the spectra were already refined for some characteristics and only the texture has not been refined. In addition we have some Pole Figures from this sample. (In reality the Pole Figures were not measured traditionally but extracted using Maud from the spectra supposing an orthorhombic texture. See the tutorial on texture analysis about how to do that). For just the texture analysis by using traditional pole figures we don't need all the spectra and instrument defined in the analysis file. The only necessary thing is a phase defined at least with the correct space group (Laue group in reality) and lattice parameters. WIMV use only them for the ODF computation. In this tutorial we have also the spectra to show how the so obtained ODF can be used to correct the spectra for the texture. In principle you can collect just a spectrum for a Rietveld analysis and some pole figures to compute the texture and use it to perform a Rietveld analysis having the exact correction for the intensities from the texture (ODF) computed from the pole figures.</p>
+		<p><i><b>Requisite</b></i></p>
+		<p>To execute this tutorial you need <a href="../../index.html">Maud version 1.68</a> or later installed on your computer. Download the archive file <a href="ODFfromPF.zip">ODFfromPF.zip</a> Unzip the archive to extract the example files to be loaded by Maud. Start the program Maud. You are ready to start the tutorial.</p>
+		<p><b><i>Procedure</i></b></p>
+		<p>From Maud use the menu command <b>File:Open...</b> to locate and load the file <b>CuFeIIw5all.par</b> from the tutorial files. Select the <b>Phases</b> tabPanel in the main window of Maud, so you will have something like in figure 1.</p>
+		<div align="center">
+			<p><img src="ODFfromPF_start.jpg" width="563" height="464" border="0"></p>
+		</div>
+		<p>Figure 1: Starting main window and Phases tabPanel.</p>
+		<p></p>
+		<p>If you select one of the phases in the list and press the <b>edit</b> button the phase frame will appear and pressing the <b>texture</b> button you may check that no texture model is actually active for the phase (see figure 2).</p>
+		<div align="center">
+			<p><img src="ODFfromPF_1.jpg" width="788" height="549" border="0"></p>
+		</div>
+		<p>Figure 2: Verifying that no texture model is active.</p>
+		<p></p>
+		<p>Close the frames and go back to the main window. We will now try to compute the spectra with no texture model activated. The spectra will be simulated as if the phases have a random ODF. To compute the spectra with the actual parameters, select <b>Refinement:Compute spectrum</b> from the main menu as in figure 3.</p>
+		<div align="center">
+			<p><img src="ODFfromPF_2.jpg" width="525" height="386" border="0"></p>
+		</div>
+		<p>Figure 3: Computing spectra with the random model.</p>
+		<p>
+		</p>
+		<p>A window will appear showing the result of the computation (the Weighted Sum of Squares, WSS). As the computation is finished we can display the corresponding plots. Select the <b>Data sets</b> tabPanel and select the only dataset in the list. Choose from the main menu (the menu of the main window) <b>Graphic:Plot selected dataset</b> and a window will appear showing all the spectra with the fitting functions in a multiplot fashion as in figure 4.</p>
+		<div align="center">
+			<p><img src="ODFfromPF_3.jpg" width="864" height="694" border="0"></p>
+		</div>
+		<p>Figure 4: Multiplot with the random model.</p>
+		<p></p>
+		<p>From the plot it is recognizable that the texture deviations on the intensity are not reproduced. Drawing a box in the plot around the portion you want to enlarge you can zoom in. So enlarging the lower-right part of the plot, the texture deviations are more visibles as in figure 5. You can close now the plot window.</p>
+		<div align="center">
+			<p><img src="ODFfromPF_4.jpg" width="672" height="454" border="0"></p>
+		</div>
+		<p>Figure 5: Zoom in the multiplot with the random model.</p>
+		<p></p>
+		<p>The first part has been used only to show how it looks a fitting on a textured pattern when we don't use a texture model or not the proper one. It is not necessary to perform this first part before to perform the texture computation as in the following. Now we will perform the ODF computation using the WIMV method and some pole figures as in traditional texture methods.</p>
+		<p>In the <b>Phases</b> tabPanel select one of the two phases (for example we can start with the alfa-Fe) and press the <b>edit</b> button to view the phase frame for the alfa-Fe. For texture computation we need only to specify the symmetry/space group (the Im-3m is already specified for the Fe) and the cell parameters (you may verify this by pressing the <b>Cell parameter</b> button. The rest is needed only for the Rietveld computation but not for the texture calculation that we will perform in the following. Press the <b>texture</b> button to see the window for the selection of the texture model. Select from the combo box the <b>WIMV</b> model and press the <b>options</b> button to see the options window for this model. You will end up with the frame as in figure 6.</p>
+		<div align="center">
+			<p><img src="ODFfromPF_5.jpg" width="959" height="624" border="0"></p>
+		</div>
+		<p>Figure 6: The WIMV options frame.</p>
+		<p></p>
+		<p>Press the <b>ODF from PF</b> button and a dialog box will appear asking to locate the pole figure file needed for the ODF computation. The file should be a text file containing all the experimental pole figures for the alfa-Fe in the Beartex format (use a text editor to see the format used in this example; superposed pole figures can be specified as for the 0,3,6 that is superposed with 3,0,6 inside the example; see the <a href="alfa-Few5.xpe">alfa-Few5.xpe</a> file at the 0,3,6 pole figure). Locate and load the <b>alfa-Few5.xpe</b> file inside the tutorial folder. It contains pole figures in 5x5 degrees grid (the resolution of the pole figures should correspond to the resolution of the ODF in the WIMV options frame).</p>
+		<p>In this example the pole figures are not complete pole figures and in the input file used, zero's are reported in the unmeasured region. The measured region is specified with the <b>0.0 40.0</b> fields corresponding to 0 to 40 degrees in <font face="Symbol">q</font> (or <font face="Symbol">c</font>) for each pole figure. Warning: in WIMV, in order to correctly works, it is necessary to specify the measured part as lower/upper value for the <font face="Symbol">q</font> as in this example. Otherwise the zero's will be interpreted as real zero's in the pole figure. Each pole figure may have a different range in <font face="Symbol">q</font>. The angle <font face="Symbol">f</font> should go instead from 0 to 360 as in this example. No smaller range for <font face="Symbol">f</font> is possible. If you want to use a different resolution the input format for the pole figures is the same (intensities in rows of 18th values; obviously more or less rows are needed) but you should put the correct resolution value after the <font face="Symbol">q</font> and the <font face="Symbol">f</font> range for each pole figure. Remember to use only 5/n or 5*n resolution values for a secure computation with n as an integer.</p>
+		<p>Superposed pole figures are reported as a mean pole figure (over all the suposed ones) with the h k l indices of the first reflex. In the subsequent rows it should be reported: </p>
+		<p>numberOfSuperpositions h_1 k_1 l_1 weight_1 h_2 k_2 l_2 weight_2 ........</p>
+		<p>Warning: don't put a line break inside a h_n k_n l_n weight_n of a reflex. Put line breaks if necessary between peak specifications.</p>
+		<p>As soon as you load the pole figures file, if all is ok, a WIMV computation will start and the progressive output will be visible in the <b>console</b> window.</p>
+		<p><b>Note:</b> <i>the console window is the window where Java messages are shown. For Unix is the console or terminal window where the program started (in MacOS X, if a true Mac OS X app has been used, you can see the output by starting the Console application from Applications:Utilities), for Windows is the DOS window for the Java output (edit the parameters of the window to enable more lines to be remembered) and in Mac OS is a window called console that will appear in the lower-left corner only if there is an output. </i><i>The WIMV output is visible in figure 7 for the last few cycles. The general Rp and single Rp factors for each pole figure is reported (RPFAKs) with also the normalization factor (NORMFAKs).</i></p>
+		<div align="center">
+			<p><img src="ODFfromPF_6.jpg" width="840" height="665" border="0"></p>
+		</div>
+		<p>Figure 7: WIMV output at end.</p>
+		<p>
+		</p>
+		<p>You can press the <b>Compute</b> button before the <b>Texture index (F2)</b> to compute the texture index for this ODF.</p>
+		<p>To view the reconstructed pole figures for the alfa-Fe from this computed ODF you can close the windows and come back to the main window of Maud. From the main menu select <b>Graphic:Texture plots</b>. A frame will appear with alfa-Fe already selected and a list of peaks. To plot more pole figures in 2D turn on the option <b>active</b> in the list of hkl's for each hkl you want to use (for example the 1 1 0, 2 0 0 and 2 2 2) and press the <b>Plot</b> button in the lower-left corner. After the pole figures have been recalculated, a box will appear asking to confirm the proposed range for the pole figure intensities. Press <b>accept</b> to use the proposed range and a window with the reconstructed pole figures and the intensity reference scale will appear as in figure 8.</p>
+		<div align="center">
+			<p><img src="ODFfromPF_7.jpg" width="697" height="575" border="0"></p>
+		</div>
+		<p>Figure 8: Reconstructed pole figures plot.</p>
+		<p></p>
+		<p>Close the windows and come back to the main Maud window. Do the same texture computation for the second phase (Copper) using the copperw5.xpe pole figures input file.</p>
+		<p><b>Note: </b><i>after the WIMV texture computation the program will save automaticly for each phase on which the texture computation has been performed some extra files containing:</i></p>
+		<p><i>- nameOfThePhase.xpx : the experimental and reconstructed pole figures in Beartex format for comparison plotting. Can be loaded by the <a href="http://www.seismo.berkeley.edu/~wenk/beartex.htm">Beartex program</a>.</i></p>
+		<p><i>- nameOfThePhase.odf : the odf in Maud format. Can be loaded by Maud or used automatically for Rietveld computation if WIMV is used as texture model.</i></p>
+		<p>
+		</p>
+		<p>Finally, now each phase has an ODF associated that has been computed from the pole figures. The experimental pole figures used for input has been obtained with the sample in the same position as for the spectra collection. So the ODF can be used to correct the spectra in a Rietveld computation. (If the reference frame is not the same, you can use the sample position angles in the <b>Sample</b> edit frame to make the two reference frames corresponding). If you select from the main menu <b>Refinement:Compute spectrum</b> the program will compute the spectra using also the ODF's to correct the intensities (note: the WIMV texture model should remain active as texture model for both phases; if you change to <b>none tex</b> than the random texture model will be used). After the computation of the fitting function has been finished (note the lower value of the WSS that indicates a better fitting) you can use as at the beginning the menu choice <b>Plot selected dataset</b> to view the multiplot.</p>
+		<p>
+		</p>
+    <!-- Start of StatCounter Code -->
+    <script type="text/javascript" language="javascript">
+    var sc_project=1376406;
+    var sc_invisible=1;
+    var sc_partition=12;
+    var sc_security="2e253a39";
+    </script>
+
+    <script type="text/javascript" language="javascript" src="http://www.statcounter.com/counter/counter.js"></script><noscript><a href="http://www.statcounter.com/" target="_blank"><img  src="http://c13.statcounter.com/counter.php?sc_project=1376406&amp;java=0&amp;security=2e253a39&amp;invisible=0" alt="hit counter code" border="0"></a> </noscript>
+    <!-- End of StatCounter Code --><!--br><a href="http://my.statcounter.com/project/standard/stats.php?project_id=1376406&amp;guest=1">View Maud Stats</a-->
+    </body>
+
+</html>

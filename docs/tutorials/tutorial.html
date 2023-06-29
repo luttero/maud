@@ -1,0 +1,340 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+	<title> The MAUD program </title> 
+	<meta name="Author" content="Luca Lutterotti (Luca.Lutterotti@unitn.it)">
+	<meta name="Description" content="University of Trento, Department of Industrial Engineering, Program 'MAUD' for material analysis by diffraction/reflectivity/fluorescence">
+	<meta name="Keywords" content="diffraction, development, Java, MAUD, texture, Rietveld, download, program, structure, refinement, ab-initio, solution, crystal, crystallography, powder, powder diffraction, TOF, neutron, x-ray, synchrotron, radiation, reflectivity, stress, residual stress, ODF, calculation, fitting, spectrum, spectra, phase, phase analysis, quantitative, quantitative phase analysis, amorphous, material, analysis, layer, multilayer, thickness, WIMV, Harmonic, stacking fault, twin fault, crystallite, microstrain,
+preferred orientation, WIMV, EWIMV, Harmonic, Popa, distribution, atom, atomic structure, film, thin film, intermetallic, ceramic, fluorescence,
+polymer, metal, microstructure, least squares, Le Bail, indexing, background, images, Laue, image plate, CCD, detector, tutorial">
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <link rel="shortcut icon" href="../Images/favicon.ico" type="image/x-icon" />
+	<link rel=stylesheet type="text/css" href="../styles/basic.css">
+</head>
+<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" leftmargin="0" topmargin="0">
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+	<tr>
+		<td bgcolor="#0b2775" valign="top" align="center" width="180" rowspan="4">
+			<a href="../Images/Maud_ladybug2_full66.png"> <img alt="Maud ladybug icon" src="../Images/Maud_ladybug2_full20.png" border=0 width=180> </a> 
+		</td>
+		<td>
+			<img alt="none" src="../Images/null.gif" border="0" width="1" height="4"> 
+		</td>
+		<td>
+			<img alt="none" src="../Images/null.gif" border=0 width=10 height=1> 
+		</td>
+		<td colspan="2">
+			<img alt="none" src="../Images/null.gif" border=0 width=1 height=4> 
+		</td>
+		<td>
+			<img alt="none" src="../Images/null.gif" border=0 width=10 height=1> 
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<img alt="none" src="../Images/null.gif" border=0 width=10 height=1> 
+		</td>
+		<td valign="bottom">
+			<img alt="none" src="../Images/null.gif" border=0 width=1 height=2> 
+			<br>
+			<span class="nav-title"> <strong> MAUD - Materials Analysis Using Diffraction - Tutorial </strong> &nbsp; </span> 
+		</td>
+		<td class="re" align="right" valign="bottom">
+			<a href="http://maud.radiographema.com"><img alt="none" src="../Images/button-up.gif" border=0></a> <img alt="none" src="../Images/null.gif" border=0 width=8 height=1> <a href="../facts/facts.html"><img alt="none" src="../Images/button-prev.gif" border=0></a> <a href="../download.html"><img alt="none" src="../Images/button-next.gif" border=0></a>
+		</td>
+		<td>
+			<img alt="none" src="../Images/null.gif" border=0 width=10 height=1> 
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<img alt="none" src="../Images/null.gif" border="0" width="10" height="1"> 
+		</td>
+		<td class="re" align="right" valign="top" colspan="2" width="100%">
+			<hr size=1>
+      <a class=nav href="../"> Maud </a> <img alt="none" src="../Images/nav-dot.gif" border=0> <a class=nav href="../"> News </a> <img alt="none" src="../Images/nav-dot.gif" border=0> <a class=nav href="../facts/facts.html"> Maud in action </a> <img alt="none" src="../Images/nav-dot.gif" border=0> <a class=nav href="tutorial.html"> Tutorial </a> <img alt="none" src="../Images/nav-dot.gif" border=0> <a class=nav href="../download.html"> Download </a> <img alt="none" src="../Images/nav-dot.gif" border=0> <a class=nav href="../devs/developer.html"> Developer </a> <img alt="none" src="../Images/nav-dot.gif" border=0> <a class=nav href="../"> Maud forum </a> <img alt="none" src="../Images/nav-dot.gif" border=0> <a class=nav href="../"> Bug Reporter </a> <img alt="none" src="../Images/nav-dot.gif" border=0> <a class=nav href="../documents/links.html"> Maud docs </a>
+<!--   <img alt="none" src="../Images/nav-dot.gif" border=0><a class=nav href="http://www.ing.unitn.it/~maud/esqui/workshop.html" target="guide"> Workshop (Esqui-Maud)</a> -->
+		</td>
+		<td rowspan="2">
+			<img alt="none" src="../Images/null.gif" border=0 width=10 height=1> 
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<img alt="none" src="../Images/null.gif" border="0" width="10" height="80"> 
+		</td>
+		<td colspan="2" align="right">
+		</td>
+	</tr>
+	<tr>
+		<td bgcolor="#0b2775" align="left" valign="top" width="180">
+			<table border="0" cellspacing="0" cellpadding="0">
+				<tr>
+					<td class="re" bgcolor="#0b2775">
+						<img alt="none" src="../Images/null.gif" border="0" width="1" height="14"> 
+						<br>
+						<span class="menu-group"> Diffraction&nbsp; </span> 
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="../Images/menu-gi.gif" border="0"> 
+						<br>
+						<img alt="none" src="../Images/null.gif" border="0" width="1" height="10"> 
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="../Images/null.gif" border="0" width="1" height="2"> 
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<a href="index.html"> <span class="menu-reference"> &nbsp;&nbsp;&nbsp;Maud&nbsp;&nbsp;&nbsp;</span> </a> 
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="../Images/null.gif" border="0" width="1" height="2"> 
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="../Images/null.gif" border="0" width="1" height="2"> 
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<a href="../download.html"> <span class="menu-reference"> &nbsp;&nbsp;&nbsp;Download Maud&nbsp;&nbsp;&nbsp;</span> </a> 
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="../Images/null.gif" border="0" width="1" height="2"> 
+					</td>
+				</tr>
+				<tr>
+					<td class="re" bgcolor="#0b2775">
+						<img alt="none" src="../Images/null.gif" border="0" width="1" height="14"> 
+						<br>
+						<span class="menu-group"> Links&nbsp; </span> 
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="../Images/menu-gi.gif" border="0"> 
+						<br>
+						<img alt="none" src="../Images/null.gif" border="0" width="1" height="10"> 
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="../Images/null.gif" border="0" width="1" height="2"> 
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<a href="../"> <span class="menu-reference"> &nbsp;&nbsp;&nbsp;Maud Rietveld school&nbsp;&nbsp;&nbsp;</span> </a> 
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="../Images/null.gif" border="0" width="1" height="2"> 
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="../Images/null.gif" border="0" width="1" height="2"> 
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<a href="http://www.crystallography.net/cod"> <span class="menu-reference"> &nbsp;&nbsp;&nbsp;COD (Crystallography Open Database)&nbsp;&nbsp;&nbsp;</span> </a> 
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="../Images/null.gif" border="0" width="1" height="2"> 
+					</td>
+				</tr>
+				<tr>
+					<td class="re" bgcolor="#0b2775">
+						<img alt="none" src="../Images/null.gif" border="0" width="1" height="14"> 
+						<br>
+						<span class="menu-group"> The author&nbsp; </span> 
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="../Images/menu-gi.gif" border="0"> 
+						<br>
+						<img alt="none" src="../Images/null.gif" border="0" width="1" height="10"> 
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="../Images/null.gif" border="0" width="1" height="2"> 
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<a href="mailto:luca.lutterotti@unitn.it"> <span class="menu-reference"> &nbsp;&nbsp;&nbsp;Cont@ct&nbsp;&nbsp;&nbsp;</span> </a> 
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="../Images/null.gif" border="0" width="1" height="2"> 
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="../Images/null.gif" border="0" width="1" height="2"> 
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<a href="https://www.dii.unitn.it/en"> <span class="menu-reference"> &nbsp;&nbsp;&nbsp;Industrial Engineering Dept.&nbsp;&nbsp;&nbsp;</span> </a> 
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="../Images/null.gif" border="0" width="1" height="2"> 
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="../Images/null.gif" border="0" width="1" height="2"> 
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775" align="center">
+						<a href="http://www.unitn.it"> <img alt="none" src="../Images/univer.gif" border=0> </a> 
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="../Images/null.gif" border="0" width="1" height="10"> 
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="../Images/null.gif" border="0" width="1" height="2"> 
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775" align="center">
+						<img alt="none" src="../Images/team.jpg" border=0> 
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#0b2775">
+						<img alt="none" src="../Images/null.gif" border="0" width="1" height="10"> 
+					</td>
+				</tr>
+			</table>
+		</td>
+
+
+  <td colspan="3" valign="top" width="100%">
+
+
+<table border="0" cellspacing="0" cellpadding="10">
+  <tr>
+    <td width="100%" align="left" valign="top">
+
+  <tr>
+    <td width="100%">
+      <p align="center">&nbsp;</p>
+      <p align="center"><font size="5">Available tutorials</font></p>
+      <p align="center">&nbsp;</p>
+    </td>
+  </tr>
+<tr>
+<td width="100%">
+<h2>Maud version 2.x</h2>
+<ol>
+  <p align="left">1. <a href="Tutorial/QPA2/main.html">Performing an x-ray quantitative analysis in five easy steps! (Revised for version 2.0)</a></p>
+  <p align="left">2. <a href="Tutorial/sizestrain/instrumentalbroadening.html">Determining the instrumental broadening of your instrument (for microstructural - size-strain analyses) (for version 2.0 also)</a></p>
+  <p align="left">3. <a href="Tutorial/imagesToSpectra2/index.html">Converting image data to spectra and performing a refinement with an old film camera.</a></p>
+  <p align="left">4. <a href="Tutorial/ODFfromPF2/index.html">Texture analysis from traditional pole figures with EWIMV (Revised for version 2.0).</a></p>
+  <p align="left">5. <a href="Tutorial/HippoWizard/hippowizard.html">Hippo Texture Analysis Wizard.</a></p>
+</ol>
+<h2>Maud version 1.x</h2>
+<ol>
+  <p align="left">1. <a href="Tutorial/QPA/main.html">Performing an x-ray quantitative analysis in seven easy steps!</a></p>
+  <p align="left">2. <a href="Tutorial/sizestrain/instrumentalbroadening.html">Determining the instrumental broadening of your instrument (for microstructural - size-strain analyses)</a></p>
+  <p align="left">3. <a href="Tutorial/imagesToSpectra/index.html">Converting image data to spectra.</a></p>
+  <p align="left">4. <a href="Tutorial/ODFfromPF/index.html">Texture analysis from traditional pole figures.</a></p>
+</ol>
+<h2>Maud version 2.x: Video tutorials</h2>
+<ol>
+  <p align="left">1. All tutorials have been uploaded at the new YouTube page: <a href="http://www.youtube.com/user/MaudRietveldProgram">YouTube Maud videos</a></p>
+</ol>
+</td>
+</tr>
+
+
+    <!--/td>
+  </tr-->
+</table>
+
+  </td>
+  <td><img alt="none" src="../Images/null.gif" border="0" width="10" height="10"></td>
+</tr>
+
+
+  <tr>
+    <td bgcolor="#0b2775">
+      <img alt="none" src="../Images/null.gif" border="0" width="1" height="10">
+    </td>
+    <td>
+      <img alt="none" src="../Images/null.gif" border="0" width="10" height="1">
+    </td>
+    <td colspan="2" valign="bottom">
+      <table border="0" cellspacing="0" cellpadding="0" width="100%">
+        <tr>
+          <td>
+          </td>
+          <td>
+            <img alt="none" src="../Images/null.gif" border="0" width="1" height="10">
+          </td>
+        </tr>
+        <tr>
+          <td bgcolor="#0b2775">
+            <img alt="none" src="../Images/null.gif" border="0" width="1" height="1">
+          </td>
+        </tr>
+        <tr>
+          <td nowrap>
+            <span class="trademark">
+              <p>Copyright (c) 1997-2097 Luca Lutterotti All Rights Reserved.</p>
+              <p>This software is the research result of Luca Lutterotti and it is <br>
+              provided as it is as confidential and proprietary information. <br>
+              You shall not disclose such Confidential Information and shall use <br>
+              it only in accordance with the terms of the license agreement you <br>
+              entered into with Luca Lutterotti. <br></p>
+              <p><a href="license_maud.txt">Maud license</a></p>
+            </span><a href="style/TM-.inc"> </a>
+          </td>
+          <td width="100%">
+          </td>
+        </tr>
+      </table>
+    </td>
+    <td>
+      <img alt="none" src="../Images/null.gif" border="0" width="10" height="1">
+    </td>
+  </tr>
+</table>
+<!-- Start of StatCounter Code -->
+<script type="text/javascript" language="javascript">
+var sc_project=1376406;
+var sc_invisible=1;
+var sc_partition=12;
+var sc_security="2e253a39";
+</script>
+
+<script type="text/javascript" language="javascript" src="http://www.statcounter.com/counter/counter.js"></script><noscript><a href="http://www.statcounter.com/" target="_blank"><img  src="http://c13.statcounter.com/counter.php?sc_project=1376406&amp;java=0&amp;security=2e253a39&amp;invisible=0" alt="hit counter code" border="0"></a> </noscript>
+<!-- End of StatCounter Code --><!--br><a href="http://my.statcounter.com/project/standard/stats.php?project_id=1376406&amp;guest=1">View Maud Stats</a-->
+</body>
+</html>

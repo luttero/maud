@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="61caab25-241f-4ab1-85f0-b423f2950da9" name="Changes" comment="New version 5/2023&#10;Some modifications on GSASDataFile and more options for plotting types." />
+    <list default="true" id="61caab25-241f-4ab1-85f0-b423f2950da9" name="Changes" comment="New version 5/2023&#10;Some modifications on GSASDataFile and more options for plotting types.">
+      <change beforePath="$PROJECT_DIR$/Maud.iws" beforeDir="false" afterPath="$PROJECT_DIR$/Maud.iws" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
