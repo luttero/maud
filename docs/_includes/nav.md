@@ -9,6 +9,8 @@
                 | {% include reference.html link="install" content="Installation" no_icon=true %}
                 | {% include reference.html link="examples" content="Examples" %}
                 | {% include reference.html link="videos" content="Videos" %}
+                | {% include reference.html link="https://github.com/luttero/maud/releases" content="Download" %}
+
             </div>
         </div>
     </div>

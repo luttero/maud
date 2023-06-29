@@ -11,4 +11,4 @@ To download the program check on [MAUD download][maud-download]. Check out the [
 
 [maud-docs]: /maud/documents/
 [maud-tutorials]: /maud/tutorials/
-[maud-download]: /maud/releases/tag/v2.998/
+[maud-download]: https://github.com/luttero/maud/releases/tag/v2.998
