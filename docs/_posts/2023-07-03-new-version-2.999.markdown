@@ -6,11 +6,16 @@ categories: Maud release
 ---
 
 A new MAUD version (2.999) is available in the releases section. The version contains some bugs fixes and improvements.
+
 Other download links:
+
 Download from [DropBox][dropbox]
+
 Download from [Goggle drive][gdrive]
 
-To download here on gothub the program and source check on [MAUD download][maud-download]. Check out the [MAUD docs][maud-docs] for more info on how to get the most out of MAUD. To start tutorials are probably the best and can be found at [MAUD tutorials][maud-tutorials]. 
+To download here on gothub the program and source check on [MAUD download][maud-download]. 
+
+To start tutorials are probably the best and can be found at [MAUD tutorials][maud-tutorials]. 
 
 [maud-docs]: /maud/documents/
 [maud-tutorials]: /maud/tutorials/
