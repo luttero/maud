@@ -43,6 +43,11 @@ from the older one.
 
 Maud Version notes:
 
+(03/07/2023):   2.999. The "Holy grail" release.
+                Finally the slow as hell bug was found.
+                Fixing a bug that was slowing Maud a lot for certain analyses. It
+                started after version 2.995. Other speed improvements made.
+
 (08/06/2023):   2.998. The "Rattle snake" release.
                 Someone you don't want to meet.
                 Fixing a bug on the new routines to modify statistical weights for

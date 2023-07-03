@@ -352,6 +352,9 @@ public class DataFileSet extends XRDcat {
     }
 
 
+	public boolean shouldNotifyParent(XRDcat source, int reason) {
+		return false; // not the default
+	}
 	public double[] dataForPlot = null;
 
 	public double[] getDataForPlot() {
@@ -2719,7 +2722,7 @@ public class DataFileSet extends XRDcat {
 
   @Override
   public boolean isActive(XRDcat obj) {
-    return isEnabled() && super.isActive(obj);
+    return enabled(); // not needed, it check again if dataset enabled: && super.isActive(obj);
   }
 
   public double[] getData() {

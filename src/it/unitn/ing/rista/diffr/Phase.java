@@ -741,7 +741,19 @@ public class Phase extends XRDcat {
 //			getActiveStress().refreshStress = true;
         CellSymmetry();
       }
-      super.refreshAll(firstLoading);
+//      super.refreshAll(firstLoading);
+	    // this is what the super does, we remove some of the objects refresh
+	    refreshComputation = true;
+	    setRefreshAllStatus();
+	    update(firstLoading);
+	    Object[] childrens = getObjectChildren();
+	    int numberOfChildrens = childrens.length;
+	    for (int i = 0; i < numberOfChildrens; i++) {
+//				System.out.println(this.toXRDcatString() + ": " + childrens[i].toXRDcatString());
+		    XRDcat subObject = (XRDcat) childrens[i];
+		    if (subObject != getActiveTexture() || subObject != getActiveStrain())
+		      subObject.refreshAll(firstLoading);
+	    }
     }
   }
 

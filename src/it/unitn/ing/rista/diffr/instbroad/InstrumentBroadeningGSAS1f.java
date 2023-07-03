@@ -167,12 +167,14 @@ public class InstrumentBroadeningGSAS1f extends InstrumentBroadening {
   }
 
   double truncationFactor = 0.01;
+	double log_truncation = Math.log(truncationFactor);
   int convolutionStep = MaudPreferences.getInteger("asymmetry.convolutionStep", 1);
 
   public void updateStringtoDoubleBuffering(boolean firstLoading) {
     super.updateStringtoDoubleBuffering(false);
     int banks = banknumbers();
     truncationFactor = Double.parseDouble(getTruncationField());
+	 log_truncation = Math.log(truncationFactor);
     typeNumber = new int[banks];
     for (int bank = 0; bank < banks; bank++)
       typeNumber[bank] = getTypeNumber(bank);
@@ -555,9 +557,10 @@ public class InstrumentBroadeningGSAS1f extends InstrumentBroadening {
   public void computeAsymmetry(DiffrDataFile diffrDataFile, Sample asample, double[] afit, int min, int max) {
 
 
-    Instrument ainstrument = (Instrument) getParent();
+//    Instrument ainstrument = (Instrument) getParent();
 
-    double newFit[];
+    double[] newFit = null;
+	 double[] cal = null;
 
     double total_asymmetrymin = getInstrumentalAsymmetry(diffrDataFile.getXData(min), diffrDataFile);
     total_asymmetrymin = Math.abs(total_asymmetrymin);
@@ -566,10 +569,13 @@ public class InstrumentBroadeningGSAS1f extends InstrumentBroadening {
 //    System.out.println(total_asymmetrymax + " " + total_asymmetrymin);
     if (Math.min(total_asymmetrymax, total_asymmetrymin) < 1 && max > min) {
       newFit = new double[max - min];
+		cal = new double[max - min];
+	    for (int j = min; j < max; j++)
+		    cal[j - min] = diffrDataFile.getXDataForCalibration(j);
 
       for (int j = min; j < max; j++) {
         int absdirection = convolutionStep;  // increasing step
-        double x = diffrDataFile.getXDataForCalibration(j);
+        double x = cal[j - min];
         double total_asymmetry = getInstrumentalAsymmetry(diffrDataFile.getXData(j), diffrDataFile);
 //      System.out.println(total_asymmetry);
         if (total_asymmetry == 0.0)
@@ -583,13 +589,13 @@ public class InstrumentBroadeningGSAS1f extends InstrumentBroadening {
           double function = afit[j];
           double normalization = 1.0;
           int ij = j + direction;
-          if (diffrDataFile.insiderange(ij)) {
-            double difference = Math.abs(diffrDataFile.getXDataForCalibration(ij) - x);
+          if (ij < max && ij >= min) { //diffrDataFile.insiderange(ij)) {
+            double difference = Math.abs(cal[ij - min] - x);
             double expasymmetry = 1.0;
-            double truncation_angle = Math.abs(-Math.log(truncationFactor) / total_asymmetry);
+            double truncation_angle = Math.abs(-log_truncation / total_asymmetry);
 //          System.out.println(total_asymmetry + " " + truncation_angle + " " + difference);
-            for (; difference < truncation_angle && diffrDataFile.insiderange(ij); ij += direction) {
-              difference = Math.abs(diffrDataFile.getXDataForCalibration(ij) - x);
+            for (; difference < truncation_angle && ij < max && ij >= min; ij += direction) { //diffrDataFile.insiderange(ij); ij += direction) {
+              difference = Math.abs(cal[ij - min] - x);
               expasymmetry = Math.exp(-difference * total_asymmetry);
               function += afit[ij] * expasymmetry;
               normalization += expasymmetry;
@@ -612,11 +618,17 @@ public class InstrumentBroadeningGSAS1f extends InstrumentBroadening {
     total_asymmetrymax = Math.abs(total_asymmetrymax);
 //    System.out.println("alpha " + total_asymmetrymax + " " + total_asymmetrymin);
     if (Math.min(total_asymmetrymax, total_asymmetrymin) < 1) {
-      newFit = new double[max - min];
+		 if (newFit == null)
+         newFit = new double[max - min];
+	    if (cal == null) {
+		    cal = new double[max - min];
+		    for (int j = min; j < max; j++)
+			    cal[j - min] = diffrDataFile.getXDataForCalibration(j);
+	    }
 
       for (int j = min; j < max; j++) {
         int absdirection = -1;  // increasing step
-        double x = diffrDataFile.getXDataForCalibration(j);
+        double x = cal[j-min];
         double total_asymmetry = getSecondInstrumentalAsymmetry(diffrDataFile.getXData(j), diffrDataFile);
 //      System.out.println(total_asymmetry);
         if (total_asymmetry == 0.0)
@@ -630,13 +642,13 @@ public class InstrumentBroadeningGSAS1f extends InstrumentBroadening {
           double function = afit[j];
           double normalization = 1.0;
           int ij = j + direction;
-          if (diffrDataFile.insiderange(ij)) {
-            double difference = Math.abs(diffrDataFile.getXDataForCalibration(ij) - x);
+          if (ij < max && ij >= min) {
+            double difference = Math.abs(cal[ij - min] - x);
             double expasymmetry = 1.0;
-            double truncation_angle = Math.abs(-Math.log(truncationFactor) / total_asymmetry);
+            double truncation_angle = Math.abs(-log_truncation / total_asymmetry);
 //          System.out.println(total_asymmetry + " " + truncation_angle + " " + difference);
-            for (; difference < truncation_angle && diffrDataFile.insiderange(ij); ij += direction) {
-              difference = Math.abs(diffrDataFile.getXDataForCalibration(ij) - x);
+            for (; difference < truncation_angle &&  ij < max && ij >= min; ij += direction) {
+              difference = Math.abs(cal[ij - min] - x);
               expasymmetry = Math.exp(-difference * total_asymmetry);
               function += afit[ij] * expasymmetry;
               normalization += expasymmetry;

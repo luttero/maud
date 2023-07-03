@@ -645,9 +645,7 @@ public class Sample extends Maincat {
   }
 
   public boolean isDataSetActive(DataFileSet adataset) {
-    if (adataset.enabled())
-      return true;
-    return false;
+    return adataset.enabled();
   }
 
   public Layer getlayer(int index) {
