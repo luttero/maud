@@ -936,41 +936,61 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
     notifyUpObjectChanged(this, Constants.PARAMETER_ADDED, -1);
   }
 
-  public XRDcat setsubordinateField(int numberlist, XRDcat obj) {
+	public XRDcat setsubordinateField(int numberlist) {
+		return setsubordinateField(numberlist, "");
+	}
+
+	public XRDcat setsubordinateField(int numberlist, XRDcat obj) {
+	  if (obj == null)
+		  return null;
+	  checkForModelChanging(obj, subordinateField[numberlist]);
     if (subordinateField[numberlist] != null) {
       subordinateField[numberlist].dispose();
       subordinateField[numberlist] = null;
     }
     subordinateField[numberlist] = obj;
     notifyUpObjectChanged(this, Constants.OBJECT_CHANGED, -1);
+	 if (!getFilePar().isLoadingFile())
+		 subordinateField[numberlist].initializeAsNew();
     return obj;
   }
 
-  public XRDcat setsubordinateField(int numberlist) {
-    return setsubordinateField(numberlist, "");
-  }
-
-  public XRDcat setsubordinateField(int numberlist, String alabel) {
-//	  System.out.println("Setting model: " + alabel + ", with identifier: " + numberlist);
-    if (subordinateField[numberlist] != null) {
-      subordinateField[numberlist].dispose();
-      subordinateField[numberlist] = null;
-    }
+	public XRDcat setsubordinateField(int numberlist, String alabel) {
+		XRDcat obj = null;
     try {
-      subordinateField[numberlist] = (XRDcat) factory(this, alabel, filterClass(classlists[numberlist], alabel));
-      notifyUpObjectChanged(this, Constants.OBJECT_CHANGED, -1);
+	    obj = (XRDcat) factory(this, alabel, filterClass(classlists[numberlist], alabel));
     } catch (CannotCreateXRDcat e) {
       e.printStackTrace();
     } catch (PrototypeNotFound ex) {
       ex.printStackTrace();
     }
-    if (!getFilePar().isLoadingFile()) {
-      subordinateField[numberlist].initializeAsNew();
-    }
-    return subordinateField[numberlist];
+    return setsubordinateField(numberlist, obj);
   }
 
-  public XRDcat addsubordinateloopField(int numberlist, XRDcat obj) {
+  public void checkForModelChanging(XRDcat newModel, XRDcat previousModel) {
+	  // to be implemented in subclass
+	}
+
+	public XRDcat olDsetsubordinateField(int numberlist, String alabel) {
+		if (subordinateField[numberlist] != null) {
+			subordinateField[numberlist].dispose();
+			subordinateField[numberlist] = null;
+		}
+		try {
+			subordinateField[numberlist] = (XRDcat) factory(this, alabel, filterClass(classlists[numberlist], alabel));
+			notifyUpObjectChanged(this, Constants.OBJECT_CHANGED, -1);
+		} catch (CannotCreateXRDcat e) {
+			e.printStackTrace();
+		} catch (PrototypeNotFound ex) {
+			ex.printStackTrace();
+		}
+		if (!getFilePar().isLoadingFile()) {
+			subordinateField[numberlist].initializeAsNew();
+		}
+		return subordinateField[numberlist];
+	}
+
+	public XRDcat addsubordinateloopField(int numberlist, XRDcat obj) {
     if (!obj.mustRemoved) {
 //    System.out.println("The sub: " + obj + ", " + obj.getTheRealOne());
       subordinateloopField[numberlist].addItem(obj.getTheRealOne());

@@ -159,6 +159,10 @@ public class Calibration extends it.unitn.ing.rista.diffr.XRDcat {
 		return x;
 	}
 
+	public boolean needUncalibrated() {
+		return false;
+	}
+
 	public boolean validX(DiffrDataFile datafile, double x, int index) {
 		return true;
 	}
@@ -183,7 +187,7 @@ public class Calibration extends it.unitn.ing.rista.diffr.XRDcat {
     return 1000.0;
   }
 
-  public JOptionsDialog getOptionsDialog(Frame parent) {
+	public JOptionsDialog getOptionsDialog(Frame parent) {
     JOptionsDialog adialog = new JCalOptionsD(parent, this);
     return adialog;
   }

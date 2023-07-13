@@ -82,6 +82,10 @@ public class Crystallite3Djgl extends AnimatedRendering3Djgl {
     cryst_color[2] = (float) Constants.crystallite_color.getBlue() / 255;
     cryst_color[3] = 1.0f;
 
+	  System.out.println("Using back color: " + Constants.openglBackColor[0] + " " + Constants.openglBackColor[1] + " " + Constants.openglBackColor[2] + " " + Constants.openglBackColor[3]);
+	 gl.glClearColor(Constants.openglBackColor[0], Constants.openglBackColor[1], Constants.openglBackColor[2],
+			 Constants.openglBackColor[3]);
+
     gl.glMaterialfv(gl.GL_FRONT, gl.GL_SPECULAR, Constants.crystallite_mat_specular);
     gl.glMaterialfv(gl.GL_FRONT, gl.GL_SHININESS, Constants.crystallite_mat_shininess);
     gl.glMaterialfv(gl.GL_FRONT, gl.GL_AMBIENT_AND_DIFFUSE, cryst_color);

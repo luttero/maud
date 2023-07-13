@@ -1132,7 +1132,10 @@ public class DataD extends myJFrame {
     thedata.setPeakCutoff(peakcutoffTF.getText());
 	  thedata.setDatasetWeight(datasetWeightTF.getText());
     thedata.setGroupCount(Integer.parseInt(groupCountTF.getText()));
-    thedata.refreshAll(false);
+	  if (thedata.getInstrument().getAngularCalibration().needUncalibrated())
+		  thedata.setXuncalibrated();
+
+	  thedata.refreshAll(false);
 	  thedata.forceRangeCut();
   }
 

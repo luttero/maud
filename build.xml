@@ -16,13 +16,14 @@
     <property name="myself" value="myself"/>
     <property name="bundle.icon" value="maud.icns"/>
     <property name="icon" value="src/images/${bundle.icon}"/>
-    <property name="maud_version" value="2.999"/>
+    <property name="maud_version" value="2.9991"/>
     <property name="application_OSX.title" value="Maud.app"/>
     <property name="app_osx_295" location="${user.home}/Projects/maud/osx_295"/>
     <property name="app_osx_arm" location="${user.home}/Projects/maud/osx_arm"/>
     <property name="app_osx_10.6" location="${user.home}/Projects/maud/osx_10.6"/>
     <!--property name="java_version" value="1.8"/-->
     <property name="java_openjdk" location="${openjdk}"/>
+    <property name="java_openjdk_arm" location="${openjdk_arm}"/>
     <property name="fpsm_build" location="${fpsmBuild}"/>
     <property name="javac_options" value="--enable-preview --source=19"/>
 
@@ -2251,7 +2252,7 @@
                    applicationCategory="public.app-category.productivity">
 
             <!-- The directory where your OpenJDK runtime is. -->
-            <runtime dir="${java_openjdk}/"/>
+            <runtime dir="${java_openjdk_arm}/"/>
 
             <!-- The bundleapp task doesn't support classpathref so all
                 the run classpath entries must be stated here too.

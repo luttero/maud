@@ -21,10 +21,7 @@
 package it.unitn.ing.rista.awt;
 
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
-import javax.swing.border.BevelBorder;
 import java.awt.*;
-import java.awt.event.*;
 
 import it.unitn.ing.rista.diffr.*;
 import it.unitn.ing.rista.util.*;
@@ -129,11 +126,7 @@ public class InstrumentD extends myJFrame {
       optchoice[i].setMaximumRowCount(4);
       jPanel2.add(optchoice[i]);
       JButton optbutton = new JIconButton("Eyeball.gif", "Options");
-      optbutton.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent event) {
-          subordinateOptions(index);
-        }
-      });
+      optbutton.addActionListener(event -> subordinateOptions(index));
       jPanel2.add(optbutton);
     }
 
@@ -150,12 +143,10 @@ public class InstrumentD extends myJFrame {
     c1.add("South", closebuttonPanel);
     JButton jbok1 = new JCloseButton();
     closebuttonPanel.add(jbok1);
-    jbok1.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        retrieveParameters();
-        setVisible(false);
-        dispose();
-      }
+    jbok1.addActionListener(e -> {
+      retrieveParameters();
+      setVisible(false);
+      dispose();
     });
     getRootPane().setDefaultButton(jbok1);
 
@@ -189,6 +180,13 @@ public class InstrumentD extends myJFrame {
 
   }
 
+  public void checkAndChangeSubordinate(int index) {
+	  String value = optchoice[index].getSelectedItem().toString();
+	  if (theinstrument.subordinateField[index] == null ||
+			  !value.equals(theinstrument.subordinateField[index].identifier))
+		  theinstrument.setsubordinateField(index, value);
+  }
+
   public void retrieveParameters() {
     super.retrieveParameters();
 
@@ -198,19 +196,12 @@ public class InstrumentD extends myJFrame {
 //    ThetaPanel.retrieveparlist();
 
     for (int i = 0; i < theinstrument.Nsubordinate - 1; i++) { //absorption removed here
-      String value = optchoice[i].getSelectedItem().toString();
-      if (theinstrument.subordinateField[i] == null ||
-              !value.equals(theinstrument.subordinateField[i].identifier))
-        theinstrument.setsubordinateField(i, value);
+	    checkAndChangeSubordinate(i);
     }
   }
 
   public void subordinateOptions(int index) {
-    String value = optchoice[index].getSelectedItem().toString();
-    if (theinstrument.subordinateField[index] == null ||
-            !value.equals(theinstrument.subordinateField[index].identifier))
-      theinstrument.setsubordinateField(index, value);
-
+	  checkAndChangeSubordinate(index);
     theinstrument.subordinateField[index].getOptionsDialog(this).setVisible(true);
   }
 

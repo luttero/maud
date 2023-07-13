@@ -1998,7 +1998,17 @@ public class DiffrDataFile extends XRDcat {
 	  calibrated = false;
   }
 
-  public void setXImage(int index, double value) {
+	public void setXuncalibrated() {
+		for (int i = 0; i < numberOfData; i++) {
+			twothetaOriginal[i] = i;
+			twotheta[i] = i;
+		}
+		calibrated = false;
+	}
+
+
+
+	public void setXImage(int index, double value) {
     x_image[index] = value;
     calibrated = false;
   }

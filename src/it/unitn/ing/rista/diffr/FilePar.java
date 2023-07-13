@@ -2474,20 +2474,24 @@ public class FilePar extends XRDcat implements lFilePar, Function {
     if (Constants.testtime)
       Constants.tmpTime = System.currentTimeMillis();
 
-//	 boolean forceRefreshAll = MaudPreferences.getBoolean("testing.computeWithRefresh", false);
-    if (refreshAll) {
+	 boolean forceRefreshAll = MaudPreferences.getBoolean("testing.computeWithRefresh", false);
+	 boolean forceRefreshPhases = MaudPreferences.getBoolean("testing.computeWithRefreshPhases", false);
+	  boolean forceRefreshSample = MaudPreferences.getBoolean("testing.computeWithRefreshSample", false);
+    if (refreshAll || forceRefreshAll) {
 	    refreshAll(false);
 //b		else
 //b			refreshPartially = true;  // speedModification
 
 //    refreshDataIndices();
 
-      for (int i = 0; i < samplesNumber(); i++) {
+	    if (refreshAll || forceRefreshSample)
+		    for (int i = 0; i < samplesNumber(); i++) {
         Sample asample = getSample(i);
         asample.prepareComputation();
       }
 //      System.out.println("Updating phases");
-      updateAllPhases();
+      if (refreshAll || forceRefreshPhases)
+         updateAllPhases();
     }/* else if (forceRefreshAll) {
 	    refreshAll(false);
     }*/

@@ -125,7 +125,11 @@ public class AngularCameraCalibration extends AngularCalibration {
     return true;
   }
 
-  public void calibrateX(DiffrDataFile datafile) {
+	public boolean needUncalibrated() {
+		return true;
+	}
+
+	public void calibrateX(DiffrDataFile datafile) {
     int datanumber = datafile.getTotalNumberOfData();
     updateParametertoDoubleBuffering(false);
     DataFileSet dataset = datafile.getDataFileSet();

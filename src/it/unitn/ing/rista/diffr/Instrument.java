@@ -60,7 +60,7 @@ public class Instrument extends XRDcat {
     "_diffrn_measurement_device_type",
 		  "_maud_optional_intensity_factor",
       "Intensity (scale factor)",
-    "2-theta or d-spacing offset ",
+    "2-theta or d-spacing offset (don't used), replaced by Angular Calibration",
 
     "_inst_intensity_calibration", "_inst_angular_calibration", "_pd_instr_geometry",
     "_diffrn_measurement_method", "_diffrn_radiation_type",
@@ -385,7 +385,19 @@ public class Instrument extends XRDcat {
     return !getAngularCalibrationMethod().equals("no ang");
   }
 
-  public int getGeometryID() {
+	public void checkForModelChanging(XRDcat newModel, XRDcat previousModel) {
+
+		if (previousModel != null && newModel != null && previousModel instanceof Calibration && newModel instanceof Calibration) {
+			Calibration newCal = (Calibration) newModel;
+			Calibration previousCal = (Calibration) previousModel;
+			if (!previousCal.needUncalibrated() && newCal.needUncalibrated()) {
+				DataFileSet dataset = (DataFileSet) getParent();
+				dataset.setXuncalibrated();
+			}
+		}
+	}
+
+	public int getGeometryID() {
     return 2;
   }
 

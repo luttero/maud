@@ -266,13 +266,13 @@ public class Constants {
   public static String resultsFile = "results.txt";
   public static String userName = null;
   public static String startPath = "/";
-  public static String maudReleaseBuilt = "$Revision: 2.999 $";
-  public static String maudDateBuilt = "$Date: 2023/07/03 07:40:00 $";
+  public static String maudReleaseBuilt = "$Revision: 2.9991 $";
+  public static String maudDateBuilt = "$Date: 2023/07/12 07:40:00 $";
 
   public static final double arg2PIover3 = PI2 / 3.;
   public static final double sinArg2PIover3 = Math.sin(arg2PIover3);
   public static final double cosArg2PIover3 = Math.cos(arg2PIover3);
-  public static double maud_version = 2.999;
+  public static double maud_version = 2.9991;
   public static boolean useOpenCL = false;
   public static Vector<OpenCLDevice> openClDevices= null;
   public static OpenCLDevice openclDevice = null;
@@ -1134,8 +1134,11 @@ public class Constants {
   public static void read3DPreferences() {
 
     BufferedReader in = Misc.getReader(documentsDirectory, "Properties.3D");
-    if (in == null)
-      in = Misc.getResourceReader(maudJar, "files/Properties.3D");
+	  System.out.println("Reading 3D preferences from " + documentsDirectory + "Properties.3D");
+    if (in == null) {
+		 System.out.println("Not found, reading 3D from jar!");
+	    in = Misc.getResourceReader(maudJar, "files/Properties.3D");
+    }
     String token;
     if (in != null) {
       try {
@@ -1153,6 +1156,7 @@ public class Constants {
             color[i] = Integer.valueOf(token).intValue();
           }
         }
+	      System.out.println("Reading crystallite color: " + color[0] + " " + color[1] + " " + color[2]);
         crystallite_color = new Color(color[0], color[1], color[2]);
         line = in.readLine();
         while (line.startsWith("#"))
@@ -1164,6 +1168,7 @@ public class Constants {
             lightpos[i] = Float.valueOf(token).floatValue();
           }
         }
+	      System.out.println("Reading light position: " + lightpos[0] + " " + lightpos[1] + " " + lightpos[2]);
         line = in.readLine();
         while (line.startsWith("#"))
           line = in.readLine();
@@ -1174,6 +1179,7 @@ public class Constants {
             crystallite_mat_specular[i] = Float.valueOf(token).floatValue();
           }
         }
+	      System.out.println("Reading mat specular: " + crystallite_mat_specular[0] + " " + crystallite_mat_specular[1] + " " + crystallite_mat_specular[2]);
         line = in.readLine();
         while (line.startsWith("#"))
           line = in.readLine();
@@ -1185,23 +1191,24 @@ public class Constants {
           }
         }
 	      line = in.readLine();
-	     if (!line.startsWith("# Pole")) {
-
-		      while (line.startsWith("#") && !line.startsWith("# Pole"))
-			      line = in.readLine();
-		     if (!line.startsWith("# Pole")) {
-			     st = new StringTokenizer(line, " ,\t\r\n");
-			     for (int i = 0; i < 4; i++) {
-				     if (st.hasMoreTokens()) {
-					     token = st.nextToken();
-					     openglBackColor[i] = Float.valueOf(token).floatValue();
-				     }
-			     }
-		     }
-	      }
+		  if (!line.startsWith("# Pole")) {
+			  while (line.startsWith("#"))
+				  line = in.readLine();
+			  if (!line.startsWith("#")) {
+				  st = new StringTokenizer(line, " ,\t\r\n");
+				  for (int i = 0; i < 4; i++) {
+					  if (st.hasMoreTokens()) {
+						  token = st.nextToken();
+						  openglBackColor[i] = Float.valueOf(token).floatValue();
+					  }
+				  }
+				  System.out.println("Reading back color: " + openglBackColor[0] + " " + openglBackColor[1] + " " + openglBackColor[2] + " " + openglBackColor[3]);
+			  }
+		  }
         in.close();
       } catch (IOException ie) {
         try {
+			  ie.printStackTrace();
           in.close();
         } catch (IOException iex) {
         }

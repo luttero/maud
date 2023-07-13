@@ -121,7 +121,11 @@ public class AngularSplineCalibration extends AngularCalibration {
     getCoeffP(index).setValue(value);
   }
 
-  public void calibrateX(DiffrDataFile datafile) {
+	public boolean needUncalibrated() {
+		return true;
+	}
+
+	public void calibrateX(DiffrDataFile datafile) {
     int datanumber = datafile.getTotalNumberOfData();
     updateParametertoDoubleBuffering(false);
 

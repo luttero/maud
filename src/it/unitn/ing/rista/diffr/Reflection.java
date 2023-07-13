@@ -348,10 +348,10 @@ public class Reflection {
   public static double[] getPhiBeta(double x, double y) {
     double[] phibeta = new double[2];
     double r = Math.sqrt(x * x + y * y);
-    if (r > 1.0E-9) {
+    if (r > 1.0E-12) {
       phibeta[1] = Math.acos(x / r);
       if (y < 0)
-        phibeta[1] += Math.PI;
+        phibeta[1] = 2.0 * Math.PI -phibeta[1];
     } else
       phibeta[1] = 0.0;
     phibeta[0] = r;
@@ -382,12 +382,12 @@ public class Reflection {
         xymax[3] = Math.PI / 2.0;
         break;
       case 5:  // -3
+	    case 6:  // -3m
         xymax[0] = -Math.PI / 2.0;
         xymax[1] = Math.PI / 2.0;
         xymax[2] = -Math.PI / 2.0;
         xymax[3] = Math.PI / 2.0;
         break;
-      case 6:  // -3m
       case 7:  // 6/m
       case 8:  // 6/mmm
         xymax[0] = 0.0;

@@ -23,11 +23,9 @@ package it.unitn.ing.rista.awt;
 import java.awt.*;
 import java.awt.event.*;
 
-import it.unitn.ing.rista.awt.myJFrame;
 import it.unitn.ing.rista.diffr.*;
 
 import javax.swing.*;
-import javax.swing.event.*;
 import javax.swing.border.*;
 
 import it.unitn.ing.rista.util.*;

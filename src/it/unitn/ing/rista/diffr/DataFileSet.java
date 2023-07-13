@@ -30,7 +30,6 @@ import java.util.concurrent.TimeUnit;
 
 import com.radiographema.MaudText;
 import it.unitn.ing.rista.diffr.cal.GSASbankIntCalibration;
-import it.unitn.ing.rista.diffr.cal.IntensityCalibration;
 import it.unitn.ing.rista.diffr.instrument.DefaultInstrument;
 import it.unitn.ing.rista.io.cif.*;
 import it.unitn.ing.rista.util.*;
@@ -81,6 +80,7 @@ public class DataFileSet extends XRDcat {
 
 		  "_pd_proc_info_excluded_regions", "_riet_par_background_peak_id",
 		  "_riet_meas_datafile_name", "_original_diffraction_image"};
+
   protected static String[] diclistcrm = new String[]{
 		  "_pd_meas_datetime_initiated",
 		  "_pd_meas_info_author_name", "_riet_meas_datafile_format",
@@ -754,6 +754,8 @@ public class DataFileSet extends XRDcat {
 		try {
 			XRDcat obj = (XRDcat) factory(this, alabel, filterClass(classlist[2], alabel));
 			addsubordinateloopField(2, obj);
+			if (getInstrument().getAngularCalibration().needUncalibrated())
+				setXuncalibrated();
 		} catch (CannotCreateXRDcat e) {
 			e.printStackTrace();
 		} catch (PrototypeNotFound ex) {
@@ -3322,6 +3324,15 @@ public class DataFileSet extends XRDcat {
 
   double drange_final[] = new double[2];
 
+  public void setXuncalibrated() {
+	  int datafilenumber = datafilesnumber();
+
+	  for (int i = 0; i < datafilenumber; i++) {
+		  DiffrDataFile adatafile1 = getDataFile(i);
+		  adatafile1.setXuncalibrated();
+	  }
+  }
+
   public DiffrDataFile getBackgroundDataFile(DiffrDataFile requestingDataFile) {
     int banknumber = requestingDataFile.getBankNumber();
     int alldatafilenumber = datafilesnumber();
@@ -3414,6 +3425,8 @@ public class DataFileSet extends XRDcat {
     drange_final[1] = -1.0E+10;
     drange_final[0] = 1.0E+10;
 
+	 if (getInstrument().getAngularCalibration().needUncalibrated())
+		 setXuncalibrated();
     for (int i = 0; i < datafilenumber; i++) {
 //      adatafile[i] = getActiveDataFile(i);
       DiffrDataFile bdatafile = getActiveDataFile(i);

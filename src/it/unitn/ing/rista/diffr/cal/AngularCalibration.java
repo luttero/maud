@@ -148,5 +148,5 @@ public class AngularCalibration extends it.unitn.ing.rista.diffr.Calibration {
   }
 
   public void invertEta() {}
-  
+
 }
