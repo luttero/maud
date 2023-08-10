@@ -1022,7 +1022,7 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
 /*    if (Constants.ITS)
       (new AboutITSMaud(this, false)).setVisible(true);
     else*/
-      (new AboutMAUD(this, "About MAUD Diffraction Screamer", false)).setVisible(true);
+      (new AboutMAUD(this, "About MAUD", false)).setVisible(true);
   }
 
   public void updateDataFilePlot(boolean keepMaxima) {

@@ -88,7 +88,7 @@ public class SetEqualtoD extends myJFrame {
 
     basicObj filepar = theparameter.getParent().getFilePar();
     startLeaf = new DefaultMutableTreeNode(filepar);
-    basicObj tmpPar[] = filepar.getChildren(null);
+    basicObj tmpPar[] = filepar.getChildren(null, false);
     if (tmpPar != null) {
       for (int i = 0; i < tmpPar.length; i++) {
         DefaultMutableTreeNode newnode = new DefaultMutableTreeNode(tmpPar[i]);
@@ -136,7 +136,7 @@ public class SetEqualtoD extends myJFrame {
     actualrow++;
     if (refpar != null && child == refpar)
       rowtoselect = actualrow;
-    basicObj tmpPar[] = child.getChildren(null);
+    basicObj tmpPar[] = child.getChildren(null, false);
     if (tmpPar != null) {
       for (int i = 0; i < tmpPar.length; i++) {
         DefaultMutableTreeNode newnode = new DefaultMutableTreeNode(tmpPar[i]);

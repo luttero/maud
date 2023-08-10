@@ -13,7 +13,7 @@ Download from [DropBox][dropbox]
 
 Download from [Goggle drive][gdrive]
 
-To download here on gothub the program and source check on [MAUD download][maud-download]. 
+To download here on github the program and source check on [MAUD download][maud-download]. 
 
 To start tutorials are probably the best and can be found at [MAUD tutorials][maud-tutorials]. 
 

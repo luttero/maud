@@ -43,6 +43,14 @@ from the older one.
 
 Maud Version notes:
 
+(09/08/2023):   2.9992. The "The underwear man" release.
+                You don't want to see that.
+                Modified the Hippo Wizard by adding some new options for the
+                background. In the parameters list window you can now select to
+                view only parameters that are refinable. Modified also the
+                iterations output to avoid listing parameter values each
+                iteration.
+
 (03/07/2023):   2.999. The "Holy grail" release.
                 Finally the slow as hell bug was found.
                 Fixing a bug that was slowing Maud a lot for certain analyses. It

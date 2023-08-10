@@ -700,7 +700,8 @@ public class LeastSquareFit extends OptimizationAlgorithm {
               ++n0;
             parmn[i] = b[i];
           }
-          printout(parmn, nprm);
+	       if (MaudPreferences.getBoolean("leastSquares.printParametersPerIteration", false))
+            printout(parmn, nprm);
         }
         if (n0 == nprm)
           conver = 1;
@@ -736,7 +737,9 @@ public class LeastSquareFit extends OptimizationAlgorithm {
 //                ((FilePar) fittingFunction).updatePlot();
             }
 
-            printf("Wgt'd ssq = ", wss);
+	          String iterMessage = "Computing iteration # " + Integer.toString(niter + 1)
+			          + " of " + Integer.toString(getIterations());
+	          printf(iterMessage + ", Wgt'd ssq = ", wss);
             if (fittingFunction.singleFunctionComputing())
               fittingFunction.setDerivate(true);                      // to check
             if (computation != null && computation.shouldStop()) {
@@ -798,7 +801,9 @@ public class LeastSquareFit extends OptimizationAlgorithm {
             fit[i] = fittingFunction.getFit(i);
           wss = fittingFunction.getWSS();
         }
-        printf("Wgt'd ssq = ", wss);
+	      String iterMessage = "Computing iteration # " + Integer.toString(niter + 1)
+			      + " of " + Integer.toString(getIterations());
+        printf(iterMessage + ", Wgt'd ssq = ", wss);
       }
       oldwss = wss;
       fittingFunction.setDerivate(true);
@@ -1045,21 +1050,22 @@ public class LeastSquareFit extends OptimizationAlgorithm {
               }
             }
             newLine(out);
-            for (int sp = 0; sp < nprm; sp++) {
-              printString(out, sp + " ", 4);
-              //         int l = (sp + 1) * sp / 2;
-              dump = new StringBuffer("    ");
-              for (int kcs = 0; kcs <= sp; kcs++) {
-                printString(out, " " + ((double) cov1[sp][kcs]), maxdigits);
-                if (MoreMath.isMultipleOf(kcs + 1, maxcolumn)) {
-                  newLine(out);
-                  dump.append("  ");
-                  printString(out, dump.toString());
-                }
-              }
-              newLine(out);
-            }
-            out.flush();
+					for (int sp = 0; sp < nprm; sp++) {
+						printString(out, sp + " ", 4);
+						//         int l = (sp + 1) * sp / 2;
+						dump = new StringBuffer("    ");
+						for (int kcs = 0; kcs <= sp; kcs++) {
+							printString(out, " " + ((double) cov1[sp][kcs]), maxdigits);
+							if (MoreMath.isMultipleOf(kcs + 1, maxcolumn)) {
+								newLine(out);
+								dump.append("  ");
+								printString(out, dump.toString());
+							}
+						}
+						newLine(out);
+					}
+					out.flush();
+
           } catch (Exception io) {
             io.printStackTrace();
           }

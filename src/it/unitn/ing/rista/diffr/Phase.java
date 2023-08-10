@@ -391,12 +391,12 @@ public class Phase extends XRDcat {
 
 // we rewrite this to not include the dummy cell parameters
 
-  public basicObj[] getChildren(String searchString) {
+  public basicObj[] getChildren(String searchString, boolean refinable) {
 
     int i, j, k;
 
 //	  System.out.println(this + " - " + searchString);
-    basicObj childrens[] = new basicObj[getChildCount(searchString)];
+    basicObj childrens[] = new basicObj[getChildCount(searchString, refinable)];
 
     basicObj obj;
 
@@ -404,6 +404,7 @@ public class Phase extends XRDcat {
     for (i = 0; i < Nparameter; i++) {
       // here the last modification
       if (i > 5 || ic[i] == 1)
+			if (!refinable || parameterField[i].getFree())
         if (searchString == null || searchString.equalsIgnoreCase("") ||
             parameterField[i].getLabel().contains(searchString))
           childrens[k++] = parameterField[i];
@@ -415,20 +416,20 @@ public class Phase extends XRDcat {
               obj.getLabel().contains(searchString))
             childrens[k++] = obj;
     for (i = 0; i < Nsubordinate; i++)
-      if ((subordinateField[i]) != null && subordinateField[i].getChildCount(searchString) > 0) {
+      if ((subordinateField[i]) != null && subordinateField[i].getChildCount(searchString, refinable) > 0) {
         childrens[k++] = subordinateField[i];
 //	      System.out.println("Adding for phase: " + subordinateField[i].toString());
       }
 	  for (i = 0; i < Nsubordinateloop; i++)
       for (j = 0; j < numberofelementSubL(i); j++)
         if ((obj = (basicObj) subordinateloopField[i].elementAt(j)) != null &&
-            ((basicObj) subordinateloopField[i].elementAt(j)).getChildCount(searchString) > 0)
+            ((basicObj) subordinateloopField[i].elementAt(j)).getChildCount(searchString, refinable) > 0)
           childrens[k++] = obj;
 
     return childrens;
   }
 
-  public int getChildCount(String searchString) {
+  public int getChildCount(String searchString, boolean refinable) {
     int i, j;
 
     // first we force a refresh of the cell
@@ -439,6 +440,7 @@ public class Phase extends XRDcat {
     for (i = 0; i < Nparameter; i++) {
       // here the last modification
       if (i > 5 || ic[i] == 1)
+	      if (!refinable || parameterField[i].getFree())
         if (searchString == null || searchString.equalsIgnoreCase("") ||
             parameterField[i].getLabel().contains(searchString))
           numberofObjects++;
@@ -451,12 +453,12 @@ public class Phase extends XRDcat {
               ((basicObj) parameterloopField[i].elementAt(j)).getLabel().contains(searchString))
             numberofObjects++;
     for (i = 0; i < Nsubordinate; i++)
-      if (subordinateField[i] != null && subordinateField[i].getChildCount(searchString) > 0)
+      if (subordinateField[i] != null && subordinateField[i].getChildCount(searchString, refinable) > 0)
         numberofObjects++;
     for (i = 0; i < Nsubordinateloop; i++)
       for (j = 0; j < numberofelementSubL(i); j++)
         if (subordinateloopField[i].elementAt(j) != null &&
-            ((basicObj) subordinateloopField[i].elementAt(j)).getChildCount(searchString) > 0)
+            ((basicObj) subordinateloopField[i].elementAt(j)).getChildCount(searchString, refinable) > 0)
           numberofObjects++;
 
 
@@ -4533,17 +4535,24 @@ public static final String getSpaceGroup(int index, int sgconv) {
     } catch (IOException e) {
       e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
     }
+	  System.out.println("Write Data fields");
     writeDataField(out);
+	  System.out.println("Write refinement");
     writeGeneralRefinement(out);
+	  System.out.println("Write all fields");
     writeAllFieldsCOD(out);
 //    writeAllLoopFields(out);
+	  System.out.println("Write all parameters");
     writeAllParametersCOD(out);
+	  System.out.println("Write coordinates");
 	  writeGeneralCoordinateCOD(out);
 //    writeAllLoopParameters(out);
 //    writeAllSubordinates(out, "", "");
 //    writeCustomObject(out);
 //    writeBounds(out);
+	  System.out.println("Write atoms");
     writeAllAtoms(out);
+	  System.out.println("End!");
   }
 
   public void writeGeneralRefinement(BufferedWriter out) {

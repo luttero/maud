@@ -544,6 +544,12 @@ public class Sample extends Maincat {
     refreshDataIndices();
   }
 
+	public void removeData(DataFileSet dataset) {
+		getDatasetsList().remove(dataset);
+		checkActiveDataSets();
+		refreshDataIndices();
+	}
+
 /*  public void loadData(String filename) {
     getFilePar().loadingFile = true;
     CIFParser dataParser = (new CIFParser(filename, (Frame) getFilePar().themainframe, this, "DataFileSet"));

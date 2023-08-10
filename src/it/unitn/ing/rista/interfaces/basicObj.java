@@ -59,13 +59,13 @@ public interface basicObj {
 
   public XRDcat getParent();
 
-  public basicObj[] getChildren(String searchString);
+  public basicObj[] getChildren(String searchString, boolean refinable);
 
   public boolean isLeaf();
 
   public boolean getAllowsChildren();
 
-  public int getChildCount(String searchString);
+  public int getChildCount(String searchString, boolean refinable);
 
   public basicObj getChildAt(int childIndex);
 
@@ -73,9 +73,9 @@ public interface basicObj {
 
   public int getIndex(basicObj node);
 
-  public void freeAllParameters(String searchString);
+  public void freeAllParameters(String searchString, boolean refinable);
 
-  public void fixAllParameters(String searchString);
+  public void fixAllParameters(String searchString, boolean refinable);
 
   }
 

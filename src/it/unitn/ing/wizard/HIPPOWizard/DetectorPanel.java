@@ -2,8 +2,7 @@ package it.unitn.ing.wizard.HIPPOWizard;
 
 import it.unitn.ing.rista.util.MaudPreferences;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -18,6 +17,10 @@ import javax.swing.border.TitledBorder;
 public class DetectorPanel extends JPanel {
 
 	private JCheckBox checkGroupDatasets;
+	private JCheckBox chebyshevPolCB;
+
+	private JTextField generalBkgPar;
+	private JTextField individualBkgPar;
 
   JTextField[] minmaxDTF = null;
   JCheckBox[] banksCB = null;
@@ -58,25 +61,49 @@ public class DetectorPanel extends JPanel {
 	
 	private void initGUI() {
 
-		setLayout(new BorderLayout());
-		final JPanel panel_11 = new JPanel();
-		panel_11.setLayout(new BorderLayout());
-		panel_11.setBorder(new TitledBorder(null, "", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION,
+		final JPanel panel_11 = new JPanel(new GridLayout(0, 1, 0, 0));
+		panel_11.setBorder(new TitledBorder(null, "Background", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION,
         null, null));
-		add(panel_11, BorderLayout.SOUTH);
+		add(panel_11, BorderLayout.CENTER);
+
+		chebyshevPolCB = new JCheckBox();
+		chebyshevPolCB.setText("Chebyshev polynomials for background");
+		panel_11.add(chebyshevPolCB);
+		chebyshevPolCB.setEnabled(true);
+		chebyshevPolCB.setToolTipText(
+        "Check this if you want to use Chebyshev polynomials for the background function");
+		chebyshevPolCB.setSelected(MaudPreferences.getBoolean("hippoWizard.useChebyshevPolynomials", false));
+
+		JPanel generalBkg = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+		generalBkg.add(new JLabel("Number of general background parameters "));
+		generalBkgPar = new JTextField(5);
+		generalBkgPar.setText(MaudPreferences.getPref("hippoWizard.numberOfGeneralBackgroundParameters", "5"));
+		generalBkg.add(generalBkgPar);
+		panel_11.add(generalBkg);
+
+		generalBkg = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+		generalBkg.add(new JLabel("Number of individual background parameters "));
+		individualBkgPar = new JTextField(5);
+		individualBkgPar.setText(MaudPreferences.getPref("hippoWizard.numberOfIndividualBackgroundParameters", "0"));
+		generalBkg.add(individualBkgPar);
+		panel_11.add(generalBkg);
+
+		final JPanel panel_12 = new JPanel();
+		panel_12.setLayout(new BorderLayout());
+		add(panel_12, BorderLayout.SOUTH);
 
 		checkGroupDatasets = new JCheckBox();
 		checkGroupDatasets.setText("Treat rotations as separate datasets/instruments");
-		panel_11.add(checkGroupDatasets);
-    checkGroupDatasets.setEnabled(true);
-    checkGroupDatasets.setToolTipText(
-        "Check this if it is possible that different datafiles have different intensities or errors");
-    checkGroupDatasets.setSelected(MaudPreferences.getBoolean("hippoWizard.datafiles_different_datasets", false));
+		panel_12.add(checkGroupDatasets);
+		checkGroupDatasets.setEnabled(true);
+		checkGroupDatasets.setToolTipText(
+				"Check this if it is possible that different datafiles have different intensities or errors");
+		checkGroupDatasets.setSelected(MaudPreferences.getBoolean("hippoWizard.datafiles_different_datasets", false));
 
-    final JPanel panelBanks = new JPanel();
+		final JPanel panelBanks = new JPanel();
 		panelBanks.setBorder(new TitledBorder(null, "Select banks to use", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
 		panelBanks.setLayout(new BoxLayout(panelBanks, BoxLayout.Y_AXIS));
-		add(panelBanks);
+		add(panelBanks, BorderLayout.NORTH);
 
     banksCB = new JCheckBox[maxBanks];
     minmaxDTF = new JTextField[maxBanks * 2];
@@ -144,9 +171,16 @@ public class DetectorPanel extends JPanel {
       ConfigData.setPropertyValue(((HIPPOBank) data.mbank.elementAt(i)).name + ConfigData.BANK_ENABLED,
           Boolean.toString(banksCB[i].isSelected()));
     }
-		data.groupDatasetsByRotation = checkGroupDatasets.isSelected();
+
+	 data.groupDatasetsByRotation = checkGroupDatasets.isSelected();
+	 data.chebyshevPol = chebyshevPolCB.isSelected();
+	 data.numberOfGeneralBackgroundParameters = Integer.valueOf(generalBkgPar.getText());
+	 data.numberOfIndividualBackgroundParameters = Integer.valueOf(individualBkgPar.getText());
     MaudPreferences.setPref("hippoWizard.datafiles_different_datasets", data.groupDatasetsByRotation);
-    for (int i = 0; i < maxBanks; i++)
+	 MaudPreferences.setPref("hippoWizard.numberOfGeneralBackgroundParameters", data.numberOfGeneralBackgroundParameters);
+	 MaudPreferences.setPref("hippoWizard.numberOfIndividualBackgroundParameters", data.numberOfIndividualBackgroundParameters);
+	 MaudPreferences.setPref("hippoWizard.useChebyshevPolynomials", data.chebyshevPol);
+	 for (int i = 0; i < maxBanks; i++)
       for (int j = 0; j < 2; j++)
         ConfigData.setPropertyValue(((HIPPOBank) data.mbank.elementAt(i)).name + ConfigData.BANK_DMIN_DMAX[j],
             minmaxDTF[i*2+j].getText());

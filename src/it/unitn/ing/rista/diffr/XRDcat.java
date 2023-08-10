@@ -730,16 +730,16 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
     }
   }
 
-  public void freeAllParameters(String searchString) {
-    basicObj[] objs = getChildren(searchString);
+  public void freeAllParameters(String searchString, boolean refinable) {
+    basicObj[] objs = getChildren(searchString, refinable);
     for (int i = 0; i < objs.length; i++)
-      objs[i].freeAllParameters(searchString);
+      objs[i].freeAllParameters(searchString, refinable);
   }
 
-  public void fixAllParameters(String searchString) {
-    basicObj[] objs = getChildren(searchString);
+  public void fixAllParameters(String searchString, boolean refinable) {
+    basicObj[] objs = getChildren(searchString, refinable);
     for (int i = 0; i < objs.length; i++)
-      objs[i].fixAllParameters(searchString);
+      objs[i].fixAllParameters(searchString, refinable);
   }
 
   public void freeAllParametersPreserveBound() {
@@ -752,11 +752,11 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
     }
   }
 
-  public basicObj[] getChildren(String searchString) {
+  public basicObj[] getChildren(String searchString, boolean refinable) {
 
     int i, j, k;
 
-    int numberofObjects = getChildCount(searchString);
+    int numberofObjects = getChildCount(searchString, refinable);
     basicObj childrens[] = new basicObj[numberofObjects];
 // System.out.println(this + " " + searchString);
 //    System.out.println("getChildren "+numberofObjects);
@@ -764,8 +764,9 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
 
     k = 0;
     for (i = 0; i < Nparameter; i++) {
-      if (searchString == null || searchString.equalsIgnoreCase("") ||
-          parameterField[i].getLabel().contains(searchString))
+	    if (!refinable || parameterField[i].getFree())
+      if ((searchString == null || searchString.equalsIgnoreCase("") ||
+          parameterField[i].getLabel().contains(searchString)))
         childrens[k++] = parameterField[i];
     }
     for (i = 0; i < Nparameterloop; i++)
@@ -775,14 +776,14 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
               obj.getLabel().contains(searchString))
             childrens[k++] = obj;
     for (i = 0; i < Nsubordinate; i++)
-      if ((subordinateField[i]) != null && subordinateField[i].getChildCount(searchString) > 0) {
+      if ((subordinateField[i]) != null && subordinateField[i].getChildCount(searchString, refinable) > 0) {
         childrens[k++] = subordinateField[i];
 //	      System.out.println("Adding: " + subordinateField[i].toString());
       }
     for (i = 0; i < Nsubordinateloop; i++)
       for (j = 0; j < numberofelementSubL(i); j++)
         if ((obj = (basicObj) subordinateloopField[i].elementAt(j)) != null &&
-            ((basicObj) subordinateloopField[i].elementAt(j)).getChildCount(searchString) > 0)
+            ((basicObj) subordinateloopField[i].elementAt(j)).getChildCount(searchString, refinable) > 0)
           childrens[k++] = obj;
 
     return childrens;
@@ -792,15 +793,16 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
 
   public boolean getAllowsChildren() {return true;}
 
-  public int getChildCount(String searchString) {
+  public int getChildCount(String searchString, boolean refinable) {
     int i, j;
 
     int numberofObjects = 0;
 // System.out.println(this + " " + searchString);
     for (i = 0; i < Nparameter; i++) {
       // here the last modification
-        if (searchString == null || searchString.equalsIgnoreCase("") ||
-            parameterField[i].getLabel().contains(searchString))
+	    if (!refinable || parameterField[i].getFree())
+        if ((searchString == null || searchString.equalsIgnoreCase("") ||
+            parameterField[i].getLabel().contains(searchString)))
           numberofObjects++;
     }
 
@@ -811,12 +813,12 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
               ((basicObj)parameterloopField[i].elementAt(j)).getLabel().contains(searchString))
           numberofObjects++;
     for (i = 0; i < Nsubordinate; i++)
-      if (subordinateField[i] != null && subordinateField[i].getChildCount(searchString) > 0)
+      if (subordinateField[i] != null && subordinateField[i].getChildCount(searchString, refinable) > 0)
         numberofObjects++;
     for (i = 0; i < Nsubordinateloop; i++)
       for (j = 0; j < numberofelementSubL(i); j++)
         if (subordinateloopField[i].elementAt(j) != null &&
-            ((basicObj) subordinateloopField[i].elementAt(j)).getChildCount(searchString) > 0)
+            ((basicObj) subordinateloopField[i].elementAt(j)).getChildCount(searchString, refinable) > 0)
           numberofObjects++;
 
 //    System.out.println("getChildCount "+numberofObjects);
@@ -858,7 +860,7 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
     return new Enumeration() {
       int index = 0;
       public boolean hasMoreElements() {
-        return index < getChildCount(null);
+        return index < getChildCount(null, false);
       }
       public Object nextElement() {
         return getChildAt(index++);

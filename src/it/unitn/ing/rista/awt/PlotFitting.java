@@ -1482,7 +1482,7 @@ public class PlotFitting extends PlotDataFile {
       jPanel2.add(stepTF);
 
       DefaultMutableTreeNode top = new DefaultMutableTreeNode(filepar);
-      basicObj tmpPar[] = filepar.getChildren(null);
+      basicObj tmpPar[] = filepar.getChildren(null, false);
       if (tmpPar != null) {
         for (int i = 0; i < tmpPar.length; i++) {
           DefaultMutableTreeNode newnode = new DefaultMutableTreeNode(tmpPar[i]);
@@ -1524,7 +1524,7 @@ public class PlotFitting extends PlotDataFile {
 
     public void addChildren(DefaultMutableTreeNode parent, DefaultMutableTreeNode children, basicObj child) {
       parent.add(children);
-      basicObj tmpPar[] = child.getChildren(null);
+      basicObj tmpPar[] = child.getChildren(null, false);
       if (tmpPar != null) {
         for (int i = 0; i < tmpPar.length; i++) {
           DefaultMutableTreeNode newnode = new DefaultMutableTreeNode(tmpPar[i]);

@@ -128,7 +128,7 @@ public class ParameterTreeModel extends AbstractTreeTableModel
 
   protected Object[] getChildren(Object node) {
     basicObj parNode = ((basicObj) node);
-    return parNode.getChildren(parentFrame.getSearchString());
+    return parNode.getChildren(parentFrame.getSearchString(), parentFrame.refinableOnly);
   }
 
   //
@@ -219,11 +219,11 @@ public class ParameterTreeModel extends AbstractTreeTableModel
             ((Parameter) par).setNotRefinable();
         } else {
           if (aValue.equals(status[1]))
-            par.freeAllParameters(parentFrame.getSearchString());
+            par.freeAllParameters(parentFrame.getSearchString(), parentFrame.refinableOnly);
           else if (aValue.equals(status[2]))
             setXRDcatEqualto((XRDcat) par);
           else if (aValue.equals(status[0]))
-            par.fixAllParameters(parentFrame.getSearchString());
+            par.fixAllParameters(parentFrame.getSearchString(), parentFrame.refinableOnly);
         }
         break;
       case 6:

@@ -71,7 +71,7 @@ public class ParameterTreePanel extends JPanel {
     rootPar = parFile;
 
     DefaultMutableTreeNode startLeaf = new DefaultMutableTreeNode(parFile);
-    basicObj tmpPar[] = parFile.getChildren(null);
+    basicObj tmpPar[] = parFile.getChildren(null, false);
     if (tmpPar != null) {
       for (int i = 0; i < tmpPar.length; i++) {
         DefaultMutableTreeNode newnode = new DefaultMutableTreeNode(tmpPar[i]);
@@ -96,7 +96,7 @@ public class ParameterTreePanel extends JPanel {
 
   public void addChildren(DefaultMutableTreeNode parent, DefaultMutableTreeNode children, basicObj child) {
     parent.add(children);
-    basicObj tmpPar[] = child.getChildren(null);
+    basicObj tmpPar[] = child.getChildren(null, false);
     if (tmpPar != null) {
       for (int i = 0; i < tmpPar.length; i++) {
         DefaultMutableTreeNode newnode = new DefaultMutableTreeNode(tmpPar[i]);

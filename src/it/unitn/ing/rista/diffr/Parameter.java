@@ -220,7 +220,7 @@ public class Parameter extends Object implements Cloneable, basicObj {
     return minimumSignificantValue;
   }
 
-  public basicObj[] getChildren(String searchString) {
+  public basicObj[] getChildren(String searchString, boolean refinable) {
     return null;
   }
 
@@ -244,7 +244,7 @@ public class Parameter extends Object implements Cloneable, basicObj {
     return false;
   }
 
-  public int getChildCount(String searchString) {
+  public int getChildCount(String searchString, boolean refinable) {
     return 0;
   }
 
@@ -672,11 +672,11 @@ public class Parameter extends Object implements Cloneable, basicObj {
     }
   }
 
-  public void freeAllParameters(String searchString) {
+  public void freeAllParameters(String searchString, boolean refinable) {
     setRefinable();
   }
 
-  public void fixAllParameters(String searchString) {
+  public void fixAllParameters(String searchString, boolean refinable) {
     setNotRefinable();
   }
 

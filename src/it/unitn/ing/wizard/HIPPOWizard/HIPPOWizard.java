@@ -126,6 +126,7 @@ public class HIPPOWizard extends Wizard {
 	  double maxBankToleranceTheta = MaudPreferences.getDouble("hippoWizard.maxDelta2ThetaForBankGrouping", 2.0);
 	  int numberIndividualBackground = MaudPreferences.getInteger("hippoWizard.numberOfIndividualBackgroundParameters", 3);
 	  int numberBackground = MaudPreferences.getInteger("hippoWizard.numberOfGeneralBackgroundParameters", 0);
+		boolean useCebyshev = MaudPreferences.getBoolean("hippoWizard.useChebyshevPolynomials", false);
     analysis.setStoreSpectraOption(false);
     if (data.groupDatasetsByRotation) {
       for (int i = 0; i < data.mbank.size(); i++) {
@@ -133,9 +134,9 @@ public class HIPPOWizard extends Wizard {
           for (int k = 0; k < data.dataFiles.size(); k++) {
             double omega = ((HIPPODataFile) data.dataFiles.get(k)).omegaAngle +
                 data.omegaOffset;
-            if (i != 0 || k != 0)
-              adataset = asample.newData(numberBackground);
-            else {
+            if (i != 0 || k != 0) {
+	            adataset = asample.newData(numberBackground);
+            } else {
 	            adataset = asample.getDataSet(0);
 	            adataset.removeAllBackgroundCoeff();
 	            for (int n = 0; n < numberBackground; n++) {
@@ -145,6 +146,7 @@ public class HIPPOWizard extends Wizard {
             adataset.initializeAsNew();
             adataset.setLabel(((HIPPOBank) data.mbank.elementAt(i)).name + " omega " + ((float) omega));
             adataset.setInstrument(DefaultInstrument.modelID);
+				adataset.useChebyshevPolynomials(useCebyshev);
             Instrument inst = adataset.getInstrument();
             inst.setDetector(TOFDetector.modelID);
             inst.setGeometry(GeometryIPNS_LANSCE.modelID);
@@ -191,6 +193,7 @@ public class HIPPOWizard extends Wizard {
               int newdatanumber = adataset.datafilesnumber();
               if (newdatanumber > actualdatanumber) {
                 DiffrDataFile adatafile = adataset.getDataFile(actualdatanumber);
+	              adatafile.useChebyshevPolynomials(useCebyshev);
 
 	              adatafile.setAngleValue(0, -omega);
 	              for (int bj = 0; bj < numberIndividualBackground; bj++)
@@ -231,6 +234,7 @@ public class HIPPOWizard extends Wizard {
           adataset.initializeAsNew();
           adataset.setLabel(((HIPPOBank) data.mbank.elementAt(i)).name);
           adataset.setInstrument(DefaultInstrument.modelID);
+	        adataset.useChebyshevPolynomials(useCebyshev);
           Instrument inst = adataset.getInstrument();
           inst.setDetector(TOFDetector.modelID);
           inst.setGeometry(GeometryIPNS_LANSCE.modelID);
@@ -318,6 +322,7 @@ public class HIPPOWizard extends Wizard {
 					            adatafile[ij].setAngleValue(0, -Double.parseDouble(adatafile[ij].getString(1)) -
 							            ((HIPPODataFile) data.dataFiles.get(k)).omegaAngle -
 							            data.omegaOffset);
+					            adatafile[ij].useChebyshevPolynomials(useCebyshev);
 					            for (int nbkg = 0; nbkg < numberIndividualBackground; nbkg++) {
 						            adatafile[ij].addBackgroundParameter();
 //						            adatafile[ij].addBackgroundParameter();

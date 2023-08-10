@@ -14,7 +14,10 @@ public class HIPPOdata {
   public String calibrationFile;
 
 	public boolean groupDatasetsByRotation = false;
-	
+	public boolean chebyshevPol = false;
+	public int numberOfGeneralBackgroundParameters = 5;
+	public int numberOfIndividualBackgroundParameters = 0;
+
 	public double _instrument_neutron_flight_path = 10.0;
 	
 	public double omegaOffset = MaudPreferences.getDouble("hippoWizard.omegaOffset", 0.0);;

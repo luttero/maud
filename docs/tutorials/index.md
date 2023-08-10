@@ -41,21 +41,21 @@ layout: post
         <div class="panel panel-default">
             <div class="panel-heading">
                 <i class="fa fa-tutorial1-o"></i>
-                Tutorials - MAUD v.2.x
+                Tutorials - MAUD v.1.x
             </div>
             <div class="panel-body">
                 <ul>
 					<li>
-                        {% include reference.html link="QPA/main.html" content="Hippo Texture Analysis Wizard" %}
+                        {% include reference.html link="QPA/main.html" content="Performing an x-ray quantitative analysis in five easy steps." %}
                     </li>
 					<li>
-                        {% include reference.html link="sizestrain/instrumentalbroadening.html" content="Hippo Texture Analysis Wizard" %}
+                        {% include reference.html link="sizestrain/instrumentalbroadening.html" content="Determining the instrumental broadening of your instrument (for size-strain analyses)" %}
                     </li>
 					<li>
-                        {% include reference.html link="imagesToSpectra/index.html" content="Hippo Texture Analysis Wizard" %}
+                        {% include reference.html link="imagesToSpectra/index.html" content="Converting image data to spectra and performing a refinement with an old film camera" %}
                     </li>
 					<li>
-                        {% include reference.html link="ODFfromPF/index.html" content="Hippo Texture Analysis Wizard" %}
+                        {% include reference.html link="ODFfromPF/index.html" content="Texture analysis from traditional pole figures with EWIMV" %}
                     </li>
                 </ul>
             </div>

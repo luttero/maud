@@ -24,6 +24,9 @@ import it.unitn.ing.rista.awt.ProgressFrame;
 import it.unitn.ing.rista.diffr.*;
 import it.unitn.ing.rista.diffr.instbroad.InstrumentBroadeningPVCaglioti;
 import it.unitn.ing.rista.diffr.instrument.DefaultInstrument;
+import it.unitn.ing.rista.util.Constants;
+import it.unitn.ing.rista.util.PersistentThread;
+
 import java.util.Vector;
 
 /**
@@ -69,7 +72,8 @@ public class GeneratePatternAndPDF {
 		adatafileset.setInstrument(instrument);
 		instrument.setIntensity("1.0");
 		instrument.setMeasurement("Theta-2Theta");
-		instrument.setRadiationType("Neutron");
+		instrument.setRadiationType(radiation);
+		instrument.getRadiationType().addRadiation("Dummy");
 		instrument.getRadiationType().getRadiation(0).setRadiation("Dummy", radWave, 1.0);
 
 		// instrument broadening
@@ -95,14 +99,14 @@ public class GeneratePatternAndPDF {
 		}
 
 		// now we add the data
-		adatafileset.addDatafiles("Dummy"); //addDataFileforName(folderAndName[0] + folderAndName[1], true);
-		adatafileset.addBackgroudCoeff();
-		adatafileset.addBackgroudCoeff();
-		adatafileset.addBackgroudCoeff();
-		adatafileset.addAdditionalBackgroundToAll();
+		adatafileset.addDatafiles(Constants.generateDummyDatafile); //addDataFileforName(folderAndName[0] + folderAndName[1], true);
+//		adatafileset.addBackgroudCoeff();
+//		adatafileset.addBackgroudCoeff();
+//		adatafileset.addBackgroudCoeff();
+//		adatafileset.addAdditionalBackgroundToAll();
 
 
-/*		actualRunningThreads = 0;
+		actualRunningThreads = 0;
 		listData = new Vector(100, 100);
 
 		int maxRunning = 1; //Constants.maxNumberOfThreads;
@@ -134,7 +138,7 @@ public class GeneratePatternAndPDF {
 						if (!Constants.textonly && prF != null) {
 							prF.setProgressText("......" );
 						}
-						Vector dataVector = generateData(thePhase, prF);
+						Vector dataVector = generateData(thePhase, adatafileset, prF);
 						addData(dataVector);
 					}
 					if (!Constants.textonly && prF != null) {
@@ -169,11 +173,11 @@ public class GeneratePatternAndPDF {
 		} while (actualRunningThreads > 0);
 
 		for (int j = 0; j < maxRunning; j++) {
-			theSample.removeData(adata);
+			theSample.removeData(adatafileset);
 			threads[j] = null;
 		}
 //    threads = null;
-*/
+
 		computing = false;
 
 	}
@@ -199,110 +203,21 @@ public class GeneratePatternAndPDF {
 
 	final Object lock = new Object();
 
-	public Vector generateData(Phase phase, ProgressFrame prF) {
+	public Vector generateData(Phase phase, DataFileSet dataset, ProgressFrame prF) {
 
-/*		int time, ltrialNumber;
-		double lcellmin, lcellmax, lanmin, lanmax, lamin, lamax;
+		int numberOfJobs = 1;
 
-		synchronized (lock) {
-			time = (int) System.currentTimeMillis();
-			ltrialNumber = trialNumber;
-			lcellmin = cellmin;
-			lcellmax = cellmax;
-			lamin = amin;
-			lamax = amax;
-			lanmin = anmin;
-			lanmax = anmax;
-			Parameter.doRefresh = false;
-		}*/
-//		ec.util.MersenneTwisterFast randomizer = new ec.util.MersenneTwisterFast(time);
 		Vector dataVector = new Vector(0, 1);
 
-/*		double[] tricAngles = new double[3];
-
 		if (prF != null)
-			prF.setProgressBarValue(ltrialNumber, 1);
+			prF.setProgressBarValue(numberOfJobs, 1);
 
-		for (int i = 0; i < ltrialNumber; i++) {
-			double vc = -1.0;
-			while (vc < lcellmin || vc > lcellmax) {
-				switch (SpaceGroups.getSymmetryNumber(phase.getSymmetry())) {
-					case 0: // triclinic
-						for (int j = 0; j < 3; j++) {
-							phase.setCellValue(j, lamin + (lamax - lamin) * randomizer.nextDouble());
-						}
-						for (int j = 0; j < 3; j++) {
-							if (j == 1 && (tricAngles[0] + lanmax + lanmin >= 360)) {
-								tricAngles[j] = lanmin + (360 - (tricAngles[0] + lanmin) - lanmin) * randomizer.nextDouble();
-							} else {
-								if (j == 2 && (tricAngles[0] + tricAngles[1] + lanmax >= 360))
-									tricAngles[j] = lanmin + (360 - (tricAngles[0] + tricAngles[1]) - lanmin) * randomizer.nextDouble();
-								else
-									tricAngles[j] = lanmin + (lanmax - lanmin) * randomizer.nextDouble();
-							}
-						}
-						for (int j = 0; j < 3; j++) {
-							phase.setCellValue(j + 3, tricAngles[j]);
-						}
-						break;
-					case 1: // monoclinic
-						for (int j = 0; j < 3; j++)
-							phase.setCellValue(j, lamin + (lamax - lamin) * randomizer.nextDouble());
-						for (int j = 0; j < 3; j++)
-							if (j == 1)
-								phase.setCellValue(j + 3, lanmin + (lanmax - lanmin) * randomizer.nextDouble());
-							else
-								phase.setCellValue(j + 3, 90.0);
-						break;
-					case 2: // orthorhombic
-						for (int j = 0; j < 3; j++)
-							phase.setCellValue(j, lamin + (lamax - lamin) * randomizer.nextDouble());
-						for (int j = 0; j < 3; j++)
-							phase.setCellValue(j + 3, 90.0);
-						break;
-					case 3: // tetragonal
-						double a = lamin + (lamax - lamin) * randomizer.nextDouble();
-						phase.setCellValue(0, a);
-						phase.setCellValue(1, a);
-						phase.setCellValue(2, lamin + (lamax - lamin) * randomizer.nextDouble());
-						for (int j = 0; j < 3; j++)
-							phase.setCellValue(j + 3, 90.0);
-						break;
-					case 4: // trigonal
-					case 5: // hexagonal
-						a = lamin + (lamax - lamin) * randomizer.nextDouble();
-						phase.setCellValue(0, a);
-						phase.setCellValue(1, a);
-						phase.setCellValue(2, lamin + (lamax - lamin) * randomizer.nextDouble());
-						for (int j = 0; j < 2; j++)
-							phase.setCellValue(j + 3, 90.0);
-						phase.setCellValue(5, 120.0);
-						break;
-					case 6: // cubic
-						a = lamin + (lamax - lamin) * randomizer.nextDouble();
-						phase.setCellValue(0, a);
-						phase.setCellValue(1, a);
-						phase.setCellValue(2, a);
-						for (int j = 0; j < 3; j++)
-							phase.setCellValue(j + 3, 90.0);
-						break;
-					default: {
-					}
-				}
-				phase.updateAll();
-				phase.CellSymmetry();
-				phase.updateParametertoDoubleBuffering(false);
-				vc = phase.getCellVolume();
-			}
-			if (!Constants.textonly && prF != null)
-				prF.increaseProgressBarValue(1);
-			dataVector.add(getLinesAndCell(phase));
-		}
-		String[] symSg = {phase.getSymmetry(), phase.getSpaceGroup()};
-		dataVector.add(symSg);
-		synchronized (lock) {
-			Parameter.doRefresh = true;
-		}*/
+
+
+//		if (!Constants.textonly && prF != null)
+//			prF.increaseProgressBarValue(1);
+//		dataVector.add(getLinesAndCell(phase));
+
 		return dataVector;
 	}
 

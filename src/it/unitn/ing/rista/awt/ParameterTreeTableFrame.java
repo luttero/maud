@@ -27,8 +27,7 @@ import it.unitn.ing.rista.interfaces.basicObj;
 import it.unitn.ing.rista.util.Constants;
 
 import javax.swing.*;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.DocumentEvent;
+import javax.swing.event.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.tree.TreePath;
 import java.awt.*;
@@ -47,6 +46,9 @@ public class ParameterTreeTableFrame extends myJFrame {
 
   JTreeTable treeTable = null;
   JTextField searchField = null;
+
+  JCheckBox refinableCB = null;
+  public Boolean refinableOnly = false;
   ParameterTreeModel parameterTreeModel = null;
 
   public ParameterTreeTableFrame(Frame parentFrame, basicObj parameterfile) {
@@ -324,9 +326,10 @@ public class ParameterTreeTableFrame extends myJFrame {
     JLabel searchLabel = new JLabel("Search: ");
     buttonP.add(searchLabel);
     searchField = new JTextField(18);
-    searchField.setToolTipText("Type a text here to show only parameters containing that text in the CIF label. Case sensitive!");
+	  searchField.setToolTipText("Type a text here to show only parameters containing that text in the CIF label. Case sensitive!");
     buttonP.add(searchField);
-    DocumentListener documentListener = new DocumentListener() {
+
+	  DocumentListener documentListener = new DocumentListener() {
       public void changedUpdate(DocumentEvent documentEvent) {
         updateTree();
       }
@@ -336,43 +339,56 @@ public class ParameterTreeTableFrame extends myJFrame {
       public void removeUpdate(DocumentEvent documentEvent) {
         updateTree();
       }
-      private void updateTree() {
+/*      private void updateTree() {
         parameterTreeModel.reload();
         expandAllRows();
-      }
+      }*/
     };
     searchField.getDocument().addDocumentListener(documentListener);
 
-    buttonP.add(new JLabel("        "));
+	  refinableCB = new JCheckBox("Show only refinable");
+	  refinableCB.setSelected(refinableOnly);
+	  refinableCB.setToolTipText("Check this to only see refined parameters");
+	  buttonP.add(refinableCB);
+
+	  refinableCB.addChangeListener(new ChangeListener() {
+		  @Override
+		  public void stateChanged(ChangeEvent e) {
+			  refinableOnly = refinableCB.isSelected();
+			  updateTree();
+		  }
+	  });
+
+	  buttonP.add(new JLabel("        "));
 
     JButton prefB = new JButton("Parameter preferences");
     buttonP.add(prefB);
-    prefB.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent event) {
+    prefB.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent event) {
         Utility.showParameterPrefs(ParameterTreeTableFrame.this);
       }
     });
 
     JButton okB = new JButton("Expand all");
     buttonP.add(okB);
-    okB.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent event) {
+    okB.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent event) {
         expandAllRows();
       }
     });
 
     okB = new JButton("Collapse all");
     buttonP.add(okB);
-    okB.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent event) {
+    okB.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent event) {
         collapseAllRows();
       }
     });
 
     JCloseButton cancelB = new JCloseButton("Close");
     buttonP.add(cancelB);
-    cancelB.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent event) {
+    cancelB.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent event) {
         setVisible(false);
         dispose();
       }
@@ -384,6 +400,10 @@ public class ParameterTreeTableFrame extends myJFrame {
 
   }
 
+	private void updateTree() {
+		parameterTreeModel.reload();
+		expandAllRows();
+	}
 	private void setAnisotropicBfactors() {
 		TreePath path = treeTable.getTree().getSelectionPath();
 		if (path != null) {
@@ -393,7 +413,7 @@ public class ParameterTreeTableFrame extends myJFrame {
 				XRDcat obj = (XRDcat) obj1;
 				Vector<basicObj> objs = new Vector<basicObj>();
 				objs.add(obj);
-				objs.addAll(getAllChildren(obj, getSearchString()));
+				objs.addAll(getAllChildren(obj, getSearchString(), refinableOnly));
 				for (int i = 0; i < objs.size(); i++)
 					if (objs.get(i) instanceof AtomSite)
 						((AtomSite) objs.get(i)).setAnisotropicBfactors();
@@ -411,7 +431,7 @@ public class ParameterTreeTableFrame extends myJFrame {
 				XRDcat obj = (XRDcat) obj1;
 				Vector<basicObj> objs = new Vector<basicObj>();
 				objs.add(obj);
-				objs.addAll(getAllChildren(obj, getSearchString()));
+				objs.addAll(getAllChildren(obj, getSearchString(), refinableOnly));
 				for (int i = 0; i < objs.size(); i++)
 					if (objs.get(i) instanceof Parameter)
 						((Parameter) objs.get(i)).setRefinable();
@@ -431,7 +451,7 @@ public class ParameterTreeTableFrame extends myJFrame {
 				XRDcat obj = (XRDcat) obj1;
 				Vector<basicObj> objs = new Vector<basicObj>();
 				objs.add(obj);
-				objs.addAll(getAllChildren(obj, getSearchString()));
+				objs.addAll(getAllChildren(obj, getSearchString(), refinableOnly));
 				for (int i = 0; i < objs.size(); i++)
 					if (objs.get(i) instanceof Parameter)
 						((Parameter) objs.get(i)).setNotRefinable();
@@ -442,13 +462,13 @@ public class ParameterTreeTableFrame extends myJFrame {
 			System.out.println("Nothing selected in the three path!");
 	}
 	
-	public Vector<basicObj> getAllChildren(basicObj obj, String toSearch) {
+	public Vector<basicObj> getAllChildren(basicObj obj, String toSearch, boolean refinable) {
 		Vector<basicObj> allObjs = new Vector<basicObj>();
-		basicObj[] children = obj.getChildren(toSearch);
+		basicObj[] children = obj.getChildren(toSearch, refinable);
 		for (int i = 0; i < children.length; i++) {
 			allObjs.add(children[i]);
 			if (!(children[i] instanceof Parameter))
-				allObjs.addAll(getAllChildren(children[i], toSearch));
+				allObjs.addAll(getAllChildren(children[i], toSearch, refinable));
 		}
 		return allObjs;
 	}

@@ -131,7 +131,7 @@ public class ParameterTreeMutableModel extends AbstractTreeTableModel implements
 
   protected Object[] getChildren(Object node) {
     basicObj parNode = ((basicObj) node);
-    return parNode.getChildren(null);
+    return parNode.getChildren(null, false);
   }
 
   //
@@ -139,7 +139,7 @@ public class ParameterTreeMutableModel extends AbstractTreeTableModel implements
   //
 
   public int getChildCount(Object node) {
-    return getParameter(node).getChildCount(null);
+    return getParameter(node).getChildCount(null, false);
   }
 
   public Object getChild(Object node, int i) {
@@ -154,7 +154,7 @@ public class ParameterTreeMutableModel extends AbstractTreeTableModel implements
 
   public void checkTree(XRDcat source, int reason) {
     if (reason == Constants.PARAMETER_CHANGED) {
-      basicObj[] obj = source.getChildren(null);
+      basicObj[] obj = source.getChildren(null, false);
       for (basicObj anObj : obj)
         if (isParameter(anObj))
           nodeChanged(anObj);
