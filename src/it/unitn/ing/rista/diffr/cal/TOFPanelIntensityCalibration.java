@@ -107,7 +107,7 @@ public class TOFPanelIntensityCalibration extends IntensityCalibration {
 	public static int functionnumber = functiontype.length;
 	static int numberIncSpectrumCoefficients = 16;
 
-	double MINIMUM_INTENSITY_CALIBRATION_VALUE = 1.0E-9;
+	double MINIMUM_INTENSITY_CALIBRATION_VALUE = 0;
 
 	double[][] difc = null;
 	double[][] difc2 = null;
@@ -217,7 +217,7 @@ public class TOFPanelIntensityCalibration extends IntensityCalibration {
 		for (int bank = 0; bank < banks; bank++)
 			typeSplitNumber[bank] = getSplitTypeNumber(bank);
 		splitPosition = Double.parseDouble(getSplitPosition());
-		MINIMUM_INTENSITY_CALIBRATION_VALUE = MaudPreferences.getDouble("_TOF_incident_intensity_cal.minimumValue", MINIMUM_INTENSITY_CALIBRATION_VALUE);
+		MINIMUM_INTENSITY_CALIBRATION_VALUE = MaudPreferences.getDouble("TOF_incident_intensity_cal.minimumValue", MINIMUM_INTENSITY_CALIBRATION_VALUE);
 	}
 
 	public void updateParametertoDoubleBuffering(boolean firstLoading) {

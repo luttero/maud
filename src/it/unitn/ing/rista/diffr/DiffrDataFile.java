@@ -60,6 +60,8 @@ public class DiffrDataFile extends XRDcat {
 	public static int DATAFILE_PHI = 2;
 	public static int DATAFILE_ETA = 3;
 	public static int DATAFILE_THETA2 = 4;
+//	public static int DATAFILE_PIXEL_X = 6;
+//	public static int DATAFILE_PiXEL_Y = 7;
 
 	public static String[] diclistc = {
       "_riet_meas_datafile_format",
@@ -69,6 +71,8 @@ public class DiffrDataFile extends XRDcat {
       "_pd_meas_angle_eta",
 			"_pd_meas_angle_2theta",
 			"_pd_meas_energy_kev",
+//			"_pd_meas_pixel_x",
+//			"_pd_meas_pixel_y",
       "_riet_meas_datafile_compute",
       "_riet_meas_datafile_fitting",
       "_pd_meas_detector_id",
@@ -107,6 +111,8 @@ public class DiffrDataFile extends XRDcat {
       "eta angle (deg)",
 		  "2theta detector (deg)",
 		  "radiation energy (keV)",
+//		  "_pd_meas_pixel_x (pixels)",
+//		  "_pd_meas_pixel_y (pixels)",
       "_riet_meas_datafile_compute",
       "_riet_meas_datafile_fitting",
       "_pd_meas_detector_id",
@@ -331,7 +337,7 @@ public class DiffrDataFile extends XRDcat {
 
   @Override
   public void initConstant() {
-    Nstring = 22;
+    Nstring = 24;
     Nstringloop = 0;
     Nparameter = 5;
     Nparameterloop = 3;
@@ -1134,6 +1140,8 @@ public class DiffrDataFile extends XRDcat {
 	  if (ainstrument.isTOF() && corrected_tilting_angles[4] == 0) {
 		  corrected_tilting_angles[4] = ainstrument.getDetector().getThetaDetector(this, 0);
 	  }
+	  for (int i = 5; i < maxAngleNumber; i++)
+		  corrected_tilting_angles[i] = tilting_angles[i];
   }
 
 	public double getDatafileWeight() {

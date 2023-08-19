@@ -1,10 +1,10 @@
-package it.unitn.ing.wizard.LCLS2Wizard;
+package it.unitn.ing.wizard.LoskoWizard;
 
 import ij.ImagePlus;
 import ij.process.FloatProcessor;
-import ij.process.ShortProcessor;
+import it.unitn.ing.wizard.LCLS2Wizard.SensorImage;
 
-public class SensorImage {
+public class LoskoSensorImage extends SensorImage {
 	public String name = "";
 
 	public boolean enabled = true;
@@ -27,16 +27,13 @@ public class SensorImage {
 
 	public double[][] photons = null;
 
-	public SensorImage() {
-	}
-
-	public SensorImage(int swidth, int sheight) {
+	public LoskoSensorImage(int swidth, int sheight) {
 		width = swidth;
 		height = sheight;
 		photons = new double[height][width];
 	}
 
-	public SensorImage(double[][] phot) {
+	public LoskoSensorImage(double[][] phot) {
 		setPhotons(phot);
 	}
 
@@ -52,11 +49,11 @@ public class SensorImage {
 		}
 	}
 
-	public void removeDarkCurrentWithGap(SensorImage image, int gapx, int gapy) {
+	public void removeDarkCurrentWithGap(LoskoSensorImage image, int gapx, int gapy) {
 		removeDarkCurrentWithGap(image.photons, gapx, gapy);
 	}
 
-	public void removeDarkCurrent(SensorImage image, int shiftx, int shifty) {
+	public void removeDarkCurrent(LoskoSensorImage image, int shiftx, int shifty) {
 		removeDarkCurrent(image.photons, shiftx, shifty);
 	}
 
@@ -162,7 +159,7 @@ public class SensorImage {
 		}
 	}
 
-	public void rotateCW(LCLSDetectorType type) {
+	public void rotateCW(LoskoDetectorType type) {
 		double[][] newPhotons = new double[width][height];
 		int maxRow = height - 1;
 		for (int i = 0; i < height; i++)
@@ -182,7 +179,7 @@ public class SensorImage {
 		originX = width + temp1 - type.height;
 	}
 
-	public void rotateCCW(LCLSDetectorType type) {
+	public void rotateCCW(LoskoDetectorType type) {
 		double[][] newPhotons = new double[width][height];
 		int maxCol = width - 1;
 		for (int i = 0; i < height; i++)
@@ -202,7 +199,7 @@ public class SensorImage {
 		originX = -temp1;
 	}
 
-	public void rotate180(LCLSDetectorType type) {
+	public void rotate180(LoskoDetectorType type) {
 		double[][] newPhotons = new double[width][height];
 		int maxRow = height - 1;
 		for (int i = 0; i < height; i++)

@@ -30,6 +30,7 @@ import it.unitn.ing.rista.io.COD.CODdatabaseConnector;
 import it.unitn.ing.rista.util.*;
 import it.unitn.ing.wizard.HIPPOWizard.HIPPOWizard;
 import it.unitn.ing.wizard.LCLS2Wizard.LCLS2Wizard;
+import it.unitn.ing.wizard.LoskoWizard.LoskoWizard;
 import it.unitn.ing.xgridclient.Client;
 import it.unitn.ing.xgridclient.XGridClient;
 
@@ -83,6 +84,7 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
   static final String MENU_NEW_ANALYSIS = "General analysis";
   static final String MENU_HIPPO_WIZARD = "Hippo wizard";
   static final String MENU_LCLS2_WIZARD = "LCLS2 wizard";
+  static final String MENU_LOSKO_WIZARD = "Losko wizard";
   static final String ANALYSIS_DEFAULT = " analysis";
   static final String ANALYSIS_ALTERNATE = " general analysis";
   static final String ANALYSIS_CAPILLARY = " capillary analysis";
@@ -91,10 +93,11 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
 
   static String[] mainMenuLabels = {
       "File:15",
-        "New:3",
+        "New:4",
           MENU_NEW_ANALYSIS,
           MENU_HIPPO_WIZARD,
 		    MENU_LCLS2_WIZARD,
+		    MENU_LOSKO_WIZARD,
         "Open analysis...",
         "Load datafile...",
         "Restore",
@@ -167,6 +170,7 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
       KeyEvent.VK_N,
       nullKeyEvent,
 		  nullKeyEvent,
+		  nullKeyEvent,
       KeyEvent.VK_O,
       nullKeyEvent,
       nullKeyEvent,
@@ -238,6 +242,7 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
       true,
       true,
       true,
+		  true,
       true,
       true,
 		  true,
@@ -1571,6 +1576,10 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
 
 	}
 
+	public void loskoWizard() {
+		LoskoWizard.startWizard(this);
+	}
+
 	class DiffractionMenuAction implements ActionListener {
     public void actionPerformed(ActionEvent event) {
 
@@ -1589,6 +1598,9 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
         return;
       } else if (command.equals(MENU_LCLS2_WIZARD)) {
 	      lcls2Wizard();
+	      return;
+      } else if (command.equals(MENU_LOSKO_WIZARD)) {
+	      loskoWizard();
 	      return;
       } else if (command.equals(mainMenuCommand[index][1])) {         // Open...
         openFile_Action();

@@ -5,28 +5,26 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="61caab25-241f-4ab1-85f0-b423f2950da9" name="Changes" comment="New version 5/2023&#10;Some modifications on GSASDataFile and more options for plotting types.">
+      <change afterPath="$PROJECT_DIR$/src/it/unitn/ing/wizard/LoskoWizard/LoskoConfigData.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/it/unitn/ing/wizard/LoskoWizard/LoskoCspad.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/it/unitn/ing/wizard/LoskoWizard/LoskoData.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/it/unitn/ing/wizard/LoskoWizard/LoskoDetectorPanel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/it/unitn/ing/wizard/LoskoWizard/LoskoDetectorSensor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/it/unitn/ing/wizard/LoskoWizard/LoskoDetectorType.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/it/unitn/ing/wizard/LoskoWizard/LoskoImageDataPanelDescriptor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/it/unitn/ing/wizard/LoskoWizard/LoskoImagePanel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/it/unitn/ing/wizard/LoskoWizard/LoskoSensorImage.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/it/unitn/ing/wizard/LoskoWizard/LoskoWizard.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Maud.iws" beforeDir="false" afterPath="$PROJECT_DIR$/Maud.iws" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.xml" beforeDir="false" afterPath="$PROJECT_DIR$/build.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/help/readme.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/help/readme.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/AboutMAUD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/AboutMAUD.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/DataD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/DataD.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/DiffractionMainFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/DiffractionMainFrame.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/ParameterTreePanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/ParameterTreePanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/ParameterTreeTableFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/ParameterTreeTableFrame.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/PlotFitting.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/PlotFitting.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/SetEqualtoD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/SetEqualtoD.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/treetable/ParameterTreeModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/treetable/ParameterTreeModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/treetable/ParameterTreeMutableModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/treetable/ParameterTreeMutableModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/comp/LeastSquareFit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/comp/LeastSquareFit.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Parameter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Parameter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Phase.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Phase.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Sample.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Sample.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/XRDcat.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/XRDcat.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/pdf/GeneratePatternAndPDF.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/pdf/GeneratePatternAndPDF.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/interfaces/basicObj.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/interfaces/basicObj.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/Constants.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/wizard/HIPPOWizard/DetectorPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/wizard/HIPPOWizard/DetectorPanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/wizard/HIPPOWizard/HIPPOWizard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/wizard/HIPPOWizard/HIPPOWizard.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/wizard/HIPPOWizard/HIPPOdata.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/wizard/HIPPOWizard/HIPPOdata.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/DiffrDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/DiffrDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/GSASbankIntCalibration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/GSASbankIntCalibration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/TOFPanelIntensityCalibration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/TOFPanelIntensityCalibration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/GSASDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/GSASDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/GSASNewDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/GSASNewDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/LoskoDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/LoskoDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/wizard/LCLS2Wizard/SensorImage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/wizard/LCLS2Wizard/SensorImage.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,10 +46,10 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/src/it/unitn/ing/rista/util/SpaceGroups.java" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/build.xml" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/PhaseInfo.java" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/it/unitn/ing/rista/util/Constants.java" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/it/unitn/ing/rista/util/SpaceGroups.java" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -59,28 +57,23 @@
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="ProjectErrors" />
   </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 7
+}]]></component>
   <component name="ProjectId" id="2A7cAOKYVpTWOnuOc7jZLaPwgaJ" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.291954&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.externalDependencies&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "git-widget-placeholder": "version2",
+    "settings.editor.selected.configurable": "reference.settings.ide.settings.new.ui"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected="Application.MaudSpeed">
     <configuration name="MaudSpeed" type="Application" factoryName="Application">
-      <classpathModifications>
-        <entry path="$PROJECT_DIR$/../../maud/osx_arm/Maud.app/Contents/Java/Maud.jar" />
-      </classpathModifications>
       <option name="MAIN_CLASS_NAME" value="com.radiographema.MaudText" />
       <module name="Maud" />
       <option name="PROGRAM_PARAMETERS" value="-f $PROJECT_DIR$/../../maud/osx_arm/speedtest.ins" />

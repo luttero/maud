@@ -272,7 +272,7 @@ public class GSASNewDataFile extends MultDiffrDataFile {
                 else if (bintyp.equalsIgnoreCase("lpsd"))
                   datafile.setXData(i, (bcoeff[0] + bcoeff[2] * (i - bcoeff[1])) / 100.0);
                 else if (bintyp.equalsIgnoreCase("log6"))
-                  datafile.setXData(i, bcoeff[0] + Math.log(bcoeff[1]) * i);
+                  datafile.setXData(i, bcoeff[0] + Math.log(i + 1) * bcoeff[1]);
                 else if (bintyp.startsWith("TIME_MAP")) {
                   if (tmap_index < nvals - 1 && i + 1 >= tmap[0][tmap_index + 1])
                     tmap_index++;

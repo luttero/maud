@@ -698,7 +698,7 @@ public class DataD extends myJFrame {
     jp1.add(p4);
     p3 = new JPanel();
     p3.setLayout(new GridLayout(0, 1, 1, 1));
-	  String[] angleLabels = {"Omega:", "Chi:", "Phi:", "Eta:", "2Theta:", "Energy:"};
+	  String[] angleLabels = {"Omega:", "Chi:", "Phi:", "Eta:", "2Theta:", "Energy:", "Pixel x:", "Pixel y:"};
 	  anglesTF = new JTextField[angleLabels.length];
 	  for (int j = 0; j < angleLabels.length; j++) {
 		  p6 = new JPanel();
