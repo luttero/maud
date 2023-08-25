@@ -27,7 +27,39 @@ public class MTEX {
         set.addinline("iter_min", iter_min);
         set.addinline("flags", 1);
 
-        set.add("P", P);
+/*		  System.out.println("P dim: " + P.length);
+		  for (int i = 0; i < 10; i++)
+			  System.out.println(P[i]);
+			System.out.println();
+
+	    System.out.println("r dim: " + r.length);
+	    for (int i = 0; i < 10; i++)
+		    System.out.println(r[i]);
+	    System.out.println();
+
+	    System.out.println("gh dim: " + gh.length);
+	    for (int i = 0; i < 10; i++)
+		    System.out.println(gh[i]);
+	    System.out.println();
+
+	    System.out.println("A dim: " + A.length);
+	    for (int i = 0; i < 10; i++)
+		    System.out.println(A[i]);
+	    System.out.println();
+
+	    System.out.println("c0 dim: " + c0.length);
+	    for (int i = 0; i < 10; i++)
+		    System.out.println(c0[i]);
+	    System.out.println();
+
+	    System.out.println("w dim: " + w.length);
+	    for (int i = 0; i < 10; i++)
+		    System.out.println(w[i]);
+	    System.out.println();*/
+
+
+
+	    set.add("P", P);
         set.add("r", r);
         set.add("gh", gh);
         set.add("A", A);

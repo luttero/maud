@@ -1,7 +1,7 @@
 /*
  * @(#)TOFPanelCalibration.java created 7/06/2023 Los Alamos
  *
- * Copyright (c) 2023 Luca Lutterotti All Rights Reserved.
+ * Copyright (c) 2099 Luca Lutterotti All Rights Reserved.
  *
  * This software is the research result of Luca Lutterotti and it is
  * provided as it is as confidential and proprietary information.
@@ -78,8 +78,8 @@ public class TOFPanelCalibration extends AngularCalibration {
 
 	int choosedPanelNumber = 0;
 
-	public static final String panelPrefix = "Panel";
-	public static String modelID = "TOF Panel";
+	public static final String panelPrefix = "TOFPanel";
+	public static String modelID = "TOF 2D Panel";
 
 	public TOFPanelCalibration(XRDcat aobj, String alabel) {
 		super(aobj, alabel);
@@ -144,7 +144,7 @@ public class TOFPanelCalibration extends AngularCalibration {
 		super.updateParametertoDoubleBuffering(firstLoading);
 		isAbilitatetoRefresh = false;
 		int banks = banknumbers();
-		choosedPanelNumber = getBankNumber();
+		choosedPanelNumber = getPanelNumber();
 		difc = new double[banks];
 		difa = new double[banks];
 		zero = new double[banks];
@@ -199,7 +199,7 @@ public class TOFPanelCalibration extends AngularCalibration {
 	public void freeAllZeroParameters(boolean forceFree) { // DIFC
 		int banks = banknumbers();
 		for (int bank = 0; bank < banks; bank++) {
-			if (bankIsActive(bank)) {
+			if (panelIsActive(bank)) {
 				if (forceFree)
 					((Parameter) parameterloopField[0].elementAt(bank)).setRefinable();
 				else
@@ -208,10 +208,15 @@ public class TOFPanelCalibration extends AngularCalibration {
 		}
 	}
 
-	protected boolean bankIsActive(int bank) {
+	protected boolean panelIsActive(int bank) {
 		DataFileSet data = (DataFileSet) getParent().getParent();
 		int datafiles = data.activedatafilesnumber();
-		return datafiles > 0;
+		boolean isActive = false;
+		for (int i = 0; i < datafiles && !isActive; i++) {
+			if (data.getActiveDataFile(i).getBankNumber() == bank)
+				isActive = true;
+		}
+		return isActive;
 	}
 
 	public void boundAllBankCoefficients() {
@@ -254,7 +259,7 @@ public class TOFPanelCalibration extends AngularCalibration {
 	}
 
 	public void removePanel(int indexToRemove) {
-		removePanel(GSASbankCalibration.bankPrefix + Integer.toString(indexToRemove));
+		removePanel(panelPrefix + Integer.toString(indexToRemove));
 	}
 
 	public void removePanel(String bankID) {
@@ -289,57 +294,62 @@ public class TOFPanelCalibration extends AngularCalibration {
 	}
 
 	public String getDifc() {
-		if (getBankNumber() >= 0)
-			return getDifc(getBankNumber()).getValue();
+		if (getPanelNumber() >= 0)
+			return getDifc(getPanelNumber()).getValue();
 		else
 			return "0";
 	}
 
 	public String getDifa() {
-		if (getBankNumber() >= 0)
-			return getDifa(getBankNumber()).getValue();
+		if (getPanelNumber() >= 0)
+			return getDifa(getPanelNumber()).getValue();
 		else
 			return "0";
 	}
 
 	public String getZero() {
-		if (getBankNumber() >= 0)
-			return getZero(getBankNumber()).getValue();
+		if (getPanelNumber() >= 0)
+			return getZero(getPanelNumber()).getValue();
 		else
 			return "0";
 	}
 
 	public String getTtheta() {
-		if (getBankNumber() >= 0)
-			return getTtheta(getBankNumber()).getValue();
+		if (getPanelNumber() >= 0)
+			return getTtheta(getPanelNumber()).getValue();
 		else
 			return "0";
 	}
 
 	public String getEta() {
-		if (getBankNumber() >= 0)
-			return getEta(getBankNumber()).getValue();
+		if (getPanelNumber() >= 0)
+			return getEta(getPanelNumber()).getValue();
 		else
 			return "0";
 	}
 
 	public String getDetectorDistance() {
-		if (getBankNumber() >= 0)
-			return getDetectorDistance(getBankNumber()).getValue();
+		if (getPanelNumber() >= 0)
+			return getDetectorDistance(getPanelNumber()).getValue();
 		else
 			return "1";
 	}
 
+/*	public int getPanelNumber(DiffrDataFile datafile) {
+		return datafile.getAngBankNumber();
+	}*/
+
 	public double getTthetaValue(DiffrDataFile datafile, double twotheta) {
-		return theta[getBankNumber(datafile)];
+//	  System.out.println(this + ", asking for bank number: " + getBankNumber(datafile));
+		return theta[getPanelNumber(datafile)];
 	}
 
 	public double getEtaValue(DiffrDataFile datafile) {
-		return eta[getBankNumber(datafile)];
+		return eta[getPanelNumber(datafile)];
 	}
 
 	public double getDetectorDistanceValue(DiffrDataFile datafile) {
-		return dist[getBankNumber(datafile)];
+		return dist[getPanelNumber(datafile)];
 	}
 
 	public double getDetectorDistanceValue(int bank) {
@@ -466,37 +476,6 @@ public class TOFPanelCalibration extends AngularCalibration {
 			return null;
 	}
 
-/*
-  public void setDifc(String value) {
-    if (getBankNumber() >= 0)
-      getDifc(getBankNumber()).setValue(value);
-  }
-
-  public void setDifa(String value) {
-    if (getBankNumber() >= 0)
-      getDifa(getBankNumber()).setValue(value);
-  }
-
-  public void setZero(String value) {
-    if (getBankNumber() >= 0)
-      getZero(getBankNumber()).setValue(value);
-  }
-
-  public void setTtheta(String value) {
-    if (getBankNumber() >= 0)
-      getTtheta(getBankNumber()).setValue(value);
-  }
-
-  public void setEta(String value) {
-    if (getBankNumber() >= 0)
-      getEta(getBankNumber()).setValue(value);
-  }
-
-  public void setDetectorDistance(String value) {
-    if (getBankNumber() >= 0)
-      getDetectorDistance(getBankNumber()).setValue(value);
-  }*/
-
 	public void setBank(String value) {
 		stringField[1] = value;
 	}
@@ -525,7 +504,7 @@ public class TOFPanelCalibration extends AngularCalibration {
 		return stringField[1];
 	}
 
-	public int getBankNumber() {
+	public int getPanelNumber() {
 		if (getPanelID().equalsIgnoreCase("") || getPanelID().equalsIgnoreCase("?"))
 			setBank(0);
 		try {
@@ -556,7 +535,7 @@ public class TOFPanelCalibration extends AngularCalibration {
 			System.out.println(getPanelID(i));
 	}
 
-	public int getBankNumber(DiffrDataFile datafile) {
+	public int getPanelNumber(DiffrDataFile datafile) {
 		return choosedPanelNumber;
 	}
 
@@ -689,7 +668,7 @@ public class TOFPanelCalibration extends AngularCalibration {
 			if (datafiles != null) {
 				for (int i = 0; i < datafiles.length; i++) {
 //      System.out.println("Check datafile: " + datafiles[i].getBankID() + " == " + getBankID(getBankNumber(datafiles[i])));
-					if (datafiles[i].getBankID().equalsIgnoreCase(getPanelID(getBankNumber(datafiles[i]))))
+					if (datafiles[i].getBankID().equalsIgnoreCase(getPanelID(getPanelNumber(datafiles[i]))))
 						enabled = true;
 				}
 			}
@@ -723,7 +702,7 @@ public class TOFPanelCalibration extends AngularCalibration {
 		int datanumber = datafile.getTotalNumberOfData();
 //    int banknumber = getBankNumber(datafile);
 		updateParametertoDoubleBuffering(false);
-		int banknumber = getBankNumber(datafile);
+		int banknumber = getPanelNumber(datafile);
 		if (banknumber >= difa.length || banknumber < 0) {
 			System.out.println("Warning, panel number: " + banknumber + " out of range: 0 - " + difa.length);
 			return;
@@ -746,7 +725,7 @@ public class TOFPanelCalibration extends AngularCalibration {
 //    int datasetsNumber = datafile.getTotalNumberOfData();
 //    int banknumber = getBankNumber(datafile);
 //    updateParametertoDoubleBuffering();
-		int banknumber = getBankNumber(datafile);
+		int banknumber = getPanelNumber(datafile);
 		if (banknumber >= difa.length || banknumber < 0) {
 			System.out.println("Problem, panel number: " + banknumber + " out of range: 0 - " + difa.length);
 			return value;
@@ -763,16 +742,100 @@ public class TOFPanelCalibration extends AngularCalibration {
 	}
 
 	public double notCalibrated(DiffrDataFile datafile, double x) {
-		int banknumber = getBankNumber(datafile);
+		int banknumber = getPanelNumber(datafile);
 		return difc[banknumber] * x + difa[banknumber] * x * x + zero[banknumber];
 	}
 
+/*	public void panelUnrolling(DiffrDataFile datafile) {
+
+		datafile.getIma
+
+		double[] xf;
+		double angcal;
+
+		int datanumber = datafile.getTotalNumberOfData();
+		updateParametertoDoubleBuffering(false);
+
+		DataFileSet dataset = datafile.getDataFileSet();
+		double zs = dataset.getZshift();
+		double rx = dataset.getSample().getRadiusDimensionXD();
+		double ry = dataset.getSample().getRadiusDimensionYD();
+		double[] tiltingAngles = datafile.getTiltingAngle();
+		double omega = tiltingAngles[0];
+		double chi = tiltingAngles[1];
+		double detectorProper2Theta = detector2Theta + tiltingAngles[4];
+
+		if (Math.abs(omega) > 1.0E-18)
+			zs /= Math.cos((90.0 - omega) * Constants.DEGTOPI);
+		zs /= Math.cos(chi * Constants.DEGTOPI);
+		double dx = zs * Math.cos((detectorProper2Theta - 90.0) * Constants.DEGTOPI);
+		double dd = zs * Math.sin((detectorProper2Theta - 90.0) * Constants.DEGTOPI);
+
+		double[][] tmat = ConvertImageToSpectra.getTransformationMatrixNew(detectorOmegaDN, detectorPhiDA,
+				detectorEtaDA, detectorProper2Theta, omega);
+//    double pangcal = -999.0;
+		for (int i = 0; i < datanumber; i++) {
+//      double value = datafile.getXDataOriginal(i);
+			double x = datafile.getXDataImage(i);
+			double y = datafile.getYDataImage(i);
+
+			xf = ConvertImageToSpectra.getTransformedVectorNew(tmat, x, y, centerX + dx, centerY, detectorDistance - dd);
+			angcal = ConvertImageToSpectra.get2ThetaNew(xf) * Constants.PITODEG;
+//      if (Math.abs(pangcal - angcal) < 1E-6)
+//	      System.out.println(i + " " + angcal + " " + pangcal + " " + x + " " + y + " " + datafile.getXDataImage(i - 1) + " " + datafile.getYDataImage(i - 1));
+//	    pangcal = angcal;
+			if (rx != 0) { // || ry != 0) {
+				double xc = rx * MoreMath.sind(90.0 - angcal / 2.0);
+				double zc = rx * (1.0 - MoreMath.cosd(90.0 - angcal));
+				double dx1 = (zs - zc) * Math.cos((detectorProper2Theta - 90.0) * Constants.DEGTOPI);
+				double dd1 = (zs - zc) * Math.sin((detectorProper2Theta - 90.0) * Constants.DEGTOPI);
+				double dx2 = xc * Math.sin((detectorProper2Theta - 90.0) * Constants.DEGTOPI);
+				double dd2 = xc * Math.cos((detectorProper2Theta - 90.0) * Constants.DEGTOPI);
+				xf = ConvertImageToSpectra.getTransformedVectorNew(tmat, x, y, centerX + dx1 + dx2, centerY, detectorDistance - dd1 - dd2);
+				angcal = ConvertImageToSpectra.get2ThetaNew(xf) * Constants.PITODEG;
+			}
+
+			datafile.setCalibratedXDataOnly(i, angcal);
+		}
+	}
+	public double[][] getTmat(double omega) {
+		return ConvertImageToSpectra.getTransformationMatrixNew(detectorOmegaDN, detectorPhiDA,
+				detectorEtaDA, detector2Theta, omega);
+	}
+
+	public double getBeamInclination(DiffrDataFile datafile, int index, double[][] tmat) {
+		updateParametertoDoubleBuffering(false);
+
+		double zs = datafile.getDataFileSet().getZshift();
+//    System.out.println("zs = " + zs);
+		double[] tiltingAngles = datafile.getTiltingAngle();
+		double omega = tiltingAngles[0];
+		if (Math.abs(omega) > 1.0E-9)
+			zs /= Math.sin(omega * Constants.DEGTOPI);
+		double chi = tiltingAngles[1];
+		double detectorProper2Theta = detector2Theta + tiltingAngles[4];
+		zs /= Math.cos(chi * Constants.DEGTOPI);
+		double dx = zs * Math.sin((180.0 - detectorProper2Theta) * Constants.DEGTOPI);
+		double dd = zs * Math.cos((180.0 - detectorProper2Theta) * Constants.DEGTOPI);
+
+		double x = datafile.getXDataImage(index);
+		double y = datafile.getYDataImage(index);
+
+		double[] xf = ConvertImageToSpectra.getTransformedVectorNew(tmat, x, y, centerX + dx, centerY, detectorDistance - dd);
+		double[] xfc = ConvertImageToSpectra.getTransformedVectorNew(tmat, 0, 0, centerX + dx, centerY, detectorDistance - dd);
+
+		double angle = Math.abs(MoreMath.getAngleBetweenPoints(xf, xfc));
+		angle += Constants.PI_2;
+
+		return angle;
+	}*/
+
 	public JOptionsDialog getOptionsDialog(Frame parent) {
-		JOptionsDialog adialog = new JPanelOptionsDialog(parent, this);
+		JTOFPanelOptionsDialog adialog = new JTOFPanelOptionsDialog(parent, this);
 		return adialog;
 	}
 
-	class JPanelOptionsDialog extends JOptionsDialog {
+	class JTOFPanelOptionsDialog extends JOptionsDialog {
 
 		JTextField filenameL;
 		JComboBox bankCB;
@@ -786,7 +849,7 @@ public class TOFPanelCalibration extends AngularCalibration {
 
 		int selectedBank = 0;
 
-		public JPanelOptionsDialog(Frame parent, XRDcat obj) {
+		public JTOFPanelOptionsDialog(Frame parent, XRDcat obj) {
 
 			super(parent, obj);
 
@@ -909,7 +972,7 @@ public class TOFPanelCalibration extends AngularCalibration {
 			for (int i = 0; i < banknumbers(); i++)
 				bankCB.addItem(getPanelID(i));
 			doRefreshBank = true;
-			selectedBank = getBankNumber();
+			selectedBank = getPanelNumber();
 			bankCB.setSelectedItem(getPanelID(selectedBank));
 		}
 

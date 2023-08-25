@@ -457,8 +457,8 @@ public class Constants {
 			cachesDirectory = System.getProperty("CachesDirectory") + fileSeparator + "com.radiographema.maud" + fileSeparator;
 			applicationSupportDirectory = System.getProperty("ApplicationSupportDirectory") + fileSeparator;
 			logsDirectory = libraryDirectory + "Logs" + fileSeparator;
-			startingAppDirectory = System.getProperty("java.library.path") + fileSeparator;
 			documentsDirectory = System.getProperty("DocumentsDirectory") + fileSeparator + "maud" + fileSeparator;
+			startingAppDirectory = documentsDirectory; // System.getProperty("java.library.path") + fileSeparator;
 		}
 	}
 
@@ -475,7 +475,8 @@ public class Constants {
 		documentsDirectory = applicationSupportDirectory + "doc" + fileSeparator;
 		cachesDirectory = applicationSupportDirectory + "caches" + fileSeparator;
 		logsDirectory = libraryDirectory + "Logs" + fileSeparator;
-		startingAppDirectory = userDirectory;
+		startingAppDirectory = documentsDirectory;
+//		startingAppDirectory = userDirectory;
 	}
 
 	public static void initForLinux() {
@@ -487,6 +488,7 @@ public class Constants {
 		documentsDirectory = applicationSupportDirectory + "doc" + fileSeparator;
 		cachesDirectory = applicationSupportDirectory + "caches" + fileSeparator;
 		logsDirectory = libraryDirectory + "Logs" + fileSeparator;
+		startingAppDirectory = documentsDirectory;
 	}
 
 	/**

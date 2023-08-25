@@ -19,9 +19,12 @@ import com.jtex.qta.odf.FourierComponent;
 import com.jtex.qta.odf.ODFComponent;
 import com.jtex.qta.odf.UniformComponent;
 import com.jtex.qta.odf.UnimodalComponent;
-import java.util.ArrayList;
-import java.util.Formatter;
-import java.util.Locale;
+import it.unitn.ing.rista.util.MaudPreferences;
+import it.unitn.ing.rista.util.Misc;
+
+import java.io.BufferedReader;
+import java.io.Reader;
+import java.util.*;
 
 /**
  *
@@ -126,15 +129,60 @@ public class ODF extends ODFComponent {
 		Array1D refl = pf.getSuperposition();
 
 		// todooooo
-		Array1D w = pf.getQuadratureWeights(options.getPsi());
+		Array1D w = null;
+
+		if (options.wFilename.length() > 0) {
+			BufferedReader reader = Misc.getReader(options.wFilename);
+			if (reader != null) {
+				try {
+					Vector angular = new Vector(0, 100);
+					String token = new String("");
+					StringTokenizer st = null;
+					String linedata = null;
+					boolean endoffile = false;
+					boolean found = false;
+
+					while (!endoffile) {
+						linedata = reader.readLine();
+						if (linedata == null || linedata.length() == 0) {
+							endoffile = true;
+							break;
+						}
+
+						st = new StringTokenizer(linedata, "' ,\t\r\n");
+
+						while (st.hasMoreTokens()) {
+							token = st.nextToken();
+//          	System.out.println(token);
+							angular.addElement(token);
+						}
+					}
+					w = new Array1D(angular);
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		} else
+			w = pf.getQuadratureWeights(options.getPsi());
 
 		Array1D A = options.getPsi().A();
-		A.set(Array1D.linspace(1, A.size() - 1, 2).toIntArray(), 0);
+		double[] A2 = null;
+		if (MaudPreferences.getBoolean("MTEX.usesFlorianA", true)) {
+			A.set(Array1D.linspace(1, A.size() - 1, 2).toIntArray(), 0);
+			A2 = A.toDoubleArray();
+		} else {
+			double[] A1 = A.toDoubleArray();
+			A2 = new double[A1.length];
+			for (int i = 0; i < A1.length; i+=2)
+				A2[i] = A1[i];
+		}
+
 		Array1D RM = new Array1D(0, 0, 0, 0);
 
 		double[] result = MTEX.pf2odf(lP.toIntArray(), lh.toIntArray(), refl.toDoubleArray(), options.getIterMax(), options.getIterMin(), options.getFlags(),
 				P.toDoubleArray(), r.toDoubleArray(), gh.toDoubleArray(),
-				A.toDoubleArray(), options.getC0().toDoubleArray(), w.toDoubleArray(), RM.toDoubleArray(), 0, 0);
+				A2, options.getC0().toDoubleArray(), w.toDoubleArray(), RM.toDoubleArray(), 0, 0);
 
 		UnimodalComponent cmp = new UnimodalComponent(q, new Array1D(result), options.getPsi(), cs, ss);
 
@@ -168,7 +216,7 @@ public class ODF extends ODFComponent {
 
 				double[] ghresult = MTEX.pf2odf(lP.toIntArray(), lh.toIntArray(), refl.toDoubleArray(), options.getIterMax(), options.getIterMin(), options.getFlags(),
 						Pc.toDoubleArray(), r.toDoubleArray(), gh.toDoubleArray(),
-						A.toDoubleArray(), options.getC0().toDoubleArray(), w.toDoubleArray(), RM.toDoubleArray(), 0, 0);
+						A2, options.getC0().toDoubleArray(), w.toDoubleArray(), RM.toDoubleArray(), 0, 0);
 
 				odf.add(phon, new UniformComponent(cs, ss));
 				odf.add(1D - phon, new UnimodalComponent(q, new Array1D(ghresult), options.getPsi(), cs, ss));

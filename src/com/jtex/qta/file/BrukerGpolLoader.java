@@ -12,6 +12,8 @@ import com.jtex.geom.Vec3;
 import com.jtex.plot.Plotter;
 import com.jtex.plot.SimpleMultiPlotComponent;
 import com.jtex.qta.PoleFigure;
+import it.unitn.ing.rista.util.Constants;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -110,6 +112,12 @@ public class BrukerGpolLoader implements PoleFigureLoader {
 
         Array1D rho = ix.atan2(iy).multiplyd(-1);
         Array1D theta = (ix.squared().plusd(iy.squared()).sqrt().divided(nrows / 2 - 1)).atan().multiplyd(2);
+
+		  double[] r1 = rho.toDoubleArray();
+		  double[] t1 = theta.toDoubleArray();
+		  for (int i = 0; i < r1.length && i < t1.length; i++) {
+			  System.out.println((r1[i] * Constants.PITODEG) + " " + (t1[i] * Constants.PITODEG));
+		  }
 
         Vec3 r = new Vec3(theta, rho);
 

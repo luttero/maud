@@ -233,6 +233,8 @@ public class DiffrDataFile extends XRDcat {
   static int thetaDisplacementID = 1;
   double thetaDisplacement[] = null;
   int thetaDisplacementN = 0;
+
+  double absorptionVelocityFactor = 0.0;
 //  static int monitorAsBackgroundID = 2;
 //  double monitorAsBackground[] = null;
 //  int monitorAsBackgroundN = 0;
@@ -337,7 +339,7 @@ public class DiffrDataFile extends XRDcat {
 
   @Override
   public void initConstant() {
-    Nstring = 24;
+    Nstring = 22;
     Nstringloop = 0;
     Nparameter = 5;
     Nparameterloop = 3;
@@ -1245,6 +1247,8 @@ public class DiffrDataFile extends XRDcat {
     for (int i = 0; i < numberFileBackground; i++) {
 
     }
+
+	  absorptionVelocityFactor = getParameterValue(absorptionFactorID);
 //    if (thetaDisplacementN > 0)
 //      System.out.println("Update " + this.getLabel() + " " + thetaDisplacement[0]);
   }
@@ -3334,14 +3338,16 @@ public class DiffrDataFile extends XRDcat {
   public double computeAngularIntensityCorrection(Sample asample, Instrument ainstrument, int j) {
     double x = getXData(j);
 //    if (lorentzRestricted)
-	  return getIntensityCalibration(j) * ainstrument.getBeamRelatedCorrection(this, asample, x, j);
+	  return getIntensityCalibration(j) * ainstrument.getBeamRelatedCorrection(this, asample, x, j) *
+			  computeAbsorptionPath(x, ainstrument);
 //    else
 //      return getIntensityCalibration(j) * ainstrument.getBeamOutCorrection(this, asample, x)
 //          * ainstrument.LorentzPolarization(this, asample, x, dspacingbase, energyDispersive);
   }
 
   public double computeAngularIntensityCorrection(Sample asample, Instrument ainstrument, double x) {
-    return computeAngularIntensityCorrection(asample, ainstrument, getOldNearestPoint(x));
+    return computeAngularIntensityCorrection(asample, ainstrument, getOldNearestPoint(x)) *
+		    computeAbsorptionPath(x, ainstrument);
   }
 
 /*  public double computeAbsorptionAndPhaseQuantity(Instrument ainstrument, Sample asample, Phase aphase, double x) {
@@ -3352,7 +3358,23 @@ public class DiffrDataFile extends XRDcat {
 //			return 1.0;
   }
 */
-  boolean checkForRealCalibration = true;
+public double computeAbsorptionPath(double x, Instrument ainstrument) {
+	if (absorptionVelocityFactor == 0)
+		return 1.0;
+	double toLambda = 0.0;
+	if (ainstrument.getMeasurement().isTOF()) {
+		toLambda = (2.0 * MoreMath.sind(Math.abs(ainstrument.getGeometry().getThetaDetector(this,
+				x))));
+	}
+	double arg1 = absorptionVelocityFactor * toLambda;
+	if (arg1 < 200.0)
+		arg1 = Math.exp(-arg1);
+	else
+		arg1 = 0.0f;
+	return arg1;
+}
+
+	boolean checkForRealCalibration = true;
   boolean needRealCalibration = true;
 
   public double getIntensityCalibration(int j) {

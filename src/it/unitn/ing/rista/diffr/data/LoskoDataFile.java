@@ -38,7 +38,9 @@ import ij.process.*;
 
 
 /**
- *  The LoskoDataFile is a class
+ *  The LoskoDataFile is a class to load the LumaCam
+ *  detector by Adrian Losko in his text format (prepared
+ *  by Tim)
  *
  *
  * @version $Revision: 1.0 $, $Date: 2023/06/7 17:07:29 $
@@ -50,44 +52,13 @@ public class LoskoDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
 
 	public LoskoDataFile(XRDcat aobj, String alabel) {
 		super(aobj, alabel);
-		identifier = ".losko";
+		identifier = ".luma";
 	}
 
 	public LoskoDataFile() {
-		identifier = ".losko";
+		identifier = ".luma";
 	}
 
-
-/*	public boolean readallSpectra() {
-
-		boolean loadSuccessfull = false;
-		DataFileSet data = getDataFileSet();
-		boolean tmpB = isAbilitatetoRefresh;
-		isAbilitatetoRefresh = false;
-//    new Opener().open();
-//		OpenDialog od = new OpenDialog("Open...", "");
-		String directory = getFolder(); //od.getDirectory();
-		String name = getLabel(); //od.getFileName();
-//    System.out.println("Opening file: "+ directory + " - " + name);
-		if (name != null) {
-			ImagePlus imp = (new Opener()).openImage(directory, name);
-			if (imp != null) {
-				double[] gonioAngles = StringNumber.checkAngles(name);
-				AngularCalibration angcal = getDataFileSet().getInstrument().getAngularCalibration();
-
-				if (angcal != null) {
-					if (angcal instanceof TOFPanelCalibration) {
-						angcal.loadAndUnrollImage(imp, this, gonioAngles);
-						loadSuccessfull = true;
-					}
-				}
-			}
-		}
-		isAbilitatetoRefresh = tmpB;
-//    data.refreshAll(false);
-
-		return loadSuccessfull;
-	}*/
 
 	int groupPixelsX = 8;
 	int groupPixelsY = groupPixelsX;
@@ -169,7 +140,7 @@ public class LoskoDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
 				sensorSizeX = 115.0;
 				sensorSizeY = sensorSizeX;
 
-				tofNumber = MaudPreferences.getInteger("LoskoDetector.numberTOFpoints", 2048);
+				tofNumber = MaudPreferences.getInteger("LumaCam.numberTOFpoints", 2048);
 
 				counts = new int[pixelsNumberX][pixelsNumberY][tofNumber];
 				x_m = new double[pixelsNumberX][pixelsNumberY][tofNumber];

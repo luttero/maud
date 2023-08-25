@@ -359,6 +359,8 @@ public class MTextureModel extends DiscreteODFTexture {
 
 	public void prepareiteration(Sample asample) {
 
+		showPlotsAtEnd = MaudPreferences.getBoolean("MTEX.show_plots_at_end", false);
+
 		textureInitialization();
 
 		Phase aphase = getPhase();
@@ -378,7 +380,7 @@ public class MTextureModel extends DiscreteODFTexture {
 		cs = new Symmetry(symmetry, aphase.getFullCellValue(0), aphase.getFullCellValue(1), aphase.getFullCellValue(2),
 				aphase.getFullCellValue(3), aphase.getFullCellValue(4), aphase.getFullCellValue(5));
 
-//		System.out.println(cs.euler("ZXZ").toDegrees());
+		System.out.println(cs.getGroup().toString());
 
 		pf = new com.jtex.qta.PoleFigure();
 		pf.setCS(cs);
@@ -437,12 +439,14 @@ public class MTextureModel extends DiscreteODFTexture {
 				}
 
 //            System.out.println("PF number & size: " + pf_number + " " + data.length);
-				com.jtex.qta.PoleFigure ps = new com.jtex.qta.PoleFigure(new Miller(refl.getH(), refl.getK(), refl.getL(), cs, ""),
-						new Vec3(theta, rho), new Array1D(data));
-				ps.setCS(cs);
-				ps.setSS(ss);
-				pf.add(ps);
-				pf_number++;
+//				for (int ii = 0; ii < refl.hlist.length; ii++) {
+					com.jtex.qta.PoleFigure ps = new com.jtex.qta.PoleFigure(new Miller(refl.getH(), refl.getK(), refl.getL(), cs, ""),
+							new Vec3(theta, rho), new Array1D(data));
+					ps.setCS(cs);
+					ps.setSS(ss);
+					pf.add(ps);
+					pf_number++;
+//				}
 			}
 		}
 		if (showPlotsAtEnd)
@@ -719,6 +723,8 @@ public class MTextureModel extends DiscreteODFTexture {
 				odf = new ODF();
 			com.jtex.qta.ODFOptions odfOptions = new com.jtex.qta.ODFOptions(pf, Math.toRadians(getResolutionD()), kernel);
 			odfOptions.setGhostCorrection(true);
+			if (Misc.checkForFile(getFilePar().getDirectory() + "w_weights.txt"))
+				odfOptions.setwFilename(getFilePar().getDirectory() + "w_weights.txt");
 
 			odf = odf.estimate(pf, odfOptions);
 
@@ -1063,6 +1069,7 @@ public class MTextureModel extends DiscreteODFTexture {
 			resolutionTF.setText(getResolution());
 			kernelResolutionTF.setText(getKernelResolution());
 			kernelTypeCB.setSelectedIndex(getKernelTypeAsInt());
+			showPlotsAtEnd = MaudPreferences.getBoolean("MTEX.show_plots_at_end", false);
 			showPlotCB.setSelected(showPlotsAtEnd);
 		}
 
@@ -1073,6 +1080,7 @@ public class MTextureModel extends DiscreteODFTexture {
 			setKernelResolution(kernelResolutionTF.getText());
 			setODFrefinable(refinableCB.isSelected());
 			showPlotsAtEnd = showPlotCB.isSelected();
+			MaudPreferences.setPref("MTEX.show_plots_at_end", showPlotsAtEnd);
 			setMinimumIntensity(minIntTF.getText());
 			setMinimumDspacing(thresholdTF.getText());
 		}

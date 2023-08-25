@@ -55,7 +55,9 @@ public class Array1D {
     public static Array1D linspace(double d1, double d2, int n) {
 //         % at least two end points
         double n1 = (double) (n - 1D);
+//		  System.out.println("Array1D, n1 " + n1);
         double c = (d2 - d1) * (n1 - 1D);
+//	    System.out.println("Array1D, c " + c);
         double y[] = new double[(int) n1 + 1];
 
         if (n == 1) {
@@ -161,7 +163,12 @@ public class Array1D {
         this.a = ele;
     }
 
-    public double[] copy() {
+	public Array1D(Vector<String> ele) {
+		this.a = new double[ele.size()];
+		for (int i = 0; i < ele.size(); i++)
+			this.a[i] = Double.parseDouble(ele.elementAt(i));
+	}
+	public double[] copy() {
 
 //        double[] b = new double[a.length];
 //        int i = 0;

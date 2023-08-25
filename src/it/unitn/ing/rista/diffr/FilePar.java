@@ -2394,10 +2394,10 @@ public class FilePar extends XRDcat implements lFilePar, Function {
     } catch (IOException ioe) {
       ioe.printStackTrace();
     }
-    boolean phaseOutput = MaudPreferences.getBoolean("fittingFileOutput.backgroundAndPhases", true);
+//    boolean phaseOutput = MaudPreferences.getBoolean("fittingFileOutput.backgroundAndPhases", true);
     for (int i = 0; i < samplesNumber(); i++) {
       Sample asample = getSample(i);
-      asample.fittingFileOutput(addStatisticalError, phaseOutput);
+      asample.fittingFileOutput(addStatisticalError, false);
     }
   }
 

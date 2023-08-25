@@ -19,6 +19,8 @@ public class ODFOptions {
 	SO3Grid grid;
 	Array1D c0;
 
+	public String wFilename = "";
+
 	public ODFOptions(PoleFigure pf) {
 		this(pf, Math.toRadians(7.5));
 	}
@@ -119,6 +121,10 @@ public class ODFOptions {
 
 	public int getFlags() {
 		return flags;
+	}
+
+	public void setwFilename(String wFilename) {
+		this.wFilename = wFilename;
 	}
 
 	@Override

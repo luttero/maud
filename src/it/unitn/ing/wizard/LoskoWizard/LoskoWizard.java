@@ -11,9 +11,7 @@ import it.unitn.ing.rista.diffr.geometry.GeometryTransmissionFlatImage;
 import it.unitn.ing.rista.diffr.instbroad.InstrumentBroadeningPVCaglioti;
 import it.unitn.ing.rista.diffr.instrument.DefaultInstrument;
 import it.unitn.ing.rista.diffr.measurement.TOFMeasurement;
-import it.unitn.ing.rista.diffr.measurement.TwoThetaMeasurement;
 import it.unitn.ing.rista.diffr.radiation.TOFNeutronRadiation;
-import it.unitn.ing.rista.diffr.radiation.XrayRadiation;
 import it.unitn.ing.rista.util.*;
 import it.unitn.ing.wizard.*;
 
@@ -46,7 +44,7 @@ public class LoskoWizard extends Wizard {
 		frame.setResizable(true);
 		frame.getContentPane().setLayout(new BorderLayout());
 		frame.setSize(new Dimension(1124, 600));
-		frame.setTitle("Losko image Wizard");
+		frame.setTitle("LumaCam Wizard");
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
 		cardPanel = new JPanel();
@@ -152,7 +150,7 @@ public class LoskoWizard extends Wizard {
 							Instrument inst = adataset.getInstrument();
 							inst.setDetector(StandardDetector.modelID);
 							inst.setGeometry(GeometryTransmissionFlatImage.modelID);
-							inst.setInstrumentID("Hippo TOF");
+							inst.setInstrumentID("LumaCam TOF");
 							inst.setMeasurement(TOFMeasurement.modelID);
 							inst.setRadiationType(TOFNeutronRadiation.modelID);
 							inst.getRadiationType().addRadiation("Dummy");

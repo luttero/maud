@@ -1401,6 +1401,7 @@ public class DataD extends myJFrame {
 //		(new PlotDataFile(this, thedata.getSelectedDataFile())).setVisible(true);
     (new PersistentThread() {
         public void executeJob() {
+			  thedata.refreshAll(false);
         DiffrDataFile[] datafiles = thedata.getSelectedDataFiles();
         if (datafiles.length > 1)
           (new MultiPlotFitting(DataD.this, datafiles, thedata.getLabel())).setVisible(true);
@@ -1414,6 +1415,7 @@ public class DataD extends myJFrame {
 //		(new PlotDataFile(this, thedata.getSelectedDataFile())).setVisible(true);
     (new PersistentThread() {
         public void executeJob() {
+	        thedata.refreshAll(false);
         DiffrDataFile[] datafiles = thedata.getSelectedDataFiles();
         (new PlotFitting(DataD.this, datafiles)).setVisible(true);
       }

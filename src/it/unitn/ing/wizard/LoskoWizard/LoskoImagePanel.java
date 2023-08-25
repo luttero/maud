@@ -81,16 +81,16 @@ public class LoskoImagePanel extends JPanel {
 		panelNorth.add(panelSampleName1, BorderLayout.CENTER);
 
 		oneRow = new JPanel(new FlowLayout());
-		JButton browseCalibrationButton = createBrowseButtonToLoad("Directory for Cspad calibration files", false);
+		JButton browseCalibrationButton = createBrowseButtonToLoad("Directory for LumaCam calibration files", false);
 //    browseCalibrationButton2.setPreferredSize(new Dimension(100, 30));
 		oneRow.add(browseCalibrationButton);
 		calibrationDirectoryTF = new JTextField(36);
-		calibrationDirectoryTF.setText("Cspad calibration files dir (not used)");
+		calibrationDirectoryTF.setText("LumaCam calibration files dir (not used)");
 		oneRow.add(calibrationDirectoryTF);
 		panelSampleName1.add(oneRow);
 
 		String property = "detector_config_file";
-		String filename_cf = "LCLS2_config_data.cif";
+		String filename_cf = "LumaCam_config_data.cif";
 		filename_cf = LCLS2ConfigData.getPropertyValue(property, filename_cf);
 		if (Misc.checkForFile(filename_cf)) {
 			LCLS2ConfigData.readLCLSConfigDataFromFile(filename_cf);
@@ -101,7 +101,7 @@ public class LoskoImagePanel extends JPanel {
 			filename_cf += " (Not found, select it)";
 		}
 		oneRow = new JPanel(new FlowLayout());
-		browseCalibrationButton = createBrowseButton("Detector config file...");
+		browseCalibrationButton = createBrowseButton("LumaCam config file...");
 //    browseCalibrationButton2.setPreferredSize(new Dimension(100, 30));
 		oneRow.add(browseCalibrationButton);
 		textCalibrationDatafile = new JTextField(36);
@@ -132,9 +132,7 @@ public class LoskoImagePanel extends JPanel {
 		uncorrImagePanelTF = new JTextField[panelsNumber];
 		final JPanel imagePanels = new JPanel(new GridLayout(0, 1, 3, 3));
 		for (int i = 0; i < panelsNumber; i++) {
-			String prefix = "Cspad";
-			if (i > 0)
-				prefix = prefix + "2x2";
+			String prefix = "LumaCam";
 			final JPanel panelCalibration = createImagePanel(prefix + "." + i, i);
 			imagePanels.add(panelCalibration);
 		}
@@ -168,7 +166,7 @@ public class LoskoImagePanel extends JPanel {
 					String filename = uncorrImagePanelTF[0].getText();
 					if (Misc.checkForFile(filename)) {
 						for (int j = 1; j < 5; j++)
-							uncorrImagePanelTF[j].setText(filename.replaceFirst("Cspad-0", "Cspad2x2-" + j));
+							uncorrImagePanelTF[j].setText(filename.replaceFirst("LumaCam-0", "LumaCam2x2-" + j));
 					}
 				}
 			});
@@ -193,9 +191,9 @@ public class LoskoImagePanel extends JPanel {
 				public void actionPerformed(ActionEvent e) {
 					String filename = corrImagePanelTF[0].getText();
 					if (Misc.checkForFile(filename)) {
-						filename = filename.replaceFirst("CsPad_", "CsPad2x2_");
+						filename = filename.replaceFirst("LumaCam_", "LumaCam2x2_");
 						for (int j = 1; j < 5; j++)
-							corrImagePanelTF[j].setText(filename.replaceFirst("Cspad.0", "Cspad2x2." + j));
+							corrImagePanelTF[j].setText(filename.replaceFirst("LumaCam.0", "LumaCam2x2." + j));
 					}
 				}
 			});
@@ -280,15 +278,15 @@ public class LoskoImagePanel extends JPanel {
 
 	public void saveData() {
 		LCLS2ConfigData.filenameToSave = filenameToSaveTF.getText();
-		LCLS2ConfigData.setPropertyValue("UnrolledImagesDatafile", LCLS2ConfigData.filenameToSave);
+		LCLS2ConfigData.setPropertyValue("UnrolledImagesDatafile", LoskoConfigData.filenameToSave);
 		LCLS2ConfigData.filenameTemplate = filenameTemplateTF.getText();
-		LCLS2ConfigData.setPropertyValue("LCLSdefaultTemplate", LCLS2ConfigData.filenameTemplate);
+		LCLS2ConfigData.setPropertyValue("LumaCamdefaultTemplate", LoskoConfigData.filenameTemplate);
 		data.useTemplateFile = !newFileParCB.isSelected();
 		data.sampleName = textSampleName.getText();
 		data.omega = Double.parseDouble(omegaTF.getText());
 		data.wavelength = ENERGY_LAMBDA / (Double.parseDouble(energyInKeVTF.getText()) * 1000);
 		for (int i = 0; i < panelsNumber; i++) {
-			String prefix = "Cspad";
+			String prefix = "LumaCam";
 			if (i > 0)
 				prefix = prefix + "2x2";
 			String property1 = prefix + "." + i + "_uncorrected_image";

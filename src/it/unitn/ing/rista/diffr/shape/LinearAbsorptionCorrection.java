@@ -150,10 +150,11 @@ public class LinearAbsorptionCorrection extends SampleShape {
 	public void computeAbsorptionPath(double[][][] incidentAndDiffraction_angles, double[] absorption, double[][] position,
 	                                  double[][] intensity, double toLambda) {
 		double arg1 = abs * toLambda;
-		if (arg1 < 200.0) {
+		if (arg1 < 200.0)
 			arg1 = Math.exp(-arg1);
+		else
 			arg1 = 0.0f;
-		}
+
 		for (int i = 0; i < position.length; i++)
 			for (int k = 0; k < absorption.length; k++)
 				intensity[i][k] *= arg1;

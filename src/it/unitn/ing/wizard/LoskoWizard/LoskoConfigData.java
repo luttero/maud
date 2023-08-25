@@ -14,7 +14,7 @@ import java.util.Vector;
 public class LoskoConfigData {
 
 	//	public static final String INSTRUMENT_FILE_DIR = "Instrument file directory";
-	public static final String DATA_FILE_DIR = "Losko images directory";
+	public static final String DATA_FILE_DIR = "LumaCam images directory";
 	public static final String DETECTOR_PANEL_ENABLED = " enabled";
 
 	public static final String LOSKO_PANEL_TYPE = "panel_type";
@@ -33,27 +33,27 @@ public class LoskoConfigData {
 
 	public static String getPropertyValue(String property, String defaultvalue) {
 		property = Misc.toStringNoBlank(property);
-		return MaudPreferences.getPref("LoskoWizard." + property, defaultvalue);
+		return MaudPreferences.getPref("LumaCamWizard." + property, defaultvalue);
 	}
 
 	public static void setPropertyValue(String property, String value) {
 		property = Misc.toStringNoBlank(property);
-		MaudPreferences.setPref("LoskoWizard." + property, value);
+		MaudPreferences.setPref("LumaCamWizard." + property, value);
 	}
 
 	public static int getPropertyValue(String property, int defaultvalue) {
 		property = Misc.toStringNoBlank(property);
-		return MaudPreferences.getInteger("LoskoWizard." + property, defaultvalue);
+		return MaudPreferences.getInteger("LumaCamWizard." + property, defaultvalue);
 	}
 
 	public static double getPropertyValue(String property, double defaultvalue) {
 		property = Misc.toStringNoBlank(property);
-		return MaudPreferences.getDouble("LoskoWizard." + property, defaultvalue);
+		return MaudPreferences.getDouble("LumaCamWizard." + property, defaultvalue);
 	}
 
 	public static void setPropertyValue(String property, int value) {
 		property = Misc.toStringNoBlank(property);
-		MaudPreferences.setPref("LoskoWizard." + property, value);
+		MaudPreferences.setPref("LumaCamWizard." + property, value);
 	}
 
 	public static void writeConfig() {
@@ -145,7 +145,7 @@ public class LoskoConfigData {
 					} while (tokentype != CIFtoken.TT_EOF);
 
 				} catch (IOException e) {
-					System.out.println("Error loading cif file!");
+					System.out.println("Error loading LumaCam file!");
 				}
 				try {
 					reader.close();
@@ -213,7 +213,7 @@ public class LoskoConfigData {
 	public static double omega = 72.7;
 	public static String calibrationDirectory = "";
 	public static String filenameToSave = getPropertyValue("UnrolledImagesDatafile", "Filename for saving unrolled images datafiles....");
-	public static String filenameTemplate = getPropertyValue("LoskoDefaultTemplate", "Template file for analysis....");
+	public static String filenameTemplate = getPropertyValue("LumaCamDefaultTemplate", "Template file for analysis....");
 	public static int version = 0;
 
 	public static Vector<LoskoDetectorPanel> detectorPanels = null;

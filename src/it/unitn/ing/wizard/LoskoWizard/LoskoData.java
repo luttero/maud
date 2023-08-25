@@ -14,7 +14,7 @@ import static it.unitn.ing.rista.util.Constants.ENERGY_LAMBDA;
 
 public class LoskoData {
 
-	public String title = "New Losko TOF image analysis";
+	public String title = "New LumaCam TOF image analysis";
 	public String author = "Adrian";
 	public String sampleName = "Sample_x";
 	public int panelsNumber = LoskoConfigData.getPropertyValue("numberOfPanels", 5);
@@ -113,7 +113,7 @@ public class LoskoData {
 
 				int dotLocation = LoskoConfigData.filenameToSave.lastIndexOf(".");
 				String filename = LoskoConfigData.filenameToSave.substring(0, dotLocation) + image.name;
-				if (MaudPreferences.getBoolean("LoskoWizard.saveIntermediateImages", false)) {
+				if (MaudPreferences.getBoolean("LumaCamWizard.saveIntermediateImages", false)) {
 					ImagePlus imp1 = image.getImagePlus();
 					IJ.saveAsTiff(imp1, filename + "_pre.tiff");
 
@@ -149,7 +149,7 @@ public class LoskoData {
 				image.omegaDN = panel.panel_omegaDN;
 				image.phiDA = panel.panel_tilting;
 
-				if (MaudPreferences.getBoolean("LCLS2Wizard.saveFinalImages", false)) {
+				if (MaudPreferences.getBoolean("LumaCamWizard.saveFinalImages", false)) {
 					ImagePlus imp1 = image.getImagePlus();
 					IJ.saveAsTiff(imp1, filename + "_final.tiff");
 				}
@@ -387,15 +387,15 @@ public class LoskoData {
 				String property1 = prefix + "." + i + "_uncorrected_image";
 				file1 = new String(original_image);
 //				System.out.println("file1 before: " + file1);
-				file1 = file1.replaceFirst("Cspad-0", "Cspad2x2-" + i);
+				file1 = file1.replaceFirst("LumaCam", "Cspad2x2-" + i);
 				LoskoConfigData.setPropertyValue(property1, file1);
 //				System.out.println("file1 after: " + file1);
 
 				String property2 = prefix + "." + i + "_dark_current_image";
 				file2 = new String(dark_image);
 //				System.out.println("file2 before: " + file2);
-				file2 = file2.replaceFirst("CsPad_", "CsPad2x2_");
-				file2 = file2.replaceFirst("Cspad.0", "Cspad2x2." + i);
+				file2 = file2.replaceFirst("LumaCam_", "LumaCam2x2_");
+				file2 = file2.replaceFirst("LumaCam", "LumaCam2x2." + i);
 				LoskoConfigData.setPropertyValue(property2, file2);
 //				System.out.println("file2 after: " + file2);
 			}
