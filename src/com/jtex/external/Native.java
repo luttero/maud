@@ -62,6 +62,9 @@ public class Native {
         if (osArch.equals("amd64") || osArch.equals("IA64N") || osArch.equals("x86_64") || osArch.equals("IA64W")) {
             return "64";
         }
+	    if (osArch.equals("aarch64")) {
+		    return "arm";
+	    }
         System.out.println("OS detected: " + osArch);
         return osArch;
     }
