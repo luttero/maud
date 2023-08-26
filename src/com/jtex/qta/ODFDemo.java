@@ -27,7 +27,7 @@ public class ODFDemo {
     public static ODF SantaFe() {
 
         Symmetry cs = new Symmetry("cubic");
-        Symmetry ss = new Symmetry("222");
+        Symmetry ss = new Symmetry("-1");
 
         ODF odf = new ODF(cs, ss, null);
         UniformComponent uniformCmp = new UniformComponent(cs, ss);
@@ -74,28 +74,30 @@ public class ODFDemo {
         Array1D data = pf.getData();
         pf.setData(data.multiply(100));
 
-        Plotter.show(Plotter.plot(pf));
+	    System.out.println("Checking crystal symmetry in MTEX: " + pf.getCS().getGroup().toString());
+	    System.out.println("Checking sample symmetry in MTEX: " + pf.getSS().getGroup().toString());
+	    Plotter.show(Plotter.plot(pf));
         ODF rec = new ODF();
 	     rec = rec.estimate(pf, 5);
 	    System.out.println("SanteFe ODF1 components number: " + rec.componentsNumber());
 
-        ODFOptions odfOptions = new ODFOptions(pf, Math.toRadians(5), new VonMisesFisher(Math.toRadians(5)));
-        odfOptions.setGhostCorrection(false);
+//        ODFOptions odfOptions = new ODFOptions(pf, Math.toRadians(5), new VonMisesFisher(Math.toRadians(5)));
+//        odfOptions.setGhostCorrection(false);
 
-        ODF rec2 = rec.estimate(pf, odfOptions);
-	    System.out.println("SanteFe ODF2 components number: " + rec2.componentsNumber());
+//        ODF rec2 = rec.estimate(pf, odfOptions);
+//	    System.out.println("SanteFe ODF2 components number: " + rec2.componentsNumber());
 
-        Plotter.show(Plotter.plotpdf(rec2, h));
+//        Plotter.show(Plotter.plotpdf(rec2, h));
         Plotter.show(Plotter.plotpdf(rec, h));
 
-        SantaFe.powerSpectrum().print();
-        rec.powerSpectrum().print();
-        rec2.powerSpectrum().print();
+ //       SantaFe.powerSpectrum().print();
+ //       rec.powerSpectrum().print();
+ //       rec2.powerSpectrum().print();
 
-        Plotter.show(Plotter.plotphi2(SantaFe));
-        Plotter.show(Plotter.plotphi2(rec2));
+//        Plotter.show(Plotter.plotphi2(SantaFe));
+//        Plotter.show(Plotter.plotphi2(rec2));
 
-        Plotter.show(Plotter.plotphi2(rec));
+//        Plotter.show(Plotter.plotphi2(rec));
 
     }
 

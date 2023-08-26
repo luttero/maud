@@ -5,28 +5,31 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="61caab25-241f-4ab1-85f0-b423f2950da9" name="Changes" comment="New version 5/2023&#10;Some modifications on GSASDataFile and more options for plotting types.">
-      <change afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/LoskoPanelCalibration.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/LoskoPanelIntensityCalibration.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Maud.iws" beforeDir="false" afterPath="$PROJECT_DIR$/Maud.iws" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/jtex/arrays/Array1D.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/jtex/arrays/Array1D.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/jtex/external/MTEX.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/jtex/external/MTEX.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.xml" beforeDir="false" afterPath="$PROJECT_DIR$/build.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/jtex/external/Native.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/jtex/external/Native.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/jtex/external/bin/maci/fc2odf" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/jtex/external/bin/mac/fc2odf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/jtex/external/bin/maci/odf2fc" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/jtex/external/bin/mac/odf2fc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/jtex/external/bin/maci/odf2pf" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/jtex/external/bin/mac/odf2pf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/jtex/external/bin/maci/pdf2pf" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/jtex/external/bin/mac/pdf2pf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/jtex/external/bin/maci/pf2odf" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/jtex/external/bin/mac/pf2odf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/jtex/external/bin/maci64/fc2odf" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/jtex/external/bin/mac64/fc2odf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/jtex/external/bin/maci64/odf2fc" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/jtex/external/bin/mac64/odf2fc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/jtex/external/bin/maci64/odf2pf" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/jtex/external/bin/mac64/odf2pf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/jtex/external/bin/maci64/pdf2pf" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/jtex/external/bin/mac64/pdf2pf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/jtex/external/bin/maci64/pf2odf" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/jtex/external/bin/mac64/pf2odf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/jtex/plot/Plotter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/jtex/plot/Plotter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/jtex/qta/ODF.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/jtex/qta/ODF.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/jtex/qta/ODFOptions.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/jtex/qta/ODFOptions.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/jtex/qta/file/BrukerGpolLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/jtex/qta/file/BrukerGpolLoader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/jtex/qta/ODFDemo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/jtex/qta/ODFDemo.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/jtex/qta/kernel/DeLaValleePoussin.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/jtex/qta/kernel/DeLaValleePoussin.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/DataD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/DataD.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/DiffrDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/DiffrDataFile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/FilePar.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/FilePar.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/TOFPanelCalibration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/TOFPanelCalibration.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/LoskoDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/LoskoDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/radiographema/fpsm/maca64/libfpsm_shared.dylib" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/radiographema/fpsm/maci64/libfpsm_shared.dylib" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/help/readme.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/help/readme.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/DiffractionMainFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/DiffractionMainFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/TextViewer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/TextViewer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/DiscreteODFTexture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/DiscreteODFTexture.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/MTextureModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/MTextureModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/shape/LinearAbsorptionCorrection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/shape/LinearAbsorptionCorrection.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/Constants.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/SpaceGroups.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/SpaceGroups.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/wizard/LoskoWizard/LoskoConfigData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/wizard/LoskoWizard/LoskoConfigData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/wizard/LoskoWizard/LoskoData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/wizard/LoskoWizard/LoskoData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/wizard/LoskoWizard/LoskoImagePanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/wizard/LoskoWizard/LoskoImagePanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/wizard/LoskoWizard/LoskoWizard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/wizard/LoskoWizard/LoskoWizard.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

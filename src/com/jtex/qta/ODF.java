@@ -131,7 +131,7 @@ public class ODF extends ODFComponent {
 		// todooooo
 		Array1D w = null;
 
-		if (options.wFilename.length() > 0) {
+/*		if (options.wFilename.length() > 0) {
 			BufferedReader reader = Misc.getReader(options.wFilename);
 			if (reader != null) {
 				try {
@@ -163,7 +163,7 @@ public class ODF extends ODFComponent {
 					e.printStackTrace();
 				}
 			}
-		} else
+		} else*/
 			w = pf.getQuadratureWeights(options.getPsi());
 
 		Array1D A = options.getPsi().A();

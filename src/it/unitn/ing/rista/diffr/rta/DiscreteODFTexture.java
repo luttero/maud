@@ -498,7 +498,7 @@ public class DiscreteODFTexture extends Texture {
     poleFigureIndex = new int[numberReflexes];
     numberOfPoleFigureIzoveri = 0;
     for (int i = 0; i < numberReflexes; i++) {
-      if (minPermitted > meanintensity[i] / maxInt || minDspacing > refl[i].d_space) {
+      if (minPermitted >= meanintensity[i] / maxInt || minDspacing > refl[i].d_space) {
         refl[i].setnoGoodforTexture();
         System.out.println("Reflection not used : (" + refl[i].getH() + " " + refl[i].getK() + " " + refl[i].getL() + ") , intensity : " +
             meanintensity[i]);

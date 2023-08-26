@@ -43,7 +43,24 @@ from the older one.
 
 Maud Version notes:
 
-(09/08/2023):   2.9992. The "The underwear man" release.
+(26/08/2023):   2.9993. The "MTEX" release.
+                Finally, it was about time.
+                The MAUD interface to MTEX is working now. Thank to Florian
+                who wrote the java library for that, but also to Dan for help
+                in debugging and Ralf for writing MTEX. All was supported
+                by LANSCE and Sven.
+                MTEX is the Texture package written by Ralf Hielscher and it
+                is available for free at https://mtex-toolbox.github.io/index
+                To use it in Maud, you selected MTEX as texture model under
+                the Phase advanced options. It works more or less as EWIMV
+                or WIMV by extracting first experimental pole figure values
+                and then computing the ODF with the MTEX external binary tools.
+                MatLab is not required when running from MAUD.
+                We will add more tools to further process the texture data/ODF
+                inside the full MTEX program that you will have to download
+                from the above link.
+
+(09/08/2023):   2.9992. The "underwear man" release.
                 You don't want to see that.
                 Modified the Hippo Wizard by adding some new options for the
                 background. In the parameters list window you can now select to

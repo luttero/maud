@@ -49,10 +49,10 @@ public class MTextureModel extends DiscreteODFTexture {
 
 	public static String[] diclistc = {"_rita_generate_symmetry", "_rita_wimv_odf_resolution", "_mtex_kernel_resolution"
 			, "_rita_wimv_refl_min_int",
-			"_rita_wimv_refl_min_dspacing", "_rita_odf_refinable", "_rita_odf_sharpness", "_mtex_kernel_type"};
+			"_rita_wimv_refl_min_dspacing", "_rita_odf_refinable", "_rita_odf_sharpness", "_mtex_kernel_type", "_mtex_ghost_correction"};
 	public static String[] diclistcrm = {"_rita_generate_symmetry", "_rita_wimv_odf_resolution", "_mtex_kernel_resolution"
 			, "_rita_wimv_refl_min_int",
-			"_rita_wimv_refl_min_dspacing", "_rita_odf_refinable", "_rita_odf_sharpness", "_mtex_kernel_type"};
+			"_rita_wimv_refl_min_dspacing", "_rita_odf_refinable", "_rita_odf_sharpness", "_mtex_kernel_type", "_mtex_ghost_correction"};
 
 	public static String[] classlistcs = {};
 	public static String[] classlistc = {};
@@ -71,6 +71,8 @@ public class MTextureModel extends DiscreteODFTexture {
 	public static final int kernelID = 7;
 	public static final int kernelResID = 2;
 	int actualKernel = 0;
+
+	int ghostCorrectionID = 8;
 
 	boolean showPlotsAtEnd = false;
 
@@ -95,7 +97,7 @@ public class MTextureModel extends DiscreteODFTexture {
 	}
 
 	public void initConstant() {
-		Nstring = 8;
+		Nstring = 9;
 		Nstringloop = 0;
 		Nparameter = 0;
 		Nparameterloop = 0;
@@ -121,6 +123,7 @@ public class MTextureModel extends DiscreteODFTexture {
 		setODFrefinable(true);
 		setKernelType(KERNEL_VONMISES);
 		determineKernelType();
+		setGhostCorrectionEnabled(MaudPreferences.getBoolean("mtex.ghostCorrection", true));
 	}
 
 	public void refreshForNotificationDown(XRDcat source, int reason) {
@@ -313,6 +316,17 @@ public class MTextureModel extends DiscreteODFTexture {
 			stringField[5] = "false";
 	}
 
+	public boolean ghostCorrectionEnabled() {
+		return stringField[ghostCorrectionID].equalsIgnoreCase("true");
+	}
+
+	public void setGhostCorrectionEnabled(boolean status) {
+		if (status)
+			stringField[ghostCorrectionID] = "true";
+		else
+			stringField[ghostCorrectionID] = "false";
+	}
+
 	public void setODFrefinable(String value) {
 		stringField[5] = value;
 	}
@@ -377,10 +391,11 @@ public class MTextureModel extends DiscreteODFTexture {
 		int LGIndex = SpaceGroups.getLGNumber(getPhase().getPointGroup());
 
 		String symmetry = it.unitn.ing.rista.util.SpaceGroups.laueGroupOnly[LGIndex];
-		cs = new Symmetry(symmetry, aphase.getFullCellValue(0), aphase.getFullCellValue(1), aphase.getFullCellValue(2),
-				aphase.getFullCellValue(3), aphase.getFullCellValue(4), aphase.getFullCellValue(5));
+		cs = new Symmetry(symmetry , aphase.getFullCellValue(0), aphase.getFullCellValue(1), aphase.getFullCellValue(2),
+				aphase.getFullCellValue(3) * Constants.DEGTOPI, aphase.getFullCellValue(4) * Constants.DEGTOPI,
+				aphase.getFullCellValue(5) * Constants.DEGTOPI);
 
-		System.out.println(cs.getGroup().toString());
+//		System.out.println("Checking crystal symmetry in MTEX: " + cs.getGroup().toString());
 
 		pf = new com.jtex.qta.PoleFigure();
 		pf.setCS(cs);
@@ -449,7 +464,10 @@ public class MTextureModel extends DiscreteODFTexture {
 //				}
 			}
 		}
-		if (showPlotsAtEnd)
+//		Array1D data = pf.getData();
+//		pf.setData(data.multiply(100));
+
+		if (showPlotsAtEnd && !getFilePar().isOptimizing())
 			Plotter.show(Plotter.plot(pf));
 //		pf.setC(2, new Array1D(0.52, 1.23));
 	}
@@ -700,12 +718,9 @@ public class MTextureModel extends DiscreteODFTexture {
 
 		if (aparFile.isTextureComputationPermitted() && ODFisRefinable()) {
 
-//      actualsample = asample;
-
 			prepareiteration(asample);
 
 			System.out.println("Computing ODF using MTex for phase: " + getPhase().toXRDcatString());
-
 
 //			Plotter.show(Plotter.plot(pf));
 //			ODF rec = ODF.estimate(pf, 5);
@@ -722,17 +737,20 @@ public class MTextureModel extends DiscreteODFTexture {
 			if (odf == null)
 				odf = new ODF();
 			com.jtex.qta.ODFOptions odfOptions = new com.jtex.qta.ODFOptions(pf, Math.toRadians(getResolutionD()), kernel);
-			odfOptions.setGhostCorrection(true);
-			if (Misc.checkForFile(getFilePar().getDirectory() + "w_weights.txt"))
-				odfOptions.setwFilename(getFilePar().getDirectory() + "w_weights.txt");
+			odfOptions.setGhostCorrection(ghostCorrectionEnabled());
+/*			if (Misc.checkForFile(getFilePar().getDirectory() + "w_weights.txt"))
+				odfOptions.setwFilename(getFilePar().getDirectory() + "w_weights.txt");*/
 
 			odf = odf.estimate(pf, odfOptions);
+			System.out.println("Checking crystal symmetry in MTEX: " + pf.getCS().getGroup().toString());
+			System.out.println("Checking sample symmetry in MTEX: " + pf.getSS().getGroup().toString());
+//			odf = odf.estimate(pf, 5);
 
 //			System.out.println("ODF components number: " + odf.componentsNumber());
 
 //			Plotter.show(Plotter.plotsigma(odf));
 //			Plotter.show(Plotter.plot(pf));
-			if (showPlotsAtEnd)
+			if (showPlotsAtEnd && !getFilePar().isOptimizing())
 				Plotter.show(Plotter.plotpdf(odf, pf.getH()));
 
 		}
@@ -751,7 +769,8 @@ public class MTextureModel extends DiscreteODFTexture {
 
 		String symmetry = it.unitn.ing.rista.util.SpaceGroups.laueGroupOnly[LGIndex];
 		Symmetry cs = new Symmetry(symmetry, aphase.getFullCellValue(0), aphase.getFullCellValue(1), aphase.getFullCellValue(2),
-				aphase.getFullCellValue(3), aphase.getFullCellValue(4), aphase.getFullCellValue(5));
+				aphase.getFullCellValue(3) * Constants.DEGTOPI, aphase.getFullCellValue(4) * Constants.DEGTOPI,
+				aphase.getFullCellValue(5) * Constants.DEGTOPI);
 		Symmetry ss = getMTexSampleSymmetry();
 		int hkln = aphase.gethklNumber();
 		Vector<Array1D> allData = new Vector<>(hkln, 1);
@@ -849,7 +868,8 @@ public class MTextureModel extends DiscreteODFTexture {
 
 		String symmetry = it.unitn.ing.rista.util.SpaceGroups.laueGroupOnly[LGIndex];
 		Symmetry cs = new Symmetry(symmetry, aphase.getFullCellValue(0), aphase.getFullCellValue(1), aphase.getFullCellValue(2),
-				aphase.getFullCellValue(3), aphase.getFullCellValue(4), aphase.getFullCellValue(5));
+				aphase.getFullCellValue(3) * Constants.DEGTOPI, aphase.getFullCellValue(4) * Constants.DEGTOPI,
+				aphase.getFullCellValue(5) * Constants.DEGTOPI);
 
 		double[] theta = new double[numberOfPoints], rho = new double[numberOfPoints];
 		for (int i = 0; i < numberOfPoints; i++) {
@@ -875,6 +895,8 @@ public class MTextureModel extends DiscreteODFTexture {
 		JComboBox kernelTypeCB;
 		JCheckBox refinableCB;
 		JCheckBox showPlotCB;
+
+		JCheckBox usePhonCB;
 		JTextField minIntTF;
 		JTextField thresholdTF;
 		JButton jb;
@@ -920,6 +942,13 @@ public class MTextureModel extends DiscreteODFTexture {
 			refinableCB = new JCheckBox("ODF refinable");
 			refinableCB.setToolTipText("Uncheck this box if the ODF should not be modify");
 			jPanel8.add(refinableCB);
+
+			jPanel8 = new JPanel();
+			jPanel8.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
+			lowerPanel.add(jPanel8);
+			usePhonCB = new JCheckBox("Ghost correction");
+			usePhonCB.setToolTipText("Check this box to enable the ghost correction");
+			jPanel8.add(usePhonCB);
 
 			jPanel8 = new JPanel();
 			jPanel8.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
@@ -1064,6 +1093,7 @@ public class MTextureModel extends DiscreteODFTexture {
 		public void initParameters() {
 			symmetryCB.setSelectedItem(getSampleSymmetry());
 			refinableCB.setSelected(ODFisRefinable());
+			usePhonCB.setSelected(ghostCorrectionEnabled());
 			minIntTF.setText(getMinimumIntensity());
 			thresholdTF.setText(getMinimumDspacing());
 			resolutionTF.setText(getResolution());
@@ -1079,6 +1109,7 @@ public class MTextureModel extends DiscreteODFTexture {
 			setKernelType(kernelTypeCB.getSelectedIndex());
 			setKernelResolution(kernelResolutionTF.getText());
 			setODFrefinable(refinableCB.isSelected());
+			setGhostCorrectionEnabled(usePhonCB.isSelected());
 			showPlotsAtEnd = showPlotCB.isSelected();
 			MaudPreferences.setPref("MTEX.show_plots_at_end", showPlotsAtEnd);
 			setMinimumIntensity(minIntTF.getText());

@@ -211,6 +211,7 @@ public class Plotter {
         ScatterOptions scatterOptions = new ScatterOptions(Shapes.Named.CIRCLE, .5);
         for (int i = 0; i < pf.size(); i++) {
             PoleFigure pft = pf.get(i);
+//	        System.out.println("Plotting pole figure : " + pft.getH().toHKL());
 //	        System.out.println("Plotting pole figure of length: " + pft.getData().size());
             Array1D data = pft.getData();
             SphericalCanvas canvas = new SphericalCanvasScatter(

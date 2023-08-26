@@ -48,7 +48,7 @@ public class DeLaValleePoussin extends Kernel {
     private Array1D constructA() {
 
         int L = Math.min(1000, Math.max(10, (int) p + 1));
-		  System.out.println("DeLaValle dim " + L);
+//		  System.out.println("DeLaValle dim " + L);
 
         Array1D A = Array1D.fill(L, 1.0);
         double a[] = A.toDoubleArray();

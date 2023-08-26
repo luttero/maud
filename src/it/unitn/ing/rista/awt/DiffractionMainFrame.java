@@ -241,11 +241,11 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
   static boolean[] menuNewItemEnabled = {
       true,
       true,
-      true,
+        true, // Wizards start here
 		  true,
-      true,
-      true,
-		  true,
+        true,
+        false,
+		true,
       true,
       true,
       true,
@@ -563,151 +563,6 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
     return toolBar;
   }
 
-  void initMenuBar(DiffractionMenuAction actionMenuListener) {
-    JMenuBar mb = new JMenuBar();
-    setJMenuBar(mb);
-
-    String[] menuString = {"File", "Edit", "Analysis", "Graphic", "Special", "Help"};
-    boolean[] menuEnabled = {true, true, true, true, true, true};
-    int[][] menuKeyEvent = {{KeyEvent.VK_N, KeyEvent.VK_O, nullKeyEvent, nullKeyEvent, nullKeyEvent,
-        KeyEvent.VK_S, nullKeyEvent, nullKeyEvent, nullKeyEvent, nullKeyEvent,
-        nullKeyEvent, nullKeyEvent, nullKeyEvent, nullKeyEvent, KeyEvent.VK_Q},
-        {KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_K, KeyEvent.VK_Z, nullKeyEvent,
-            KeyEvent.VK_E, nullKeyEvent, nullKeyEvent, nullKeyEvent, nullKeyEvent,
-            nullKeyEvent, nullKeyEvent, nullKeyEvent, nullKeyEvent, nullKeyEvent},
-        {nullKeyEvent, KeyEvent.VK_W, KeyEvent.VK_L, KeyEvent.VK_M, KeyEvent.VK_R,
-            nullKeyEvent, nullKeyEvent, nullKeyEvent, nullKeyEvent, nullKeyEvent,
-            nullKeyEvent, nullKeyEvent, nullKeyEvent, nullKeyEvent, nullKeyEvent},
-        {KeyEvent.VK_P, nullKeyEvent, nullKeyEvent, nullKeyEvent, KeyEvent.VK_T,
-            nullKeyEvent, nullKeyEvent, nullKeyEvent, nullKeyEvent, nullKeyEvent,
-            nullKeyEvent, nullKeyEvent, nullKeyEvent, nullKeyEvent, nullKeyEvent},
-        {nullKeyEvent, nullKeyEvent, nullKeyEvent, nullKeyEvent, nullKeyEvent,
-            nullKeyEvent, nullKeyEvent, nullKeyEvent, nullKeyEvent, nullKeyEvent,
-            nullKeyEvent, nullKeyEvent, nullKeyEvent, nullKeyEvent, nullKeyEvent},
-        {nullKeyEvent, nullKeyEvent, nullKeyEvent, nullKeyEvent, nullKeyEvent,
-            nullKeyEvent, nullKeyEvent, nullKeyEvent, nullKeyEvent, nullKeyEvent,
-            nullKeyEvent, nullKeyEvent, nullKeyEvent, nullKeyEvent, nullKeyEvent}};
-
-    boolean[][] menuItemEnabled = {{true, true, true, true, true,
-        true, true, true, true, true,
-        true, true, true, true, true},
-        {true, true, true, true, true,
-            true, true, true, true, true,
-            true, true, true, true, true},
-        {true, true, true, true, true,
-            true, true, true, true, true,
-            true, true, true, true, true},
-        {true, true, true, true, true,
-            true, true, true, true, true,
-            true, true, true, true, true},
-        {true, true, Constants.esquienabled, true, true,
-            true, true, true, true, true,
-            true, true, true, true, true},
-        {true, true, true, true, true,
-            true, true, true, true, true,
-            true, true, true, true, true}};
-
-    JMenuItem amenuItem;
-    JMenu amenu;
-    int maxMenuIndex = menuString.length;
-    int maxMenuItemIndex = mainMenuCommand[0].length;
-
-    for (int menuIndex = 0; menuIndex < maxMenuIndex; menuIndex++) {
-
-      amenu = mb.add(new JMenu(menuString[menuIndex]));
-      amenu.setMnemonic(menuMnemonic[menuIndex]);
-      for (int i = 0; i < maxMenuItemIndex; i++) {
-        if (mainMenuCommand[menuIndex][i] == null)
-          break;
-        if (mainMenuCommand[menuIndex][i].equals("-")) {
-          if (menuItemEnabled[menuIndex][i]) {
-            amenu.add(new JSeparator());
-          }
-        } else {
-          if (menuItemEnabled[menuIndex][i]) {
-            amenuItem = amenu.add(new JMenuItem(mainMenuCommand[menuIndex][i]));
-            if (menuKeyEvent[menuIndex][i] != nullKeyEvent)
-              amenuItem.setAccelerator(KeyStroke.getKeyStroke(menuKeyEvent[menuIndex][i],
-                  Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-            amenuItem.addActionListener(actionMenuListener);
-            amenu.setEnabled(menuItemEnabled[menuIndex][i]);
-          }
-        }
-      }
-      amenu.setEnabled(menuEnabled[menuIndex]);
-      if (menuIndex == 4) {         // Append network items to Special menu
-        addNetworkComputingMenuItems(amenu, actionMenuListener);
-        // Insert the interface menu
-        addOptionsMenu(mb, actionMenuListener);
-      }
-
-    }
-
-  }
-
-  JToolBar initToolBar(DiffractionMenuAction actionMenuListener) {
-    String[] iconTB = {"New.gif", "OpenDoc.gif", "Redo.gif", "Save.gif", "SaveAll.gif", null, null,
-        "Eyeball.gif", null,
-        "Box.gif", "DataExtract.gif", "DataStore.gif", null, "Delete.gif",
-        null, null,
-        "Bulb.gif", "Calculator.gif", Constants.refineIcon, null, null,
-        "LineGraph.gif", null, null,
-        "Help.gif"};
-    String[] tbToolTipText = {"New Analysis: load the default analysis file",
-        "Open an existing analysis",
-        "Restore analysis from last computation",
-        "Save current analysis",
-        "Save current analysis as...",
-        "-", "-",
-        "Edit the selected object of the visible list",
-        "-",
-        "Create and add a new object to the visible list",
-        "Load an object from a (CIF) database or file...",
-        "Save the selected object of the visible list into a database...", "-",
-        "Remove the selected object from the visible list",
-        "-", "-",
-        "Open refine wizard panel",
-        "Compute spectra",
-        "Launch parameters refinement (I feel lucky!)",
-        "-", "-",
-        "Plot selected dataset",
-        "-", "-",
-        "General help for the program"
-    };
-    int[] firstIndexTBAction = {0, 0, 0, 0, 0, 0, 0,
-        1, 0,
-        1, 1, 1, 0, 1, 0, 0,
-        2, 2, 2, 0, 0,
-        3, 0, 0,
-        5
-    };
-    int[] secondIndexTBAction = {0, 1, 3, 5, 6, 0, 0,
-        5, 0,
-        0, 1, 2, 0, 3, 0, 0,
-        1, 3, 4, 0, 0,
-        0, 0, 0,
-        1
-    };
-
-    JToolBar toolBar = new JToolBar();
-    toolBar.setFloatable(false);
-    toolBar.add(new JToolBar.Separator(new Dimension(10, 10)));
-    for (int i = 0; i < iconTB.length; i++) {
-      if (iconTB[i] == null) {
-        toolBar.add(new JToolBar.Separator(new Dimension(10, 10)));
-      } else {
-        JButton tb = new JIconButton(iconTB[i],
-            "",
-            mainMenuCommand[firstIndexTBAction[i]][secondIndexTBAction[i]],
-            tbToolTipText[i]
-        );
-        toolBar.add(tb);
-        tb.addActionListener(actionMenuListener);
-//        tb.setEnabled(menuItemEnabled[firstIndexTBAction[i]][secondIndexTBAction[i]]);
-      }
-    }
-    return toolBar;
-  }
 
   public void initMainFrame(boolean ownHandler, String filename) {
     initDone = true;
@@ -729,23 +584,7 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
     Container c1 = getContentPane();
     c1.setLayout(new BorderLayout(Constants.borderInside, Constants.borderInside));
 
-    boolean oldMenu = false;
-    if (oldMenu) {
-//  ---------------------- Menubar ----------------------
-    pcontrol.setProgressText("Setting menubar");
-    pcontrol.increaseValue();
 
-      DiffractionMenuAction actionMenuListener = new DiffractionMenuAction();
-
-      initMenuBar(actionMenuListener);
-
-//  ---------------------- Toolbar ----------------------
-    pcontrol.setProgressText("Building toolbar");
-    pcontrol.increaseValue();
-
-    JToolBar toolBar = initToolBar(actionMenuListener);
-    c1.add(toolBar, BorderLayout.NORTH);
-    } else {
 //  ---------------------- Menubar ----------------------
       pcontrol.setProgressText("Setting menubar");
       pcontrol.increaseValue();
@@ -760,7 +599,6 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
 
       JToolBar toolBar = initNewToolBar(actionMenuListener);
       c1.add(toolBar, BorderLayout.NORTH);
-    }
 
     titlePrefix = "Maud";
     setTitle(titlePrefix);

@@ -266,13 +266,13 @@ public class Constants {
   public static String resultsFile = "results.txt";
   public static String userName = null;
   public static String startPath = "/";
-  public static String maudReleaseBuilt = "$Revision: 2.9992 $";
-  public static String maudDateBuilt = "$Date: 2023/08/9 14:45:00 $";
+  public static String maudReleaseBuilt = "$Revision: 2.9993 $";
+  public static String maudDateBuilt = "$Date: 2023/08/26 15:16:00 $";
 
   public static final double arg2PIover3 = PI2 / 3.;
   public static final double sinArg2PIover3 = Math.sin(arg2PIover3);
   public static final double cosArg2PIover3 = Math.cos(arg2PIover3);
-  public static double maud_version = 2.9992;
+  public static double maud_version = 2.9993;
   public static boolean useOpenCL = false;
   public static Vector<OpenCLDevice> openClDevices= null;
   public static OpenCLDevice openclDevice = null;
@@ -458,7 +458,7 @@ public class Constants {
 			applicationSupportDirectory = System.getProperty("ApplicationSupportDirectory") + fileSeparator;
 			logsDirectory = libraryDirectory + "Logs" + fileSeparator;
 			documentsDirectory = System.getProperty("DocumentsDirectory") + fileSeparator + "maud" + fileSeparator;
-			startingAppDirectory = documentsDirectory; // System.getProperty("java.library.path") + fileSeparator;
+			startingAppDirectory = pathToMaudJar + fileSeparator + ".." + fileSeparator + "MacOS" + fileSeparator; // System.getProperty("java.library.path") + fileSeparator;
 		}
 	}
 
@@ -475,7 +475,7 @@ public class Constants {
 		documentsDirectory = applicationSupportDirectory + "doc" + fileSeparator;
 		cachesDirectory = applicationSupportDirectory + "caches" + fileSeparator;
 		logsDirectory = libraryDirectory + "Logs" + fileSeparator;
-		startingAppDirectory = documentsDirectory;
+		startingAppDirectory = pathToMaudJar + fileSeparator + ".." + fileSeparator;
 //		startingAppDirectory = userDirectory;
 	}
 
@@ -488,7 +488,7 @@ public class Constants {
 		documentsDirectory = applicationSupportDirectory + "doc" + fileSeparator;
 		cachesDirectory = applicationSupportDirectory + "caches" + fileSeparator;
 		logsDirectory = libraryDirectory + "Logs" + fileSeparator;
-		startingAppDirectory = documentsDirectory;
+		startingAppDirectory = pathToMaudJar + fileSeparator + ".." + fileSeparator;;
 	}
 
 	/**
@@ -535,6 +535,9 @@ public class Constants {
 		libraryDirectory = userDirectory;
 		cachesDirectory = System.getProperty("java.io.tmpdir");
 		applicationSupportDirectory = userDirectory;
+		pathToMaudJar = Misc.getPathToMaudJar("Maud.jar");
+		if (pathToMaudJar.startsWith("/."))
+			pathToMaudJar = pathToMaudJar.substring(1);
 
 		String osName = System.getProperty("os.name");
 //		System.out.println("System: " + osName);
@@ -601,13 +604,8 @@ public class Constants {
 
    String vers = System.getProperty("java.version");
 //	  String classnamesFile = "files/classnames.ins";
-	  pathToMaudJar = Misc.getPathToMaudJar("Maud.jar");
 	  maudJar = pathToMaudJar + fileSeparator + "Maud.jar";
 
-		if (pathToMaudJar.startsWith("/."))
-		  pathToMaudJar = pathToMaudJar.substring(1);
-	  if (maudJar.startsWith("/."))
-		  maudJar = maudJar.substring(1);
 	  System.out.println("Maud.jar located at: " + maudJar);
 	  System.out.println("Path to Maud jar: " + pathToMaudJar);
 

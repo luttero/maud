@@ -133,8 +133,8 @@ public class TextViewer extends myJFrame {
 
       textArea.setText(Buf.toString());
       JScrollBar scrollBar = scrollarea.getVerticalScrollBar();
-      if (scrollBar != null)
-        scrollBar.setValue(0);
+//      if (scrollBar != null)
+//        scrollBar.setValue(0);
     } catch (IOException e) {
       setVisible(false);
     }
@@ -158,7 +158,7 @@ public class TextViewer extends myJFrame {
 	    if (scrollarea.getVerticalScrollBar() != null)
 		    javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			    public void run() {
-				    scrollarea.getVerticalScrollBar().setValue(0);
+				    //scrollarea.getVerticalScrollBar().setValue(0);
 			    }
 		    });
     } catch (IOException e) {
