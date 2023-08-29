@@ -26,8 +26,8 @@ public class ODFDemo {
 
     public static ODF SantaFe() {
 
-        Symmetry cs = new Symmetry("cubic");
-        Symmetry ss = new Symmetry("-1");
+        Symmetry cs = new Symmetry("cubic", false);
+        Symmetry ss = new Symmetry("-1", false);
 
         ODF odf = new ODF(cs, ss, null);
         UniformComponent uniformCmp = new UniformComponent(cs, ss);

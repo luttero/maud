@@ -6,12 +6,19 @@
   <component name="ChangeListManager">
     <list default="true" id="61caab25-241f-4ab1-85f0-b423f2950da9" name="Changes" comment="New version 5/2023&#10;Some modifications on GSASDataFile and more options for plotting types.">
       <change beforePath="$PROJECT_DIR$/Maud.iws" beforeDir="false" afterPath="$PROJECT_DIR$/Maud.iws" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/jtex/external/Native.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/jtex/external/Native.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/jtex/external/bin/macarm/fc2odf" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/jtex/external/bin/macarm/fc2odf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/jtex/external/bin/macarm/odf2fc" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/jtex/external/bin/macarm/odf2fc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/jtex/external/bin/macarm/odf2pf" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/jtex/external/bin/macarm/odf2pf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/jtex/external/bin/macarm/pdf2pf" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/jtex/external/bin/macarm/pdf2pf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/jtex/external/bin/macarm/pf2odf" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/jtex/external/bin/macarm/pf2odf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/jtex/geom/PointGroup.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/jtex/geom/PointGroup.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/jtex/geom/Symmetry.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/jtex/geom/Symmetry.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/jtex/qta/ODFDemo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/jtex/qta/ODFDemo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/jtex/qta/file/BrukerGpolLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/jtex/qta/file/BrukerGpolLoader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/jtex/qta/file/DubnaLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/jtex/qta/file/DubnaLoader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/DiffractionMainFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/DiffractionMainFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/DiffrDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/DiffrDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/FilePar.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/FilePar.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Instrument.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Instrument.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Sample.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Sample.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/TOFPanelCalibration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/TOFPanelCalibration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/MTextureModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/MTextureModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/SpaceGroups.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/SpaceGroups.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

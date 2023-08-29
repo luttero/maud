@@ -1902,7 +1902,7 @@ public class Sample extends Maincat {
     }
     double toLambda = 0.0f;
     if (isTOF) {
-      toLambda = (2.0 * MoreMath.sind(Math.abs(tilting_angles[0])));
+      toLambda = (2.0 * position[0] * MoreMath.sind(Math.abs(tilting_angles[0])));
     }
 
     double x, y, r;

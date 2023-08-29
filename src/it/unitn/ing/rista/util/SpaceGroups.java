@@ -71,6 +71,19 @@ public class SpaceGroups {
       "10, m3m, O, 423"
   };
 
+	public static final String[] rotationGroupMTEX = {
+			"1",
+			"2",
+			"222",
+			"4",
+			"422",
+			"3",
+			"32",
+			"6",
+			"622",
+			"23",
+			"432"
+	};
 	public static final String[] laueGroupOnly = {
 			"-1",
 			"2/m",
@@ -88,7 +101,6 @@ public class SpaceGroups {
 /*                       432 23  422  4  222  2   1  622  6  322  3 */
 
 /*      CODE NUMBER     : 7   6   5   4   3   2   1  11  10   9   8 */
-
 
   private SpaceGroups() {
   }

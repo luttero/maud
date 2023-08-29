@@ -638,7 +638,7 @@ public class Instrument extends XRDcat {
   public double getLambdaForTOF(DiffrDataFile adatafile, double position) {
     double toLambda = 0.0f;
     if (getMeasurement().isTOF()) {
-      toLambda = (2.0 * MoreMath.sind(Math.abs(getGeometry().getThetaDetector(adatafile,
+      toLambda = (2.0 * position * MoreMath.sind(Math.abs(getGeometry().getThetaDetector(adatafile,
                        position) / 2.0)));
     }
     return toLambda;

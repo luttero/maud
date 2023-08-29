@@ -390,8 +390,8 @@ public class MTextureModel extends DiscreteODFTexture {
 
 		int LGIndex = SpaceGroups.getLGNumber(getPhase().getPointGroup());
 
-		String symmetry = it.unitn.ing.rista.util.SpaceGroups.laueGroupOnly[LGIndex];
-		cs = new Symmetry(symmetry , aphase.getFullCellValue(0), aphase.getFullCellValue(1), aphase.getFullCellValue(2),
+		String symmetry = SpaceGroups.rotationGroupMTEX[LGIndex];
+		cs = new Symmetry(symmetry, true , aphase.getFullCellValue(0), aphase.getFullCellValue(1), aphase.getFullCellValue(2),
 				aphase.getFullCellValue(3) * Constants.DEGTOPI, aphase.getFullCellValue(4) * Constants.DEGTOPI,
 				aphase.getFullCellValue(5) * Constants.DEGTOPI);
 
@@ -767,8 +767,8 @@ public class MTextureModel extends DiscreteODFTexture {
 
 		int LGIndex = SpaceGroups.getLGNumber(getPhase().getPointGroup());
 
-		String symmetry = it.unitn.ing.rista.util.SpaceGroups.laueGroupOnly[LGIndex];
-		Symmetry cs = new Symmetry(symmetry, aphase.getFullCellValue(0), aphase.getFullCellValue(1), aphase.getFullCellValue(2),
+		String symmetry = SpaceGroups.rotationGroupMTEX[LGIndex];
+		Symmetry cs = new Symmetry(symmetry, true, aphase.getFullCellValue(0), aphase.getFullCellValue(1), aphase.getFullCellValue(2),
 				aphase.getFullCellValue(3) * Constants.DEGTOPI, aphase.getFullCellValue(4) * Constants.DEGTOPI,
 				aphase.getFullCellValue(5) * Constants.DEGTOPI);
 		Symmetry ss = getMTexSampleSymmetry();
@@ -866,8 +866,8 @@ public class MTextureModel extends DiscreteODFTexture {
 
 		int LGIndex = SpaceGroups.getLGNumber(getPhase().getPointGroup());
 
-		String symmetry = it.unitn.ing.rista.util.SpaceGroups.laueGroupOnly[LGIndex];
-		Symmetry cs = new Symmetry(symmetry, aphase.getFullCellValue(0), aphase.getFullCellValue(1), aphase.getFullCellValue(2),
+		String symmetry = it.unitn.ing.rista.util.SpaceGroups.rotationGroupMTEX[LGIndex];
+		Symmetry cs = new Symmetry(symmetry, true, aphase.getFullCellValue(0), aphase.getFullCellValue(1), aphase.getFullCellValue(2),
 				aphase.getFullCellValue(3) * Constants.DEGTOPI, aphase.getFullCellValue(4) * Constants.DEGTOPI,
 				aphase.getFullCellValue(5) * Constants.DEGTOPI);
 

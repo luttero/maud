@@ -43,9 +43,19 @@ import javax.swing.*;
  */
 
 
+
 public class TOFPanelCalibration extends AngularCalibration {
 	public static String[] diclistc = {"_instrument_parameter_file", "_instrument_counter_panel",
 			"_instrument_neutron_flight_path",
+			"_image_original_dist_spec/detc",
+			"_image_original_center_x", "_image_original_center_y",
+			"_image_original_detc_2theta", "_image_original_detc_phiDA",
+			"_image_original_detc_omegaDN", "_image_original_detc_etaDA",
+
+			"_pd_instr_dist_spec/detc",
+			"_inst_ang_calibration_center_x", "_inst_ang_calibration_center_y",
+			"_inst_ang_calibration_detc_2theta", "_inst_ang_calibration_detc_phiDA",
+			"_inst_ang_calibration_detc_omegaDN", "_inst_ang_calibration_detc_etaDA",
 
 			"_instrument_counter_panel_ID",
 

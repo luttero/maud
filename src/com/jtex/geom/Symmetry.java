@@ -176,7 +176,7 @@ public class Symmetry extends Quaternion {
         }
 
         group = group.replaceAll("[ '/]", "");
-        return new Symmetry(group, a, b, c, alpha, beta, gamma);
+        return new Symmetry(group, false, a, b, c, alpha, beta, gamma);
     }
 
     public static Vec3 calcAxis(double a, double b, double c, double alpha, double beta, double gamma, Alignment[] align) {
@@ -433,33 +433,41 @@ public class Symmetry extends Quaternion {
     private Vec3 axis;
 
     public Symmetry() {
-        this(PointGroup.C1.getSchoenflies());
+        this(PointGroup.C1.getSchoenflies(), false);
     }
 
     public Symmetry(String group, Alignment... ali) {
-        this(group, 1, ali);
+        this(group, false, 1, ali);
     }
 
-    public Symmetry(String group, double a, Alignment... ali) {
-        this(group, new Array1D(a, a, a), null, ali);
+	public Symmetry(String group, boolean rotationOnly, Alignment... ali) {
+		this(group, rotationOnly, 1, ali);
+	}
+
+	public Symmetry(String group, boolean rotationOnly, double a, Alignment... ali) {
+        this(group, rotationOnly, new Array1D(a, a, a), null, ali);
     }
 
-    public Symmetry(String group, double a, double b, double c, Alignment... ali) {
-        this(group, new Array1D(a, b, c), null, ali);
+    public Symmetry(String group, boolean rotationOnly, double a, double b, double c, Alignment... ali) {
+        this(group, rotationOnly, new Array1D(a, b, c), null, ali);
     }
 
-    public Symmetry(String group, double a, double b, double c, double alpha, double beta, double gamma, Alignment... ali) {
-        this(group, new Array1D(a, b, c), new Array1D(alpha, beta, gamma), ali);
+    public Symmetry(String group, boolean rotationOnly, double a, double b, double c, double alpha, double beta, double gamma, Alignment... ali) {
+        this(group, rotationOnly, new Array1D(a, b, c), new Array1D(alpha, beta, gamma), ali);
     }
 
-    public Symmetry(String group, Array1D axlength, Array1D angles) {
-        this(group, axlength, angles, Alignment.X_astar, Alignment.Z_c);
+    public Symmetry(String group, boolean rotationOnly, Array1D axlength, Array1D angles) {
+        this(group, rotationOnly, axlength, angles, Alignment.X_astar, Alignment.Z_c);
     }
 
-    public Symmetry(String group, Array1D axlength, Array1D angles, Alignment... align) {
-        this.schoen = PointGroup.get(group);
+    public Symmetry(String group, boolean rotationOnly, Array1D axlength, Array1D angles, Alignment... align) {
+        this.schoen = null;
+		  if (rotationOnly)
+			  this.schoen = PointGroup.getRotationBase(group);
+		  else
+			  this.schoen = PointGroup.get(group);
 
-        if (this.schoen == null) {
+	    if (this.schoen == null) {
             this.schoen = PointGroup.get(hms2point(group));
         }
 
@@ -506,7 +514,7 @@ public class Symmetry extends Quaternion {
 
     }
 
-    public Alignment[] getAlignment() {
+	public Alignment[] getAlignment() {
         if (this.schoen.isLaue("-1", "2/m", "-3", "-3m", "6/m", "6/mmm", "72/m", "72/mmm")) {
             Vec3 base = Vec3.concat(basis(), basisStar()).normalize();
             double eps = 1 - 1e-5;

@@ -2985,7 +2985,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 	  printLine(out, "Total energy: " + Fmt.format(indexes[18]));
     newLine(out);
     printLine(out, "Refinement final output indices for single samples:");
-    out.flush();
+//    out.flush();
     for (int i = 0; i < samplesNumber(); i++) {
       getSample(i).finalOutput(out, outputGraph);
     }

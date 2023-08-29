@@ -76,7 +76,19 @@ public enum PointGroup {
         return null;
     }
 
-    public String getSystem() {
+	public static PointGroup getRotationBase(String sym) {
+		TreeSet<PointGroup> schoen = new TreeSet<PointGroup>(EnumSet.allOf(PointGroup.class));
+		Iterator<PointGroup> it = schoen.descendingIterator();
+		while (it.hasNext()) {
+			PointGroup next = it.next();
+			if (next.isRot(sym)) {
+				return next;
+			}
+		}
+		return null;
+	}
+
+	public String getSystem() {
         return system;
     }
 
@@ -106,7 +118,17 @@ public enum PointGroup {
         return false;
     }
 
-    public boolean isLaue(String... group) {
+	public boolean isRot(String... group) {
+		for (String g : group) {
+			g = g.replace("/", "");
+			if (rotaxis.replace("/", "").equals(g)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean isLaue(String... group) {
         for (String g : group) {
             if (laue.equals(g)) {
                 return true;

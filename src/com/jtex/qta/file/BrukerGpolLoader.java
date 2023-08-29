@@ -149,7 +149,7 @@ public class BrukerGpolLoader implements PoleFigureLoader {
 
     public static PoleFigure loadExample() {
 
-        Symmetry cs = new Symmetry("m-3m", 3.54);
+        Symmetry cs = new Symmetry("m-3m", false, 3.54);
 
 //        Miller h = Miller.concat(new Miller(1, 1, 1, cs), new Miller(2, 0, 0, cs), new Miller(2, 2, 0, cs), new Miller(3, 1, 1, cs));
 //        String names[] = new String[]{"P62h_grob_111.gpol", "P62h_grob_200.gpol", "P62h_grob_220.gpol", "P62h_grob_311.gpol"};

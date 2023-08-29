@@ -3363,7 +3363,7 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 		return 1.0;
 	double toLambda = 0.0;
 	if (ainstrument.getMeasurement().isTOF()) {
-		toLambda = (2.0 * MoreMath.sind(Math.abs(ainstrument.getGeometry().getThetaDetector(this,
+		toLambda = (2.0 * x * MoreMath.sind(Math.abs(ainstrument.getGeometry().getThetaDetector(this,
 				x))));
 	}
 	double arg1 = absorptionVelocityFactor * toLambda;
