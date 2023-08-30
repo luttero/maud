@@ -5,20 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="61caab25-241f-4ab1-85f0-b423f2950da9" name="Changes" comment="New version 5/2023&#10;Some modifications on GSASDataFile and more options for plotting types.">
+      <change afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/MultiTOFPanelCalibration.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Maud.iws" beforeDir="false" afterPath="$PROJECT_DIR$/Maud.iws" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/jtex/geom/PointGroup.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/jtex/geom/PointGroup.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/jtex/geom/Symmetry.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/jtex/geom/Symmetry.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/jtex/qta/ODFDemo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/jtex/qta/ODFDemo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/jtex/qta/file/BrukerGpolLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/jtex/qta/file/BrukerGpolLoader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/jtex/qta/file/DubnaLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/jtex/qta/file/DubnaLoader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/DiffractionMainFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/DiffractionMainFrame.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/DiffrDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/DiffrDataFile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/FilePar.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/FilePar.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Instrument.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Instrument.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Sample.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Sample.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/TOFPanelCalibration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/TOFPanelCalibration.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/MTextureModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/MTextureModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/SpaceGroups.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/SpaceGroups.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/Constants.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,12 +51,12 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;git-widget-placeholder&quot;: &quot;version2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.ide.settings.new.ui&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "git-widget-placeholder": "version2",
+    "settings.editor.selected.configurable": "editor.preferences.fonts.default"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected="Application.MaudSpeed">
     <configuration name="MaudSpeed" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="com.radiographema.MaudText" />

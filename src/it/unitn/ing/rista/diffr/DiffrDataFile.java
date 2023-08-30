@@ -156,6 +156,9 @@ public class DiffrDataFile extends XRDcat {
   protected double[] twothetacalibrated = null;
   protected double[] x_image = null;
   protected double[] y_image = null;
+  protected double[] twotheta_image = null;
+  protected double[] eta_image = null;
+  protected double[] distance_image = null;
   //	public double[] fit;
   public double[] phasesfit = null;
   protected double[] bkgfit = null;
@@ -435,6 +438,9 @@ public class DiffrDataFile extends XRDcat {
     if (Integer.parseInt(getDataType()) == DIFFRACTION_IMAGE) {
       x_image = new double[datanumber];
       y_image = new double[datanumber];
+	    twotheta_image = new double[datanumber];
+	    eta_image = new double[datanumber];
+	    distance_image = new double[datanumber];
     }
     intensity = new double[datanumber];
 //		intensityCalibrated = new double[datasetsNumber];
@@ -473,6 +479,9 @@ public class DiffrDataFile extends XRDcat {
     if (Integer.parseInt(getDataType()) == DIFFRACTION_IMAGE) {
       x_image = shrinkRange(x_image, min, datanumber);
       y_image = shrinkRange(y_image, min, datanumber);
+	    twotheta_image = shrinkRange(twotheta_image, min, datanumber);
+	    eta_image = shrinkRange(eta_image, min, datanumber);
+	    distance_image = shrinkRange(distance_image, min, datanumber);
     }
     intensity = shrinkRange(intensity, min, datanumber);
     intensityCalibrated = shrinkRange(intensityCalibrated, min, datanumber);
@@ -1199,6 +1208,9 @@ public class DiffrDataFile extends XRDcat {
     if (Integer.parseInt(getDataType()) == DIFFRACTION_IMAGE) {
       x_image = getReducedArray(x_image, datanumber, groupControlNumber);
       y_image = getReducedArray(y_image, datanumber, groupControlNumber);
+	    twotheta_image = getReducedArray(twotheta_image, datanumber, groupControlNumber);
+	    eta_image = getReducedArray(eta_image, datanumber, groupControlNumber);
+	    distance_image = getReducedArray(distance_image, datanumber, groupControlNumber);
     }
     intensity = getReducedArray(intensity, datanumber, groupControlNumber);
     weight = getReducedArray(weight, datanumber, groupControlNumber);
@@ -1845,13 +1857,34 @@ public class DiffrDataFile extends XRDcat {
       return 0;
   }
 
-  public double[] getXDataImage() {
+	public double getTwothetaImage(int index) {
+		if (twotheta_image != null)
+			return twotheta_image[index];
+		else
+			return 0;
+	}
+
+	public double getEtaImage(int index) {
+		if (eta_image != null)
+			return eta_image[index];
+		else
+			return 0;
+	}
+
+	public double getDistanceImage(int index) {
+		if (distance_image != null)
+			return distance_image[index];
+		else
+			return 0;
+	}
+
+/*	public double[] getXDataImage() {
     return x_image;
   }
 
   public double[] getYDataImage() {
     return y_image;
-  }
+  }*/
 
   public double[] getXDataOriginal() {
     if (twotheta != null)
@@ -2030,7 +2063,19 @@ public class DiffrDataFile extends XRDcat {
     calibrated = false;
   }
 
-  public void setCalibratedXData(int index, double value) {
+	public void setTwothetaImage(int index, double value) {
+		twotheta_image[index] = value;
+	}
+
+	public void setEtaImage(int index, double value) {
+		eta_image[index] = value;
+	}
+
+	public void setDistanceImage(int index, double value) {
+		distance_image[index] = value;
+	}
+
+	public void setCalibratedXData(int index, double value) {
     calibrated = true;
     twothetacalibrated[index] = value;
     twothetaOriginal[index] = value;
@@ -4706,61 +4751,78 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 		}
 	} */
 
-  public int getNearestPoint(double x) {
-    boolean incrX = increasingX();
-    if (x <= startingX) {
-      if (incrX)
-        return startingindex;
-      else
-        return finalindex - 1;
-    }
-    if (x <= startingX) {
-      if (incrX)
-        return startingindex;
-      else
-        return finalindex - 1;
-    }
-    int index = startingindex + (int) (((x - startingX) * i_deltaX) * deltaindex);
-    if (incrX) {
-      if (index < startingindex && x > getXData(startingindex))
-        index = startingindex + 1;
-      else if (index >= finalindex && x < getXData(finalindex - 1))
-        index = finalindex - 2;
-    } else {
-      if (index < startingindex && x < getXData(startingindex))
-        index = startingindex + 1;
-      else if (index >= finalindex && x > getXData(finalindex - 1))
-        index = finalindex - 2;
-    }
-    if (index < startingindex)
-      return startingindex;
-    if (index >= finalindex)
-      return finalindex - 1;
-    if (incrX) {
-      while (index < finalindex - 1 && getXData(index + 1) < x)
-        index++;
-      while (index > startingindex && getXData(index - 1) > x)
-        index--;
-      if (getXData(index) < x && index < finalindex - 1)
-        if (x - getXData(index) > getXData(index + 1) - x) {
-          return ++index;
-        }
-      if (getXData(index) > x && index > startingindex)
-        if (x - getXData(index - 1) < getXData(index) - x)
-          return --index;
-    } else {
-      while (index < finalindex - 1 && getXData(index + 1) > x)
-        index++;
-      while (index > startingindex && getXData(index - 1) < x)
-        index--;
-      if (getXData(index) > x && index < finalindex - 1)
-        if (x - getXData(index + 1) < getXData(index) - x)
-          return ++index;
-      if (getXData(index) < x && index > startingindex)
-        if (x - getXData(index) > getXData(index - 1) - x)
-          return --index;
-    }
-    return index;
+  public int getOriginalNearestPoint(double x) {
+	  boolean incrX = increasingX();
+	  if (Math.abs((getXDataOriginal(lastIndex) - x) * i_deltaX) < 0.1) {
+		  if (incrX) {
+			  while (lastIndex < finalindex - 1 && getXDataOriginal(lastIndex + 1) < x)
+				  lastIndex++;
+			  while (lastIndex > startingindex && getXDataOriginal(lastIndex - 1) > x)
+				  lastIndex--;
+			  if (getXDataOriginal(lastIndex) < x && lastIndex < finalindex - 1)
+				  if (x - getXDataOriginal(lastIndex) > getXDataOriginal(lastIndex + 1) - x) {
+					  return ++lastIndex;
+				  }
+			  if (getXDataOriginal(lastIndex) > x && lastIndex > startingindex)
+				  if (x - getXDataOriginal(lastIndex - 1) < getXDataOriginal(lastIndex) - x)
+					  return --lastIndex;
+		  } else {
+			  while (lastIndex < finalindex - 1 && getXDataOriginal(lastIndex + 1) > x)
+				  lastIndex++;
+			  while (lastIndex > startingindex && getXDataOriginal(lastIndex - 1) < x)
+				  lastIndex--;
+			  if (getXDataOriginal(lastIndex) > x && lastIndex < finalindex - 1)
+				  if (x - getXDataOriginal(lastIndex + 1) < getXDataOriginal(lastIndex) - x)
+					  return ++lastIndex;
+			  if (getXDataOriginal(lastIndex) < x && lastIndex > startingindex)
+				  if (x - getXDataOriginal(lastIndex) > getXDataOriginal(lastIndex - 1) - x)
+					  return --lastIndex;
+		  }
+		  return lastIndex;
+	  }
+	  double startingOriginalX = getXDataOriginal(startingindex);
+	  double finalOriginalX = getXDataOriginal(finalindex - 1);
+	  lastIndex = startingindex + (int) (((x - startingOriginalX) * i_deltaX) * deltaindex);
+	  if (incrX) {
+		  if (lastIndex < startingindex && x > startingOriginalX)
+			  lastIndex = startingindex + 1;
+		  else if (lastIndex >= finalindex && x < finalOriginalX)
+			  lastIndex = finalindex - 2;
+	  } else {
+		  if (lastIndex < startingindex && x < startingOriginalX)
+			  lastIndex = startingindex + 1;
+		  else if (lastIndex >= finalindex && x > finalOriginalX)
+			  lastIndex = finalindex - 2;
+	  }
+	  if (lastIndex < startingindex)
+		  return lastIndex = startingindex;
+	  if (lastIndex >= finalindex)
+		  return lastIndex = finalindex - 1;
+	  if (incrX) {
+		  while (lastIndex < finalindex - 1 && getXDataOriginal(lastIndex + 1) < x)
+			  lastIndex++;
+		  while (lastIndex > startingindex && getXDataOriginal(lastIndex - 1) > x)
+			  lastIndex--;
+		  if (getXDataOriginal(lastIndex) < x && lastIndex < finalindex - 1)
+			  if (x - getXDataOriginal(lastIndex) > getXDataOriginal(lastIndex + 1) - x) {
+				  return ++lastIndex;
+			  }
+		  if (getXDataOriginal(lastIndex) > x && lastIndex > startingindex)
+			  if (x - getXDataOriginal(lastIndex - 1) < getXDataOriginal(lastIndex) - x)
+				  return --lastIndex;
+	  } else {
+		  while (lastIndex < finalindex - 1 && getXDataOriginal(lastIndex + 1) > x)
+			  lastIndex++;
+		  while (lastIndex > startingindex && getXDataOriginal(lastIndex - 1) < x)
+			  lastIndex--;
+		  if (getXDataOriginal(lastIndex) > x && lastIndex < finalindex - 1)
+			  if (x - getXDataOriginal(lastIndex + 1) < getXDataOriginal(lastIndex) - x)
+				  return ++lastIndex;
+		  if (getXDataOriginal(lastIndex) < x && lastIndex > startingindex)
+			  if (x - getXDataOriginal(lastIndex) > getXDataOriginal(lastIndex - 1) - x)
+				  return --lastIndex;
+	  }
+	  return lastIndex;
   }
 
   public int getOldNearestPoint(double x) {
@@ -6422,6 +6484,7 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 
 	public double getIncidentDetectorAngle(int pointIndex) {
 		// in rad
+		// to do
 		AngularCalibration angcal = getDataFileSet().getInstrument().getAngularCalibration();
 		double[][] tmat = null;
 		if (angcal instanceof AngularInclinedFlatImageCalibration)

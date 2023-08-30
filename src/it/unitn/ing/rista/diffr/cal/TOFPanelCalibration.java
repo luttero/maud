@@ -42,54 +42,64 @@ import javax.swing.*;
  * @since JDK19
  */
 
-
+// Constants.LAMBDA_SPEED_NEUTRON_CONV_ANG
 
 public class TOFPanelCalibration extends AngularCalibration {
-	public static String[] diclistc = {"_instrument_parameter_file", "_instrument_counter_panel",
-			"_instrument_neutron_flight_path",
-			"_image_original_dist_spec/detc",
-			"_image_original_center_x", "_image_original_center_y",
-			"_image_original_detc_2theta", "_image_original_detc_phiDA",
-			"_image_original_detc_omegaDN", "_image_original_detc_etaDA",
 
+	static int DIFA_ID = 0;
+	static int ZERO_ID = 1;
+	static int DISTANCE_ID = 2;
+	static int THETA_ID = 3;
+	static int ETA_ID = 4;
+	static int CENTER_X_ID = 5;
+	static int CENTER_Y_ID = 6;
+	static int TILT_X_ID = 7;
+	static int ROTATION_Z_ID = 8;
+	static int SHIFT_ID = -1;
+
+	public static String[] diclistc = {
+			"_instrument_bank_ID", "_bank_original_dist_spec/detc",
+			"_bank_original_tof_theta", "_bank_original_tof_eta",
+			"_bank_original_center_x", "_bank_original_center_y",
+			"_bank_original_tilt_x", "_bank_original_rotation_z",
+
+			"_instrument_bank_difa", "_instrument_bank_zero",
 			"_pd_instr_dist_spec/detc",
-			"_inst_ang_calibration_center_x", "_inst_ang_calibration_center_y",
-			"_inst_ang_calibration_detc_2theta", "_inst_ang_calibration_detc_phiDA",
-			"_inst_ang_calibration_detc_omegaDN", "_inst_ang_calibration_detc_etaDA",
+			"_instrument_bank_tof_theta", "_instrument_bank_tof_eta",
+			"_instrument_bank_center_x", "_instrument_bank_center_y",
+			"_instrument_bank_tilt_x", "_instrument_bank_rot_z"
+	};
+	public static String[] diclistcrm = {
+			"_instrument_bank_ID", "_bank_original_dist_spec/detc",
+			"_bank_original_tof_theta", "_bank_original_tof_eta",
+			"_bank_original_center_x", "_bank_original_center_y",
+			"_bank_original_tilt_x", "_bank_original_rotation_z",
 
-			"_instrument_counter_panel_ID",
-
-			"_instrument_panel_difc", "_instrument_panel_difa",
-			"_instrument_panel_zero", "_instrument_panel_tof_theta",
-			"_instrument_panel_eta", "_pd_instr_dist_spec/detc"};
-	public static String[] diclistcrm = {"_instrument_parameter_file", "_instrument_counter_panel",
-			"_instrument_neutron_flight_path",
-
-			"_instrument_counter_panel_ID",
-
-			"difc (GSAS) ", "difa (GSAS) ",
-			"zero (GSAS) ", "TOF 2theta (deg) ",
-			"eta angle position (deg) ", "sample detector distance (m) "};
+			"_instrument_bank_difa", "_instrument_bank_zero",
+			"_pd_instr_dist_spec/detc",
+			"_instrument_bank_tof_theta", "_instrument_bank_tof_eta",
+			"_instrument_bank_center_x", "_instrument_bank_center_y",
+			"_instrument_bank_tilt_x", "_instrument_bank_rot_z"};
 
 	public static String[] classlistc = {};
 	public static String[] classlistcs = {};
 
-	boolean refreshCalibration = true;
+//	boolean refreshCalibration = true;
 
-	double[] difc = null;
-	double[] difa = null;
-	double[] zero = null;
-	double[] theta = null;
-	double[] eta = null;
-	double[] dist = null;
-	double flightPath = 9000.0;
+	double dist = 0;
+	double difa = 0;
+	double zero = 0;
+	double theta = 0;
+	double eta = 0;
+	double center_x = 0;
+	double center_y = 0;
+	double tilt_x = 0;
+	double rot_z = 0;
+	int maxNumberCoefficient = ROTATION_Z_ID + 1;
 
-	int maxNumberCoefficient = 6;
+//	int choosedPanelNumber = 0;
 
-	int choosedPanelNumber = 0;
-
-	public static final String panelPrefix = "TOFPanel";
-	public static String modelID = "TOF 2D Panel";
+	public static String modelID = "TOF 2D Bank";
 
 	public TOFPanelCalibration(XRDcat aobj, String alabel) {
 		super(aobj, alabel);
@@ -108,10 +118,10 @@ public class TOFPanelCalibration extends AngularCalibration {
 	}
 
 	public void initConstant() {
-		Nstring = 3;
-		Nstringloop = 1;
-		Nparameter = 0;
-		Nparameterloop = maxNumberCoefficient;
+		Nstring = 8;
+		Nstringloop = 0;
+		Nparameter = maxNumberCoefficient;
+		Nparameterloop = 0;
 		Nsubordinate = 0;
 		Nsubordinateloop = 0;
 	}
@@ -128,643 +138,169 @@ public class TOFPanelCalibration extends AngularCalibration {
 
 	public void initParameters() {
 		super.initParameters();
-		setFileName("");
-		setBank("");
-		stringField[2] = "9.07617";
+
+		double ldistance = MaudPreferences.getDouble("TOFbank2D.defaultDistance", 1.0);
+		double ltheta2 = MaudPreferences.getDouble("TOFbank2D.default2ThetaAngle", 90.0);
+		double leta = MaudPreferences.getDouble("TOFbank2D.defaultEtaAngle", 0.0);
+		double lx = MaudPreferences.getDouble("TOFbank2D.centerX", 0.0);
+		double ly = MaudPreferences.getDouble("TOFbank2D.centerY", 0.0);
+		double ltilt = MaudPreferences.getDouble("TOFbank2D.defaultTiltAngle", 0.0);
+		double lrot = MaudPreferences.getDouble("TOFbank2D.defaultRotationAngle", 0.0);
+
+		refreshComputation = true;
 	}
 
 	public void updateStringtoDoubleBuffering(boolean firstLoading) {
 		super.updateStringtoDoubleBuffering(false);
-		flightPath = Double.parseDouble(stringField[2]) * 1000;
-	}
-
-	public void invertEta() {
-		for (int bank = 0; bank < banknumbers(); bank++) {
-			double eta = getParameterLoopValues(4, bank);
-			getParameterFromLoop(4, bank).setValue(-eta);
-		}
 	}
 
 	public void updateParametertoDoubleBuffering(boolean firstLoading) {
 		if (getFilePar().isLoadingFile() || !isAbilitatetoRefresh)
 			return;
-		isAbilitatetoRefresh = false;
-		checkConsistency(firstLoading);
 		isAbilitatetoRefresh = true;
 		super.updateParametertoDoubleBuffering(firstLoading);
 		isAbilitatetoRefresh = false;
-		int banks = banknumbers();
-		choosedPanelNumber = getPanelNumber();
-		difc = new double[banks];
-		difa = new double[banks];
-		zero = new double[banks];
-		theta = new double[banks];
-		eta = new double[banks];
-		dist = new double[banks];
-		for (int bank = 0; bank < banks; bank++) {
-			difc[bank] = getParameterLoopValues(0, bank);
-			difa[bank] = getParameterLoopValues(1, bank);
-			zero[bank] = getParameterLoopValues(2, bank);
-			theta[bank] = getParameterLoopValues(3, bank);
-			eta[bank] = getParameterLoopValues(4, bank);
-			double distance = getParameterLoopValues(5, bank);
-			if (distance == 0)
-				distance = 1.0;
-			dist[bank] = distance * 1000.0;
-		}
-		flightPath = Double.parseDouble(stringField[2]) * 1000;
+
+		dist = getParameterValue(DISTANCE_ID);
+		difa = getParameterValue(DIFA_ID);
+		zero = getParameterValue(ZERO_ID);
+		theta = getParameterValue(THETA_ID);
+		eta = getParameterValue(ETA_ID);
+		center_x = getParameterValue(CENTER_X_ID);
+		center_y = getParameterValue(CENTER_Y_ID);
+		tilt_x = getParameterValue(TILT_X_ID);
+		rot_z = getParameterValue(ROTATION_Z_ID);
+
+		if (dist == 0)
+			dist = 1.0;
+		dist *= 1000.0;  // m -> mm
+
 		isAbilitatetoRefresh = true;
 	}
 
 	public void notifyParameterChanged(Parameter source) {
 		FilePar filepar = getFilePar();
 		if ((filepar != null && !filepar.isLoadingFile()) && isAbilitatetoRefresh) {
-			int banks = banknumbers();
-			for (int bank = 0; bank < banks; bank++) {
-				for (int i = 0; i < 3; i++)
-					if (source == getParameterFromLoop(i, bank)) {
-						notifyParameterChanged(source, Constants.ANGULAR_CALIBRATION, -1);
-						return;
-					}
-				for (int i = 3; i < 5; i++)
-					if (source == getParameterFromLoop(i, bank)) {
-						notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED, -1);
-						notifyParameterChanged(source, Constants.TEXTURE_CHANGED, -1);
-						return;
-					}
-				if (source == getParameterFromLoop(5, bank)) {
+			for (int i = 0; i < Nparameter; i++)
+				if (source == getParameter(i)) {
+					notifyParameterChanged(source, Constants.ANGULAR_CALIBRATION, -1);
 					notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED, -1);
+					notifyParameterChanged(source, Constants.TEXTURE_CHANGED, -1);
 					return;
 				}
-			}
 			super.notifyParameterChanged(source);
 		}
 	}
 
 	public boolean freeAllBasicParameters() {
-		freeAllZeroParameters(false);
+		getParameter(CENTER_X_ID).setRefinableCheckBound();
+		getParameter(CENTER_Y_ID).setRefinableCheckBound();
 		return true;
 	}
-
-	public void freeAllZeroParameters(boolean forceFree) { // DIFC
-		int banks = banknumbers();
-		for (int bank = 0; bank < banks; bank++) {
-			if (panelIsActive(bank)) {
-				if (forceFree)
-					((Parameter) parameterloopField[0].elementAt(bank)).setRefinable();
-				else
-					((Parameter) parameterloopField[0].elementAt(bank)).setRefinableCheckBound();
-			}
-		}
-	}
-
-	protected boolean panelIsActive(int bank) {
-		DataFileSet data = (DataFileSet) getParent().getParent();
-		int datafiles = data.activedatafilesnumber();
-		boolean isActive = false;
-		for (int i = 0; i < datafiles && !isActive; i++) {
-			if (data.getActiveDataFile(i).getBankNumber() == bank)
-				isActive = true;
-		}
-		return isActive;
-	}
-
-	public void boundAllBankCoefficients() {
-		int banks = banknumbers();
-		for (int i = 0; i < Nparameterloop; i++) {
-			Parameter apar = (Parameter) parameterloopField[i].elementAt(0);
-			for (int bank = 1; bank < banks; bank++) {
-				Parameter apar1 = (Parameter) parameterloopField[i].elementAt(bank);
-				if (apar.getValueD() == apar1.getValueD())
-					apar1.setEqualTo(apar, 1.0, 0.0);
-			}
-		}
-	}
-
-	public void forceBoundAllBankCoefficients() {
-		try {
-			int banks = banknumbers();
-			int nparameter = Nparameterloop;
-			Parameter[] apar = new Parameter[nparameter];
-			int index = 0;
-//      int selBankNumber = getBankNumber(getBankID());
-			for (int i = 0; i < Nparameterloop; i++)
-				apar[index++] = (Parameter) parameterloopField[i].elementAt(0);
-
-			for (int bank = 1; bank < banks; bank++) {
-//        if (bank != selBankNumber) {
-				for (int i = 0; i < Nparameterloop; i++) {
-					if (i < 3)
-						((Parameter) parameterloopField[i].elementAt(bank)).setEqualTo(apar[i], 1.0, 0.0);
-					else {
-						if (((Parameter) parameterloopField[i].elementAt(bank)).getValueD() == apar[i].getValueD())
-							((Parameter) parameterloopField[i].elementAt(bank)).setEqualTo(apar[i], 1.0, 0.0);
-					}
-				}
-//        }
-			}
-		} catch (Exception e) {
-			e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-		}
-	}
-
-	public void removePanel(int indexToRemove) {
-		removePanel(panelPrefix + Integer.toString(indexToRemove));
-	}
-
-	public void removePanel(String bankID) {
-		try {
-			int indexToRemove = getBankNumber(bankID);
-//    System.out.println("Ang, removing " + bankID + " " + indexToRemove);
-			boolean isAbilitate = isAbilitatetoRefresh;
-			isAbilitatetoRefresh = false;
-			for (int i = 0; i < stringloopField.length; i++)
-				stringloopField[i].removeItemAt(indexToRemove);
-			for (int i = 0; i < parameterloopField.length; i++)
-				parameterloopField[i].removeItemAt(indexToRemove);
-			isAbilitatetoRefresh = isAbilitate;
-			notifyUpObjectChanged(this, Constants.ANGULAR_CALIBRATION, -1);
-		} catch (Exception e) {
-			e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-		}
-	}
-
-	public double getFlightPath() {
-		return flightPath;
-	}
-
-	public void setFileName(String filename) {
-		stringField[0] = filename;
-		if (getFileName() != null && !getFileName().equals(""))
-			readall();
-	}
-
-	public String getFileName() {
-		return stringField[0];
-	}
-
-	public String getDifc() {
-		if (getPanelNumber() >= 0)
-			return getDifc(getPanelNumber()).getValue();
-		else
-			return "0";
-	}
-
-	public String getDifa() {
-		if (getPanelNumber() >= 0)
-			return getDifa(getPanelNumber()).getValue();
-		else
-			return "0";
-	}
-
-	public String getZero() {
-		if (getPanelNumber() >= 0)
-			return getZero(getPanelNumber()).getValue();
-		else
-			return "0";
-	}
-
-	public String getTtheta() {
-		if (getPanelNumber() >= 0)
-			return getTtheta(getPanelNumber()).getValue();
-		else
-			return "0";
-	}
-
-	public String getEta() {
-		if (getPanelNumber() >= 0)
-			return getEta(getPanelNumber()).getValue();
-		else
-			return "0";
-	}
-
-	public String getDetectorDistance() {
-		if (getPanelNumber() >= 0)
-			return getDetectorDistance(getPanelNumber()).getValue();
-		else
-			return "1";
-	}
-
-/*	public int getPanelNumber(DiffrDataFile datafile) {
-		return datafile.getAngBankNumber();
-	}*/
-
-	public double getTthetaValue(DiffrDataFile datafile, double twotheta) {
-//	  System.out.println(this + ", asking for bank number: " + getBankNumber(datafile));
-		return theta[getPanelNumber(datafile)];
-	}
-
-	public double getEtaValue(DiffrDataFile datafile) {
-		return eta[getPanelNumber(datafile)];
-	}
-
-	public double getDetectorDistanceValue(DiffrDataFile datafile) {
-		return dist[getPanelNumber(datafile)];
-	}
-
-	public double getDetectorDistanceValue(int bank) {
-		return dist[bank];
-	}
-
-	public String getDifc(String bank) {
-		for (int i = 0; i < banknumbers(); i++)
-			if (getPanelID(i).equals(bank))
-				return getDifc(i).getValue();
-		return "0";
-	}
-
-	public String getDifa(String bank) {
-		for (int i = 0; i < banknumbers(); i++)
-			if (getPanelID(i).equals(bank))
-				return getDifa(i).getValue();
-		return "0";
-	}
-
-	public String getZero(String bank) {
-		for (int i = 0; i < banknumbers(); i++)
-			if (getPanelID(i).equals(bank))
-				return getZero(i).getValue();
-		return "0";
-	}
-
-	public String getTtheta(String bank) {
-		for (int i = 0; i < banknumbers(); i++)
-			if (getPanelID(i).equals(bank))
-				return getTtheta(i).getValue();
-		return "0";
-	}
-
-	public String getEta(String bank) {
-		for (int i = 0; i < banknumbers(); i++)
-			if (getPanelID(i).equals(bank))
-				return getEta(i).getValue();
-		return "0";
-	}
-
-	public String getDetectorDistance(String bank) {
-		for (int i = 0; i < banknumbers(); i++)
-			if (getPanelID(i).equals(bank))
-				return getDetectorDistance(i).getValue();
-		return "1";
-	}
-
-	public void addDifc(int index, String value) {
-		addparameterloopField(0, new Parameter(this, getParameterString(0, index), value, "0",
-				ParameterPreferences.getPref(getParameterString(0, index) + ".min", "0"),
-				ParameterPreferences.getPref(getParameterString(0, index) + ".max", "10000"), false));
-	}
-
-	public void addDifa(int index, String value) {
-		addparameterloopField(1, new Parameter(this, getParameterString(1, index), value, "0",
-				ParameterPreferences.getPref(getParameterString(1, index) + ".min", "-10"),
-				ParameterPreferences.getPref(getParameterString(1, index) + ".max", "10"), false));
-	}
-
-	public void addZero(int index, String value) {
-		addparameterloopField(2, new Parameter(this, getParameterString(2, index), value, "0",
-				ParameterPreferences.getPref(getParameterString(2, index) + ".min", "-10"),
-				ParameterPreferences.getPref(getParameterString(2, index) + ".max", "10"), false));
-	}
-
-	public void addTtheta(int index, String value) {
-		addparameterloopField(3, new Parameter(this, getParameterString(3, index), value, "0",
-				ParameterPreferences.getPref(getParameterString(3, index) + ".min", "-180"),
-				ParameterPreferences.getPref(getParameterString(3, index) + ".max", "180"), false));
-	}
-
-	public void addEta(int index, String value) {
-		addparameterloopField(4, new Parameter(this, getParameterString(4, index), value, "0",
-				ParameterPreferences.getPref(getParameterString(4, index) + ".min", "-180"),
-				ParameterPreferences.getPref(getParameterString(4, index) + ".max", "180"), false));
-	}
-
-	public void addDetectorDistance(int index, String value) {
-		addparameterloopField(5, new Parameter(this, getParameterString(5, index), value, "0.0",
-				ParameterPreferences.getPref(getParameterString(5, index) + ".min", "0.1"),
-				ParameterPreferences.getPref(getParameterString(5, index) + ".max", "10"), false));
-	}
-
-	public Parameter getDifc(int index) {
-		if (index >= 0)
-			return (Parameter) parameterloopField[0].elementAt(index);
-		else
-			return null;
-	}
-
-	public Parameter getDifa(int index) {
-		if (index >= 0)
-			return (Parameter) parameterloopField[1].elementAt(index);
-		else
-			return null;
-	}
-
-	public Parameter getZero(int index) {
-		if (index >= 0)
-			return (Parameter) parameterloopField[2].elementAt(index);
-		else
-			return null;
-	}
-
-	public Parameter getTtheta(int index) {
-		if (index >= 0)
-			return (Parameter) parameterloopField[3].elementAt(index);
-		else
-			return null;
-	}
-
-	public Parameter getEta(int index) {
-		if (index >= 0)
-			return (Parameter) parameterloopField[4].elementAt(index);
-		else
-			return null;
-	}
-
-	public Parameter getDetectorDistance(int index) {
-		if (index >= 0)
-			return (Parameter) parameterloopField[5].elementAt(index);
-		else
-			return null;
-	}
-
-	public void setBank(String value) {
-		stringField[1] = value;
-	}
-
-	public void setBank(int index) {
-		if (index >= 0 && index < banknumbers())
-			stringField[1] = getPanelID(index);
-	}
-
-	public int banknumbers() {
-		return numberofelementSL(0);
-	}
-
-	public String getPanelID(int index) {
-		if (index >= 0 && index < banknumbers())
-			return (String) stringloopField[0].elementAt(index);
-		else
-			return "";
-	}
-
-	public void addBank(String value) {
-		stringloopField[0].addItem(value);
-	}
-
-	public String getPanelID() {
-		return stringField[1];
-	}
-
-	public int getPanelNumber() {
-		if (getPanelID().equalsIgnoreCase("") || getPanelID().equalsIgnoreCase("?"))
-			setBank(0);
-		try {
-			return getBankNumber(getPanelID());
-		} catch (Exception e) {
-			e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-		}
-		return -1;
-	}
-
-	public int getBankNumber(String bankID) throws Exception {
-		for (int i = 0; i < banknumbers(); i++)
-			if (getPanelID(i).equalsIgnoreCase(bankID))
-				return i;
-/*    if (bankID.equalsIgnoreCase(getBankID())) {
-      setBank(0);
-      for (int i = 0; i < banknumbers(); i++) {
-        if (getBankID(i).equalsIgnoreCase(bankID))
-          return i;
-      }
-    }*/
-//    printBank();
-		throw new Exception(bankID + ": The panel ID is not corresponding, reload the instrument parameter file for angular calibration!");
-	}
-
-	public void printBank() {
-		for (int i = 0; i < banknumbers(); i++)
-			System.out.println(getPanelID(i));
-	}
-
-	public int getPanelNumber(DiffrDataFile datafile) {
-		return choosedPanelNumber;
-	}
-
-	public String loadDataFile(Frame parent) {
-		String filename = Utility.openFileDialog(parent, "Import panel/bank calibration file",
-				FileDialog.LOAD, getDirectory(), null, null);
-		if (filename != null) {
-			parent.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-//      relativePathChange = false;
-			setFileName(filename);
-			parent.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-		}
-		return filename;
-	}
-
-	public void resetParameterToZero() {
-		boolean isAbilitate = isAbilitatetoRefresh;
-		isAbilitatetoRefresh = false;
-		for (int i = 0; i < Nstringloop; i++)
-			if (stringloopField[i] != null)
-				stringloopField[i].removeAllItems();
-		for (int i = 0; i < Nparameterloop; i++)
-			if (parameterloopField[i] != null)
-				parameterloopField[i].removeAllItems();
-		isAbilitatetoRefresh = isAbilitate;
-	}
-
-	public void readall() {
-		refreshCalibration = true;
-		boolean isAbilitate = isAbilitatetoRefresh;
-		isAbilitatetoRefresh = false;
-		BufferedReader reader = Misc.getReader(getFileName());
-		if (reader != null) {
-			try {
-				String token = new String("");
-				StringTokenizer st = null;
-				String linedata = null;
-				boolean endoffile = false;
-				boolean found = false;
-				int banknumber = 0;
-				resetParameterToZero();
-
-				while (!endoffile) {
-					linedata = reader.readLine();
-					if (linedata == null) {
-						endoffile = true;
-						break;
-					}
-
-					if (linedata.toUpperCase().startsWith("INS")) {
-						linedata = "IN " + linedata.substring(3);
-						String bankString = Misc.toStringDeleteBlank(linedata.substring(3, 6));
-						if (bankString.length() > 0)
-							banknumber = Integer.valueOf(bankString).intValue();
-						st = new StringTokenizer(linedata, " ,\t\r\n");
-
-						while (st.hasMoreTokens()) {
-							token = st.nextToken();
-							if (token.equalsIgnoreCase("FPATH1")) {
-								stringField[2] = st.nextToken();
-//	              System.out.println("FPATH1(" + banknumber + "): " + stringField[2]);
-							} else if (token.equalsIgnoreCase("ICONS")) {
-//              	 System.out.println(this + ", Adding bank number: " + banknumber);
-								addBank(panelPrefix + bankString);
-								addDifc(banknumber, token = st.nextToken());
-								addDifa(banknumber, token = st.nextToken());
-								addZero(banknumber, token = st.nextToken());
-							} else if (token.toLowerCase().indexOf("bnkpar") != -1) {
-								int j = token.toLowerCase().indexOf("bnkpar");
-								addDetectorDistance(banknumber, token = st.nextToken());
-								addTtheta(banknumber, token = st.nextToken());
-							} else if (token.toLowerCase().indexOf("detazm") != -1) {
-								int j = token.toLowerCase().indexOf("detazm");
-								token = st.nextToken();
-								double eta = Double.parseDouble(token);
-								boolean invert = MaudPreferences.getBoolean("testing.HippoInvertDetzmInImport", true);
-								double shift = MaudPreferences.getDouble("testing.HippoShiftDetzmInImport", 180.0);
-								int sign = 1;
-								if (invert) sign = -1;
-								eta = eta * sign + shift;
-								token = Double.toString(eta);
-								addEta(banknumber, token);
-							}
-						}
-					}
-				}
-
-			} catch (IOException e) {
-				System.out.println("Error in loading the data file! Try to remove this data file");
-			}
-			try {
-				reader.close();
-			} catch (IOException e) {
-			}
-//      System.out.println("Number of banks loaded: " + banknumbers());
-		}
-
-		checkConsistency(true);
-
-		isAbilitatetoRefresh = isAbilitate;
-		notifyUpObjectChanged(this, Constants.ANGULAR_CALIBRATION, -1);
-	}
-
-	public Parameter getCoeff(int loop, int index) {
-		if (index >= 0 && index < parameterloopField[loop].size())
-			return (Parameter) parameterloopField[loop].elementAt(index);
-		else
-			return null;
-	}
-
-	public void addCoeff(int loop, int index, String value) {
-		addparameterloopField(loop, new Parameter(this, getParameterString(loop, index), value, "0",
-				ParameterPreferences.getPref(getParameterString(loop, index) + ".min", "-100"),
-				ParameterPreferences.getPref(getParameterString(loop, index) + ".max", "100"), false));
-
-	}
-
-	void checkConsistency(boolean firstLoading) {
-		for (int i = 0; i < banknumbers(); i++)
-			for (int j = 0; j < maxNumberCoefficient; j++)
-				if (getCoeff(j, i) == null)
-					addCoeff(j, i, "0.0");
-
-		try {
-			DataFileSet data = (DataFileSet) getInstrument().getParent();
-			DiffrDataFile[] datafiles = data.getActiveDataFiles();
-			boolean enabled = false;
-
-//      System.out.println("Checking banks! " + datafiles + ": " + datafiles.length);
-			if (datafiles != null) {
-				for (int i = 0; i < datafiles.length; i++) {
-//      System.out.println("Check datafile: " + datafiles[i].getBankID() + " == " + getBankID(getBankNumber(datafiles[i])));
-					if (datafiles[i].getBankID().equalsIgnoreCase(getPanelID(getPanelNumber(datafiles[i]))))
-						enabled = true;
-				}
-			}
-			if (!enabled && !firstLoading)
-				fixAllParameters();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-
-/*    int banks = banknumbers();
-//    System.out.println("banks :" + banks);
-    for (int i = 1; i < Nparameterloop; i++) {
-//      System.out.println("par " + i + ": " + numberofelementPL(i));
-      while (numberofelementPL(i) > banks) {
-        int index = numberofelementPL(i);
-        removesPLField(i, index - 1);
-      }
-      while (numberofelementPL(i) < banks) {
-        int index = numberofelementPL(i);
-        addparameterloopField(i, new Parameter(this, getParameterString(i, index), "0.0", "0"));
-      }
-//      System.out.println("At end par " + i + ": " + numberofelementPL(i));
-    }*/
-	}
-
 	public void calibrateData(DiffrDataFile datafile) {
 	}
 
 	public void calibrateX(DiffrDataFile datafile) {
 		int datanumber = datafile.getTotalNumberOfData();
-//    int banknumber = getBankNumber(datafile);
 		updateParametertoDoubleBuffering(false);
-		int banknumber = getPanelNumber(datafile);
-		if (banknumber >= difa.length || banknumber < 0) {
-			System.out.println("Warning, panel number: " + banknumber + " out of range: 0 - " + difa.length);
-			return;
-		}
+		double flightPath = ((MultiTOFPanelCalibration) getParent()).getFlightPath();
+		double difc_part = Constants.LAMBDA_SPEED_NEUTRON_CONV_ANG * 0.5;
+
+		DataFileSet dataset = datafile.getDataFileSet();
+		double zs = dataset.getZshift();
+		double rx = dataset.getSample().getRadiusDimensionXD();
+		double ry = dataset.getSample().getRadiusDimensionYD();
+		double[] tiltingAngles = datafile.getTiltingAngle();
+		double omega = tiltingAngles[0];
+		double chi = tiltingAngles[1];
+		double detectorProper2Theta = theta + tiltingAngles[4];
+
+		if (Math.abs(omega) > 1.0E-18)
+			zs /= Math.cos((90.0 - omega) * Constants.DEGTOPI);
+		zs /= Math.cos(chi * Constants.DEGTOPI);
+		double dx = zs * Math.cos((detectorProper2Theta - 90.0) * Constants.DEGTOPI);
+		double dd = zs * Math.sin((detectorProper2Theta - 90.0) * Constants.DEGTOPI);
+
 		for (int i = 0; i < datanumber; i++) {
-			double value = datafile.getXDataForCalibration(i);
-			if (difa[banknumber] == 0.0) {
-				if (difc[banknumber] != 0.0)
-					value = (value - zero[banknumber]) / difc[banknumber];
-				else
-					value = value - zero[banknumber];
-			} else
-				value = (-difc[banknumber] + Math.sqrt(difc[banknumber] * difc[banknumber] -
-						(4 * difa[banknumber] * (zero[banknumber] - value)))) / (2 * difa[banknumber]);
-			datafile.setCalibratedXDataOnly(i, value);
+         double value = datafile.getXDataOriginal(i);
+			double x = datafile.getXDataImage(i);
+			double y = datafile.getYDataImage(i);
+			double[] xf = getThetaEtaAndDist(x, y,
+					omega, detectorProper2Theta, eta,
+					tilt_x,  rot_z,
+					center_x,  center_y,  dist,
+					dx,  dd,  rx,  zs);
+
+			double difc = difc_part / ((xf[2] + flightPath) * Math.sin(xf[0] * 0.5));
+			double angcal_d = (-difc + Math.sqrt(difc * difc - 4.0 * difa * (zero - value))) / (2.0 * difa);
+
+			datafile.setCalibratedXDataOnly(i, angcal_d);
+			datafile.setTwothetaImage(i, xf[0] * Constants.PITODEG);
+			datafile.setEtaImage(i, xf[1] * Constants.PITODEG);
+			datafile.setDistanceImage(i, xf[2]);
 		}
 	}
 
 	public double calibrateX(DiffrDataFile datafile, double value) {
-//    int datasetsNumber = datafile.getTotalNumberOfData();
-//    int banknumber = getBankNumber(datafile);
-//    updateParametertoDoubleBuffering();
-		int banknumber = getPanelNumber(datafile);
-		if (banknumber >= difa.length || banknumber < 0) {
-			System.out.println("Problem, panel number: " + banknumber + " out of range: 0 - " + difa.length);
-			return value;
-		}
-		if (difa[banknumber] == 0.0) {
-			if (difc[banknumber] != 0.0)
-				value = (value - zero[banknumber]) / difc[banknumber];
-			else
-				value = value - zero[banknumber];
-		} else
-			value = (-difc[banknumber] + Math.sqrt(difc[banknumber] * difc[banknumber] -
-					(4 * difa[banknumber] * (zero[banknumber] - value)))) / (2 * difa[banknumber]);
-		return value;
+
+		// This is only for GSAS instrument broadening functions
+
+		double flightPath = ((MultiTOFPanelCalibration) getParent()).getFlightPath();
+		double difc_part = Constants.LAMBDA_SPEED_NEUTRON_CONV_ANG * 0.5;
+
+		DataFileSet dataset = datafile.getDataFileSet();
+		double zs = dataset.getZshift();
+		double rx = dataset.getSample().getRadiusDimensionXD();
+		double ry = dataset.getSample().getRadiusDimensionYD();
+		double[] tiltingAngles = datafile.getTiltingAngle();
+		double omega = tiltingAngles[0];
+		double chi = tiltingAngles[1];
+		double detectorProper2Theta = theta + tiltingAngles[4];
+
+		if (Math.abs(omega) > 1.0E-18)
+			zs /= Math.cos((90.0 - omega) * Constants.DEGTOPI);
+		zs /= Math.cos(chi * Constants.DEGTOPI);
+		double dx = zs * Math.cos((detectorProper2Theta - 90.0) * Constants.DEGTOPI);
+		double dd = zs * Math.sin((detectorProper2Theta - 90.0) * Constants.DEGTOPI);
+
+		int i = datafile.getOriginalNearestPoint(value);
+		double x = datafile.getXDataImage(i);
+		double y = datafile.getYDataImage(i);
+		double[] xf = getThetaEtaAndDist(x, y,
+				omega, detectorProper2Theta, eta,
+				tilt_x,  rot_z,
+				center_x,  center_y,  dist,
+				dx,  dd,  rx,  zs);
+
+		double difc = difc_part / ((xf[2] + flightPath) * Math.sin(xf[0] * 0.5));
+		double angcal_d = (-difc + Math.sqrt(difc * difc - 4.0 * difa * (zero - value))) / (2.0 * difa);
+
+		return angcal_d;
 	}
 
 	public double notCalibrated(DiffrDataFile datafile, double x) {
-		int banknumber = getPanelNumber(datafile);
-		return difc[banknumber] * x + difa[banknumber] * x * x + zero[banknumber];
+		// This is only for GSAS instrument broadening functions
+
+		double flightPath = ((MultiTOFPanelCalibration) getParent()).getFlightPath();
+		double difc_part = Constants.LAMBDA_SPEED_NEUTRON_CONV_ANG * 0.5;
+		int i = datafile.getOriginalNearestPoint(x);
+		double twotheta = datafile.getTwothetaImage(i) * Constants.DEGTOPI;
+		double dist = datafile.getDistanceImage(i);
+		double difc = difc_part / ((dist + flightPath) * Math.sin(twotheta * 0.5));
+		return difc * x + difa * x * x + zero;
 	}
 
-/*	public void panelUnrolling(DiffrDataFile datafile) {
+/*	public void panelUnrolling(DiffrDataFile datafile, double detector2Theta, double detectorEta,
+	                           double detectorTiltX, double detectorRotationZ,
+	                           double centerX, double centerY, double distance) {
 
-		datafile.getIma
+//		datafile.getIma
 
 		double[] xf;
 		double angcal;
 
 		int datanumber = datafile.getTotalNumberOfData();
-		updateParametertoDoubleBuffering(false);
+//		updateParametertoDoubleBuffering(false);
 
 		DataFileSet dataset = datafile.getDataFileSet();
 		double zs = dataset.getZshift();
@@ -781,36 +317,68 @@ public class TOFPanelCalibration extends AngularCalibration {
 		double dx = zs * Math.cos((detectorProper2Theta - 90.0) * Constants.DEGTOPI);
 		double dd = zs * Math.sin((detectorProper2Theta - 90.0) * Constants.DEGTOPI);
 
-		double[][] tmat = ConvertImageToSpectra.getTransformationMatrixNew(detectorOmegaDN, detectorPhiDA,
-				detectorEtaDA, detectorProper2Theta, omega);
-//    double pangcal = -999.0;
 		for (int i = 0; i < datanumber; i++) {
 //      double value = datafile.getXDataOriginal(i);
 			double x = datafile.getXDataImage(i);
 			double y = datafile.getYDataImage(i);
+			xf = getThetaEtaAndDist(x, y,
+					omega, detectorProper2Theta, detectorEta,
+					detectorTiltX,  detectorRotationZ,
+					centerX,  centerY,  distance,
+					dx,  dd,  rx,  zs);
 
-			xf = ConvertImageToSpectra.getTransformedVectorNew(tmat, x, y, centerX + dx, centerY, detectorDistance - dd);
-			angcal = ConvertImageToSpectra.get2ThetaNew(xf) * Constants.PITODEG;
-//      if (Math.abs(pangcal - angcal) < 1E-6)
-//	      System.out.println(i + " " + angcal + " " + pangcal + " " + x + " " + y + " " + datafile.getXDataImage(i - 1) + " " + datafile.getYDataImage(i - 1));
-//	    pangcal = angcal;
-			if (rx != 0) { // || ry != 0) {
-				double xc = rx * MoreMath.sind(90.0 - angcal / 2.0);
-				double zc = rx * (1.0 - MoreMath.cosd(90.0 - angcal));
-				double dx1 = (zs - zc) * Math.cos((detectorProper2Theta - 90.0) * Constants.DEGTOPI);
-				double dd1 = (zs - zc) * Math.sin((detectorProper2Theta - 90.0) * Constants.DEGTOPI);
-				double dx2 = xc * Math.sin((detectorProper2Theta - 90.0) * Constants.DEGTOPI);
-				double dd2 = xc * Math.cos((detectorProper2Theta - 90.0) * Constants.DEGTOPI);
-				xf = ConvertImageToSpectra.getTransformedVectorNew(tmat, x, y, centerX + dx1 + dx2, centerY, detectorDistance - dd1 - dd2);
-				angcal = ConvertImageToSpectra.get2ThetaNew(xf) * Constants.PITODEG;
-			}
-
+			double difc =
+			double angcal =
 			datafile.setCalibratedXDataOnly(i, angcal);
 		}
+	}*/
+
+	public double[] getThetaEtaAndDist(double x, double y, double omega,
+	                                   double detectorProper2Theta, double detectorEta,
+	                                   double detectorTiltX, double detectorRotationZ,
+	                                   double centerX, double centerY, double distance,
+	                                   double dx, double dd, double rx, double zs) {
+
+		double[] res = new double[3];
+
+		double[][] tmat = getTmat(omega, detectorProper2Theta, detectorEta, detectorTiltX, detectorRotationZ);
+		double[] xf = ConvertImageToSpectra.getTransformedVectorNew(tmat, x, y,
+				centerX + dx, centerY, distance - dd);
+		double[] etatheta = ConvertImageToSpectra.get2ThetaEtaNew(xf); // * Constants.PITODEG;
+		res[0] = etatheta[0];  // theta, rad
+		res[1] = etatheta[1];  // eta, rad
+
+		if (rx != 0) { // || ry != 0) {
+			double angcal = ConvertImageToSpectra.get2ThetaNew(xf);
+			double xc = rx * Math.sin((Constants.PI - angcal) * 0.5);
+			double zc = rx * (1.0 - Math.cos(Constants.PI_2 - angcal));
+			double dx1 = (zs - zc) * Math.cos((detectorProper2Theta - 90.0) * Constants.DEGTOPI);
+			double dd1 = (zs - zc) * Math.sin((detectorProper2Theta - 90.0) * Constants.DEGTOPI);
+			double dx2 = xc * Math.sin((detectorProper2Theta - 90.0) * Constants.DEGTOPI);
+			double dd2 = xc * Math.cos((detectorProper2Theta - 90.0) * Constants.DEGTOPI);
+//			if (Math.abs(omega) > 1.0E-2)
+//				zs /= Math.sin(omega * Constants.DEGTOPI);
+			dd = dd1 + dd2;
+			dx = dx1 + dx2;
+			xf = ConvertImageToSpectra.getTransformedVectorNew(tmat, x, y,
+					centerX + dx, centerY, distance - dd);
+			etatheta = ConvertImageToSpectra.get2ThetaEtaNew(xf);
+			res[0] = etatheta[0];
+			res[1] = etatheta[1];
+		}
+
+		centerX += dx;
+		double dx2 = x - centerX;
+		dx2 *= dx2;
+		double dy2 = y - centerY;
+		dy2 *= dy2;
+		distance -= dd;
+		res[2] = Math.sqrt(distance * distance + dx2 + dy2);
+		return res;
 	}
-	public double[][] getTmat(double omega) {
-		return ConvertImageToSpectra.getTransformationMatrixNew(detectorOmegaDN, detectorPhiDA,
-				detectorEtaDA, detector2Theta, omega);
+	public double[][] getTmat(double omega, double detector2Theta, double detectorEta, double detectorTiltX, double detectorRotationZ) {
+		return ConvertImageToSpectra.getTransformationMatrixNew(detectorRotationZ, detectorTiltX,
+				detectorEta, detector2Theta, omega);
 	}
 
 	public double getBeamInclination(DiffrDataFile datafile, int index, double[][] tmat) {
@@ -823,22 +391,25 @@ public class TOFPanelCalibration extends AngularCalibration {
 		if (Math.abs(omega) > 1.0E-9)
 			zs /= Math.sin(omega * Constants.DEGTOPI);
 		double chi = tiltingAngles[1];
-		double detectorProper2Theta = detector2Theta + tiltingAngles[4];
+//		double thetaPoint = datafile.getTwothetaImage(index);
+		double detectorProper2Theta = theta + tiltingAngles[4];
 		zs /= Math.cos(chi * Constants.DEGTOPI);
 		double dx = zs * Math.sin((180.0 - detectorProper2Theta) * Constants.DEGTOPI);
 		double dd = zs * Math.cos((180.0 - detectorProper2Theta) * Constants.DEGTOPI);
 
 		double x = datafile.getXDataImage(index);
 		double y = datafile.getYDataImage(index);
+//		double detectorDistance = datafile.getDistanceImage(index);
+		double detectorDistance = dist;
 
-		double[] xf = ConvertImageToSpectra.getTransformedVectorNew(tmat, x, y, centerX + dx, centerY, detectorDistance - dd);
-		double[] xfc = ConvertImageToSpectra.getTransformedVectorNew(tmat, 0, 0, centerX + dx, centerY, detectorDistance - dd);
+		double[] xf = ConvertImageToSpectra.getTransformedVectorNew(tmat, x, y, center_x + dx, center_y, detectorDistance - dd);
+		double[] xfc = ConvertImageToSpectra.getTransformedVectorNew(tmat, 0, 0, center_x + dx, center_y, detectorDistance - dd);
 
 		double angle = Math.abs(MoreMath.getAngleBetweenPoints(xf, xfc));
 		angle += Constants.PI_2;
 
 		return angle;
-	}*/
+	}
 
 	public JOptionsDialog getOptionsDialog(Frame parent) {
 		JTOFPanelOptionsDialog adialog = new JTOFPanelOptionsDialog(parent, this);
@@ -847,242 +418,69 @@ public class TOFPanelCalibration extends AngularCalibration {
 
 	class JTOFPanelOptionsDialog extends JOptionsDialog {
 
-		JTextField filenameL;
-		JComboBox bankCB;
-		JTextField difcTF;
-		JTextField difaTF;
-		JTextField zeroTF;
-		JTextField tthetaTF;
-		JTextField etaTF;
-		JTextField ddistanceTF;
-		JTextField fpTF;
-
-		int selectedBank = 0;
-
+		JTextField[] textfield = null;
 		public JTOFPanelOptionsDialog(Frame parent, XRDcat obj) {
 
 			super(parent, obj);
 
-			principalPanel.setLayout(new BorderLayout(6, 6));
+			principalPanel.setLayout(new BorderLayout(3, 3));
 
-			JPanel jp2 = new JPanel();
-			jp2.setLayout(new BorderLayout(6, 6));
-			principalPanel.add(BorderLayout.NORTH, jp2);
-			JPanel jp1 = new JPanel();
-			jp1.setLayout(new FlowLayout(FlowLayout.LEFT, 1, 1));
-			jp2.add(BorderLayout.NORTH, jp1);
-			JLabel jl1 = new JLabel("Instrument Parameter File: ");
-			jp1.add(jl1);
-			jp1 = new JPanel();
-			jp1.setLayout(new FlowLayout());
-			jp2.add(BorderLayout.CENTER, jp1);
-			filenameL = new JTextField(30);
-			filenameL.setEditable(false);
-			jp1.add(filenameL);
-			JButton jb = new JIconButton("Open.gif", "Browse...");
-			jp1.add(jb);
-			jb.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent event) {
-					browsethefile();
-				}
-			});
+			JTabbedPane tabPanel = new JTabbedPane();
+			String tempString[] = {"Calibration parameters", "Data importing setting"};
+			principalPanel.add(BorderLayout.CENTER, tabPanel);
 
-			jp1 = new JPanel();
-			jp1.setLayout(new GridLayout(5, 1, 6, 6));
-			principalPanel.add(BorderLayout.CENTER, jp1);
+			JPanel firstPanel = new JPanel(new GridLayout(0, 4, 3, 3));
+			tabPanel.addTab(tempString[0], null, firstPanel);
 
-			jp2 = new JPanel();
-			jp2.setLayout(new FlowLayout(FlowLayout.RIGHT, 6, 6));
-			jp1.add(jp2);
-			jp2.add(new JLabel("Panel number: "));
-			bankCB = new JComboBox();
-			bankCB.setToolTipText("Select the panel number");
-			jp2.add(bankCB);
+			String[] textStrings = {"Difa parameter: ", "Zero parameter: ", "Bank distance:  ",
+					                  "Bank 2theta:    ", "Bank eta:       ", "Center x error: ",
+					                  "Center y error: ", "Bank tilt:      ", "Bank rotation:  "};
+			for (int i = 0; i < textStrings.length; i++)
+				addParField(firstPanel, textStrings[i], parameterField[i]);
 
-			jp2 = new JPanel();
-			jp2.setLayout(new FlowLayout(FlowLayout.RIGHT, 6, 6));
-			jp1.add(jp2);
-			JButton removeButton = new JButton("Remove panel");
-			jp2.add(removeButton);
-			removeButton.setToolTipText("Remove the selected panel");
-			removeButton.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent event) {
-					removeSelectedPanel();
-				}
-			});
+			JPanel secondPanel = new JPanel(new BorderLayout(3, 3));
+			tabPanel.addTab(tempString[1], null, secondPanel);
 
-			jp2 = new JPanel();
-			jp2.setLayout(new FlowLayout(FlowLayout.RIGHT, 6, 6));
-			jp1.add(jp2);
-			jp2.add(new JLabel("DIFC: "));
-			difcTF = new JTextField(Constants.FLOAT_FIELD);
-			jp2.add(difcTF);
+			JPanel secondPanelTop = new JPanel(new GridLayout(0, 4, 3, 3));
+			secondPanel.add(secondPanelTop, BorderLayout.CENTER);
 
-			jp2 = new JPanel();
-			jp2.setLayout(new FlowLayout(FlowLayout.RIGHT, 6, 6));
-			jp1.add(jp2);
-			jp2.add(new JLabel("DIFA: "));
-			difaTF = new JTextField(Constants.FLOAT_FIELD);
-			jp2.add(difaTF);
+			textfield = new JTextField[stringField.length];
 
-			jp2 = new JPanel();
-			jp2.setLayout(new FlowLayout(FlowLayout.RIGHT, 6, 6));
-			jp1.add(jp2);
-			jp2.add(new JLabel("ZERO: "));
-			zeroTF = new JTextField(Constants.FLOAT_FIELD);
-			jp2.add(zeroTF);
+			for (int i = 0; i < textStrings.length - 3; i++)
+				textStrings[i] = textStrings[i + 2];
+			textStrings[3] = "Center x:       ";
+			textStrings[4] = "Center y:       ";
 
-			jp2 = new JPanel();
-			jp2.setLayout(new FlowLayout(FlowLayout.RIGHT, 6, 6));
-			jp1.add(jp2);
-			jp2.add(new JLabel("TOF theta: "));
-			tthetaTF = new JTextField(Constants.FLOAT_FIELD);
-			jp2.add(tthetaTF);
+			String[] tooltipStrings = {
+					"Sample-detector distance used in the image integration, default in Maud preferences with keyword: TOFbank2D.defaultDistance",
+					"Position of the detector in 2theta during image integration; pref keyword: TOFbank2D.default2ThetaAngle",
+					"Position of the detector in eta (along diffraction circles) during image integration; pref keyword: TOFbank2D.defaultEtaAngle",
+					"X coord on the image of the center used in the image integration (where the line perpendicular to the detector plane and passing by the sample center will hit the detector virtual plane, can be outside the image); pref keyword: TOFbank2D.centerX",
+					"Y coord on the image of the center used in the image integration (where the line perpendicular to the detector plane and passing by the sample center will hit the detector virtual plane, can be outside the image); pref keyword: TOFbank2D.centerY",
+					"Tilt of the detector around its horizontal axis during image integration; pref keyword: TOFbank2D.defaultTiltAngle",
+					"Rotation of the detector around its perpendicular axis passing by the center during image integration; pref keyword: TOFbank2D.defaultRotationAngle"};
+			for (int i = 0; i < stringField.length - 1; i++)
+				addStringField(secondPanelTop, textStrings[i], tooltipStrings[i], i);
 
-			jp2 = new JPanel();
-			jp2.setLayout(new FlowLayout(FlowLayout.RIGHT, 6, 6));
-			jp1.add(jp2);
-			jp2.add(new JLabel("Eta: "));
-			etaTF = new JTextField(Constants.FLOAT_FIELD);
-			jp2.add(etaTF);
-
-			jp2 = new JPanel();
-			jp2.setLayout(new FlowLayout(FlowLayout.RIGHT, 6, 6));
-			jp1.add(jp2);
-			jp2.add(new JLabel("Detector Distance: "));
-			ddistanceTF = new JTextField(Constants.FLOAT_FIELD);
-			jp2.add(ddistanceTF);
-
-			jp2 = new JPanel();
-			jp2.setLayout(new FlowLayout(FlowLayout.RIGHT, 6, 6));
-			jp1.add(jp2);
-			jp2.add(new JLabel("Flight path: "));
-			fpTF = new JTextField(Constants.FLOAT_FIELD);
-			jp2.add(fpTF);
-
-			setTitle("TOF calibration");
+			setTitle("TOF 2D Bank calibration");
 			initParameters();
-
-			bankCB.addItemListener(new ItemListener() {
-				public void itemStateChanged(ItemEvent event) {
-					bankchanged();
-				}
-			});
-
 
 			pack();
 		}
 
-		boolean doRefreshBank = true;
-
-		public void initBankList() {
-			doRefreshBank = false;
-			if (bankCB.getItemCount() > 0)
-				bankCB.removeAllItems();
-			for (int i = 0; i < banknumbers(); i++)
-				bankCB.addItem(getPanelID(i));
-			doRefreshBank = true;
-			selectedBank = getPanelNumber();
-			bankCB.setSelectedItem(getPanelID(selectedBank));
-		}
-
-		public void initParameters() {
-			isAbilitatetoRefresh = false;
-			checkConsistency(false);
-			isAbilitatetoRefresh = true;
-			filenameL.setText(getFileName());
-			initBankList();
-			if (banknumbers() > 0)
-				initParameterFields();
-			fpTF.setText(stringField[2]);
-		}
-
-		public void initParameterFields() {
-			if (banknumbers() > 0) {
-				int bank = selectedBank;
-				if (bank >= 0) {
-					difcTF.setText(getDifc(bank).getValue());
-					addComponenttolist(difcTF, getDifc(bank));
-					difaTF.setText(getDifa(bank).getValue());
-					addComponenttolist(difaTF, getDifa(bank));
-					zeroTF.setText(getZero(bank).getValue());
-					addComponenttolist(zeroTF, getZero(bank));
-					tthetaTF.setText(getTtheta(bank).getValue());
-					addComponenttolist(tthetaTF, getTtheta(bank));
-					etaTF.setText(getEta(bank).getValue());
-					addComponenttolist(etaTF, getEta(bank));
-					ddistanceTF.setText(getDetectorDistance(bank).getValue());
-					addComponenttolist(ddistanceTF, getDetectorDistance(bank));
-				}
-			}
-		}
-
-		public void removeParameterFields() {
-			removeComponentfromlist(difcTF);
-			removeComponentfromlist(difaTF);
-			removeComponentfromlist(zeroTF);
-			removeComponentfromlist(tthetaTF);
-			removeComponentfromlist(etaTF);
-			removeComponentfromlist(ddistanceTF);
-		}
-
+		@Override
 		public void retrieveParameters() {
-			getDifc(selectedBank).setValue(difcTF.getText());
-			getDifa(selectedBank).setValue(difaTF.getText());
-			getZero(selectedBank).setValue(zeroTF.getText());
-			getTtheta(selectedBank).setValue(tthetaTF.getText());
-			getEta(selectedBank).setValue(etaTF.getText());
-			getDetectorDistance(selectedBank).setValue(ddistanceTF.getText());
-//			if (bankCB.getSelectedItem() != null)
-			stringField[2] = fpTF.getText();
+			for (int i = 0; i < stringField.length; i++)
+				stringField[i] = textfield[i].getText();
+			super.retrieveParameters();
 		}
 
-		public void browsethefile() {
-			removeParameterFields();
-			isAbilitatetoRefresh = false;
-			String filename = loadDataFile(this);
-			filenameL.setText(getFileName());
-
-			initParameterFields();
-			initBankList();
-			isAbilitatetoRefresh = true;
-		}
-
-		public void bankchanged() {
-			if (doRefreshBank && bankCB.getSelectedItem() != null) {
-				retrieveParameters();
-				removeParameterFields();
-				selectedBank = bankCB.getSelectedIndex();
-				setBank(selectedBank);
-				initParameterFields();
-			}
-		}
-
-		public void removeSelectedPanel() {
-			if (bankCB.getSelectedItem() != null) {
-				try {
-					String bankToRemove = (String) bankCB.getSelectedItem();
-					int selectedIndex = bankCB.getSelectedIndex();
-					int newIndex = selectedIndex;
-					if (newIndex < bankCB.getItemCount() - 1)
-						newIndex++;
-					else
-						newIndex--;
-					if (newIndex >= 0) {
-						bankCB.setSelectedIndex(newIndex);
-						bankchanged();
-//				 selectedBank = newIndex;
-					} else
-						removeParameterFields();
-					removePanel(bankToRemove);
-					bankCB.removeItemAt(selectedIndex);
-
-//	        setVisible(false);
-//	        dispose();
-				} catch (Exception e) {
-					e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-				}
-			}
+		public void addStringField(JPanel apanel, String label, String tooltip, int stringFieldNumber) {
+			apanel.add(new JLabel(label));
+			textfield[stringFieldNumber] = new JTextField(Constants.FLOAT_FIELD);
+			textfield[stringFieldNumber].setText(stringField[stringFieldNumber]);
+			textfield[stringFieldNumber].setToolTipText(tooltip);
+			apanel.add(textfield[stringFieldNumber]);
 		}
 
 	}
