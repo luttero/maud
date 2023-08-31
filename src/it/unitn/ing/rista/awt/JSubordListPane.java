@@ -86,7 +86,7 @@ public class JSubordListPane extends JPanel {
     buttonPanel.setLayout(new FlowLayout());
     jp1.add(BorderLayout.WEST, buttonPanel);
     jp3 = new JPanel();
-    jp3.setLayout(new GridLayout(2, 1, 3, 3));
+    jp3.setLayout(new GridLayout(0, 1, 3, 3));
     buttonPanel.add(jp3);
     jp3.add(addB = new JIconButton("Plus.gif", "add term"));
     final JRemoveButton removeB = new JRemoveButton("Minus.gif", "remove term");
@@ -97,6 +97,13 @@ public class JSubordListPane extends JPanel {
           removeB_Clicked();
       }
     });
+/*	  final JButton optionsB = new JButton("Options");
+	  jp3.add(optionsB);
+	  optionsB.addActionListener(new ActionListener() {
+		  public void actionPerformed(ActionEvent event) {
+			  optionsB_Clicked();
+		  }
+	  });*/
     jp2 = new JPanel();
     jp2.setLayout(new FlowLayout(FlowLayout.CENTER, 6, 6));
     add("Center", jp2);
@@ -306,7 +313,15 @@ public class JSubordListPane extends JPanel {
       }
   }
 
-  void thelist_ListSelect() {
+/*	void optionsB_Clicked() {
+		// open the editing panel for the object
+		if (itsparent != null && thelist != null)
+			if (thelist.getSelectedIndex() >= 0) {
+				itsparent.subordinateloopField[theindex].elementAt(thelist.getSelectedIndex()).getOptionsDialog(new Frame()).setVisible(true);
+			}
+	}*/
+
+	void thelist_ListSelect() {
     if (thelist != null) {
       retrieveparlist(selected);
       selected = thelist.getSelectedIndex();

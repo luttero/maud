@@ -44,7 +44,7 @@ import javax.swing.*;
 
 // Constants.LAMBDA_SPEED_NEUTRON_CONV_ANG
 
-public class TOFPanelCalibration extends AngularCalibration {
+public class TOFPanelCalibration extends XRDcat {
 
 	static int DIFA_ID = 0;
 	static int ZERO_ID = 1;
@@ -86,7 +86,7 @@ public class TOFPanelCalibration extends AngularCalibration {
 
 //	boolean refreshCalibration = true;
 
-	double dist = 0;
+	double dist = 120.0;
 	double difa = 0;
 	double zero = 0;
 	double theta = 0;
@@ -139,13 +139,40 @@ public class TOFPanelCalibration extends AngularCalibration {
 	public void initParameters() {
 		super.initParameters();
 
-		double ldistance = MaudPreferences.getDouble("TOFbank2D.defaultDistance", 1.0);
+		double ldistance = MaudPreferences.getDouble("TOFbank2D.defaultDistance", 120.0);
 		double ltheta2 = MaudPreferences.getDouble("TOFbank2D.default2ThetaAngle", 90.0);
 		double leta = MaudPreferences.getDouble("TOFbank2D.defaultEtaAngle", 0.0);
-		double lx = MaudPreferences.getDouble("TOFbank2D.centerX", 0.0);
-		double ly = MaudPreferences.getDouble("TOFbank2D.centerY", 0.0);
+		double lx = MaudPreferences.getDouble("TOFbank2D.centerX", 57.5);
+		double ly = MaudPreferences.getDouble("TOFbank2D.centerY", 57.5);
 		double ltilt = MaudPreferences.getDouble("TOFbank2D.defaultTiltAngle", 0.0);
 		double lrot = MaudPreferences.getDouble("TOFbank2D.defaultRotationAngle", 0.0);
+
+	   parameterField[DISTANCE_ID] = new Parameter(this, getParameterString(DISTANCE_ID), ldistance,
+				ParameterPreferences.getDouble(getParameterString(DISTANCE_ID) + ".min", 0.0),
+				ParameterPreferences.getDouble(getParameterString(DISTANCE_ID) + ".max", 10000.0));
+		parameterField[THETA_ID] = new Parameter(this, getParameterString(THETA_ID), ltheta2,
+				ParameterPreferences.getDouble(getParameterString(THETA_ID) + ".min", -180.0),
+				ParameterPreferences.getDouble(getParameterString(THETA_ID) + ".max", 180.0));
+		parameterField[ETA_ID] = new Parameter(this, getParameterString(ETA_ID), leta,
+				ParameterPreferences.getDouble(getParameterString(ETA_ID) + ".min", -180.0),
+				ParameterPreferences.getDouble(getParameterString(ETA_ID) + ".max", 180.0));
+		parameterField[CENTER_X_ID] = new Parameter(this, getParameterString(CENTER_X_ID), lx,
+				ParameterPreferences.getDouble(getParameterString(CENTER_X_ID) + ".min", 0.0),
+				ParameterPreferences.getDouble(getParameterString(CENTER_X_ID) + ".max", 1000.0));
+		parameterField[CENTER_Y_ID] = new Parameter(this, getParameterString(CENTER_Y_ID), ly,
+				ParameterPreferences.getDouble(getParameterString(CENTER_Y_ID) + ".min", 0.0),
+				ParameterPreferences.getDouble(getParameterString(CENTER_Y_ID) + ".max", 1000.0));
+		parameterField[TILT_X_ID] = new Parameter(this, getParameterString(TILT_X_ID), ltilt,
+				ParameterPreferences.getDouble(getParameterString(TILT_X_ID) + ".min", -2.0),
+				ParameterPreferences.getDouble(getParameterString(TILT_X_ID) + ".max", 2.0));
+		parameterField[ROTATION_Z_ID] = new Parameter(this, getParameterString(ROTATION_Z_ID), lrot,
+				ParameterPreferences.getDouble(getParameterString(ROTATION_Z_ID) + ".min", -5.0),
+				ParameterPreferences.getDouble(getParameterString(ROTATION_Z_ID) + ".max", 5.0));
+
+		stringField[0] = "Bank 2D X";
+		stringField[1] = parameterField[DISTANCE_ID].getValue();
+		for (int i = 2; i < Nstring; i++)
+			stringField[i] = parameterField[i + SHIFT_ID].getValue();
 
 		refreshComputation = true;
 	}
@@ -197,6 +224,10 @@ public class TOFPanelCalibration extends AngularCalibration {
 		getParameter(CENTER_Y_ID).setRefinableCheckBound();
 		return true;
 	}
+
+	public String getBankID() {
+		return stringField[0];
+	}
 	public void calibrateData(DiffrDataFile datafile) {
 	}
 
@@ -204,7 +235,7 @@ public class TOFPanelCalibration extends AngularCalibration {
 		int datanumber = datafile.getTotalNumberOfData();
 		updateParametertoDoubleBuffering(false);
 		double flightPath = ((MultiTOFPanelCalibration) getParent()).getFlightPath();
-		double difc_part = Constants.LAMBDA_SPEED_NEUTRON_CONV_ANG * 0.5;
+		double difc_part = 1.0E3 / (Constants.LAMBDA_SPEED_NEUTRON_CONV_ANG * 2.0);
 
 		DataFileSet dataset = datafile.getDataFileSet();
 		double zs = dataset.getZshift();
@@ -233,6 +264,8 @@ public class TOFPanelCalibration extends AngularCalibration {
 
 			double difc = difc_part / ((xf[2] + flightPath) * Math.sin(xf[0] * 0.5));
 			double angcal_d = (-difc + Math.sqrt(difc * difc - 4.0 * difa * (zero - value))) / (2.0 * difa);
+			if (i == datanumber/2)
+				System.out.println(difc + " " + value + " " + angcal_d);
 
 			datafile.setCalibratedXDataOnly(i, angcal_d);
 			datafile.setTwothetaImage(i, xf[0] * Constants.PITODEG);
@@ -246,7 +279,7 @@ public class TOFPanelCalibration extends AngularCalibration {
 		// This is only for GSAS instrument broadening functions
 
 		double flightPath = ((MultiTOFPanelCalibration) getParent()).getFlightPath();
-		double difc_part = Constants.LAMBDA_SPEED_NEUTRON_CONV_ANG * 0.5;
+		double difc_part = 1.0E3 / (Constants.LAMBDA_SPEED_NEUTRON_CONV_ANG * 2.0);
 
 		DataFileSet dataset = datafile.getDataFileSet();
 		double zs = dataset.getZshift();
@@ -282,7 +315,7 @@ public class TOFPanelCalibration extends AngularCalibration {
 		// This is only for GSAS instrument broadening functions
 
 		double flightPath = ((MultiTOFPanelCalibration) getParent()).getFlightPath();
-		double difc_part = Constants.LAMBDA_SPEED_NEUTRON_CONV_ANG * 0.5;
+		double difc_part = 1.0E3 / (Constants.LAMBDA_SPEED_NEUTRON_CONV_ANG * 2.0);
 		int i = datafile.getOriginalNearestPoint(x);
 		double twotheta = datafile.getTwothetaImage(i) * Constants.DEGTOPI;
 		double dist = datafile.getDistanceImage(i);
@@ -470,7 +503,7 @@ public class TOFPanelCalibration extends AngularCalibration {
 
 		@Override
 		public void retrieveParameters() {
-			for (int i = 0; i < stringField.length; i++)
+			for (int i = 0; i < stringField.length - 1; i++)
 				stringField[i] = textfield[i].getText();
 			super.retrieveParameters();
 		}

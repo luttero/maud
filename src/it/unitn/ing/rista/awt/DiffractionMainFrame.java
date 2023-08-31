@@ -244,7 +244,7 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
         true, // Wizards start here
 		  true,
         true,
-        true,
+        false,
 		true,
       true,
       true,

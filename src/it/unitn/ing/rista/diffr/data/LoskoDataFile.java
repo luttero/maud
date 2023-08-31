@@ -63,12 +63,16 @@ public class LoskoDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
 	int groupPixelsX = 8;
 	int groupPixelsY = groupPixelsX;
 
-	int pixelsNumberX = 256 / groupPixelsX;
-	int pixelsNumberY = pixelsNumberX;
+	int originalPixelsNumberX = 256;
+	int originalPixelsNumberY = originalPixelsNumberX;
+	int pixelsNumberX = originalPixelsNumberX / groupPixelsX;
+	int pixelsNumberY = originalPixelsNumberY / groupPixelsY;
 	double sensorSizeX = 115.0;
 	double sensorSizeY = sensorSizeX;
 	double pixelSizeX = sensorSizeX / pixelsNumberX;
 	double pixelSizeY = sensorSizeY / pixelsNumberY;
+
+	String loadedBankID = "";
 
 	int tofNumber = 2048;
 	double clockWidth = 100.0;
@@ -93,6 +97,9 @@ public class LoskoDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
 				x_m[ix][iy][index] += x;
 				y_m[ix][iy][index] += y;
 				tof_m[ix][iy][index] += tof;
+//				MultiTOFPanelCalibration angcal = (MultiTOFPanelCalibration) getDataFileSet().getInstrument().getAngularCalibration();
+//				int bankNumber = angcal.getBankNumber(loadedBankID);
+//				double tofCorrection = angcal.getBank(bankNumber).getTOFcorrectionForBinning(x, y, tof);
 			}
 		}
 	}
@@ -114,9 +121,29 @@ public class LoskoDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
 	}
 	public boolean readallSpectra() {
 
+		originalPixelsNumberX = MaudPreferences.getInteger("LumaCam.dataPixelsNumberX", originalPixelsNumberX);
+		originalPixelsNumberY = MaudPreferences.getInteger("LumaCam.dataPixelsNumberY", originalPixelsNumberX);;
+
+		groupPixelsX = MaudPreferences.getInteger("LumaCam.groupPixelsBy", groupPixelsX);
+		groupPixelsY = groupPixelsX;
+
+		sensorSizeX = MaudPreferences.getDouble("LumaCam.sensorSize_mm", sensorSizeX);;
+		sensorSizeY = sensorSizeX;
+		pixelsNumberX = originalPixelsNumberX / groupPixelsX;
+		pixelsNumberY = originalPixelsNumberY / groupPixelsY;
+		pixelSizeX = sensorSizeX / pixelsNumberX;
+		pixelSizeY = sensorSizeY / pixelsNumberY;
+
+		tofNumber = MaudPreferences.getInteger("LumaCam.numberTOFpoints", 2048);
+
+		double clockWidth = 100.0;
+		double minTOF = MaudPreferences.getDouble("LumaCam.minTOF", 0);
+		double maxTOF = MaudPreferences.getDouble("LumaCam.maxTOF", 7.5);
+
 		boolean loadSuccessfull = false;
 		boolean tmpB = isAbilitatetoRefresh;
 		isAbilitatetoRefresh = false;
+
 		BufferedReader reader = getReader();
 		if (reader != null) {
 			try {
@@ -126,21 +153,14 @@ public class LoskoDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
 
 				String token = new String("");
 				StringTokenizer st = null;
-				String linedata = null;
+				String linedata = reader.readLine();
 				boolean endoffile = false;
 
-				while (linedata.startsWith("X\tY\tToF"))
+				while (!linedata.startsWith("X\tY\tToF"))
 					linedata = reader.readLine();
 
 				double omega = 0.0, chi = 0.0, phi = 0.0, eta = 0.0;
 				double scale_factor = 1.0;
-
-				pixelsNumberX = 256 / groupPixelsX;
-				pixelsNumberY = pixelsNumberX;
-				sensorSizeX = 115.0;
-				sensorSizeY = sensorSizeX;
-
-				tofNumber = MaudPreferences.getInteger("LumaCam.numberTOFpoints", 2048);
 
 				counts = new int[pixelsNumberX][pixelsNumberY][tofNumber];
 				x_m = new double[pixelsNumberX][pixelsNumberY][tofNumber];
@@ -164,7 +184,7 @@ public class LoskoDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
 					if (st.hasMoreTokens()) {
 						double x = Double.parseDouble(st.nextToken());
 						double y = Double.parseDouble(st.nextToken());
-						double tof = Double.parseDouble(st.nextToken()) / clockWidth;
+						double tof = Double.parseDouble(st.nextToken()) * 1000.0 / clockWidth;
 						addToCount(x, y, tof);
 					}
 
@@ -185,22 +205,23 @@ public class LoskoDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
 							atmpB = datafile.isAbilitatetoRefresh;
 							datafile.isAbilitatetoRefresh = false;
 
+							datafile.setDataType(DIFFRACTION_IMAGE);
 							datafile.dspacingbase = true;
 							datafile.constantstep = false;
-							initData(tofNumber);
+							datafile.initData(tofNumber);
 
-							String titleString = getFromCacheFilename(index - 1);
+							String titleString = "LumaCam number " + Integer.toString(index - 1);
 							datafile.title = new String(titleString);
 
 							datafile.setAngleValue(DiffrDataFile.DATAFILE_OMEGA, omega);
 							datafile.setAngleValue(DiffrDataFile.DATAFILE_CHI, chi);
 							datafile.setAngleValue(DiffrDataFile.DATAFILE_PHI, phi);
 							datafile.setAngleValue(DiffrDataFile.DATAFILE_ETA, eta);
-							for (int i = 0; i < tofNumber; i++) {
-								datafile.setXData(i, tof_m[ix][iy][i]);
-								datafile.setYData(i, counts[ix][iy][i]);
-								datafile.setXImage(i, x_m[ix][iy][i]);
-								datafile.setYImage(i, y_m[ix][iy][i]);
+							for (int i1 = 0; i1 < tofNumber; i1++) {
+								datafile.setXData(i1, tof_m[ix][iy][i1]);
+								datafile.setYData(i1, counts[ix][iy][i1]);
+								datafile.setXImage(i1, x_m[ix][iy][i1] * pixelSizeX);
+								datafile.setYImage(i1, y_m[ix][iy][i1] * pixelSizeY);
 							}
 							String bankID = new String(GSASbankCalibration.bankPrefix + Integer.toString(bankNumber));
 							datafile.setBankID(bankID);

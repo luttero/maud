@@ -5,11 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="61caab25-241f-4ab1-85f0-b423f2950da9" name="Changes" comment="New version 5/2023&#10;Some modifications on GSASDataFile and more options for plotting types.">
-      <change afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/MultiTOFPanelCalibration.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Maud.iws" beforeDir="false" afterPath="$PROJECT_DIR$/Maud.iws" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/DiffractionMainFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/DiffractionMainFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/JSubordListPane.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/JSubordListPane.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/DiffrDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/DiffrDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/GSASbankIntCalibration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/GSASbankIntCalibration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/MultiTOFPanelCalibration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/MultiTOFPanelCalibration.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/TOFPanelCalibration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/TOFPanelCalibration.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/Constants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/TOFPanelIntensityCalibration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/TOFPanelIntensityCalibration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/LoskoDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/LoskoDataFile.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,12 +55,12 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "git-widget-placeholder": "version2",
-    "settings.editor.selected.configurable": "editor.preferences.fonts.default"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;git-widget-placeholder&quot;: &quot;version2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.fonts.default&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected="Application.MaudSpeed">
     <configuration name="MaudSpeed" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="com.radiographema.MaudText" />

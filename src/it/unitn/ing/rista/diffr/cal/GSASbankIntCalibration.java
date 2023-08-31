@@ -112,7 +112,7 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 	double[][] difc2 = null;
   int[] typeNumber = null;
 	int[] typeSplitNumber = null;
-	private ArrayList<double[]> incidentSpectrum = null;
+	protected ArrayList<double[]> incidentSpectrum = null;
 
   boolean refreshCalibration = true;
 
