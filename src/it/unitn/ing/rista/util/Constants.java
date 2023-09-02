@@ -164,7 +164,7 @@ public class Constants {
    * Avogadro's constant.
    */
   public static final double LAMBDA_SPEED_NEUTRON_CONV_REC = NEUTRON_MASS / PLANCK * 10E-9;   // in mm
-	public static final double LAMBDA_SPEED_NEUTRON_CONV_ANG = NEUTRON_MASS / PLANCK * 10E-10;   // in cm
+	public static final double LAMBDA_SPEED_NEUTRON_CONV_ANG = NEUTRON_MASS / PLANCK * 10E-5;   // in m
   /**
    * Avogadro's constant.
    */

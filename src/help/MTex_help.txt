@@ -1,0 +1,24 @@
+------------ The MTEX texture model and method -----------------
+
+MTEX is a texture package for all kind of computation and processing concerning texture.
+This plugin/model, uses the MTEX binaries by Ralf Hielscher to calculate an ODF from the
+automatically exported pole figures extracted by MAUD. After the ODF computation, the ODF
+is used to recalculate the pole figures and correct the pattern. This is done at every
+iteration cycle to progressively refine the extracted and exported pole figures and
+the next ODF. The MTEX binaries come from MTEX version 4.5.2. The version for Mac M1-2
+processor was recompiled by L. Lutterotti from the source code downloaded from the
+MTEX Github web site.
+
+If you use it, please cite one of the papers of Ralf about MTEX you can find at the
+web site below. A specific paper for this implementation is in the working.
+
+For more information about MTEX visit the web site: https://mtex-toolbox.github.io
+
+This model in MAUD would not work or exist if not for the Java package of Florian Bachmann
+that made a Java interface to MTEX that MAUD is using to run MTEX and transfert data
+back and forth between the two programs.
+Thanks also go to Daniel Savage who revise and debugged the method to made it working
+finally. The final implementation was finalised during my stay at LANSCE, Los Alamos National
+Labs. working with Sven Vogel and Daniel.
+
+From the MTEX web site: MTEX comes with binaries from the NFFT which build up the core of MTEX.

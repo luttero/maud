@@ -43,7 +43,7 @@ from the older one.
 
 Maud Version notes:
 
-(26/08/2023):   2.9993. The "MTEX" release.
+(01/09/2023):   2.9993. The "MTEX" release.
                 Finally, it was about time.
                 The MAUD interface to MTEX is working now. Thank to Florian
                 who wrote the java library for that, but also to Dan for help

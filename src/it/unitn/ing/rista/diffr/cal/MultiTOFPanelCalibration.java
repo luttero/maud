@@ -123,7 +123,7 @@ public class MultiTOFPanelCalibration extends AngularCalibration {
 			return;
 		isAbilitatetoRefresh = false;
 		int banks = banknumbers();
-		flightPath = getParameterValue(FLIGHT_PATH_ID) * 1000;
+		flightPath = getParameterValue(FLIGHT_PATH_ID);
 		isAbilitatetoRefresh = true;
 		super.updateParametertoDoubleBuffering(firstLoading);
 	}
@@ -184,6 +184,15 @@ public class MultiTOFPanelCalibration extends AngularCalibration {
 */
 	public double getFlightPath() {
 		return flightPath;
+	}
+	public double refreshAndGetFlightPath() {
+		flightPath = getParameterValue(FLIGHT_PATH_ID);
+		return flightPath;
+	}
+
+
+	public double getDetectorDistanceValue(DiffrDataFile datafile) {
+		return getBank(datafile.getAngBankNumber()).getDetectorDistanceValue();
 	}
 
 	public void setFileName(String filename) {

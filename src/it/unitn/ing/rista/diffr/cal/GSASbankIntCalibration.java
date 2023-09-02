@@ -929,7 +929,7 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 			GSASbankCalibration calib_ref = (GSASbankCalibration) dataset.getInstrument().getAngularCalibration();
 			double distDiff = calib.getDetectorDistanceValue(bank) -
 						calib_ref.getDetectorDistanceValue(bank);
-			timeCorr = 2.0 * distDiff * Constants.LAMBDA_SPEED_NEUTRON_CONV_ANG * d *
+			timeCorr = 2.0 * distDiff * Constants.LAMBDA_SPEED_NEUTRON_CONV_ANG * 0.001 * d *
 						MoreMath.sind(calib.getTtheta(bank).getValueD() * 0.5);
 //			System.out.println(bank + " " + x + " " + timeCorr + " " + distDiff + " " + d);
 		}

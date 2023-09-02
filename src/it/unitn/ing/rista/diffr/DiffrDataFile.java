@@ -593,10 +593,10 @@ public class DiffrDataFile extends XRDcat {
       out.write(CIFdictionary.loopDecl);
       out.newLine();
       if (Integer.parseInt(getDataType()) == DIFFRACTION_IMAGE) {
-        out.write("_pd_meas_position _pd_meas_position_x _pd_meas_position_y _pd_meas_intensity_total _pd_meas_intensity_sigma");
+        out.write("_pd_meas_position _pd_meas_position_x _pd_meas_position_y _pd_meas_intensity_total _pd_meas_intensity_sigma"); // _dummy_2theta _dummy_eta _dummy_distance");
         out.newLine();
         for (int ng = 0; ng < datanumber; ng++) {
-          out.write(" " + twothetaOriginal[ng] + " " + x_image[ng] + " " + y_image[ng] + " " + intensity[ng] + " " + weight[ng]);
+          out.write(" " + twothetaOriginal[ng] + " " + x_image[ng] + " " + y_image[ng] + " " + intensity[ng] + " " + weight[ng]); // + " " + twotheta_image[ng] + " " + eta_image[ng] + " " + distance_image[ng]);
           out.newLine();
         }
       } else {

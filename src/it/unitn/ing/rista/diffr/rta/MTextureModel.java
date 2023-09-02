@@ -1086,6 +1086,7 @@ public class MTextureModel extends DiscreteODFTexture {
 			lowerPanel.add(jPanel8);
 
 			setTitle("MTex options panel");
+			setHelpFilename("MTex_help.txt");
 			initParameters();
 			pack();
 		}

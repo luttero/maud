@@ -55,6 +55,8 @@ public class TOFPanelCalibration extends XRDcat {
 	static int CENTER_Y_ID = 6;
 	static int TILT_X_ID = 7;
 	static int ROTATION_Z_ID = 8;
+	static int ZOOM_X_ID = 9;
+	static int ZOOM_Y_ID = 10;
 	static int SHIFT_ID = -1;
 
 	public static String[] diclistc = {
@@ -67,7 +69,8 @@ public class TOFPanelCalibration extends XRDcat {
 			"_pd_instr_dist_spec/detc",
 			"_instrument_bank_tof_theta", "_instrument_bank_tof_eta",
 			"_instrument_bank_center_x", "_instrument_bank_center_y",
-			"_instrument_bank_tilt_x", "_instrument_bank_rot_z"
+			"_instrument_bank_tilt_x", "_instrument_bank_rot_z",
+			"_instrument_bank_zoom_factor_x", "_instrument_bank_zoom_factor_y"
 	};
 	public static String[] diclistcrm = {
 			"_instrument_bank_ID", "_bank_original_dist_spec/detc",
@@ -79,7 +82,9 @@ public class TOFPanelCalibration extends XRDcat {
 			"_pd_instr_dist_spec/detc",
 			"_instrument_bank_tof_theta", "_instrument_bank_tof_eta",
 			"_instrument_bank_center_x", "_instrument_bank_center_y",
-			"_instrument_bank_tilt_x", "_instrument_bank_rot_z"};
+			"_instrument_bank_tilt_x", "_instrument_bank_rot_z",
+			"_instrument_bank_zoom_factor_x", "_instrument_bank_zoom_factor_y"
+	};
 
 	public static String[] classlistc = {};
 	public static String[] classlistcs = {};
@@ -95,7 +100,11 @@ public class TOFPanelCalibration extends XRDcat {
 	double center_y = 0;
 	double tilt_x = 0;
 	double rot_z = 0;
-	int maxNumberCoefficient = ROTATION_Z_ID + 1;
+	double zoom_x = 1.0;
+	double zoom_y = 1.0;
+	int maxNumberCoefficient = ZOOM_Y_ID + 1;
+
+	static double DIST_CONV = 1.0E-3;
 
 //	int choosedPanelNumber = 0;
 
@@ -147,29 +156,35 @@ public class TOFPanelCalibration extends XRDcat {
 		double ltilt = MaudPreferences.getDouble("TOFbank2D.defaultTiltAngle", 0.0);
 		double lrot = MaudPreferences.getDouble("TOFbank2D.defaultRotationAngle", 0.0);
 
-	   parameterField[DISTANCE_ID] = new Parameter(this, getParameterString(DISTANCE_ID), ldistance,
+	   parameterField[DISTANCE_ID] = new Parameter(this, getParameterString(DISTANCE_ID), 120.0,
 				ParameterPreferences.getDouble(getParameterString(DISTANCE_ID) + ".min", 0.0),
 				ParameterPreferences.getDouble(getParameterString(DISTANCE_ID) + ".max", 10000.0));
-		parameterField[THETA_ID] = new Parameter(this, getParameterString(THETA_ID), ltheta2,
+		parameterField[THETA_ID] = new Parameter(this, getParameterString(THETA_ID), 90.0,
 				ParameterPreferences.getDouble(getParameterString(THETA_ID) + ".min", -180.0),
 				ParameterPreferences.getDouble(getParameterString(THETA_ID) + ".max", 180.0));
-		parameterField[ETA_ID] = new Parameter(this, getParameterString(ETA_ID), leta,
+		parameterField[ETA_ID] = new Parameter(this, getParameterString(ETA_ID), 0.0,
 				ParameterPreferences.getDouble(getParameterString(ETA_ID) + ".min", -180.0),
 				ParameterPreferences.getDouble(getParameterString(ETA_ID) + ".max", 180.0));
-		parameterField[CENTER_X_ID] = new Parameter(this, getParameterString(CENTER_X_ID), lx,
+		parameterField[CENTER_X_ID] = new Parameter(this, getParameterString(CENTER_X_ID), 57.5,
 				ParameterPreferences.getDouble(getParameterString(CENTER_X_ID) + ".min", 0.0),
 				ParameterPreferences.getDouble(getParameterString(CENTER_X_ID) + ".max", 1000.0));
-		parameterField[CENTER_Y_ID] = new Parameter(this, getParameterString(CENTER_Y_ID), ly,
+		parameterField[CENTER_Y_ID] = new Parameter(this, getParameterString(CENTER_Y_ID), 57.5,
 				ParameterPreferences.getDouble(getParameterString(CENTER_Y_ID) + ".min", 0.0),
 				ParameterPreferences.getDouble(getParameterString(CENTER_Y_ID) + ".max", 1000.0));
-		parameterField[TILT_X_ID] = new Parameter(this, getParameterString(TILT_X_ID), ltilt,
+		parameterField[TILT_X_ID] = new Parameter(this, getParameterString(TILT_X_ID), 0.0,
 				ParameterPreferences.getDouble(getParameterString(TILT_X_ID) + ".min", -2.0),
 				ParameterPreferences.getDouble(getParameterString(TILT_X_ID) + ".max", 2.0));
-		parameterField[ROTATION_Z_ID] = new Parameter(this, getParameterString(ROTATION_Z_ID), lrot,
+		parameterField[ROTATION_Z_ID] = new Parameter(this, getParameterString(ROTATION_Z_ID), 0.0,
 				ParameterPreferences.getDouble(getParameterString(ROTATION_Z_ID) + ".min", -5.0),
 				ParameterPreferences.getDouble(getParameterString(ROTATION_Z_ID) + ".max", 5.0));
+		parameterField[ZOOM_X_ID] = new Parameter(this, getParameterString(ZOOM_X_ID), 1.0,
+				ParameterPreferences.getDouble(getParameterString(ZOOM_X_ID) + ".min", 0.5),
+				ParameterPreferences.getDouble(getParameterString(ZOOM_X_ID) + ".max", 2.0));
+		parameterField[ZOOM_Y_ID] = new Parameter(this, getParameterString(ZOOM_Y_ID), 1.0,
+				ParameterPreferences.getDouble(getParameterString(ZOOM_Y_ID) + ".min", 0.5),
+				ParameterPreferences.getDouble(getParameterString(ZOOM_Y_ID) + ".max", 2.0));
 
-		stringField[0] = "Bank 2D X";
+		stringField[0] = "Bank1";
 		stringField[1] = parameterField[DISTANCE_ID].getValue();
 		for (int i = 2; i < Nstring; i++)
 			stringField[i] = parameterField[i + SHIFT_ID].getValue();
@@ -178,6 +193,8 @@ public class TOFPanelCalibration extends XRDcat {
 	}
 
 	public void updateStringtoDoubleBuffering(boolean firstLoading) {
+		if (Constants.testing)
+			DIST_CONV = MaudPreferences.getDouble("testing.conversionFlightPath", DIST_CONV);
 		super.updateStringtoDoubleBuffering(false);
 	}
 
@@ -197,12 +214,17 @@ public class TOFPanelCalibration extends XRDcat {
 		center_y = getParameterValue(CENTER_Y_ID);
 		tilt_x = getParameterValue(TILT_X_ID);
 		rot_z = getParameterValue(ROTATION_Z_ID);
+		zoom_x = getParameterValue(ZOOM_X_ID);
+		zoom_y = getParameterValue(ZOOM_Y_ID);
 
-		if (dist == 0)
-			dist = 1.0;
-		dist *= 1000.0;  // m -> mm
+//		if (dist == 0)
+//			dist = 100.0;
 
 		isAbilitatetoRefresh = true;
+	}
+
+	public double getDetectorDistanceValue() {
+		return dist;
 	}
 
 	public void notifyParameterChanged(Parameter source) {
@@ -234,8 +256,8 @@ public class TOFPanelCalibration extends XRDcat {
 	public void calibrateX(DiffrDataFile datafile) {
 		int datanumber = datafile.getTotalNumberOfData();
 		updateParametertoDoubleBuffering(false);
-		double flightPath = ((MultiTOFPanelCalibration) getParent()).getFlightPath();
-		double difc_part = 1.0E3 / (Constants.LAMBDA_SPEED_NEUTRON_CONV_ANG * 2.0);
+		double flightPath = ((MultiTOFPanelCalibration) getParent()).refreshAndGetFlightPath();
+		double difc_part = Constants.LAMBDA_SPEED_NEUTRON_CONV_ANG * 2.0;
 
 		DataFileSet dataset = datafile.getDataFileSet();
 		double zs = dataset.getZshift();
@@ -252,20 +274,30 @@ public class TOFPanelCalibration extends XRDcat {
 		double dx = zs * Math.cos((detectorProper2Theta - 90.0) * Constants.DEGTOPI);
 		double dd = zs * Math.sin((detectorProper2Theta - 90.0) * Constants.DEGTOPI);
 
+//		System.out.println("Datafile " + datafile.thelabel);
+//		System.out.println(datafile.getXDataImage(0) + " " + datafile.getYDataImage(0) + " " + datafile.getXDataOriginal(datafile.startingindex) + " " + datafile.getXDataOriginal(datafile.finalindex - 1));
 		for (int i = 0; i < datanumber; i++) {
          double value = datafile.getXDataOriginal(i);
 			double x = datafile.getXDataImage(i);
 			double y = datafile.getYDataImage(i);
-			double[] xf = getThetaEtaAndDist(x, y,
+			double[] xf = getThetaEtaAndDist(x * zoom_x, y * zoom_y,
 					omega, detectorProper2Theta, eta,
 					tilt_x,  rot_z,
-					center_x,  center_y,  dist,
+					center_x * zoom_x,  center_y * zoom_y,  dist,
 					dx,  dd,  rx,  zs);
 
-			double difc = difc_part / ((xf[2] + flightPath) * Math.sin(xf[0] * 0.5));
-			double angcal_d = (-difc + Math.sqrt(difc * difc - 4.0 * difa * (zero - value))) / (2.0 * difa);
-			if (i == datanumber/2)
-				System.out.println(difc + " " + value + " " + angcal_d);
+			double difc = difc_part * (xf[2] * DIST_CONV + flightPath) * Math.sin(xf[0] * 0.5);
+			double angcal_d = 0;
+			if (difa != 0) {
+				angcal_d = (-difc + Math.sqrt(difc * difc - 4.0 * difa * (zero - value))) / (2.0 * difa);
+			} else {
+				if (difc != 0.0)
+					angcal_d = (value - zero) / difc;
+				else
+					angcal_d = value - zero;
+			}
+//			if (angcal_d < 2.0 && angcal_d > 1.99)
+//				System.out.println(difc + " " + x + " " + y + " " + value + " " + angcal_d + " " + (difc * difc - 4.0 * difa * (zero - value)) + " " + xf[0] + " " + xf[1] + " " + xf[2] + " " + (xf[2] * DIST_CONV + flightPath));
 
 			datafile.setCalibratedXDataOnly(i, angcal_d);
 			datafile.setTwothetaImage(i, xf[0] * Constants.PITODEG);
@@ -279,7 +311,7 @@ public class TOFPanelCalibration extends XRDcat {
 		// This is only for GSAS instrument broadening functions
 
 		double flightPath = ((MultiTOFPanelCalibration) getParent()).getFlightPath();
-		double difc_part = 1.0E3 / (Constants.LAMBDA_SPEED_NEUTRON_CONV_ANG * 2.0);
+		double difc_part = Constants.LAMBDA_SPEED_NEUTRON_CONV_ANG * 2.0;
 
 		DataFileSet dataset = datafile.getDataFileSet();
 		double zs = dataset.getZshift();
@@ -299,14 +331,22 @@ public class TOFPanelCalibration extends XRDcat {
 		int i = datafile.getOriginalNearestPoint(value);
 		double x = datafile.getXDataImage(i);
 		double y = datafile.getYDataImage(i);
-		double[] xf = getThetaEtaAndDist(x, y,
+		double[] xf = getThetaEtaAndDist(x * zoom_x, y * zoom_y,
 				omega, detectorProper2Theta, eta,
 				tilt_x,  rot_z,
-				center_x,  center_y,  dist,
+				center_x * zoom_x,  center_y * zoom_y,  dist,
 				dx,  dd,  rx,  zs);
 
-		double difc = difc_part / ((xf[2] + flightPath) * Math.sin(xf[0] * 0.5));
-		double angcal_d = (-difc + Math.sqrt(difc * difc - 4.0 * difa * (zero - value))) / (2.0 * difa);
+		double difc = difc_part * (xf[2] * DIST_CONV + flightPath) * Math.sin(xf[0] * 0.5);
+		double angcal_d = 0;
+		if (difa != 0) {
+			angcal_d = (-difc + Math.sqrt(difc * difc - 4.0 * difa * (zero - value))) / (2.0 * difa);
+		} else {
+			if (difc != 0.0)
+				angcal_d = (value - zero) / difc;
+			else
+				angcal_d = value - zero;
+		}
 
 		return angcal_d;
 	}
@@ -315,11 +355,11 @@ public class TOFPanelCalibration extends XRDcat {
 		// This is only for GSAS instrument broadening functions
 
 		double flightPath = ((MultiTOFPanelCalibration) getParent()).getFlightPath();
-		double difc_part = 1.0E3 / (Constants.LAMBDA_SPEED_NEUTRON_CONV_ANG * 2.0);
+		double difc_part = Constants.LAMBDA_SPEED_NEUTRON_CONV_ANG * 2.0;
 		int i = datafile.getOriginalNearestPoint(x);
 		double twotheta = datafile.getTwothetaImage(i) * Constants.DEGTOPI;
 		double dist = datafile.getDistanceImage(i);
-		double difc = difc_part / ((dist + flightPath) * Math.sin(twotheta * 0.5));
+		double difc = difc_part * (dist * DIST_CONV + flightPath) * Math.sin(twotheta * 0.5);
 		return difc * x + difa * x * x + zero;
 	}
 
@@ -393,8 +433,8 @@ public class TOFPanelCalibration extends XRDcat {
 //				zs /= Math.sin(omega * Constants.DEGTOPI);
 			dd = dd1 + dd2;
 			dx = dx1 + dx2;
-			xf = ConvertImageToSpectra.getTransformedVectorNew(tmat, x, y,
-					centerX + dx, centerY, distance - dd);
+			xf = ConvertImageToSpectra.getTransformedVectorNew(tmat, x * zoom_x, y * zoom_y,
+					centerX * zoom_x + dx, centerY * zoom_y, distance - dd);
 			etatheta = ConvertImageToSpectra.get2ThetaEtaNew(xf);
 			res[0] = etatheta[0];
 			res[1] = etatheta[1];
@@ -435,8 +475,10 @@ public class TOFPanelCalibration extends XRDcat {
 //		double detectorDistance = datafile.getDistanceImage(index);
 		double detectorDistance = dist;
 
-		double[] xf = ConvertImageToSpectra.getTransformedVectorNew(tmat, x, y, center_x + dx, center_y, detectorDistance - dd);
-		double[] xfc = ConvertImageToSpectra.getTransformedVectorNew(tmat, 0, 0, center_x + dx, center_y, detectorDistance - dd);
+		double[] xf = ConvertImageToSpectra.getTransformedVectorNew(tmat, x * zoom_x, y * zoom_y,
+				center_x * zoom_x + dx, center_y * zoom_y, detectorDistance - dd);
+		double[] xfc = ConvertImageToSpectra.getTransformedVectorNew(tmat, 0, 0,
+				center_x * zoom_x + dx, center_y * zoom_y, detectorDistance - dd);
 
 		double angle = Math.abs(MoreMath.getAngleBetweenPoints(xf, xfc));
 		angle += Constants.PI_2;
@@ -466,8 +508,10 @@ public class TOFPanelCalibration extends XRDcat {
 			tabPanel.addTab(tempString[0], null, firstPanel);
 
 			String[] textStrings = {"Difa parameter: ", "Zero parameter: ", "Bank distance:  ",
-					                  "Bank 2theta:    ", "Bank eta:       ", "Center x error: ",
-					                  "Center y error: ", "Bank tilt:      ", "Bank rotation:  "};
+					                  "Bank 2theta:    ", "Bank eta:       ", "Center x:       ",
+					                  "Center y:       ", "Bank tilt:      ", "Bank rotation:  ",
+					                  "Zoom x:         ", "Zoom y:         "
+			};
 			for (int i = 0; i < textStrings.length; i++)
 				addParField(firstPanel, textStrings[i], parameterField[i]);
 
@@ -479,12 +523,14 @@ public class TOFPanelCalibration extends XRDcat {
 
 			textfield = new JTextField[stringField.length];
 
-			for (int i = 0; i < textStrings.length - 3; i++)
-				textStrings[i] = textStrings[i + 2];
-			textStrings[3] = "Center x:       ";
-			textStrings[4] = "Center y:       ";
+			textStrings[0] = "Bank ID:        ";
+			for (int i = 1; i < textStrings.length - 1; i++)
+				textStrings[i] = textStrings[i + 1];
+			textStrings[4] = "Center x:       ";
+			textStrings[5] = "Center y:       ";
 
 			String[] tooltipStrings = {
+					"BankID, used to identify the bank from the pattern",
 					"Sample-detector distance used in the image integration, default in Maud preferences with keyword: TOFbank2D.defaultDistance",
 					"Position of the detector in 2theta during image integration; pref keyword: TOFbank2D.default2ThetaAngle",
 					"Position of the detector in eta (along diffraction circles) during image integration; pref keyword: TOFbank2D.defaultEtaAngle",
@@ -492,7 +538,7 @@ public class TOFPanelCalibration extends XRDcat {
 					"Y coord on the image of the center used in the image integration (where the line perpendicular to the detector plane and passing by the sample center will hit the detector virtual plane, can be outside the image); pref keyword: TOFbank2D.centerY",
 					"Tilt of the detector around its horizontal axis during image integration; pref keyword: TOFbank2D.defaultTiltAngle",
 					"Rotation of the detector around its perpendicular axis passing by the center during image integration; pref keyword: TOFbank2D.defaultRotationAngle"};
-			for (int i = 0; i < stringField.length - 1; i++)
+			for (int i = 0; i < stringField.length; i++)
 				addStringField(secondPanelTop, textStrings[i], tooltipStrings[i], i);
 
 			setTitle("TOF 2D Bank calibration");
@@ -503,7 +549,7 @@ public class TOFPanelCalibration extends XRDcat {
 
 		@Override
 		public void retrieveParameters() {
-			for (int i = 0; i < stringField.length - 1; i++)
+			for (int i = 0; i < stringField.length; i++)
 				stringField[i] = textfield[i].getText();
 			super.retrieveParameters();
 		}
