@@ -142,8 +142,11 @@ public class AngularCameraCalibration extends AngularCalibration {
 
       angcal = (value + startX) * c1;
       angcal += (xs * Math.cos(angcal) + zs * Math.sin(angcal)) * c1;
+		angcal *= Constants.PITODEG;
 
-      datafile.setCalibratedXDataOnly(i, angcal * Constants.PITODEG);
+//		System.out.println(i + " " + value + " " + angcal);
+
+      datafile.setCalibratedXDataOnly(i, angcal);
     }
   }
 

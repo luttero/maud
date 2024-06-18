@@ -5,21 +5,32 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="61caab25-241f-4ab1-85f0-b423f2950da9" name="Changes" comment="New version 5/2023&#10;Some modifications on GSASDataFile and more options for plotting types.">
-      <change afterPath="$PROJECT_DIR$/src/help/MTex_help.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/help/generateSimulatedDataForAI.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/TrainArtificialIntelligentStartDialog.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sfm/ExtinctionModel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sfm/ExtinctionNoneModel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sfm/ExtinctionSabineModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Maud.ipr" beforeDir="false" afterPath="$PROJECT_DIR$/Maud.ipr" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Maud.iws" beforeDir="false" afterPath="$PROJECT_DIR$/Maud.iws" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libs/current/Files.jar" beforeDir="false" afterPath="$PROJECT_DIR$/libs/current/Files.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libs/current/Help.jar" beforeDir="false" afterPath="$PROJECT_DIR$/libs/current/Help.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.xml" beforeDir="false" afterPath="$PROJECT_DIR$/build.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/help/readme.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/help/readme.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/DataD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/DataD.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/DiffractionMainFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/DiffractionMainFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/MultiPlotFitting.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/MultiPlotFitting.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/PlotFitting.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/PlotFitting.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/SectionPlotData2D.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/SectionPlotData2D.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/refinementOptionsD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/refinementOptionsD.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/comp/MonteCarloAlgorithmRefinement.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/comp/MonteCarloAlgorithmRefinement.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/DataFileSet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/DataFileSet.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/DiffrDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/DiffrDataFile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/GSASbankIntCalibration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/GSASbankIntCalibration.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/MultiTOFPanelCalibration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/MultiTOFPanelCalibration.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/TOFPanelCalibration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/TOFPanelCalibration.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/TOFPanelIntensityCalibration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/TOFPanelIntensityCalibration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/FilePar.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/FilePar.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Sample.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Sample.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/Angular2DCurvedDetectorCalibration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/Angular2DCurvedDetectorCalibration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/AngularCameraCalibration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/AngularCameraCalibration.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/LoskoDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/LoskoDataFile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/geometry/GeometryDiffractometer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/geometry/GeometryDiffractometer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/MTextureModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/MTextureModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sfm/StructureFactorStandardModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sfm/StructureFactorStandardModel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/Constants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/function/CagliotiFunction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/function/CagliotiFunction.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,7 +61,7 @@
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="ProjectErrors" />
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 7
@@ -61,13 +72,13 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ToolWindowBuild.ShowToolbar": "false",
-    "git-widget-placeholder": "version2",
-    "settings.editor.selected.configurable": "editor.preferences.fonts.default"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ToolWindowBuild.ShowToolbar&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;version2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.sourceCode.Java&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected="Application.MaudSpeed">
     <configuration name="MaudSpeed" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="com.radiographema.MaudText" />

@@ -36,6 +36,14 @@ import java.util.Vector;
 
 
 public class StructureFactorStandardModel extends StructureFactorModel {
+
+	public static String[] diclistc = {"_rita_extinction_model_id"};
+	public static String[] diclistcrm = {"Extinction model"};
+
+	public static String[] classlistcs = {"it.unitn.ing.rista.diffr.sfm.ExtinctionModel"};
+	public static String[] classlistc = {};
+	boolean extinctionCorrection = false;
+
   //insert class definition here
 	public StructureFactorStandardModel(XRDcat aobj, String alabel) {
     super(aobj, alabel);
@@ -55,6 +63,31 @@ public class StructureFactorStandardModel extends StructureFactorModel {
     description = "select this for standard atomic structure factors";
   }
 
+	public void initConstant() {
+		Nstring = 0;
+		Nstringloop = 0;
+		Nparameter = 0;
+		Nparameterloop = 0;
+		Nsubordinate = 1;
+		Nsubordinateloop = 0;
+	}
+
+	public void initDictionary() {
+		for (int i = 0; i < totsubordinateloop; i++)
+			diclist[i] = diclistc[i];
+		System.arraycopy(diclistcrm, 0, diclistRealMeaning, 0, totsubordinateloop);
+		for (int i = 0; i < totsubordinateloop - totsubordinate; i++)
+			classlist[i] = classlistc[i];
+		for (int i = 0; i < totsubordinate - totparameterloop; i++)
+			classlists[i] = classlistcs[i];
+	}
+
+	public void initParameters() {
+		super.initParameters();
+
+		refreshComputation = true;
+	}
+
 	public void computeStructureFactors(Sample asample, DataFileSet adataset) {
 		final Phase phase = (Phase) getParent();
 		if (!phase.refreshFhklcomp)
@@ -62,7 +95,7 @@ public class StructureFactorStandardModel extends StructureFactorModel {
 		computeStructureFactors(phase, asample, adataset);
 	}
 
-  public static void computeStructureFactors(final Phase phase, Sample asample, DataFileSet adataset) {
+  public void computeStructureFactors(final Phase phase, Sample asample, DataFileSet adataset) {
 	  double structureFactor, intA = 1;
 	  final double cuttingThreshold = 0.0001;
 	  final double thermalS = phase.getThermalStrainCached();
@@ -144,6 +177,8 @@ public class StructureFactorStandardModel extends StructureFactorModel {
 //							  else
 //								  structureFactor = 1.207107;
 //								structureFactor *= volumeCorrection / thickness_corr; // we eliminate the thickness
+						  } else if (extinctionCorrection) {
+
 						  }
 						  fhkl_t[j - i1] = structureFactor;
 					  }
@@ -218,7 +253,7 @@ public class StructureFactorStandardModel extends StructureFactorModel {
 		adataset.storeComputedStructureFactors(phase, fhkl);
 	}
 
-	public static double Fhklcomp0(Phase phase, double[][] scatf) {
+	public double Fhklcomp0(Phase phase, double[][] scatf) {
 		double scatf1, scatf2;
 		double a1 = 0.0;
 		double a2 = 0.0;
@@ -245,7 +280,7 @@ public class StructureFactorStandardModel extends StructureFactorModel {
 	}
 
 
-	public static double Fhklcomp(Phase phase, Reflection refl, double[][] scatf) {
+	public double Fhklcomp(Phase phase, Reflection refl, double[][] scatf) {
 		double scatf1, scatf2;
 			double factors = refl.getStructureModifier();
 			double[] divideFactors = refl.getDivisionFactors();

@@ -333,7 +333,7 @@ public class refinementOptionsD extends myJFrame {
     minimizeCB.setSelectedItem(parameterfile.getMinimizeQuantity());
     weightsCB.setSelectedItem(parameterfile.getWeightingScheme());
     theoreticalWeightCB.setSelected(parameterfile.theoreticalWeightingScheme());
-    addStatisticalErrorCB.setSelected(parameterfile.addStatisticalError);
+    addStatisticalErrorCB.setSelected(parameterfile.useStatisticalError());
     computationAlgorithmCB.setSelectedItem(parameterfile.getOptimizationAlgorithm().identifier);
 //    Removed also from preferences
 //		Constants.speedUp = MaudPreferences.getBoolean(MaudPreferences.speedupComp);
@@ -363,7 +363,7 @@ public class refinementOptionsD extends myJFrame {
     parameterfile.setMinimizeQuantity(minimizeCB.getSelectedItem().toString());
     parameterfile.setWeightingScheme(weightsCB.getSelectedItem().toString());
     parameterfile.setTheoreticalWeightingScheme(theoreticalWeightCB.isSelected());
-    parameterfile.addStatisticalError = addStatisticalErrorCB.isSelected();
+    parameterfile.setStatisticalError(addStatisticalErrorCB.isSelected());
     boolean store = storeSpectraCB.isSelected();
     boolean oldstore = parameterfile.storeSpectraWithAnalysis();
     parameterfile.setStoreSpectraOption(store);

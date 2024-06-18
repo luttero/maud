@@ -262,7 +262,7 @@ public class SectionPlotData2D extends myJFrame {
 
 		if (filename != null) {
 
-			boolean addStatisticalError = thePlotPanel.datafile[0].getFilePar().addStatisticalError;
+			boolean addStatisticalError = thePlotPanel.datafile[0].getFilePar().useStatisticalError();
 
 			BufferedWriter output = Misc.getWriter(folder, filename);
 			try {

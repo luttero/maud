@@ -231,6 +231,7 @@ public class Angular2DCurvedDetectorCalibration extends AngularCalibration {
 						else
 							eta[index] = 90;
 					}*/
+//		System.out.println(i + " " + x + " " + y + " " + angcal);
 			angcal += theta2Error;
 			datafile.setCalibratedXDataOnly(i, angcal);
 		}

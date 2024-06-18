@@ -1,0 +1,23 @@
+This is used to generate simulated data for AI training. It uses the analysis setup to generate
+the multiple data, each data with a randomly generated set of parameters using a MonteCarlo routine.
+The procedure should be:
+- set your analysis/es as you would generate the data. Setup instrument, add at least one datafile
+that is used to determine the data range, step, coordinates.
+- if you wish to add a proper noise to the simulated data, choose Analysis->Options from the general
+menu and check the "Add error to output fitting files" option.
+- Add the phases you would like to generate the data for and specify the quantities in the sample
+editing panel.
+- Open the "Parameters list" window from the Analysis menu and specify which parameters you would
+like the program to variate randomly when generating the data. This is done by choosing refinable
+for them and setting the min and max value. This is important to impose the range to be used
+for the MC routine to generate a random set of parameters. Only the refinable parameters will
+be changed randomly. The others will stay unchanged.
+- you can generate data for a combined analysis, like generating both XRD and XRF for each different
+set of parameters.
+- Then you run this dialog, specify the number of simulations and a prefix for the file names for
+the generated data. These files containing the training data will be saved in the same directory
+as the parameter file you used, with a name starting with the prefix you specify and then adding
+the number of the simulation and a ".txt" extension.
+- Inside each simulation datafile you get the parameters (CIF keyword and value) randomly generated
+and then a loop for each spectrum generated (more if you have multiple datasets/datafiles) with
+the coordinates and intensities.

@@ -81,6 +81,8 @@ public class CagliotiFunction extends ParameterFunction {
 //		if (dspacingbase)
 //			x = Math.asin(Constants.minimumdspace / (2 * x));
     double tanx = Math.tan(x * Constants.DEGTOPI / 2.0);
+	 if (dspacingbase)
+		 tanx = x;
 
     double f = 0.0;
     for (int i = 0; i < getNumberOfParameters(); i++) {

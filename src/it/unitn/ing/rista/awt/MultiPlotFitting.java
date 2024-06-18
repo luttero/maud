@@ -783,7 +783,7 @@ public class MultiPlotFitting extends PlotFitting {
 
 		if (filename != null) {
 
-			boolean addStatisticalError = datafile[0].getFilePar().addStatisticalError;
+      boolean addStatisticalError = datafile[0].getFilePar().useStatisticalError();
 
 			BufferedWriter output = Misc.getWriter(folder, filename);
 			try {

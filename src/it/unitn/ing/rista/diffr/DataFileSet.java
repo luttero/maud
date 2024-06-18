@@ -940,7 +940,17 @@ public class DataFileSet extends XRDcat {
 		diffrDatafile.setAngleValue(angleNumber, start[angleNumber]);
 	}
 
-	private void disable(DiffrDataFile diffrDatafile) {
+  public void simulatedFileOutput(BufferedWriter output) {
+    int datafilenumber = activedatafilesnumber();
+
+    for (int i = 0; i < datafilenumber; i++) {
+      DiffrDataFile adfile = getActiveDataFile(i);
+      adfile.simulatedFileOutput(output);
+    }
+
+  }
+
+  private void disable(DiffrDataFile diffrDatafile) {
 	  diffrDatafile.setCompute(false);
   }
 

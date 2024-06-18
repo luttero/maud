@@ -43,6 +43,10 @@ from the older one.
 
 Maud Version notes:
 
+(18/06/2024):   2.9994. The "genAI" release.
+                Adding some usefull function to help generating simulated
+                data for AI training. You access them from the special menu.
+
 (01/09/2023):   2.9993. The "MTEX" release.
                 Finally, it was about time.
                 The MAUD interface to MTEX is working now. Thank to Florian

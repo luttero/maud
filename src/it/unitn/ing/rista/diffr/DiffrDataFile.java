@@ -1847,7 +1847,7 @@ public class DiffrDataFile extends XRDcat {
     if (x_image != null)
       return x_image[index];
     else
-      return 0;
+      return twotheta[index];
   }
 
   public double getYDataImage(int index) {
@@ -2044,10 +2044,10 @@ public class DiffrDataFile extends XRDcat {
   }
 
 	public void setXuncalibrated() {
-		for (int i = 0; i < numberOfData; i++) {
+/*		for (int i = 0; i < numberOfData; i++) {
 			twothetaOriginal[i] = i;
 			twotheta[i] = i;
-		}
+		}*/
 		calibrated = false;
 	}
 
@@ -2079,7 +2079,7 @@ public class DiffrDataFile extends XRDcat {
     calibrated = true;
     twothetacalibrated[index] = value;
     twothetaOriginal[index] = value;
-	  twotheta[index] = value;
+	 twotheta[index] = value;
   }
 
   public void setCalibratedXDataOnly(int index, double value) {
@@ -2908,6 +2908,57 @@ public class DiffrDataFile extends XRDcat {
       return CIFXcoordEnergy;
     else
       return CIFXcoord2T;
+  }
+
+  public void simulatedFileOutput(BufferedWriter output) {
+    double xcoorddata;
+    boolean addStatisticalError = getFilePar().useStatisticalError();
+    if (!(getComputePermission()))
+      return;
+    try {
+      output.write("_pd_block_id ");
+      if (getDataFileSet().isDiffraction())
+        output.write("XRD");
+      else
+        output.write("XRF");
+      output.newLine();
+      output.write("_pd_meas_number_of_points " + Integer.toString(finalindex - startingindex));
+      output.newLine();
+      output.write("loop_");
+      output.newLine();
+      if (Integer.parseInt(getDataType()) == DIFFRACTION_IMAGE) {
+        output.write("_pd_meas_position_x _pd_meas_position_y " + intensityCalcCIFstring);
+      } else {
+        output.write(getCIFXcoord());
+        output.newLine();
+        output.write(intensityCalcCIFstring);
+      }
+      output.newLine();
+//      MoreMath.prepareGaussianDistribution(300);
+      for (int i = startingindex; i < finalindex; i++) {
+        double intens = getFit(i);
+        if (addStatisticalError)
+          intens += MoreMath.getGaussianNoise(intens); //getIntensityRandomError(intens);
+        if (intens < 0)
+          intens = 0.0;
+        if (Integer.parseInt(getDataType()) == DIFFRACTION_IMAGE) {
+          output.write(" " + Fmt.format(this.getXDataImage(i)) + " " + Fmt.format(this.getYDataImage(i))
+              + " " + Fmt.format(intens));
+        } else {
+          xcoorddata = getXData(i);
+          output.write(" " + Fmt.format(xcoorddata) + " " + Fmt.format(intens));
+        }
+        output.newLine();
+      }
+//      MoreMath.resetGaussianDistribution();
+    } catch (IOException io) {
+      io.printStackTrace();
+    }
+    try {
+      output.flush();
+    } catch (IOException io) {
+      io.printStackTrace();
+    }
   }
 
   public void fittingFileOutput(boolean addStatisticalError, int angleMax) {

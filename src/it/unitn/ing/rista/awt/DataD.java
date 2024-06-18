@@ -205,7 +205,7 @@ public class DataD extends myJFrame {
 	  replaceCB.setToolTipText("When adding a new datafile, the old one/ones is/are removed");
 	  p3.add(replaceCB);
 
-	  omogeneousCB = new JCheckBox("Omogeneous");
+	  omogeneousCB = new JCheckBox("Homogeneous");
 	  omogeneousCB.setToolTipText("If marked, experimental background is fixed in coordinates");
 	  p3.add(omogeneousCB);
 

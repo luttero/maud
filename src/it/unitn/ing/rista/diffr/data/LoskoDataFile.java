@@ -72,6 +72,11 @@ public class LoskoDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
 	double pixelSizeX = sensorSizeX / pixelsNumberX;
 	double pixelSizeY = sensorSizeY / pixelsNumberY;
 
+	double minAcceptedX = 0;
+	double maxAcceptedX = sensorSizeX;
+	double minAcceptedY = 0;
+	double maxAcceptedY = sensorSizeY;
+
 	double totalCounts = 0;
 
 	String loadedBankID = "";
@@ -106,16 +111,20 @@ public class LoskoDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
 //			if (printThis)
 //				System.out.println("xy " + (ix * groupPixelsX) + " " + (iy * groupPixelsY) + " " + x + " " + y);
 			if (ix >= 0 && ix < pixelsNumberX && iy >= 0 && iy < pixelsNumberY) {
-				counts[ix][iy][index] = counts[ix][iy][index] + phot;
-//				x_m[ix][iy][index] = 0.5 + ix;  //  += x;
-//				y_m[ix][iy][index] = 0.5 + iy;  // += y;
-//				tof_m[ix][iy][index] = tmap[index]; //+= tof;
-				x_m[ix][iy][index] += x * phot;
-				y_m[ix][iy][index] += y * phot;
-				tof_m[ix][iy][index] += tof * phot;
+				if (counts[ix][iy][index] >= 0) {
+					if (phot < 0) {  // this is excluded area
+						for (int index1 = 0; index1 < tofNumber; index1++)
+							counts[ix][iy][index1] = -1;
+					} else {
+						counts[ix][iy][index] = counts[ix][iy][index] + phot;
+						x_m[ix][iy][index] += x * phot;
+						y_m[ix][iy][index] += y * phot;
+						tof_m[ix][iy][index] += tof * phot;
+					}
 //				MultiTOFPanelCalibration angcal = (MultiTOFPanelCalibration) getDataFileSet().getInstrument().getAngularCalibration();
 //				int bankNumber = angcal.getBankNumber(loadedBankID);
 //				double tofCorrection = angcal.getBank(bankNumber).getTOFcorrectionForBinning(x, y, tof);
+				}
 			}
 		}
 	}
@@ -128,7 +137,7 @@ public class LoskoDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
 						y_m[ix][iy][it] /= counts[ix][iy][it];
 						tof_m[ix][iy][it] /= counts[ix][iy][it];
 //						System.out.println("Ok: " + tof_m[ix][iy][it] + " " + x_m[ix][iy][it] + " " + y_m[ix][iy][it] + " " + counts[ix][iy][it]);
-					} else {
+					} else if (counts[ix][iy][it] == 0) {
 						x_m[ix][iy][it] = (0.5 + ix) * groupPixelsX;
 						y_m[ix][iy][it] = (0.5 + iy) * groupPixelsY;
 						tof_m[ix][iy][it] = tmap[it];
@@ -155,10 +164,14 @@ public class LoskoDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
 		int cutY = MaudPreferences.getInteger("LumaCam.cutYatEnd", 0);
 
 		groupPixelsX = MaudPreferences.getInteger("LumaCam.groupXPixelsBy", 8);
-		groupPixelsY = MaudPreferences.getInteger("LumaCam.groupYPixelsBy", 8);
+		groupPixelsY = MaudPreferences.getInteger("LumaCam.groupYPixelsBy", 32);
 
-		sensorSizeX = MaudPreferences.getDouble("LumaCam.sensorSizeX_mm", 134.0);
+		sensorSizeX = MaudPreferences.getDouble("LumaCam.sensorSizeX_mm", 134);
 		sensorSizeY = MaudPreferences.getDouble("LumaCam.sensorSizeY_mm", 134.0);
+		minAcceptedX = MaudPreferences.getDouble("LumaCam.minX_forAcceptance_mm", 9.5);
+		maxAcceptedX = MaudPreferences.getDouble("LumaCam.maxX_forAcceptance_mm", 124.5);
+		minAcceptedY = MaudPreferences.getDouble("LumaCam.minY_forAcceptance_mm", 9.5);
+		maxAcceptedY = MaudPreferences.getDouble("LumaCam.maxY_forAcceptance_mm", 124.5);
 		pixelsNumberX = originalPixelsNumberX / groupPixelsX;
 		pixelsNumberY = originalPixelsNumberY / groupPixelsY;
 		pixelSizeX = sensorSizeX / originalPixelsNumberX;
@@ -233,6 +246,8 @@ public class LoskoDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
 						double tof = Double.parseDouble(st.nextToken()) * 1.0E6; // / clockWidth;
 						double psd = Double.parseDouble(st.nextToken());
 						totalCounts += phot;
+						if (x < minAcceptedX || x > maxAcceptedX || y < minAcceptedY || y > maxAcceptedY)
+							phot = -phot - 999;
 						addToCount(x, y, phot, tof, psd);
 					}
 
@@ -244,44 +259,46 @@ public class LoskoDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
 					}
 				}
 				normalize();
-				System.out.println("Total number of photon detected: " + totalCounts);
+				System.out.println("Total number of events detected: " + totalCounts);
 				for (int ix = startX; ix < pixelsNumberX - cutX; ix++) {
 					for (int iy = startY; iy < pixelsNumberY - cutY; iy++) {
-						DiffrDataFile datafile = null;
-						boolean atmpB = false;
-						if (bankNumber >= 0) {
-							datafile = addDiffrDatafile(Integer.toString(index++));
-							atmpB = datafile.isAbilitatetoRefresh;
-							datafile.isAbilitatetoRefresh = false;
+						if (counts[ix][iy][0] >= 0) {
+							DiffrDataFile datafile = null;
+							boolean atmpB = false;
+							if (bankNumber >= 0) {
+								datafile = addDiffrDatafile(Integer.toString(index++));
+								atmpB = datafile.isAbilitatetoRefresh;
+								datafile.isAbilitatetoRefresh = false;
 
-							datafile.setDataType(DIFFRACTION_IMAGE);
-							datafile.dspacingbase = true;
-							datafile.constantstep = false;
-							datafile.initData(tofNumber);
+								datafile.setDataType(DIFFRACTION_IMAGE);
+								datafile.dspacingbase = true;
+								datafile.constantstep = false;
+								datafile.initData(tofNumber);
 
-							String titleString = "LumaCam number " + Integer.toString(index - 1);
-							datafile.title = new String(titleString);
+								String titleString = "LumaCam number " + Integer.toString(index - 1);
+								datafile.title = new String(titleString);
 
-							datafile.setAngleValue(DiffrDataFile.DATAFILE_OMEGA, omega);
-							datafile.setAngleValue(DiffrDataFile.DATAFILE_CHI, chi);
-							datafile.setAngleValue(DiffrDataFile.DATAFILE_PHI, phi);
-							datafile.setAngleValue(DiffrDataFile.DATAFILE_ETA, eta);
-							for (int i1 = 0; i1 < tofNumber; i1++) {
-								datafile.setXData(i1, tof_m[ix][iy][i1]);
-								datafile.setYData(i1, counts[ix][iy][i1]);
+								datafile.setAngleValue(DiffrDataFile.DATAFILE_OMEGA, omega);
+								datafile.setAngleValue(DiffrDataFile.DATAFILE_CHI, chi);
+								datafile.setAngleValue(DiffrDataFile.DATAFILE_PHI, phi);
+								datafile.setAngleValue(DiffrDataFile.DATAFILE_ETA, eta);
+								for (int i1 = 0; i1 < tofNumber; i1++) {
+									datafile.setXData(i1, tof_m[ix][iy][i1]);
+									datafile.setYData(i1, counts[ix][iy][i1]);
 
-								double x1 = x_m[ix][iy][i1] * pixelSizeX;
-								double y1 = y_m[ix][iy][i1] * pixelSizeY;
-								datafile.setXImage(i1, x1);
-								datafile.setYImage(i1, y1);
+									double x1 = x_m[ix][iy][i1] * pixelSizeX;
+									double y1 = y_m[ix][iy][i1] * pixelSizeY;
+									datafile.setXImage(i1, x1);
+									datafile.setYImage(i1, y1);
+								}
+								String bankID = new String(GSASbankCalibration.bankPrefix + Integer.toString(bankNumber));
+								datafile.setBankID(bankID);
+							} else index++;
+							if (datafile != null) {
+								loadSuccessfull = true;
+								datafile.isAbilitatetoRefresh = atmpB;
+								datafile.dataLoaded = true;
 							}
-							String bankID = new String(GSASbankCalibration.bankPrefix + Integer.toString(bankNumber));
-							datafile.setBankID(bankID);
-						} else index++;
-						if (datafile != null) {
-							loadSuccessfull = true;
-							datafile.isAbilitatetoRefresh = atmpB;
-							datafile.dataLoaded = true;
 						}
 					}
 				}

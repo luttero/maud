@@ -45,12 +45,12 @@ public class MonteCarloAlgorithmRefinement extends OptimizationAlgorithm {
   public static String[] classlistc = {};
   public static String[] classlistcs = {};
 
-  double[] defParams = null;
-  double[] bestParams = null;
-  double defWSS = 0.0;
-  double bestWSS = 0.0;
+  static double[] defParams = null;
+  static double[] bestParams = null;
+  static double defWSS = 0.0;
+  static double bestWSS = 0.0;
 
-  ec.util.MersenneTwisterFast randomizer = null;
+  public static ec.util.MersenneTwisterFast randomizer = null;
 
   public MonteCarloAlgorithmRefinement(XRDcat aobj, String alabel) {
     super(aobj, alabel);
@@ -422,8 +422,8 @@ public class MonteCarloAlgorithmRefinement extends OptimizationAlgorithm {
   double wgt[] = null;
   double fit[] = null; */
   int nprm = 0;
-  double lbound[] = null;
-  double ubound[] = null;
+  static double lbound[] = null;
+  static double ubound[] = null;
 
   void initAll(launchBasic computation) {
 
@@ -480,12 +480,11 @@ public class MonteCarloAlgorithmRefinement extends OptimizationAlgorithm {
     for (int i = 0; i < bestParams.length; i++)
       bestParams[i] = defParams[i];
 
-    int time = (int) System.currentTimeMillis();  // safe because we're getting low-order bits
-    randomizer = new ec.util.MersenneTwisterFast(time);
+	  initializeRandomGenerator();
 
   }
 
-  double randomGenerator() {
+  public static double randomGenerator() {
     double random = randomizer.nextDouble();
 //    while (random == 1.0)  // escluding 1.0
 //      random = randomizer.nextDouble();
@@ -499,10 +498,44 @@ public class MonteCarloAlgorithmRefinement extends OptimizationAlgorithm {
    * @param max
    * @return
    */
-  double randomGenerator(double min, double max) {
+  public static double randomGenerator(double min, double max) {
     return min + (max - min) * randomGenerator();
   }
 
+  public static void initializeRandomGenerator() {
+	  int time = (int) System.currentTimeMillis();  // safe because we're getting low-order bits
+	  randomizer = new ec.util.MersenneTwisterFast(time);
+  }
+
+  public static void initFor(FilePar analysis) {
+	  analysis.prepareIteration(false);
+	  analysis.computeFirstFit();
+	  analysis.getFit();
+
+	  int numberParameters = analysis.getNumberOfFreeParameters();
+		  defParams = new double[numberParameters];
+		  lbound = new double[numberParameters];
+		  ubound = new double[numberParameters];
+		  for (int i = 0; i < numberParameters; i++) {
+			  defParams[i] = analysis.getFreeParameter(i);
+			  lbound[i] = analysis.getLowerBound(i);
+			  ubound[i] = analysis.getUpperBound(i);
+		  }
+
+		  initializeRandomGenerator();
+  }
+
+  public static void generateOneRandomSolution(FilePar analysis) {
+	  int numberParameters = analysis.getNumberOfFreeParameters();
+	  double[] pars = new double[numberParameters];
+	  for (int i = 0; i < numberParameters; i++) {
+		  pars[i] = randomGenerator(lbound[i], ubound[i]);
+	  }
+	  analysis.setFreeParameters(pars);
+	  analysis.computeFirstFit();
+	  analysis.getFit();
+	  double wss = analysis.getWSS();
+  }
 
   void generateStartingSolutions() {
   }

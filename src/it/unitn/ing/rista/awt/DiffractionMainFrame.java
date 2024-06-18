@@ -23,8 +23,7 @@ package it.unitn.ing.rista.awt;
 import com.objectwave.viewUtility.TextFieldChangeListener;
 import com.radiographema.MaudText;
 import it.unitn.ing.rista.awt.treetable.*;
-import it.unitn.ing.rista.comp.OutputPanel;
-import it.unitn.ing.rista.comp.ParallelComputationController;
+import it.unitn.ing.rista.comp.*;
 import it.unitn.ing.rista.diffr.*;
 import it.unitn.ing.rista.io.COD.CODdatabaseConnector;
 import it.unitn.ing.rista.util.*;
@@ -141,11 +140,12 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
         "Plot options",
         "-",
         "Waiting for computation...",
-      MENU_SPECIAL + ":8",
+      MENU_SPECIAL + ":9",
         "Submit structure to COD",
         "Load RSS feed",
         "-",
         "Refine in batch...",
+		  "Train data for AI",
 		  "-",
 		  "mtex Dubna demo",
 		  "mtex SantaFe demo",
@@ -222,7 +222,8 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
       nullKeyEvent,
       nullKeyEvent,
       nullKeyEvent,
-      nullKeyEvent,
+		  nullKeyEvent,
+		  nullKeyEvent,
 		  nullKeyEvent,
 		  nullKeyEvent,
 		  nullKeyEvent,
@@ -297,6 +298,7 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
       true,
       true,
       true,
+		  true,
 		  true,
 		  true,
 		  true,
@@ -383,6 +385,7 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
           Constants.testing ? "Test COD HTTP connection" : null,
           //Constants.testing ? "Start refine on Xgrid" : null,
 		      "Refine in batch...",
+		      "Train data for AI",
 		      "-",
 		      "mtex Dubna demo",
 		      "mtex SantaFe demo",
@@ -1341,6 +1344,55 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
 		}).start();
 	}
 
+	void generateDataForAI(int simNumber, String filePrefix) {
+    StringBuffer fileoutput = new StringBuffer();
+    fileoutput.append(parameterfile.getDirectory()).append(Constants.fileSeparator)
+        .append(filePrefix);
+    parameterfile.prepareIterationNewModel();
+    String[] parNames =  parameterfile.getNameOfFreeParameters();
+		(new PersistentThread() {
+			public void executeJob() {
+        for (int i = 0; i < simNumber; i++) {
+          StringBuffer fileNameForOutput = new StringBuffer(fileoutput.toString());
+          fileNameForOutput.append(i).append(".txt");
+          if (( i / 10) * 10 == i)
+            System.out.println("Simulation " + i);
+          MonteCarloAlgorithmRefinement.initFor(parameterfile);
+          MonteCarloAlgorithmRefinement.generateOneRandomSolution(parameterfile);
+          saveDataForAI(parameterfile, fileNameForOutput.toString(), parNames);
+        }
+			}
+		}).start();
+	}
+
+  void saveDataForAI(FilePar analysis, String outputFile, String[] parNames) {
+    double[] parValues = analysis.getfreeParameters();
+    BufferedWriter output = Misc.getWriter("", outputFile);
+    try {
+      output.write("_maud_comment Simulated_data");
+      output.newLine();
+      for (int i = 0; i < parValues.length; i++) {
+        output.write(parNames[i] + " " + parValues[i]);
+        output.newLine();
+      }
+      analysis.simulatedFileOutput(output);
+    } catch (IOException io) {
+      io.printStackTrace();
+    }
+    try {
+      output.flush();
+      output.close();
+    } catch (IOException io) {
+      io.printStackTrace();
+    }
+  }
+
+  void openDialogForAI() {
+    TrainArtificialIntelligentStartDialog trainD = new TrainArtificialIntelligentStartDialog(
+      this);
+    trainD.setVisible(true);
+  }
+
 /*  void refineWithXgridUsingConsoleCommand() {
 //        XGridClient.connect("trial", "/usr/bin/cal", new String[]{"2005"});
     String[] filenames = {"Maud_essential.jar", "analysis.par"};
@@ -1581,11 +1633,13 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
         return;
       } else if (command.equals(mainMenuCommand[index][5])) {     // batch mode
 	      startBatchMode();
-      } else if (command.equals(mainMenuCommand[index][7])) {     // batch mode
-	      com.jtex.qta.ODFDemo.DubnaDemo();
+      } else if (command.equals(mainMenuCommand[index][6])) {     // batch mode
+	      openDialogForAI();
       } else if (command.equals(mainMenuCommand[index][8])) {     // batch mode
-	      com.jtex.qta.ODFDemo.SantaFeDemo();
+	      com.jtex.qta.ODFDemo.DubnaDemo();
       } else if (command.equals(mainMenuCommand[index][9])) {     // batch mode
+	      com.jtex.qta.ODFDemo.SantaFeDemo();
+      } else if (command.equals(mainMenuCommand[index][10])) {     // batch mode
 	      com.jtex.qta.ODFDemo.BrukerGPolDemo();
       } else if (command.equals(JPVMNetworkComputingCommand[0])) {     // Distribute computing configuration
         ParallelComputationController.configure();

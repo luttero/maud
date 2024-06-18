@@ -2046,6 +2046,20 @@ public class Sample extends Maincat {
     }
   }
 
+  public void simulatedFileOutput(BufferedWriter output) {
+    int numberdataset = activeDatasetsNumber();
+
+    for (int i = 0; i < numberdataset; i++) {
+      DataFileSet adataset = getActiveDataSet(i);
+      if (adataset != null) {
+        adataset.simulatedFileOutput(output);
+      } else
+        System.out.println("dataset not found: " + getDataSet(i));
+    }
+  }
+
+
+
   public void freeAllBackgroundParameters() {
     for (int i = 0; i < datasetsNumber(); i++) {
       DataFileSet adataset = getDataSet(i);

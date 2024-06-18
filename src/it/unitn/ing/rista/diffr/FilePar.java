@@ -63,8 +63,9 @@ public class FilePar extends XRDcat implements lFilePar, Function {
     "_riet_remove_phases_under", "_riet_refine_cell_over", "_riet_refine_sizestrain_over",
     "_riet_refine_crystal_structure_over", "_riet_refine_texture_over", "_riet_refine_strain_over",
     "_pd_proc_ls_interpolation_comp", "_maud_analysis_name", "_maud_analysis_prog_number",
-	 "_maud_store_structure_factors_with_analysis", "_maud_store_texture_factors_with_analysis",
-	 "_maud_refine_weight_no_bkg", "_maud_refine_weight_q_exp", "_maud_refine_weight_intensity_cal",
+	  "_maud_store_structure_factors_with_analysis", "_maud_store_texture_factors_with_analysis",
+	  "_maud_refine_weight_no_bkg", "_maud_refine_weight_q_exp", "_maud_refine_weight_intensity_cal",
+    "_maud_add_noise_to_simulated_int",
 
     "_computing_refinement_algorithm",
 
@@ -84,6 +85,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
     "_pd_proc_ls_interpolation_comp", "name of the analysis file", "progressive number of refinements",
 		  "_maud_store_structure_factors_with_analysis", "_maud_store_texture_factors_with_analysis",
 		  "_maud_refine_weight_no_bkg", "_maud_refine_weight_q_exp", "_maud_refine_weight_intensity_cal",
+      "_maud_add_noise_to_simulated_int",
 
     "_computing_refinement_algorithm",
 
@@ -158,7 +160,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
   double weightingSchemeQExp = 0;
   boolean useNoBkgForWeights = false;
 	public boolean intensityCalibratedForWeights = false;
-  public boolean addStatisticalError = false;
+  protected boolean addStatisticalError = false;
 
   int numberOfData = 0;
   private double parameters[];
@@ -198,6 +200,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 	public static int weightingSchemeQExpID = 33;
 	public static int intensityCalibratedForWeightID = 34;
 
+  public static int addNoiseID = 35;
 
 	public FilePar(String name) {
     super(null, name);
@@ -224,7 +227,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
   }
 
   public void initConstant() {
-    Nstring = 35;
+    Nstring = 36;
     Nstringloop = 0;
     Nparameter = 0;
     Nparameterloop = 0;
@@ -293,6 +296,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 		  stringField[saveTextureFactorsID] = "true";
 	  else
 		  stringField[saveTextureFactorsID] = "false";
+    stringField[addNoiseID] = new String("false");
     setOptimizationAlgorithm("Marqardt Least Squares");
 	  setNoBkgForWeightingScheme(false);
 	  setQexpForWeightingScheme(0.0);
@@ -529,6 +533,8 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 
 	  Constants.testIntensityModForWeighting = MaudPreferences.getBoolean("testing.useIntensityModifiedForStatistic", true);
 
+    updateStatisticalError();
+
 	  logOutput = MaudPreferences.getBoolean("log_output.saveInFile", Constants.stdoutput != Constants.NO_OUTPUT);
     phaseLimitForRemove = Double.parseDouble(stringField[phaseLimitForRemoveID]);
     phaseLimitForCellParameters = Double.parseDouble(stringField[phaseLimitForCellParametersID]);
@@ -699,6 +705,30 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 
   public boolean theoreticalWeight() {
     return theoreticalWeightingScheme;
+  }
+
+  public void setStatisticalError(boolean value) {
+    if (value)
+      stringField[addNoiseID] = "true";
+    else
+      stringField[addNoiseID] = "false";
+    updateStatisticalError();
+  }
+
+  public String getStatisticalErrorString() {
+    return stringField[addNoiseID];
+  }
+
+  protected void updateStatisticalError() {
+    if (getStatisticalErrorString().equalsIgnoreCase("true"))
+      addStatisticalError = true;
+    else
+      addStatisticalError = false;
+  }
+
+  public boolean useStatisticalError() {
+    updateStatisticalError();
+    return addStatisticalError;
   }
 
   public int samplesNumber() {
@@ -2855,6 +2885,23 @@ public class FilePar extends XRDcat implements lFilePar, Function {
     return freeParameters;
   }
 
+  public String[] getNameOfFreeParameters() {
+    // from the objects to parameters[]
+
+    int pnumber = 0;
+    int totnumberParameters = totParameterNumber();
+    String[] freeParameters = new String[getNumberOfFreeParameters()];
+
+    for (int i = 0; i < totnumberParameters; i++) {
+      Parameter apar = (Parameter) parametersV.elementAt(i);
+      if (apar.getFree() && apar.mayRefines()) {
+        freeParameters[pnumber] = apar.getLabel();
+        pnumber++;
+      }
+    }
+    return freeParameters;
+  }
+
   public int getNumberofIterations() {
     return 0; //iterationnumber;
   }
@@ -2895,6 +2942,9 @@ public class FilePar extends XRDcat implements lFilePar, Function {
   }
 
   public int prepareIteration() {
+    return prepareIteration(true);
+  }
+  public int prepareIteration(boolean someOutput) {
 
     refreshFit = true;
 
@@ -2905,7 +2955,8 @@ public class FilePar extends XRDcat implements lFilePar, Function {
     Rw = 0.0;
     R = 0.0;
 
-    System.out.println("Total number of data points: " + numberOfData);
+    if (someOutput)
+      System.out.println("Total number of data points: " + numberOfData);
 
     dta = new double[numberOfData];
     wgt = new double[numberOfData];
@@ -2914,9 +2965,11 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 
     numberOfParameters = computeParameterNumber();
 
-    System.out.println("Total number of refinable parameters: " + numberOfParameters);
+    if (someOutput)
+      System.out.println("Total number of refinable parameters: " + numberOfParameters);
 
-    System.out.println("Memory needed (for Least Squares), > " + (numberOfData * numberOfParameters * 8) + " bytes");
+    if (someOutput)
+      System.out.println("Memory needed (for Least Squares), > " + (numberOfData * numberOfParameters * 8) + " bytes");
 
     parameters = new double[numberOfParameters];
 	  parameters_multipliers = new double[numberOfParameters];
@@ -3587,6 +3640,10 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 		else
 			stringField[saveStructureFactorsID] = "false";
 	}
+
+  public void simulatedFileOutput(BufferedWriter output) {
+    getActiveSample().simulatedFileOutput(output);
+  }
 
 }
 
