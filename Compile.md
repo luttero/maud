@@ -28,15 +28,14 @@ Edit local parameters
 
 Inside the MAUD source code, there is a file called ant_maud_v2.properties: 
 - Make a copy
-- Edit this text file and set the following parameters
+- Edit this text file and set/change the following parameters
 - installerDir folder in which the MAUD installers will be saved
 - app_osx (only if you work on a Mac)
 - JAVA_HOME where is java?
 - java_version, 19 at the time of writing is the minimum
 - openjdk location of openjdk, if you want to build versions with jdk bundled
 - build where to build MAUD
-- fpsmBuild some special build feature, which I did not use
-- Save this file as .ant_maud_v2.properties in your home directory
+- Save this file as .ant_maud_v2.properties in your home directory (the dot in front is necessary)
 	
 Set-up the MAUD project in IntelliJ Idea
 
@@ -55,12 +54,12 @@ Build and compile in IntelliJ Idea
 
 All is done from the build.xml file for ant. Enable the ant view in Idea (click on the ant icon near the right border of Idea window).
 
-If you simply want to compile, try to run the compile_open section (right click on it in the Ant UI, which you get from the little ant icon).
+If you simply want to compile, try to run the compile_open section (right click on it in the Ant UI).
 
 If you want to build MAUD, try to run the build_full section.
 This will create MAUD.jar file in the folder you defined for build in .ant_maud_v2.properties.
 
 Run your MAUD version
 
-The easiest way is to download a recent MAUD version from the website, and replace MAUD.jar in the lib folder with the version you just built.
+The easiest way is to download a recent MAUD version from the website, and replace Maud.jar in the lib folder with the version you just built.
 
