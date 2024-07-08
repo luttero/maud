@@ -33,6 +33,10 @@ layout: post
 					<li>
                         {% include reference.html link="HippoWizard/hippowizard.html" content="Hippo Texture Analysis Wizard" %}
                     </li>
+					<li>
+                        {% include reference.html link="https://youtu.be/hp1mg7zXjC8" content="ICOTOM 20 recording of the tutorial on High Pressure analysis" %}
+                    </li>
+                    
                  </ul>
             </div>
         </div>

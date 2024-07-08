@@ -37,12 +37,12 @@ public class Symmetry extends Quaternion {
         String alignment;
 
         private Alignment(String s) {
-            this.alignment = s;
+            alignment = s;
         }
 
         @Override
         public String toString() {
-            return this.alignment;
+            return alignment;
         }
 
         public boolean isX() {
@@ -262,7 +262,7 @@ public class Symmetry extends Quaternion {
             case C2:
             case Cs:
             case C2h:
-                rot = Axis(b, 2);
+                rot = Axis(c, 2); // Luca, use the spacegroup for the axes
                 break;
             case D2:
             case C2v:
@@ -324,7 +324,8 @@ public class Symmetry extends Quaternion {
     }
 
     public static Array1D symmetry2Euler(Symmetry cs, Symmetry ss, boolean isSO3) {
-
+        System.out.println("SS: " + ss.toString());
+        System.out.println("CS: " + cs.toString());
         double maxalpha = (cs.rotangle_max_y() == Math.PI && ss.rotangle_max_y() == Math.PI)
                 ? Math.PI / 2 : ss.rotangle_max_z();
         double maxbeta = Math.min(cs.rotangle_max_y(), ss.rotangle_max_y()) / 2;
@@ -344,16 +345,18 @@ public class Symmetry extends Quaternion {
     }
 
     public double rotangle_max_y(boolean antipodal) {
-
         double theta = Math.PI;
         if (schoen.isLaue("-1", "-3", "4/m", "6/m", "72/m")) {
             theta = 2 * Math.PI / (antipodal ? 2 : 1);
         } /*else if (schoen.isLaue("mmm", "-3m", "4/mmm", "m-3m", "6/mmm", "m-3")) {
-         theta = Math.PI;
-         } */ else if (schoen.isLaue("2/m")) {
-            if (!antipodal) { // Luca && !get(2).axis().dot(Vec3.zvector()).isNull().any()) {
-// Luca                theta = 2 * Math.PI;
-            }
+          theta = Math.PI;
+        }*/ else if (schoen.isLaue("2/m")) {
+//          System.out.println("Get(2) " + get(2));
+//          System.out.println("get(2).axis() " + get(2).axis());
+//          System.out.println("Vec3.zvector() " + Vec3.zvector());
+//            if (!antipodal && !get(2).axis().dot(Vec3.zvector()).isNull().any()) { // Luca: removing this as it causes an error
+                theta = 2 * Math.PI;
+//            }
         }
         return theta;
 
@@ -380,8 +383,6 @@ public class Symmetry extends Quaternion {
         } else if (schoen.isLaue("-3")) {
             rho *= 2.0 / 3.0;
         } else if (schoen.isLaue("-3m")) {
-
- //           System.out.println(rho);
             rho *= 2.0 / 3.0 / (antipodal ? 2 : 1);
         } else if (schoen.isLaue("4/m", "4/mmm", "m-3m")) {
             rho /= 2.0;
@@ -461,18 +462,18 @@ public class Symmetry extends Quaternion {
     }
 
     public Symmetry(String group, boolean rotationOnly, Array1D axlength, Array1D angles, Alignment... align) {
-        this.schoen = null;
+      schoen = null;
 		  if (rotationOnly)
-			  this.schoen = PointGroup.getRotationBase(group);
+			  schoen = PointGroup.getRotationBase(group);
 		  else
-			  this.schoen = PointGroup.get(group);
+			  schoen = PointGroup.get(group);
 
-	    if (this.schoen == null) {
-            this.schoen = PointGroup.get(hms2point(group));
+	    if (schoen == null) {
+            schoen = PointGroup.get(hms2point(group));
         }
 
-        if (this.schoen == null) {
-            this.schoen = PointGroup.C1;
+        if (schoen == null) {
+            schoen = PointGroup.C1;
         }
 
         if (angles != null) {
@@ -508,14 +509,18 @@ public class Symmetry extends Quaternion {
             alignment[2] = Alignment.Z_c;
         }
 
-        this.axis = calcAxis(ax[0], ax[1], ax[2], an[0], an[1], an[2], alignment);
+        axis = calcAxis(ax[0], ax[1], ax[2], an[0], an[1], an[2], alignment);
 
-        set(calcQuat(this.schoen, this.axis));
+//        System.out.println("Init symmetry: " + schoen);
+//        System.out.println("Axis: " + axis);
+        set(calcQuat(schoen, axis));
 
+//      System.out.println("Size: " + size());
+//      System.out.println("Get(2) " + get(2));
     }
 
 	public Alignment[] getAlignment() {
-        if (this.schoen.isLaue("-1", "2/m", "-3", "-3m", "6/m", "6/mmm", "72/m", "72/mmm")) {
+        if (schoen.isLaue("-1", "2/m", "-3", "-3m", "6/m", "6/mmm", "72/m", "72/mmm")) {
             Vec3 base = Vec3.concat(basis(), basisStar()).normalize();
             double eps = 1 - 1e-5;
 
@@ -556,11 +561,11 @@ public class Symmetry extends Quaternion {
     }
 
     public boolean isLaue(String... m3) {
-        return this.schoen.isLaue(m3);
+        return schoen.isLaue(m3);
     }
 
     public Vec3 basis() {
-        return this.axis;
+        return axis;
     }
 
     public Vec3 basisStar() {
@@ -588,7 +593,7 @@ public class Symmetry extends Quaternion {
     }
 
     public PointGroup getGroup() {
-        return this.schoen;
+        return schoen;
     }
 
 }

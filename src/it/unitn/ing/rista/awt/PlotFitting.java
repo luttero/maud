@@ -804,7 +804,7 @@ public class PlotFitting extends PlotDataFile {
 			return null;
 	}
 
-	public String phaseIdentificationByFPSM() {
+/*	public String phaseIdentificationByFPSM() {
 		String results = null;
 		String filename = exportDatafileToFPSM_CIF();
 		if (filename != null && filename.length() > 4) {
@@ -832,13 +832,13 @@ public class PlotFitting extends PlotDataFile {
 			}
 //			Misc.deleteFile(filename);
 		}
-/*		try {
-			com.radiographema.fpsm.fpsm_h.fpsmSearch();
-		} catch (Exception e) {
-		}*/
+//		try {
+//			com.radiographema.fpsm.fpsm_h.fpsmSearch();
+//		} catch (Exception e) {
+//		}
 
 		return results;
-	}
+	}*/
 
 	public void exportOriginalData() {
 

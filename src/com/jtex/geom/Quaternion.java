@@ -260,6 +260,10 @@ public class Quaternion {
 
     public Quaternion get(int... ndx) {
         Quaternion q = new Quaternion();
+/*      System.out.println("a " + this.a.length);
+      System.out.println("b " + this.b.length);
+      System.out.println("c " + this.c.length);
+      System.out.println("d " + this.d.length);*/
         q.a = Array1D.get(this.a, ndx);
         q.b = Array1D.get(this.b, ndx);
         q.c = Array1D.get(this.c, ndx);
@@ -594,7 +598,7 @@ public class Quaternion {
     }
 
     public int size() {
-        return this.a.length;
+        return a.length;
     }
 
     public void print() {

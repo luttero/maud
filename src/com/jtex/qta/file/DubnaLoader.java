@@ -44,7 +44,7 @@ public class DubnaLoader implements PoleFigureLoader {
 //        plot.setColorRangeEqual(true);
         Plotter.show(plot);
         
-        ODFOptions opts = new ODFOptions(pf.getCS(), Math.toRadians(5), Math.toRadians(3.5));
+        ODFOptions opts = new ODFOptions(pf.getCS(), Math.toRadians(10), Math.toRadians(10));
         ODF odf = new ODF();
         odf = odf.estimate(pf, opts);
         
@@ -114,14 +114,17 @@ public class DubnaLoader implements PoleFigureLoader {
     
     public static PoleFigure loadExample() {
         
-        Symmetry cs = new Symmetry("-3m", false, 1.4, 1.4, 1.5);
+        Symmetry cs = new Symmetry("-3m", false, 4.9, 4.9, 5.4);
         
 //        System.out.println(cs.euler("ZXZ").toDegrees());
         String names[] = new String[]{"Q(02-21)_amp.cnv", "Q(10-10)_amp.cnv",
             "Q(10-11)(01-11)_amp.cnv", "Q(10-12)_amp.cnv",
             "Q(11-20)_amp.cnv", "Q(11-21)_amp.cnv", "Q(11-22)_amp.cnv"};
-        
-        PoleFigure pf = new PoleFigure();
+/*      String names[] = new String[]{"Q(10-10)_amp.cnv",   // Luca as in mtex
+          "Q(10-11)(01-11)_amp.cnv", "Q(11-22)_amp.cnv"};*/
+
+
+      PoleFigure pf = new PoleFigure();
         pf.setCS(cs);
         for (int i = 0; i < names.length; i++) {
             try {

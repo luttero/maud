@@ -390,12 +390,20 @@ public class MTextureModel extends DiscreteODFTexture {
 
 		int LGIndex = SpaceGroups.getLGNumber(getPhase().getPointGroup());
 
+/*    double gamma = aphase.getFullCellValue(5);
+    if (gamma < 120.001 && gamma > 119.999)
+      gamma = 60.0;*/
 		String symmetry = SpaceGroups.rotationGroupMTEX[LGIndex];
-		cs = new Symmetry(symmetry, true , aphase.getFullCellValue(0), aphase.getFullCellValue(1), aphase.getFullCellValue(2),
+		cs = new Symmetry(symmetry, false , aphase.getFullCellValue(0), aphase.getFullCellValue(1), aphase.getFullCellValue(2),
 				aphase.getFullCellValue(3) * Constants.DEGTOPI, aphase.getFullCellValue(4) * Constants.DEGTOPI,
-				aphase.getFullCellValue(5) * Constants.DEGTOPI);
+        aphase.getFullCellValue(5) * Constants.DEGTOPI);
 
-//		System.out.println("Checking crystal symmetry in MTEX: " + cs.getGroup().toString());
+/*		System.out.println("Cell parameters: ");
+    for (int i = 0; i < 6; i++)
+      System.out.print(aphase.getFullCellValue(i) + " ");
+    System.out.println();
+    System.out.println("Checking crystal symmetry in MTEX: " + cs.getGroup().toString());
+*/
 
 		pf = new com.jtex.qta.PoleFigure();
 		pf.setCS(cs);
@@ -460,6 +468,7 @@ public class MTextureModel extends DiscreteODFTexture {
 					ps.setCS(cs);
 					ps.setSS(ss);
 					pf.add(ps);
+        System.out.println("Add pole figure: " + ps.toString());
 					pf_number++;
 //				}
 			}
@@ -768,7 +777,7 @@ public class MTextureModel extends DiscreteODFTexture {
 		int LGIndex = SpaceGroups.getLGNumber(getPhase().getPointGroup());
 
 		String symmetry = SpaceGroups.rotationGroupMTEX[LGIndex];
-		Symmetry cs = new Symmetry(symmetry, true, aphase.getFullCellValue(0), aphase.getFullCellValue(1), aphase.getFullCellValue(2),
+		Symmetry cs = new Symmetry(symmetry, false, aphase.getFullCellValue(0), aphase.getFullCellValue(1), aphase.getFullCellValue(2),
 				aphase.getFullCellValue(3) * Constants.DEGTOPI, aphase.getFullCellValue(4) * Constants.DEGTOPI,
 				aphase.getFullCellValue(5) * Constants.DEGTOPI);
 		Symmetry ss = getMTexSampleSymmetry();
@@ -867,7 +876,7 @@ public class MTextureModel extends DiscreteODFTexture {
 		int LGIndex = SpaceGroups.getLGNumber(getPhase().getPointGroup());
 
 		String symmetry = it.unitn.ing.rista.util.SpaceGroups.rotationGroupMTEX[LGIndex];
-		Symmetry cs = new Symmetry(symmetry, true, aphase.getFullCellValue(0), aphase.getFullCellValue(1), aphase.getFullCellValue(2),
+		Symmetry cs = new Symmetry(symmetry, false, aphase.getFullCellValue(0), aphase.getFullCellValue(1), aphase.getFullCellValue(2),
 				aphase.getFullCellValue(3) * Constants.DEGTOPI, aphase.getFullCellValue(4) * Constants.DEGTOPI,
 				aphase.getFullCellValue(5) * Constants.DEGTOPI);
 

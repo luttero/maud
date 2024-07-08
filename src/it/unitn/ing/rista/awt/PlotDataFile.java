@@ -28,7 +28,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.lang.foreign.MemorySession;
+//import java.lang.foreign.MemorySession;
 
 /**
  * The PlotDataFile is a class
@@ -216,7 +216,7 @@ public class PlotDataFile extends GraphFrame {
 		  }
 	  });
 
-	  toolsMenu.add(menuitem = new JMenuItem("Run FPSM on data"));
+/*	  toolsMenu.add(menuitem = new JMenuItem("Run FPSM on data"));
 	  menuitem.addActionListener(new ActionListener() {
 		  public void actionPerformed(ActionEvent e) {
 			  String result = phaseIdentificationByFPSM();
@@ -224,7 +224,7 @@ public class PlotDataFile extends GraphFrame {
 				  System.out.println(result);
 			  }
 		  }
-	  });
+	  });*/
 
 	  toolsMenu.add(menuitem = new JMenuItem("Export experimental data"));
     menuitem.addActionListener(new ActionListener() {
@@ -315,7 +315,7 @@ public class PlotDataFile extends GraphFrame {
 		return null;
 	}
 
-	public String phaseIdentificationByFPSM() {
+/*	public String phaseIdentificationByFPSM() {
 		String results = null;
 		String filename = exportOriginalDataFPSM();
 		if (filename != null && filename.length() > 4) {
@@ -337,13 +337,13 @@ public class PlotDataFile extends GraphFrame {
 				}
 			}
 		}
-/*		try {
-			com.radiographema.fpsm.fpsm_h.fpsmSearch();
-		} catch (Exception e) {
-		}*/
+//		try {
+//			com.radiographema.fpsm.fpsm_h.fpsmSearch();
+//		} catch (Exception e) {
+//		}
 
 		return results;
-	}
+	}*/
 
 	public void exportOriginalData() {
 /*
