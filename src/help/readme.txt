@@ -43,6 +43,14 @@ from the older one.
 
 Maud Version notes:
 
+(10/07/2024):   2.9995. The "Green cut" release.
+                Added onr Java example on how to run a customizable Maud
+                process to load an analysis, set the data and run a
+                background subtraction. Inside the commented lines there is
+                also how to do some wizard analyses. Everything without
+                the interface, can be used to write a custom process with
+                Maud. You find it in com.radiographema.tools.
+
 (18/06/2024):   2.9994. The "genAI" release.
                 Adding some usefull function to help generating simulated
                 data for AI training. You access them from the special menu.

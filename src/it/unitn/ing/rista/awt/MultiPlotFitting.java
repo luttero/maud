@@ -763,7 +763,48 @@ public class MultiPlotFitting extends PlotFitting {
 		}
 	}
 
-	public void exportComputedData() {
+  public void exportForCalibrationData() {
+
+    if (thePlotPanel.datafile == null || thePlotPanel.datafile[0] == null)
+      return;
+
+    String filename = Utility.openFileDialog(this, "Save as ...",
+        FileDialog.SAVE, thePlotPanel.datafile[0].getFilePar().getDirectory(), null, "put a name.txt");
+    if (filename == null)
+      return;
+
+    String[] folderAndName = Misc.getFolderandName(filename);
+    String folder = folderAndName[0];
+    filename = folderAndName[1];
+
+    if (filename != null) {
+      BufferedWriter output = Misc.getWriter(folder, filename);
+      try {
+        double total = 0.0;
+        int starting = datafile[0].startingindex;
+        int ending = datafile[0].finalindex;
+        double[] intens = new double[ending - starting];
+
+        for (int dtaf = 0; dtaf < datafile.length; dtaf++) {
+          for (int i = starting; i != ending; i ++) {
+            intens[i - starting] = datafile[dtaf].getYData(i);
+            total += intens[i - starting];
+          }
+        }
+        for (int i = starting; i != ending; i ++) {
+          output.write(Fmt.format(intens[i - starting] / total));
+          output.newLine();
+        }
+      } catch (IOException io) {
+      }
+      try {
+        output.close();
+      } catch (IOException io) {
+      }
+    }
+  }
+
+  public void exportComputedData() {
 
 		if (datafile == null || datafile.length <= 0) {
 			return;

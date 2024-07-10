@@ -534,7 +534,7 @@ public class MonteCarloAlgorithmRefinement extends OptimizationAlgorithm {
 	  analysis.setFreeParameters(pars);
 	  analysis.computeFirstFit();
 	  analysis.getFit();
-	  double wss = analysis.getWSS();
+//	  double wss = analysis.getWSS();
   }
 
   void generateStartingSolutions() {

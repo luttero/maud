@@ -278,7 +278,7 @@ public class LoskoDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
 								String titleString = "LumaCam number " + Integer.toString(index - 1);
 								datafile.title = new String(titleString);
 
-								datafile.setAngleValue(DiffrDataFile.DATAFILE_OMEGA, omega);
+								datafile.setAngleValue(DATAFILE_OMEGA, omega);
 								datafile.setAngleValue(DiffrDataFile.DATAFILE_CHI, chi);
 								datafile.setAngleValue(DiffrDataFile.DATAFILE_PHI, phi);
 								datafile.setAngleValue(DiffrDataFile.DATAFILE_ETA, eta);

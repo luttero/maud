@@ -313,12 +313,12 @@ public class DataFileSet extends XRDcat {
 
 	  boolean refreshBackgroundInterpolation = false;
 
-	  if (interpolatedPoints != Integer.valueOf(getInterpolatedPoints())) {
-	    interpolatedPoints = Integer.valueOf(getInterpolatedPoints());
+	  if (interpolatedPoints != Integer.parseInt(getInterpolatedPoints())) {
+	    interpolatedPoints = Integer.parseInt(getInterpolatedPoints());
 	    refreshBackgroundInterpolation = true;
     }
-	  if (interpolationIterations != Integer.valueOf(getInterpolationIterations())) {
-		  interpolationIterations = Integer.valueOf(getInterpolationIterations());
+	  if (interpolationIterations != Integer.parseInt(getInterpolationIterations())) {
+		  interpolationIterations = Integer.parseInt(getInterpolationIterations());
 		  refreshBackgroundInterpolation = true;
 	  }
 	  if (refreshBackgroundInterpolation) {
@@ -445,7 +445,7 @@ public class DataFileSet extends XRDcat {
 		return dataToExport;
 	}
 
-	public void updateDataForPlot() {
+  public void updateDataForPlot() {
 
 		dataForPlot = null;
 		datafitForPlot = null;
@@ -1639,20 +1639,20 @@ public class DataFileSet extends XRDcat {
 	      meanAngles[ib] = 0;
       boolean energyDispersive = false;
 
-      for (int i = 0; i < ylength; i++) {
-          if (datafiles[i].energyDispersive)
-	          energyDispersive = true;
-          double[] tilt = datafiles[i].getTiltingAngle();
+      for (DiffrDataFile datafile : datafiles) {
+        if (datafile.energyDispersive)
+          energyDispersive = true;
+        double[] tilt = datafile.getTiltingAngle();
 //          if (i == 0) firstTilt = tilt;
-          for (int ib = 0; ib < DiffrDataFile.maxAngleNumber; ib++)
-	          meanAngles[ib] += tilt[ib] / ylength;
+        for (int ib = 0; ib < DiffrDataFile.maxAngleNumber; ib++)
+          meanAngles[ib] += tilt[ib] / ylength;
       }
 
 
       if (energyDispersive)
       	output.write("_pd_meas_scan_method disp");
 	    output.newLine();
-      output.write("_pd_meas_number_of_points " + Integer.toString(dataToExport[0].length));
+      output.write("_pd_meas_number_of_points " + dataToExport[0].length);
       output.newLine();
 /*      if (tmpdatafile.originalNotCalibrated) {
         output.write("_riet_meas_datafile_calibrated false");
@@ -1682,11 +1682,13 @@ public class DataFileSet extends XRDcat {
         output.newLine();
       }
     } catch (Exception io) {
+      io.printStackTrace();
     }
     try {
       output.flush();
       output.close();
     } catch (IOException io) {
+      io.printStackTrace();
     }
   }
 
@@ -1719,7 +1721,7 @@ public class DataFileSet extends XRDcat {
 			tmpdatafile = (DiffrDataFile) datafiles.elementAt(i);
 			datafileOrdered.add(tmpdatafile);
 		}
-		Collections.sort(datafileOrdered, new AngleComparator(selectedIndex));
+		datafileOrdered.sort(new AngleComparator(selectedIndex));
 
 		Vector<Vector<DiffrDataFile>> datafileTable = new Vector<>();
 		double startingAngle = datafileOrdered.elementAt(0).getTiltingAngle()[selectedIndex];

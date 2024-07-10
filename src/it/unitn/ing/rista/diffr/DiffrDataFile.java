@@ -46,14 +46,14 @@ import static java.lang.System.*;
  * @since JDK1.1
  */
 
-
 public class DiffrDataFile extends XRDcat {
 
-	public static String pd_meas_scan_method = "_pd_meas_scan_method";
+  public static String pd_meas_scan_method = "_pd_meas_scan_method";
 	public static String pd_meas_scan_range_min = "_pd_meas_2theta_range_min";
 	public static String pd_meas_scan_range_max = "_pd_meas_2theta_range_max";
 	public static String pd_meas_scan_range_inc = "_pd_meas_2theta_range_inc";
 	public static String pd_meas_counts_total = "_pd_meas_counts_total";
+
 
 	public static int DATAFILE_OMEGA = 0;
 	public static int DATAFILE_CHI = 1;
@@ -299,16 +299,6 @@ public class DiffrDataFile extends XRDcat {
 		initDatafile(alabel);
   }
 
-/*	public DiffrDataFile(XRDcat aobj, String alabel, boolean fromFile) {
-		super(aobj, alabel);
-		setParent(aobj);
-		initXRD();
-		if (fromFile)
-			initDatafile(alabel);
-		else
-			dataLoaded = true;
-	}*/
-
 	public DiffrDataFile(XRDcat aobj) {
     this(aobj, "Datafile_x");
   }
@@ -336,8 +326,6 @@ public class DiffrDataFile extends XRDcat {
 //    System.out.println("Path to file: " + folder+thelabel);
 		if (!getFilePar().isLoadingFile() || !getFilePar().storeSpectraWithAnalysis())
 			dataLoaded = loadData();
-//    else
-//    readLater = true;
 	}
 
   @Override
@@ -388,15 +376,10 @@ public class DiffrDataFile extends XRDcat {
   public void setParent(XRDcat obj) {
     super.setParent(obj);
     theDataFileSet = (DataFileSet) obj;
-//		System.out.println("Object :" + this);
-//		System.out.println("Class :" + this.getClass());
-//		System.out.println("Parent :" + getParent());
-//		System.out.println("Setting :" + theDataFileSet);
   }
 
   public boolean loadData() {
     int indexFile = MultDiffrDataFile.isInCache(thelabel);
-//		System.out.println("In cache :" + thelabel);
     return indexFile >= 0 || readallSpectra(getDataFileSet().askForRange);
 
   }
@@ -410,8 +393,6 @@ public class DiffrDataFile extends XRDcat {
   }
 
   public String getNameRelativeToPar() {
-//	  System.out.println("Directory: " + getDirectory());
-//	  System.out.println("Folder: " + getFolder());
     StringBuffer filenamewithPath = new StringBuffer(Misc.getRelativePath(getDirectory(), getFolder()));
     filenamewithPath.append(toXRDcatString());
     return filenamewithPath.toString();
@@ -420,7 +401,6 @@ public class DiffrDataFile extends XRDcat {
   public boolean readallSpectra(boolean askForRange) {
 	  boolean oldPermission = Constants.refreshTreePermitted;
 	  Constants.refreshTreePermitted = false;
-//	  System.out.println("Reading data: " + getFolder() + toXRDcatString() + " " + identifier);
     boolean result = readallSpectra();
 	  Constants.refreshTreePermitted = oldPermission;
 	  return result;
@@ -456,6 +436,7 @@ public class DiffrDataFile extends XRDcat {
 //	  System.out.println("Init datafile: " + toString() + " " + startingindex + " " + finalindex);
   }
 
+/*
   private boolean hardRangeCut(int min, int max) {
 // actually with calibration there is a problem, and we have to avoid it
 // so we are disabling the hard range cut
@@ -470,6 +451,7 @@ public class DiffrDataFile extends XRDcat {
     return true;
   }
 
+*/
   public void realRangeCut(int min, int max) {
     checkPhaseFitVector();
     datanumber = max - min;
@@ -687,7 +669,7 @@ public class DiffrDataFile extends XRDcat {
 
   @Override
   public void readCustomObject(CIFtoken ciffile) {
-    // to be override by subclasses
+    // to be overrided by subclasses
     // the default read and do nothing
     if (ciffile.thestring.indexOf("intensity_data") > 0) {
       int tokentype;
@@ -988,38 +970,6 @@ public class DiffrDataFile extends XRDcat {
   public Parameter getThetaDisplacement(int index) {
     return (Parameter) getThetaDisplacementList().elementAt(index);
   }
-
-  public void add2ThetaDisplacementParameter() {
-    addparameterloopField(0, new Parameter(this, getParameterString(0, getthetaoffsetnumber() - 1), 0,
-        -0.1, 0.1, false, 0.01));
-  }
-
-/*	public void notifyParameterChanged(Parameter source) {
-		FilePar filepar = getFilePar();
-		if ((filepar != null && !filepar.isLoadingFile()) && isAbilitatetoRefresh) {
-			for (int j = 0; j < numberofelementPL(0); j++) {
-				Parameter apar = (Parameter) parameterloopField[0].elementAt(j);
-				if (apar == source) {
-					notifyParameterChanged(source, Constants.BKG_PARAMETER_CHANGED);
-					return;
-				}
-			}
-			for (int i = 1; i < Nparameterloop; i++) {
-				for (int j = 0; j < numberofelementPL(i); j++) {
-					Parameter apar = (Parameter) parameterloopField[i].elementAt(j);
-					if (apar == source) {
-						notifyParameterChanged(source, Constants.PARAMETER_CHANGED);
-						return;
-					}
-				}
-			}
-			if (getAsBackgroundPermission() && parameterField[0] == source) {
-				notifyParameterChanged(source, Constants.BKG_FILE_CHANGED);
-				return;
-			}
-			super.notifyParameterChanged(source);
-		}
-	}*/
 
 @Override
   public void notifyParameterChanged(Parameter source) {

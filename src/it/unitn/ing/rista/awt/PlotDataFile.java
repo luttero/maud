@@ -247,6 +247,13 @@ public class PlotDataFile extends GraphFrame {
       }
     });
 
+    toolsMenu.add(menuitem = new JMenuItem("Export for calibration"));
+    menuitem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        exportForCalibrationData();
+      }
+    });
+
     toolsMenu.add(menuitem = new JMenuItem("Edit interpolated background points"));
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -400,6 +407,8 @@ public class PlotDataFile extends GraphFrame {
       }
     }*/
   }
+
+  public void exportForCalibrationData() {}
 
   public void exportComputedData() {
 

@@ -1359,33 +1359,11 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
             System.out.println("Simulation " + i);
           MonteCarloAlgorithmRefinement.initFor(parameterfile);
           MonteCarloAlgorithmRefinement.generateOneRandomSolution(parameterfile);
-          saveDataForAI(parameterfile, fileNameForOutput.toString(), parNames);
+          parameterfile.saveDataForAI(fileNameForOutput.toString(), parNames);
         }
 			}
 		}).start();
 	}
-
-  void saveDataForAI(FilePar analysis, String outputFile, String[] parNames) {
-    double[] parValues = analysis.getfreeParameters();
-    BufferedWriter output = Misc.getWriter("", outputFile);
-    try {
-      output.write("_maud_comment Simulated_data");
-      output.newLine();
-      for (int i = 0; i < parValues.length; i++) {
-        output.write(parNames[i] + " " + parValues[i]);
-        output.newLine();
-      }
-      analysis.simulatedFileOutput(output);
-    } catch (IOException io) {
-      io.printStackTrace();
-    }
-    try {
-      output.flush();
-      output.close();
-    } catch (IOException io) {
-      io.printStackTrace();
-    }
-  }
 
   void openDialogForAI() {
     TrainArtificialIntelligentStartDialog trainD = new TrainArtificialIntelligentStartDialog(

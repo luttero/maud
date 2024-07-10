@@ -897,7 +897,49 @@ public class PlotFitting extends PlotDataFile {
     }
   }
 
-	public void exportComputedPDF(double[] r, double[] gr) {
+  public void exportForCalibrationData() {
+
+    if (thePlotPanel.datafile == null || thePlotPanel.datafile[0] == null)
+      return;
+
+    String filename = Utility.openFileDialog(this, "Save as ...",
+        FileDialog.SAVE, thePlotPanel.datafile[0].getFilePar().getDirectory(), null, "put a name.txt");
+    if (filename == null)
+      return;
+
+    String[] folderAndName = Misc.getFolderandName(filename);
+
+    String folder = folderAndName[0];
+    filename = folderAndName[1];
+
+    if (filename != null) {
+
+      boolean from_Plot = MaudPreferences.getBoolean("exportData.useXcoordinateFromPlot", false);
+      int mode = checkScaleModeX();
+      if (!from_Plot)
+        mode = 0;
+      double[][] dataToExport = DataFileSet.getSummedExperimentalComputedData(thePlotPanel.datafile, mode);
+      // normalize
+      double total = 0.0;
+      for (int i = 0; i < dataToExport[1].length; i++)
+        total += dataToExport[1][i];
+
+      BufferedWriter output = Misc.getWriter(folder, filename);
+      try {
+        for (int i = 0; i < dataToExport.length; i++) {
+          output.write(Fmt.format(dataToExport[1][i] / total));
+          output.newLine();
+        }
+      } catch (IOException io) {
+      }
+      try {
+        output.close();
+      } catch (IOException io) {
+      }
+    }
+  }
+
+  public void exportComputedPDF(double[] r, double[] gr) {
 
 		if (thePlotPanel.datafile == null || thePlotPanel.datafile[0] == null)
 			return;

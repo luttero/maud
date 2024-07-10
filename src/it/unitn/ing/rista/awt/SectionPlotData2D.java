@@ -179,7 +179,14 @@ public class SectionPlotData2D extends myJFrame {
 			}
 		});
 
-		return toolsMenu;
+    toolsMenu.add(menuitem = new JMenuItem("Export for calibration"));
+    menuitem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        exportForCalibrationData();
+      }
+    });
+
+    return toolsMenu;
 	}
 
 	public void exportOriginalData() {
@@ -242,7 +249,52 @@ public class SectionPlotData2D extends myJFrame {
 		}
 	}
 
-	public void exportComputedData() {
+  public void exportForCalibrationData() {
+    if (thePlotPanel.datafile == null || thePlotPanel.datafile[0] == null)
+      return;
+
+    String filename = Utility.openFileDialog(this, "Save as ...",
+        FileDialog.SAVE, thePlotPanel.datafile[0].getFilePar().getDirectory(), null, "put a name.txt");
+    if (filename == null)
+      return;
+
+    String[] folderAndName = Misc.getFolderandName(filename);
+    String folder = folderAndName[0];
+    filename = folderAndName[1];
+
+    if (filename != null) {
+
+      BufferedWriter output = Misc.getWriter(folder, filename);
+      try {
+        int nPoints = thePlotPanel.datafile[0].computeDataNumber();
+        int starting = thePlotPanel.datafile[0].startingindex;
+        int ending = thePlotPanel.datafile[0].finalindex;
+        int step = 1;
+        if (thePlotPanel.datafile[0].getXData(ending - 1) < thePlotPanel.datafile[0].getXData(starting)) {
+          starting = thePlotPanel.datafile[0].finalindex - 1;
+          ending = thePlotPanel.datafile[0].startingindex - 1;
+          step = -1;
+        }
+        double total = 0.0;
+        double[] intens = new double[ending - starting];
+        for (int i = starting; i != ending; i+=step) {
+          intens[i - starting] = thePlotPanel.datafile[0].getYData(i);
+          total += intens[i - starting];
+        }
+        for (int i = starting; i != ending; i+=step) {
+           output.write(Fmt.format(intens[i - starting] / total));
+          output.newLine();
+        }
+      } catch (IOException io) {
+      }
+      try {
+        output.close();
+      } catch (IOException io) {
+      }
+    }
+  }
+
+  public void exportComputedData() {
 
 		if (thePlotPanel.datafile == null || thePlotPanel.datafile[0] == null)
 			return;

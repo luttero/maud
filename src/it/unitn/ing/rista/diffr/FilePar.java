@@ -3645,5 +3645,31 @@ public class FilePar extends XRDcat implements lFilePar, Function {
     getActiveSample().simulatedFileOutput(output);
   }
 
+  public void saveDataForAI(String outputFile, String[] parNames) {
+    double[] parValues = getfreeParameters();
+    BufferedWriter output = Misc.getWriter("", outputFile);
+    try {
+      output.write("_maud_comment Simulated_data");
+      output.newLine();
+      if (parNames != null) {
+        for (int i = 0; i < parValues.length; i++) {
+          output.write(parNames[i] + " " + parValues[i]);
+          output.newLine();
+        }
+      }
+      simulatedFileOutput(output);
+    } catch (IOException io) {
+      io.printStackTrace();
+    }
+    try {
+      output.flush();
+      output.close();
+    } catch (IOException io) {
+      io.printStackTrace();
+    }
+  }
+
+
+
 }
 
