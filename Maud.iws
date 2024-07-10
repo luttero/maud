@@ -4,24 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="61caab25-241f-4ab1-85f0-b423f2950da9" name="Changes" comment="Fix to post on the website">
-      <change beforePath="$PROJECT_DIR$/Maud.iws" beforeDir="false" afterPath="$PROJECT_DIR$/Maud.iws" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.xml" beforeDir="false" afterPath="$PROJECT_DIR$/build.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/jtex/geom/Quaternion.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/jtex/geom/Quaternion.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/help/readme.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/help/readme.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/DiffractionMainFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/DiffractionMainFrame.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/MultiPlotFitting.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/MultiPlotFitting.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/PlotDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/PlotDataFile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/PlotFitting.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/PlotFitting.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/SectionPlotData2D.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/SectionPlotData2D.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/comp/MonteCarloAlgorithmRefinement.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/comp/MonteCarloAlgorithmRefinement.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/DataFileSet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/DataFileSet.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/DiffrDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/DiffrDataFile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/FilePar.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/FilePar.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/IntensityFileCalibration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/IntensityFileCalibration.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/LoskoDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/LoskoDataFile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/Constants.java" afterDir="false" />
-    </list>
+    <list default="true" id="61caab25-241f-4ab1-85f0-b423f2950da9" name="Changes" comment="Fix to post on the website" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
