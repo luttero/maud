@@ -762,7 +762,10 @@ public class GeneticAlgorithmIndexing implements Function {
   public void refreshFit(double[] fit, double[] parm, int[] controls) {
   }
 
-  public IndexingOptionsDialog startDialog(Frame parentFrame) {
+  public void showWarnings() {
+  }
+
+    public IndexingOptionsDialog startDialog(Frame parentFrame) {
     return new IndexingOptionsDialog(parentFrame, "Indexing algorithm options", false, this);
   }
 

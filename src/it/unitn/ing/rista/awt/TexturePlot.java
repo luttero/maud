@@ -37,9 +37,9 @@ import javax.media.opengl.awt.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
 import java.util.Vector;
 import java.util.StringTokenizer;
-import java.io.BufferedReader;
 
 /**
  * Display a TexturePlot window to manage pole figure and coverage plotting.
@@ -339,19 +339,12 @@ public class TexturePlot extends myJFrame {
 
       }
     });
-    optionsMenu.add(menuitem = new JMenuItem("Load Pole Figures file....."));
-    menuitem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        loadingPFs();
-      }
-    });
-    optionsMenu.add(menuitem = new JMenuItem("Plot radial distribution....."));
-    menuitem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        radialPF();
-      }
-    });
-
+    optionsMenu.add(menuitem = new JMenuItem("Load Pole Figures file..."));
+    menuitem.addActionListener(e -> loadingPFs());
+    optionsMenu.add(menuitem = new JMenuItem("Export Pole Figures file..."));
+    menuitem.addActionListener(e -> exportPFs());
+    optionsMenu.add(menuitem = new JMenuItem("Plot radial distribution..."));
+    menuitem.addActionListener(e -> radialPF());
 
     return optionsMenu;
   }
@@ -424,6 +417,173 @@ public class TexturePlot extends myJFrame {
     }
   }
 
+  private class PoleFigureData {
+    int[] hkl = new int[3];
+    int PFsNumber = 0;
+    double[] alpha;
+    double[] beta;
+    double[] density;
+
+    PoleFigureData(int h, int k, int l, double[][] alphabeta, double[] values) {
+      hkl[0] = h;
+      hkl[1] = k;
+      hkl[2] = l;
+      PFsNumber = values.length;
+      alpha = new double[PFsNumber];
+      beta = new double[PFsNumber];
+      density = new double[PFsNumber];
+      for (int i = 0; i < PFsNumber; i++) {
+        alpha[i] = alphabeta[0][i];
+        beta[i] = alphabeta[1][i];
+        density[i] = values[i];
+      }
+    }
+    PoleFigureData(int h, int k, int l, double[][] values) {
+      hkl[0] = h;
+      hkl[1] = k;
+      hkl[2] = l;
+      PFsNumber = values[0].length;
+      alpha = new double[PFsNumber];
+      beta = new double[PFsNumber];
+      density = new double[PFsNumber];
+      for (int i = 0; i < PFsNumber; i++) {
+        alpha[i] = values[0][i];
+        beta[i] = values[1][i];
+        density[i] = values[2][i];
+      }
+    }
+  }
+  public void exportPFs() {
+    if (thephase == null || thesample == null)
+      return;
+    String filename = Utility.openFileDialog(this, "Specify PF file (Juelich format, no extension)", FileDialog.SAVE,
+        MaudPreferences.getPref(FilePar.analysisPath, Constants.documentsDirectory),
+        "", FilePar.analysisPath);
+    if (filename != null) {
+      boolean twoDmap = plotTypeRB[0].isSelected();
+      boolean coverage = plotWhatRB[0].isSelected();
+      boolean reconstructed = plotWhatRB[1].isSelected();
+      boolean experimental = plotWhatRB[2].isSelected();
+      boolean inverse = plotWhatRB[3].isSelected();
+      boolean absorptionCorrection = plotWhatRB[4].isSelected();
+      boolean reconstructedStrain = plotWhatRB[5].isSelected();
+      boolean experimentalStrain = plotWhatRB[6].isSelected();
+      lastResolution = Math.abs(Integer.valueOf(pointsTF.getText()).intValue());
+      MaudPreferences.setPref(gridResString, Integer.toString(lastResolution));
+      zoom = Math.abs(Double.parseDouble(zoomTF.getText()));
+      filterWidth = Math.abs(Double.valueOf(smoothTF.getText()).doubleValue());
+      MaudPreferences.setPref(zoomString, Double.toString(zoom));
+      MaudPreferences.setPref("texturePlot.gaussFilterWidth", Double.toString(filterWidth));
+      String maxAngleS = maxAngleTF.getText();
+      double maxAngle = Double.valueOf(maxAngleS).doubleValue();
+      maxAngle = Constants.sqrt2 * Math.sin(maxAngle * Constants.DEGTOPI / 2.0);
+      MaudPreferences.setPref(maxAngleString, maxAngleS);
+      boolean logScale = logScaleCB.isSelected();
+      String logValue = "false";
+      if (logScale)
+        logValue = "true";
+      MaudPreferences.setPref(logTexturePlotString, logValue);
+
+      int hklnumbersel = hkltable.getSelectedRow();
+      if (hklnumbersel < 0)
+        hklnumbersel = 0;
+      final int hklnumber = hklnumbersel;
+
+      boolean pfList = reconstructed || experimental;
+      Reflection[] poleList = null;
+      if (pfList) {
+        int numPoles = thephase.gethklNumber();
+        Vector list = new Vector(0, 1);
+        for (int i = 0; i < numPoles; i++) {
+          Reflection refl = thephase.getReflex(i);
+          if (refl.poleFigurePlot)
+            list.addElement(refl);
+        }
+        int selPoles = list.size();
+        if (selPoles == 0) {
+          poleList = new Reflection[1];
+          poleList[0] = thephase.getReflex(hklnumbersel);
+        } else {
+          poleList = new Reflection[selPoles];
+          for (int i = 0; i < selPoles; i++)
+            poleList[i] = (Reflection) list.elementAt(i);
+          list.removeAllElements();
+        }
+        Vector<PoleFigureData> poleFiguresToSave = new Vector<>(poleList.length);
+        if (reconstructed) {
+          int points = lastResolution / 2;
+          double res = 180 / (lastResolution - 1);
+          double[][] alphabeta = new double[2][(points * 4 + 1) * (points + 1)];
+          int index = 0;
+          for (int i = 0; i <= points; i++) {
+            for (int j = 0; j <= points * 4; j++) {
+              alphabeta[0][index] = i * res;
+              alphabeta[1][index++] = j * res;
+            }
+          }
+          for (Reflection refl: poleList) {
+            Phase aphase = refl.getParent();
+            Texture texturemodel = aphase.getActiveTexture();
+            double[] value = null;
+            if (texturemodel != null) {
+              value = texturemodel.computeTextureFactor(alphabeta, refl);
+              PoleFigureData pfd = new PoleFigureData(refl.getH(), refl.getK(), refl.getL(), alphabeta, value);
+              poleFiguresToSave.add(pfd);
+            }
+          }
+        } else if (experimental) {
+          for (Reflection refl: poleList) {
+            double value[][] = refl.getExpPoleFigureGrid();
+            PoleFigureData pfd = new PoleFigureData(refl.getH(), refl.getK(), refl.getL(), value);
+            poleFiguresToSave.add(pfd);
+          }
+        }
+        savePoleFigures(filename, poleFiguresToSave);
+      }
+    }
+  }
+
+  public void savePoleFigures(String filename, Vector<PoleFigureData> poleFiguresToSave) {
+    BufferedWriter output = null;
+    for (PoleFigureData pfdata:poleFiguresToSave) {
+      StringBuffer sb = new StringBuffer(filename);
+//      sb = sb.append("_");
+
+      sb.append("_").append(pfdata.hkl[0]).append("_").append(pfdata.hkl[1])
+          .append("_").append(pfdata.hkl[2]).append(".jul"); // Juelich format
+      try {
+        output = Misc.getWriter(sb.toString());
+        output.write("Pole figure of -> " + pfdata.hkl[0] + " " + pfdata.hkl[1] + " " + pfdata.hkl[2]);
+        output.newLine();
+        output.write("     alpha      beta intensity");
+        output.newLine();
+        for (int i = 0; i < pfdata.PFsNumber; i++) {
+          while (pfdata.alpha[i] > 90) {
+            pfdata.alpha[i] -= 90;
+            pfdata.beta[i] += 180;
+          }
+          while (pfdata.alpha[i] < 0) {
+            pfdata.alpha[i] += 90;
+            pfdata.beta[i] += 180;
+          }
+          while (pfdata.alpha[i] > 360)
+            pfdata.beta[i] -= 360;
+          while (pfdata.beta[i] < 0)
+            pfdata.beta[i] += 360;
+          output.write(pfdata.alpha[i] + " " + pfdata.beta[i] + " " + pfdata.density[i]);
+          output.newLine();
+        }
+      } catch (IOException io) {
+        io.printStackTrace();
+      }
+      try {
+        output.flush();
+        output.close();
+      } catch (IOException io) {
+        io.printStackTrace();
+      }
+    }
+  }
   public static Vector poleFigureInput(String filename, Sample thesample) {
     int[] numberOfPFPoint;
     double[][][] textureAngles;

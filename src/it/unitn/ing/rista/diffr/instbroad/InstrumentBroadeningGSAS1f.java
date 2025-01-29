@@ -301,20 +301,21 @@ public class InstrumentBroadeningGSAS1f extends InstrumentBroadening {
     stringloopField[0].addItem(value);
   }
 
-  public int getBankNumber(String bankID) {
-    for (int i = 0; i < banknumbers(); i++)
-      if (getBankID(i).equalsIgnoreCase(bankID))
-        return i;
-	  return 0;
-  }
-
   public void printBank() {
     for (int i = 0; i < banknumbers(); i++)
       System.out.println(getBankID(i));
   }
 
   public int getBankNumber(DiffrDataFile datafile) {
-	  return datafile.getBankNumber();
+	  return datafile.getBroadBankNumber();
+  }
+
+  public int getBankNumber(String bankID) {
+    for (int i = 0; i < banknumbers(); i++) {
+      if (getBankID(i).equalsIgnoreCase(bankID))
+        return i;
+    }
+    return 0;
   }
 
   public void addType(String value) {
@@ -564,7 +565,7 @@ public class InstrumentBroadeningGSAS1f extends InstrumentBroadening {
 
     double total_asymmetrymin = getInstrumentalAsymmetry(diffrDataFile.getXData(min), diffrDataFile);
     total_asymmetrymin = Math.abs(total_asymmetrymin);
-    double total_asymmetrymax = getInstrumentalAsymmetry(diffrDataFile.getXData(max), diffrDataFile);
+    double total_asymmetrymax = getInstrumentalAsymmetry(diffrDataFile.getXData(max - 1), diffrDataFile);
     total_asymmetrymax = Math.abs(total_asymmetrymax);
 //    System.out.println(total_asymmetrymax + " " + total_asymmetrymin);
     if (Math.min(total_asymmetrymax, total_asymmetrymin) < 1 && max > min) {
@@ -614,7 +615,7 @@ public class InstrumentBroadeningGSAS1f extends InstrumentBroadening {
 
     total_asymmetrymin = getSecondInstrumentalAsymmetry(diffrDataFile.getXData(min), diffrDataFile);
     total_asymmetrymin = Math.abs(total_asymmetrymin);
-    total_asymmetrymax = getSecondInstrumentalAsymmetry(diffrDataFile.getXData(max), diffrDataFile);
+    total_asymmetrymax = getSecondInstrumentalAsymmetry(diffrDataFile.getXData(max - 1), diffrDataFile);
     total_asymmetrymax = Math.abs(total_asymmetrymax);
 //    System.out.println("alpha " + total_asymmetrymax + " " + total_asymmetrymin);
     if (Math.min(total_asymmetrymax, total_asymmetrymin) < 1) {

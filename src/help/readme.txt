@@ -43,8 +43,16 @@ from the older one.
 
 Maud Version notes:
 
+(28/01/2025):   2.9996. The "F 650 GS" release.
+                Fixed and running from a while! This version should have
+                been released in September 2024.
+                Fixed a bug in the GSAS instrumental broadening not working
+                if a multibank incident intensity model was not used.
+                Refined the multibeams models for electrons dynamical
+                diffraction approximation.
+
 (10/07/2024):   2.9995. The "Green cut" release.
-                Added onr Java example on how to run a customizable Maud
+                Added one Java example on how to run a customizable Maud
                 process to load an analysis, set the data and run a
                 background subtraction. Inside the commented lines there is
                 also how to do some wizard analyses. Everything without
@@ -52,7 +60,7 @@ Maud Version notes:
                 Maud. You find it in com.radiographema.tools.
 
 (18/06/2024):   2.9994. The "genAI" release.
-                Adding some usefull function to help generating simulated
+                Adding some useful function to help generating simulated
                 data for AI training. You access them from the special menu.
 
 (01/09/2023):   2.9993. The "MTEX" release.

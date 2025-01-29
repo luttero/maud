@@ -21,6 +21,7 @@
 package it.unitn.ing.rista.interfaces;
 
 import it.unitn.ing.rista.comp.OptimizationAlgorithm;
+import it.unitn.ing.rista.comp.OutputPanel;
 
 import java.io.OutputStream;
 
@@ -104,6 +105,8 @@ public interface Function extends SimpleFunction {
   public OutputStream getResultStream();
 
   public void endOfComputation();
+
+  public void showWarnings();
 
   public boolean logOutput();
 

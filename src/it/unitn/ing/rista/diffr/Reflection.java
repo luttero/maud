@@ -557,10 +557,10 @@ public class Reflection {
 			  if (dataFile.isInsideRange(position)) {
 				  double expTextureFactor = dataFile.getExperimentalTextureFactors(aphase, index)[0][0];
 					if (!Double.isNaN(expTextureFactor)) {
-				  double[] texture_angles = dataFile.getTextureAngles(position);
-				  expTFAndAngles[0][numberOfGoodPoints] = texture_angles[0];
-				  expTFAndAngles[1][numberOfGoodPoints] = texture_angles[1] + 90.0;
-				  expTFAndAngles[2][numberOfGoodPoints++] = expTextureFactor;
+            double[] texture_angles = dataFile.getTextureAngles(position);
+            expTFAndAngles[0][numberOfGoodPoints] = texture_angles[0];
+            expTFAndAngles[1][numberOfGoodPoints] = texture_angles[1] + 90.0;
+            expTFAndAngles[2][numberOfGoodPoints++] = expTextureFactor;
 					}
 			  }
 		  }

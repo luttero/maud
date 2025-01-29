@@ -462,13 +462,13 @@ public class ParameterTreeTableFrame extends myJFrame {
 			System.out.println("Nothing selected in the three path!");
 	}
 	
-	public Vector<basicObj> getAllChildren(basicObj obj, String toSearch, boolean refinable) {
+	public Vector<basicObj> getAllChildren(basicObj obj, String toSearch, boolean refinableOnly) {
 		Vector<basicObj> allObjs = new Vector<basicObj>();
-		basicObj[] children = obj.getChildren(toSearch, refinable);
+		basicObj[] children = obj.getChildren(toSearch, refinableOnly);
 		for (int i = 0; i < children.length; i++) {
 			allObjs.add(children[i]);
 			if (!(children[i] instanceof Parameter))
-				allObjs.addAll(getAllChildren(children[i], toSearch, refinable));
+				allObjs.addAll(getAllChildren(children[i], toSearch, refinableOnly));
 		}
 		return allObjs;
 	}

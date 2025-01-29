@@ -349,13 +349,13 @@ public class ExpHarmonicTextureGPU extends HarmonicTexture {
 //		checkComputation(refl, 10.0 ,55.0);
   }
 
-  public double[] computeTextureFactor(Phase aphase, double[][] alphabeta, Reflection reflex) {
+  public double[] computeTextureFactor(double[][] alphabeta, Reflection reflex) {
 
 //    int numberOfPoints = alphabeta.length/2;
 
     initializeAll();
 
-    double[] cdsc = aphase.lattice();
+    double[] cdsc = getPhase().lattice();
 
 //    double phoninp = subfmin();
 

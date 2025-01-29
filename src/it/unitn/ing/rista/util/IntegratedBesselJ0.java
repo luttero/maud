@@ -81,16 +81,16 @@ public class IntegratedBesselJ0 {
 
 		for (int i = 1; i < numberIntegrationThetaPoints; i += 2) {
 			double s = a * cosTheta[i];
-			s1 += rByInterpolation(s) / s;
+			s1 += rByInterpolation(s) / a;
 		}
 		for (int i = 2; i < numberIntegrationThetaPoints - 1; i += 2) {
 			double s = a * cosTheta[i];
-			s2 += rByInterpolation(s) / s;
+			s2 += rByInterpolation(s) / a;
 		}
 
 		double s = a * cosTheta[numberIntegrationThetaPoints];
 		return over3 * h * (s1 * 4 + s2 * 2 + rByInterpolation(a) / a +
-				rByInterpolation(s) / s);
+				rByInterpolation(s) / a);
 	}
 
 	public static double integrate_J02x(int n, double a, double b) {

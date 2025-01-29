@@ -58,7 +58,8 @@ public class RadiationType extends XRDcat {
   public static String[] classlistc = {"it.unitn.ing.rista.diffr.Radiation"};
   public static String[] classlistcs = {};
 
-	public double energy = 0.0;
+  public double energy = 0.0;
+  public double energyJ = 0.0;
 
   public RadiationType(XRDcat aobj, String alabel) {
     super(aobj, alabel);
@@ -171,7 +172,11 @@ public class RadiationType extends XRDcat {
 		return getRadiationWavelength(index);
 	}
 
-	public double getShortestWavelengthForFluorescence() {
+  public double getRadiationEnergyForFluorescence(int index) {
+    return Constants.ENERGY_LAMBDA / getRadiationWavelengthForFluorescence(index) * 0.001;
+  }
+
+  public double getShortestWavelengthForFluorescence() {
 		double shortestWave = getRadiationWavelengthForFluorescence(0);
 		for (int i = 1; i < getLinesCount(); i++) {
 			double wave = getRadiationWavelengthForFluorescence(i);
@@ -246,6 +251,7 @@ public class RadiationType extends XRDcat {
 		super.updateParametertoDoubleBuffering(firstLoading);
 
 		energy = lambdaToEnergy(getMeanRadiationWavelength());
+    energyJ = lambdaToEnergyInJ(getMeanRadiationWavelength());
 	}
 
 	public double energyToLambda(double e)
@@ -258,9 +264,19 @@ public class RadiationType extends XRDcat {
 		return 12.398424 / lambda;
 	}
 
-	public double getRadiationEnergy() {
+  public double lambdaToEnergyInJ(double lambda)
+  {
+    return lambdaToEnergy(lambda) * Constants.CHARGE;
+  }
+
+  public double getRadiationEnergy() {
 		return energy;
 	}
+
+  public double getRadiationEnergyInJ() {
+    System.out.println("Energy: " + energy + " " + energyJ);
+    return energyJ;
+  }
 
   public JOptionsDialog getOptionsDialog(Frame parent) {
     return new JRadiationTypeOptionsD(parent, this);

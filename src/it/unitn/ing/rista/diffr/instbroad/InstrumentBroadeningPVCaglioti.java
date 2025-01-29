@@ -827,9 +827,9 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
   public void plotFunction(Frame theframe, int index) {
     ParameterFunction function;
     if (getCagliotiList() == parameterloopField[index])
-      function = new CagliotiFunction(parameterloopField[index], getInstrument().isTOF());
+      function = new CagliotiFunction(parameterloopField[index], getInstrument().isTOF() || getInstrument().isEDX()); // Luca todo
     else
-      function = new PolynomialFunction(parameterloopField[index], getInstrument().isTOF());
+      function = new PolynomialFunction(parameterloopField[index], getInstrument().isTOF() || getInstrument().isEDX());
     (new PlotParameterFunction(theframe, function)).setVisible(true);
   }
 

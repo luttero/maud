@@ -109,8 +109,10 @@ public class launchRefine extends launchBasic {
     System.out.println("Time for total refinement was: " + (System.currentTimeMillis() - Constants.totalTime) +
 			  " millisecs.");
 
-    if (parameterfile != null)
+    if (parameterfile != null) {
       parameterfile.fittingFileOutput();
+      parameterfile.showWarnings();
+    }
 
     if (outputframe != null)
       outputframe.setProgressText(endOfIterationString);

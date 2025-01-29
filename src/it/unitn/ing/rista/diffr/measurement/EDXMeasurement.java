@@ -1,23 +1,3 @@
-/*
- * @(#)XRFMeasurement.java created May 16, 2007 Caen
- *
- * Copyright (c) 2007 Luca Lutterotti All Rights Reserved.
- *
- * This software is the research result of Luca Lutterotti and it is
- * provided as it is as confidential and proprietary information.
- * You shall not disclose such Confidential Information and shall use
- * it only in accordance with the terms of the license agreement you
- * entered into with the author.
- *
- * THE AUTHOR MAKES NO REPRESENTATIONS OR WARRANTIES ABOUT THE SUITABILITY OF THE
- * SOFTWARE, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
- * PURPOSE, OR NON-INFRINGEMENT. THE AUTHOR SHALL NOT BE LIABLE FOR ANY DAMAGES
- * SUFFERED BY LICENSEE AS A RESULT OF USING, MODIFYING OR DISTRIBUTING
- * THIS SOFTWARE OR ITS DERIVATIVES.
- *
- */
-
 package it.unitn.ing.rista.diffr.measurement;
 
 import it.unitn.ing.rista.diffr.*;
@@ -25,15 +5,15 @@ import it.unitn.ing.rista.diffr.*;
 import java.awt.*;
 
 /**
- * The XRFMeasurement is a class to
+ * The EDXMeasurement is a class to
  *
  * @author Luca Lutterotti
- * @version $Revision: 1.00 $, $Date: May 16, 2007 11:32:47 AM $
+ * @version $Revision: 1.00 $, $Date: Aug 15, 2024 10:51:47 AM $
  * @since JDK1.1
  */
-public class XRFMeasurement extends Measurement {
+public class EDXMeasurement extends Measurement {
 
-  public static String modelID = "XRF Measurement";
+  public static String modelID = "EDX Measurement";
 
   public static String[] diclistc = {};
   public static String[] diclistcrm = {};
@@ -41,20 +21,20 @@ public class XRFMeasurement extends Measurement {
   public static String[] classlistc = {};
   public static String[] classlistcs = {};
 
-  boolean refreshXRFMeasurement = true;
+  boolean refreshEDXMeasurement = true;
 
-  public XRFMeasurement(XRDcat obj, String alabel) {
+  public EDXMeasurement(XRDcat obj, String alabel) {
     super(obj, alabel);
     identifier = modelID;
     IDlabel = modelID;
     description = modelID;
   }
 
-  public XRFMeasurement(XRDcat afile) {
+  public EDXMeasurement(XRDcat afile) {
     this(afile, modelID);
   }
 
-  public XRFMeasurement() {
+  public EDXMeasurement() {
     identifier = modelID;
     IDlabel = modelID;
     description = modelID;
@@ -88,13 +68,14 @@ public class XRFMeasurement extends Measurement {
 
   }
 
+  @Override
+  public boolean isEDX() {
+    return true;
+  }
+
   public void edit(Frame aframe) {
     autoDialog = true;
     super.edit(aframe);
-  }
-
-  public boolean isEDX() {
-    return true;
   }
 
 }

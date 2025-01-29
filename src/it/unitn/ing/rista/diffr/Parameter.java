@@ -220,7 +220,7 @@ public class Parameter extends Object implements Cloneable, basicObj {
     return minimumSignificantValue;
   }
 
-  public basicObj[] getChildren(String searchString, boolean refinable) {
+  public basicObj[] getChildren(String searchString, boolean refinableOnly) {
     return null;
   }
 
@@ -244,7 +244,7 @@ public class Parameter extends Object implements Cloneable, basicObj {
     return false;
   }
 
-  public int getChildCount(String searchString, boolean refinable) {
+  public int getChildCount(String searchString, boolean refinableOnly) {
     return 0;
   }
 
@@ -478,11 +478,15 @@ public class Parameter extends Object implements Cloneable, basicObj {
     return free;
   }
 
+  public boolean isRefinable() {
+    return getFree() && mayRefines();
+  }
+
   public boolean mayRefines() {
     boolean boundParMayRefine = false;
     if (registeredParameters != null) {
       for (int i = 0; i < registeredParameters.size(); i++)
-        if (((Parameter) registeredParameters.elementAt(i)).mayRefines())
+        if ((registeredParameters.elementAt(i)).mayRefines())
           boundParMayRefine = true;
     }
 
@@ -846,6 +850,29 @@ public class Parameter extends Object implements Cloneable, basicObj {
 
   public void setRangeActive(boolean rangeActive) {
     this.rangeActive = rangeActive;
+  }
+
+  public void showWarnings() {
+    if (Constants.showParameterWarnings && getFree()) {
+      if (getValueD() < getValueMinD()) {
+        System.out.println("Warning, parameter: " + getFullLabelWithParent() + " is below minimum: " + getValue() + " < " + getValueMin() + " (change the min value to silent this warning)");
+      } else if (getValueD() > getValueMaxD()) {
+        System.out.println("Warning, parameter: " + getFullLabelWithParent() + " is over maximum: " + getValue() + " > " + getValueMax() + " (change the max value to silent this warning)");
+      }
+      if (Double.parseDouble(getError()) == -1) {
+        System.out.println("Warning, this parameter: " + getFullLabelWithParent() + " causes a Cholesky negative diagonal, check if the value is too small for numerical derivative computation or don't refine it.");
+      } else if (Double.parseDouble(getError()) == 1) {
+        System.out.println("Warning, this parameter: " + getFullLabelWithParent() + " was not refined, check if the value is too small for numerical derivative computation or don't refine it.");
+      }
+    }
+  }
+
+  public String getFullLabelWithParent() {
+    return getGenealogyString() + "->" + getLabel();
+  }
+
+  public String getGenealogyString() {
+    return getParent().getGenealogyString();
   }
 
   public void printInformations(OutputStream out, XRDcat obj) {

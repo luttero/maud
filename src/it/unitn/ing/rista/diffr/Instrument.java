@@ -494,7 +494,11 @@ public class Instrument extends XRDcat {
 	}*/ // not used
 
 	public boolean isTOF() {
-    return getRadiationTypeS().toLowerCase().indexOf(("TOF").toLowerCase()) != -1;
+    return getMeasurement().isTOF();
+  }
+
+  public boolean isEDX() {
+    return getMeasurement().isEDX();
   }
 
 /*  public int getRadiationTubeNumber() {
@@ -637,7 +641,7 @@ public class Instrument extends XRDcat {
 
   public double getLambdaForTOF(DiffrDataFile adatafile, double position) {
     double toLambda = 0.0f;
-    if (getMeasurement().isTOF()) {
+    if (isTOF() || isEDX()) {
       toLambda = (2.0 * position * MoreMath.sind(Math.abs(getGeometry().getThetaDetector(adatafile,
                        position) / 2.0)));
     }
@@ -737,7 +741,7 @@ public class Instrument extends XRDcat {
   }
 
   public void plotFunction(Frame theframe, int index) {
-    ParameterFunction function = new PolynomialFunction(parameterloopField[index], isTOF());
+    ParameterFunction function = new PolynomialFunction(parameterloopField[index], isTOF() || isEDX());
     (new PlotParameterFunction(theframe, function)).setVisible(true);
   }
 

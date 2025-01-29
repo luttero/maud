@@ -136,7 +136,7 @@ public class TOFMultiDetector extends Detector {
 
   public double getThetaDetector(DiffrDataFile datafile, double twotheta) {
 //    System.out.println("Detector theta: " + getBankNumber(datafile) + " " + getDetector(getBankNumber(datafile)).getThetaDetector());
-    return (double) getDetector(getBankNumber(datafile)).getThetaDetector();
+    return getDetector(getBankNumber(datafile)).getThetaDetector();
   }
 
   public double getEtaDetector(DiffrDataFile datafile) {

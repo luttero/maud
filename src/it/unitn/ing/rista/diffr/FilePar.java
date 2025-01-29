@@ -164,7 +164,6 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 
   int numberOfData = 0;
   private double parameters[];
-	private double[] parameters_multipliers;
   int numberOfParameters = 0;
   boolean refreshFit = true;
   double R = 0.0;
@@ -747,6 +746,10 @@ public class FilePar extends XRDcat implements lFilePar, Function {
       if (id.equals(getSample(i).toXRDcatString()))
         return i;
     return -1;
+  }
+
+  public String getGenealogyString() {
+    return "";
   }
 
   static Vector listParametersForBound = null;
@@ -2778,7 +2781,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
     for (int i = 0; i < totnumberParameters; i++) {
       Parameter apar = (Parameter) parametersV.elementAt(i);
 //      System.out.println(apar.toXRDcatString() + " " + apar.getFree() + " " + apar.mayRefines());
-      if (apar.getFree() && apar.mayRefines())
+      if (apar.isRefinable())
         ++pnumber;
     }
 
@@ -2795,8 +2798,8 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 
     for (int i = 0; i < totnumberParameters; i++) {
       Parameter apar = (Parameter) parametersV.elementAt(i);
-      if (apar.getFree() && apar.mayRefines()) {
-        apar.setValue(parameters[pnumber] * parameters_multipliers[pnumber]);
+      if (apar.isRefinable()) {
+        apar.setValue(parameters[pnumber]);
 	      pnumber++;
       }
     }
@@ -2811,10 +2814,10 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 
     for (int i = 0; i < totnumberParameters; i++) {
       Parameter apar = (Parameter) parametersV.elementAt(i);
-      if (apar.getFree() && apar.mayRefines()) {
+      if (apar.isRefinable()) {
         pnumber++;
         if (pnumber == index)
-          apar.setValue(parameters[pnumber] * parameters_multipliers[pnumber]);
+          apar.setValue(parameters[pnumber]);
       }
     }
     refreshFit = true;
@@ -2828,8 +2831,8 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 
     for (int i = 0; i < totnumberParameters; i++) {
       Parameter apar = (Parameter) parametersV.elementAt(i);
-      if (apar.getFree() && apar.mayRefines()) {
-        apar.setError(errors[pnumber] * parameters_multipliers[pnumber]);
+      if (apar.isRefinable()) {
+        apar.setError(errors[pnumber]);
 	      pnumber++;
       }
     }
@@ -2867,17 +2870,10 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 
     for (int i = 0; i < totnumberParameters; i++) {
       Parameter apar = (Parameter) parametersV.elementAt(i);
-      if (apar.getFree() && apar.mayRefines()) {
+      if (apar.isRefinable()) {
         freeParameters[pnumber] = apar.getValueD();
-	      parameters_multipliers[pnumber] = 1.0;
 	      lbound[pnumber] = apar.getValueMinD();
 	      ubound[pnumber] = apar.getValueMaxD();
-	      while (Math.abs(freeParameters[pnumber]) > Constants.MAX_VALUE_FOR_DERIVATIVE) {
-		      freeParameters[pnumber] /= Constants.MAX_VALUE_FOR_DERIVATIVE;
-		      parameters_multipliers[pnumber] *= Constants.MAX_VALUE_FOR_DERIVATIVE;
-		      lbound[pnumber] /= Constants.MAX_VALUE_FOR_DERIVATIVE;
-		      ubound[pnumber] /= Constants.MAX_VALUE_FOR_DERIVATIVE;
-	      }
         parameters[pnumber] = freeParameters[pnumber];
 	      pnumber++;
       }
@@ -2894,7 +2890,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 
     for (int i = 0; i < totnumberParameters; i++) {
       Parameter apar = (Parameter) parametersV.elementAt(i);
-      if (apar.getFree() && apar.mayRefines()) {
+      if (apar.isRefinable()) {
         freeParameters[pnumber] = apar.getLabel();
         pnumber++;
       }
@@ -2926,7 +2922,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 //    System.out.println("Memory needed (for Least Squares), > " + (numberOfData * numberOfParameters * 8) + " bytes");
 
     parameters = new double[numberOfParameters];
-	  parameters_multipliers = new double[numberOfParameters];
+//	  parameters_multipliers = new double[numberOfParameters];
 	  lbound = new double[numberOfParameters];
     ubound = new double[numberOfParameters];
     hasBounds = new boolean[numberOfParameters];
@@ -2972,7 +2968,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
       System.out.println("Memory needed (for Least Squares), > " + (numberOfData * numberOfParameters * 8) + " bytes");
 
     parameters = new double[numberOfParameters];
-	  parameters_multipliers = new double[numberOfParameters];
+//	  parameters_multipliers = new double[numberOfParameters];
     lbound = new double[numberOfParameters];
     ubound = new double[numberOfParameters];
     hasBounds = new boolean[numberOfParameters];
@@ -3153,7 +3149,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
     int totnumberParameters = totParameterNumber();
     for (int i = 0; i < totnumberParameters; i++) {
       Parameter apar = (Parameter) parametersV.elementAt(i);
-      if (apar.getFree() && apar.mayRefines()) {
+      if (apar.isRefinable()) {
         if (index == pnumber++) {
           thepar = apar;
           break;
@@ -3199,9 +3195,9 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 
     for (int i = 0; i < totnumberParameters; i++) {
       Parameter apar = (Parameter) parametersV.elementAt(i);
-      if (apar.getFree() && apar.mayRefines()) {
+      if (apar.isRefinable()) {
         if (index == pnumber++)
-          apar.setValue(value * parameters_multipliers[index]);
+          apar.setValue(value);
       }
     }
     refreshFit = true;
@@ -3218,8 +3214,8 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 
     for (int i = 0; i < totnumberParameters; i++) {
       Parameter apar = (Parameter) parametersV.elementAt(i);
-      if (apar.getFree() && apar.mayRefines()) {
-        apar.setValue(parm[pnumber] * parameters_multipliers[pnumber]);
+      if (apar.isRefinable()) {
+        apar.setValue(parm[pnumber]);
 	      pnumber++;
       }
     }
@@ -3269,7 +3265,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
     int index = 0;
     for (int i = 0; i < totnumberParameters; i++) {
       Parameter apar = (Parameter) parametersV.elementAt(i);
-      if (apar.getFree() && apar.mayRefines()) {
+      if (apar.isRefinable()) {
         double val = Double.parseDouble(apar.getError());
         if (val < -1) {
           divideValue[index] = (int) -val;
@@ -3287,10 +3283,10 @@ public class FilePar extends XRDcat implements lFilePar, Function {
     int index = 0;
     for (int i = 0; i < totnumberParameters; i++) {
       Parameter apar = (Parameter) parametersV.elementAt(i);
-      if (apar.getFree() && apar.mayRefines()) {
-        apar.setValue(nparameters[index] * parameters_multipliers[index]);
-        apar.setValueMin(lBounds[index] * parameters_multipliers[index]);
-        apar.setValueMax(uBounds[index] * parameters_multipliers[index]);
+      if (apar.isRefinable()) {
+        apar.setValue(nparameters[index]);
+        apar.setValueMin(lBounds[index]);
+        apar.setValueMax(uBounds[index]);
 	      index++;
       }
     }
@@ -3377,7 +3373,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
     int index = -1;
     for (int i = 0; i < totnumberParameters; i++) {
       Parameter apar = (Parameter) parametersV.elementAt(i);
-      if (apar.getFree() && apar.mayRefines()) {
+      if (apar.isRefinable()) {
         index++;
         printString(out, index + " " + apar.toIDString());
         printString(out, " value:");

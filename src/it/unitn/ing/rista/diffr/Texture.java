@@ -228,7 +228,7 @@ public class Texture extends XRDcat {
     refreshComputation = false;
   }
 
-  public double[] computeTextureFactor(Phase aphase, double[][] alphabeta,
+  public double[] computeTextureFactor(double[][] alphabeta,
                                        Reflection reflex) {
 
     int numberOfPoints = alphabeta.length / 2;

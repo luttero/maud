@@ -228,6 +228,7 @@ public class DiffrDataFile extends XRDcat {
   DataFileSet theDataFileSet = null;
   int bankNumber = -1;
   int angBankNumber = -1;
+  int broadBankNumber = -1;
   public static int DIFFRACTION_PATTERN = 0;
   public static int DIFFRACTION_IMAGE = 1;
   int type = DIFFRACTION_PATTERN;
@@ -983,6 +984,7 @@ public class DiffrDataFile extends XRDcat {
               notifyParameterChanged(source, Constants.BKG_PARAMETER_CHANGED, -1);
               return;
             } else if (i == 2) {
+              notifyParameterChanged(source, Constants.BKG_PARAMETER_CHANGED, -1);
 	            notifyParameterChanged(source, Constants.BKG_FILE_CHANGED, -1);
 	            return;
             } else {
@@ -1000,6 +1002,7 @@ public class DiffrDataFile extends XRDcat {
             notifyParameterChanged(source, Constants.BKG_FILE_CHANGED, -1);
             return;
           } else {
+            notifyParameterChanged(source, Constants.BKG_PARAMETER_CHANGED, -1);
           	notifyParameterChanged(source, Constants.BKG_FILE_CHANGED, -1);
           	notifyParameterChanged(source, Constants.BEAM_INTENSITY_CHANGED, -1);
             notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED, -1);
@@ -1079,7 +1082,14 @@ public class DiffrDataFile extends XRDcat {
             // LogSystem.printStackTrace(e);
           }
       }
-
+      InstrumentBroadening instBroad = ainstrument.getInstrumentBroadening();
+      if (instBroad != null)
+        try {
+          broadBankNumber = instBroad.getBankNumber(getBankID());
+        } catch (Exception e) {
+          e.printStackTrace();
+          // LogSystem.printStackTrace(e);
+        }
     }
 	  countingTime = Double.valueOf(getCountTime());
     switch (getIntensityUnitControl()) {
@@ -1098,7 +1108,7 @@ public class DiffrDataFile extends XRDcat {
     theta2thetaMeasurement = ainstrument.getMeasurement() instanceof Theta2ThetaMeasurement;
 	  datafileWeight = Double.parseDouble(getString(datafileWeightFieldID));
 
-	  if (ainstrument.isTOF() && corrected_tilting_angles[4] == 0) {
+	  if ((ainstrument.isTOF() || ainstrument.isEDX()) && corrected_tilting_angles[4] == 0) {
 		  corrected_tilting_angles[4] = ainstrument.getDetector().getThetaDetector(this, 0);
 	  }
 	  for (int i = 5; i < maxAngleNumber; i++)
@@ -1851,7 +1861,7 @@ public class DiffrDataFile extends XRDcat {
     if (dspacingbase || !calibrated)
       return x;
     if (energyDispersive)
-      return 12398.424121 / x;
+      return Constants.ENERGY_LAMBDA / x;
     double wave = getMeanRadiationWavelength();
     if (wave == 0.0)
       return x;
@@ -1903,7 +1913,7 @@ public class DiffrDataFile extends XRDcat {
     if (dspacingbase || !calibrated)
       return xdata;
     if (energyDispersive)
-      return 12398.424121 / xdata;
+      return Constants.ENERGY_LAMBDA / xdata;
     double wave = getMeanRadiationWavelength();
     if (wave == 0.0)
       return xdata;
@@ -1914,7 +1924,7 @@ public class DiffrDataFile extends XRDcat {
     if (dspacingbase || !calibrated)
       return value;
     if (energyDispersive)
-      return 12398.424121 / value;
+      return Constants.ENERGY_LAMBDA / value;
     double wave = getMeanRadiationWavelength();
     if (wave == 0.0)
       return value;
@@ -1925,7 +1935,7 @@ public class DiffrDataFile extends XRDcat {
     double wave = getMeanRadiationWavelength();
     if (wave == 0.0)
       return value;
-    return 2.0 * MoreMath.asind(wave * value / (12398.424121 * 2.0));
+    return 2.0 * MoreMath.asind(wave * value / (Constants.ENERGY_LAMBDA * 2.0));
   }
 
   public double get2ThetaFromDSpace(double value) {
@@ -1946,18 +1956,22 @@ public class DiffrDataFile extends XRDcat {
     double wave = getMeanRadiationWavelength();
     if (wave == 0.0)
       return value;
-    return 12398.424121 * 2.0 / (wave / MoreMath.sind(value / 2.0));
+    return Constants.ENERGY_LAMBDA * 2.0 / (wave / MoreMath.sind(value / 2.0));
   }
 
 	public double getWavelengthFromDSpace(double value) {
 		return 2.0 * value * MoreMath.sind(get2ThetaValue() / 2.0);
 	}
 
+  public double getWavelengthFromEnergy(double value) {
+    return Constants.ENERGY_LAMBDA / value;
+  }
+
 	public double convertXToDspace(double xdata, double wave) {
     if (dspacingbase || !calibrated)
       return xdata;
     if (energyDispersive)
-      return 12398.424121 / xdata;
+      return Constants.ENERGY_LAMBDA / xdata;
     if (wave == 0.0)
       return xdata;
     return wave / 2.0 / MoreMath.sind(xdata / 2.0);
@@ -2594,7 +2608,7 @@ public class DiffrDataFile extends XRDcat {
     for (int j = 0; j < dtanumber; j++) {
       q[j] = getXData(j + startingindex);
       if (energyDispersive)
-        q[j] = 12398.424121 / q[j];
+        q[j] = Constants.ENERGY_LAMBDA / q[j];
       if (!dspacingbase && !energyDispersive)
         q[j] = 4.0 * Math.PI * MoreMath.sind(getCorrectedPosition(asample,
             q[j]) / 2) / lambda;
@@ -2611,7 +2625,7 @@ public class DiffrDataFile extends XRDcat {
 
   public double getXInQ(double x, double lambda) {
     if (energyDispersive)
-      x = 12398.424121 / x;
+      x = Constants.ENERGY_LAMBDA / x;
     if (!dspacingbase) {
       return 4.0 * Math.PI * MoreMath.sind(x / 2) / lambda;
     } else {
@@ -2626,7 +2640,7 @@ public class DiffrDataFile extends XRDcat {
 
   public double getXfromQ(double x, double lambda) {
     if (energyDispersive)
-      x = 12398.424121 / x;
+      x = Constants.ENERGY_LAMBDA / x;
     if (!dspacingbase) {
       return 2.0 * MoreMath.asind((x * lambda / (4.0 * Math.PI)));
     } else {
@@ -3192,12 +3206,12 @@ public class DiffrDataFile extends XRDcat {
     if (!dspacingbase) {
       if (energyDispersive) {
         if (rangemax > 0) {
-          rangemax = 12398.424121 / rangemax;
+          rangemax = Constants.ENERGY_LAMBDA / rangemax;
         } else {
           rangemax = 1.0E+10;
         }
         if (rangemin > 0) {
-          rangemin = 12398.424121 / rangemin;
+          rangemin = Constants.ENERGY_LAMBDA / rangemin;
         } else {
           rangemin = 1.0E+10;
         }
@@ -3392,8 +3406,7 @@ public class DiffrDataFile extends XRDcat {
   }
 
   public double computeAngularIntensityCorrection(Sample asample, Instrument ainstrument, double x) {
-    return computeAngularIntensityCorrection(asample, ainstrument, getOldNearestPoint(x)) *
-		    computeAbsorptionPath(x, ainstrument);
+    return computeAngularIntensityCorrection(asample, ainstrument, getOldNearestPoint(x));
   }
 
 /*  public double computeAbsorptionAndPhaseQuantity(Instrument ainstrument, Sample asample, Phase aphase, double x) {
@@ -3408,9 +3421,8 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 	if (absorptionVelocityFactor == 0)
 		return 1.0;
 	double toLambda = 0.0;
-	if (ainstrument.getMeasurement().isTOF()) {
-		toLambda = (2.0 * x * MoreMath.sind(Math.abs(ainstrument.getGeometry().getThetaDetector(this,
-				x))));
+	if (ainstrument.isTOF() || ainstrument.isEDX()) {
+		toLambda = (2.0 * x * MoreMath.sind(Math.abs(corrected_tilting_angles[4])));
 	}
 	double arg1 = absorptionVelocityFactor * toLambda;
 	if (arg1 < 200.0)
@@ -3471,9 +3483,8 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
   }
 
   public double computeIntensityCalibration(int j) {
-    double xc = getXDataOriginal(j);
     Instrument ainstrument = getDataFileSet().getInstrument();
-    return ainstrument.getIntensityCalibration().calibrateData(this, xc, j, getXData(j));
+    return ainstrument.getIntensityCalibration().calibrateData(this, getXDataOriginal(j), j, getXData(j));
   }
 
   public int getBankNumber() {
@@ -3482,6 +3493,10 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 
   public int getAngBankNumber() {
     return angBankNumber;
+  }
+
+  public int getBroadBankNumber() {
+    return broadBankNumber;
   }
 
   public void computeReflectivityBroadening(Sample asample) {
@@ -3981,7 +3996,7 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 //		System.out.println("Computing experimental background for " + thelabel);
 //		if (expbkgfit[(startingindex + finalindex) / 2] != 0)
 //			throw new RuntimeException("Experimental background not reset!");
-			if (refreshExperimentalBkgComputation) {
+//			if (refreshExperimentalBkgComputation) {
 				resetBackgroundExperimental();
 				DiffrDataFile expDataFile = getDataFileSet().getBackgroundDataFile(this);
 //				expDataFile.startingindex = 0;
@@ -4013,7 +4028,7 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 						addtoExpBkgFit(i, bkgIntensity);
 					}
 				}
-			}
+//			}
 		refreshExperimentalBkgComputation = false;
 
   }
@@ -5132,6 +5147,8 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 	public void refreshIndices(Phase phase) {
 		int numberOfReflections = phase.gethklNumber();
 		int radNumber = getDataFileSet().getInstrument().getRadiationType().getLinesCount();
+    if (energyDispersive || dspacingbase)
+      radNumber = 1;
 //		System.out.println("Diffraction datafile: " + this.getLabel() + ", refresh indices: " + numberOfReflections);
 		int[] reflectionsIDs = getReflectionIDs(phase);
 		boolean reflectionsChanged = false;
@@ -5780,6 +5797,8 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 		double[][][] temp = phasePositions.get(phase);
 		if (temp == null) {
 			int radNumber = getDataFileSet().getInstrument().getRadiationType().getLinesCount();
+      if (energyDispersive || dspacingbase)
+        radNumber = 1;
 			temp = new double[phase.gethklNumber()][positionsPerPattern][radNumber];
 			phasePositions.put(phase, temp);
 			resetPositions(phase);
@@ -5840,18 +5859,28 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 	public void computePosition(Phase aphase) { // no errors correction applied
 		double PI_TO_2DEG = Constants.PITODEG * 2.0;
 		int radNumber = getDataFileSet().getInstrument().getRadiationType().getLinesCount();
+    if (energyDispersive || dspacingbase)
+      radNumber = 1;
 		double[][][] positions = phasePositions.get(aphase);
 //		Sample sample = aphase.getSample();
 
 		int reflNumber = aphase.gethklNumber();
-		if (dspacingbase || energyDispersive) {
+		if (dspacingbase) {
 			for (int i = 0; i < reflNumber &&  i < positions.length; i++) {
 				Reflection refl = aphase.getReflex(i);
 				for (int j = 0; j < positionsPerPattern && j < positions[0].length; j++)
 					for (int rad = 0; rad < radNumber && rad < positions[0][0].length; rad++)
 						positions[i][j][rad] = refl.d_space;
 			}
-		} else {
+		} else if (energyDispersive) {
+      double sintheta = Math.sin(get2ThetaValue() * Constants.DEGTOPI * 0.5);
+      for (int i = 0; i < reflNumber &&  i < positions.length; i++) {
+        Reflection refl = aphase.getReflex(i);
+        for (int j = 0; j < positionsPerPattern && j < positions[0].length; j++)
+          for (int rad = 0; rad < radNumber && rad < positions[0][0].length; rad++)
+            positions[i][j][rad] = Constants.ENERGY_LAMBDA / (2.0 * refl.d_space * sintheta);
+      }
+    } else {
 			for (int i = 0; i < reflNumber && i < positions.length; i++) {
 				Reflection refl = aphase.getReflex(i);
 				for (int rad = 0; rad < radNumber && rad < positions[0][0].length; rad++) {
@@ -5870,6 +5899,8 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 	public void computePositionForStrained(Phase aphase) {
 //		double PI_TO_2DEG = Constants.PITODEG * 2.0;
 		int radNumber = getDataFileSet().getInstrument().getRadiationType().getLinesCount();
+    if (dspacingbase || energyDispersive)
+      radNumber = 1;
 		double[][][] positions = phasePositions.get(aphase);
 //		double[][][][] strain = getStrainFactors(aphase);
 		Sample sample = aphase.getSample();
@@ -5987,6 +6018,8 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 		Sample asample = getDataFileSet().getSample();
 		Instrument ainstrument = getDataFileSet().getInstrument();
 		int radNumber = ainstrument.getRadiationType().getLinesCount();
+    if (energyDispersive || dspacingbase)
+      radNumber = 1;
 
 		int reflNumber = aphase.getReflectionVector().size();
 		for (int j = 0; j < positionsPerPattern; j++) {
@@ -6006,6 +6039,7 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 		Instrument ainstrument = getDataFileSet().getInstrument();
 		int radNumber = ainstrument.getRadiationType().getLinesCount();
 		boolean isTOF = ainstrument.isTOF();
+    boolean isEDX =  ainstrument.isEDX();
 		double[][][] positions = phasePositions.get(aphase);
 
 		double[][][] shapeAbsorption = phaseShapeAbsFactors.get(aphase);
@@ -6034,7 +6068,16 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 									arg1 = 0.0f;
 								linearCorrection = arg1;
 							}
-					}
+					} else if (isEDX) {
+            double arg1 = abs * getWavelengthFromEnergy(positions[i][j][0]);
+            if (arg1 != 0.0) {
+              if (arg1 < 200.0)
+                arg1 = Math.exp(-arg1);
+              else
+                arg1 = 0.0f;
+              linearCorrection = arg1;
+            }
+          }
 
 					for (int a = 0; a < layer_abs.length; a++) {
 						shapeAbsorption[i][j][a] = intensity[j][a] * layer_abs[a] * linearCorrection;

@@ -119,10 +119,12 @@ public class FluorescenceLine {
 	  if (broad.length > 2) {
 		  fS = broad[2][0];
 		  double beta = broad[3][0];
-		  for (int i = 1; i < broad[0].length; i++) {
+		  for (int i = 1; i < broad[2].length; i++) {
 			  fS += broad[2][i] * MoreMath.pow(energy, i - 1);
-			  beta += broad[3][i] * MoreMath.pow(energy, i - 1);
 		  }
+      for (int i = 1; i < broad[3].length; i++) {
+        beta += broad[3][i] * MoreMath.pow(energy, i - 1);
+      }
 		  fS *= mhuDet;
 
 		  if (beta > 0)
@@ -158,15 +160,15 @@ public class FluorescenceLine {
   public double getIntensity(double x) {
 		double intensity = 0;
     double dx1 = x - getEnergy();
-    double dx = dx1;
-	 dx *= one_over_hwhm;
-	 dx *= dx;
+    double dx = dx1 * one_over_hwhm;
+	  dx *= dx;
 //	 dx1 *= 0.001;
 	 if (dx > 30.0)
 		 intensity = getIntensity() * dcx / (1.0 + dx);
 	 else
 		 intensity = getIntensity() * (dcx / (1.0 + dx) + dgx * Math.exp(-Constants.LN2 * dx));
 
+//    System.out.println("PV: " + getEnergy() + " " + (1.0 / one_over_hwhm) + " " + fT + " " + fS);
 	 if (fT > 0)
 	   intensity += getIntensity() * fT * one_over_beta * one_over_sigma * 0.5 / Math.exp(-0.5 * one_over_beta2) *
 			 Math.exp(dx1 * one_over_beta * one_over_sigma) *

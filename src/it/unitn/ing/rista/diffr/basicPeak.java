@@ -66,10 +66,15 @@ public class basicPeak implements Peak {
       wavelength[i] = wave[i];
       waveWeight[i] = weight[i];
       if (dspacingBase) {
-	      position[i] = pos;
-	      meanPosition += position[i] * weight[i];
-	      meanWavelength += wavelength[i] * weight[i];
-	      totWeight += weight[i];
+        position[i] = pos;
+        meanPosition += position[i] * weight[i];
+        meanWavelength += wavelength[i] * weight[i];
+        totWeight += weight[i];
+      } else if (energyDispersive) {
+        position[i] = pos;
+        meanPosition += position[i] * weight[i];
+        meanWavelength += wavelength[i] * weight[i];
+        totWeight += weight[i];
       } else {
         position[i] = DiffrDataFile.computeposition(pos, wavelength[i]);
       	if (position[i] < 180.0 && position[i] > -180.0) {

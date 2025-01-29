@@ -102,4 +102,8 @@ public class Measurement extends XRDcat {
     return false;
   }
 
+  public boolean isEDX() {
+    return false;
+  }
+
 }

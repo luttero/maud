@@ -264,6 +264,7 @@ public class batchProcess {
           simpleResultFileName = null;
           resultFileName = null;
           plotOutputFileName = null;
+          System.out.println("Reading analysis from: " + analysis.getDirectory() + analysis.getFileName());
           Reader in = Misc.getReader(analysis.getDirectory(), analysis.getFileName());
           analysis.readall(in, null);
 	        analysis.setFileNamePreserveExtension(newfolderandname[1], false);

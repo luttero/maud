@@ -189,6 +189,10 @@ public class Sample extends Maincat {
     super.setLabel(alabel);
   }
 
+  public String getGenealogyString() {
+    return getLabel();
+  }
+
   public String getSampleID() {
     return getString(0);
   }
@@ -1879,12 +1883,14 @@ public class Sample extends Maincat {
     DataFileSet adataset = getActiveDataSet(0);
     Instrument ainstrument = adataset.getInstrument();
     RadiationType rad = ainstrument.getRadiationType();
-    boolean isTOF = ainstrument.getMeasurement().isTOF();
+    boolean isTOF = ainstrument.isTOF();
+    boolean isEDX = ainstrument.isEDX();
 
     Geometry ageometry = ainstrument.getGeometry();
     double[] position = new double[1];
     position[0] = 0.0f;
     boolean dspacingbase = false;
+    boolean positionInEnergy = false;
     if (adataset.datafilesnumber() > 0)
       dspacingbase = adataset.getDataFile(0).dspacingbase;
 //		double[] tilting_angles = adatafile.getTiltingAngle();
@@ -1894,15 +1900,20 @@ public class Sample extends Maincat {
     if (dspacingbase) {  // don't know what to do
       position[0] = refl.d_space;
       tilting_angles[0] = ageometry.getThetaDetector(adataset.getDataFile(0), position[0]) / 2.0f;
-    } else {
+    } else if (positionInEnergy) {  // don't know what to do
+      position[0] = refl.d_space;
+      tilting_angles[0] = ageometry.getThetaDetector(adataset.getDataFile(0), position[0]) / 2.0f;
+    } else{
       position[0] = adataset.getDataFile(0).computeposition(refl.d_space, rad.getRadiationWavelength(0));
       position[0] = adataset.getDataFile(0).getCorrectedPosition(this, position[0], tilting_angles);
       tilting_angles[0] = position[0] / 2;
-
     }
     double toLambda = 0.0f;
     if (isTOF) {
       toLambda = (2.0 * position[0] * MoreMath.sind(Math.abs(tilting_angles[0])));
+    } else if (isEDX) {
+      toLambda = (2.0 * position[0] * MoreMath.sind(Math.abs(tilting_angles[0])));
+      // Luca todo
     }
 
     double x, y, r;
@@ -1924,14 +1935,14 @@ public class Sample extends Maincat {
           double phaseAng = Math.atan2(x, y);
           if (phaseAng < 0.0)
             phaseAng += Constants.PI2;
-          tilting_angles[1] = 2.0f * (double) (Math.asin(r / Constants.sqrt2) * Constants.PITODEG);
+          tilting_angles[1] = 2.0f * (Math.asin(r / Constants.sqrt2) * Constants.PITODEG);
           if (tilting_angles[1] < 0.0) {
             tilting_angles[1] = -tilting_angles[1];
             phaseAng += Constants.PI;
             while (phaseAng >= Constants.PI2)
               phaseAng -= Constants.PI2;
           }
-          tilting_angles[2] = (double) (phaseAng * Constants.PITODEG);
+          tilting_angles[2] = (phaseAng * Constants.PITODEG);
           double[][] angles = ageometry.getIncidentAndDiffractionAngles(adataset.getDataFile(0),
               tilting_angles, sampleAngles, position);
 

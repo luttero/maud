@@ -612,13 +612,10 @@ public class GSASbankIntCalibration extends IntensityCalibration {
   }
 
   public int getBankNumber(String bankID) {
-//	  System.out.println(bankID + " " + banknumbers());
     for (int i = 0; i < banknumbers(); i++) {
-//	    System.out.println("Bank ID for (" + i + "): " + getBankID(i));
       if (getBankID(i).equalsIgnoreCase(bankID))
         return i;
     }
-//	  System.out.println("Check " + getBankID());
     if (bankID.equalsIgnoreCase(getBankID())) {
       for (int i = 0; i < banknumbers(); i++) {
         if (getBankID(i).equalsIgnoreCase(bankID))
@@ -626,7 +623,6 @@ public class GSASbankIntCalibration extends IntensityCalibration {
       }
     }
 	  return 0;
-//    printBank();
   }
 
   public void printBank() {

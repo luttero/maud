@@ -3259,16 +3259,16 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 		recomputedTextureFactor(aphase, asample, true);
 	}
 
-	public double[] computeTextureFactor(Phase aphase, double[][] alphabeta, Reflection reflex) {
+	public double[] computeTextureFactor(double[][] alphabeta, Reflection reflex) {
 
 //    int numberOfPoints = alphabeta.length/2;
 
 		initializeAll();
 
 		if (odf == null)
-			return super.computeTextureFactor(aphase, alphabeta, reflex);
+			return super.computeTextureFactor(alphabeta, reflex);
 
-		double[] cdsc = aphase.lattice();
+		double[] cdsc = getPhase().lattice();
 
 //    double phoninp = subfmin();
 

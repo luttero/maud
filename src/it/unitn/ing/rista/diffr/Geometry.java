@@ -1015,6 +1015,8 @@ public class Geometry extends XRDcat {
 
   public double LorentzPolarization(DiffrDataFile adatafile, Sample asample, double position,
                                     boolean dspacingbase, boolean energyDispersive) {
+    if (energyDispersive)
+      position = adatafile.get2ThetaValue();
     position *= degtopi2;
     return Math.abs(polarization(adatafile, position) * Lorentz(adatafile, position));
   }

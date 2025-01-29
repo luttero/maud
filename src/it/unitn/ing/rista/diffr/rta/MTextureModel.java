@@ -468,7 +468,9 @@ public class MTextureModel extends DiscreteODFTexture {
 					ps.setCS(cs);
 					ps.setSS(ss);
 					pf.add(ps);
-        System.out.println("Add pole figure: " + ps.toString());
+          System.out.println("Add pole figure: " + ps.toString());
+          System.out.println("Crystal symmetry: " + pf.getCS().getGroup().toString());
+          System.out.println("Sample symmetry: " + pf.getSS().getGroup().toString());
 					pf_number++;
 //				}
 			}
@@ -745,6 +747,8 @@ public class MTextureModel extends DiscreteODFTexture {
 			}
 			if (odf == null)
 				odf = new ODF();
+      System.out.println("Checking crystal symmetry in MTEX: " + pf.getCS().getGroup().toString());
+      System.out.println("Checking sample symmetry in MTEX: " + pf.getSS().getGroup().toString());
 			com.jtex.qta.ODFOptions odfOptions = new com.jtex.qta.ODFOptions(pf, Math.toRadians(getResolutionD()), kernel);
 			odfOptions.setGhostCorrection(ghostCorrectionEnabled());
 /*			if (Misc.checkForFile(getFilePar().getDirectory() + "w_weights.txt"))
@@ -816,7 +820,9 @@ public class MTextureModel extends DiscreteODFTexture {
 				theta[i] = pfd[0];
 				rho[i] = pfd[1];
 			}
+//      System.out.println(refl.getH() + " " + refl.getK() + " " + refl.getL());
 			com.jtex.qta.PoleFigure pf = odf.calcPoleFigure(new Miller(refl.getH(), refl.getK(), refl.getL(), cs, ""), new Vec3(theta, rho));
+//      System.out.println(pf.getH());
 			allData.add(pf.getData());
 		}
 
@@ -843,14 +849,14 @@ public class MTextureModel extends DiscreteODFTexture {
 		return null;
 	}
 
-	public double[] computeTextureFactor(Phase aphase, double[][] alphabeta, Reflection reflex) {
+	public double[] computeTextureFactor(double[][] alphabeta, Reflection reflex) {
 
 //    int numberOfPoints = alphabeta.length/2;
 
 		initializeAll();
 
 		if (odf != null)
-			return super.computeTextureFactor(aphase, alphabeta, reflex);
+			return super.computeTextureFactor(alphabeta, reflex);
 
 		return null;
 	}

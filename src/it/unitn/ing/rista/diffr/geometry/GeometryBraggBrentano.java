@@ -74,6 +74,8 @@ public class GeometryBraggBrentano extends GeometryDiffractometer {
 
     double sin2theta;
     double lp = 1.0;
+    if (energyDispersive)
+      position = adatafile.get2ThetaValue();
     position *= Constants.DEGTOPI;
 	  double positionHalf = position * 0.5;
     if (getAutomaticSlit()) {

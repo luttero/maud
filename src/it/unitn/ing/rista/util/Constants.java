@@ -216,8 +216,9 @@ public class Constants {
   public static final double PROTON_MOMENT = 1.41060761E-26;
 
   public static final double E_SCAT_FACTOR = PLANCK * PLANCK / (2.0 * Math.PI * ELECTRON_MASS * CHARGE) *
-			1.0E20;
+			1.0E20; // Luca testing Planck constant in eV
   public static final double E_SCAT_FACTOR_PI = E_SCAT_FACTOR / Math.PI;
+  public static final double E_SCAT_PI_FACTOR = Math.PI / E_SCAT_FACTOR; // Luca test for dynamical
   public static final double ENERGY_CONSTANT = 1.9569341E-6;
 	
   public static final double ENERGY_LAMBDA = 12398.424121;
@@ -266,13 +267,13 @@ public class Constants {
   public static String resultsFile = "results.txt";
   public static String userName = null;
   public static String startPath = "/";
-  public static String maudReleaseBuilt = "$Revision: 2.9995 $";
-  public static String maudDateBuilt = "$Date: 2024/07/10 15:48:00 $";
+  public static String maudReleaseBuilt = "$Revision: 2.9996 $";
+  public static String maudDateBuilt = "$Date: 2024/01/28 20:42:00 $";
 
   public static final double arg2PIover3 = PI2 / 3.;
   public static final double sinArg2PIover3 = Math.sin(arg2PIover3);
   public static final double cosArg2PIover3 = Math.cos(arg2PIover3);
-  public static double maud_version = 2.9995;
+  public static double maud_version = 2.9996;
   public static boolean useOpenCL = false;
   public static Vector<OpenCLDevice> openClDevices= null;
   public static OpenCLDevice openclDevice = null;
@@ -391,6 +392,8 @@ public class Constants {
   public static int computationPriority = Thread.NORM_PRIORITY;
   public static boolean refreshTreePermitted = true;
   public static boolean textonly = false;
+  public static boolean showParameterWarnings = true;
+
   public static boolean initialized = false;
   public static final String NONE = "None";
   public static boolean consoleShouldBeVisible = false;
@@ -765,6 +768,7 @@ public class Constants {
 	  textureOutput = MaudPreferences.getBoolean("log_output.file_texture", textureOutput);
 	  strainOutput = MaudPreferences.getBoolean("log_output.file_strains", strainOutput);
 	  structureFactorsOutput = MaudPreferences.getBoolean("log_output.file_structure_factors", structureFactorsOutput);
+    showParameterWarnings = MaudPreferences.getBoolean("output.show_parameter_warning", showParameterWarnings);
 
 /*    if (macosx) {
       String brushMetalLook = MaudPreferences.getPref("apple.awt.brushMetalLook", "false");

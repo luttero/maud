@@ -57,4 +57,8 @@ public class EDXRFInstrument extends XRFInstrument {
     description = modelID;
   }
 
+  public boolean isEDX() {
+    return true;
+  }
+
 }

@@ -21,6 +21,7 @@
 package it.unitn.ing.rista.diffr;
 
 import it.unitn.ing.rista.awt.*;
+import it.unitn.ing.rista.comp.OutputPanel;
 import it.unitn.ing.rista.interfaces.BaseFactoryObject;
 import it.unitn.ing.rista.interfaces.basicObj;
 import it.unitn.ing.rista.io.cif.CIFItem;
@@ -752,11 +753,11 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
     }
   }
 
-  public basicObj[] getChildren(String searchString, boolean refinable) {
+  public basicObj[] getChildren(String searchString, boolean refinableOnly) {
 
     int i, j, k;
 
-    int numberofObjects = getChildCount(searchString, refinable);
+    int numberofObjects = getChildCount(searchString, refinableOnly);
     basicObj childrens[] = new basicObj[numberofObjects];
 // System.out.println(this + " " + searchString);
 //    System.out.println("getChildren "+numberofObjects);
@@ -764,7 +765,7 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
 
     k = 0;
     for (i = 0; i < Nparameter; i++) {
-	    if (!refinable || parameterField[i].getFree())
+	    if (!refinableOnly || parameterField[i].isRefinable())
       if ((searchString == null || searchString.equalsIgnoreCase("") ||
           parameterField[i].getLabel().contains(searchString)))
         childrens[k++] = parameterField[i];
@@ -772,18 +773,19 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
     for (i = 0; i < Nparameterloop; i++)
       for (j = 0; j < numberofelementPL(i); j++)
         if ((obj = (basicObj) parameterloopField[i].elementAt(j)) != null)
-          if (searchString == null || searchString.equalsIgnoreCase("") ||
-              obj.getLabel().contains(searchString))
-            childrens[k++] = obj;
+          if (!refinableOnly || ((Parameter) parameterloopField[i].elementAt(j)).isRefinable())
+            if (searchString == null || searchString.equalsIgnoreCase("") ||
+                obj.getLabel().contains(searchString))
+              childrens[k++] = obj;
     for (i = 0; i < Nsubordinate; i++)
-      if ((subordinateField[i]) != null && subordinateField[i].getChildCount(searchString, refinable) > 0) {
+      if ((subordinateField[i]) != null && subordinateField[i].getChildCount(searchString, refinableOnly) > 0) {
         childrens[k++] = subordinateField[i];
 //	      System.out.println("Adding: " + subordinateField[i].toString());
       }
     for (i = 0; i < Nsubordinateloop; i++)
       for (j = 0; j < numberofelementSubL(i); j++)
         if ((obj = (basicObj) subordinateloopField[i].elementAt(j)) != null &&
-            ((basicObj) subordinateloopField[i].elementAt(j)).getChildCount(searchString, refinable) > 0)
+            ((basicObj) subordinateloopField[i].elementAt(j)).getChildCount(searchString, refinableOnly) > 0)
           childrens[k++] = obj;
 
     return childrens;
@@ -793,14 +795,14 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
 
   public boolean getAllowsChildren() {return true;}
 
-  public int getChildCount(String searchString, boolean refinable) {
+  public int getChildCount(String searchString, boolean refinableOnly) {
     int i, j;
 
     int numberofObjects = 0;
 // System.out.println(this + " " + searchString);
     for (i = 0; i < Nparameter; i++) {
       // here the last modification
-	    if (!refinable || parameterField[i].getFree())
+	    if (!refinableOnly || parameterField[i].isRefinable())
         if ((searchString == null || searchString.equalsIgnoreCase("") ||
             parameterField[i].getLabel().contains(searchString)))
           numberofObjects++;
@@ -809,16 +811,17 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
     for (i = 0; i < Nparameterloop; i++)
       for (j = 0; j < numberofelementPL(i); j++)
         if (parameterloopField[i].elementAt(j) != null)
-          if (searchString == null || searchString.equalsIgnoreCase("") ||
-              ((basicObj)parameterloopField[i].elementAt(j)).getLabel().contains(searchString))
-          numberofObjects++;
+          if (!refinableOnly || ((Parameter) parameterloopField[i].elementAt(j)).isRefinable())
+            if (searchString == null || searchString.equalsIgnoreCase("") ||
+                ((basicObj)parameterloopField[i].elementAt(j)).getLabel().contains(searchString))
+            numberofObjects++;
     for (i = 0; i < Nsubordinate; i++)
-      if (subordinateField[i] != null && subordinateField[i].getChildCount(searchString, refinable) > 0)
+      if (subordinateField[i] != null && subordinateField[i].getChildCount(searchString, refinableOnly) > 0)
         numberofObjects++;
     for (i = 0; i < Nsubordinateloop; i++)
       for (j = 0; j < numberofelementSubL(i); j++)
         if (subordinateloopField[i].elementAt(j) != null &&
-            ((basicObj) subordinateloopField[i].elementAt(j)).getChildCount(searchString, refinable) > 0)
+            ((basicObj) subordinateloopField[i].elementAt(j)).getChildCount(searchString, refinableOnly) > 0)
           numberofObjects++;
 
 //    System.out.println("getChildCount "+numberofObjects);
@@ -2704,6 +2707,31 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
     // this should not happen
     System.out.println("CifID error in:" + toXRDcatString() + " " + parameter.toString());
     return null;
+  }
+
+  public void showWarnings() {
+    int i;
+
+    for (i = 0; i < Nparameter; i++)
+      parameterField[i].showWarnings();
+    for (i = 0; i < Nparameterloop; i++) {
+      for (int j = 0; j < parameterloopField[i].size(); j++)
+        ((Parameter) parameterloopField[i].elementAt(j)).showWarnings();
+    }
+    for (i = 0; i < Nsubordinate; i++) {
+      if (subordinateField != null && subordinateField[i] != null)
+        subordinateField[i].showWarnings();
+    }
+    for (i = 0; i < Nsubordinateloop; i++) {
+      for (int j = 0; j < numberofelementSubL(i); j++)
+        if (subordinateloopField != null && subordinateloopField[i] != null)
+          ((XRDcat) subordinateloopField[i].elementAt(j)).showWarnings();
+    }
+
+  }
+
+  public String getGenealogyString() {
+    return getParent().getGenealogyString() + "->" + getLabel();
   }
 
   public void printInformations(OutputStream out) {

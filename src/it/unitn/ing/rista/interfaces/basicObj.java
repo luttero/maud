@@ -23,6 +23,7 @@ package it.unitn.ing.rista.interfaces;
 import java.lang.*;
 import java.util.Enumeration;
 
+import it.unitn.ing.rista.comp.OutputPanel;
 import it.unitn.ing.rista.util.*;
 import it.unitn.ing.rista.diffr.*;
 
@@ -76,6 +77,8 @@ public interface basicObj {
   public void freeAllParameters(String searchString, boolean refinable);
 
   public void fixAllParameters(String searchString, boolean refinable);
+
+  public void showWarnings();
 
   }
 

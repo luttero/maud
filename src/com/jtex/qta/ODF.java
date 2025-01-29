@@ -116,6 +116,7 @@ public class ODF extends ODFComponent {
 		Miller h = pf.getH();
 		Array1D[] ghRhoTheta = new Array1D[h.size()];
 		for (int i = 0; i < h.size(); i++) {
+      System.out.println(i + ": " + h.get(i));
 			Vec3 gh = sgrid.rotate(h.get(i));
 			ghRhoTheta[i] = gh.getRhoTheta();
 		}

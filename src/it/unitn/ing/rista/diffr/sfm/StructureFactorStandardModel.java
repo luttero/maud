@@ -118,11 +118,10 @@ public class StructureFactorStandardModel extends StructureFactorModel {
 			t = phase.getCrystalThickness();
 		  if (t <= 0)
 			  t = 1;
-		  else
-			  t_corr = t;
-			double E = adataset.getInstrument().getRadiationType().getRadiationEnergy();
+      t_corr = t;
+			double E = adataset.getInstrument().getRadiationType().getRadiationEnergyInJ();
 //			double m_me = 1.0 + Constants.ENERGY_CONSTANT * E;
-			double K02 = Constants.E_SCAT_FACTOR_PI * E;
+			double K02 = Constants.E_SCAT_PI_FACTOR * E / Constants.CHARGE;
 			int atomNumber = atomList.size();
 			double[][] scatteringFactors = new double[atomNumber][2];
 			for (int j = 0; j < atomNumber; j++) {
@@ -131,14 +130,14 @@ public class StructureFactorStandardModel extends StructureFactorModel {
 				scatteringFactors[j][1] = scat[1];
 //				System.out.println(atomList.get(j).getLabel() + " " + scat[0] + " " + scat[1]);
 			}
-		  double U0corr = Constants.E_SCAT_FACTOR_PI / volume;
+		  double U0corr = Constants.E_SCAT_PI_FACTOR / volume;
 			double U0 = Math.sqrt(Fhklcomp0(phase, scatteringFactors)) * U0corr;
-		  double k = Math.sqrt(K02 + U0);
-			constV = Constants.E_SCAT_FACTOR_PI * t_corr / k * Math.PI;
-/*		  if (Constants.testing && !phase.getFilePar().isOptimizing())
-		    System.out.println("U0: " + constV + " " + k + " " + K02 + " " + U0 + " " + t + " " + t_corr);*/
+		  double k = Math.sqrt(K02 + U0) * 2.0;
+			constV = Constants.E_SCAT_PI_FACTOR * t_corr / k * Math.PI;
+		  if (Constants.testing && !phase.getFilePar().isOptimizing())
+		    System.out.println("U0: " + constV + " " + k + " " + K02 + " " + U0 + " " + t + " " + t_corr);
 		}
-		final double meanCrystallite_corr = phase.getMeanCrystallite() * thermalS + t;
+//		final double meanCrystallite_corr = phase.getMeanCrystallite() * thermalS + t;
 
 	  final int maxThreads = Math.min(Constants.maxNumberOfThreads, hkln / 10);
 	  if ((hkln * atomList.size()) > 1000 && maxThreads > 1 && Constants.threadingGranularity >= Constants.MEDIUM_GRANULARITY) {
@@ -148,8 +147,8 @@ public class StructureFactorStandardModel extends StructureFactorModel {
 		  PersistentThread[] threads = new PersistentThread[maxThreads];
 		  for (i = 0; i < maxThreads; i++) {
 			  final DataFileSet dataset = adataset;
-			  final double thickness = t;
-			  final double thickness_corr = t_corr;
+//			  final double thickness = t;
+//			  final double thickness_corr = t_corr;
 			  final double volumeCorrection = constV;
 			  final double volumeCell = volume;
 			  threads[i] = new PersistentThread(i) {
@@ -166,14 +165,14 @@ public class StructureFactorStandardModel extends StructureFactorModel {
 						  // todo, should be modified to compute scatfactors for each rad line
 						  double structureFactor = Fhklcomp(phase, refl, scatFactors[j + 1][0]);
 						  if (rad1.isDynamical()) {
-							  double crystCorr = 1.0;
-							  if (useAnisotropicCrystallites)
-								  crystCorr = (phase.getCrystallite(j) * thermalS + thickness) / thickness_corr;
+//							  double crystCorr = 1.0;
+//							  if (useAnisotropicCrystallites)
+//								  crystCorr = (phase.getCrystallite(j) * thermalS + thickness) / thickness_corr;
 							  double Fhkl = Math.sqrt(structureFactor) / volumeCell;
-							  double A = Fhkl * volumeCorrection * crystCorr;
+							  double A = Fhkl * volumeCorrection; // * crystCorr;
 //							  if (A > cuttingThreshold)
 							  double _intA = IntegratedBesselJ0.averageIntegralBesselUpTo(A);
-								structureFactor *= _intA / meanCrystallite_corr;
+								structureFactor *= _intA; // luca / meanCrystallite_corr;
 //							  else
 //								  structureFactor = 1.207107;
 //								structureFactor *= volumeCorrection / thickness_corr; // we eliminate the thickness
@@ -235,7 +234,7 @@ public class StructureFactorStandardModel extends StructureFactorModel {
 				  double A = Fhkl * constV * crystCorrection;
 //				  if (A > cuttingThreshold)
 				  intA = IntegratedBesselJ0.averageIntegralBesselUpTo(A);
-					structureFactor *= intA / meanCrystallite_corr;
+					structureFactor *= intA; // luca / meanCrystallite_corr;
 //				  else
 //				    structureFactor *= 1.207107;
 /*				  if (useAnisotropicCrystallites)

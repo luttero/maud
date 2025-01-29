@@ -136,6 +136,8 @@ public class PseudoVoigtPeak extends basicPeak {
 //      addInstrumentalBroadening(refl.getInstBroadFactor(dataindex));
 
 			int nrad = ainstrument.getRadiationType().getLinesCount();
+      if (diffrDataFile.energyDispersive || diffrDataFile.dspacingbase)
+        nrad = 1;
 			int totalLines = diffrDataFile.positionsPerPattern * nrad;
 			double[] finalposition = new double[totalLines];
 			double[][] intensity = new double[3][totalLines];

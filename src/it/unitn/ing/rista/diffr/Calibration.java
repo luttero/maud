@@ -136,6 +136,16 @@ public class Calibration extends it.unitn.ing.rista.diffr.XRDcat {
       return null;
   }
 
+  public RadiationType getRadiation() {
+    XRDcat parent = getParent();
+    while (parent != null && !(parent instanceof Instrument))
+      parent = parent.getParent();
+    if (parent != null)
+      return ((Instrument) parent).getRadiationType();
+    else
+      return null;
+  }
+
   public double calibrateData(double intensity) {
     return intensity;
   }

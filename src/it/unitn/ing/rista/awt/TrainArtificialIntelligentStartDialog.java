@@ -41,7 +41,8 @@ import java.awt.event.ActionListener;
 
 public class TrainArtificialIntelligentStartDialog extends myJFrame {
 
-  JTextField numberTF;
+  JTextField numberTF_start;
+  JTextField numberTF_end;
 
   JTextField prefixTF;
 	public TrainArtificialIntelligentStartDialog(DiffractionMainFrame parentFrame) {
@@ -65,17 +66,19 @@ public class TrainArtificialIntelligentStartDialog extends myJFrame {
 		principalPanel.setBorder(new BevelBorder(BevelBorder.LOWERED));
 		c1.add(BorderLayout.NORTH, principalPanel);
 
-    principalPanel.add(new JLabel("Number of simulations: "));
-    numberTF = new JTextField(Constants.FLOAT_FIELD);
-    numberTF.setText("1000");
-    principalPanel.add(numberTF);
-
     principalPanel.add(new JLabel("File output prefix: "));
     prefixTF = new JTextField(Constants.FLOAT_FIELD);
     prefixTF.setText("sim_");
     principalPanel.add(prefixTF);
 
-
+    principalPanel.add(new JLabel("First simulation: "));
+    numberTF_start = new JTextField(Constants.FLOAT_FIELD);
+    numberTF_start.setText("0");
+    principalPanel.add(numberTF_start);
+    principalPanel.add(new JLabel("Last simulation: "));
+    numberTF_end = new JTextField(Constants.FLOAT_FIELD);
+    numberTF_end.setText("1000");
+    principalPanel.add(numberTF_end);
 
     JPanel p1 = new JPanel();
 		p1.setLayout(new FlowLayout(FlowLayout.RIGHT, 3, 3));
@@ -84,9 +87,10 @@ public class TrainArtificialIntelligentStartDialog extends myJFrame {
 		p1.add(closeButton);
 		closeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-        int numberOfSim = Integer.parseInt(numberTF.getText());
         String prefix = prefixTF.getText();
-				parentFrame.generateDataForAI(numberOfSim, prefix);
+        int start = Integer.parseInt(numberTF_start.getText());
+        int end = Integer.parseInt(numberTF_end.getText());
+				parentFrame.generateDataForAI(prefix, start, end);
 				setVisible(false);
 				dispose();
 			}
@@ -101,11 +105,8 @@ public class TrainArtificialIntelligentStartDialog extends myJFrame {
 			}
 		});
 		setHelpButton(p1);
-
 		initParameters();
-
 		pack();
-
 //    centerOnScreen();
 	}
 

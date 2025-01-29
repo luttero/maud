@@ -377,6 +377,9 @@ public class EvolutionarySmartIndexing implements Function {
   public void refreshFit(double[] fit, double[] parm, int[] controls) {
   }
 
+  public void showWarnings() {
+  }
+
   public SmartIndexingOptionsDialog startDialog(Frame parentFrame) {
     return new SmartIndexingOptionsDialog(parentFrame, "Indexing algorithm options", false, this);
   }

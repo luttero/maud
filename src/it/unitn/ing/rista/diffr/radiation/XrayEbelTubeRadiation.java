@@ -47,199 +47,199 @@ import java.util.Vector;
 
 public class XrayEbelTubeRadiation extends RadiationType {
 
-	public static String[] diclistc = {
+  public static String[] diclistc = {
 //			"_ebel_radiation_wavelength_id",
-			"_ebel_radiation_minimum_keV",
-			"_ebel_radiation_step_keV",
-			"_ebel_radiation_trasmission_target",
+      "_ebel_radiation_minimum_keV",
+      "_ebel_radiation_step_keV",
+      "_ebel_radiation_trasmission_target",
 
-			"_ebel_radiation_tube_voltage_kV",
-			"_ebel_radiation_incident_angle_degrees",
-			"_ebel_radiation_exiting_angle_degrees",
-			"_ebel_radiation_characteristic_scale_factor",
+      "_ebel_radiation_tube_voltage_kV",
+      "_ebel_radiation_incident_angle_degrees",
+      "_ebel_radiation_exiting_angle_degrees",
+      "_ebel_radiation_characteristic_scale_factor",
 
-			"_diffrn_radiation_wavelength_id",
-			"_instrument_filter_material"
-	};
-	public static String[] diclistcrm = {
+      "_diffrn_radiation_wavelength_id",
+      "_instrument_filter_material"
+  };
+  public static String[] diclistcrm = {
 //			"_ebel_radiation_wavelength_id",
-			"_ebel_radiation_minimum_keV",
-			"_ebel_radiation_step_keV",
-			"_ebel_radiation_trasmission_target",
+      "_ebel_radiation_minimum_keV",
+      "_ebel_radiation_step_keV",
+      "_ebel_radiation_trasmission_target",
 
-			"_ebel_radiation_tube_voltage_kV",
-			"_ebel_radiation_incident_angle_degrees",
-			"_ebel_radiation_exiting_angle_degrees",
-			"_ebel_radiation_characteristic_scale_factor",
+      "_ebel_radiation_tube_voltage_kV",
+      "_ebel_radiation_incident_angle_degrees",
+      "_ebel_radiation_exiting_angle_degrees",
+      "_ebel_radiation_characteristic_scale_factor",
 
-			"_diffrn_radiation_wavelength_id",
-			"_instrument_filter_material"
-	};
+      "_diffrn_radiation_wavelength_id",
+      "_instrument_filter_material"
+  };
 
-	public static String[] classlistc = {"it.unitn.ing.rista.diffr.Radiation",
-			"superclass:it.unitn.ing.rista.diffr.AbsorptionWindow"
-	};
-	public static String[] classlistcs = {};
+  public static String[] classlistc = {"it.unitn.ing.rista.diffr.Radiation",
+      "superclass:it.unitn.ing.rista.diffr.AbsorptionWindow"
+  };
+  public static String[] classlistcs = {};
 
-//	private static int wavelength_id = 0;
-	private static int minimum_keV_id = 0;
-	private static int step_keV_id = 1;
-	private static int trasmission_target_id = 2;
-	private static int voltage_kV_id = 0;
-	private static int incident_angle_id = 1;
-	private static int exiting_angle_id = 2;
-	private static int continuous_scale_factor_id = 3;
-	private static int radiation_id = 0;
-	private static int filter_material_id = 1;
+  //	private static int wavelength_id = 0;
+  private static int minimum_keV_id = 0;
+  private static int step_keV_id = 1;
+  private static int trasmission_target_id = 2;
+  private static int voltage_kV_id = 0;
+  private static int incident_angle_id = 1;
+  private static int exiting_angle_id = 2;
+  private static int continuous_scale_factor_id = 3;
+  private static int radiation_id = 0;
+  private static int filter_material_id = 1;
 
-	private int spectrumPointsNumber = 0;
+  private int spectrumPointsNumber = 0;
 
-	private static double scale_factor = 1.0E-12;
+  private static double scale_factor = 1.0E-12;
 
-	public XrayEbelTubeRadiation(XRDcat aobj, String alabel) {
-		identifier = "X-ray Ebel tube";
-		IDlabel = "X-ray Ebel tube";
-		description = "X-ray Ebel tube radiation";
-		if (alabel == null || alabel.equals(""))
-			setLabel("unknown");
-		else
-			setLabel(alabel);
-		setParent(aobj);
-		parametersV = new Vector(0, 1);
-		initBaseObject();
-	}
+  public XrayEbelTubeRadiation(XRDcat aobj, String alabel) {
+    identifier = "X-ray Ebel tube";
+    IDlabel = "X-ray Ebel tube";
+    description = "X-ray Ebel tube radiation";
+    if (alabel == null || alabel.equals(""))
+      setLabel("unknown");
+    else
+      setLabel(alabel);
+    setParent(aobj);
+    parametersV = new Vector(0, 1);
+    initBaseObject();
+  }
 
-	public XrayEbelTubeRadiation(XRDcat aobj) {
-		this(aobj, "X-ray Ebel tube");
-	}
+  public XrayEbelTubeRadiation(XRDcat aobj) {
+    this(aobj, "X-ray Ebel tube");
+  }
 
-	public XrayEbelTubeRadiation() {
-		identifier = "X-ray Ebel tube";
-		IDlabel = "X-ray Ebel tube";
-		description = "X-ray Ebel tube radiation";
-	}
+  public XrayEbelTubeRadiation() {
+    identifier = "X-ray Ebel tube";
+    IDlabel = "X-ray Ebel tube";
+    description = "X-ray Ebel tube radiation";
+  }
 
-	public void initConstant() {
-		Nstring = 3;
-		Nstringloop = 0;
-		Nparameter = 4;
-		Nparameterloop = 0;
-		Nsubordinate = 0;
-		Nsubordinateloop = 2;
-	}
+  public void initConstant() {
+    Nstring = 3;
+    Nstringloop = 0;
+    Nparameter = 4;
+    Nparameterloop = 0;
+    Nsubordinate = 0;
+    Nsubordinateloop = 2;
+  }
 
-	public void initDictionary() {
-		System.arraycopy(diclistc, 0, diclist, 0, totsubordinateloop);
-		System.arraycopy(diclistcrm, 0, diclistRealMeaning, 0, totsubordinateloop);
-		System.arraycopy(classlistc, 0, classlist, 0, totsubordinateloop - totsubordinate);
-		System.arraycopy(classlistcs, 0, classlists, 0, totsubordinate - totparameterloop);
-	}
+  public void initDictionary() {
+    System.arraycopy(diclistc, 0, diclist, 0, totsubordinateloop);
+    System.arraycopy(diclistcrm, 0, diclistRealMeaning, 0, totsubordinateloop);
+    System.arraycopy(classlistc, 0, classlist, 0, totsubordinateloop - totsubordinate);
+    System.arraycopy(classlistcs, 0, classlists, 0, totsubordinate - totparameterloop);
+  }
 
-	public void initBaseObject() {
-		initConstant();
-		computeConstant();
-		initDictionary();
-		initParameters();
-		isAbilitatetoRefresh = true;
-	}
+  public void initBaseObject() {
+    initConstant();
+    computeConstant();
+    initDictionary();
+    initParameters();
+    isAbilitatetoRefresh = true;
+  }
 
-	public void computeConstant() {
-		totstring = Nstring;
-		totstringloop = totstring + Nstringloop;
-		totparameter = totstringloop + Nparameter;
-		totparameterloop = totparameter + Nparameterloop;
-		totsubordinate = totparameterloop + Nsubordinate;
-		totsubordinateloop = totsubordinate + Nsubordinateloop;
+  public void computeConstant() {
+    totstring = Nstring;
+    totstringloop = totstring + Nstringloop;
+    totparameter = totstringloop + Nparameter;
+    totparameterloop = totparameter + Nparameterloop;
+    totsubordinate = totparameterloop + Nsubordinate;
+    totsubordinateloop = totsubordinate + Nsubordinateloop;
 
-		diclist = new String[totsubordinateloop];
-		diclistRealMeaning = new String[totsubordinateloop];
-		classlist = new String[Nsubordinateloop];
-		classlists = new String[Nsubordinate];
-		pivotrequired = new boolean[Nsubordinateloop];
-		stringField = new String[Nstring];
-		stringloopField = new ListVector[Nstringloop];
-		parameterField = new Parameter[Nparameter];
-		parameterloopField = new ListVector[Nparameterloop];
-		subordinateField = new XRDcat[Nsubordinate];
-		subordinateloopField = new ListVector[Nsubordinateloop];
+    diclist = new String[totsubordinateloop];
+    diclistRealMeaning = new String[totsubordinateloop];
+    classlist = new String[Nsubordinateloop];
+    classlists = new String[Nsubordinate];
+    pivotrequired = new boolean[Nsubordinateloop];
+    stringField = new String[Nstring];
+    stringloopField = new ListVector[Nstringloop];
+    parameterField = new Parameter[Nparameter];
+    parameterloopField = new ListVector[Nparameterloop];
+    subordinateField = new XRDcat[Nsubordinate];
+    subordinateloopField = new ListVector[Nsubordinateloop];
 
-		parameterValues = new double[Nparameter];
-		parameterLoopValuesVector = new Vector(Nparameterloop, 1);
-		numberOfLoopParameters = new int[Nparameterloop];
+    parameterValues = new double[Nparameter];
+    parameterLoopValuesVector = new Vector(Nparameterloop, 1);
+    numberOfLoopParameters = new int[Nparameterloop];
 
-	}
+  }
 
 /*	public void initParameters() {
 		super.initParameters();
 	}*/
 
-	public void initParameters() {
-		int i;
+  public void initParameters() {
+    int i;
 
-		for (i = 0; i < Nstring; i++)
-			stringField[i] = "";
-		for (i = 0; i < Nstringloop; i++)
-			stringloopField[i] = new ListVector(0, 1, this);
-		for (i = 0; i < Nparameterloop; i++)
-			parameterloopField[i] = new ListVector(0, 1, this);
-		for (i = 0; i < Nsubordinateloop; i++)
-			subordinateloopField[i] = new ListVector(0, 1, this);
-		for (i = 0; i < Nsubordinateloop; i++)
-			pivotrequired[i] = false;
-		for (i = 0; i < Nparameter; i++)
-			parameterField[i] = new Parameter(this, getParameterString(i), 0);
+    for (i = 0; i < Nstring; i++)
+      stringField[i] = "";
+    for (i = 0; i < Nstringloop; i++)
+      stringloopField[i] = new ListVector(0, 1, this);
+    for (i = 0; i < Nparameterloop; i++)
+      parameterloopField[i] = new ListVector(0, 1, this);
+    for (i = 0; i < Nsubordinateloop; i++)
+      subordinateloopField[i] = new ListVector(0, 1, this);
+    for (i = 0; i < Nsubordinateloop; i++)
+      pivotrequired[i] = false;
+    for (i = 0; i < Nparameter; i++)
+      parameterField[i] = new Parameter(this, getParameterString(i), 0);
 
-		int nsubord = totsubordinate - totparameterloop;
-		nsubordSuperclass = new Vector[nsubord];
-		for (i = 0; i < nsubord; i++) {
-			if (classlists[i].startsWith("superclass")) {
-				nsubordSuperclass[i] = Constants.getClassList(filterClass(classlists[i]));
-			} else
-				nsubordSuperclass[i] = null;
-		}
+    int nsubord = totsubordinate - totparameterloop;
+    nsubordSuperclass = new Vector[nsubord];
+    for (i = 0; i < nsubord; i++) {
+      if (classlists[i].startsWith("superclass")) {
+        nsubordSuperclass[i] = Constants.getClassList(filterClass(classlists[i]));
+      } else
+        nsubordSuperclass[i] = null;
+    }
 
-		int nsubordloop = totsubordinateloop - totsubordinate;
-		nsubordloopSuperclass = new Vector[nsubordloop];
-		for (i = 0; i < nsubordloop; i++) {
-			if (classlist[i].startsWith("superclass"))
-				nsubordloopSuperclass[i] = Constants.getClassList(filterClass(classlist[i]));
-			else
-				nsubordloopSuperclass[i] = null;
-		}
+    int nsubordloop = totsubordinateloop - totsubordinate;
+    nsubordloopSuperclass = new Vector[nsubordloop];
+    for (i = 0; i < nsubordloop; i++) {
+      if (classlist[i].startsWith("superclass"))
+        nsubordloopSuperclass[i] = Constants.getClassList(filterClass(classlist[i]));
+      else
+        nsubordloopSuperclass[i] = null;
+    }
 
-		refreshComputation = true;
+    refreshComputation = true;
 
 //		stringField[wavelength_id] = MaudPreferences.getPref("ebel_tube.anode_element", "Cu");
-		stringField[minimum_keV_id] = MaudPreferences.getPref("ebel_tube.minimum_keV", "1");
-		stringField[step_keV_id] = MaudPreferences.getPref("ebel_tube.computation_step_keV", "0.1");
-		setTrasmissionTarget(MaudPreferences.getBoolean("ebel_tube.trasmission_target", false));
+    stringField[minimum_keV_id] = MaudPreferences.getPref("ebel_tube.minimum_keV", "1");
+    stringField[step_keV_id] = MaudPreferences.getPref("ebel_tube.computation_step_keV", "0.1");
+    setTrasmissionTarget(MaudPreferences.getBoolean("ebel_tube.trasmission_target", false));
 
-		parameterField[voltage_kV_id] = new Parameter(this, getParameterString(voltage_kV_id), 40,
-				ParameterPreferences.getDouble(getParameterString(voltage_kV_id) + ".min", 20),
-				ParameterPreferences.getDouble(getParameterString(voltage_kV_id) + ".max", 200));
-		parameterField[incident_angle_id] = new Parameter(this, getParameterString(incident_angle_id), 90,
-				ParameterPreferences.getDouble(getParameterString(incident_angle_id) + ".min", 1),
-				ParameterPreferences.getDouble(getParameterString(incident_angle_id) + ".max", 90));
-		parameterField[exiting_angle_id] = new Parameter(this, getParameterString(exiting_angle_id), 6,
-				ParameterPreferences.getDouble(getParameterString(exiting_angle_id) + ".min", 0.1),
-				ParameterPreferences.getDouble(getParameterString(exiting_angle_id) + ".max", 30));
-		parameterField[continuous_scale_factor_id] = new Parameter(this, getParameterString(continuous_scale_factor_id), 1,
-				ParameterPreferences.getDouble(getParameterString(continuous_scale_factor_id) + ".min", 0.1),
-				ParameterPreferences.getDouble(getParameterString(continuous_scale_factor_id) + ".max", 10.0));
-	}
+    parameterField[voltage_kV_id] = new Parameter(this, getParameterString(voltage_kV_id), 40,
+        ParameterPreferences.getDouble(getParameterString(voltage_kV_id) + ".min", 20),
+        ParameterPreferences.getDouble(getParameterString(voltage_kV_id) + ".max", 200));
+    parameterField[incident_angle_id] = new Parameter(this, getParameterString(incident_angle_id), 90,
+        ParameterPreferences.getDouble(getParameterString(incident_angle_id) + ".min", 1),
+        ParameterPreferences.getDouble(getParameterString(incident_angle_id) + ".max", 90));
+    parameterField[exiting_angle_id] = new Parameter(this, getParameterString(exiting_angle_id), 6,
+        ParameterPreferences.getDouble(getParameterString(exiting_angle_id) + ".min", 0.1),
+        ParameterPreferences.getDouble(getParameterString(exiting_angle_id) + ".max", 30));
+    parameterField[continuous_scale_factor_id] = new Parameter(this, getParameterString(continuous_scale_factor_id), 1,
+        ParameterPreferences.getDouble(getParameterString(continuous_scale_factor_id) + ".min", 0.1),
+        ParameterPreferences.getDouble(getParameterString(continuous_scale_factor_id) + ".max", 10.0));
+  }
 
-	public boolean trasmissionTarget() {
-		return stringField[trasmission_target_id].equalsIgnoreCase("true");
-	}
+  public boolean trasmissionTarget() {
+    return stringField[trasmission_target_id].equalsIgnoreCase("true");
+  }
 
-	private void setTrasmissionTarget(boolean selected) {
-		if (selected)
-			stringField[trasmission_target_id] = "true";
-		else
-			stringField[trasmission_target_id] = "false";
-	}
+  private void setTrasmissionTarget(boolean selected) {
+    if (selected)
+      stringField[trasmission_target_id] = "true";
+    else
+      stringField[trasmission_target_id] = "false";
+  }
 
-	public void checkRadiation() {
+  public void checkRadiation() {
 /*		if (getLinesCountForFluorescence() <= 0) {
 			addRadiation("Cu");
 			// todo: add lines from fluorescence
@@ -249,49 +249,49 @@ public class XrayEbelTubeRadiation extends RadiationType {
 			computeAll();
 			refreshComputation = false;
 		}*/
-	}
+  }
 
-	public Radiation getRadiation(int index) {
-		if (subordinateloopField[0].size() > index && index >= 0)
-			return (Radiation) subordinateloopField[0].elementAt(index);
-		else
-			return null;
-	}
+  public Radiation getRadiation(int index) {
+    if (subordinateloopField[0].size() > index && index >= 0)
+      return (Radiation) subordinateloopField[0].elementAt(index);
+    else
+      return null;
+  }
 
-	public double getRadiationWavelength(int index) {
-		return getRadiationWavelengthForFluorescence(index);
-	}
+  public double getRadiationWavelength(int index) {
+    return getRadiationWavelengthForFluorescence(index);
+  }
 
-	public double getRadiationWeigth(int index) {
-		return getRadiationWeightForFluorescence(index);
-	}
+  public double getRadiationWeigth(int index) {
+    return getRadiationWeightForFluorescence(index);
+  }
 
-	public int getLinesCount() {
-		if (refreshComputation) {
-			computeAll();
-			refreshComputation = false;
-		}
+  public int getLinesCount() {
+    if (refreshComputation) {
+      computeAll();
+      refreshComputation = false;
+    }
 //		checkRadiation();
-		if (continuous_spectrum == null || characteristic_spectrum == null)
-			return super.getLinesCount();
-		return continuous_spectrum[0].length + characteristic_spectrum[0].length;
-	}
+    if (continuous_spectrum == null || characteristic_spectrum == null)
+      return super.getLinesCount();
+    return continuous_spectrum[0].length + characteristic_spectrum[0].length;
+  }
 
-	public int getSubdivision() {
-		return MaudPreferences.getInteger("xrf_detector.energySubdivision", 20);
+  public int getSubdivision() {
+    return MaudPreferences.getInteger("xrf_detector.energySubdivision", 20);
 
-	}
+  }
 
-	public int getLinesCountForPlot() {
-		if (refreshComputation) {
-			computeAll();
-			refreshComputation = false;
-		}
+  public int getLinesCountForPlot() {
+    if (refreshComputation) {
+      computeAll();
+      refreshComputation = false;
+    }
 //		checkRadiation();
-		if (continuous_spectrum == null || characteristic_spectrum == null)
-			return super.getLinesCount();
-		return characteristic_spectrum[0].length;
-	}
+    if (continuous_spectrum == null || characteristic_spectrum == null)
+      return super.getLinesCount();
+    return characteristic_spectrum[0].length;
+  }
 
 /*	public int getLinesCountForFluorescence() {
 		if (refreshComputation) {
@@ -304,139 +304,144 @@ public class XrayEbelTubeRadiation extends RadiationType {
 		return continuous_spectrum[0].length + characteristic_spectrum[0].length;
 	}*/
 
-	public double getRadiationWavelengthForFluorescence(int index) {
+  public double getRadiationWavelengthForFluorescence(int index) {
 //		checkRadiation();
-		if (continuous_spectrum == null || characteristic_spectrum == null)
-			return super.getRadiationWavelength(index);
-		double energy;
-		if (index >= characteristic_spectrum[0].length)
-			energy = continuous_spectrum[0][index - characteristic_spectrum[0].length];
-		else
-			energy = characteristic_spectrum[0][index];
-		return Constants.ENERGY_LAMBDA / energy * 0.001;
-	}
+    if (continuous_spectrum == null || characteristic_spectrum == null)
+      return super.getRadiationWavelength(index);
+    double energy;
+    if (index >= characteristic_spectrum[0].length)
+      energy = continuous_spectrum[0][index - characteristic_spectrum[0].length];
+    else
+      energy = characteristic_spectrum[0][index];
+    return Constants.ENERGY_LAMBDA / energy * 0.001;
+  }
 
-	public double getRadiationEnergyForFluorescence(int index) {
+  public double getRadiationEnergyForFluorescence(int index) {
 //		checkRadiation();
-		if (continuous_spectrum == null || characteristic_spectrum == null)
-			return Constants.ENERGY_LAMBDA / super.getRadiationWavelength(index) * 0.001;
-		double energy;
-		if (index >= characteristic_spectrum[0].length)
-			energy = continuous_spectrum[0][index - characteristic_spectrum[0].length];
-		else
-			energy =  characteristic_spectrum[0][index];
-		return energy;
-	}
+    if (continuous_spectrum == null || characteristic_spectrum == null)
+      return Constants.ENERGY_LAMBDA / super.getRadiationWavelength(index) * 0.001;
+    double energy;
+    if (index >= characteristic_spectrum[0].length)
+      energy = continuous_spectrum[0][index - characteristic_spectrum[0].length];
+    else
+      energy = characteristic_spectrum[0][index];
+    return energy;
+  }
 
-	public int getNumberOfCharacteristicsLines() {
-		return characteristic_spectrum[1].length;
-	}
+  public int getNumberOfCharacteristicsLines() {
+    return characteristic_spectrum[1].length;
+  }
 
-	public double getRadiationWeightForFluorescence(int index) {
+  public double getRadiationWeightForFluorescence(int index) {
 //		checkRadiation();
-		if (continuous_spectrum == null || characteristic_spectrum == null)
-			return super.getRadiationWeigth(index);
-		if (index >= characteristic_spectrum[1].length)
-			return continuous_spectrum[1][index - characteristic_spectrum[1].length] * scale_factor;
-		else
-			return characteristic_spectrum[1][index] * scale_factor;
-	}
+    if (continuous_spectrum == null || characteristic_spectrum == null)
+      return super.getRadiationWeigth(index);
+    if (index >= characteristic_spectrum[1].length)
+      return continuous_spectrum[1][index - characteristic_spectrum[1].length] * scale_factor;
+    else
+      return characteristic_spectrum[1][index] * scale_factor;
+  }
 
-	int anodeElementNumber = 0;
-	int[] atomNumber = null;
-	double[] atomFraction = null;
-	double[] atomWeight = null;
+  int anodeElementNumber = 0;
+  int[] atomNumber = null;
+  double[] atomFraction = null;
+  double[] atomWeight = null;
 
-	public void computeAll() {
-		double minimumAcceptedIntensity = MaudPreferences.getDouble("ebelTube.BremsStrahlung_minimumIntensity", 0.0001);
-		// here goes the tube spectrum computation
+  public void computeAll() {
+    double minimumAcceptedIntensity = MaudPreferences.getDouble("ebelTube.BremsStrahlung_minimumIntensity", 0.0001);
+    // here goes the tube spectrum computation
 
 //		System.out.println("Computing Ebel tube spectrum for anode: " + getRadiation(0).getWavelengthID());
 
-		// first we compute the bremsstrahlung, continuous spectrum
+    // first we compute the bremsstrahlung, continuous spectrum
 
-		for (int i = 0; i < Nparameter; i++) {
-			parameterValues[i] = parameterField[i].getValueD();
-		}
+    for (int i = 0; i < Nparameter; i++) {
+      parameterValues[i] = parameterField[i].getValueD();
+    }
 
-		parameterLoopValuesVector.removeAllElements();
-		for (int i = 0; i < Nparameterloop; i++) {
-			numberOfLoopParameters[i] = numberofelementPL(i);
-			double parameterLoopValues[] = new double[numberOfLoopParameters[i]];
-			for (int j = 0; j < numberOfLoopParameters[i]; j++)
-				parameterLoopValues[j] = ((Parameter) parameterloopField[i].elementAt(j)).getValueD();
-			parameterLoopValuesVector.addElement(parameterLoopValues);
-		}
+    parameterLoopValuesVector.removeAllElements();
+    for (int i = 0; i < Nparameterloop; i++) {
+      numberOfLoopParameters[i] = numberofelementPL(i);
+      double parameterLoopValues[] = new double[numberOfLoopParameters[i]];
+      for (int j = 0; j < numberOfLoopParameters[i]; j++)
+        parameterLoopValues[j] = ((Parameter) parameterloopField[i].elementAt(j)).getValueD();
+      parameterLoopValuesVector.addElement(parameterLoopValues);
+    }
 
-		anodeElementNumber = subordinateloopField[radiation_id].size();
-		double totalAnodeWeight = 0.0;
-		for (int anodeNumber = 0; anodeNumber < anodeElementNumber; anodeNumber++)
-			totalAnodeWeight += getRadiation(anodeNumber).getWeigth().getValueD();
-		atomNumber = new int[anodeElementNumber];
-		atomFraction = new double[anodeElementNumber];
-		atomWeight = new double[anodeElementNumber];
-		for (int anodeNumber = 0; anodeNumber < anodeElementNumber; anodeNumber++) {
-			atomFraction[anodeNumber] = getRadiation(anodeNumber).getWeigth().getValueD() / totalAnodeWeight;
-			atomNumber[anodeNumber] = AtomInfo.retrieveAtomNumber(getRadiation(anodeNumber).getWavelengthID());
-			atomWeight[anodeNumber] = AtomInfo.retrieveAtomWeight(getRadiation(anodeNumber).getWavelengthID());
-		}
+    anodeElementNumber = subordinateloopField[radiation_id].size();
+    double totalAnodeWeight = 0.0;
+    for (int anodeNumber = 0; anodeNumber < anodeElementNumber; anodeNumber++)
+      totalAnodeWeight += getRadiation(anodeNumber).getWeigth().getValueD();
+    atomNumber = new int[anodeElementNumber];
+    atomFraction = new double[anodeElementNumber];
+    atomWeight = new double[anodeElementNumber];
+    for (int anodeNumber = 0; anodeNumber < anodeElementNumber; anodeNumber++) {
+      atomFraction[anodeNumber] = getRadiation(anodeNumber).getWeigth().getValueD() / totalAnodeWeight;
+      atomNumber[anodeNumber] = AtomInfo.retrieveAtomNumber(getRadiation(anodeNumber).getWavelengthID());
+      atomWeight[anodeNumber] = AtomInfo.retrieveAtomWeight(getRadiation(anodeNumber).getWavelengthID());
+    }
 
-		double[][] tmp_spectrum = computeBremsStrahlung();
+    double[][] tmp_spectrum = computeBremsStrahlung();
 
-		// now we compute the characteristic lines
+    // now we compute the characteristic lines
 
-		characteristicLines();
+    characteristicLines();
 
-		// now the absorption
+    // now the absorption
 
-		for (int i = 0; i < getList(filter_material_id).size(); i++) {
-			AbsorptionWindow absorptionWindow = (AbsorptionWindow) getList(filter_material_id).elementAt(i);
-			absorptionWindow.computeAbsorptionForLineWithEnergy(tmp_spectrum);
-			absorptionWindow.computeAbsorptionForLineWithEnergy(characteristic_spectrum);
-		}
+    for (int i = 0; i < getList(filter_material_id).size(); i++) {
+      AbsorptionWindow absorptionWindow = (AbsorptionWindow) getList(filter_material_id).elementAt(i);
+      absorptionWindow.computeAbsorptionForLineWithEnergy(tmp_spectrum);
+      absorptionWindow.computeAbsorptionForLineWithEnergy(characteristic_spectrum);
+    }
 
-		double maxIntensity = 0;
-		for (int i = 0; i < characteristic_spectrum[0].length; i++) {
-			double radFluorescence = characteristic_spectrum[1][i];
-			if (maxIntensity < radFluorescence)
-				maxIntensity = radFluorescence;
-		}
-		for (int i = 0; i < tmp_spectrum[0].length; i++) {
-			double radFluorescence = tmp_spectrum[1][i];
-			if (maxIntensity < radFluorescence)
-				maxIntensity = radFluorescence;
-		}
-		double minimumIntensity = maxIntensity * minimumAcceptedIntensity;
-		int index = 0;
-		for (int i = 0; i < tmp_spectrum[0].length; i++) {
-			double radFluorescence = tmp_spectrum[1][i];
-			if (minimumIntensity < radFluorescence)
-				index++;
-		}
-		int totalLines = index;
+    double maxIntensity = 0;
+    for (int i = 0; i < characteristic_spectrum[0].length; i++) {
+      double radFluorescence = characteristic_spectrum[1][i];
+      if (maxIntensity < radFluorescence)
+        maxIntensity = radFluorescence;
+    }
+    for (int i = 0; i < tmp_spectrum[0].length; i++) {
+      double radFluorescence = tmp_spectrum[1][i];
+      if (maxIntensity < radFluorescence)
+        maxIntensity = radFluorescence;
+    }
+    double minimumIntensity = maxIntensity * minimumAcceptedIntensity;
+    int index = 0;
+    for (int i = 0; i < tmp_spectrum[0].length; i++) {
+      double radFluorescence = tmp_spectrum[1][i];
+      if (minimumIntensity < radFluorescence)
+        index++;
+    }
+    int totalLines = index;
 
 //		System.out.println("Total lines: " + totalLines + ", minimum " + minimumIntensity + ", " + maxIntensity + ", " + tmp_spectrum[0].length);
-		continuous_spectrum = new double[3][totalLines];
-		index = 0;
-		for (int i = 0; i < tmp_spectrum[0].length; i++) {
-			double radFluorescence = tmp_spectrum[1][i];
-			if (minimumIntensity < radFluorescence) {
-				for (int j = 0; j < 3; j++)
-					continuous_spectrum[j][index] = tmp_spectrum[j][i];
-				index++;
-			}
-		}
+    continuous_spectrum = new double[3][totalLines];
+    index = 0;
+    for (int i = 0; i < tmp_spectrum[0].length; i++) {
+      double radFluorescence = tmp_spectrum[1][i];
+      if (minimumIntensity < radFluorescence) {
+        for (int j = 0; j < 3; j++)
+          continuous_spectrum[j][index] = tmp_spectrum[j][i];
+        index++;
+      }
+    }
 
-		scale_factor = 1.0E-12;
-	}
+    scale_factor = 1.0E-12;
+  }
 
-	double[][] continuous_spectrum = null;
+  double[][] continuous_spectrum = null;
 
-	public double[][] computeBremsStrahlung() {
+  public double getEnergyStep() {
+    return Double.parseDouble(getString(step_keV_id));
+  }
+
+
+  public double[][] computeBremsStrahlung() {
 		double tubeVoltageInkV = Math.abs(getParameterValue(voltage_kV_id));
 		double scale_continuous = getParameterValue(continuous_scale_factor_id);
 		double minimumEnergy = Double.parseDouble(getString(minimum_keV_id));
-		double energyStep = Double.parseDouble(getString(step_keV_id));
+		double energyStep = getEnergyStep();
 		int n_points = (int) ((tubeVoltageInkV - minimumEnergy) / energyStep);
 		double[][] tmp_spectrum = new double[3][n_points];
 		for (int i = 0; i < n_points; i++) {

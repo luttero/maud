@@ -21,6 +21,7 @@
 package it.unitn.ing.rista.diffr;
 
 import it.unitn.ing.rista.awt.*;
+import it.unitn.ing.rista.util.Misc;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -53,6 +54,13 @@ public class InstrumentBroadening extends XRDcat {
 
   public JOptionsDialog getOptionsDialog(Frame parent) {
     return new JBroadOptionsD(parent, this);
+  }
+
+  public int getBankNumber(String bankID) {
+    String number = Misc.toStringFinalOnlyDigits(bankID);
+    if (number.length() > 0)
+      return Integer.parseInt(number);
+    return 0;
   }
 
   public double[][] getInstrumentalBroadeningAt(double x, DiffrDataFile diffrDataFile) {

@@ -3151,6 +3151,7 @@ public class DataFileSet extends XRDcat {
       int datafilenumber = datafilesnumber();
       for (int i = 0; i < datafilenumber; i++) {
         getDataFile(i).refreshBkgComputation = true;
+        getDataFile(i).refreshSpectraComputation = true;
       }
       reason = 0;
     } else if (reason == Constants.TEXTURE_CHANGED) {
@@ -3176,25 +3177,26 @@ public class DataFileSet extends XRDcat {
         sourceDatafile = sourceDatafile.getParent();
       if (sourceDatafile instanceof DiffrDataFile) {
         int datafilenumber = datafilesnumber();
-        for (int i = 0; i < datafilenumber; i++) {
-          if (getDataFile(i) == sourceDatafile) {
-            if (reason == Constants.BKG_PARAMETER_CHANGED) {
-              getDataFile(i).refreshBkgComputation = true;
-              getDataFile(i).refreshSpectraComputation = true;
-//            System.out.println("refreshing bkg "+sourceDatafile.toXRDcatString());
-            } else {
-//              System.out.println("Setting parameter changed, " + sourceDatafile);
-              if (isBackgroundInterpolated())
+        if (reason == Constants.BKG_FILE_CHANGED) {
+          for (int i = 0; i < datafilenumber; i++) {
+            getDataFile(i).refreshBkgComputation = true;
+            getDataFile(i).refreshSpectraComputation = true;
+          }
+        } else {
+          for (int i = 0; i < datafilenumber; i++) {
+            if (getDataFile(i) == sourceDatafile) {
+              if (reason == Constants.BKG_PARAMETER_CHANGED) {
                 getDataFile(i).refreshBkgComputation = true;
+                getDataFile(i).refreshSpectraComputation = true;
+//            System.out.println("refreshing bkg "+sourceDatafile.toXRDcatString());
+              } else {
+//              System.out.println("Setting parameter changed, " + sourceDatafile);
+                if (isBackgroundInterpolated())
+                  getDataFile(i).refreshBkgComputation = true;
+                getDataFile(i).refreshSpectraComputation = true;
+              }
             }
           }
-        }
-      } else {
-        int datafilenumber = datafilesnumber();
-        for (int i = 0; i < datafilenumber; i++) {
-          if (isBackgroundInterpolated())
-            getDataFile(i).refreshBkgComputation = true;
-          getDataFile(i).refreshSpectraComputation = true;
         }
       }
     }
@@ -3682,10 +3684,12 @@ public class DataFileSet extends XRDcat {
 //        hklpeak.setCrystMstrainDistribution(crystallite, microstrain, distx, distsize);
 //        hklpeak.setCrystalliteMicrostrain(aphase.getCrystallite(i), aphase.getMicrostrainD(i));
 
+//        System.out.println("Adding peak: " + hklpeak.getMeanPosition());
+
         thepeaklist.addElement(hklpeak);
 
         dspace = -dspace;
-        if (datafiletmp.xInsideRange(datafiletmp.computeposition(dspace, wavelength[0]))) {
+        if (!(datafiletmp.dspacingbase || datafiletmp.energyDispersive) && datafiletmp.xInsideRange(datafiletmp.computeposition(dspace, wavelength[0]))) {
 
           hklpeak = aphase.getActiveSizeStrain().createPeak(dspace, datafiletmp.dspacingbase,
               datafiletmp.energyDispersive, wavelength, radweight,
@@ -3706,6 +3710,7 @@ public class DataFileSet extends XRDcat {
 
   public void computeSpectra(Sample asample) {
 
+//			 System.out.println("Compute dataset " + getFilePar().isComputingDerivate());
     indexesComputed = false;
 
 	  final Diffraction diffr = getDiffraction();
@@ -3728,7 +3733,7 @@ public class DataFileSet extends XRDcat {
 		  if (datafile.refreshSpectraComputation) {
 			  datafile.hasfit = true;
 			  datafile.spectrumModified = true;
-			  datafile.resetExperimentalBackground();
+//			  datafile.resetExperimentalBackground();
 			  if (isBackgroundExperimental())
 				  datafile.addExperimentalBackground();
 			  if (isBackgroundInterpolated())

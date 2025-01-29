@@ -164,7 +164,7 @@ public class PoleFigureOutput {
         alphabeta[1][ij++] = j * resolution * Constants.DEGTOPI;
       }
     }
-    polf = textureModel.computeTextureFactor(phase, alphabeta, reflex);
+    polf = textureModel.computeTextureFactor(alphabeta, reflex);
     write(reflex.getH(), reflex.getK(), reflex.getL(), polf, false);
   }
 

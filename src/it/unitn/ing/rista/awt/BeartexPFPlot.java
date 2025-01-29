@@ -464,7 +464,7 @@ public class BeartexPFPlot extends Frame implements ClipboardOwner, Printable {
 					alphabeta[1][ij++] = j * stepResolution * Constants.DEGTOPI;
 				}
 			}
-			polf = textureModel.computeTextureFactor(aphase, alphabeta, reflex);
+			polf = textureModel.computeTextureFactor(alphabeta, reflex);
 			ij = 0;
 			for (int i = 0; i < old19; i++) {
 				for (int j = 0; j < alphamax; j++) {

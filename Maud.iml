@@ -17,7 +17,7 @@
       <excludeFolder url="file://$MODULE_DIR$/src/com/nova" />
       <excludeFolder url="file://$MODULE_DIR$/src/web" />
     </content>
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="zulu-19" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
       <library>

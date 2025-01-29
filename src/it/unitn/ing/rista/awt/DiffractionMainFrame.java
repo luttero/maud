@@ -1344,7 +1344,7 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
 		}).start();
 	}
 
-	void generateDataForAI(int simNumber, String filePrefix) {
+	void generateDataForAI(String filePrefix, int startSim, int endSim) {
     StringBuffer fileoutput = new StringBuffer();
     fileoutput.append(parameterfile.getDirectory()).append(Constants.fileSeparator)
         .append(filePrefix);
@@ -1352,7 +1352,7 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
     String[] parNames =  parameterfile.getNameOfFreeParameters();
 		(new PersistentThread() {
 			public void executeJob() {
-        for (int i = 0; i < simNumber; i++) {
+        for (int i = startSim; i <= endSim; i++) {
           StringBuffer fileNameForOutput = new StringBuffer(fileoutput.toString());
           fileNameForOutput.append(i).append(".txt");
           if (( i / 10) * 10 == i)

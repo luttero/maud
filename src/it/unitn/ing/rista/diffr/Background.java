@@ -60,8 +60,8 @@ public class Background extends XRDcat {
   public void initConstant() {
     Nstring = 1;
     Nstringloop = 0;
-    Nparameter = 1;
-    Nparameterloop = 0;
+    Nparameter = 0;
+    Nparameterloop = 1;
     Nsubordinate = 0;
     Nsubordinateloop = 0;
   }
@@ -82,10 +82,13 @@ public class Background extends XRDcat {
   public void notifyParameterChanged(Parameter source) {
     FilePar filepar = getFilePar();
     if ((filepar != null && !filepar.isLoadingFile()) && isAbilitatetoRefresh) {
-      if (parameterField != null)
-      for (int i = 0; i < parameterField.length; i++) {
-        if (parameterField[i] == source) {
+      for (int i = 0; i < Nparameterloop; i++) {
+        for (int j = 0; j < numberofelementPL(i); j++) {
+          Parameter apar = (Parameter) parameterloopField[i].elementAt(j);
+          if (apar == source) {
             notifyParameterChanged(source, Constants.BKG_PARAMETER_CHANGED, -1);
+            return;
+          }
         }
       }
     }

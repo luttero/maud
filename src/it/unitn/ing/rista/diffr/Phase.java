@@ -391,12 +391,12 @@ public class Phase extends XRDcat {
 
 // we rewrite this to not include the dummy cell parameters
 
-  public basicObj[] getChildren(String searchString, boolean refinable) {
+  public basicObj[] getChildren(String searchString, boolean refinableOnly) {
 
     int i, j, k;
 
 //	  System.out.println(this + " - " + searchString);
-    basicObj childrens[] = new basicObj[getChildCount(searchString, refinable)];
+    basicObj childrens[] = new basicObj[getChildCount(searchString, refinableOnly)];
 
     basicObj obj;
 
@@ -404,7 +404,7 @@ public class Phase extends XRDcat {
     for (i = 0; i < Nparameter; i++) {
       // here the last modification
       if (i > 5 || ic[i] == 1)
-			if (!refinable || parameterField[i].getFree())
+			if (!refinableOnly || parameterField[i].isRefinable())
         if (searchString == null || searchString.equalsIgnoreCase("") ||
             parameterField[i].getLabel().contains(searchString))
           childrens[k++] = parameterField[i];
@@ -416,20 +416,20 @@ public class Phase extends XRDcat {
               obj.getLabel().contains(searchString))
             childrens[k++] = obj;
     for (i = 0; i < Nsubordinate; i++)
-      if ((subordinateField[i]) != null && subordinateField[i].getChildCount(searchString, refinable) > 0) {
+      if ((subordinateField[i]) != null && subordinateField[i].getChildCount(searchString, refinableOnly) > 0) {
         childrens[k++] = subordinateField[i];
 //	      System.out.println("Adding for phase: " + subordinateField[i].toString());
       }
 	  for (i = 0; i < Nsubordinateloop; i++)
       for (j = 0; j < numberofelementSubL(i); j++)
         if ((obj = (basicObj) subordinateloopField[i].elementAt(j)) != null &&
-            ((basicObj) subordinateloopField[i].elementAt(j)).getChildCount(searchString, refinable) > 0)
+            ((basicObj) subordinateloopField[i].elementAt(j)).getChildCount(searchString, refinableOnly) > 0)
           childrens[k++] = obj;
 
     return childrens;
   }
 
-  public int getChildCount(String searchString, boolean refinable) {
+  public int getChildCount(String searchString, boolean refinableOnly) {
     int i, j;
 
     // first we force a refresh of the cell
@@ -440,7 +440,7 @@ public class Phase extends XRDcat {
     for (i = 0; i < Nparameter; i++) {
       // here the last modification
       if (i > 5 || ic[i] == 1)
-	      if (!refinable || parameterField[i].getFree())
+	      if (!refinableOnly || parameterField[i].isRefinable())
         if (searchString == null || searchString.equalsIgnoreCase("") ||
             parameterField[i].getLabel().contains(searchString))
           numberofObjects++;
@@ -453,12 +453,12 @@ public class Phase extends XRDcat {
               ((basicObj) parameterloopField[i].elementAt(j)).getLabel().contains(searchString))
             numberofObjects++;
     for (i = 0; i < Nsubordinate; i++)
-      if (subordinateField[i] != null && subordinateField[i].getChildCount(searchString, refinable) > 0)
+      if (subordinateField[i] != null && subordinateField[i].getChildCount(searchString, refinableOnly) > 0)
         numberofObjects++;
     for (i = 0; i < Nsubordinateloop; i++)
       for (j = 0; j < numberofelementSubL(i); j++)
         if (subordinateloopField[i].elementAt(j) != null &&
-            ((basicObj) subordinateloopField[i].elementAt(j)).getChildCount(searchString, refinable) > 0)
+            ((basicObj) subordinateloopField[i].elementAt(j)).getChildCount(searchString, refinableOnly) > 0)
           numberofObjects++;
 
 

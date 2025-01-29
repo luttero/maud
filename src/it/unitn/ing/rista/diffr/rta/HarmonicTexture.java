@@ -433,7 +433,7 @@ public class HarmonicTexture extends Texture implements Function {
     return poleIntensity;
   }
 
-  public double[] computeTextureFactor(Phase aphase, double[][] alphabeta, Reflection reflex) {
+  public double[] computeTextureFactor(double[][] alphabeta, Reflection reflex) {
 
     int numberOfPoints = alphabeta[0].length;
 
@@ -1550,7 +1550,7 @@ public class HarmonicTexture extends Texture implements Function {
 
     for (int i = 0; i < totnumberParameters; i++) {
       Parameter apar = (Parameter) parametersV.elementAt(i);
-      if (apar.getFree() && apar.mayRefines())
+      if (apar.isRefinable())
         ++pnumber;
     }
 
@@ -1605,7 +1605,7 @@ public class HarmonicTexture extends Texture implements Function {
 
     for (int i = 0; i < totnumberParameters; i++) {
       Parameter apar = (Parameter) parametersV.elementAt(i);
-      if (apar.getFree() && apar.mayRefines())
+      if (apar.isRefinable())
         apar.setValue(parameters[pnumber++]);
     }
     refreshFit = true;
@@ -1619,7 +1619,7 @@ public class HarmonicTexture extends Texture implements Function {
 
     for (int i = 0; i < totnumberParameters; i++) {
       Parameter apar = (Parameter) parametersV.elementAt(i);
-      if (apar.getFree() && apar.mayRefines()) {
+      if (apar.isRefinable()) {
         pnumber++;
         if (pnumber == index)
           apar.setValue(parameters[pnumber]);
@@ -1636,7 +1636,7 @@ public class HarmonicTexture extends Texture implements Function {
 
     for (int i = 0; i < totnumberParameters; i++) {
       Parameter apar = (Parameter) parametersV.elementAt(i);
-      if (apar.getFree() && apar.mayRefines())
+      if (apar.isRefinable())
         apar.setError(errors[pnumber++]);
     }
   }
@@ -1702,7 +1702,7 @@ public class HarmonicTexture extends Texture implements Function {
 
     for (int i = 0; i < totnumberParameters; i++) {
       Parameter apar = (Parameter) parametersV.elementAt(i);
-      if (apar.getFree() && apar.mayRefines()) {
+      if (apar.isRefinable()) {
         parameters[pnumber++] = (double) apar.getValueD();
 //        lbound[pnumber] = (double) apar.getValueMinD();
 //        ubound[pnumber++] = (double) apar.getValueMaxD();

@@ -871,8 +871,6 @@ public class LeastSquareFit extends OptimizationAlgorithm {
       firstfit = new double[dataNumber];
       secondfit = new double[dataNumber];
     }
-    //
-
 //    System.out.println(derstep);
 
     for (int sp = 0; sp < nprm; sp++) {

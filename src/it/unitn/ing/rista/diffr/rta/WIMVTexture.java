@@ -675,7 +675,7 @@ public class WIMVTexture extends DiscreteODFTexture {
     return null;
   }
 
-  public double[] computeTextureFactor(Phase aphase, double[][] alphabeta,
+  public double[] computeTextureFactor(double[][] alphabeta,
                                        Reflection reflex) {
 
 //    int numberOfPoints = alphabeta.length / 2;
@@ -683,9 +683,9 @@ public class WIMVTexture extends DiscreteODFTexture {
     initializeAll();
 
     if (odf == null)
-      return super.computeTextureFactor(aphase, alphabeta, reflex);
+      return super.computeTextureFactor(alphabeta, reflex);
 
-    double[] cdsc = aphase.lattice();
+    double[] cdsc = getPhase().lattice();
 
     double phoninp = Uwimvuo.subfmin(odf, Uwimvuo.getAlphamax(getResolutionD()));
 

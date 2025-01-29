@@ -569,7 +569,7 @@ public class StandardFunctionTexture extends Texture {
 		return poleIntensity;
 	}
 
-	public double[] computeTextureFactor(Phase aphase, double[][] alphabeta, Reflection reflex) {
+	public double[] computeTextureFactor(double[][] alphabeta, Reflection reflex) {
 
     int numberOfPoints = alphabeta[0].length;
 

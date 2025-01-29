@@ -487,13 +487,13 @@ public class ExpHarmonicTexture extends HarmonicTexture {
 		return textF;
 	}
 
-	public double[] computeTextureFactor(Phase aphase, double[][] alphabeta, Reflection reflex) {
+	public double[] computeTextureFactor(double[][] alphabeta, Reflection reflex) {
 
 //    int numberOfPoints = alphabeta.length/2;
 
     initializeAll();
 
-    double[] cdsc = aphase.lattice();
+    double[] cdsc = getPhase().lattice();
 
 //    float phoninp = subfmin();
 

@@ -66,7 +66,7 @@ public class ElectronRadiation extends RadiationType {
 		return (Math.sqrt(1.0 + 5.8869799437E-4 / lambda / lambda) - 1.0) / 1.9569506E-6;
 	}
 
-	public boolean isDynamical() {
+  public boolean isDynamical() {
 		return useDynamicalCorrection();
 	}
 

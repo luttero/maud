@@ -48,4 +48,7 @@ public interface myObj extends basicObj {
 	public boolean isObjectSupported(XRDcat source, ListVector list);
 	public boolean isObjectSupported(ListVector list);
 
-}
+  public void showWarnings();
+
+
+  }
