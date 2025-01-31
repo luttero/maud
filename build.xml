@@ -25,7 +25,7 @@
     <property name="java_openjdk" location="${openjdk}"/>
     <property name="java_openjdk_arm" location="${openjdk_arm}"/>
     <property name="fpsm_build" location="${fpsmBuild}"/>
-    <property name="javac_options" value="--source=19"/>
+    <property name="javac_options" value="--source=21"/>
 
     <target name="clean" description="Delete the build files.">
         <delete dir="${build_ant}"/>

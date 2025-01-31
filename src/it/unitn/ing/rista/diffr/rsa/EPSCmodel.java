@@ -184,9 +184,8 @@ public class EPSCmodel extends Strain {
   int c37 = 37;
   double phon = 0.;
 
-  boolean debug_output = MaudPreferences.getBoolean("momentPoleStress.debug", false);
+  boolean debug_output = MaudPreferences.getBoolean("EPSC.debug", false);
   boolean log_output = false;
-  boolean siegfried_strict = false;
 
   public static final int[] mi = {1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 5, 5, 6, 2, 3, 4,
       5, 6, 3, 4, 5, 6, 4, 5, 6, 5, 6, 6};
@@ -200,9 +199,9 @@ public class EPSCmodel extends Strain {
   public EPSCmodel(XRDcat aobj, String alabel) {
     super(aobj, alabel);
     initBaseObject();
-    identifier = "Moment Pole Stress";
-    IDlabel = "Moment Pole Stress";
-    description = "select this to apply the Moment Pole Stress method of Siegfried Matthies";
+    identifier = "EPSC";
+    IDlabel = "EPSC";
+    description = "select this to apply the EPSC model of Tomè and Lebensohn";
   }
 
   public EPSCmodel(XRDcat aobj) {
@@ -210,9 +209,9 @@ public class EPSCmodel extends Strain {
   }
 
   public EPSCmodel() {
-    identifier = "Moment Pole Stress";
-    IDlabel = "Moment Pole Stress";
-    description = "select this to apply the Moment Pole Stress method of Siegfried Matthies";
+    identifier = "EPSC";
+    IDlabel = "EPSC";
+    description = "select this to apply the  EPSC model of Tomè and Lebensohn";
   }
 
   public void initConstant() {

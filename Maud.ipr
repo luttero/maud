@@ -6,7 +6,7 @@
         <entry dir="file://$APPLICATION_HOME_DIR$/lib/ant/lib" />
         <entry path="file://$PROJECT_DIR$/libs/ant-libs/infinitekind-appbundler-last/appbundler/bin/appbundler-1.2.jar" />
       </additionalClassPath>
-      <customJdkName value="zulu-19" />
+      <customJdkName value="zulu-21" />
       <maximumHeapSize value="2048" />
       <maximumStackSize value="4" />
     </buildFile>
@@ -381,7 +381,7 @@
   <component name="ProjectResources">
     <default-html-doctype>http://www.w3.org/1999/xhtml</default-html-doctype>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_19_PREVIEW" project-jdk-name="zulu-19" project-jdk-type="JavaSDK" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_21_PREVIEW" project-jdk-name="zulu-21" project-jdk-type="JavaSDK" />
   <component name="ProjectRunConfigurationManager">
     <configuration default="false" name="Maud" type="Application" factoryName="Application" show_console_on_std_err="true" show_console_on_std_out="true">
       <classpathModifications>

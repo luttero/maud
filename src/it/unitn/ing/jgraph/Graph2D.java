@@ -1175,7 +1175,7 @@ public class Graph2D extends GraphInterface {
      */
     public void end() {
 
-      super.stop();
+      super.interrupt();
 
       g2d.clearAll = true;
       g2d.paintAll = true;

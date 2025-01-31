@@ -435,7 +435,7 @@ public class MDSimulation
   public void startSimulation() {
 
     if (thread != null) {
-      thread.stop();
+      thread.interrupt();
       thread = null;
     }
     dontquit = true;

@@ -330,7 +330,7 @@ public class Settings
   private void abortLoad(int type) {
 
     if ((loadThread != null) && (type == loadType)) {
-      loadThread.stop();
+      loadThread.interrupt();
       loadThread = null;
     } // end if
 
