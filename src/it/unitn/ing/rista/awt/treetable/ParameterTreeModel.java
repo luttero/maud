@@ -43,12 +43,12 @@ public class ParameterTreeModel extends AbstractTreeTableModel
     implements TreeTableModel {
 
   // Names of the columns.
-  static protected String[] cNames = {"Name", "Value", "Min", "Max", "Error", "Status", "Output"};
+  static protected String[] cNames = {"Name", "Value", "Error", "Min", "Max", "Min significant", "Status", "Output"};
   static protected String[] status = {"Fixed", "Refined", "Equal to", "*****"};
 
   // Types of the columns.
   public Class[] cTypes = {TreeTableModel.class, String.class, String.class,
-                           String.class, String.class, JComboBox.class, JCheckBox.class};
+                           String.class, String.class, String.class, JComboBox.class, JCheckBox.class};
 
   protected JComboBox refinableCB;
   protected JCheckBox outputCB;
@@ -102,11 +102,12 @@ public class ParameterTreeModel extends AbstractTreeTableModel
       case 2:
       case 3:
       case 4:
+      case 5:
         basicObj par = getParameter(node);
         return isParameter(par);
-      case 5:
-        return true;
       case 6:
+        return true;
+      case 7:
         return true;
       default:
         {
@@ -177,14 +178,16 @@ public class ParameterTreeModel extends AbstractTreeTableModel
       case 1:
         return isParameter(par) ? ((Parameter) par).getValue() : "-";
       case 2:
-        return isParameter(par) ? ((Parameter) par).getValueMin() : "-";
-      case 3:
-        return isParameter(par) ? ((Parameter) par).getValueMax() : "-";
-      case 4:
         return isParameter(par) ? ((Parameter) par).getError() : "-";
+      case 3:
+        return isParameter(par) ? ((Parameter) par).getValueMin() : "-";
+      case 4:
+        return isParameter(par) ? ((Parameter) par).getValueMax() : "-";
       case 5:
-        return isParameter(par) ? status[((Parameter) par).getReducedStatusIndex()] : status[3];
+        return isParameter(par) ? String.valueOf(((Parameter) par).getMinimumSignificantValue()) : "-";
       case 6:
+        return isParameter(par) ? status[((Parameter) par).getReducedStatusIndex()] : status[3];
+      case 7:
         return par.automaticOutput();
       default:
         {
@@ -201,15 +204,18 @@ public class ParameterTreeModel extends AbstractTreeTableModel
         ((Parameter) par).setValue((String) aValue);
         break;
       case 2:
-        ((Parameter) par).setValueMin((String) aValue);
-        break;
-      case 3:
-        ((Parameter) par).setValueMax((String) aValue);
-        break;
-      case 4:
         ((Parameter) par).setError((String) aValue);
         break;
+      case 3:
+        ((Parameter) par).setValueMin((String) aValue);
+        break;
+      case 4:
+        ((Parameter) par).setValueMax((String) aValue);
+        break;
       case 5:
+        ((Parameter) par).setMinimumSignificantValue(Double.valueOf((String) aValue));
+        break;
+      case 6:
          if (isParameter(par)) {
           if (aValue.equals(status[1]))
             ((Parameter) par).setRefinable();
@@ -226,7 +232,7 @@ public class ParameterTreeModel extends AbstractTreeTableModel
             par.fixAllParameters(parentFrame.getSearchString(), parentFrame.refinableOnly);
         }
         break;
-      case 6:
+      case 7:
         par.setAutomaticOutput(((Boolean) aValue).booleanValue());
         break;
       default:

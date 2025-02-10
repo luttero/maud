@@ -71,7 +71,7 @@ public class LoadData extends Thread {
 **  Places were we can send error/informational messages
 */
   private Graph2D graph = null;
-  private Applet applet = null;
+//  private Applet applet = null;
 /*
 ** The URL where we are to get the data
 */
@@ -173,7 +173,7 @@ public class LoadData extends Thread {
    * @param drawable An object that can be drawn to that will indicate
    * that data is loading. eg. An applet or the Graph2D canvas.
    */
-  public DataSet loadDataSet(URL file, Object drawable) {
+/*  public DataSet loadDataSet(URL file, Object drawable) {
     if (file == null) return null;
     if (ds == null) ds = new DataSet();
     this.file = file;
@@ -187,7 +187,7 @@ public class LoadData extends Thread {
     }
     this.start();
     return ds;
-  }
+  }*/
 
   /**
    * Start loading the data into an array.
@@ -197,7 +197,7 @@ public class LoadData extends Thread {
    * that data is loading. eg. An applet or the Graph2D canvas.
    */
 
-  public void loadArray(URL file, Object drawable) {
+/*  public void loadArray(URL file, Object drawable) {
     if (file == null) return;
     this.file = file;
     if (drawable != null) {
@@ -210,7 +210,7 @@ public class LoadData extends Thread {
     }
     this.start();
     return;
-  }
+  }*/
 
   /**
    * The method to be run as a seperate thread. It does all the work
@@ -373,7 +373,7 @@ public class LoadData extends Thread {
 
     if (s == null) return;
 
-    if (applet != null) applet.showStatus(s);
+//    if (applet != null) applet.showStatus(s);
 
     Graph2D.out.println(s);
 

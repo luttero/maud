@@ -43,6 +43,18 @@ from the older one.
 
 Maud Version notes:
 
+(10/02/2025):   2.9997. The "Il Lonfo" release.
+                How on earth did I miss that before.
+                Fixed a bug with the "Loading Data ..." message never
+                going away,
+                Improved the Marquard Least Squares algorithm to reduce
+                the number of Cholesky negative diagonal errors and improving
+                the minimization.
+                Improved the bad pixel mask for importing images (TIFF).
+                Added sample Y error to the inclined flat reflection
+                images calibration (strangely was left out before).
+                Added Ga Kalpha(1,2) radiation to the standard X-ray tubes.
+
 (28/01/2025):   2.9996. The "F 650 GS" release.
                 Fixed and running from a while! This version should have
                 been released in September 2024.

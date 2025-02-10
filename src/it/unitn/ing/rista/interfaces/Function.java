@@ -47,7 +47,7 @@ public interface Function extends SimpleFunction {
 
   public double getWSS();
 
-  public double[] getRefinementIndexes();
+  public double[] getRefinementIndexes(boolean forceComputation);
 
   public void setRw(double Rw);
 

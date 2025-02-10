@@ -779,7 +779,7 @@ public class HybridRefinement extends OptimizationAlgorithm implements GAProblem
     }
 //    structureFactorList = null;
     fittingFunction.computeFirstFit();
-    fittingFunction.getRefinementIndexes();
+    fittingFunction.getRefinementIndexes(true);
     GeneralEvolutionProblem.cleanUp();
     defParams = null;
     bestParams = null;
@@ -843,7 +843,7 @@ public class HybridRefinement extends OptimizationAlgorithm implements GAProblem
     fittingFunction.setDerivate(false);
 
     fittingFunction.computeFirstFit();
-	  fittingFunction.getRefinementIndexes();
+	  fittingFunction.getRefinementIndexes(true);
 
       fittingFunction.getFit();
       for (int i = 0; i < dataNumber; i++) {
@@ -878,7 +878,7 @@ public class HybridRefinement extends OptimizationAlgorithm implements GAProblem
 
     double wss = 0.0;
 //	  fittingFunction.computeFit();
-	  fittingFunction.getRefinementIndexes();
+	  fittingFunction.getRefinementIndexes(true);
 	  wss = fittingFunction.getWSS();
     double oldwss = wss;
 

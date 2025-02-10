@@ -345,6 +345,7 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 
     DataFileSet dataset = datafile.getDataFileSet();
     double zs = dataset.getZshift();
+    double ys = dataset.getYshift();
     double rx = dataset.getSample().getRadiusDimensionXD();
     double ry = dataset.getSample().getRadiusDimensionYD();
     double[] tiltingAngles = datafile.getTiltingAngle();
@@ -352,6 +353,8 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 	  double chi = tiltingAngles[1];
 	  double detectorProper2Theta = detector2Theta + tiltingAngles[4];
 
+    if (chi != 0 && ys != 0)
+      zs += ys * Math.tan(chi * Constants.DEGTOPI);
 	  if (Math.abs(omega) > 1.0E-18)
       zs /= Math.cos((90.0 - omega) * Constants.DEGTOPI);
     zs /= Math.cos(chi * Constants.DEGTOPI);
@@ -441,8 +444,8 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 		}
 		if (cal.pixelWidth == 0.0 || cal.pixelWidth == 1 || cal.getUnit().compareToIgnoreCase("mm") != 0) {
 			cal.setUnit("mm");
-			cal.pixelWidth = MaudPreferences.getDouble("pixelDetector.pixelWidth", 0.02);
-			cal.pixelHeight = MaudPreferences.getDouble("pixelDetector.pixelHeight", 0.02);
+			cal.pixelWidth = MaudPreferences.getDouble("pixelDetector.pixelWidth", 0.075);
+			cal.pixelHeight = MaudPreferences.getDouble("pixelDetector.pixelHeight", 0.075);
 		}
 
 		ImageProcessor ip = imp.getChannelProcessor();
@@ -450,9 +453,9 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 //		int width = ip.getWidth();
 //		int height = ip.getHeight();
 //    buffer[width, height]
-		int[][] pixels = ip.getIntArray();
+		float[][] pixels = ip.getFloatArray();   //getIntArray();
 		getDataMask().filterData(pixels);
-		ip.setIntArray(pixels);
+		ip.setFloatArray(pixels);
 
 		rotationInversion = getOriginalRotoInversionOperation();
 

@@ -51,7 +51,7 @@ public class DataMask extends it.unitn.ing.rista.diffr.XRDcat {
 	public DataMask() {
 	}
 
-	public void filterData(int[][] buffer) {
+	public void filterData(float[][] buffer) {
 	}
 
 	public JOptionsDialog getOptionsDialog(Frame parent) {

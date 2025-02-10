@@ -101,7 +101,7 @@ public class Graph2D extends GraphInterface {
    * @see it.unitn.ing.jgraph.Graph2D#startedloading()
    */
 
-  protected LoadMessage load_thread = null;
+//  protected LoadMessage load_thread = null;
 
   /**
    * The background color for the data window
@@ -789,13 +789,14 @@ public class Graph2D extends GraphInterface {
 
     loadingData++;
 
+//    System.out.println("Starting loading: " + loadingData);
 
     if (loadingData != 1) return;
 
-    if (load_thread == null) load_thread = new LoadMessage(this);
-    load_thread.setFont(new Font("Helvetica", Font.PLAIN, 25));
+//    if (load_thread == null) load_thread = new LoadMessage(this);
+//    load_thread.setFont(new Font("Helvetica", Font.PLAIN, 25));
 
-    load_thread.begin();
+//    load_thread.begin();
 
   }
 
@@ -810,11 +811,12 @@ public class Graph2D extends GraphInterface {
   public void finishedloading() {
 
     loadingData--;
+//    System.out.println("Finished loading: " + loadingData);
 
     if (loadingData > 0) return;
 
-    if (load_thread != null) load_thread.end();
-    load_thread = null;
+//    if (load_thread != null) load_thread.end();
+//    load_thread = null;
 
   }
 
@@ -827,8 +829,8 @@ public class Graph2D extends GraphInterface {
    * @see LoadMessage
    */
   public void loadmessage(String s) {
-    if (load_thread == null) load_thread = new LoadMessage(this);
-    load_thread.setMessage(s);
+//    if (load_thread == null) load_thread = new LoadMessage(this);
+//    load_thread.setMessage(s);
   }
 
 
@@ -1167,7 +1169,6 @@ public class Graph2D extends GraphInterface {
       g2d.paintAll = false;
 
       super.start();
-
     }
 
     /**
@@ -1175,12 +1176,16 @@ public class Graph2D extends GraphInterface {
      */
     public void end() {
 
-      super.interrupt();
+      interrupt();
+//      showing = false;
 
       g2d.clearAll = true;
       g2d.paintAll = true;
 
-      if (lg != null) lg.dispose();
+      if (lg != null) {
+        lg.dispose();
+        lg = null;
+      }
 
       g2d.repaint();
 
@@ -1200,8 +1205,7 @@ public class Graph2D extends GraphInterface {
 
       setPriority(Thread.MIN_PRIORITY);
 
-
-      while (true) {
+      while (!isInterrupted()) {
 
         if (newmessage != null && draw) {
           message = newmessage;

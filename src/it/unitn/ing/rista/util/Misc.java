@@ -988,8 +988,6 @@ public class Misc {
   }
 
   public static String freeMemory() {
-    System.out.println("Run finalization");
-    System.runFinalization();
     System.out.println("Run garbage collector");
     System.gc();
     System.out.println("Check memory");

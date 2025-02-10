@@ -570,7 +570,7 @@ public class MonteCarloAlgorithmRefinement extends OptimizationAlgorithm {
     }
 //    structureFactorList = null;
     fittingFunction.computeFirstFit();
-    fittingFunction.getRefinementIndexes();
+    fittingFunction.getRefinementIndexes(true);
     defParams = null;
     bestParams = null;
   }

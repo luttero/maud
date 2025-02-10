@@ -635,7 +635,7 @@ public class HybridMonteCarloRefinement extends OptimizationAlgorithm {
     }
 //    structureFactorList = null;
     fittingFunction.computeFirstFit();
-    fittingFunction.getRefinementIndexes();
+    fittingFunction.getRefinementIndexes(true);
     defParams = null;
     bestParams = null;
   }
@@ -698,7 +698,7 @@ public class HybridMonteCarloRefinement extends OptimizationAlgorithm {
 		fittingFunction.setDerivate(false);
 
 		fittingFunction.computeFirstFit();
-		fittingFunction.getRefinementIndexes();
+		fittingFunction.getRefinementIndexes(true);
 
 		fittingFunction.getFit();
 		for (int i = 0; i < dataNumber; i++) {
@@ -733,7 +733,7 @@ public class HybridMonteCarloRefinement extends OptimizationAlgorithm {
 
 		double wss = 0.0;
 //	  fittingFunction.computeFit();
-		fittingFunction.getRefinementIndexes();
+		fittingFunction.getRefinementIndexes(true);
 		wss = fittingFunction.getWSS();
 		double oldwss = wss;
 

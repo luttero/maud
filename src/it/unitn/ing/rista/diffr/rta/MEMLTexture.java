@@ -480,7 +480,7 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 	public void refreshFit(double[] fit, double[] parm, int[] controls) {
 	}
 
-	public double[] getRefinementIndexes() {
+	public double[] getRefinementIndexes(boolean forceComputation) {
 
 		return null;
 

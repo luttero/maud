@@ -465,7 +465,7 @@ public class SDPDFourierMapsMEM extends StructureFactorSolveCrystalStructure imp
   public void refreshFit(double[] fit, double[] parm, int[] controls) {
   }
 
-  public double[] getRefinementIndexes() {
+  public double[] getRefinementIndexes(boolean forceComputation) {
 
     return null;
 

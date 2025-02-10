@@ -929,7 +929,7 @@ public class Sample extends Maincat {
   }
 
   public void finalOutput(OutputStream out, boolean outputGraph) throws IOException {
-    double[] indexes = getRefinementIndexes();
+    double[] indexes = getRefinementIndexes(outputGraph);
     printLine(out, "Sample " + toXRDcatString() + " :");
 	  printLine(out, "Sample Rwp: " + Fmt.format(indexes[0]));
 	  printLine(out, "Sample Rp: " + Fmt.format(indexes[4]));
@@ -951,9 +951,9 @@ public class Sample extends Maincat {
   boolean indexesComputed = false;
   double[] refinementIndexes = new double[19];
 
-  public double[] getRefinementIndexes() {
+  public double[] getRefinementIndexes(boolean forceComputation) {
 
-    if (!indexesComputed) {
+    if (!indexesComputed || forceComputation) {
 
       for (int j = 0; j < 19; j++)
         refinementIndexes[j] = 0.0;
@@ -961,7 +961,7 @@ public class Sample extends Maincat {
       for (int i = 0; i < activeDatasetsNumber(); i++) {
         DataFileSet adataset = getActiveDataSet(i);
 
-        double[] refIndex = adataset.getRefinementIndexes();
+        double[] refIndex = adataset.getRefinementIndexes(forceComputation);
         for (int j = 8; j < 18; j++)
           refinementIndexes[j] += refIndex[j];
       }

@@ -187,6 +187,17 @@ public class OptimizationAlgorithm extends XRDcat implements OptimizationAlgorit
     }
   }
 
+  public void printout(double[] parmn, double[] norm, int nprm) {
+    for (int j = 0; j < nprm; j += 3) {
+      if (j + 2 < nprm)
+        printf(parmn[j] * norm[j], parmn[j + 1] * norm[j + 1], parmn[j + 2] * norm[j + 2]);
+      else if (j + 1 < nprm)
+        printf(parmn[j] * norm[j], parmn[j + 1] * norm[j + 1]);
+      else
+        printf(parmn[j] * norm[j]);
+    }
+  }
+
 /*  public void printout(double[] parmn, int nprm) {
     for (int j = 0; j < nprm; j += 3) {
       if (j + 2 < nprm)

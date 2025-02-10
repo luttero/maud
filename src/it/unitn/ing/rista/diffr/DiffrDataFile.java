@@ -2444,9 +2444,9 @@ public class DiffrDataFile extends XRDcat {
   boolean indexesComputed = false;
   double[] refinementIndexes = new double[18];
 
-  public double[] getRefinementIndexes(boolean outputGraph) {
+  public double[] getRefinementIndexes(boolean forceComputation) {
 
-    if (!indexesComputed) {
+    if (!indexesComputed || forceComputation) {
       double diff, wgt, dta, diff2, wgt2, dta2, dtanb, dtanb2;
       double rw = 0.0, r = 0.0, rwb1 = 0, rwb2 = 0, r1 = 0, r2 = 0, den = 0.0, rden = 0.0,
 		      denb = 0.0, rdenb = 0.0;

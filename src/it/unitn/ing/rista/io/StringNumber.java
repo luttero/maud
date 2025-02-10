@@ -171,7 +171,7 @@ public class StringNumber {
   public static double dummyAngle = -999.999;
 
 	public static double[] checkAngles(String name) {
-  	   double[] angles = new double[anglesPrefix.length];
+    double[] angles = new double[anglesPrefix.length];
 		if (name != null && containsNumber(name)) {
 			for (int i = 0; i < anglesPrefix.length; i++) {
 				angles[i] = dummyAngle;

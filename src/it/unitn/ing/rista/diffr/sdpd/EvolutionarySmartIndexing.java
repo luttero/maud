@@ -291,7 +291,7 @@ public class EvolutionarySmartIndexing implements Function {
     return 0.0f;
   }
 
-  public double[] getRefinementIndexes() {
+  public double[] getRefinementIndexes(boolean forceComputation) {
     return null;
   }
 

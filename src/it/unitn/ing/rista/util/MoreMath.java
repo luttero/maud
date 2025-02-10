@@ -1337,4 +1337,13 @@ end;
 		return res;
 	}
 
+  public static boolean areSimilar(double first, double second) {
+    if (Math.abs(first) < 10E-8) {
+      if (Math.abs(first - second) < 10E-8)
+        return true;
+    } else if (Math.abs((first - second) / first) < 0.0001)
+      return true;
+    return false;
+  }
+
 }

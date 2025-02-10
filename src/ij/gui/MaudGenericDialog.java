@@ -6,6 +6,7 @@ import java.util.*;
 
 import ij.*;
 import ij.plugin.frame.Recorder;
+import it.unitn.ing.rista.util.Constants;
 
 /** This class is a customizable modal dialog box. */
 public class MaudGenericDialog extends Dialog implements ActionListener,
@@ -14,7 +15,7 @@ public class MaudGenericDialog extends Dialog implements ActionListener,
   protected Vector defaultValues,defaultText,numberField,stringField,checkbox,choice;
   protected Component theLabel;
   protected TextArea textArea1,textArea2;
-  private Button cancel, okay;
+  protected Button cancel, okay;
   private boolean wasCanceled;
   private int y;
   private int nfIndex, sfIndex, cbIndex, choiceIndex;
@@ -33,7 +34,7 @@ public class MaudGenericDialog extends Dialog implements ActionListener,
    this requires that the first word of each label be unique. */
   public MaudGenericDialog(String title) {
     this(title, WindowManager.getCurrentImage() != null ?
-            (Frame) WindowManager.getCurrentImage().getWindow() : IJ.getInstance());
+            WindowManager.getCurrentImage().getWindow() : IJ.getInstance());
   }
 
   /** Creates a new GenericDialog using the specified title and parent frame. */
@@ -85,7 +86,7 @@ public class MaudGenericDialog extends Dialog implements ActionListener,
     tf.addFocusListener(this);
     tf.addKeyListener(this);
     numberField.addElement(tf);
-    defaultValues.addElement(new Double(defaultValue));
+    defaultValues.addElement(defaultValue);
     defaultText.addElement(tf.getText());
     c.gridx = 1;
     c.gridy = y;
@@ -101,7 +102,7 @@ public class MaudGenericDialog extends Dialog implements ActionListener,
   }
 
   private Label makeLabel(String label) {
-    if (IJ.isMacintosh())
+    if (Constants.macosx)
       label += " ";
     return new Label(label);
   }
@@ -362,7 +363,7 @@ public class MaudGenericDialog extends Dialog implements ActionListener,
   protected Double getValue(String theText) {
     Double d;
     try {
-      d = new Double(theText);
+      d = Double.parseDouble(theText);
     } catch (NumberFormatException e) {
       d = null;
     }
@@ -506,13 +507,13 @@ public class MaudGenericDialog extends Dialog implements ActionListener,
     c.insets = new Insets(15, 0, 0, 0);
     grid.setConstraints(buttons, c);
     add(buttons);
-    if (IJ.isMacintosh())
+    if (Constants.macosx)
       setResizable(false);
     pack();
     setup();
     GUI.center(this);
     setVisible(true);
-    IJ.wait(250); // work around for Sun/WinNT bug
+//    IJ.wait(250); // work around for Sun/WinNT bug
   }
 
   /** Displays this dialog box. */
@@ -556,7 +557,7 @@ public class MaudGenericDialog extends Dialog implements ActionListener,
     setup();
     GUI.center(this);
     show();
-    IJ.wait(250); // work around for Sun/WinNT bug
+//    IJ.wait(250); // work around for Sun/WinNT bug
   }
 
   protected void setup() {

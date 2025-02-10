@@ -414,11 +414,9 @@ public class DataD extends myJFrame {
     p5.add(BorderLayout.CENTER, p3);
 
     datafileL = new JList();
-    new FileDrop(datafileL, new FileDrop.Listener() {
-      public void filesDropped( java.io.File[] files ) {
-                  // handle file drop
-        datafilesDropped(files);
-      }   // end filesDropped
+    new FileDrop(datafileL, files -> {
+                // handle file drop
+      datafilesDropped(files);
     }); // end FileDrop.Listener
     datafileL.setVisibleRowCount(7);
     datafileL.setPrototypeCellValue("123456789012345678901234567890123456789012345678901234567890");

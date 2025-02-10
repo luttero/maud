@@ -20,6 +20,9 @@
 
 package it.unitn.ing.rista.diffr.data;
 
+import ij.ImagePlus;
+import ij.io.Opener;
+import ij.process.ImageProcessor;
 import it.unitn.ing.rista.awt.JOptionsDialog;
 import it.unitn.ing.rista.diffr.*;
 import it.unitn.ing.rista.util.*;
@@ -28,6 +31,9 @@ import it.unitn.ing.rista.util.*;
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.Vector;
 //import java.util.Vector;
 
 
@@ -45,9 +51,10 @@ import java.awt.*;
 public class ImageBadPixelsMask extends it.unitn.ing.rista.diffr.DataMask {
 
 //	Vector<Coord2D> badPixels;
+  boolean outputPixels = false;
 
-	public static String[] diclistc = {"_image2D_bad_pixels_std_dev", "_image2D_bad_pixels_surround_layers", "_image2D_bad_pixels_x", "_image2D_bad_pixels_y"};
-	public static String[] diclistcrm = {"Remove bad pixel with std deviation higher than this value (0 to not use this)", "Consider surrounding pixels up to the specified layer", "Remove bad pixel at coordinate x", "Remove bad pixel at coordinate y"};
+	public static String[] diclistc = {"_image2D_bad_pixels_std_dev", "_image2D_bad_pixels_surround_layers", "_image2D_bad_pixels_repetition", "_image2D_bad_pixels_x", "_image2D_bad_pixels_y"};
+	public static String[] diclistcrm = {"Remove bad pixel with std deviation higher than this value (0 to not use this)", "Consider surrounding pixels up to the specified layer", "Repeat the process multiple times for adjacent pixels", "Remove bad pixel at coordinate x", "Remove bad pixel at coordinate y"};
 
 	public static String[] classlistc = {};
 	public static String[] classlistcs = {};
@@ -69,7 +76,7 @@ public class ImageBadPixelsMask extends it.unitn.ing.rista.diffr.DataMask {
 	}
 
 	public void initConstant() {
-		Nstring = 2;
+		Nstring = 3;
 		Nstringloop = 2;
 		Nparameter = 0;
 		Nparameterloop = 0;
@@ -91,8 +98,9 @@ public class ImageBadPixelsMask extends it.unitn.ing.rista.diffr.DataMask {
 	public void initParameters() {
 		super.initParameters();
 
-		stringField[0] = MaudPreferences.getPref("badPixels.stdDeviation", "0");
+		stringField[0] = MaudPreferences.getPref("badPixels.stdDeviation", "50");
 		stringField[1] = MaudPreferences.getPref("badPixels.layersNumber", "2");;
+    stringField[2] = MaudPreferences.getPref("badPixels.repeat", "2");
 	}
 
 	public double getStandardDeviation() {
@@ -120,71 +128,121 @@ public class ImageBadPixelsMask extends it.unitn.ing.rista.diffr.DataMask {
 		stringField[1] = value;
 	}
 
-	public void filterData(int[][] buffer) {
+  public int getNumberOfRepetitions() {
+    return Integer.parseInt(getNumberOfRepetitionsS());
+  }
+
+  public String getNumberOfRepetitionsS() {
+    return stringField[2];
+  }
+
+  public void setNumberOfRepetitions(String value) {
+    stringField[2] = value;
+  }
+
+  public Vector<int[]> filterDataByStdDev(float[][] buffer) {
 //		refreshCachedBadPixels();
+    Vector<int[]> toRemove = new Vector<>(10, 10);
 		double stdDev = getStandardDeviation();
 		int layersNumber = getNumberOfLayers();
 		int dataNumber = 2 * layersNumber + 1;
 		dataNumber *= dataNumber;
-		int[] data = new int[dataNumber];
+		float[] data = new float[dataNumber];
 		int dataMin, dataMax, dataCenter, disabled;
 		double sum, avg;
 		if (stdDev > 0) {
 			for (int i = 0; i < buffer.length; i++) {
-				int minI = i - 1;
-				if (minI < 0) minI = 0;
-				int maxI = minI + 2 * layersNumber;
-				while (maxI > buffer.length) {
-					maxI--;
-					minI--;
-				}
+        int minI = i - layersNumber;
+        if (minI < 0) minI = 0;
+        int maxI = minI + 2 * layersNumber + 1;
+        while (maxI > buffer.length) {
+          maxI--;
+          minI--;
+        }
 				for (int j = 0; j < buffer[0].length; j++) {
-					int minJ = j - layersNumber;
-					if (minJ < 0) minJ = 0;
-					int maxJ = minJ + 2 * layersNumber;
-					while (maxJ > buffer[0].length) {
-						maxJ--;
-						minJ--;
-					}
-					int index = 0;
-					sum = 0;
-					dataMin = 0;
-					dataMax = 0;
-					disabled = 0;
-					dataCenter = dataNumber / 2;
-					for (int i1 = minI; i1 < maxI; i1++) {
-						for (int j1 = minJ; j1 < maxJ; j1++) {
-							data[index] = buffer[i1][j1];
-							if (i1 == i & j1 == j)
-								dataCenter = index;
-							else if (data[index] >= 0) {
-								if (data[index] > data[dataMax])
-									dataMax = index;
-								if (data[index] < data[dataMin])
-									dataMin = index;
-							} else {
-								disabled++;
-								data[index] = 0;
-							}
-							sum += data[index++];
-						}
-					}
-					int active = dataNumber - disabled - 3;
-					if (active > 1) {
-						avg = (sum - data[dataCenter] - data[dataMax] - data[dataMin]) / active;
-						if (Math.abs(data[dataCenter] - avg) / avg > stdDev) {
-							buffer[i][j] = -1;
-							System.out.println("Disabling pixel: " + i + " " + j);
-						}
-					}
-				}
+          int minJ = j - layersNumber;
+          if (minJ < 0) minJ = 0;
+          int maxJ = minJ + 2 * layersNumber + 1;
+          while (maxJ > buffer[0].length) {
+            maxJ--;
+            minJ--;
+          }
+          int index = 0;
+          sum = 0;
+          dataMin = 0;
+          dataMax = 0;
+          disabled = 0;
+          dataCenter = dataNumber / 2;
+//        System.out.println("Pixel: " + i + " " + j + ", " + minI + " " + maxI + " " + minJ + " " + maxJ);
+          for (int i1 = minI; i1 < maxI; i1++) {
+            for (int j1 = minJ; j1 < maxJ; j1++) {
+              data[index] = buffer[i1][j1];
+              if (i1 == i & j1 == j)
+                dataCenter = index;
+              if (data[index] >= 0) {
+                if (data[index] > data[dataMax])
+                  dataMax = index;
+                if (data[index] < data[dataMin])
+                  dataMin = index;
+              } else {
+                disabled++;
+                data[index] = 0;
+              }
+//            System.out.println("Data: " + i1 + " " + j1 + ", " + data[index] + " " + data[dataMin] + " " + data[dataMax]);
+              if (dataCenter != index)
+                sum += data[index];
+              index++;
+            }
+          }
+          int active = index - disabled - 3;
+          if (active > 1 && sum > 0) {
+            avg = sum / index; // (sum - data[dataCenter] - data[dataMax] - data[dataMin]) / active;
+            double dev = Math.abs(data[dataCenter] - avg) / avg;
+            if (dev > stdDev) {
+              if (outputPixels)
+                System.out.println("Bad pixel at: " + i + " " + j + " " + buffer[i][j] + " " + avg + " " + dev);
+              int[] remove = new int[2];
+              remove[0] = i;
+              remove[1] = j;
+              toRemove.add(remove);
+              // buffer[i][j] = -1;
+            } else {
+//            System.out.println("Result: " + i + " " + j + " " + avg + " " + data[dataCenter] + " " + index + " " + (Math.abs(data[dataCenter] - avg) / avg) + " > " + stdDev);
+            }
+          } else {
+//          System.out.println("Active < 1 for: " + i + " " + j);
+          }
+
+        }
 			}
 		}
-		for (int i = 0; i < badPixelsNumber(); i++) {
-//			buffer[badPixels.elementAt(i).x][badPixels.elementAt(i).y] = -1;
-			buffer[Integer.parseInt((String) stringloopField[0].elementAt(i))][Integer.parseInt((String) stringloopField[1].elementAt(i))] = -1;
-		}
+    return toRemove;
 	}
+
+  public void filterData(float[][] buffer) {
+//		refreshCachedBadPixels();
+    outputPixels = MaudPreferences.getBoolean("badPixels.outputPixels", false);
+    for (int ij = 0; ij < badPixelsNumber(); ij++) {
+//			buffer[badPixels.elementAt(i).x][badPixels.elementAt(i).y] = -1;
+      int i = Integer.parseInt((String) stringloopField[0].elementAt(ij));
+      int j = Integer.parseInt((String) stringloopField[1].elementAt(ij));
+
+      System.out.println("Disabling pixel by address: " + i + " " + j + " " + buffer[i][j]);
+      buffer[i][j] = -1;
+    }
+
+    int repetition = getNumberOfRepetitions();
+
+    for (int i = 0; i < repetition; i++) {
+      Vector<int[]> toRemove = filterDataByStdDev(buffer);
+      for (int j = 0; j < toRemove.size(); j++) {
+        int[] remove = toRemove.elementAt(j);
+        buffer[remove[0]][remove[1]] = -1;
+      }
+
+    }
+
+  }
 
 /*	public void updateStringtoDoubleBuffering(boolean firstLoading) {
 		super.updateStringtoDoubleBuffering(false);
@@ -246,6 +304,8 @@ public class ImageBadPixelsMask extends it.unitn.ing.rista.diffr.DataMask {
 		Object[][] data;
 		JTextField stdDevTF;
 		JTextField layersNumberTF;
+    JTextField repetitionsNumberTF;
+    PixelTableModel pmodel;
 
 		public JBadPixelsMaskOptionsD(Frame parent, XRDcat obj) {
 
@@ -256,8 +316,8 @@ public class ImageBadPixelsMask extends it.unitn.ing.rista.diffr.DataMask {
 			JPanel tablePanel = new JPanel();
 			tablePanel.setLayout(new BorderLayout(6, 6));
 
-			PixelTableModel model = new PixelTableModel();
-			JTable pixelsCoordTable = new JTable(model);
+			pmodel = new PixelTableModel();
+			JTable pixelsCoordTable = new JTable(pmodel);
 			JScrollPane tablescrollPane = new JScrollPane(pixelsCoordTable);
 			pixelsCoordTable.setPreferredScrollableViewportSize(new Dimension(350, 400));
 
@@ -274,7 +334,7 @@ public class ImageBadPixelsMask extends it.unitn.ing.rista.diffr.DataMask {
 
 			JButton jb2;
 			bottomTablePanel.add(jb2 = new JButton("Remove pixel"));
-			jb2.addActionListener(event -> model.remove(pixelsCoordTable.getSelectedRow()));
+			jb2.addActionListener(event -> pmodel.remove(pixelsCoordTable.getSelectedRow()));
 			jb2.setToolTipText("Remove a bad pixel. You need to reload the images to apply.");
 
 			JButton jb3;
@@ -303,26 +363,92 @@ public class ImageBadPixelsMask extends it.unitn.ing.rista.diffr.DataMask {
 			layersPanel.add(layersNumberTF);
 			optionsPanel.add(layersPanel);
 
-			setTitle("Bad pixels coordinates");
+      JPanel repsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 3, 3));
+      repsPanel.add(new JLabel("Repetitions:"));
+      repetitionsNumberTF = new JTextField(Constants.FLOAT_FIELD);
+      repetitionsNumberTF.setText(getNumberOfRepetitionsS());
+      repetitionsNumberTF.setToolTipText("Set the number of repetition of the mask (min 1, more rep to eliminate adjacent pixels)");
+      repsPanel.add(repetitionsNumberTF);
+      optionsPanel.add(repsPanel);
+
+      setTitle("Bad pixels coordinates");
 //      setHelpFilename("DistanceAngleBondRestraints.txt");
 
 			initParameters();
-			pack();
+
+      new FileDrop(tablescrollPane, files -> {
+        // handle file drop
+        datafilesDropped(files);
+      }); // end FileDrop.Listener
+
+      pack();
 		}
 
-		public void initParameters() {
+    public void initParameters() {
 			super.initParameters();
 		}
 
 		public void retrieveParameters() {
 			setStandardDev(stdDevTF.getText());
 			setNumberOfLayers(layersNumberTF.getText());
+      setNumberOfRepetitions(repetitionsNumberTF.getText());
 //			resetMask();
 //			for (Object[] datum : data) addBadPixel((String) datum[0], (String) datum[1]);
 //			refreshCachedBadPixels();
 		}
 
-		class PixelTableModel extends AbstractTableModel {
+    private void datafilesDropped(File[] files) {
+      try {
+        float[][] buffer = null;
+        for (int i = 0; i < files.length; i++) {
+          ImagePlus imp = (new Opener()).openImage(files[i].getCanonicalPath());
+          if (imp != null) {
+            ImageProcessor ip = imp.getChannelProcessor();
+            int width = ip.getWidth();
+            int height = ip.getHeight();
+            float[][] pixels = ip.getFloatArray();
+            if (buffer == null) {
+              buffer = new float[width][height];
+              for (int j = 0; j < width; j++)
+                for (int k = 0; k < height; k++)
+                  buffer[j][k] = pixels[j][k];
+            } else {
+              for (int j = 0; j < width; j++)
+                for (int k = 0; k < height; k++)
+                  buffer[j][k] += pixels[j][k];
+            }
+            imp.close();
+          }
+        }
+        if (buffer != null) {
+          for (int l = 0; l < getNumberOfRepetitions(); l++) {
+            Vector<int[]> toRemove = filterDataByStdDev(buffer);
+            for (int k = 0; k < toRemove.size(); k++) {
+              int[] remove = toRemove.elementAt(k);
+              boolean isNew = true;
+              for (int it = 0; it < pmodel.getRowCount(); it++) {
+                String first = (String) pmodel.getValueAt(it, 0);
+                String second = (String) pmodel.getValueAt(it, 1);
+                if (Integer.parseInt(first) == remove[0] && Integer.parseInt(second) == remove[1]) {
+                  isNew = false;
+                  break;
+                }
+              }
+              if (isNew)
+                pmodel.add(remove[0], remove[1]);
+              buffer[remove[0]][remove[1]] = -1;
+            }
+          }
+        } else {
+          System.out.println("No suitable image loaded");
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+
+
+    class PixelTableModel extends AbstractTableModel {
 
 			public PixelTableModel() {
 				columnNames = new String[]{"x (pixels)", "y (pixels)"};
@@ -375,7 +501,15 @@ public class ImageBadPixelsMask extends it.unitn.ing.rista.diffr.DataMask {
 				fireTableRowsInserted(size, size);
 			}
 
-			public void remove(int index) {
+      public void add(int i, int j) {
+        int size = getRowCount();
+//				System.out.println("Rows number: " + size);
+        addBadPixel(i, j);
+        updateData();
+        fireTableRowsInserted(size, size);
+      }
+
+      public void remove(int index) {
 				if (index >= 0 && index < getRowCount()) {
 					removeBadPixel(index);
 					updateData();

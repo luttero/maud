@@ -882,7 +882,7 @@ public class MetaDynamicsSearch extends OptimizationAlgorithm {
 
     double[] dparm = new double[nprm];
     if (nprm > 0) {
-      double[] rValues = fittingFunction.getRefinementIndexes();
+      double[] rValues = fittingFunction.getRefinementIndexes(true);
       double sig = Math.sqrt(rValues[8] / (dataNumber - 1 - nprm));
       if (niter > 0) {
         for (int j = 0; j < mdi; j++)
@@ -908,7 +908,7 @@ public class MetaDynamicsSearch extends OptimizationAlgorithm {
 //    double wss;
 
     if (nprm > 0) {
-      double[] rValues = fittingFunction.getRefinementIndexes();
+      double[] rValues = fittingFunction.getRefinementIndexes(true);
       double sig = Math.sqrt(rValues[8] / (dataNumber - 1 - nprm));
       printf("sig= ", sig);
       double Rw = rValues[0];

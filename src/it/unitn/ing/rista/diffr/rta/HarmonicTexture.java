@@ -1479,9 +1479,9 @@ public class HarmonicTexture extends Texture implements Function {
   boolean indexesComputed = false;
   double[] refinementIndexes = new double[19];
 
-  public double[] getRefinementIndexes() {
+  public double[] getRefinementIndexes(boolean forceComputation) {
 
-    if (!indexesComputed) {
+    if (!indexesComputed || forceComputation) {
       double diff, wgt, dta, diff2, wgt2, dta2, dtanb, dtanb2, diffb, diffb2;
       double rw = 0.0, r = 0.0, rwb = 0.0, rb = 0.0, den = 0.0, rden = 0.0, denb = 0.0, rdenb = 0.0;
 
@@ -1757,7 +1757,7 @@ public class HarmonicTexture extends Texture implements Function {
     OutputPanel outputP = getFilePar().getMainFrame().getOutputPanel();
 
     if (hasoutput && outputP != null) {
-      double[] indexes = getRefinementIndexes();
+      double[] indexes = getRefinementIndexes(false);
       outputP.appendnewline("Harmonic texture computation: " + String.valueOf(indexes[4]));
       outputP.appendnewline("Weighted Sum of Squares: " + String.valueOf(indexes[4]));
       outputP.appendnewline("Rw(%): " + indexes[0] * 100);

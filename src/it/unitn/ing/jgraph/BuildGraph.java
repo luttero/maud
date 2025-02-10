@@ -1,6 +1,6 @@
 package it.unitn.ing.jgraph;
 
-import java.applet.Applet;
+//import java.applet.Applet;
 import java.awt.*;
 import java.io.InputStream;
 import java.net.URL;
@@ -156,7 +156,7 @@ public class BuildGraph extends ScanWord {
   /**
    *   The Calling Applet
    */
-  protected Applet applet;
+//  protected Applet applet;
 
   /**
    * Debug. If true output copious debug messages. Though unless you know
@@ -196,12 +196,11 @@ public class BuildGraph extends ScanWord {
   /**
    * Instantiate the class
    * @param in The inputstream to be read
-   * @param ap the driving applet.
    */
 
-  public BuildGraph(InputStream in, Applet ap) {
+  public BuildGraph(InputStream in/*, Applet ap*/) {
     super(in);
-    applet = ap;
+//    applet = ap;
 /*
 **   Specifiy The Key Words and associate them with the integer Values
 */
@@ -348,7 +347,7 @@ public class BuildGraph extends ScanWord {
         case TT_EOL:
           lineno++;
           if (lineno == (lineno / 10) * 10) {
-            applet.showStatus("Reading input: Line " + lineno);
+//            applet.showStatus("Reading input: Line " + lineno);
           }
           break;
 /*
@@ -367,7 +366,7 @@ public class BuildGraph extends ScanWord {
             int toke = nextWord();
             if (toke == TT_NUMBER) {
               nobj = new NamedObject(
-                      new Integer((int) (nval + 0.01)), token);
+                      ((int) (nval + 0.01)), token);
             } else {
               errorAtLine(
                       "In this context LEFT, RIGHT, TOP or BOTTOM should be followed an integer");
@@ -385,8 +384,8 @@ public class BuildGraph extends ScanWord {
           token = nextWord();
           if (token == STRING) {
             try {
-              URL url = new URL(applet.getDocumentBase(), sval);
-              nobj = new NamedObject(url, URL);
+//              URL url = new URL(applet.getDocumentBase(), sval);
+//              nobj = new NamedObject(url, URL);
             } catch (Exception e) {
               errorAtLine("Failed to build URL!");
               return;
@@ -395,7 +394,7 @@ public class BuildGraph extends ScanWord {
             errorAtLine("URL should be followed by a string");
             return;
           }
-          object.push(nobj);
+  //        object.push(nobj);
           break;
 /*
 **                         The ATTACH keyword is followed by the name of the
@@ -434,7 +433,7 @@ public class BuildGraph extends ScanWord {
           } else if (token == ITALIC) {
             nobj = new NamedObject(PLAIN);
           } else if (token == TT_NUMBER) {
-            nobj = new NamedObject(new Integer((int) (nval + 0.01)), STYLE);
+            nobj = new NamedObject(((int) (nval + 0.01)), STYLE);
           } else {
             errorAtLine(
                     "STYLE should be followed an integer or Keyword");
@@ -453,7 +452,7 @@ public class BuildGraph extends ScanWord {
           }
           token = nextWord();
           if (token == TT_NUMBER) {
-            nobj = new NamedObject(new Integer((int) (nval + 0.01)), SIZE);
+            nobj = new NamedObject(((int) (nval + 0.01)), SIZE);
           } else {
             errorAtLine("SIZE should be followed by an integer");
             return;
@@ -471,7 +470,7 @@ public class BuildGraph extends ScanWord {
           }
           token = nextWord();
           if (token == TT_NUMBER) {
-            nobj = new NamedObject(new Integer((int) (nval + 0.01)), LLEVELS);
+            nobj = new NamedObject(((int) (nval + 0.01)), LLEVELS);
           } else {
             errorAtLine("LLEVELS should be followed by an integer");
             return;
@@ -535,7 +534,7 @@ public class BuildGraph extends ScanWord {
           token = nextWord();
           if (token == TT_NUMBER) {
             nobj = new NamedObject(
-                    new Integer((int) (nval + 0.01)), NUMBER);
+                    ((int) (nval + 0.01)), NUMBER);
           } else {
             errorAtLine("NUMBER should be followed by an integer");
             return;
@@ -591,18 +590,18 @@ public class BuildGraph extends ScanWord {
           }
 
           if (token == XRANGE) {
-            nobj = new NamedObject(new Integer(num), XNUMBER);
+            nobj = new NamedObject(num, XNUMBER);
             object.push(nobj);
-            nobj = new NamedObject(new Double(min), XMIN);
+            nobj = new NamedObject(min, XMIN);
             object.push(nobj);
-            nobj = new NamedObject(new Double(max), XMAX);
+            nobj = new NamedObject(max, XMAX);
             object.push(nobj);
           } else {
-            nobj = new NamedObject(new Integer(num), YNUMBER);
+            nobj = new NamedObject(num, YNUMBER);
             object.push(nobj);
-            nobj = new NamedObject(new Double(min), YMIN);
+            nobj = new NamedObject(min, YMIN);
             object.push(nobj);
-            nobj = new NamedObject(new Double(max), YMAX);
+            nobj = new NamedObject(max, YMAX);
             object.push(nobj);
           }
           break;
@@ -835,7 +834,7 @@ public class BuildGraph extends ScanWord {
           break;
         case BEGIN:
           built.addElement(graph);
-          applet.showStatus("BuildGraph: Built Graph!!!");
+//          applet.showStatus("BuildGraph: Built Graph!!!");
 
           return true;
         default:
@@ -924,7 +923,7 @@ public class BuildGraph extends ScanWord {
             f = new Font(name, style, size);
             nobj = new NamedObject(f, FONT);
             object.push(nobj);
-            applet.showStatus("BuildGraph: Built Font!");
+//            applet.showStatus("BuildGraph: Built Font!");
             return true;
           } catch (Exception e) {
             errorAtLine("Ill formed font specification");
@@ -964,7 +963,7 @@ public class BuildGraph extends ScanWord {
         case BEGIN:
           nobj = new NamedObject(title, TITLE);
           object.push(nobj);
-          applet.showStatus("BuildGraph: Built Title!");
+//          applet.showStatus("BuildGraph: Built Title!");
           return true;
         default:
           errorAtLine("Incorrect keyword in Title specification");
@@ -999,7 +998,7 @@ public class BuildGraph extends ScanWord {
         case BEGIN:
           if (color != null) object.push(color);
           if (font != null) object.push(font);
-          applet.showStatus("BuildGraph: Built Axis Label!");
+//          applet.showStatus("BuildGraph: Built Axis Label!");
           return true;
         default:
           errorAtLine("Incorrect keyword in Label specification");
@@ -1056,14 +1055,14 @@ public class BuildGraph extends ScanWord {
             nobj = new NamedObject(m, MARKER);
             object.push(nobj);
             built.addElement(m);
-            applet.showStatus(
-                    "BuildGraph: Loaded Marker file!");
+//            applet.showStatus(
+//                    "BuildGraph: Loaded Marker file!");
             return true;
           } else {
             if (color != null) object.push(color);
             if (size != null) object.push(size);
             if (style != null) object.push(style);
-            applet.showStatus("BuildGraph: Built Marker!");
+//            applet.showStatus("BuildGraph: Built Marker!");
             return true;
           }
         default:
@@ -1128,8 +1127,8 @@ public class BuildGraph extends ScanWord {
           }
           break;
         case URL:
-          load = new LoadData(data);
-          load.loadDataSet((URL) (nobj.getObject()), graph);
+//          load = new LoadData(data);
+//          load.loadDataSet((URL) (nobj.getObject()), graph);
           break;
         case FUNCTION:
           parsef = new ParseFunction((String) (nobj.getObject()));
@@ -1197,7 +1196,7 @@ public class BuildGraph extends ScanWord {
           built.addElement(data);
           built.addElement(load);
           datasets.addElement(ndata);
-          applet.showStatus("BuildGraph: Loading Data!");
+//          applet.showStatus("BuildGraph: Loading Data!");
           return true;
 
         default:
@@ -1319,7 +1318,7 @@ public class BuildGraph extends ScanWord {
             object.push(attach.pop());
           }
           built.addElement(axis);
-          applet.showStatus("BuildGraph: Built Axis!");
+//          applet.showStatus("BuildGraph: Built Axis!");
           return true;
 
         default:
@@ -1417,7 +1416,7 @@ public class BuildGraph extends ScanWord {
 
   private void errorAtLine(String s) {
     Graph2D.out.println("Error at line " + lineno + ": " + s);
-    applet.showStatus("Error at line " + lineno + ": " + s);
+//    applet.showStatus("Error at line " + lineno + ": " + s);
   }
 
   /**

@@ -3129,23 +3129,23 @@ public class DataFileSet extends XRDcat {
     } else if (reason == Constants.INTENSITY_CALIBRATION) {
       refreshComputation = true;
       int datafilenumber = datafilesnumber();
-		if (source instanceof GSASbankIntCalibration && paramNumber >= 0) {
-			for (int i = 0; i < datafilenumber; i++) {
-				DiffrDataFile adatafile = getDataFile(i);
-				if (adatafile.getBankNumber() == paramNumber) {
-					adatafile.setIntensityUncalibrated();
-					adatafile.refreshBkgComputation = true;
-					adatafile.refreshSpectraComputation = true;
-				}
-			}
-	    } else {
-			for (int i = 0; i < datafilenumber; i++) {
-				DiffrDataFile adatafile = getDataFile(i);
-				adatafile.setIntensityUncalibrated();
-				adatafile.refreshBkgComputation = true;
-				adatafile.refreshSpectraComputation = true;
-			}
-		}
+      if (source instanceof GSASbankIntCalibration && paramNumber >= 0) {
+        for (int i = 0; i < datafilenumber; i++) {
+          DiffrDataFile adatafile = getDataFile(i);
+          if (adatafile.getBankNumber() == paramNumber) {
+            adatafile.setIntensityUncalibrated();
+            adatafile.refreshBkgComputation = true;
+            adatafile.refreshSpectraComputation = true;
+          }
+        }
+      } else {
+        for (int i = 0; i < datafilenumber; i++) {
+          DiffrDataFile adatafile = getDataFile(i);
+          adatafile.setIntensityUncalibrated();
+          adatafile.refreshBkgComputation = true;
+          adatafile.refreshSpectraComputation = true;
+        }
+      }
       reason = 0;
     } else if (reason == Constants.BKG_FILE_CHANGED) {
       int datafilenumber = datafilesnumber();
@@ -3161,6 +3161,14 @@ public class DataFileSet extends XRDcat {
 		    getDataFile(i).refreshBkgComputation = true;
 		    getDataFile(i).refreshSpectraComputation = true;
 	    }
+    } else if (reason == Constants.INSTRUMENT_BROADENING || reason == Constants.BEAM_INTENSITY_CHANGED) {
+      refreshComputation = true;
+      int datafilenumber = datafilesnumber();
+      for (int i = 0; i < datafilenumber; i++) {
+        getDataFile(i).refreshBkgComputation = true;
+        getDataFile(i).refreshSpectraComputation = true;
+      }
+      reason = 0;
     }
     if (source == this || source instanceof BkgPeak) {
       int datafilenumber = datafilesnumber();
@@ -3370,7 +3378,7 @@ public class DataFileSet extends XRDcat {
   }
 
   public void finalOutput(OutputStream out, boolean outputGraph) throws IOException {
-    double[] indexes = getRefinementIndexes();
+    double[] indexes = getRefinementIndexes(outputGraph);
     printLine(out, "DataSet " + toXRDcatString() + " :");
     printLine(out, "DataSet Rwp: " + Fmt.format(indexes[0]));
     printLine(out, "DataSet Rp: " + Fmt.format(indexes[4]));
@@ -3391,9 +3399,9 @@ public class DataFileSet extends XRDcat {
   boolean indexesComputed = false;
   double[] refinementIndexes = new double[18];
 
-  public double[] getRefinementIndexes() { // todo: add WSS
+  public double[] getRefinementIndexes(boolean forceComputation) { // todo: add WSS
 
-    if (!indexesComputed) {
+    if (!indexesComputed || forceComputation) {
 
       for (int j = 0; j < 18; j++)
         refinementIndexes[j] = 0.0;
@@ -3401,7 +3409,7 @@ public class DataFileSet extends XRDcat {
       int datafilenumber = activedatafilesnumber();
       for (int i = 0; i < datafilenumber; i++) {
 
-        double[] refIndex = getActiveDataFile(i).getRefinementIndexes(false);
+        double[] refIndex = getActiveDataFile(i).getRefinementIndexes(forceComputation);
         for (int j = 8; j < 18; j++)
           refinementIndexes[j] += refIndex[j];
       }

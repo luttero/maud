@@ -448,7 +448,7 @@ public class ChargeFlippingDensityMap extends StructureSolutionMethod {
   public void refreshFit(double[] fit, double[] parm, int[] controls) {
   }
 
-  public double[] getRefinementIndexes() {
+  public double[] getRefinementIndexes(boolean forceComputation) {
 
     return null;
 

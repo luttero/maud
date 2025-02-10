@@ -564,7 +564,7 @@ public class SampleShapeIntegral extends SampleShape implements Shape3D, SimpleF
     return false;
   }
 
-  public void computeAbsorptionPath_disabled(double[][] incidentAndDiffraction_angles, double absorption, double[] position,
+/*  public void computeAbsorptionPath_disabled(double[][] incidentAndDiffraction_angles, double absorption, double[] position,
                                     double[] intensity, double toLambda) {
     double dist1[] = new double[Ncell], dist2[] = new double[Ncell], arg1 = absorption;
     boolean positionCorr = false;
@@ -680,7 +680,7 @@ public class SampleShapeIntegral extends SampleShape implements Shape3D, SimpleF
     solver.releaseMemory();
     solver = null;
   }
-
+*/
   public void computeCoord(double[] coord, double azimuth, double polar) {
 
     double sinPolar = Math.sin(polar);

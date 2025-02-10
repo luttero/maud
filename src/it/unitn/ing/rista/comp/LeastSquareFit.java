@@ -119,7 +119,7 @@ public class LeastSquareFit extends OptimizationAlgorithm {
   public void initParameters() {
     super.initParameters();
     stringField[0] = MaudPreferences.getPref(iterations, "3");
-    stringField[2] = MaudPreferences.getPref("leastSquares.derivativeStep", "0.0001");
+    stringField[2] = MaudPreferences.getPref("leastSquares.derivativeStep", "0.0005");
     stringField[4] = MaudPreferences.getPref("leastSquares.doubleDerivative", "false");
     stringField[1] = MaudPreferences.getPref("leastSquares.precision", "0.00000001");
 	  stringField[3] = MaudPreferences.getPref("leastSquares.lambda", "0.01");
@@ -173,6 +173,7 @@ public class LeastSquareFit extends OptimizationAlgorithm {
 
     fittingFunction = funtionTominimize;
 
+    Constants.debug_LS = MaudPreferences.getBoolean("optimizer.debug", Constants.debug_LS);
     newModel = MaudPreferences.getBoolean("leastSquares.newModelReduceMemory", true);
     if (!(fittingFunction instanceof FilePar))
       newModel = false;
@@ -246,6 +247,7 @@ public class LeastSquareFit extends OptimizationAlgorithm {
       parm[i] = fittingFunction.getFreeParameter(i);
       minSignificantValue[i] = fittingFunction.getParameterMinSignificantValue(i);
     }
+    double[] norm = getNormFrom(parm);
     double parmn[] = new double[nprm];
 
     if (computation != null && computation.shouldStop()) {
@@ -287,7 +289,7 @@ public class LeastSquareFit extends OptimizationAlgorithm {
       return;
     }
 
-// start least squares fitting
+// start the least squares fitting
 
     int conver = 0;
     double lambda = lambdaStart;
@@ -381,7 +383,7 @@ public class LeastSquareFit extends OptimizationAlgorithm {
 			for (int i = 0; i < nprm; i++)
 				parm[i] = fittingFunction.getFreeParameter(i);*/
 
-			computeDerivativeMatrix(dataNumber, nprm, parm, fitVector, derivf, fit, computation, minSignificantValue);
+			computeDerivativeMatrix(dataNumber, nprm, parm, norm, fitVector, derivf, fit, computation, minSignificantValue);
 
       if (computation != null && computation.shouldStop()) {
         return;
@@ -701,7 +703,7 @@ public class LeastSquareFit extends OptimizationAlgorithm {
             parmn[i] = b[i];
           }
 	       if (MaudPreferences.getBoolean("leastSquares.printParametersPerIteration", false))
-            printout(parmn, nprm);
+            printout(parmn, norm, nprm);
         }
         if (n0 == nprm)
           conver = 1;
@@ -711,14 +713,14 @@ public class LeastSquareFit extends OptimizationAlgorithm {
           }
           boolean bounds = false;
           for (int j = 0; j < nprm; j++)
-            bounds = (bounds || fittingFunction.checkBound(j, parmn[j]));
+            bounds = (bounds || fittingFunction.checkBound(j, parmn[j] * norm[j]));
           if (bounds) {
             wss = oldwss * 1.01;
 //        		printf("At least one parameter out of bounds, recomputing...");
           } else {
             if (fittingFunction.singleFunctionComputing())
               fittingFunction.setDerivate(false);
-            fittingFunction.setFreeParameters(parmn);
+            fittingFunction.setFreeParameters(getParametersFrom(parmn, norm));
             if (!newModel) {
               for (int i = 0; i < dataNumber; i++)
                 fit[i] = fittingFunction.getFit(i);
@@ -771,7 +773,7 @@ public class LeastSquareFit extends OptimizationAlgorithm {
       } while ((wss > oldwss) && (conver == 0));
       if (wss > oldwss) {
         printf("No solution found, setting old values...");
-        fittingFunction.setFreeParameters(parm);
+        fittingFunction.setFreeParameters(getParametersFrom(parm, norm));
       }
 
       if (computation != null && computation.shouldStop()) {
@@ -816,6 +818,9 @@ public class LeastSquareFit extends OptimizationAlgorithm {
           ((FilePar) fittingFunction).updatePlot();
         for (int i = 0; i < nprm; i++) {
           parm[i] = fittingFunction.getFreeParameter(i);
+          double[] newNormPar = getNormFrom(parm[i]);
+          norm[i] = newNormPar[0];
+          parm[i] = newNormPar[1];
           parmn[i] = parm[i];
           b[i] = parm[i];
         }
@@ -844,7 +849,7 @@ public class LeastSquareFit extends OptimizationAlgorithm {
       printf("lambda/l(min) = ", ri);
       n0 = 0;
     }
-    finaloutput(nprm, dataNumber, niter, mdi, c, flg);
+    finaloutput(nprm, dataNumber, niter, mdi, c, norm, flg);
     if (newModel) {
       for (int i1 = 0; i1 < fitVector.size(); i1++) {
         SpectrumFitContainer spectrum = (SpectrumFitContainer) fitVector.elementAt(i1);
@@ -855,7 +860,7 @@ public class LeastSquareFit extends OptimizationAlgorithm {
     }
   }
 
-  public void computeDerivativeMatrix(int dataNumber, int nprm, double parm[],
+  public void computeDerivativeMatrix(int dataNumber, int nprm, double parm[], double[] norm,
                                       Vector fitVector, double derivf[][], double fit[],
                                       launchBasic computation, double[] minSignificantValue) {
     //        compute matrix of derivative
@@ -885,8 +890,9 @@ public class LeastSquareFit extends OptimizationAlgorithm {
       double dparp2 = dparp * 2.0f;
       double oldpar = parm[sp];
       double parm1 = parm[sp] + dparp;
-//      System.out.println("Setting (" + sp + ") = " + parm1);
-      fittingFunction.setFreeParameter(sp, parm1);
+      if (Constants.debug_LS)
+        System.out.println("(debug optimizer) Setting 1 (" + sp + ") = " + (parm1 * norm[sp]));
+      fittingFunction.setFreeParameter(sp, parm1 * norm[sp]);
       fittingFunction.computeFit();
       if (newModel) {
         for (int i1 = 0; i1 < fitVector.size(); i1++) {
@@ -897,9 +903,15 @@ public class LeastSquareFit extends OptimizationAlgorithm {
         for (int i = 0; i < dataNumber; i++)
           firstfit[i] = fittingFunction.getFit(i);
       }
+      if (Constants.debug_LS) {
+        fittingFunction.getRefinementIndexes(true);
+        System.out.println("(debug optimizer) WSS1 (" + sp + ") = " + fittingFunction.getWSS());
+      }
       if (doubleder) {
         parm1 = oldpar - dparp;
-        fittingFunction.setFreeParameter(sp, parm1);
+        if (Constants.debug_LS)
+          System.out.println("(debug optimizer) Setting 2 (" + sp + ") = " + (parm1 * norm[sp]));
+        fittingFunction.setFreeParameter(sp, parm1 * norm[sp]);
         fittingFunction.computeFit();
         if (newModel) {
           for (int i1 = 0; i1 < fitVector.size(); i1++) {
@@ -909,6 +921,10 @@ public class LeastSquareFit extends OptimizationAlgorithm {
         } else {
           for (int i = 0; i < dataNumber; i++)
             secondfit[i] = fittingFunction.getFit(i);
+        }
+        if (Constants.debug_LS) {
+          fittingFunction.getRefinementIndexes(true);
+          System.out.println("(debug optimizer) WSS2 (" + sp + ") = " + fittingFunction.getWSS());
         }
       }
 
@@ -936,17 +952,17 @@ public class LeastSquareFit extends OptimizationAlgorithm {
             derivf[i][sp] = ((firstfit[i] - fit[i]) / dparp);
         }
       }
-//      System.out.println("Setting back (" + sp + ") = " + oldpar);
-      fittingFunction.setFreeParameter(sp, oldpar);
+      if (Constants.debug_LS)
+        System.out.println("(debug optimizer) Setting back (" + sp + ") = " + (oldpar * norm[sp]));
+      fittingFunction.setFreeParameter(sp, oldpar * norm[sp]);
     }
-	  return;
   }
 
-  public void finaloutput(int nprm, int dataNumber, int niter, int mdi, double c[], int flg) {
+  public void finaloutput(int nprm, int dataNumber, int niter, int mdi, double c[], double[] norm, int flg) {
 //    double wss;
 
     if (nprm > 0) {
-      double[] rValues = fittingFunction.getRefinementIndexes();
+      double[] rValues = fittingFunction.getRefinementIndexes(true);
       double sig = Math.sqrt(rValues[8] / (dataNumber - nprm));
       printf("sig= ", sig);
       double Rw = rValues[0];
@@ -1138,12 +1154,12 @@ public class LeastSquareFit extends OptimizationAlgorithm {
           g[z] = 1.0;
           choback(nprm);
           if (choleskyFlag[z] > 0 && !Double.isNaN(g[z]))
-            dparm[z] = (double) (Math.sqrt(Math.abs(g[z])) * sig);
+            dparm[z] = Math.sqrt(Math.abs(g[z])) * sig;
           else
             dparm[z] = choleskyFlag[z];
 //          printf(z, dparm[z]);
         }
-        fittingFunction.setErrors(dparm);
+        fittingFunction.setErrors(getErrorsFrom(dparm, norm));
       }
       fittingFunction.saveparameters();
       if (fittingFunction instanceof FilePar)
@@ -1226,7 +1242,52 @@ public class LeastSquareFit extends OptimizationAlgorithm {
     return flg;
   }
 
-/* Memory allocation */
+  public double[] getNormFrom(double[] parList) {
+    double[] norm = new double[parList.length];
+    for (int i = 0; i < parList.length; i++) {
+      if (parList[i] != 0) {
+        norm[i] = parList[i];
+        parList[i] = 1.0;
+      } else
+        norm[i] = 1.0;
+    }
+    return norm;
+  }
+
+  public double[] getParametersFrom(double[] parm, double[] norm) {
+    double[] parameters = new double[parm.length];
+    for (int i = 0; i < parm.length; i++)
+      parameters[i] = parm[i] * norm[i];
+    return parameters;
+  }
+
+  public double[] getNormFrom(double par) {
+    double[] norm = new double[2];
+    if (par == 0)
+      norm[0] = 1.0;
+    else {
+      norm[0] = par;
+      norm[1] = 1.0;
+    }
+    return norm;
+  }
+
+  public double[] getErrorsFrom(double[] parm, double[] norm) {
+    double[] parameters = new double[parm.length];
+    for (int i = 0; i < parm.length; i++) {
+      if (parm[i] != -1 && parm[i] != 1)
+        parameters[i] = parm[i] * Math.abs(norm[i]);
+      else
+        parameters[i] = parm[i];
+    }
+    return parameters;
+  }
+
+
+
+
+
+  /* Memory allocation */
 
   double s_deriv[] = null;
   double s_b[] = null;
@@ -1271,6 +1332,8 @@ public class LeastSquareFit extends OptimizationAlgorithm {
     s_derivf = null;
     initialized = false;
   }
+
+
 
   public LeastSquareFit(SimpleFunction fitFunction, int iterations) {
     super(fitFunction, iterations);
@@ -1369,16 +1432,6 @@ public class LeastSquareFit extends OptimizationAlgorithm {
         else {
           simpleFittingFunction.refreshFit(fit, s_parmn, controls);
           wss = getWSS(dta, fit, wgt);
-/*          if (Double.toXRDcatString(wss).equalsIgnoreCase("NaN")) {
-            wss = oldwss * 1.01;
-            printf("Wrong parameters, recomputing...");
-          } */
-/*          if (outputEnabled) {
-            printf("new Wss = ", wss);
-            printf("actual iteration ", niter);
-            for (int i = 0; i < dataNumber; i++)
-              printf(dta[i], fit[i]);
-          }*/
           if (wss < oldwss && wss >= 0.0) {
             oldwss = wss;
             for (int i = 0; i < nprm; i++)
@@ -1426,18 +1479,14 @@ public class LeastSquareFit extends OptimizationAlgorithm {
 
     for (int sp = 0; sp < nprm; sp++) {
       if (parm[sp] == 0)
-        dparp = (double) derstep;
+        dparp = derstep;
       else
-        dparp = parm[sp] * (double) derstep;
+        dparp = parm[sp] * derstep;
 //      double dparp2 = dparp * 2.0f;
       double oldpar = parm[sp];
       parm[sp] += dparp;
 //      for (int i = 0; i < dataNumber; i++)
       simpleFittingFunction.refreshFit(s_firstfit, parm, controls);
-/*      if (doubleder) {
-        parm[sp] = oldpar - dparp;
-        simpleFittingFunction.getFit(secondfit, parm, controls);
-      }     */
 
       for (int i = 0; i < dataNumber; i++) {
 //        if (doubleder)

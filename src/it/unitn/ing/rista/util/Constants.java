@@ -267,13 +267,13 @@ public class Constants {
   public static String resultsFile = "results.txt";
   public static String userName = null;
   public static String startPath = "/";
-  public static String maudReleaseBuilt = "$Revision: 2.9996 $";
-  public static String maudDateBuilt = "$Date: 2025/01/31 20:42:00 $";
+  public static String maudReleaseBuilt = "$Revision: 2.9997 $";
+  public static String maudDateBuilt = "$Date: 2025/02/10 18:49:00 $";
 
   public static final double arg2PIover3 = PI2 / 3.;
   public static final double sinArg2PIover3 = Math.sin(arg2PIover3);
   public static final double cosArg2PIover3 = Math.cos(arg2PIover3);
-  public static double maud_version = 2.9996;
+  public static double maud_version = 2.9997;
   public static boolean useOpenCL = false;
   public static Vector<OpenCLDevice> openClDevices= null;
   public static OpenCLDevice openclDevice = null;
@@ -374,6 +374,7 @@ public class Constants {
 	public static final int PLOT_REFRESH = 2001;
 
 	public static boolean testing = false;
+  public static boolean debug_LS = false;
   public static boolean testtime = false;
   public static boolean esquienabled = false;
 
@@ -782,6 +783,7 @@ public class Constants {
     maxNumberOfThreads = MaudPreferences.getInteger("parallel_processing.threads_maxNumber",
         /*Runtime.getRuntime().availableProcessors()*/ 1);
     debugThreads = MaudPreferences.getBoolean("parallel_processing.threads_debug", false);
+    debug_LS = MaudPreferences.getBoolean("optimizer.debug", false);
     STARTING_STRUCTURE_FACTOR = MaudPreferences.getDouble("structure_factors.default_value",
         STARTING_STRUCTURE_FACTOR);
     MINIMUM_STRUCTURE_FACTOR = MaudPreferences.getDouble("structure_factors.minimum_value_for_extraction", 

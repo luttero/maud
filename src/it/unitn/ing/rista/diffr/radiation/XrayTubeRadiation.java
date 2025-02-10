@@ -39,13 +39,15 @@ import java.awt.*;
 
 public class XrayTubeRadiation extends XrayRadiation {
 
-  public static final String[] tube = {"Cr Kalpha", "Fe Kalpha", "Cu Kalpha", "Mo Kalpha", "Ag Kalpha", "Co Kalpha"};
-  public static final int numbertube = 6;
+  public static final String[] tube = {"Cr Kalpha", "Fe Kalpha", "Cu Kalpha", "Mo Kalpha", "Ag Kalpha", "Co Kalpha",
+                                       "Ga Kalpha"};
+  public static final int numbertube = tube.length;
 
 	// Luca update 31/5/2013 using X-ray International table 4.2.2.1 Chapter 4 section 2, Volume C
 
   public static final double[][] kalpha = {{2.289726d, 2.293651d}, {1.936041d, 1.939973d}, {1.5405929d, 1.5444274d},
-                                           {.70931715d, .713607d}, {.55942178d, .5638131d}, {1.788996d, 1.792835d}};
+                                           {.70931715d, .713607d}, {.55942178d, .5638131d}, {1.788996d, 1.792835d},
+                                           {1.34011809d, 1.34402884d}};
 
   public static final double[] weight = {1.0, 0.5};
 

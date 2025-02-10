@@ -467,6 +467,12 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 
   public void refreshForNotificationDown(XRDcat source, int reason) {
     refreshComputation = true;
+    if (reason == Constants.CELL_CHANGED || reason == Constants.STRUCTURE_FACTOR_CHANGED
+        || reason == Constants.ATOM_POSITION_CHANGED || reason == Constants.FRAGMENT_POSITION_CHANGED) {
+
+      refreshAll(false);
+    }
+
   }
 
   public void refreshAll(boolean firstLoading) {
@@ -2560,7 +2566,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 		*/
 
     if (hasoutput && outputframe != null) {
-      double[] indexes = getRefinementIndexes();
+      double[] indexes = getRefinementIndexes(true);
       outputframe.appendnewline("Weighted Sum of Squares (fitting): " + String.valueOf(indexes[8]));
       outputframe.appendnewline("Energy: " + String.valueOf(indexes[18]));
       outputframe.appendnewline("Total: " + String.valueOf(indexes[8] + indexes[18]));
@@ -3021,7 +3027,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
   }
 
   public void finalOutput(OutputStream out, boolean outputGraph) throws IOException {
-    double[] indexes = getRefinementIndexes();
+    double[] indexes = getRefinementIndexes(outputGraph);
     printLine(out, "Refinement final output indices:");
 	  printLine(out, "Global Rwp: " + Fmt.format(indexes[0]));
 	  printLine(out, "Global Rp: " + Fmt.format(indexes[4]));
@@ -3040,12 +3046,12 @@ public class FilePar extends XRDcat implements lFilePar, Function {
     }
   }
 
-  boolean indexesComputed = false;
+  public boolean indexesComputed = false;
   double[] refinementIndexes = new double[19];
 
-  public double[] getRefinementIndexes() {
+  public double[] getRefinementIndexes(boolean forceComputation) {
 
-    if (!indexesComputed) {
+    if (!indexesComputed || forceComputation) {
 
       //     double diff, wgt, dta, diff2, wgt2, dta2, dtanb, dtanb2, diffb, diffb2;
       for (int j = 0; j < 19; j++)
@@ -3054,7 +3060,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
       for (int i = 0; i < samplesNumber(); i++) {
         Sample asample = getSample(i);
 
-        double[] refIndex = asample.getRefinementIndexes();
+        double[] refIndex = asample.getRefinementIndexes(forceComputation);
         for (int j = 8; j < 19; j++)
           refinementIndexes[j] += refIndex[j];
       }
@@ -3085,7 +3091,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
       WSS += diff * diff;
     }*/
 
-//    double[] indexes = getRefinementIndexes();
+//    double[] indexes = getRefinementIndexes(false);
 
 //    double WSS = refinementIndexes[4];
     switch (getMinimizeQuantitySwitch()) {
@@ -3467,7 +3473,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
       themainframe.retrieveParameters();
     out.write(getTitleField());
     out.write("\t");
-    double[] indexes = getRefinementIndexes();
+    double[] indexes = getRefinementIndexes(false);
     if (indexes[0] == 1.0)
       out.write(stringField[5]);
     else
@@ -3499,7 +3505,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 //    else
       out.write(getTitleField());
     out.write("\t");
-    double[] indexes = getRefinementIndexes();
+    double[] indexes = getRefinementIndexes(false);
     if (indexes[0] == 1.0)
       out.write(stringField[5]);
     else

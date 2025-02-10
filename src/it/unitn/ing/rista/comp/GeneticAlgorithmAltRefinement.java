@@ -717,7 +717,7 @@ public class GeneticAlgorithmAltRefinement extends OptimizationAlgorithm {
     System.out.println("Final chi :" + wss);
 //    structureFactorList = null;
     fittingFunction.computeFirstFit();
-    fittingFunction.getRefinementIndexes();
+    fittingFunction.getRefinementIndexes(true);
     } catch (Exception ice) {
       System.out.println("End of solution loop, error occurred");
       ice.printStackTrace();

@@ -677,7 +677,7 @@ public class GeneticAlgorithmRefinement extends OptimizationAlgorithm implements
     }
 //    structureFactorList = null;
     fittingFunction.computeFirstFit();
-    fittingFunction.getRefinementIndexes();
+    fittingFunction.getRefinementIndexes(true);
     GeneralEvolutionProblem.cleanUp();
     defParams = null;
     bestParams = null;
