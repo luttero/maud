@@ -43,7 +43,7 @@ from the older one.
 
 Maud Version notes:
 
-(25/02/2025):   2.9998. The "61" release.
+(24/03/2025):   2.9998. The "61" release.
                 Time is flying. Corrected a small bug affecting the importing
                 of CIF files without atom chemical element specification.
                 The bug affected only version 2.9997.

@@ -300,7 +300,7 @@ public class AtomSite extends XRDcat {
 
   public void updateStringtoDoubleBuffering(boolean firstLoading) {
     super.updateStringtoDoubleBuffering(firstLoading);
-    System.out.println("Update number scatters: " + getNumberOfScatterers());
+//    System.out.println("Update number scatters: " + getNumberOfScatterers());
 	  if (getNumberOfScatterers() == 0)
 	  	addAtomWithSymbol(checkAtomSymbol("", getSiteLabel()));
 /*	  String oldSymbol = getAtomSymbol();
