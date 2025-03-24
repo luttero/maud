@@ -38,8 +38,8 @@ import java.lang.*;
 
 public class Radiation extends XRDcat {
 
-	protected static String[] diclistc = {"_diffrn_radiation_wavelength", "_diffrn_radiation_wavelength_wt"};
-  protected static String[] diclistcrm = {"wavelength (angstrom)", "weight (arb)"};
+	protected static String[] diclistc = {"_diffrn_radiation_wavelength", "_diffrn_radiation_wavelength_wt", "_riet_par_beam_displac_y", "_riet_par_beam_displac_z", "_riet_par_beam_tilt_y", "_riet_par_beam_tilt_z"};
+  protected static String[] diclistcrm = {"wavelength (angstrom)", "weight (arb)", "Beam out of center in y (vertical plane)", "Beam out of center in z (in plane with diffraction)", "Beam angle error in y", "beam angle error in z"};
 
   protected static String[] classlistc = {};
 
@@ -49,6 +49,8 @@ public class Radiation extends XRDcat {
   public static double[] neutronAbs = null;
   public static double[][] electronSF = null;
   public static double[] electronAbs = null;
+
+  public double[] beamErrors = new double[4];
 
   static boolean loadTables = true;
 
@@ -66,7 +68,7 @@ public class Radiation extends XRDcat {
   public void initConstant() {
     Nstring = 0;
     Nstringloop = 0;
-    Nparameter = 2;
+    Nparameter = 6;
     Nparameterloop = 0;
     Nsubordinate = 0;
     Nsubordinateloop = 0;
@@ -86,6 +88,11 @@ public class Radiation extends XRDcat {
     parameterField[1] = new Parameter(this, getParameterString(1), 1.0,
             ParameterPreferences.getDouble(getParameterString(1) + ".min", 0),
             ParameterPreferences.getDouble(getParameterString(1) + ".max", 1.01));
+    for (int i = 2; i < Nparameter; i++) {
+      parameterField[i] = new Parameter(this, getParameterString(i), 0.0,
+          ParameterPreferences.getDouble(getParameterString(i) + ".min", -3.0),
+          ParameterPreferences.getDouble(getParameterString(i) + ".max", 3.0));
+    }
     loadAtomTables();
   }
 
@@ -97,6 +104,11 @@ public class Radiation extends XRDcat {
     parameterField[1] = new Parameter(this, getParameterString(1), aweight,
             ParameterPreferences.getDouble(getParameterString(1) + ".min", 0),
             ParameterPreferences.getDouble(getParameterString(1) + ".max", 1.01));
+    for (int i = 2; i < Nparameter; i++) {
+      parameterField[i] = new Parameter(this, getParameterString(i), 0.0,
+          ParameterPreferences.getDouble(getParameterString(i) + ".min", -3.0),
+          ParameterPreferences.getDouble(getParameterString(i) + ".max", 3.0));
+    }
   }
 
   public String getWavelengthID() {
@@ -131,6 +143,12 @@ public class Radiation extends XRDcat {
 		return ((RadiationType) getParent()).isDynamical();
 	}
 
+  public double[] getBeamErrors() {
+    for (int i = 0; i < 4; i++)
+      beamErrors[i] = getParameterValue(i + 2);
+    return beamErrors;
+  }
+
 /*	public int getRadiationIDNumber() {
     return ((RadiationType) getParent()).getRadiationIDNumber();
   }*/
@@ -142,10 +160,11 @@ public class Radiation extends XRDcat {
         notifyParameterChanged(source, Constants.RADIATION_WAVELENGTH_CHANGED, -1);
         notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED, -1);
         return;
-      }
-      if (parameterField[1] == source) {
+      } else if (parameterField[1] == source) {
         notifyParameterChanged(source, Constants.BEAM_INTENSITY_CHANGED, -1);
         return;
+      } else {
+        notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED, -1);
       }
       super.notifyParameterChanged(source);
     }

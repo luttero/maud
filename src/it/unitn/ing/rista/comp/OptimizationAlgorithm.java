@@ -83,9 +83,10 @@ public class OptimizationAlgorithm extends XRDcat implements OptimizationAlgorit
       case ParallelComputationController.NONE:
         solve(computation, functionToMinimize);
       break;
-      case ParallelComputationController.XGRID:
+/*      case ParallelComputationController.XGRID:
         solveXGRID(computation, functionToMinimize);
       break;
+ */
       case ParallelComputationController.JPVM:
         solveJPVM(computation, functionToMinimize);
       break;

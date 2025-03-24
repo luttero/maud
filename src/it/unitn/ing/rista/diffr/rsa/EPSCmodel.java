@@ -41,15 +41,58 @@ package it.unitn.ing.rista.diffr.rsa;
  * @since JDK1.1
  */
 
+// enum usage:
+// Ellipsoid.valueOf("EVOLVING") -> EVOLVING
+// Ellipsoid array[] = Ellipsoid.values();
+// for (Ellipsoid ell : array) {
+//    System.out.println(ell + " at index "
+//                               + ell.ordinal());
+// }
+//
+// NON_EVOLVING at index 0
+// etc
+
+enum Ellipsoid {
+  NON_EVOLVING,
+  EVOLVING,
+  INDIVIDUAL;
+}
+
+enum Crysym {
+      CUBIC,
+      HEXAG,
+      TRIGO,
+      TETRA,
+      ORTHO,
+      MONOC,
+      TRICL;
+}
 
 public class EPSCmodel extends Strain {
 
   public static String[] diclistc = {
+      "_rista_epsc_user_title",
       "_rista_epsc_grain_shape_ctrl",
+      "_rista_residual_stress_use_texture",
+      "_rista_epsc_large_strain_model",
+      "_rista_epsc_iterations_self_cons",
+      "_rista_epsc_error_self_cons",
+      "_rista_epsc_iterations_active_systems",
+      "_rista_epsc_use_previous_iteration",
+      "_rista_epsc_inverse_pole_figures",
+      "_rista_epsc_number_processes",
+      "_rista_epsc_inverse_pole_figures",
+      "_rista_epsc_inverse_pole_figures",
+      "_rista_epsc_inverse_pole_figures",
+      "_rista_epsc_stiff_pressure_dependence",  // (iSM=0 no; iSM=1 yes)
+
+
       "_rista_epsc_ellipsoid_ratio_x",
       "_rista_epsc_ellipsoid_ratio_y",
       "_rista_epsc_ellipsoid_ratio_z",
-      "_rista_residual_stress_use_texture",
+      "_rista_epsc_ellipsoid_euler_alpha",
+      "_rista_epsc_ellipsoid_euler_beta",
+      "_rista_epsc_ellipsoid_euler_gamma",
 
       "_rista_stiffness_11", // 1
       "_rista_stiffness_12", // 2
@@ -57,42 +100,36 @@ public class EPSCmodel extends Strain {
       "_rista_stiffness_14", // 4
       "_rista_stiffness_15", // 5
       "_rista_stiffness_16", // 6
-//                                      "_rista_stiffness_21",
       "_rista_stiffness_22", // 7
       "_rista_stiffness_23", // 8
       "_rista_stiffness_24", // 9
       "_rista_stiffness_25", // 10
       "_rista_stiffness_26", // 11
-//                                      "_rista_stiffness_31",
-//                                      "_rista_stiffness_32",
       "_rista_stiffness_33", // 12
       "_rista_stiffness_34", // 13
       "_rista_stiffness_35", // 14
       "_rista_stiffness_36", // 15
-//                                      "_rista_stiffness_41",
-//                                      "_rista_stiffness_42",
-//                                      "_rista_stiffness_43",
       "_rista_stiffness_44", // 16
       "_rista_stiffness_45", // 17
       "_rista_stiffness_46", // 18
-//                                      "_rista_stiffness_51",
-//                                      "_rista_stiffness_52",
-//                                      "_rista_stiffness_53",
-//                                      "_rista_stiffness_54",
       "_rista_stiffness_55", // 19
       "_rista_stiffness_56", // 20
-//                                      "_rista_stiffness_61",
-//                                      "_rista_stiffness_62",
-//                                      "_rista_stiffness_63",
-//                                      "_rista_stiffness_64",
-//                                      "_rista_stiffness_65",
       "_rista_stiffness_66", // 21
+
       "_rista_macrostress_11",
       "_rista_macrostress_22",
       "_rista_macrostress_33",
       "_rista_macrostress_23",
       "_rista_macrostress_13",
-      "_rista_macrostress_12"
+      "_rista_macrostress_12",
+
+      "_rista_thermal_expansion_11",
+      "_rista_thermal_expansion_22",
+      "_rista_thermal_expansion_33",
+      "_rista_thermal_expansion_23",
+      "_rista_thermal_expansion_13",
+      "_rista_thermal_expansion_12"
+
   };
   public static String[] diclistcrm = {
       "_rista_residual_stress_model",
@@ -145,7 +182,54 @@ public class EPSCmodel extends Strain {
   public static String[] classlistcs = {};
   public static String[] classlistc = {};
 
-  Sample actualsample = null;
+  public static String[] reminders = {
+      "        Information about grain shape:", // line 2
+      "        Name and Path for Texture File:", // line 6
+      "        Name and Path for Material Data File (Single Crystal File):", // line 9
+      "        Precision Settings for Convergence Procedures", // line 11
+      "        Input/Output Settings for the Run", // line 15
+      "        Number of thermomechanical processes to be run:", // line 22
+      "        Path and Name for Process Files", // line 24
+      "" // line 28
+  };
+
+  public String userDefinedTitle = "SS TENSION";
+
+  // Information about grain shape:
+  public int grainShape = 0;
+  public double[] ellipsoidRatios = {1.0, 1.0, 1.0};
+  public double[] ellipsoidEulerAngles = {0.0, 0.0, 0.0};
+
+  // Name and Path for Texture File:
+  public String textureFile = "texture.red";
+  public boolean textureEvolution = false; // 0 = false, 1 = true
+
+  // Name and Path for Material Data File (Single Crystal File)
+  public String materialDatafile = "crystal.sx";
+
+  // Precision Settings for Convergence Procedures
+  public int itmax_mod = 100;
+  public double error_mod = 0.01;
+  public int itmax_grain = 100;
+
+  // Input/Output Settings for the Run
+  public boolean prev_proc = false;    // "i_prev_proc" - Reads state from previous process (1=YES or 0=NO) and related file:
+  public String prev_proc_file = "epsc4.out";
+  public int  itexskip = 50; // "itexskip" - Sets Frequency of Texture Downloads
+  public boolean diff_dir = true; // "i_diff_dir"    Read diffracting planes and directions (1=YES or 0=NO) and file:
+  public String diff_dirFile = "epsc4.dif";
+  public boolean strpf = false; // "i_strpf"       Read directions and calculate strain pole figure (1=YES or 0=NO):
+
+  // Number of thermomechanical processes to be run:
+  public int nproc = 3;
+  public String[] processFiles = {
+      "tension_1.pro",
+      "tension_2.pro",
+      "unload_3.pro"
+  };
+
+
+
 
   public static String[] stressModels = {"Voigt", "Reuss", "Hill", "PathGEO", "BulkPathGEO"};
 //	int actuallayer = 0;

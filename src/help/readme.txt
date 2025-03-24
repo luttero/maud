@@ -43,6 +43,14 @@ from the older one.
 
 Maud Version notes:
 
+(25/02/2025):   2.9998. The "61" release.
+                Time is flying. Corrected a small bug affecting the importing
+                of CIF files without atom chemical element specification.
+                The bug affected only version 2.9997.
+                Analysis files saved with the problem are corrupted
+                and either deleted or the phase affected removed and
+                reloaded from the cif with the new version.
+
 (10/02/2025):   2.9997. The "Il Lonfo" release.
                 How on earth did I miss that before.
                 Fixed a bug with the "Loading Data ..." message never

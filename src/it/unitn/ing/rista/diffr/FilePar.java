@@ -40,7 +40,7 @@ import java.io.*;
 import java.net.URL;
 import java.util.Vector;
 
-import base64.Base64;
+//import base64.Base64;
 
 /**
  * The FilePar is a class to manage the root of the analysis.
@@ -467,11 +467,11 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 
   public void refreshForNotificationDown(XRDcat source, int reason) {
     refreshComputation = true;
-    if (reason == Constants.CELL_CHANGED || reason == Constants.STRUCTURE_FACTOR_CHANGED
+/*    if (reason == Constants.CELL_CHANGED || reason == Constants.STRUCTURE_FACTOR_CHANGED
         || reason == Constants.ATOM_POSITION_CHANGED || reason == Constants.FRAGMENT_POSITION_CHANGED) {
 
       refreshAll(false);
-    }
+    }*/
 
   }
 
@@ -1363,12 +1363,12 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 	public void setLabel(String alabel) {
   }
 
-  public String getSavedFileAsBase64String() {
+/*  public String getSavedFileAsBase64String() {
     ByteArrayOutputStream stream = new ByteArrayOutputStream();
     BufferedWriter br = new BufferedWriter(new PrintWriter(stream));
     writeall(br);
     return Base64.encodeBytes(stream.toByteArray());
-  }
+  }*/
 
   public void writeall(BufferedWriter out) {
     if (themainframe != null)

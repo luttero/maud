@@ -25,7 +25,7 @@ import it.unitn.ing.rista.awt.JOptionsDialog;
 import it.unitn.ing.rista.diffr.*;
 import it.unitn.ing.rista.interfaces.*;
 import it.unitn.ing.rista.util.*;
-import it.unitn.ing.xgridclient.*;
+//import it.unitn.ing.xgridclient.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -229,7 +229,7 @@ public class GeneticAlgorithmRefinement extends OptimizationAlgorithm implements
   int startIndex = 0;
   boolean submissionStarted = false;
 
-  public void solveXGRID(launchBasic computation, Function funtionToMinimize) {
+/*  public void solveXGRID(launchBasic computation, Function funtionToMinimize) {
     if (funtionToMinimize instanceof FilePar) {
       fittingFunction = funtionToMinimize;
       int iterations = getIntNumberOfPopulations();
@@ -472,7 +472,7 @@ public class GeneticAlgorithmRefinement extends OptimizationAlgorithm implements
         ie.printStackTrace(System.err);
       }
     }
-  }
+  } */
 
   private class Result {
     public double Rwp = 1.0E33;

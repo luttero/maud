@@ -2161,7 +2161,7 @@ public class DiffrDataFile extends XRDcat {
     return intensity[index];
   }
 
-  public double getTotalIntensity() {
+  public double getTotalIntensity(boolean normalised) {
     double total = 0.0;
     for (int i = startingindex; i < finalindex; i++)
       total += getYData(i);
@@ -2170,6 +2170,9 @@ public class DiffrDataFile extends XRDcat {
 		  total /= getCountTimeValue();
 //		  System.out.print(getCountTimeValue() + " ");
 	  }
+    if (normalised) {
+      total /= Math.abs(finalindex - 1 - startingindex); // Math.abs(getXData(finalindex - 1) - getXData(startingindex));
+    }
 //	  System.out.println(total);
     return total;
   }

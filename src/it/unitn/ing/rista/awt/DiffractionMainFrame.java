@@ -30,8 +30,8 @@ import it.unitn.ing.rista.util.*;
 import it.unitn.ing.wizard.HIPPOWizard.HIPPOWizard;
 import it.unitn.ing.wizard.LCLS2Wizard.LCLS2Wizard;
 import it.unitn.ing.wizard.LoskoWizard.LoskoWizard;
-import it.unitn.ing.xgridclient.Client;
-import it.unitn.ing.xgridclient.XGridClient;
+//import it.unitn.ing.xgridclient.Client;
+//import it.unitn.ing.xgridclient.XGridClient;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -1286,7 +1286,7 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
     refreshTreeTable = true;
   }
 
-  void refineWithXgrid() {
+/*  void refineWithXgrid() {
     // set XGrid if it is not
     setDistributeComputing(ParallelComputationController.XGRID);
 
@@ -1324,7 +1324,7 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
         }
       }
     }).start();
-  }
+  }*/
 
 	void startBatchMode() {
 		(new PersistentThread() {

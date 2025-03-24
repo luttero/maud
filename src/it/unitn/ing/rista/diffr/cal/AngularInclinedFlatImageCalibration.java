@@ -208,6 +208,14 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
     parameterField[6].setValue(value);
   }
 
+  public double getDetectorCenterX() {
+    return parameterField[1].getValueD();
+  }
+
+  public double getDetectorCenterY() {
+    return parameterField[2].getValueD();
+  }
+
   public double getDetector2Theta() {
     return detector2Theta;
   }
@@ -760,7 +768,14 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 			  jPanel2.add(optbutton);
 		  }
 
-
+      JButton jb = new JButton("Merge calibration");
+      addButton(jb);
+      jb.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          mergeCalibration();
+        }
+      });
 
 		  setTitle("2D Image angular calibration");
       initParameters();
@@ -809,6 +824,18 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 
 		  subordinateField[index].getOptionsDialog(this).setVisible(true);
 	  }
+
+    public void mergeCalibration() {
+      setOriginalDistance(getRadius());
+      setOriginalCenterX(getOriginalCenterX() + getDetectorCenterX());
+      setOriginalCenterY(getOriginalCenterY() + getDetectorCenterY());
+      setOriginal2Theta(getOriginal2Theta() + getDetector2Theta());
+//      setOriginalPhiDA(getOriginalPhiDA());
+//      setOriginalOmegaDN(getOriginalOmegaDN());
+//      setOriginalEtaDA(getOriginalEtaDA());
+      for (int i = 0; i < stringField.length - 4; i++)
+        textfield[i].setText(stringField[i]);
+    }
 
 	  public void dispose() {
 		  for (int i = 0; i < Nsubordinate; i++) {  //absorption removed here

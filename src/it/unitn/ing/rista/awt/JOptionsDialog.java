@@ -38,6 +38,7 @@ import java.awt.event.*;
 public class JOptionsDialog extends myJFrame {
   public XRDcat XRDparent = null;
   public JPanel principalPanel = null;
+  public JPanel buttonPanel = null;
 
   public JOptionsDialog(Frame parent) {
     super(parent);
@@ -93,6 +94,11 @@ public class JOptionsDialog extends myJFrame {
       }
     });
     getRootPane().setDefaultButton(jb);
+
+    buttonPanel = new JPanel();
+    buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 6, 6));
+    southpanel.add(BorderLayout.CENTER, buttonPanel);
+
   }
 
   public JOptionsDialog(Frame parent, XRDcat obj, String title) {
@@ -102,5 +108,9 @@ public class JOptionsDialog extends myJFrame {
 
   public void retrieveParameters() {
     super.retrieveParameters();
+  }
+
+  public void addButton(JButton jb) {
+    buttonPanel.add(jb);
   }
 }

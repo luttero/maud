@@ -26,8 +26,8 @@ import it.unitn.ing.rista.util.Console;
 import it.unitn.ing.rista.comp.*;
 import it.unitn.ing.esqui.client.Client;
 import it.unitn.ing.esqui.wizard.BaseWizard;
-import com.deadmoo.xgridagent.XGridAgent;
-import it.unitn.ing.xgridclient.XGridClient;
+//import com.deadmoo.xgridagent.XGridAgent;
+//import it.unitn.ing.xgridclient.XGridClient;
 
 import javax.swing.*;
 import java.io.*;
@@ -610,7 +610,7 @@ public class principalJFrame extends myJFrame {
               case ParallelComputationController.NONE:
                 distrNetwMenu.setEnabled(false);
                 break;
-              case ParallelComputationController.XGRID:
+/*              case ParallelComputationController.XGRID:
                 distrNetwMenu.setEnabled(true);
                 distrNetwMenu.removeAll();
                 final JMenu controllerMenu = new JMenu("Controller");
@@ -647,6 +647,8 @@ public class principalJFrame extends myJFrame {
                   networks1.addActionListener(listener);
                 }
                 break;
+
+ */
               case ParallelComputationController.JPVM:
                 distrNetwMenu.setEnabled(true);
                 distrNetwMenu.removeAll();

@@ -101,7 +101,6 @@
             <!--exclude name="it/unitn/ing/rista/diffr/forcefield/ABINITEnergyComputation.java" /-->
             <exclude name="it/unitn/ing/rista/interfaces/myObj.java"/>
             <exclude name="it/unitn/ing/rista/io/ZIPNLextractor.java"/>
-            <!--exclude name="it/unitn/ing/xgridagent/**"/-->
             <exclude name="jnt/**"/>
             <exclude name="HTTPClient/**"/>
             <exclude name="gl4java/**"/>
@@ -119,6 +118,10 @@
             <exclude name="web/**"/>
             <exclude name="license/**"/>
             <exclude name="dot/**"/>
+            <exclude name="it/unitn/ing/xgridagent/**"/>
+            <exclude name="it/unitn/ing/xgridclient/**"/>
+            <exclude name="it/unitn/ing/xgridcontroller/**"/>
+            <exclude name="com/deadmoo/xgridagent/**"/>
             <classpath>
                 <pathelement location="libs/current/jogl.all.jar"/>
                 <pathelement location="libs/current/EsquiClient.jar"/>
@@ -136,7 +139,7 @@
                 <!--pathelement location="libs/current/jdom.jar"/>
                 <pathelement location="libs/current/rome.jar"/-->
                 <pathelement location="libs/current/MySQL-ConnectorJ.jar"/>
-                <pathelement location="libs/current/xgridlib.jar"/>
+                <!--pathelement location="libs/current/xgridlib.jar"/-->
                 <!--pathelement location="${build}/capsapi_classes.zip"/>
 				<pathelement location="${build}/Apple_ui.jar"/-->
                 <pathelement location="libs/current/aparapi.jar"/>
@@ -217,7 +220,6 @@
             <!--exclude name="it/unitn/ing/rista/diffr/forcefield/ABINITEnergyComputation.java" /-->
             <exclude name="it/unitn/ing/rista/interfaces/myObj.java"/>
             <exclude name="it/unitn/ing/rista/io/ZIPNLextractor.java"/>
-            <exclude name="it/unitn/ing/xgridagent/**"/>
             <exclude name="jnt/**"/>
             <exclude name="HTTPClient/**"/>
             <exclude name="gl4java/**"/>
@@ -232,6 +234,10 @@
             <exclude name="files/**"/>
             <exclude name="com/hypernex/**"/>
             <exclude name="com/nova/**"/>
+            <exclude name="it/unitn/ing/xgridagent/**"/>
+            <exclude name="it/unitn/ing/xgridclient/**"/>
+            <exclude name="it/unitn/ing/xgridcontroller/**"/>
+            <exclude name="com/deadmoo/xgridagent/**"/>
             <classpath>
                 <pathelement location="libs/current/jogl.all.jar"/>
                 <pathelement location="libs/current/EsquiClient.jar"/>
@@ -249,7 +255,7 @@
                 <pathelement location="libs/current/jdom.jar"/>
                 <pathelement location="libs/current/rome.jar"/>
                 <pathelement location="libs/current/MySQL-ConnectorJ.jar"/>
-                <pathelement location="libs/current/xgridlib.jar"/>
+                <!--pathelement location="libs/current/xgridlib.jar"/-->
                 <!--pathelement location="${build}/capsapi_classes.zip"/>
               <pathelement location="${build}/Apple_ui.jar"/-->
                 <pathelement location="libs/current/aparapi.jar"/>
@@ -595,7 +601,6 @@
             <exclude name="it/unitn/ing/rista/diffr/forcefield/ABINITEnergyComputation.java"/>
             <exclude name="it/unitn/ing/rista/interfaces/myObj.java"/>
             <exclude name="it/unitn/ing/rista/io/ZIPNLextractor.java"/>
-            <exclude name="it/unitn/ing/xgridagent/**"/>
             <exclude name="it/unitn/ing/rista/MaudWebStart.java"/>
             <exclude name="jnt/**"/>
             <exclude name="HTTPClient/**"/>
@@ -609,6 +614,10 @@
             <exclude name="files/**"/>
             <exclude name="com/hypernex/**"/>
             <exclude name="com/nova/**"/>
+            <exclude name="it/unitn/ing/xgridagent/**"/>
+            <exclude name="it/unitn/ing/xgridclient/**"/>
+            <exclude name="it/unitn/ing/xgridcontroller/**"/>
+            <exclude name="com/deadmoo/xgridagent/**"/>
             <classpath>
                 <pathelement location="libs/current/jogl.all.jar"/>
                 <pathelement location="libs/current/EsquiClient.jar"/>
@@ -626,7 +635,7 @@
                 <pathelement location="libs/current/jdom.jar"/>
                 <pathelement location="libs/current/rome.jar"/>
                 <pathelement location="libs/current/MySQL-ConnectorJ.jar"/>
-                <pathelement location="libs/current/xgridlib.jar"/>
+                <!--pathelement location="libs/current/xgridlib.jar"/-->
                 <!--pathelement location="${build}/capsapi_classes.zip"/>
           <pathelement location="${build}/Apple_ui.jar"/-->
                 <pathelement location="libs/current/aparapi.jar"/>
@@ -660,7 +669,7 @@
         <delete dir="${build_ant}/org"/>
         <delete dir="${build_ant}/it/unitn/ing/esqui"/>
         <delete dir="${build_ant}/it/unitn/ing/xgridclient"/>
-        <delete dir="${build_ant}/it/unitn/ing/xgridagent"/>
+        <!--delete dir="${build_ant}/it/unitn/ing/xgridagent"/-->
         <!--delete dir="${build_ant}/it/unitn/ing/rista/awt" /-->
         <!--delete dir="${build_ant}/it/unitn/ing/rista/jpvm" /-->
         <delete dir="${build_ant}/it/unitn/ing/rista/render3d"/>
@@ -1198,9 +1207,10 @@
                 <include name="it/unitn/ing/rista/**"/>
                 <exclude name="it/unitn/ing/rista/esqui/**"/>
                 <exclude name="it/unitn/ing/rista/fortran/**"/>
+                <exclude name="it/unitn/ing/xgridagent/**"/>
+                <exclude name="it/unitn/ing/xgridclient/**"/>
+                <exclude name="it/unitn/ing/xgridcontroller/**"/>
                 <exclude name="com/deadmoo/xgridagent/**"/>
-                <exclude name="it/unitn/ing/rista/xgridclient/**"/>
-                <exclude name="it/unitn/ing/rista/xgridcontroller/**"/>
                 <exclude name="it/unitn/ing/rista/mdyn/**"/>
                 <exclude name="it/unitn/ing/rista/awt/MaudAppMacOSFrame.java"/>
                 <exclude name="it/unitn/ing/rista/awt/MRJInterface.java"/>
@@ -2111,8 +2121,8 @@
             <classpath file="libs/current/newt.all.jar"/>
             <classpath file="libs/current/nativewindow.all.jar"/>
             <classpath file="libs/current/sqlite-jdbc.jar"/>
-            <classpath file="libs/current/xgridagent.jar"/>
-            <classpath file="libs/current/xgridlib.jar"/>
+            <!--classpath file="libs/current/xgridagent.jar"/>
+            <classpath file="libs/current/xgridlib.jar"/-->
             <classpath file="libs/current/com.github.tschoonj.xraylib.jar"/>
             <classpath file="libs/current/commons-math.jar"/>
             <classpath file="libs/current/JTransforms-3.1-with-dependencies.jar"/>
@@ -2285,8 +2295,8 @@
             <classpath file="libs/current/newt.all.jar"/>
             <classpath file="libs/current/nativewindow.all.jar"/>
             <classpath file="libs/current/sqlite-jdbc.jar"/>
-            <classpath file="libs/current/xgridagent.jar"/>
-            <classpath file="libs/current/xgridlib.jar"/>
+            <!--classpath file="libs/current/xgridagent.jar"/>
+            <classpath file="libs/current/xgridlib.jar"/-->
             <classpath file="libs/current/com.github.tschoonj.xraylib.jar"/>
             <classpath file="libs/current/commons-math.jar"/>
             <classpath file="libs/current/JTransforms-3.1-with-dependencies.jar"/>
@@ -2458,8 +2468,8 @@
             <classpath file="libs/current/newt.all.jar"/>
             <classpath file="libs/current/nativewindow.all.jar"/>
             <classpath file="libs/current/sqlite-jdbc.jar"/>
-            <classpath file="libs/current/xgridagent.jar"/>
-            <classpath file="libs/current/xgridlib.jar"/>
+            <!--classpath file="libs/current/xgridagent.jar"/>
+            <classpath file="libs/current/xgridlib.jar"/-->
             <classpath file="libs/current/com.github.tschoonj.xraylib.jar"/>
             <classpath file="libs/current/commons-math.jar"/>
             <classpath file="libs/current/JTransforms-3.1-with-dependencies.jar"/>
@@ -2711,8 +2721,8 @@
             <classpath file="libs/current/newt.all.jar"/>
             <classpath file="libs/current/nativewindow.all.jar"/>
             <classpath file="libs/current/sqlite-jdbc.jar"/>
-            <classpath file="libs/current/xgridagent.jar"/>
-            <classpath file="libs/current/xgridlib.jar"/>
+            <!--classpath file="libs/current/xgridagent.jar"/>
+            <classpath file="libs/current/xgridlib.jar"/-->
             <classpath file="libs/current/com.github.tschoonj.xraylib.jar"/>
             <classpath file="libs/current/commons-math.jar"/>
             <classpath file="libs/current/JTransforms-3.1-with-dependencies.jar"/>

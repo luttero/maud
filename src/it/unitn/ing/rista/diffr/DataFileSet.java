@@ -976,11 +976,12 @@ public class DataFileSet extends XRDcat {
 
 	public void removeDatafilesWithTotalLessThan(double number) {
 		Constants.refreshTreePermitted = false;
+    boolean normalised = MaudPreferences.getBoolean("plotHistograms.normaliseInt", false);
 		Vector datafiles = getSelectedDatafiles();
 		int numberDatafiles = datafiles.size();
 		for (int i = 0; i < numberDatafiles; i++) {
 			DiffrDataFile diffrDatafile = (DiffrDataFile) datafiles.elementAt(i);
-			double total = diffrDatafile.getTotalIntensity();
+			double total = diffrDatafile.getTotalIntensity(normalised);
 			if (total < number)
 				disable(diffrDatafile);
 		}
@@ -2876,8 +2877,11 @@ public class DataFileSet extends XRDcat {
 			adfile[i] = getActiveDataFile(i);
 		}
 		final String label = DataFileSet.this.toXRDcatString();
-		MultiPlotFitting2D plot = new MultiPlotFitting2D(null, adfile, label, yTitle, yUnit);
-		(new PersistentThread() {
+//    System.out.println("Creating 2D plot... ");
+    try {
+      MultiPlotFitting2D plot = new MultiPlotFitting2D(null, adfile, label, yTitle, yUnit);
+//      System.out.println("Saving 2D plot... ");
+    (new PersistentThread() {
 			@Override
 			public void executeJob() {
 				int index = MaudText.addNewThread();
@@ -2898,8 +2902,14 @@ public class DataFileSet extends XRDcat {
 					g.clearRect(0, 0, comp.getWidth(), comp.getHeight());
 					comp.paint(g);
 					// write it out in the format you want
-					String dst = plotOutput2DFileName + label + ".png";
+          String dst = null;
+          char ch = plotOutput2DFileName.charAt(plotOutput2DFileName.length() - 1);
+          if (ch == '_' || ch == '-')
+            dst = plotOutput2DFileName + label + ".png";
+          else
+            dst = plotOutput2DFileName + ".png";
 					Misc.deleteFile(dst);
+//          System.out.println("Save 2D plot as: " + dst);
 					BeartexPFPlot.savePic(fileImage, "png", dst, comp);
 
 					boolean fileSaved = false;
@@ -2920,6 +2930,9 @@ public class DataFileSet extends XRDcat {
 				}
 			}
 		}).start();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
 	}
 
 	public void plotAndExportPng(String plotOutputFileName) {
@@ -2954,7 +2967,12 @@ public class DataFileSet extends XRDcat {
 					g.clearRect(0, 0, comp.getWidth(), comp.getHeight());
 					comp.paint(g);
 					// write it out in the format you want
-					String dst = plotOutputFileName + label + ".png";
+					String dst = null;
+          char ch = plotOutputFileName.charAt(plotOutputFileName.length() - 1);
+          if (ch == '_' || ch == '-')
+            dst = plotOutputFileName + label + ".png";
+          else
+            dst = plotOutputFileName + ".png";
 					Misc.deleteFile(dst);
 					BeartexPFPlot.savePic(fileImage, "png", dst, comp);
 
@@ -3277,9 +3295,10 @@ public class DataFileSet extends XRDcat {
   public double[] getTotalIntensityForActiveSpectra() {
     update(false);
 
+    boolean normalised = MaudPreferences.getBoolean("plotHistograms.normaliseInt", false);
     double[] total = new double[activedatanumber];
     for (int i = 0; i < activedatanumber; i++)
-      total[i] = getActiveDataFile(i).getTotalIntensity();
+      total[i] = getActiveDataFile(i).getTotalIntensity(normalised);
     return total;
   }
 
@@ -3300,11 +3319,13 @@ public class DataFileSet extends XRDcat {
 	public double[] getTotalIntensityForSelectedSpectra() {
 		update(false);
 
+    boolean normalised = MaudPreferences.getBoolean("plotHistograms.normaliseInt", false);
+
 		Vector datafiles = getSelectedDatafiles();
 		int numberDatafiles = datafiles.size();
 		double[] total = new double[numberDatafiles];
 		for (int i = 0; i < numberDatafiles; i++)
-			total[i] = ((DiffrDataFile) datafiles.elementAt(i)).getTotalIntensity();
+			total[i] = ((DiffrDataFile) datafiles.elementAt(i)).getTotalIntensity(normalised);
 		return total;
 	}
 

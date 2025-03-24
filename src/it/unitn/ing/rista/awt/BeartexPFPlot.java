@@ -544,12 +544,14 @@ public class BeartexPFPlot extends Frame implements ClipboardOwner, Printable {
 		BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		Graphics g = bi.getGraphics();
 		try {
+//      System.out.println("Saving picture file: " + dst);
 			g.drawImage(image, 0, 0, null);
 			ImageIO.write(bi, type, new File(dst));
-		} catch (IOException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+//    System.out.println("Saved in: " + dst);
 	}
 
 	class LimitsDialog extends Dialog {

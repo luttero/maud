@@ -22,14 +22,14 @@ package it.unitn.ing.rista.comp;
 
 import it.unitn.ing.rista.jpvm.*;
 import it.unitn.ing.rista.util.*;
-import com.deadmoo.xgridagent.XGridAgent;
-import it.unitn.ing.xgridclient.XGridClientMessage;
-import it.unitn.ing.xgridclient.XGridClient;
-import it.unitn.ing.xgridagent.XGridJavaLauncher;
+//import com.deadmoo.xgridagent.XGridAgent;
+//import it.unitn.ing.xgridclient.XGridClientMessage;
+//import it.unitn.ing.xgridclient.XGridClient;
+//import it.unitn.ing.xgridagent.XGridJavaLauncher;
 
 import java.io.File;
 
-import base64.Base64;
+//import base64.Base64;
 
 /**
  * The ParallelComputationController is a class to control and manage the parallel computation
@@ -43,7 +43,7 @@ import base64.Base64;
 public class ParallelComputationController {
 
   public static final int NONE = 0;
-  public static final int XGRID = 1;
+//  public static final int XGRID = 1;
   public static final int JPVM = 2;
   public static final String[] methodName = {"None", "XGrid", "Jpvm"};
   public static String xgridFolder = null;
@@ -62,9 +62,9 @@ public class ParallelComputationController {
     if (index == activeStructure)
       return;
     switch (activeStructure) {
-      case XGRID:
-        XGridAgent.stopAgent();
-        break;
+//      case XGRID:
+//        XGridAgent.stopAgent();
+//        break;
       case JPVM:
         disposeJPVM();
         stopJPVMDaemon();
@@ -74,9 +74,9 @@ public class ParallelComputationController {
     }
     activeStructure = index;
     switch (activeStructure) {
-      case XGRID:
-        initXGrid();
-        break;
+//      case XGRID:
+//        initXGrid();
+//        break;
       case JPVM:
         initJPVM();
         break;
@@ -85,7 +85,7 @@ public class ParallelComputationController {
     }
   }
 
-  static void initXGrid() {
+/*  static void initXGrid() {
     XGridClient.checkController();
     XGridAgent.hostname = XGridClient.hostname;
     XGridAgent.host = XGridClient.host;
@@ -101,7 +101,7 @@ public class ParallelComputationController {
       javaArguments = new String[]{"-mx512M", "-jar", xgridFilenames[0], "-xgrid", "-analysis",
           xgridFilenames[1], "-getbyurl", filenamemd5};
     }
-  }
+  }*/
 
   static void initJPVM() {
 
@@ -109,9 +109,9 @@ public class ParallelComputationController {
 
   public static void runAsAgent() {
     switch (activeStructure) {
-      case XGRID:
-        XGridAgent.startAgentWithDefault();
-        break;
+//      case XGRID:
+//        XGridAgent.startAgentWithDefault();
+//        break;
       case JPVM:
         startJPVMDaemon();
         break;
@@ -124,9 +124,9 @@ public class ParallelComputationController {
 
   public static void configure() {
     switch (activeStructure) {
-      case XGRID:
+//      case XGRID:
 //        XGridAgent.checkController();
-        break;
+//        break;
       case JPVM:
         viewConsole();
         break;

@@ -24,8 +24,8 @@ import it.unitn.ing.rista.interfaces.Function;
 import it.unitn.ing.rista.diffr.*;
 import it.unitn.ing.rista.util.*;
 import it.unitn.ing.rista.awt.JOptionsDialog;
-import it.unitn.ing.xgridclient.XGridClient;
-import it.unitn.ing.xgridclient.Client;
+//import it.unitn.ing.xgridclient.XGridClient;
+//import it.unitn.ing.xgridclient.Client;
 import ec.EvolutionState;
 
 import javax.swing.*;
@@ -307,7 +307,7 @@ public class HybridRefinement extends OptimizationAlgorithm implements GAProblem
   int startIndex = 0;
   boolean submissionStarted = false;
 
-  public void solveXGRID(launchBasic computation, Function funtionToMinimize) {
+/*  public void solveXGRID(launchBasic computation, Function funtionToMinimize) {
     if (funtionToMinimize instanceof FilePar) {
       fittingFunction = funtionToMinimize;
       int iterations = getIntNumberOfPopulations();
@@ -550,7 +550,7 @@ public class HybridRefinement extends OptimizationAlgorithm implements GAProblem
         ie.printStackTrace(System.err);
       }
     }
-  }
+  }*/
 
   private class Result {
     public double Rwp = 1.0E33;

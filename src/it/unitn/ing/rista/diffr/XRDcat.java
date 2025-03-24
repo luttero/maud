@@ -999,6 +999,7 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
     if (!obj.mustRemoved) {
 //    System.out.println("The sub: " + obj + ", " + obj.getTheRealOne());
       subordinateloopField[numberlist].addItem(obj.getTheRealOne());
+      System.out.println("Scatterers number: " + subordinateloopField[numberlist].size());
       notifyUpObjectChanged(this, Constants.OBJECT_ADDED, -1);
 //			System.out.println(obj.toXRDcatString() + " added");
       return obj;
