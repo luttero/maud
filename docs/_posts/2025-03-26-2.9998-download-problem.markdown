@@ -1,0 +1,20 @@
+---
+layout: post
+title:  "Download problem"
+date:   2025-03-26 12:15:00 +0200
+categories: Maud release
+---
+
+There was a problem with the installer script for version 2.9998. 
+The installers for Windows and LinuX were not generated correctly and contained and old Maud.jar (version 2.9995).
+The two installers have been updated with the correct version now.
+If you download Maud 2.9998 (Windows or LinuX only) before March 26 (this post), please redownload it with the corrected version.
+Sorry for the inconvenient.
+If you wish to check if your Maud is the correct 2.9998 version, check at start what version is displaying. That is the correct way to check it.
+The "About Maud" box in the MacOS version may still show 2.9997, but what count is the version displayed at start.
+
+[maud-docs]: /maud/documents/
+[maud-tutorials]: /maud/tutorials/
+[maud-download]: https://github.com/luttero/maud/releases/tag/v2.9998
+[dropbox]: https://www.dropbox.com/sh/3l4jpjw7mkc3cfo/AAAtzz-9__TMmUdaxlolX68xa?dl=0
+[gdrive]: https://drive.google.com/drive/folders/1EQw0XPx6QPwE-VN7OpTvI8DtrvsW-V4i?usp=sharing

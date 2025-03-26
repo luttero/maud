@@ -43,6 +43,10 @@ from the older one.
 
 Maud Version notes:
 
+(xx/04/2025):   2.9999. The "Cutting" release.
+                Watch for the rain.....
+
+
 (24/03/2025):   2.9998. The "61" release.
                 Time is flying. Corrected a small bug affecting the importing
                 of CIF files without atom chemical element specification.

@@ -1260,7 +1260,7 @@ public class Sample extends Maincat {
 	  computeFinalPositions();
 
 	  computeLorentzPolarization(positionRefreshed);
-     computeScatteringFactors(positionRefreshed);
+    computeScatteringFactors(positionRefreshed);
 
 	  for (int ip = 0; ip < numberOfPhases; ip++) {
 		  Phase aphase = getPhase(ip);
@@ -1343,11 +1343,10 @@ public class Sample extends Maincat {
             totQuantity += phaseQuantity[j][ip][nd];
         if (totQuantity != 0.0) {
           Phase aphase = getPhase(ip);
-          aphase.computeTextureFactor(Sample.this);
-//          aphase.computeStrain(Sample.this);
+          aphase.computeTextureFactor(this);
+//          aphase.computeStrain(this);
         }
       }
-//		computeStrains(); // todo eliminate second call, not necessary
 
 	  if (Constants.testtime)
       System.out.println("Texture and strain: " +

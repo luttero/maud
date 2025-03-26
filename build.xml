@@ -16,7 +16,7 @@
     <property name="myself" value="myself"/>
     <property name="bundle.icon" value="maud.icns"/>
     <property name="icon" value="src/images/${bundle.icon}"/>
-    <property name="maud_version" value="2.9997"/>
+    <property name="maud_version" value="2.9999"/>
     <property name="application_OSX.title" value="Maud.app"/>
     <property name="app_osx_295" location="${user.home}/Projects/maud/osx_295"/>
     <property name="app_osx_arm" location="${user.home}/Projects/maud/osx_arm"/>
@@ -1942,7 +1942,7 @@
     </target>
 
 
-    <target name="deploy_jgaec" depends="deploy_test_jgaec"
+    <!--target name="deploy_jgaec" depends="deploy_test_jgaec"
             description="Deploy the jgaec build files to the web server.">
         <ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}"
              remotedir="${deployfulldir}/lib">
@@ -2062,7 +2062,7 @@
 
     <target name="deploy_Maud_beta" depends="rebuild_allLib,deploy_full_beta,deploy_webPages_full"
             description="Deploy the full build files to the web server.">
-    </target>
+    </target-->
 
 
     <target name="rebuild_allLib"
@@ -2076,7 +2076,7 @@
     </target>
 
 
-    <target name="bundle" depends="copy_full">
+    <target name="bundle" depends="copy_full,copy_Help,copy_Files,copy_ImageJ,copy_Examples,copy_miscLib">
         <!-- Import the AppBundlerTaks from ant lib directory -->
         <taskdef name="bundleapp"
                  classname="com.oracle.appbundler.AppBundlerTask"
@@ -2250,7 +2250,7 @@
         </exec>
     </target>
 
-    <target name="bundle_arm64" depends="build_full">
+    <target name="bundle_arm64" depends="copy_full,copy_Help,copy_Files,copy_ImageJ,copy_Examples,copy_miscLib">
         <!-- Import the AppBundlerTaks from ant lib directory -->
         <taskdef name="bundleapp"
                  classname="com.radiographema.appbundler.AppBundlerTask"
@@ -2406,6 +2406,105 @@
             <option value="-Xmx8192M"/>
         </bundleapp>
         <mkdir dir="${inst}/Maud_mac/Maud.app/Contents/MacOS/lib" /-->
+        <!--copy file="cctbxForMaud/build/Debug/libcctbxForMaud.dylib" tofile="${inst}/Maud_mac/Maud.app/Contents/Plugins/Home/jre/lib/libcctbxForMaud.dylib" /-->
+        <!--copy file="cctbxForMaud/libcctbx.dylib" tofile="${inst}/Maud_mac/Maud.app/Contents/MacOS/lib/libcctbx.dylib" />
+        <copy file="cctbxForMaud/libcctbxForMaud.dylib" tofile="${inst}/Maud_mac/Maud.app/Contents/MacOS/libcctbxForMaud.dylib" /-->
+        <mkdir dir="${app_osx_arm}/Maud.app/Contents/MacOS/mtex" />
+        <copy todir="${app_osx_arm}/Maud.app/Contents/MacOS/mtex" >
+            <fileset dir="${src}/com/jtex/external/bin/macarm" includes="**"/>
+        </copy>
+        <exec executable="chmod">
+            <arg line=" -R a+x ${app_osx_arm}/Maud.app/Contents/MacOS/mtex"/>
+        </exec>
+        <copy file="${src}/com/radiographema/fpsm/macarm/libfpsm_shared.dylib"
+              tofile="${app_osx_arm}/Maud.app/Contents/PlugIns/Home/lib/libfpsm_shared.dylib"/>
+        <exec executable="chmod">
+            <arg line=" -R a+x ${app_osx_arm}/Maud.app/Contents/PlugIns/Home/lib/libfpsm_shared.dylib"/>
+        </exec>
+    </target>
+
+    <target name="bundle_arm64_only" depends="build_full">
+        <!-- Import the AppBundlerTaks from ant lib directory -->
+        <taskdef name="bundleapp"
+                 classname="com.radiographema.appbundler.AppBundlerTask"
+                 classpath="libs/commons-net-3.3.jar;libs/ant-libs/infinitekind-appbundler-arm/appbundler/bin/appbundler-1.2.jar"/>
+
+        <bundleapp outputdirectory="${app_osx_arm}/"
+                   name="Maud"
+                   displayname="Maud"
+                   identifier="com.radiographema.maud"
+                   executableName="Maud"
+                   shortversion="${maud_version}"
+                   icon="${icon}"
+                   mainclassname="com.radiographema.Maud"
+                   copyright="Maud, for materials analysis, Copyright 1997-2064 Luca Lutterotti"
+                   applicationCategory="public.app-category.productivity">
+
+            <!-- The directory where your OpenJDK runtime is. -->
+            <runtime dir="${java_openjdk_arm}/"/>
+
+            <!-- The bundleapp task doesn't support classpathref so all
+                the run classpath entries must be stated here too.
+            -->
+            <classpath file="${build}/Maud.jar"/>
+            <classpath file="libs/current/Files.jar"/>
+            <classpath file="libs/current/Examples.jar"/>
+            <classpath file="libs/current/jmol.jar"/>
+            <classpath file="libs/current/Help.jar"/>
+            <classpath file="libs/current/Images.jar"/>
+            <classpath file="libs/current/miscLib.jar"/>
+            <classpath file="libs/current/HTTPClient.jar"/>
+            <classpath file="libs/current/jdom.jar"/>
+            <classpath file="libs/current/ij.jar"/>
+            <classpath file="libs/current/jgap.jar"/>
+            <classpath file="libs/current/jogl.all.jar"/>
+            <classpath file="libs/current/joone-engine.jar"/>
+            <classpath file="libs/current/jgaec.jar"/>
+            <classpath file="libs/current/jsplines.jar"/>
+            <classpath file="libs/current/jnlp.jar"/>
+            <classpath file="libs/current/MySQL-ConnectorJ.jar"/>
+            <classpath file="libs/current/swingx.jar"/>
+            <classpath file="libs/current/sqlite-jdbc.jar"/>
+            <classpath file="libs/current/newt.all.jar"/>
+            <classpath file="libs/current/nativewindow.all.jar"/>
+            <classpath file="libs/current/sqlite-jdbc.jar"/>
+            <!--classpath file="libs/current/xgridagent.jar"/>
+            <classpath file="libs/current/xgridlib.jar"/-->
+            <classpath file="libs/current/com.github.tschoonj.xraylib.jar"/>
+            <classpath file="libs/current/commons-math.jar"/>
+            <classpath file="libs/current/JTransforms-3.1-with-dependencies.jar"/>
+
+            <!-- Workaround since the icon parameter for bundleapp
+                 doesn't work. (It's not a bug in AppBundler but
+                 in the JavaAppLauncher, see Known Problems).
+            -->
+            <option value="-Xdock:icon=Contents/Resources/${bundle.icon}"/>
+
+            <!-- Specify which architectures you want to support -->
+            <arch name="arm_64"/>
+
+            <!-- Register the application as an editor for PNG and JPG files -->
+            <bundledocument extensions="par"
+                            icon="${bundle.icon}"
+                            name="Analysis"
+                            role="editor">
+            </bundledocument>
+
+            <!-- OSX specific options, optional -->
+            <option value="-Dapple.laf.useScreenMenuBar=true"/>
+            <option value="-Dcom.apple.macos.use-file-dialog-packages=true"/>
+            <option value="-Dcom.apple.macos.useScreenMenuBar=true"/>
+            <option value="-Dapple.awt.application.name=Maud"/>
+            <option value="-Dcom.apple.smallTabs=true"/>
+            <option value="-Xmx16384M"/>
+            <option value="--enable-preview"/>
+            <option value="--enable-native-access=ALL-UNNAMED"/>
+            <option value="--add-opens"/>
+            <option value="java.base/java.net=ALL-UNNAMED"/>
+            <option value="-Djava.library.path=."/>
+        </bundleapp>
+
+        <mkdir dir="${app_osx_arm}/Maud.app/Contents/Frameworks"/>
         <!--copy file="cctbxForMaud/build/Debug/libcctbxForMaud.dylib" tofile="${inst}/Maud_mac/Maud.app/Contents/Plugins/Home/jre/lib/libcctbxForMaud.dylib" /-->
         <!--copy file="cctbxForMaud/libcctbx.dylib" tofile="${inst}/Maud_mac/Maud.app/Contents/MacOS/lib/libcctbx.dylib" />
         <copy file="cctbxForMaud/libcctbxForMaud.dylib" tofile="${inst}/Maud_mac/Maud.app/Contents/MacOS/libcctbxForMaud.dylib" /-->

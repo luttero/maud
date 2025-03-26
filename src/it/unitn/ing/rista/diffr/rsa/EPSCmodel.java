@@ -23,13 +23,17 @@ package it.unitn.ing.rista.diffr.rsa;
     import java.awt.*;
     import javax.swing.*;
 
+    import com.jtex.arrays.Array1D;
+    import com.jtex.geom.Miller;
+    import com.jtex.geom.Vec3;
+    import it.unitn.ing.fortran.Format;
     import it.unitn.ing.rista.diffr.*;
     import it.unitn.ing.rista.awt.*;
     import it.unitn.ing.rista.util.*;
-    import it.unitn.ing.rista.diffr.rta.*;
 
     import javax.swing.border.*;
     import java.io.*;
+    import java.util.Vector;
 
 /**
  *  The EPSCmodel is a class to compute the diffraction shift from
@@ -67,6 +71,8 @@ enum Crysym {
       MONOC,
       TRICL;
 }
+
+record PlaneDirections(int h, int k, int l, Vector<double[]> angles) {}
 
 public class EPSCmodel extends Strain {
 
@@ -193,7 +199,10 @@ public class EPSCmodel extends Strain {
       "" // line 28
   };
 
-  public String userDefinedTitle = "SS TENSION";
+  String programName = "epsc";
+  String insName = "epsc4.ins";
+
+  public String userDefinedTitle = "strain, created by Maud";
 
   // Information about grain shape:
   public int grainShape = 0;
@@ -201,11 +210,11 @@ public class EPSCmodel extends Strain {
   public double[] ellipsoidEulerAngles = {0.0, 0.0, 0.0};
 
   // Name and Path for Texture File:
-  public String textureFile = "texture.red";
+//  public String textureFile = "texture.red";
   public boolean textureEvolution = false; // 0 = false, 1 = true
 
   // Name and Path for Material Data File (Single Crystal File)
-  public String materialDatafile = "crystal.sx";
+//  public String materialDatafile = "crystal.sx";
 
   // Precision Settings for Convergence Procedures
   public int itmax_mod = 100;
@@ -216,8 +225,8 @@ public class EPSCmodel extends Strain {
   public boolean prev_proc = false;    // "i_prev_proc" - Reads state from previous process (1=YES or 0=NO) and related file:
   public String prev_proc_file = "epsc4.out";
   public int  itexskip = 50; // "itexskip" - Sets Frequency of Texture Downloads
-  public boolean diff_dir = true; // "i_diff_dir"    Read diffracting planes and directions (1=YES or 0=NO) and file:
-  public String diff_dirFile = "epsc4.dif";
+//  public boolean diff_dir = true; // "i_diff_dir"    Read diffracting planes and directions (1=YES or 0=NO) and file:
+//  public String diff_dirFile = "epsc4.dif";
   public boolean strpf = false; // "i_strpf"       Read directions and calculate strain pole figure (1=YES or 0=NO):
 
   // Number of thermomechanical processes to be run:
@@ -228,14 +237,12 @@ public class EPSCmodel extends Strain {
       "unload_3.pro"
   };
 
-
-
-
-  public static String[] stressModels = {"Voigt", "Reuss", "Hill", "PathGEO", "BulkPathGEO"};
-//	int actuallayer = 0;
+  public double spread = 5.0;
 
   int irandom = 1;
-  double pfthreshold_tmp = 0.05;
+  double[][] e0 = new double[6][6];
+
+  /*  double pfthreshold_tmp = 0.05;
   double[] hj = new double[9], hjm = new double[9];
   //  int[][] mij = new int[3][3];
   double pi, pif, p2i, pi5, pi25, pisim;
@@ -246,7 +253,6 @@ public class EPSCmodel extends Strain {
   double[] cr2 = new double[181], sr2 = new double[181], cr4 = new double[181], sr4 = new double[181],
       cr6 = new double[181], sr6 = new double[181], cr8 = new double[181], sr8 = new double[181];
   double[][] trigs = new double[9][73];
-  double[][] e0 = new double[6][6];
   double[][] s0 = new double[6][6];
   double[][] c0 = new double[6][6];
   double[][] egeom = new double[6][6], ea = new double[6][6];
@@ -266,18 +272,18 @@ public class EPSCmodel extends Strain {
   public static int c6 = 6;
   int c73 = 73;
   int c37 = 37;
-  double phon = 0.;
+  double phon = 0.;*/
 
   boolean debug_output = MaudPreferences.getBoolean("EPSC.debug", false);
   boolean log_output = false;
 
-  public static final int[] mi = {1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 5, 5, 6, 2, 3, 4,
+/*  public static final int[] mi = {1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 5, 5, 6, 2, 3, 4,
       5, 6, 3, 4, 5, 6, 4, 5, 6, 5, 6, 6};
   public static final int[] mj = {1, 2, 3, 4, 5, 6, 2, 3, 4, 5, 6, 3, 4, 5, 6, 4, 5, 6, 5, 6, 6, 1, 1, 1,
       1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 4, 5};
   public static final int[] mivoigt = {1, 2, 3, 2, 3, 1, 3, 1, 2};
   public static final int[] mjvoigt = {1, 2, 3, 3, 1, 2, 2, 3, 1};
-
+*/
   private int actualReflexIndex = 0;
 
   public EPSCmodel(XRDcat aobj, String alabel) {
@@ -358,7 +364,6 @@ public class EPSCmodel extends Strain {
   public void updateParametertoDoubleBuffering(boolean firstLoading) {
     super.updateParametertoDoubleBuffering(false);
 
-    imodel = getStressModelValue();
     fio_tmp = null;
 
     int k = 1;
@@ -378,29 +383,6 @@ public class EPSCmodel extends Strain {
   }
 
   public void checkForSymmetries(double[][] e0) {
-  }
-
-  public String getStressModelID() {
-    return stringField[0];
-  }
-
-  public int getStressModelValue() {
-
-    String modelID = getStressModelID();
-
-    for (int i = 0; i < stressModels.length; i++) {
-      if (modelID.equals(stressModels[i]))
-        return i;
-    }
-    return 0;
-  }
-
-  public void setStressModel(int i) {
-    setStressModel(stressModels[i]);
-  }
-
-  public void setStressModel(String value) {
-    stringField[0] = value;
   }
 
   public boolean useTexture() {
@@ -426,25 +408,248 @@ public class EPSCmodel extends Strain {
   }*/
 
   double[][][] fio_tmp = null;
-  double bk0_tmp = 0.0;
   OutputStream out = null;
+
+  void initAll(Sample asample, Phase aphase, String filename) {
+    BufferedWriter output = null;
+    if (filename != null) {
+      try {
+        output = Misc.getWriter(filename);
+        filename = null;
+        output.write(aphase.getPhaseName() + userDefinedTitle);
+        output.newLine();
+        output.write(reminders[0]);
+        output.newLine();
+        output.write(grainShape + "                       Grain Shape and Orientation Control (0 non-evolving ellipsoid; 1 evolving ellipsoid; 2 individual ellipsoid)");
+        output.newLine();
+        for (int i = 0; i < ellipsoidRatios.length; i++)
+          output.write(Fmt.format(ellipsoidRatios[i]) + "  ");
+        output.write("         Initial Ellipsoid Ratios");
+        output.newLine();
+        for (int i = 0; i < ellipsoidEulerAngles.length; i++)
+          output.write(Fmt.format(ellipsoidEulerAngles[i]) + "  ");
+        output.write("         Initial Euler Angle Ellipsoid Axes");
+        output.newLine();
+        output.write(reminders[1]);
+        output.newLine();
+        output.write(aphase.getPhaseName() + ".red");
+        output.newLine();
+        String texv = "0";
+        if (textureEvolution)
+          texv = "1";
+        output.write(texv + "\t\t\tRotations Due to Slip - IE Texture evolution (0 for no, 1 for yes)");
+        output.newLine();
+        output.write(reminders[2]);
+        output.newLine();
+        output.write(aphase.getPhaseName() + ".sx");
+        output.newLine();
+        output.write(reminders[3]);
+        output.newLine();
+        output.write(itmax_mod + "                     itmax_mod");
+        output.newLine();
+        output.write(error_mod + "                     error_mod");
+        output.newLine();
+        output.write(itmax_grain + "                     itmax_grain");
+        output.newLine();
+
+        int prevproc = 0;
+        if (prev_proc)
+          prevproc = 1;
+  /*      int i_diff_dir = 0;
+        if (diff_dir)
+          i_diff_dir = 1;*/
+        int i_strpf = 0;
+        if (strpf)
+          i_strpf = 1;
+
+        output.write(reminders[4]);
+        output.newLine();
+        output.write(prevproc + "                       i_prev_proc - Reads state from previous process (1=YES or 0=NO) and related file:");
+        output.newLine();
+        output.write(prev_proc_file);
+        output.newLine();
+        output.write(itexskip + "                      itexskip - Sets Frequency of Texture Downloads");
+        output.newLine();
+        output.write(1 + "       i_diff_dir    Read diffracting planes and directions (1=YES or 0=NO) and file:");
+        output.newLine();
+        filename = aphase.getPhaseName() + ".dif";
+        output.write(filename);
+        output.newLine();
+        output.write(i_strpf + "       i_strpf       Read directions and calculate strain pole figure (1=YES or 0=NO):");
+        output.newLine();
+        output.write(reminders[5]);
+        output.newLine();
+        output.write(nproc + "                       nproc");
+        output.newLine();
+        output.write(reminders[6]);
+        output.newLine();
+        for (int i = 0; i < nproc; i++) {
+          output.write(processFiles[i]);
+          output.newLine();
+        }
+
+        output.flush();
+        output.close();
+      } catch (Exception io) {
+        io.printStackTrace();
+      }
+    }
+
+    if (filename != null) {
+      try {
+        output = Misc.getWriter(filename);
+        output.write("*DIFFRACTING PLANES AND DIRECTION FOR " + aphase.getPhaseName());
+        output.newLine();
+        output.write("*Number of diffraction directions and diffracting angle spread: 0,0 is 3, 90,90 is 2, 90,0 is 1");
+        output.newLine();
+
+        int ndif = 0;
+        int hkln = aphase.gethklNumber();
+        Vector<PlaneDirections> allData = new Vector<>(hkln);
+        for (int j = 0; j < hkln; j++) {
+          Reflection refl = aphase.getReflectionVector().elementAt(j);
+
+          if (refl.isGoodforTexture()) {
+
+            Vector<double[]> pf_data = new Vector<>(100, 100);
+            int numberDatasets = asample.activeDatasetsNumber();
+            for (int i = 0; i < numberDatasets; i++) {
+              DataFileSet dataset = asample.getActiveDataSet(i);
+              int radCount = dataset.getInstrument().getRadiationType().getLinesCount();
+              for (int k = 0; k < dataset.activedatafilesnumber(); k++) {
+                DiffrDataFile datafile = dataset.getActiveDataFile(k);
+                for (int ppp = 0; ppp < datafile.positionsPerPattern; ppp++) {
+                  for (int l = 0; l < radCount; l++) {
+                    double[] pfd = new double[3];
+                    pfd[2] = datafile.getExperimentalTextureFactors(aphase, j)[ppp][0];
+                    double position = datafile.getPositions(aphase)[j][ppp][0];
+                    if (!Double.isNaN(pfd[2]) && datafile.isInsideRange(position)) {
+                      double[] angles = datafile.getTextureAngles(position);
+                      pfd[0] = angles[0];
+                      pfd[1] = angles[1];
+                      pf_data.add(pfd);
+                      ndif++;
+                    }
+                  }
+                }
+              }
+            }
+            PlaneDirections planeData = new PlaneDirections(refl.getH(), refl.getK(), refl.getL(), pf_data);
+            allData.add(planeData);
+          }
+        }
+
+        output.write("    " + ndif + "  " + spread + "   ndif  Spread");
+        output.newLine();
+
+        output.flush();
+        output.close();
+      } catch (Exception io) {
+        io.printStackTrace();
+      }
+    }
+
+  }
+
+  public Vector loadFhkl(Phase aphase, String fhklFilename) {
+
+/*
+    This is the format of the input file for the Fourier module of Jana2000 (Petrıcek et al., 2000).
+    Its standard extension is .m80. Each line of the file has format (di4,i4,13e12.5),
+    where d is the number of reflection indices. The information in each line is:
+    reflection indices, number of structure(always 1 in superflip),Fobs, Fobs, Fcalc, A, B
+    The rest of the line is compulsory in the format, but it is irrelevant for the output from superflip
+    and is padded with zeroes.
+*/
+    double sfCalcR = 0;
+    String line = null;
+    boolean coincidence = false;
+    boolean invertHK = aphase.getSymmetry().equalsIgnoreCase("tetragonal"); // ||
+//        aphase.getSymmetry().equalsIgnoreCase("hexagonal") ||
+//        aphase.getSymmetry().equalsIgnoreCase("trigonal");
+    BufferedReader reader = Misc.getReader(fhklFilename);
+//    System.out.println("Reading: " + fhklFilename);
+    Vector hklList = new Vector(100, 100);
+    if (reader != null) {
+      try {
+        reader.readLine(); // 0 0 0
+        reader.readLine(); // 0 0 0
+        line = reader.readLine(); // 0 0 0
+        while (line != null) {
+          line = reader.readLine();
+          if (line != null && line.length() > 56) {
+            int h1 = Integer.parseInt(Misc.toStringDeleteBlankAndTab(line.substring(0, 4)));
+            int k1 = Integer.parseInt(Misc.toStringDeleteBlankAndTab(line.substring(4, 8)));
+            int l1 = Integer.parseInt(Misc.toStringDeleteBlankAndTab(line.substring(8, 12)));
+            String mult = Misc.toStringDeleteBlankAndTab(line.substring(16, 20));
+            String sfcalcS = Misc.toStringDeleteBlankAndTab(line.substring(56, 72));
+            sfCalcR = Double.parseDouble(sfcalcS);
+            double sfFhkl = Math.sqrt(sfCalcR / Integer.parseInt(mult));
+//            if (invertHK)
+//              hklList.add(new HKLIntensityPeak(k1, h1, l1, sfFhkl));
+//            else
+            hklList.add(new HKLIntensityPeak(h1, k1, l1, sfFhkl));
+          }
+        }
+      } catch (Exception e) {
+        System.out.println("Error in loading the Fhkl FullProf file!");
+        e.printStackTrace();
+      }
+      try {
+        reader.close();
+      } catch (IOException e) {
+      }
+    }
+    return hklList;
+  }
 
   public void prepareComputation(Phase aphase, Sample asample) {
     log_output = /* getFilePar().isStrainComputationPermitted() && */getFilePar().logOutput();
     if (log_output)
       out = getFilePar().getResultStream();
     update(false);
-    int igb = SpaceGroups.getLGNumberSiegfriedConv(aphase.getPointGroup());
-    int iga = 1;
-    phon = 0.0;
+//    int igb = SpaceGroups.getLGNumberSiegfriedConv(aphase.getPointGroup());
+//    int iga = 1;
+//    phon = 0.0;
 
     if (useTexture())
       irandom = 0;
     else
       irandom = 1;
 
+
+    programName = MaudPreferences.getPref("epsc.executable_name", programName);
+
+    MaudPreferences.getPref("epsc.instr_filename", insName);
+    initAll(asample, aphase, getFilePar().getDirectory() + insName);
+
+    // call superflip
+    String epscProgram = Misc.getUserDir() + Constants.pluginsDir + programName;
+    try {
+      System.out.println("Executing: " + Misc.checkForWindowsPath(epscProgram) + " " + Misc.checkForWindowsPath(insName));
+      Executable process = new Executable(Misc.checkForWindowsPath(epscProgram),
+          Misc.checkForWindowsPath(getFilePar().getDirectory()), new String[]
+          {Misc.checkForWindowsPath(insName)});
+      process.start();
+      while (!process.getStatus().equals(Executable.TERMINATED))
+        Thread.currentThread().sleep(100);
+      System.out.println("Execution of EPSC terminate with code: " + process.getTerminationResult());
+      process.cleanUp();
+//      Runtime.getRuntime().exec(superflipProgram + " " + filename);
+      String hklFilename = getFilePar().getDirectory() + insName + ".hkl";
+      if (Constants.windoze) {
+        hklFilename = Misc.getUserDir() + "\\" + insName + ".hkl";
+      }
+      System.out.println("EPSC results saved in " + hklFilename);
+      Vector hklList = loadFhkl(aphase, hklFilename);
+
+    } catch (Exception e) {
+      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+    }
+
+
 //    double fmin = 10.0;
-    Texture atexture = aphase.getActiveTexture();
+/*    Texture atexture = aphase.getActiveTexture();
     atexture.initializeAll();
 
     double resolution = 5.0; //atexture.getResolutionD(); // for the moment to be changed to variable in the future
@@ -490,24 +695,10 @@ public class EPSCmodel extends Strain {
         io.printStackTrace();
       }
     }
+    */
 //    System.out.println("irandom "+irandom);
 
-/*    prepare1();
-    if (imodel != 0)
-      subhkwkw();
-    if (irandom != 1 && MoreMath.pow_ii(imodel) > 0)
-      prepare3();
-    if (pfthreshold_tmp < .001)
-      pfthreshold_tmp = .001;
-    bk0_tmp = e0prep(imodel);
-    igaigbprep(iga, igb, irandom);
-    double[][][] fio_corrected = null;
-    if (irandom != 1)
-      fio_corrected = odfprep(iga, igb, fio_tmp);
-    if (MoreMath.pow_ii(imodel) > 0)
-      bulkprep(imodel, irandom, fio_corrected);
-*/
-    int hkln = aphase.gethklNumber();
+/*   int hkln = aphase.gethklNumber();
     sshi0 = new double[hkln][6][6];
     sshi0m = new double[hkln][6][6];
     double[] cdsc = aphase.lattice();
@@ -516,8 +707,7 @@ public class EPSCmodel extends Strain {
 
       double[] sctf = Uwimvuo.tfhkl(refl.getH(), refl.getK(), refl.getL(),
           cdsc[7], cdsc[5], cdsc[3], cdsc[6], cdsc[0], cdsc[1]);
-/*      subshi0(j, sctf[0], sctf[1], sctf[2], sctf[3]); */
-    }
+    } */
   }
 
   public double computeStrain(Reflection refl, double[] strain_angles) { // you don't need to modify this unless
@@ -617,8 +807,8 @@ public class EPSCmodel extends Strain {
       jPanel6.add(jPanel7);
       jPanel7.add(new JLabel("Stress/strain model: "));
       ssmodelCB = new JComboBox();
-      for (int i = 0; i < stressModels.length; i++)
-        ssmodelCB.addItem(stressModels[i]);
+//      for (int i = 0; i < stressModels.length; i++)
+//        ssmodelCB.addItem(stressModels[i]);
       ssmodelCB.setToolTipText("Select the micromechanical model for strain computation from macrostresses");
       jPanel7.add(ssmodelCB);
 
@@ -674,7 +864,7 @@ public class EPSCmodel extends Strain {
 //        cijTF[i].setText(parameterField[i + 1].getValue());
         addComponenttolist(cijTF[i], parameterField[i + 1]);
       }
-      ssmodelCB.setSelectedItem(getStressModelID());
+//      ssmodelCB.setSelectedItem(getStressModelID());
       textureCB.setSelected(useTexture());
     }
 
@@ -686,7 +876,7 @@ public class EPSCmodel extends Strain {
       for (int i = 0; i < 21; i++) {
         parameterField[i + 1].setValue(cijTF[i].getText());
       }
-      setStressModel(ssmodelCB.getSelectedItem().toString());
+  //    setStressModel(ssmodelCB.getSelectedItem().toString());
       useTexture(textureCB.isSelected());
     }
 

@@ -191,10 +191,10 @@ public class MarchDollaseTexture extends Texture {
     }
   }
 
-  public void computeTextureFactor(Sample asample) {
+/*  public void computeTextureFactor(Sample asample) {
     Phase aphase = (Phase) getParent();
     computeTextureFactor(aphase, asample);
-  }
+  }*/
 
   public JOptionsDialog getOptionsDialog(Frame parent) {
     JOptionsDialog adialog = new JMDParameterPanel(parent, this);
