@@ -43,9 +43,12 @@ from the older one.
 
 Maud Version notes:
 
-(xx/04/2025):   2.9999. The "Cutting" release.
-                Watch for the rain.....
-
+(xx/04/2025):   2.9999. The "Van Kilmer" release.
+                EPSC4 was finally interfaced with Maud. You can select the
+                model of C. Tome and R. Lebensohn as a strain-stress model
+                for a phase. EPSC4 only works for one phase. Wait for
+                (E)VPSC models that work with multiple phases if you
+                need it.
 
 (24/03/2025):   2.9998. The "61" release.
                 Time is flying. Corrected a small bug affecting the importing

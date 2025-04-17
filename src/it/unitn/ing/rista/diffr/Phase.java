@@ -1829,6 +1829,24 @@ public static final String getSpaceGroup(int index, int sgconv) {
     return false;
   }
 
+  public boolean hasHexagonalAxes() {
+    String sg = getSpaceGroup();
+    switch (getNumber(getSymmetry())) {
+      case 4:
+        int f = sg.indexOf(':');
+        int f1 = -1;
+        if (f != -1)
+          f1 = sg.toUpperCase().lastIndexOf('R');
+        if (f1 <= f)
+          return true;
+      case 5:
+        return true;
+      default: {
+      }
+    }
+    return false;
+  }
+
   double cdsc[] = new double[8];
 
   public final double[] lattice() {

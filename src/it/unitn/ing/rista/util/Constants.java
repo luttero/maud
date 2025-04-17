@@ -895,7 +895,7 @@ public class Constants {
 	    (new Thread() {
 		    @Override
 		    public void run() {
-			    useXrayLib = MaudPreferences.getBoolean("atomProperties.useXrayLib", true);
+			    useXrayLib = MaudPreferences.getBoolean("atomProperties.useXrayLib", false);
 			    MAX_ENERGY_IN_KEV = MaudPreferences.getDouble("atomProperties.maxEnergyInKeV", 100.0);
 			    BASE_ENERGY_IN_KEV = MaudPreferences.getDouble("atomProperties.minEnergyInKeV", 1.0);
 			    INV_MULTIPLE_ENERGY_TO_INT = MaudPreferences.getDouble("atomProperties.energyStepInKeV", 0.1);

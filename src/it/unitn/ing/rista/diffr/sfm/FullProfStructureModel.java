@@ -166,7 +166,7 @@ public class FullProfStructureModel extends StructureFactorModel {
       System.out.println("Executing: " + Misc.checkForWindowsPath(fullprofProgram) + " " + Misc.checkForWindowsPath(insName));
       Executable process = new Executable(Misc.checkForWindowsPath(fullprofProgram),
           Misc.checkForWindowsPath(getFilePar().getDirectory()), new String[]
-          {Misc.checkForWindowsPath(insName)});
+          {Misc.checkForWindowsPath(insName)}, true);
       process.start();
       while (!process.getStatus().equals(Executable.TERMINATED))
         Thread.currentThread().sleep(100);

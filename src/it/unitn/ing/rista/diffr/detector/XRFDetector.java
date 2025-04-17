@@ -288,7 +288,7 @@ public class XRFDetector extends Detector {
 
 	public Vector<double[]> getEscapeIntensity(double[] energy) {
 
-		double minIntensityEscapePeaks = MaudPreferences.getDouble("fluorescence.escapePeaksMinimumIntensityRatio", 0.05);
+		double minIntensityEscapePeaks = MaudPreferences.getDouble("fluorescence.escapePeaksMinimumIntensityRatio", 0.01);
 
 		double energyInKeV = energy[energy.length - 1] * 0.001;
 

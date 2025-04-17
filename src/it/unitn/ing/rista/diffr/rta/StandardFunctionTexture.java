@@ -875,7 +875,7 @@ public class StandardFunctionTexture extends Texture {
       });
       jb.setToolTipText("Press this to save the odf using the Beartex/Maud exchange format");*/
 
-          jPanel10 = new JPanel();
+      jPanel10 = new JPanel();
       jPanel10.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
       lowerPanel.add(jPanel10);
       jPanel10.add(new JLabel("Export PFs (.xpc) for "));

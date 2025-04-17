@@ -261,7 +261,7 @@ public class ABINITEnergyComputation extends ForceField {
 	    if (resultsFile.exists())
         resultsFile.delete();
       System.out.println("Executing: " + superflipProgram);
-      Executable process = new Executable(superflipProgram, getFilePar().getDirectory(), null);
+      Executable process = new Executable(superflipProgram, getFilePar().getDirectory(), null, true);
       process.start();
       while (!process.getStatus().equals(Executable.TERMINATED))
         Thread.currentThread().sleep(100);

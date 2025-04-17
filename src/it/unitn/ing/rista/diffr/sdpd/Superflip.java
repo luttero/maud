@@ -174,8 +174,12 @@ public class Superflip extends StructureFactorSolveCrystalStructure {
     // call superflip
     String superflipProgram = Misc.getUserDir() + Constants.pluginsDir + superflipName;
     try {
+      boolean remove = true;
+      if (Constants.testing)
+        remove = MaudPreferences.getBoolean("superflip_script.remove", false);
       System.out.println("Executing: " + Misc.checkForWindowsPath(superflipProgram) + " " + Misc.checkForWindowsPath(filename));
-      Executable process = new Executable(Misc.checkForWindowsPath(superflipProgram), Misc.checkForWindowsPath(getFilePar().getDirectory()), new String[]{Misc.checkForWindowsPath(filename)});
+      Executable process = new Executable(Misc.checkForWindowsPath(superflipProgram),
+          Misc.checkForWindowsPath(getFilePar().getDirectory()), new String[]{Misc.checkForWindowsPath(filename)}, remove);
       process.start();
       while (!process.getStatus().equals(Executable.TERMINATED))
         Thread.currentThread().sleep(100);

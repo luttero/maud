@@ -410,7 +410,10 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
       }
     }
     for (int i = 0; i < Nsubordinate; i++) {
-      subordinateField[i].writeResults(out);
+      if (subordinateField[i] == null)
+        System.out.println("Subordinate " + i + " null in " + this.thelabel);
+      else
+        subordinateField[i].writeResults(out);
     }
     for (int i = 0; i < Nsubordinateloop; i++) {
       for (int j = 0; j < numberofelementSubL(i); j++) {

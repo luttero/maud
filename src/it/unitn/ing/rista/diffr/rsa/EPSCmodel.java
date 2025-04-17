@@ -29,10 +29,14 @@ package it.unitn.ing.rista.diffr.rsa;
     import it.unitn.ing.fortran.Format;
     import it.unitn.ing.rista.diffr.*;
     import it.unitn.ing.rista.awt.*;
+    import it.unitn.ing.rista.diffr.radiation.XrayEbelTubeRadiation;
+    import it.unitn.ing.rista.diffr.rta.DiscreteODFTexture;
+    import it.unitn.ing.rista.diffr.rta.Uwimvuo;
     import it.unitn.ing.rista.util.*;
 
     import javax.swing.border.*;
     import java.io.*;
+    import java.util.StringTokenizer;
     import java.util.Vector;
 
 /**
@@ -62,45 +66,40 @@ enum Ellipsoid {
   INDIVIDUAL;
 }
 
-enum Crysym {
-      CUBIC,
-      HEXAG,
-      TRIGO,
-      TETRA,
-      ORTHO,
-      MONOC,
-      TRICL;
-}
-
 record PlaneDirections(int h, int k, int l, Vector<double[]> angles) {}
 
 public class EPSCmodel extends Strain {
 
+  public static int ELLIPSOID_RATIO_ID = 0;
+  public static int ELLIPSOID_ANGLE_ID = 3;
+  public static int STIFFNESS_ID = 6;
+  public static int STIFFNESS_P_DER_ID = 27;
+  public static int THERMAL_EXPANSION_ID = 48;
+
+
   public static String[] diclistc = {
       "_rista_epsc_user_title",
-      "_rista_epsc_grain_shape_ctrl",
+      "_rista_epsc_grain_shape_ctrl",              // ishape
       "_rista_residual_stress_use_texture",
-      "_rista_epsc_large_strain_model",
-      "_rista_epsc_iterations_self_cons",
-      "_rista_epsc_error_self_cons",
-      "_rista_epsc_iterations_active_systems",
-      "_rista_epsc_use_previous_iteration",
-      "_rista_epsc_inverse_pole_figures",
-      "_rista_epsc_number_processes",
-      "_rista_epsc_inverse_pole_figures",
-      "_rista_epsc_inverse_pole_figures",
-      "_rista_epsc_inverse_pole_figures",
-      "_rista_epsc_stiff_pressure_dependence",  // (iSM=0 no; iSM=1 yes)
+      "_rista_epsc_large_strain_model",            // irot
+      "_rista_epsc_iterations_self_cons",          // itmax_mod
+      "_rista_epsc_error_self_cons",               // error_mod
+      "_rista_epsc_iterations_active_systems",     // itmax_grain
+      "_rista_epsc_use_previous_iteration",        // i_prev_proc
+      "_rista_epsc_texture_iterations_skip",       // itexskip
+      "_rista_epsc_internal_strain_calculate",     // i_diff_dir
+      "_rista_epsc_strain_inverse_pole_figures",   // i_strpf
+      "_rista_epsc_stiff_pressure_dependence",     // (iSM=0 no; iSM=1 yes)
+      "_rista_epsc_constitutive_law_hardening", // kCL
 
-
-      "_rista_epsc_ellipsoid_ratio_x",
-      "_rista_epsc_ellipsoid_ratio_y",
+      "_rista_epsc_ellipsoid_ratio_x", // 0
+      "_rista_epsc_ellipsoid_ratio_y", // 1
       "_rista_epsc_ellipsoid_ratio_z",
       "_rista_epsc_ellipsoid_euler_alpha",
       "_rista_epsc_ellipsoid_euler_beta",
-      "_rista_epsc_ellipsoid_euler_gamma",
+      "_rista_epsc_ellipsoid_euler_gamma", // 5
 
-      "_rista_stiffness_11", // 1
+      "_rista_stiffness_11", // 6
       "_rista_stiffness_12", // 2
       "_rista_stiffness_13", // 3
       "_rista_stiffness_14", // 4
@@ -120,73 +119,123 @@ public class EPSCmodel extends Strain {
       "_rista_stiffness_46", // 18
       "_rista_stiffness_55", // 19
       "_rista_stiffness_56", // 20
-      "_rista_stiffness_66", // 21
+      "_rista_stiffness_66", // 26
 
-      "_rista_macrostress_11",
-      "_rista_macrostress_22",
-      "_rista_macrostress_33",
-      "_rista_macrostress_23",
-      "_rista_macrostress_13",
-      "_rista_macrostress_12",
+      "_rista_stiffness_p_der_11", // 27
+      "_rista_stiffness_p_der_12", // 2
+      "_rista_stiffness_p_der_13", // 3
+      "_rista_stiffness_p_der_14", // 4
+      "_rista_stiffness_p_der_15", // 5
+      "_rista_stiffness_p_der_16", // 6
+      "_rista_stiffness_p_der_22", // 7
+      "_rista_stiffness_p_der_23", // 8
+      "_rista_stiffness_p_der_24", // 9
+      "_rista_stiffness_p_der_25", // 10
+      "_rista_stiffness_p_der_26", // 11
+      "_rista_stiffness_p_der_33", // 12
+      "_rista_stiffness_p_der_34", // 13
+      "_rista_stiffness_p_der_35", // 14
+      "_rista_stiffness_p_der_36", // 15
+      "_rista_stiffness_p_der_44", // 16
+      "_rista_stiffness_p_der_45", // 17
+      "_rista_stiffness_p_der_46", // 18
+      "_rista_stiffness_p_der_55", // 19
+      "_rista_stiffness_p_der_56", // 20
+      "_rista_stiffness_p_der_66", // 21
 
-      "_rista_thermal_expansion_11",
+      "_rista_thermal_expansion_11", // 48
       "_rista_thermal_expansion_22",
       "_rista_thermal_expansion_33",
       "_rista_thermal_expansion_23",
       "_rista_thermal_expansion_13",
-      "_rista_thermal_expansion_12"
+      "_rista_thermal_expansion_12", // 53
+
+      "_rista_epsc_thermomechanical_processes_id",
+      "_rista_epsc_slip_and_twinning_mode_id"
+
 
   };
   public static String[] diclistcrm = {
-      "_rista_residual_stress_model",
+      "_rista_epsc_user_title",
+      "_rista_epsc_grain_shape_ctrl",              // ishape
       "_rista_residual_stress_use_texture",
-      "voigt-reuss weight",
-      "stiffness_11 (arb)", // 1
+      "_rista_epsc_large_strain_model",            // irot
+      "_rista_epsc_iterations_self_cons",          // itmax_mod
+      "_rista_epsc_error_self_cons",               // error_mod
+      "_rista_epsc_iterations_active_systems",     // itmax_grain
+      "_rista_epsc_use_previous_iteration",        // i_prev_proc
+      "_rista_epsc_texture_iterations_skip",       // itexskip
+      "_rista_epsc_internal_strain_calculate",     // i_diff_dir
+      "_rista_epsc_strain_inverse_pole_figures",   // i_strpf
+      "_rista_epsc_stiff_pressure_dependence",     // (kSM=0 no; kSM=1 yes)
+
+      "stiffness_11 (arb)", // 0
       "stiffness_12 (arb)", // 2
       "stiffness_13 (arb)", // 3
       "stiffness_14 (arb)", // 4
       "stiffness_15 (arb)", // 5
       "stiffness_16 (arb)", // 6
-//                                      "_rista_stiffness_21",
       "stiffness_22 (arb)", // 7
       "stiffness_23 (arb)", // 8
       "stiffness_24 (arb)", // 9
       "stiffness_25 (arb)", // 10
       "stiffness_26 (arb)", // 11
-//                                      "_rista_stiffness_31",
-//                                      "_rista_stiffness_32",
       "stiffness_33 (arb)", // 12
       "stiffness_34 (arb)", // 13
       "stiffness_35 (arb)", // 14
       "stiffness_36 (arb)", // 15
-//                                      "_rista_stiffness_41",
-//                                      "_rista_stiffness_42",
-//                                      "_rista_stiffness_43",
       "stiffness_44 (arb)", // 16
       "stiffness_45 (arb)", // 17
       "stiffness_46 (arb)", // 18
-//                                      "_rista_stiffness_51",
-//                                      "_rista_stiffness_52",
-//                                      "_rista_stiffness_53",
-//                                      "_rista_stiffness_54",
       "stiffness_55 (arb)", // 19
       "stiffness_56 (arb)", // 20
-//                                      "_rista_stiffness_61",
-//                                      "_rista_stiffness_62",
-//                                      "_rista_stiffness_63",
-//                                      "_rista_stiffness_64",
-//                                      "_rista_stiffness_65",
+      "stiffness_66 (arb)", // 20
+
+      "stiffness_11 (arb)", // 21
+      "stiffness_12 (arb)", // 2
+      "stiffness_13 (arb)", // 3
+      "stiffness_14 (arb)", // 4
+      "stiffness_15 (arb)", // 5
+      "stiffness_16 (arb)", // 6
+      "stiffness_22 (arb)", // 7
+      "stiffness_23 (arb)", // 8
+      "stiffness_24 (arb)", // 9
+      "stiffness_25 (arb)", // 10
+      "stiffness_26 (arb)", // 11
+      "stiffness_33 (arb)", // 12
+      "stiffness_34 (arb)", // 13
+      "stiffness_35 (arb)", // 14
+      "stiffness_36 (arb)", // 15
+      "stiffness_44 (arb)", // 16
+      "stiffness_45 (arb)", // 17
+      "stiffness_46 (arb)", // 18
+      "stiffness_55 (arb)", // 19
+      "stiffness_56 (arb)", // 20
       "stiffness_66 (arb)", // 21
-      "macrostress_11 (arb)",
-      "macrostress_22 (arb)",
-      "macrostress_33 (arb)",
-      "macrostress_23 (arb)",
-      "macrostress_13 (arb)",
-      "macrostress_12 (arb)"
+
+      "_rista_epsc_ellipsoid_ratio_x",
+      "_rista_epsc_ellipsoid_ratio_y",
+      "_rista_epsc_ellipsoid_ratio_z",
+      "_rista_epsc_ellipsoid_euler_alpha",
+      "_rista_epsc_ellipsoid_euler_beta",
+      "_rista_epsc_ellipsoid_euler_gamma",
+
+      "thermal expansion coeff 11",
+      "thermal expansion coeff 22",
+      "thermal expansion coeff 33",
+      "thermal expansion coeff 23",
+      "thermal expansion coeff 13",
+      "thermal expansion coeff 12",
+
+      "thermomechanical processes id",
+      "epsc slip and twinning mode id"
   };
 
   public static String[] classlistcs = {};
-  public static String[] classlistc = {};
+  public static String[] classlistc = {"it.unitn.ing.rista.diffr.rsa.ThermoMechanicalProcess",
+                                       "it.unitn.ing.rista.diffr.rsa.EpscDeformationMode"};
+
+  public static int THERMO_MECHANICAL_ID = 0;
 
   public static String[] reminders = {
       "        Information about grain shape:", // line 2
@@ -199,10 +248,10 @@ public class EPSCmodel extends Strain {
       "" // line 28
   };
 
-  String programName = "epsc";
-  String insName = "epsc4.ins";
+  String programName = "epsc4";
+  String insName = "epsc4.in";
 
-  public String userDefinedTitle = "strain, created by Maud";
+  public String userDefinedTitle = "EPSC4 input file, created by Maud";
 
   // Information about grain shape:
   public int grainShape = 0;
@@ -230,14 +279,10 @@ public class EPSCmodel extends Strain {
   public boolean strpf = false; // "i_strpf"       Read directions and calculate strain pole figure (1=YES or 0=NO):
 
   // Number of thermomechanical processes to be run:
-  public int nproc = 3;
-  public String[] processFiles = {
-      "tension_1.pro",
-      "tension_2.pro",
-      "unload_3.pro"
-  };
-
   public double spread = 5.0;
+  public double step = 5.0;
+
+
 
   int irandom = 1;
   double[][] e0 = new double[6][6];
@@ -274,7 +319,7 @@ public class EPSCmodel extends Strain {
   int c37 = 37;
   double phon = 0.;*/
 
-  boolean debug_output = MaudPreferences.getBoolean("EPSC.debug", false);
+  boolean debug_output = MaudPreferences.getBoolean("epsc4.debug", false);
   boolean log_output = false;
 
 /*  public static final int[] mi = {1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 5, 5, 6, 2, 3, 4,
@@ -289,28 +334,28 @@ public class EPSCmodel extends Strain {
   public EPSCmodel(XRDcat aobj, String alabel) {
     super(aobj, alabel);
     initBaseObject();
-    identifier = "EPSC";
-    IDlabel = "EPSC";
-    description = "select this to apply the EPSC model of Tomè and Lebensohn";
+    identifier = "EPSC4";
+    IDlabel = "EPSC4";
+    description = "select this to apply the EPSC4 model of Tomè and Lebensohn";
   }
 
   public EPSCmodel(XRDcat aobj) {
-    this(aobj, "Moment Pole Stress");
+    this(aobj, "EPSC4");
   }
 
   public EPSCmodel() {
-    identifier = "EPSC";
-    IDlabel = "EPSC";
-    description = "select this to apply the  EPSC model of Tomè and Lebensohn";
+    identifier = "EPSC4";
+    IDlabel = "EPSC4";
+    description = "select this to apply the  EPSC4 model of Tomè and Lebensohn";
   }
 
   public void initConstant() {
-    Nstring = 2;
+    Nstring = 13;
     Nstringloop = 0;
-    Nparameter = 28;
+    Nparameter = 54;
     Nparameterloop = 0;
     Nsubordinate = 0;
-    Nsubordinateloop = 0;
+    Nsubordinateloop = 2;
   }
 
   public void initDictionary() {
@@ -356,6 +401,18 @@ public class EPSCmodel extends Strain {
     }
 
     refreshComputation = true;
+  }
+
+  public boolean useTextureODF() {
+    return (stringField[2].equalsIgnoreCase("true"));
+  }
+
+  public int getNumberEnabled() {
+    int total = 0;
+    for (int i = 0; i < numberofelementSubL(1); i++)
+      if (((EpscDeformationMode) subordinateloopField[1].elementAt(i)).isEnabled())
+        total++;
+    return total;
   }
 
   double[] macrostress = new double[6];
@@ -410,7 +467,50 @@ public class EPSCmodel extends Strain {
   double[][][] fio_tmp = null;
   OutputStream out = null;
 
-  void initAll(Sample asample, Phase aphase, String filename) {
+  public String getCellType(Phase aphase) {
+    switch (SpaceGroups.getSymmetryNumber(aphase.getSymmetry())) {
+      case 0: // triclinic
+        return "TRICL";
+      case 1: // monoclinic
+        return "MONOC";
+      case 2: // orthorhombic
+        return "ORTHO";
+      case 3: // tetragonal
+        return "TETRA";
+      case 4: // trigonal
+        return "TRIGO";
+      case 5: // hexagonal
+        return "HEXAG";
+      case 6: // cubic
+        return "CUBIC";
+      default: {}
+    }
+    return "TRICL";
+  }
+
+  public int getStiffIndex(int i1, int j1) {
+
+    int index = 0;
+    for (int i = 0; i < 6; i++) {
+      for (int j = 0; j < 6; j++) {
+        if (i == i1 && j == j1)
+          return index;
+        if (i <= j)
+          index++;
+      }
+    }
+    return 0;
+  }
+
+  public int getPressureDependentValue() {
+    return Integer.parseInt(stringField[11]);
+  }
+
+  public double getODFResolution() {
+    return 10.0;
+  }
+
+  public void initAll(Sample asample, Phase aphase, String filename) {
     BufferedWriter output = null;
     if (filename != null) {
       try {
@@ -468,7 +568,7 @@ public class EPSCmodel extends Strain {
         output.newLine();
         output.write(prev_proc_file);
         output.newLine();
-        output.write(itexskip + "                      itexskip - Sets Frequency of Texture Downloads");
+        output.write(itexskip + "                       itexskip - Sets Frequency of Texture Downloads");
         output.newLine();
         output.write(1 + "       i_diff_dir    Read diffracting planes and directions (1=YES or 0=NO) and file:");
         output.newLine();
@@ -479,12 +579,13 @@ public class EPSCmodel extends Strain {
         output.newLine();
         output.write(reminders[5]);
         output.newLine();
+        int nproc = numberofelementSubL(THERMO_MECHANICAL_ID);
         output.write(nproc + "                       nproc");
         output.newLine();
         output.write(reminders[6]);
         output.newLine();
         for (int i = 0; i < nproc; i++) {
-          output.write(processFiles[i]);
+          output.write(((ThermoMechanicalProcess) subordinateloopField[THERMO_MECHANICAL_ID].elementAt(i)).getFilename());
           output.newLine();
         }
 
@@ -495,9 +596,11 @@ public class EPSCmodel extends Strain {
       }
     }
 
+    filename = aphase.getPhaseName() + ".dif";
     if (filename != null) {
       try {
         output = Misc.getWriter(filename);
+        filename = null;
         output.write("*DIFFRACTING PLANES AND DIRECTION FOR " + aphase.getPhaseName());
         output.newLine();
         output.write("*Number of diffraction directions and diffracting angle spread: 0,0 is 3, 90,90 is 2, 90,0 is 1");
@@ -541,6 +644,18 @@ public class EPSCmodel extends Strain {
 
         output.write("    " + ndif + "  " + spread + "   ndif  Spread");
         output.newLine();
+        output.write("*Plane type and direction angle:");
+        output.newLine();
+        output.write("*n3 or n4       theta           phi");
+        output.newLine();
+
+        for (PlaneDirections planedir: allData) {
+          for (double[] angle: planedir.angles()) {
+            output.write(" " + planedir.h() + " " + " " + planedir.k() + " " + planedir.l() +
+                "           " + angle[0] + "      " + angle[1]);
+            output.newLine();
+          }
+        }
 
         output.flush();
         output.close();
@@ -548,6 +663,177 @@ public class EPSCmodel extends Strain {
         io.printStackTrace();
       }
     }
+
+    filename = aphase.getPhaseName() + ".sx";
+    if (filename != null) {
+      try {
+        output = Misc.getWriter(filename);
+        output.write("*Material: " + aphase.getPhaseName());
+        output.newLine();
+        output.write(getCellType(aphase) + "            crysym");
+        output.newLine();
+        for (int i = 0; i < 6; i++)
+          output.write(aphase.getCellValue(i) + "   ");
+        output.write("unit cell axes and angles");
+        output.newLine();
+
+        output.write("Elastic stiffness of single crystal");
+        output.newLine();
+        int index = 0;
+        for (int i = 0; i < 6; i++) {
+          for (int j = 0; j < 6; j++) {
+            if (i > j) {
+              int indexr = getStiffIndex(j, i);
+              output.write(parameterField[STIFFNESS_ID + indexr].getValue() + " ");
+            } else
+              output.write(parameterField[STIFFNESS_ID + index++].getValue() + " ");
+            if (j == 5)
+              output.newLine();
+          }
+        }
+
+        output.write("*Large elastic strain & pressure dependent Cij (kSM=0 or 1)");
+        output.newLine();
+        int kSM = getPressureDependentValue();
+        output.write(" " + kSM);
+        output.newLine();
+
+        if (kSM == 1) {
+          output.write("FIRST PRESSURE DERIVATIVE OF SINGLE CRYSTAL ELASTIC STIFFNESS");
+          output.newLine();
+          index = 0;
+          for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 6; j++) {
+              if (i > j) {
+                int indexr = getStiffIndex(j, i);
+                output.write(parameterField[STIFFNESS_P_DER_ID + indexr].getValue() + " ");
+              } else
+                output.write(parameterField[STIFFNESS_P_DER_ID + index++].getValue() + " ");
+              if (j == 5)
+                output.newLine();
+            }
+          }
+        }
+
+        output.write("*Thermal expansion coefficients of single crystal (in crystal axis)");
+        output.newLine();
+        for (int i = 0; i < 6; i++)
+          output.write(" " + parameterField[THERMAL_EXPANSION_ID + i].getValue() + " ");
+        output.newLine();
+        output.write("*Info about slip & twinning modes in this file:");
+        output.newLine();
+        output.write("  " + numberofelementSubL(1) + "          nmodesx    (total # of modes listed in file)");
+        output.newLine();
+        int modesEnabled = getNumberEnabled();
+        output.write("  " + modesEnabled + "          nmodes     (# of modes to be used in the calculation)");
+        output.newLine();
+        if (modesEnabled > 0) {
+          output.write("  ");
+          for (int i = 0; i < numberofelementSubL(1); i++) {
+            if (((EpscDeformationMode) subordinateloopField[1].elementAt(i)).isEnabled())
+              output.write((i + 1) + " ");
+          }
+          output.write("  mode(i)    (label of the modes to be used)");
+          output.newLine();
+        }
+        for (int i = 0; i < numberofelementSubL(1); i++) {
+          EpscDeformationMode mode = (EpscDeformationMode) subordinateloopField[1].elementAt(i);
+          output.write(mode.getTitle());
+          output.newLine();
+          int slipOrTwin = 1;
+          if (mode.isTwin())
+            slipOrTwin = 0;
+          int twinOrSlip = 0;
+          if (slipOrTwin == 0)
+            twinOrSlip = 1;
+          output.write(" " + (i + 1) + " " + mode.numberofelementSubL(0) + "  20   " + slipOrTwin +
+              "   " + twinOrSlip + "                    modex,nsmx,nrsx,iopsysx,itwx");
+          output.newLine();
+          if (twinOrSlip == 1) {
+            output.write(" " + mode.getCharacteristicTwinStress() + "                           stwx");
+            output.newLine();
+          }
+          if (aphase.hasHexagonalAxes()) {
+            for (int j = 0; j < mode.numberofelementSubL(0); j++) {
+              output.write("  " + mode.getPlaneAsStringHex(j) + "           " + mode.getDirectionAsStringHex(j));
+              output.newLine();
+            }
+          } else {
+            for (int j = 0; j < mode.numberofelementSubL(0); j++) {
+              output.write("  " + mode.getPlaneAsString(j) + "           " + mode.getDirectionAsString(j));
+              output.newLine();
+            }
+          }
+        }
+
+/*        output.write("Constitutive law");
+        output.newLine();
+        output.write("  " + stringField[12]);
+        output.newLine();*/
+
+        output.flush();
+        output.close();
+      } catch (Exception io) {
+        io.printStackTrace();
+      }
+    }
+
+    filename = aphase.getPhaseName() + ".red";
+    if (filename != null) {
+      try {
+        output = Misc.getWriter(filename);
+        output.write(" " + aphase.getPhaseName());
+        output.newLine();
+        output.write(" CALCULATED BY MAUD");
+        output.newLine();
+        output.write("DISCRETE TEXTURE FROM TEXTURE MODEL " + aphase.getTextureModel());
+        output.newLine();
+
+        Texture texModel = aphase.getActiveTexture();
+
+        double res = getODFResolution();
+        double half_res = res * 0.5;
+        int laueGroup = SpaceGroups.getLGNumberSiegfriedConv(aphase.getPointGroup());
+        int[] nae = DiscreteODFTexture.getCellNumber(laueGroup, res);
+
+        output.write("B    " + (nae[0] * nae[1] * nae[2]));
+        output.newLine();
+
+        boolean useODF = useTextureODF();
+
+//        ψRoe = ψ1,Bunge – π/2
+//        θRoe = φBunge
+//        φRoe = ψ2, Bunge + π/2
+
+        for (int ng = 0; ng < nae[0]; ng++) {
+          for (int nb = 0; nb < nae[1]; nb++) {
+            for (int na = 0; na < nae[2]; na++) {
+              double alpha = na * res + half_res - 90.0;
+              double beta = nb * res + half_res;
+              double gamma = ng * res + half_res + 90.0;
+              output.write("  " + alpha + "  " + beta + "  " + gamma + "  ");
+              if (alpha < 0)
+                alpha = alpha + 360.0;
+              if (gamma >= 360.0)
+                gamma = gamma - 360.0;
+              double odf = 1.0;
+              if (useODF)
+                odf = texModel.getODF(alpha * Constants.DEGTOPI, beta * Constants.DEGTOPI, gamma * Constants.DEGTOPI);
+              output.write(Double.toString(odf));
+              output.newLine();
+            }
+          }
+        }
+
+        output.flush();
+        output.close();
+      } catch (Exception io) {
+        io.printStackTrace();
+      }
+    }
+
+    for (int i = 0; i < numberofelementSubL(THERMO_MECHANICAL_ID); i++)
+      ((ThermoMechanicalProcess) subordinateloopField[THERMO_MECHANICAL_ID].elementAt(i)).writeInputFile();
 
   }
 
@@ -618,29 +904,28 @@ public class EPSCmodel extends Strain {
       irandom = 1;
 
 
-    programName = MaudPreferences.getPref("epsc.executable_name", programName);
+    programName = MaudPreferences.getPref("epsc4.executable_name", programName);
 
-    MaudPreferences.getPref("epsc.instr_filename", insName);
+    MaudPreferences.getPref("epsc4.instr_filename", insName);
     initAll(asample, aphase, getFilePar().getDirectory() + insName);
 
     // call superflip
     String epscProgram = Misc.getUserDir() + Constants.pluginsDir + programName;
     try {
-      System.out.println("Executing: " + Misc.checkForWindowsPath(epscProgram) + " " + Misc.checkForWindowsPath(insName));
+      System.out.println("Executing: " + Misc.checkForWindowsPath(epscProgram)); // + " " + Misc.checkForWindowsPath(insName));
       Executable process = new Executable(Misc.checkForWindowsPath(epscProgram),
-          Misc.checkForWindowsPath(getFilePar().getDirectory()), new String[]
-          {Misc.checkForWindowsPath(insName)});
+          Misc.checkForWindowsPath(getFilePar().getDirectory()), null, false); //new String[] {Misc.checkForWindowsPath(insName)});
       process.start();
       while (!process.getStatus().equals(Executable.TERMINATED))
         Thread.currentThread().sleep(100);
-      System.out.println("Execution of EPSC terminate with code: " + process.getTerminationResult());
+      System.out.println("Execution of EPSC4 terminate with code: " + process.getTerminationResult());
       process.cleanUp();
 //      Runtime.getRuntime().exec(superflipProgram + " " + filename);
       String hklFilename = getFilePar().getDirectory() + insName + ".hkl";
       if (Constants.windoze) {
         hklFilename = Misc.getUserDir() + "\\" + insName + ".hkl";
       }
-      System.out.println("EPSC results saved in " + hklFilename);
+      System.out.println("EPSC4 results saved in " + hklFilename);
       Vector hklList = loadFhkl(aphase, hklFilename);
 
     } catch (Exception e) {
@@ -774,6 +1059,7 @@ public class EPSCmodel extends Strain {
         "    Orientation gamma : ",
         "    Orientation gamma : ",
     };
+    JSubordinateLoopListPane processesPanel;
 
     public JTSStrainOptionsD(Frame parent, XRDcat obj) {
 
@@ -846,6 +1132,9 @@ public class EPSCmodel extends Strain {
         }
       }
 
+      processesPanel = new JSubordinateLoopListPane(this, "Thermomechanical processes");
+      add(processesPanel, BorderLayout.SOUTH);
+
       setTitle("Moment pole figures options panel");
       initParameters();
       pack();
@@ -866,6 +1155,7 @@ public class EPSCmodel extends Strain {
       }
 //      ssmodelCB.setSelectedItem(getStressModelID());
       textureCB.setSelected(useTexture());
+      processesPanel.setList(EPSCmodel.this, THERMO_MECHANICAL_ID);
     }
 
     public void retrieveParameters() {

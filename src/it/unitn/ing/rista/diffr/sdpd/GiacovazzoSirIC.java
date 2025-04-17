@@ -162,7 +162,8 @@ public class GiacovazzoSirIC extends StructureSolutionMethod {
     try {
       System.out.println("Executing: " + Misc.checkForWindowsPath(sir2kProgram) + " " + Misc.checkForWindowsPath(insName));
       Executable process = new Executable(Misc.checkForWindowsPath(sir2kProgram),
-          Misc.checkForWindowsPath(getFilePar().getDirectory()), new String[]{Misc.checkForWindowsPath(insName), Misc.checkForWindowsPath(insName)});
+          Misc.checkForWindowsPath(getFilePar().getDirectory()),
+          new String[]{Misc.checkForWindowsPath(insName), Misc.checkForWindowsPath(insName)}, true);
       process.start();
       while (!process.getStatus().equals(Executable.TERMINATED))
         Thread.currentThread().sleep(100);

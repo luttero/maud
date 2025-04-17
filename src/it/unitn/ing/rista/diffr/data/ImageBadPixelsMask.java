@@ -447,7 +447,6 @@ public class ImageBadPixelsMask extends it.unitn.ing.rista.diffr.DataMask {
       }
     }
 
-
     class PixelTableModel extends AbstractTableModel {
 
 			public PixelTableModel() {

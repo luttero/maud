@@ -130,7 +130,7 @@ public class ShelxsSolution extends StructureSolutionMethod {
     String shelxsProgram = Misc.getUserDir() + Constants.pluginsDir + "shelxs";
     try {
       System.out.println("Executing: " + shelxsProgram + " " + filename);
-      Executable process = new Executable(shelxsProgram, getFilePar().getDirectory(), new String[] {filename});
+      Executable process = new Executable(shelxsProgram, getFilePar().getDirectory(), new String[] {filename}, true);
       process.start();
       while (!process.getStatus().equals(Executable.TERMINATED))
         Thread.currentThread().sleep(100);

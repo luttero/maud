@@ -451,11 +451,11 @@ public class QuantitativeXRF extends Fluorescence {
 			Vector<double[]> escapeIntensitiesAndEnergies = detector.getEscapeIntensity(xEnergy);
 			int numberLines = escapeIntensitiesAndEnergies.size() - 1;
 			double[] deltaEnergies = escapeIntensitiesAndEnergies.get(numberLines);
-//			System.out.println("N lines: " + numberLines);
+//			System.out.println("N lines: " + numberLines + ", " + escapePeak);
 			for (int l = 0; l < numberLines; l++) {
 				int deltaChannel = (int) (deltaEnergies[l] / channelStep * 1000);
-//				System.out.println("Line: " + l+ ", delta E = " + deltaEnergies[l] + ", channels = " + deltaChannel);
 				double[] relativeIntensities = escapeIntensitiesAndEnergies.get(l);
+//        System.out.println("Line: " + l+ ", delta E = " + deltaEnergies[l] + ", channels = " + deltaChannel + ", relInt = " + relativeIntensities[0]);
 				for (int i = 0; i < numberOfPoints - deltaChannel; i++) {
 					escFluorescence[i] += escapePeak * relativeIntensities[i + deltaChannel] *
 							fluorescence[i + deltaChannel];

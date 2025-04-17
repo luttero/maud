@@ -37,10 +37,10 @@ import java.util.Vector;
 
 public class StructureFactorStandardModel extends StructureFactorModel {
 
-	public static String[] diclistc = {"_rita_extinction_model_id"};
-	public static String[] diclistcrm = {"Extinction model"};
+	public static String[] diclistc = {/*"_rita_extinction_model_id"*/};
+	public static String[] diclistcrm = {/*"Extinction model"*/};
 
-	public static String[] classlistcs = {"it.unitn.ing.rista.diffr.sfm.ExtinctionModel"};
+	public static String[] classlistcs = {/*"it.unitn.ing.rista.diffr.sfm.ExtinctionModel"*/};
 	public static String[] classlistc = {};
 	boolean extinctionCorrection = false;
 
@@ -68,7 +68,7 @@ public class StructureFactorStandardModel extends StructureFactorModel {
 		Nstringloop = 0;
 		Nparameter = 0;
 		Nparameterloop = 0;
-		Nsubordinate = 1;
+		Nsubordinate = 0; // 1;
 		Nsubordinateloop = 0;
 	}
 

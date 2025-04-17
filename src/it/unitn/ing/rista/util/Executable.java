@@ -50,18 +50,17 @@ public class Executable extends Thread {
   String workingDir = null;
 
 
-  public Executable(String command, String directory, String[] args) {
+  public Executable(String command, String directory, String[] args, boolean removeFiles) {
     super();
     pathCommand = command;
     workingDir = directory;
     arguments = args;
     status = PREPARING;
+    remove = removeFiles;
     if (args != null)
       setName("command running for file " + args[0]);
     else
       setName("command running");
-    if (Constants.testing)
-      remove = MaudPreferences.getBoolean("superflip_script.remove", false);
   }
 
   public void run() {
