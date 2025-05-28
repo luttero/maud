@@ -42,6 +42,9 @@ import it.unitn.ing.fortran.*;
  * @since JDK1.1
  */
 
+enum TYPE {STD, ESD, ALT, FXY, FXYE, TIME_MAP}
+enum BINTYPE {STD, CONST, COND, CONS, CONQ, EDS, LOG6, LSPD, RALF, SLOG, TIME_MAP}
+
 public class GSASDataFile extends MultDiffrDataFile {
 
   public GSASDataFile(XRDcat aobj, String alabel) {
@@ -171,8 +174,8 @@ public class GSASDataFile extends MultDiffrDataFile {
             int mapNumber = 0;
             int banknumber = Integer.parseInt(token = st.nextToken());
             String bankID = new String(GSASbankCalibration.bankPrefix + Integer.toString(banknumber));
-				GSASbankCalibration cal = (GSASbankCalibration) ((DataFileSet) getParent()).getInstrument().getAngularCalibration();
-				int bankNumber = -1;
+				    GSASbankCalibration cal = (GSASbankCalibration) ((DataFileSet) getParent()).getInstrument().getAngularCalibration();
+				    int bankNumber = -1;
             try {
 	            bankNumber = cal.getBankNumber(bankID);
             } catch (Exception e) {
@@ -199,16 +202,16 @@ public class GSASDataFile extends MultDiffrDataFile {
 //	          System.out.println(datafile.getLabel() + ", setting bank ID and omega :" + bankID + " " + omega);
 
             int nchannel = Integer.parseInt(token = st.nextToken());
-				 if (datafile != null)
+            if (datafile != null)
                datafile.initData(nchannel);
 
             nrec = Integer.parseInt(token = st.nextToken());
-            String bintyp = st.nextToken();
-            String form = "STD";
+            BINTYPE bintyp = getBinType(st.nextToken());
+            TYPE form = TYPE.STD;
             double bcoeff[] = new double[4];
             int numbercoeff = 0;
-            if (bintyp.startsWith("TIME_MAP")) {
-              form = "TIME_MAP";
+            if (bintyp == BINTYPE.TIME_MAP) {
+              form = TYPE.TIME_MAP;
               mapNumber = Integer.parseInt(token = st.nextToken());
             } else {
               for (int j = 0; j < 4; j++)
@@ -218,9 +221,10 @@ public class GSASDataFile extends MultDiffrDataFile {
                 }
             }
             if (st.hasMoreTokens()) {
-              form = st.nextToken();
+              form = getType(st.nextToken());
 //              System.out.println("Form " + form);
             }
+
 
 //            System.out.println("Form final " + form);
 
@@ -228,7 +232,7 @@ public class GSASDataFile extends MultDiffrDataFile {
 		          datafile.dspacingbase = true;
 		          datafile.constantstep = false;
 		          datafile.datanumber = nchannel;
-		          if (bintyp.equalsIgnoreCase("lpsd")) {
+		          if (bintyp == BINTYPE.LSPD) {
 			          datafile.dspacingbase = false;
 			          datafile.constantstep = true;
 		          }
@@ -254,14 +258,14 @@ public class GSASDataFile extends MultDiffrDataFile {
               int repeat = 0;
               int number = 1;
               int[] digits = null;
-              if (form.equalsIgnoreCase("TIME_MAP")) {
+              if (form == TYPE.TIME_MAP) {
 //        				inputString = "I8";
                 digits = new int[1];
                 digits[0] = 8;
                 repeat = 10;
                 if (nchannel - i < repeat)
                   repeat = nchannel - i;
-              } else if (form.equalsIgnoreCase("STD")) {
+              } else if (form == TYPE.STD) {
 //        				inputString = "I2,F6.0";
                 digits = new int[2];
                 digits[0] = 2;
@@ -270,7 +274,7 @@ public class GSASDataFile extends MultDiffrDataFile {
                 number = 2;
                 if (nchannel - i < repeat)
                   repeat = nchannel - i;
-              } else if (form.equalsIgnoreCase("ESD")) {
+              } else if (form == TYPE.ESD) {
 //        				inputString = "F8,F8";
                 digits = new int[2];
                 digits[0] = 8;
@@ -279,7 +283,7 @@ public class GSASDataFile extends MultDiffrDataFile {
                 number = 2;
                 if (nchannel - i < repeat)
                   repeat = nchannel - i;
-              } else if (form.equalsIgnoreCase("ALT")) {
+              } else if (form == TYPE.ALT) {
 //        				inputString = "F8.0,F7.4,F5.4";
                 digits = new int[3];
                 digits[0] = 8;
@@ -289,10 +293,10 @@ public class GSASDataFile extends MultDiffrDataFile {
                 number = 3;
                 if (nchannel - i < repeat)
                   repeat = nchannel - i;
-              } else if (form.equalsIgnoreCase("FXY")) {
+              } else if (form == TYPE.FXY) {
 	              repeat = 1;
 	              number = 2;
-              } else if (form.equalsIgnoreCase("FXYE")) {
+              } else if (form == TYPE.FXYE) {
 	              repeat = 1;
 	              number = 3;
               }
@@ -302,44 +306,47 @@ public class GSASDataFile extends MultDiffrDataFile {
                 int nctr = 1;
                 double x = 0.0;
                 double esd = 0.0;
-                if (form.equalsIgnoreCase("TIME_MAP")) {
+                if (form == TYPE.TIME_MAP) {
                   token = data[j];
-                } else if (form.equalsIgnoreCase("STD")) {
+                } else if (form == TYPE.STD) {
                   if (data[j] != null && !data[j].equals("  ")) {
                     nctr = Integer.parseInt(Misc.toStringDeleteBlankAndTab(data[j]));
                     if (nctr <= 0)
                       nctr = 1;
                   }
                   token = data[j + 1];
-                } else if (form.equalsIgnoreCase("ESD")) {
+                } else if (form == TYPE.ESD) {
                   token = data[j];
                   esd = Double.parseDouble(data[j + 1]);
-                } else if (form.equalsIgnoreCase("ALT")) {
+                } else if (form == TYPE.ALT) {
                   x = Double.parseDouble(data[j]);
                   token = data[j + 1];
                   esd = Double.parseDouble(data[j + 2]);
-                } else if (form.equalsIgnoreCase("FXY")) {
+                } else if (form == TYPE.FXY) {
 	                x = Double.parseDouble(data[j]);
 	                token = data[j + 1];
 	                esd = 0.0;
-                } else if (form.equalsIgnoreCase("FXYE")) {
+                } else if (form == TYPE.FXYE) {
 	                x = Double.parseDouble(data[j]);
 	                token = data[j + 1];
 	                esd = Double.parseDouble(data[j + 2]);
                 }
 
 	              if (datafile != null) {
-		              if (bintyp.equalsIgnoreCase("RALF"))
-			              datafile.setXData(i, x / 32);
-		              else if (bintyp.equalsIgnoreCase("const"))
+		              if (bintyp == BINTYPE.RALF) {
+                    if (form == TYPE.FXY || form == TYPE.FXYE)
+                      datafile.setXData(i, x);
+                    else
+                      datafile.setXData(i, x/32);
+                  } else if (bintyp == BINTYPE.CONST || bintyp == BINTYPE.CONS)
 			              datafile.setXData(i, (bcoeff[0] + bcoeff[1] * i));
-		              else if (bintyp.equalsIgnoreCase("lpsd"))
+		              else if (bintyp == BINTYPE.LSPD)
 			              datafile.setXData(i, (bcoeff[0] + bcoeff[2] * (i - bcoeff[1])) / 100.0);
-		              else if (bintyp.equalsIgnoreCase("log6"))
+		              else if (bintyp == BINTYPE.LOG6)
 			              datafile.setXData(i, bcoeff[0] + bcoeff[1] * Math.log(i));
-		              else if (bintyp.equalsIgnoreCase("SLOG"))
+		              else if (bintyp == BINTYPE.SLOG)
 			              datafile.setXData(i, x);
-		              else if (bintyp.startsWith("TIME_MAP")) {
+		              else if (bintyp == BINTYPE.TIME_MAP) {
 			              String mapNumberKey = Integer.toString(mapNumber);
 			              if (tmapTable.containsKey(mapNumberKey))
 				              aTimeMap = (TimeMap) tmapTable.get(mapNumberKey);
@@ -356,7 +363,7 @@ public class GSASDataFile extends MultDiffrDataFile {
 //      System.out.println( token );
 		              datafile.setYData(i, Double.parseDouble(token) /* nctr */ / scale_factor / width);
 		              double tmpweight = 0.0;
-		              if (form.equalsIgnoreCase("ESD")) {
+		              if (form == TYPE.ESD) {
 			              if (esd != 0.0)
 				              tmpweight = 1.0 / esd;
 			              else
@@ -398,7 +405,53 @@ public class GSASDataFile extends MultDiffrDataFile {
     return loadSuccessfull;
   }
 
-	// not used
+  public TYPE getType(String s) {
+    TYPE form = TYPE.STD;
+    if (s != null && s.length() > 0) {
+      if (s.equalsIgnoreCase("ESD"))
+        form = TYPE.ESD;
+      else if (s.equalsIgnoreCase("ALT"))
+        form = TYPE.ALT;
+      else if (s.equalsIgnoreCase("FXY"))
+        form = TYPE.FXY;
+      else if (s.equalsIgnoreCase("FXYE"))
+        form = TYPE.FXYE;
+      else if (s.equalsIgnoreCase("TIME_MAP"))
+        form = TYPE.TIME_MAP;
+    }
+    return form;
+  }
+
+  // STD, COND, CONS, CONQ, EDS, LOG6, LSPD, RALF, SLOG, TIME_MAP
+  public BINTYPE getBinType(String s) {
+    BINTYPE form = BINTYPE.STD;
+    if (s != null && s.length() > 0) {
+      if (s.equalsIgnoreCase("COND"))
+        form = BINTYPE.COND;
+      else if (s.equalsIgnoreCase("CONST"))
+        form = BINTYPE.CONST;
+      else if (s.equalsIgnoreCase("CONS"))
+        form = BINTYPE.CONS;
+      else if (s.equalsIgnoreCase("CONQ"))
+        form = BINTYPE.CONQ;
+      else if (s.equalsIgnoreCase("EDS"))
+        form = BINTYPE.EDS;
+      else if (s.equalsIgnoreCase("LOG6"))
+        form = BINTYPE.LOG6;
+      else if (s.equalsIgnoreCase("LSPD"))
+        form = BINTYPE.LSPD;
+      else if (s.equalsIgnoreCase("RALF"))
+        form = BINTYPE.RALF;
+      else if (s.equalsIgnoreCase("SLOG"))
+        form = BINTYPE.SLOG;
+      else if (s.equalsIgnoreCase("TIME_MAP"))
+        form = BINTYPE.TIME_MAP;
+    }
+    return form;
+  }
+
+
+  // not used
   public static String[] readFortranLine(String line, String form, int number, int repeat) {
 
     StringBuffer finalForm = new StringBuffer(form);

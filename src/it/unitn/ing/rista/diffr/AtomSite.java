@@ -2365,7 +2365,7 @@ public class AtomSite extends XRDcat {
 	}
 
 	public void addAtomWithSymbol(String ca) {
-		System.out.println("Adding: " + ca);
+//		System.out.println("Adding: " + ca);
 		AtomScatterer atomScatterer = new AtomScatterer(this, ca);
 		addsubordinateloopField(scattererLoopID, atomScatterer);
 	}

@@ -1251,7 +1251,7 @@ public class Phase extends XRDcat {
       newatom.setSiteLabel(oldatom.getSiteLabel() + "a");
 	    for (int j = 0; j < oldatom.subordinateloopField[AtomSite.scattererLoopID].size(); j++) {
 		    newatom.addsubordinateloopField(AtomSite.scattererLoopID, ((XRDcat)
-				    oldatom.subordinateloopField[AtomSite.scattererLoopID].elementAt(j)).getCopy(this));
+				    oldatom.subordinateloopField[AtomSite.scattererLoopID].elementAt(j)).getCopy(newatom));
 	    }
       newatom.getLocalCoordX().setValue(oldatom.getLocalCoordX().getValueD() + traslx);
       newatom.getLocalCoordX().setEqualTo(oldatom.getLocalCoordX(), 1.0, traslx);

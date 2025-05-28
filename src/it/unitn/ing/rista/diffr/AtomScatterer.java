@@ -260,6 +260,10 @@ public class AtomScatterer extends Scatterer {
 	}
 
 	public double getSiteNumber() {
+    if (getParent() instanceof Phase) {
+      			System.out.println("Wrong parent for: " + getAtomSymbol() + " " + getOccupancy());
+
+    }
 		return ((AtomSite) getParent()).getSiteMultiplicity() * getOccupancy();
 	}
 

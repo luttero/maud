@@ -3,7 +3,7 @@
   <component name="AntConfiguration">
     <buildFile url="file://$PROJECT_DIR$/build.xml">
       <additionalClassPath>
-        <entry dir="file://$APPLICATION_HOME_DIR$/lib/ant/lib" />
+        <entry dir="file://$APPLICATION_PLUGINS_DIR$/ant/lib" />
         <entry path="file://$PROJECT_DIR$/libs/ant-libs/infinitekind-appbundler-last/appbundler/bin/appbundler-1.2.jar" />
       </additionalClassPath>
       <customJdkName value="zulu-21" />
@@ -446,6 +446,14 @@
       <JAVADOC />
       <SOURCES />
     </library>
+    <library name="colt">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/libs/current/colt.jar!/" />
+        <root url="jar://$PROJECT_DIR$/libs/current/JSci.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
     <library name="com.github.tschoonj.xraylib">
       <CLASSES>
         <root url="jar://$PROJECT_DIR$/libs/current/com.github.tschoonj.xraylib.jar!/" />
@@ -495,6 +503,13 @@
       <JAVADOC />
       <SOURCES />
     </library>
+    <library name="jgl">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/libs/current/jgl.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
     <library name="jmol">
       <CLASSES>
         <root url="jar://$PROJECT_DIR$/libs/current/jmol.jar!/" />
@@ -514,6 +529,13 @@
     <library name="joone-engine">
       <CLASSES>
         <root url="jar://$PROJECT_DIR$/libs/current/joone-engine.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="jspline">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/libs/current/jspline.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />

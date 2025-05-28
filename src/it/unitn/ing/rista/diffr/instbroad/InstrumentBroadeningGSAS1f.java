@@ -61,7 +61,10 @@ public class InstrumentBroadeningGSAS1f extends InstrumentBroadening {
       "_riet_par_TOF_func2_gamma2",*/
 		  "_riet_par_TOF_func3_alpha1", "_riet_par_TOF_func3_beta0",
 		  "_riet_par_TOF_func3_beta1", "_riet_par_TOF_func3_sigma0", "_riet_par_TOF_func3_sigma1",
-		  "_riet_par_TOF_func3_sigma2", "_riet_par_broadening_texture"
+		  "_riet_par_TOF_func3_sigma2",
+      "_riet_par_TOF_func4_alpha1", "_riet_par_TOF_func4_beta0",
+      "_riet_par_TOF_func4_beta1", "_riet_par_TOF_func4_sigma1", "_riet_par_TOF_func4_sigma2",
+      "_riet_par_broadening_texture"
   };
 
   protected static final String[] diclistcrm = {
@@ -78,7 +81,10 @@ public class InstrumentBroadeningGSAS1f extends InstrumentBroadening {
       "Function 2 gamma2",*/
 		  "Function 3 alpha1", "Function 3 beta0",
 		  "Function 3 beta1", "Function 3 sigma0", "Function 3 sigma1",
-		  "Function 3 sigma2", "texture broadening coeff "
+		  "Function 3 sigma2",
+      "Function 4 alpha1", "Function 4 beta0",
+      "Function 4 beta1", "Function 4 sigma1", "Function 4 sigma2",
+      "texture broadening coeff "
   };
 
   protected static final String[] classlistc = {};
@@ -88,10 +94,10 @@ public class InstrumentBroadeningGSAS1f extends InstrumentBroadening {
   double[][] difc = null;
 //         , s1ec = 0.0, s2ec = 0.0;
 
-  public static String[] functiontype = {"1", "2", "3"};
+  public static String[] functiontype = {"1", "2", "3", "4"};
   public static int functionnumber = functiontype.length;
-  static int maxNumberFunctionCoefficients = 20;
-  static int[] maxNcoeff = {7, 14, 20};
+  static int maxNumberFunctionCoefficients = 25;
+  static int[] maxNcoeff = {7, 14, 20, 25};
   int[] typeNumber = null;
 	public static final int broadeningTextureID = maxNumberFunctionCoefficients;
 //	int choosedBankNumber = 0;
@@ -200,6 +206,8 @@ public class InstrumentBroadeningGSAS1f extends InstrumentBroadening {
     isAbilitatetoRefresh = false;
 //	  choosedBankNumber = getBankNumber();
     int banks = banknumbers();
+    if (banks <= 0)
+      System.out.println(this + ": warning, number of banks " + banks);
     difc = new double[banks][maxNumberFunctionCoefficients];
     for (int bank = 0; bank < banks; bank++) {
 	    int type = getTypeNumber(bank);
@@ -210,9 +218,23 @@ public class InstrumentBroadeningGSAS1f extends InstrumentBroadening {
 			    break;
 		    case 3:
 			    difc[bank][0] = 0.0;
-			    for (int i = 0; i < 6; i++)
-				    difc[bank][i + 1] = getParameterLoopValues(i + maxNcoeff[1], bank);
+			    for (int i = 0; i < 6; i++) {
+            try {
+              difc[bank][i + 1] = getParameterLoopValues(i + maxNcoeff[1], bank);
+            } catch (Exception e) {
+              System.out.println("Object: " + this + ": par requested " + (i + maxNcoeff[1]) + " for bank " + bank);
+              e.printStackTrace();
+            }
+          }
 			    break;
+        case 4:
+          difc[bank][0] = 0.0;
+          for (int i = 0; i < 3; i++)
+            difc[bank][i + 1] = getParameterLoopValues(i + maxNcoeff[2], bank);
+          difc[bank][4] = 0.0;
+          for (int i = 0; i < 2; i++)
+            difc[bank][i + 5] = getParameterLoopValues(i + maxNcoeff[2] + 3, bank);
+          break;
 		    case 2: // not implemented todo
 		    default: {
 			    System.out.println(this + ": warning, function type " + type + " for bank " + bank + " not implemented!");
@@ -334,7 +356,12 @@ public class InstrumentBroadeningGSAS1f extends InstrumentBroadening {
   }
 
   public int getTypeNumber(int index) {
-    return Integer.valueOf(getFunctionType(index)).intValue();
+    try {
+      return Integer.valueOf(getFunctionType(index)).intValue();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return 1;
   }
 
   public String getFunctionType(int index) {
@@ -358,7 +385,7 @@ public class InstrumentBroadeningGSAS1f extends InstrumentBroadening {
   }
 
   public void addCoeff(int loop, int index, String value) {
-//    System.out.println(loop + " " + index + " " + getBankNumber() + " " + value);
+//    System.out.println(loop + " " + index + " " + banknumbers() + " " + value);
     addparameterloopField(loop, new Parameter(this, getParameterString(loop, index), value, "0",
         ParameterPreferences.getPref(getParameterString(loop, index) + ".min", "-10"),
         ParameterPreferences.getPref(getParameterString(loop, index) + ".max", "10"), false));
@@ -422,6 +449,7 @@ public class InstrumentBroadeningGSAS1f extends InstrumentBroadening {
         resetParameterToZero();
         int ncoeff = 0;
         int maxcoeff = 0;
+        int typeIndex = 0;
         int type = 0;
 	      String bankString = "";
         while (!endoffile) {
@@ -431,9 +459,8 @@ public class InstrumentBroadeningGSAS1f extends InstrumentBroadening {
             break;
           }
 //          System.out.println(linedata);
-
-          if (!linedata.toUpperCase().startsWith("COMMENT")) {
-            st = new StringTokenizer(linedata, " ,\t\r\n");
+          if (!linedata.toUpperCase().startsWith("COMM")) {
+            st = new StringTokenizer(linedata.substring(4), " ,\t\r\n");
 //				boolean functionReaded = false;
             while (st.hasMoreTokens()) {
 //              String lasttoken = token;
@@ -445,29 +472,44 @@ public class InstrumentBroadeningGSAS1f extends InstrumentBroadening {
                   banknumber = Integer.valueOf(bankString).intValue();
                 addBank(GSASbankCalibration.bankPrefix + bankString);
 //	              functionReaded = false;
-//                System.out.println("bank " + banknumber);
+  //              System.out.println("bank " + banknumber);
 //                for (int i = 0; i < maxNumberFunctionCoefficients; i++)
 //                  addCoeff(i, banknumber, "0.0");
                 ncoeff = 0;
-              } else if (token.toUpperCase().indexOf("PRCF1") != -1) {
+              } else if (token.toUpperCase().indexOf("PRCF") >= 0) {
 //                banknumber = Integer.valueOf(Misc.toStringDeleteBlank(linedata.substring(4, 6))).intValue();
-                token = Misc.toStringDeleteBlank(linedata.substring(10, 12));
-                if (token.length() == 1) {
+                if (Misc.toStringDeleteBlank(linedata.substring(11, 12)).length() == 0) {
+//                  token = Misc.toStringDeleteBlank(linedata.substring(10, 11));
+              //    if (token.length() == 1)
                   type = Integer.valueOf(token = st.nextToken()).intValue();
-                  if (type < 4)
+              //    else {
+              //      type = 1;
+              //      token = st.nextToken();
+              //    }
+                  if (type < 5)
                     addType(token);
 //                  System.out.println("Added type: " + token);
                   maxcoeff = Integer.valueOf(st.nextToken()).intValue();
-	                ncoeff = 0;
-	                if (type > 1)
-		                ncoeff = maxNcoeff[type - 2];
+                  ncoeff = 0;
+                  if (type > 1) {
+                    ncoeff = maxNcoeff[type - 2];
+  //                  System.out.println("Changing type  " + type + ", ncoeff: " + ncoeff);
+                  }
+                  typeIndex = type;
+               /* } else if ((token.toUpperCase().indexOf("PRCF") >= 0) &&
+                    (Misc.toStringDeleteBlank(linedata.substring(10, 11)).length() == 0)) {
+                  token = st.nextToken();*/
                 } else {
+                  if (token.toUpperCase().indexOf("PRCF") >= 0 && Misc.toStringDeleteBlank(linedata.substring(10, 11)).length() == 0) {
+                    token = st.nextToken();
+                  }
                   while (st.hasMoreTokens()) {
-                    int typeIndex = type - 1;
-//                    System.out.println("Bank " + banknumber + ", Coeff: " + ncoeff + " " + (typeIndex));
-                    if (typeIndex < maxNcoeff.length && (ncoeff >= 0 && ncoeff < maxNcoeff[typeIndex])) {
-                      addCoeff(ncoeff++, banknumber, token = st.nextToken());
-                    } else
+ //                   System.out.println("Bank " + banknumber + ", Coeff: " + ncoeff + " " + typeIndex + " < " + (maxNcoeff[typeIndex - 1] + 1) + " " + token);
+                    if (typeIndex <= maxNcoeff.length && (ncoeff >= 0 && ncoeff < (maxNcoeff[typeIndex - 1] + 1))) {
+                      token = st.nextToken();
+//                      System.out.println("Add coeff for " + banknumber + ", Coeff: " + ncoeff + " " + token);
+                      addCoeff(ncoeff++, banknumber - 1, token);
+                    } else if (st.hasMoreTokens())
                       token = st.nextToken();
                   }
                 }

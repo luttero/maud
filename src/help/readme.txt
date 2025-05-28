@@ -43,12 +43,15 @@ from the older one.
 
 Maud Version notes:
 
-(xx/04/2025):   2.9999. The "Van Kilmer" release.
-                EPSC4 was finally interfaced with Maud. You can select the
-                model of C. Tome and R. Lebensohn as a strain-stress model
-                for a phase. EPSC4 only works for one phase. Wait for
-                (E)VPSC models that work with multiple phases if you
-                need it.
+(28/05/2025):   2.9999. The "Van Kilmer" release.
+                The instrument INES is now supported for the Hippo wizard.
+                Use Mantid to export a GSAS instrument file (.prm) and the
+                data in GSAS format (multiple banks and patterns supported).
+                In the Hippo wizard load the instrument parameter file and
+                then the GSAS datafiles. In the next panel select the banks
+                you want to use and the range in d if you want to use only
+                a restricted one. You can change it later also.
+                Corrected a problem loading some CIF with C1/C-1 spacegroups.
 
 (24/03/2025):   2.9998. The "61" release.
                 Time is flying. Corrected a small bug affecting the importing

@@ -221,5 +221,8 @@
     <orderEntry type="library" name="MySQL-ConnectorJ" level="project" />
     <orderEntry type="library" name="newt.all" level="project" />
     <orderEntry type="library" name="EsquiClient" level="project" />
+    <orderEntry type="library" name="jspline" level="project" />
+    <orderEntry type="library" name="colt" level="project" />
+    <orderEntry type="library" name="jgl" level="project" />
   </component>
 </module>
