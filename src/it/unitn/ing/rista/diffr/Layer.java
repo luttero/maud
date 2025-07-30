@@ -161,6 +161,11 @@ public class Layer extends XRDcat {
       phasenumber = numberofelementPL(0);
 	    normalizePhaseQuantity(false);
     }
+    for (int i = 0; i < phasenumber; i++) {
+      Parameter par = ((Parameter) parameterloopField[0].elementAt(i));
+      if (par.getLabel().startsWith("_pd_phase_atom_%"))
+        par.setLabel("Volume fraction of " + getPhaseName(i));
+    }
     return phasenumber;
   }
 

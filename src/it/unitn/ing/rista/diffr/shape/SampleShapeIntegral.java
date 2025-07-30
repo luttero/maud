@@ -968,12 +968,9 @@ public class SampleShapeIntegral extends SampleShape implements Shape3D, SimpleF
 
     ShapePane shapeP;
     JSlider resolutionJS;
-    JRadioButton openGlRB;
-    JRadioButton idx3DRB;
     JTextField scalePlot;
     JTextField divisionTF;
     JComboBox symmetryCB;
-    JTextField meanSizeTF;
     JRadioButton velocityRB;
 
     public JShapeHarmIntOptionsD(Frame parent, XRDcat obj) {

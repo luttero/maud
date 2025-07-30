@@ -119,21 +119,21 @@ public class simplehklTableModel extends hklTableModel {
     switch (column) {
       case 0:
         if (row < numRows)
-          return new Integer(thephase.geth(row));
+          return thephase.geth(row);
         else
           return unitHKL[row - numRows][0];
       case 1:
         if (row < numRows)
-          return new Integer(thephase.getk(row));
+          return thephase.getk(row);
         else
           return unitHKL[row - numRows][1];
       case 2:
         if (row < numRows)
-          return new Integer(thephase.getl(row));
+          return thephase.getl(row);
         else
           return unitHKL[row - numRows][2];
       case 3:
-        return new Boolean(thephase.isTextureActive(row));
+        return thephase.isTextureActive(row);
       default:
         {
           return null;

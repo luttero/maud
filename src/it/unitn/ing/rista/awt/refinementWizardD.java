@@ -43,6 +43,16 @@ public class refinementWizardD extends myJFrame {
 
   JRadioButton[] refineRB;
 
+  public static String[] wizardAnalysisTitle = {"Background and scale parameters", "Previous + basic phase parameters",
+      "Previous + microstructure parameters", "Previous + crystal structure parameters",
+      "All parameters for texture", "Crystal+Texture parameters",
+      "All parameters for strain", "Crystal+Strain analysis",
+      "Strain+Texture parameters", "Crystal+Texture+Strain parameters",
+      "Quantitative analysis", "Crystal structure analysis", "Texture analysis",
+      "Crystal+Texture analysis", "Strain analysis", "Crystal+Strain analysis",
+      "Strain+Texture analysis", "Crystal+Texture+Strain analysis",
+      "INEL PSD calibration"};
+
   public refinementWizardD(Frame parentFrame) {
     super(parentFrame, "Refinement wizard");
 
@@ -54,17 +64,7 @@ public class refinementWizardD extends myJFrame {
 
 //    FilePar parameterfile = (FilePar) getFileParent();
 
-    String[] labelRB = {"Background and scale parameters", "Previous + basic phase parameters",
-                        "Previous + microstructure parameters", "Previous + crystal structure parameters",
-                        "All parameters for texture", "Crystal+Texture parameters",
-                        "All parameters for strain", "Crystal+Strain analysis",
-                        "Strain+Texture parameters", "Crystal+Texture+Strain parameters",
-                        "Quantitative analysis", "Crystal structure analysis", "Texture analysis",
-                        "Crystal+Texture analysis", "Strain analysis", "Crystal+Strain analysis",
-                        "Strain+Texture analysis", "Crystal+Texture+Strain analysis",
-                        "INEL PSD calibration"};
-
-    refineRB = new JRadioButton[labelRB.length];
+    refineRB = new JRadioButton[wizardAnalysisTitle.length];
 
     Container c1 = getContentPane();
     c1.setLayout(new BorderLayout());
@@ -89,7 +89,7 @@ public class refinementWizardD extends myJFrame {
       JPanel jp = new JPanel();
       jp.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
       refinePanel.add(jp);
-      refineRB[i] = new JRadioButton(labelRB[i]);
+      refineRB[i] = new JRadioButton(wizardAnalysisTitle[i]);
       customB = new JButton("Custom");
       jp.add(refineRB[i]);
       rbg.add(refineRB[i]);
@@ -108,12 +108,12 @@ public class refinementWizardD extends myJFrame {
 //    specialPanel.setBorder(new TitledBorder("Special"));
     principalPanel.add(BorderLayout.EAST, specialPanel);
 
-    for (int i = 10; i < labelRB.length; i++) {
+    for (int i = 10; i < wizardAnalysisTitle.length; i++) {
 //      final int index = i;
       JPanel jp = new JPanel();
       jp.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
       specialPanel.add(jp);
-      refineRB[i] = new JRadioButton(labelRB[i]);
+      refineRB[i] = new JRadioButton(wizardAnalysisTitle[i]);
       jp.add(refineRB[i]);
       rbg.add(refineRB[i]);
     }

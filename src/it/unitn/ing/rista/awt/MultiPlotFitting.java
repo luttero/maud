@@ -321,11 +321,11 @@ public class MultiPlotFitting extends PlotFitting {
               for (int ij = 0; ij < numberphases; ij++)
                 if (tmpphase == phaselist[ij])
                   phaseindex = ij;
-	            // todo modify for more peaks par pattern
+	            // todo modify for more peaks per pattern
 	            double pos = adataset.getActiveDataFile(0).getPositions(tmpphase)[peaklist.elementAt(i).getOrderPosition()][0][ijn];
               datapeak[j] = datafile[0].convertXDataForPlot(pos, wave, mode);
 
-              datapeak[j + 1] = (double) (phaseindex + 1);
+              datapeak[j + 1] = phaseindex + 1;
             }
             datap[ijn] = positions.loadPeakSet(datapeak, numberofRefl);
             datap[ijn].linestyle = 0;

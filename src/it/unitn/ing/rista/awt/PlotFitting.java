@@ -566,6 +566,14 @@ public class PlotFitting extends PlotDataFile {
     showPeakSmoothing(thePlotPanel.datafile[0]);
   }
 
+  public void peaksLocationManualFrame() {
+    int dtanumber = thePlotPanel.datafile[0].computeDataNumber();
+    double[] fit = new double[dtanumber];
+    double[][] peaks = thePlotPanel.datafile[0].peaksLocationManual(fit);
+    if (peaks != null)
+      showNewFrame(peaks, fit);
+  }
+
   public void peaksLocation() {
     prepareForTools(true);
     int dtanumber = thePlotPanel.datafile[0].computeDataNumber();
@@ -664,7 +672,7 @@ public class PlotFitting extends PlotDataFile {
 		eta /= datafile.length;
 		theta2 /= datafile.length;
 
-		double[][] dataToExport = DataFileSet.getSummedExperimentalComputedData(thePlotPanel.datafile, 0);
+		double[][] dataToExport = DataFileSet.getSummedExperimentalComputedData(thePlotPanel.datafile, 0, true);
 
 		String filename = Utility.openFileDialog(this, "Save as CIF...",
 				FileDialog.SAVE, thePlotPanel.datafile[0].getFilePar().getDirectory(), null, "put a name.cif");
@@ -745,7 +753,7 @@ public class PlotFitting extends PlotDataFile {
 			eta /= datafile.length;
 			theta2 /= datafile.length;
 
-			double[][] dataToExport = DataFileSet.getSummedExperimentalComputedData(thePlotPanel.datafile, 0);
+			double[][] dataToExport = DataFileSet.getSummedExperimentalComputedData(thePlotPanel.datafile, 0, true);
 
 			String filename = Constants.cachesDirectory + "fpsmDatafile.cif";
 			String[] folderAndName = Misc.getFolderandName(filename);
@@ -864,7 +872,7 @@ public class PlotFitting extends PlotDataFile {
 	    int mode = checkScaleModeX();
 	    if (!from_Plot)
 		    mode = 0;
-	    double[][] dataToExport = DataFileSet.getSummedExperimentalComputedData(thePlotPanel.datafile, mode);
+	    double[][] dataToExport = DataFileSet.getSummedExperimentalComputedData(thePlotPanel.datafile, mode, true);
 
       BufferedWriter output = Misc.getWriter(folder, filename);
       try {
@@ -918,7 +926,7 @@ public class PlotFitting extends PlotDataFile {
       int mode = checkScaleModeX();
       if (!from_Plot)
         mode = 0;
-      double[][] dataToExport = DataFileSet.getSummedExperimentalComputedData(thePlotPanel.datafile, mode);
+      double[][] dataToExport = DataFileSet.getSummedExperimentalComputedData(thePlotPanel.datafile, mode, true);
       // normalize
       double total = 0.0;
       for (int i = 0; i < dataToExport[1].length; i++)
@@ -1139,57 +1147,15 @@ public class PlotFitting extends PlotDataFile {
   }
 
   public void addPeak(double dToRemove) {
-/*    int numberOfPeaks = peaksList[0].length;
-    double[][] newPeaksList = new double[2][numberOfPeaks + 1];
-    if (numberOfPeaks <= 1) {
-      newPeaksList[0][numberOfPeaks] = dToRemove;
-      newPeaksList[1][numberOfPeaks] = 1.0;
-    } else {
-      int indexToAdd = 0;
-      int sign = (int) ((peaksList[0][numberOfPeaks - 1] - peaksList[0][0]) /
-              Math.abs(peaksList[0][numberOfPeaks - 1] - peaksList[0][0]));
-      for (int i = 0; i < numberOfPeaks; i++) {
-        if (sign * peaksList[0][i] < dToRemove) {
-          indexToAdd = i + 1;
-        } else
-          break;
-      }
-      int j = 0;
-      for (int i = 0; i < numberOfPeaks + 1; i++) {
-        if (i != indexToAdd) {
-          newPeaksList[0][i] = peaksList[0][j];
-          newPeaksList[1][i] = peaksList[1][j++];
-        } else {
-          newPeaksList[0][i] = dToRemove;
-          newPeaksList[1][i] = 1.0;
-        }
-      }
-    }
-    peaksList = newPeaksList;
-    updatePlotForPeaks();*/
+    thePlotPanel.addPeak(dToRemove);
   }
 
   public void removePeak(double dToRemove) {
-/*    int numberOfPeaks = peaksList[0].length;
-    double[][] newPeaksList = new double[2][numberOfPeaks - 1];
-    int indexToRemove = 0;
-    double dist = Math.abs(peaksList[0][0] - dToRemove);
-    for (int i = 1; i < numberOfPeaks; i++) {
-      double dist1 = Math.abs(peaksList[0][i] - dToRemove);
-      if (dist1 < dist) {
-        dist = dist1;
-        indexToRemove = i;
-      }
-    }
-    int j = 0;
-    for (int i = 0; i < numberOfPeaks; i++) {
-      if (i != indexToRemove) {
-        newPeaksList[0][j] = peaksList[0][i];
-        newPeaksList[1][j++] = peaksList[1][i];
-      }
-    }
-    peaksList = newPeaksList;
-    updatePlotForPeaks();*/
+    thePlotPanel.removePeak(dToRemove);
+  }
+
+  public void removeAllPeaks() {
+    thePlotPanel.removeAllPeaks();
   }
 
   public void showNewFrame() {
@@ -1298,7 +1264,7 @@ public class PlotFitting extends PlotDataFile {
 	            double pos = adataset.getActiveDataFile(0).getPositions(tmpphase)[peaklist.elementAt(i).getOrderPosition()][0][ijn];
 	            datapeak[j] = thePlotPanel.datafile[0].convertXDataForPlot(pos, wave, mode);
 
-              datapeak[j + 1] = (double) (phaseindex + 1);
+              datapeak[j + 1] = phaseindex + 1;
             }
             thePlotPanel.datap[ijn].deleteData();
             thePlotPanel.datap[ijn].linestyle = 0;
@@ -2125,6 +2091,15 @@ public class PlotFitting extends PlotDataFile {
           public void actionPerformed(ActionEvent ae) {
             double d[] = positionBox.getClosestPoint(x1, y1);
             PlotFitting.this.removePeak(d[0]);
+          }
+        });
+        popup.add(mi);
+
+        mi = new JMenuItem("Remove all peaks");
+        mi.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent ae) {
+            double d[] = positionBox.getClosestPoint(x1, y1);
+            PlotFitting.this.removeAllPeaks();
           }
         });
         popup.add(mi);

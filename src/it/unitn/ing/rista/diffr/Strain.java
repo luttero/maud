@@ -189,7 +189,7 @@ public class Strain extends XRDcat {
 										double position = datafile.getPositions(aphase)[j][ppp][l];
 										if (!Double.isNaN(pf)) {
 											numberDataPoints++;
-											double[] angles = datafile.getTextureAngles(position);
+											double[] angles = datafile.getTextureAngles(position, ppp);
 											double[] mAngles = datafile.getTiltingAngle();
 											int bankNumber = datafile.getBankNumber() + 1;
 											double chi = angles[0];
@@ -278,23 +278,25 @@ public class Strain extends XRDcat {
 							for (int k = 0; k < dataset.activedatafilesnumber(); k++) {
 								DiffrDataFile datafile = dataset.getActiveDataFile(k);
 								for (int ppp = 0; ppp < datafile.positionsPerPattern; ppp++) {
-										double pf = datafile.getStrains(aphase, reflIndex)[ppp][0];
-										double position = datafile.getPositions(aphase)[reflIndex][ppp][0];
-										if (!Double.isNaN(pf)) {
+                  for (int l = 0; l < radCount; l++) {
+                    double pf = datafile.getStrains(aphase, reflIndex)[ppp][l];
+                    double position = datafile.getPositions(aphase)[reflIndex][ppp][l];
+                    if (!Double.isNaN(pf)) {
 //											numberDataPoints++;
-											double[] angles = datafile.getTextureAngles(position);
-											double chi = angles[0];
-											double phi = angles[1];
-											double sinpsi = MoreMath.sind(chi);
-											sinpsi *= sinpsi;
-											double ds = arefl.d_space * Math.exp(pf);
-											PFwriter.write(chi + " " + phi + " " + pf + " " + position + " " + ds + " " + sinpsi);
-											PFwriter.write(Constants.lineSeparator);
-											double[] one = new double[2];
-											one[0] = sinpsi;
-											one[1] = ds;
-											data.add(one);
-										}
+                      double[] angles = datafile.getTextureAngles(position, ppp);
+                      double chi = angles[0];
+                      double phi = angles[1];
+                      double sinpsi = MoreMath.sind(chi);
+                      sinpsi *= sinpsi;
+                      double ds = arefl.d_space * Math.exp(pf);
+                      PFwriter.write(chi + " " + phi + " " + pf + " " + position + " " + ds + " " + sinpsi);
+                      PFwriter.write(Constants.lineSeparator);
+                      double[] one = new double[2];
+                      one[0] = sinpsi;
+                      one[1] = ds;
+                      data.add(one);
+                    }
+                  }
 								}
 							}
 							int dataNumber = data.size();

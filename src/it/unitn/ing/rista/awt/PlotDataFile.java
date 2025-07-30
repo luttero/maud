@@ -172,10 +172,17 @@ public class PlotDataFile extends GraphFrame {
       }
     });
 
-    toolsMenu.add(menuitem = new JMenuItem("Peaks location"));
+    toolsMenu.add(menuitem = new JMenuItem("Peaks location (FT)"));
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         peaksLocationFrame();
+      }
+    });
+
+    toolsMenu.add(menuitem = new JMenuItem("Peaks location (manual)"));
+    menuitem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        peaksLocationManualFrame();
       }
     });
 
@@ -310,6 +317,9 @@ public class PlotDataFile extends GraphFrame {
   }
 
   public void peaksLocationFrame() {
+  }
+
+  public void peaksLocationManualFrame() {
   }
 
   public void exportPeaksDicvol91() {

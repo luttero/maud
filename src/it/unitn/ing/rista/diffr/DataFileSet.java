@@ -379,7 +379,8 @@ public class DataFileSet extends XRDcat {
 		return dataphaseForPlot;
 	}
 
-	static public double[][] getSummedExperimentalComputedData(DiffrDataFile[] datafile, int mode) {
+	static public double[][] getSummedExperimentalComputedData(DiffrDataFile[] datafile, int mode,
+                                                             boolean meanIntensity) {
 
 		if (datafile == null || datafile.length == 0)
 			return null;
@@ -436,9 +437,9 @@ public class DataFileSet extends XRDcat {
 						}
 					}
 				}
-				if (total > 0)
+				if (total > 0 && meanIntensity)
 					dataToExport[1][is1] /= total;
-				if (totalFit > 0)
+				if (totalFit > 0 && meanIntensity)
 					dataToExport[2][is1] /= totalFit;
 			}
 		}
@@ -1631,7 +1632,9 @@ public class DataFileSet extends XRDcat {
       return;
     }
 
-    double[][] dataToExport = DataFileSet.getSummedExperimentalComputedData(datafiles, 0);
+    boolean meanIntensity = MaudPreferences.getBoolean("sumSpectra.meanIntensity", true);
+
+    double[][] dataToExport = DataFileSet.getSummedExperimentalComputedData(datafiles, 0, meanIntensity);
     int ylength = datafiles.length;
     BufferedWriter output = Misc.getWriter(folder, filename);
     try {
@@ -1643,7 +1646,7 @@ public class DataFileSet extends XRDcat {
       for (DiffrDataFile datafile : datafiles) {
         if (datafile.energyDispersive)
           energyDispersive = true;
-        double[] tilt = datafile.getTiltingAngle();
+        double[] tilt = datafile.getUncorrectedTiltingAngle();
 //          if (i == 0) firstTilt = tilt;
         for (int ib = 0; ib < DiffrDataFile.maxAngleNumber; ib++)
           meanAngles[ib] += tilt[ib] / ylength;
@@ -1725,8 +1728,8 @@ public class DataFileSet extends XRDcat {
 		datafileOrdered.sort(new AngleComparator(selectedIndex));
 
 		Vector<Vector<DiffrDataFile>> datafileTable = new Vector<>();
-		double startingAngle = datafileOrdered.elementAt(0).getTiltingAngle()[selectedIndex];
-		double maxAngle = datafileOrdered.elementAt(datafilenumber - 1).getTiltingAngle()[selectedIndex];
+		double startingAngle = datafileOrdered.elementAt(0).getUncorrectedTiltingAngle()[selectedIndex];
+		double maxAngle = datafileOrdered.elementAt(datafilenumber - 1).getUncorrectedTiltingAngle()[selectedIndex];
 		double angle = startingAngle;
 		int index = 0;
 		int groupIndex = 0;
@@ -1735,7 +1738,7 @@ public class DataFileSet extends XRDcat {
 			boolean nextGroup = false;
 			Vector<DiffrDataFile> datalist = new Vector<>();
 			while (index < datafilenumber && !nextGroup) {
-				double actualAngle = datafileOrdered.elementAt(index).getTiltingAngle()[selectedIndex];
+				double actualAngle = datafileOrdered.elementAt(index).getUncorrectedTiltingAngle()[selectedIndex];
 //				System.out.println(index + " " + angle + " " + nextAngle + " " + actualAngle);
 				if (actualAngle >= angle && actualAngle <= nextAngle) {
 					datalist.add(datafileOrdered.elementAt(index++));
@@ -1765,7 +1768,7 @@ public class DataFileSet extends XRDcat {
 					meanAngle[k] = 0;
 				for (int j = 0; j < datafilenumber; j++) {
 					for (int k = 0; k < DiffrDataFile.maxAngleNumber; k++)
-						meanAngle[k] += datalist.elementAt(j).getTiltingAngle()[k];
+						meanAngle[k] += datalist.elementAt(j).getUncorrectedTiltingAngle()[k];
 					if (datalist.elementAt(j).useCountTimeToScale())
 						useCountTimeToScale = true;
 					countingTime += datalist.elementAt(j).getCountTimeValue();
@@ -1899,7 +1902,7 @@ public class DataFileSet extends XRDcat {
     for (int i = 0; i < datafilenumber; i++) {
       tmpdatafile = getDataFile(i);
       if (tmpdatafile.getComputePermission()) {
-        double[] tilt = tmpdatafile.getTiltingAngle();
+        double[] tilt = tmpdatafile.getUncorrectedTiltingAngle();
         check = getAnglesPosition(angles, tilt, sameAngle, angleRange);
         if (check == -1) {
           angles.addElement(tilt);
@@ -1928,6 +1931,8 @@ public class DataFileSet extends XRDcat {
     } catch (IOException ignored) {
     }
 
+    boolean meanIntensity = MaudPreferences.getBoolean("sumSpectra.meanIntensity", true);
+
     boolean[] verifySameAngles = new boolean[sameAngle.length];
     double[] meanAngles = new double[angle.length];
     for (int ij = 0; ij < groupfilenumber; ij++) {
@@ -1954,11 +1959,11 @@ public class DataFileSet extends XRDcat {
           tmpdatafile = datalist.elementAt(i);
           if (tmpdatafile.energyDispersive)
           	energyDispersive = true;
-          double[] tilt = tmpdatafile.getTiltingAngle();
+          double[] tilt = tmpdatafile.getUncorrectedTiltingAngle();
 	        bank = tmpdatafile.getBankNumber();
 	        if (i == 0) {
             firstTilt = tilt;
-            arraycopy(tilt, 0, meanAngles, 0, sameAngle.length);
+            arraycopy(tilt, 0, meanAngles, 0, tilt.length);
 		        bankFirst = bank;
           }
 	        int ib;
@@ -1988,7 +1993,7 @@ public class DataFileSet extends XRDcat {
               intensity[j - tmpdatafile.startingindex] = tmpdatafile.getYData(j);
             }
           } else {
-            for (int kj = 0; kj < sameAngle.length; kj++)
+            for (int kj = 0; kj < tilt.length; kj++)
               meanAngles[kj] += tilt[kj];
             for (int j = tmpdatafile.startingindex; j < tmpdatafile.finalindex; j++) {
               intensity[j - tmpdatafile.startingindex] += tmpdatafile.getYData(j);
@@ -2014,6 +2019,9 @@ public class DataFileSet extends XRDcat {
             output.newLine();
           }
         }
+        int normaliseBy = datafilenumber;
+        if (!meanIntensity)
+          normaliseBy = 1;
         output.write(DiffrDataFile.diclistc[7] + ' ');
         output.write(tmpdatafile.getString(7));
         output.newLine();
@@ -2025,7 +2033,7 @@ public class DataFileSet extends XRDcat {
         output.write(DiffrDataFile.intensityCalcCIFstring);
         output.newLine();
         for (int i = 0; i < datanumber; i++) {
-          output.write(' ' + Fmt.format(xcoord[i]) + ' ' + Fmt.format(intensity[i] / datafilenumber));
+          output.write(' ' + Fmt.format(xcoord[i]) + ' ' + Fmt.format(intensity[i] / normaliseBy));
           output.newLine();
         }
       } catch (IOException ignored) {
@@ -2059,7 +2067,7 @@ public class DataFileSet extends XRDcat {
 	  for (int i = 0; i < size; i++) {
 		  angle = angles.elementAt(i);
 		  boolean check = true;
-		  for (int j = 0; j < sameAngle.length; j++)
+		  for (int j = 0; j < tilt.length; j++)
 			  if (sameAngle[j] && !checkAngle(tilt[j], angle[j], rangeAngles[j]))
 				  check = false;
 
@@ -2216,7 +2224,7 @@ public class DataFileSet extends XRDcat {
       output.write("_riet_meas_datafile_calibrated false");
       output.newLine();
       output.newLine();
-      double[] tilt = datafile.getTiltingAngle();
+      double[] tilt = datafile.getUncorrectedTiltingAngle();
       for (int ib = 0; ib < tilt.length; ib++) {
         output.write(DiffrDataFile.diclistc[ib + 1] + ' ');
         output.write(Fmt.format(tilt[ib]));
@@ -2666,6 +2674,20 @@ public class DataFileSet extends XRDcat {
     return (Parameter) parameterloopField[etaBackgroundID].elementAt(index);
   }
 
+  public void resetBackgrounds() {
+    resetCoefficients(backgroundID);
+    resetCoefficients(chiBackgroundID);
+    resetCoefficients(etaBackgroundID);
+    if (numbercoefbackg() > 0) {
+      getbackgcoef(0).setValue(1.0);
+    }
+  }
+
+  public void resetCoefficients(int index) {
+    for (int i = 0; i < numberofelementPL(index); i++)
+      ((Parameter) parameterloopField[index].elementAt(i)).setValue(0.0);
+  }
+
   public int backgpeaksnumber() {
     return numberofelementSubL(1);
   }
@@ -2906,8 +2928,10 @@ public class DataFileSet extends XRDcat {
           char ch = plotOutput2DFileName.charAt(plotOutput2DFileName.length() - 1);
           if (ch == '_' || ch == '-')
             dst = plotOutput2DFileName + label + ".png";
-          else
-            dst = plotOutput2DFileName + ".png";
+          else {
+            if (!plotOutput2DFileName.endsWith(".png"))
+              dst = plotOutput2DFileName + ".png";
+          }
 					Misc.deleteFile(dst);
 //          System.out.println("Save 2D plot as: " + dst);
 					BeartexPFPlot.savePic(fileImage, "png", dst, comp);
@@ -2971,8 +2995,10 @@ public class DataFileSet extends XRDcat {
           char ch = plotOutputFileName.charAt(plotOutputFileName.length() - 1);
           if (ch == '_' || ch == '-')
             dst = plotOutputFileName + label + ".png";
-          else
-            dst = plotOutputFileName + ".png";
+          else {
+            if (!plotOutputFileName.endsWith(".png"))
+              dst = plotOutputFileName + ".png";
+          }
 					Misc.deleteFile(dst);
 					BeartexPFPlot.savePic(fileImage, "png", dst, comp);
 
@@ -3692,7 +3718,8 @@ public class DataFileSet extends XRDcat {
 
     double Rhkl;
 
-    double intensity = ainstrument.getIntensityValue();
+    int numberPositions = asample.getSampleShapeModel().getDifferentPositionsNumber();
+    double intensity = ainstrument.getIntensityValue() / numberPositions;
 //    boolean distribution = needDistribution();
 
 //			 System.out.println("Adding peaks: " + numberofpeaks);
@@ -3789,9 +3816,9 @@ public class DataFileSet extends XRDcat {
     return getSample().getSampleAsymmetry(x, tilting_angles);
   }
 
-  public double[] getTextureAngles(DiffrDataFile datafile, double[] tilting_angles, double twotheta) {
+  public double[] getTextureAngles(DiffrDataFile datafile, double[] tilting_angles, double twotheta, int ppp) {
     return getInstrument().getTextureAngles(datafile, tilting_angles,
-		    getSample().getSampleAngles(), twotheta);
+		    getSample(), twotheta, ppp);
   }
 
   public double[][] getTextureAngles(DiffrDataFile datafile, double[] tilting_angles, double[] twotheta) {
@@ -3819,8 +3846,8 @@ public class DataFileSet extends XRDcat {
 	}
 
   public double getCorrectedPosition(Sample asample, double x, double[] tilting_angles,
-                                     DiffrDataFile adatafile) {
-    return getInstrument().getCorrectedPosition(asample, x, tilting_angles, adatafile);
+                                     DiffrDataFile adatafile, int ppp) {
+    return getInstrument().getCorrectedPosition(asample, x, tilting_angles, adatafile, ppp);
   }
 
 	public boolean extractIntensity() {
@@ -4121,10 +4148,10 @@ public class DataFileSet extends XRDcat {
     int datafilenumber = activedatafilesnumber();
     for (int i = 0; i < datafilenumber; i++) {
       DiffrDataFile adatafile1 = getActiveDataFile(i);
-      double[] angles = adatafile1.getTiltingAngle();
+      double[] angles = adatafile1.getUncorrectedTiltingAngle();
       for (int j = 0; j < i; j++) {
         DiffrDataFile adatafile2 = getActiveDataFile(j);
-        double[] angles2 = adatafile2.getTiltingAngle();
+        double[] angles2 = adatafile2.getUncorrectedTiltingAngle();
         boolean sameAngles = true;
         for (int k = 0; k < angles.length; k++) {
           if (useAngle[k] && angles[k] != angles2[k]) {
@@ -4235,7 +4262,7 @@ public class DataFileSet extends XRDcat {
   }
 
   public void sortPeakArray() {
-    sort(thepeaklist, new dhklComparer());
+    thepeaklist.sort(new dhklComparer());
   }
 
 	public void resetPeakArray() {
@@ -4260,17 +4287,17 @@ public class DataFileSet extends XRDcat {
   }
 
   public void sortByBankNumber() {
-    sort(getDataFileList(), new datafileBankComparer());
+    getDataFileList().sort(new datafileBankComparer());
     getDataFileList().updateList();
   }
 
   public void sortByAngles(int[] order) {
-    sort(getDataFileList(), new datafileAnglesComparer(order));
+    getDataFileList().sort(new datafileAnglesComparer(order));
     getDataFileList().updateList();
   }
 
   public void sortByName() {
-    sort(getDataFileList(), new datafileNameComparer());
+    getDataFileList().sort(new datafileNameComparer());
     getDataFileList().updateList();
   }
 
@@ -4310,11 +4337,13 @@ public class DataFileSet extends XRDcat {
 		for (int i = 0; i < activedatafilesnumber(); i++) {
 			DiffrDataFile adatafile = getActiveDataFile(i);
 			for (int j = 0; j < adatafile.positionsPerPattern; j++) {
-				boolean goodPoint = adatafile.isInsideRange(adatafile.getPositions(aphase)[hklnumbersel][j][0]);
+        for (int r = 0; r < adatafile.radiationsNumber; r++) {
+          boolean goodPoint = adatafile.isInsideRange(adatafile.getPositions(aphase)[hklnumbersel][j][r]);
 //				System.out.println(goodPoint);
-				if (goodPoint)
-					total++;
-			}
+          if (goodPoint)
+            total++;
+        }
+      }
 		}
 		return total;
 	}
@@ -4348,12 +4377,11 @@ public class DataFileSet extends XRDcat {
     }
 
     public int compare(Object obj1, Object obj2) {
-      double[] angles1 = ((DiffrDataFile) obj1).getTiltingAngle();
-      double[] angles2 = ((DiffrDataFile) obj2).getTiltingAngle();
-//      for (int ordervalue : order) {
+      double[] angles1 = ((DiffrDataFile) obj1).getUncorrectedTiltingAngle();
+      double[] angles2 = ((DiffrDataFile) obj2).getUncorrectedTiltingAngle();
       for (int ordervalue : order) {
         double diff = angles2[ordervalue] - angles1[ordervalue];
-        if (diff != 0.0) {
+        if (Math.abs(diff) > 1.0E-8) {
           if (diff > 0)
             return -1;
           return 1;
@@ -4419,24 +4447,26 @@ public class DataFileSet extends XRDcat {
 
 	class AngleComparator implements Comparator {
 
-		public int selectedAngle = 0;
+    public int selectedAngle = 0;
 
-		AngleComparator(int index) {
-			selectedAngle = index;
-		}
+    AngleComparator(int index) {
+      selectedAngle = index;
+    }
 
-		public int compare(Object obj1, Object obj2) {
-			double dspace1 = ((DiffrDataFile) obj1).getTiltingAngle()[selectedAngle];
-			double dspace2 = ((DiffrDataFile) obj2).getTiltingAngle()[selectedAngle];
-			double diff = dspace1 - dspace2;
+    public int compare(Object obj1, Object obj2) {
+      double dspace1 = ((DiffrDataFile) obj1).getUncorrectedTiltingAngle()[selectedAngle];
+      double dspace2 = ((DiffrDataFile) obj2).getUncorrectedTiltingAngle()[selectedAngle];
+      double diff = dspace1 - dspace2;
 
-			if (diff == 0.0)
-				return 0;
-			else if (diff > 0)
-				return 1;
-			return -1;
-		}
-	}
+      if (Math.abs(diff) > 1.0E-8) {
+        if (diff > 0)
+          return 1;
+        return -1;
+      }
+      return 0;
+    }
+
+  }
 
 }
 

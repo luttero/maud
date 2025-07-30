@@ -61,6 +61,7 @@ public class xyDataFile extends it.unitn.ing.rista.diffr.DiffrDataFile {
         dspacingbase = false;
         Vector x = new Vector(100, 100);
         Vector y = new Vector(100, 100);
+        Vector e = new Vector(100, 100);
 
         datanumber = 0;
 
@@ -90,6 +91,10 @@ public class xyDataFile extends it.unitn.ing.rista.diffr.DiffrDataFile {
                 datanumber++;
                 x.addElement(n1);
                 y.addElement(n2);
+                if (st.hasMoreTokens()) {
+                  token2 = st.nextToken();
+                  e.addElement(Double.valueOf(token2));
+                }
               }
             }
           } catch (Exception ge) {
@@ -109,6 +114,8 @@ public class xyDataFile extends it.unitn.ing.rista.diffr.DiffrDataFile {
 //            intensityValue = 0.0;
           setYData(i, intensityValue);
           double tmpweight = Math.sqrt(Math.abs(intensityValue));
+          if (e.size() > i)
+            tmpweight = ((Double) e.elementAt(i)).doubleValue();
           if (tmpweight != 0.0)
             setWeight(i, 1.0 / tmpweight);
           else

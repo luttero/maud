@@ -224,5 +224,6 @@
     <orderEntry type="library" name="jspline" level="project" />
     <orderEntry type="library" name="colt" level="project" />
     <orderEntry type="library" name="jgl" level="project" />
+    <orderEntry type="library" name="xraylib" level="project" />
   </component>
 </module>

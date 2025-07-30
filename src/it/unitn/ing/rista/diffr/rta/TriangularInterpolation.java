@@ -182,8 +182,8 @@ public class TriangularInterpolation extends Interpolation {
     return wimv.getTextureAngles(pole, point);
   }
 
-  public double getPoleIntensity(int pole, int point) {
-    return wimv.getPoleIntensity(pole, point);
+  public double getPoleIntensity(int pole, int point, int ppp, int l) {
+    return wimv.getPoleIntensity(pole, point, ppp, l);
   }
 
   public double getWeight(int pole, int point) {

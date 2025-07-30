@@ -266,11 +266,11 @@ public class GeometryDiffractometer extends Geometry {
 	}
 
   public double getCorrectedPosition(Sample asample, double x, double[] tilting_angles,
-                                     DiffrDataFile adatafile) {
+                                     DiffrDataFile adatafile, int ppp) {
     // we delegate this computation to the measurement object, because it could be different for
     // a position sensistive detector or a point one.
     double[] angles = getTrueTiltingAngles(adatafile, tilting_angles, x);
-    return getMeasurement().getCorrectedPosition(asample, x, angles, getRadius(adatafile), adatafile);
+    return getMeasurement().getCorrectedPosition(asample, x, angles, getRadius(adatafile), adatafile, ppp);
   }
 
   public JOptionsDialog getOptionsDialog(Frame parent) {

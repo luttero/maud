@@ -90,7 +90,7 @@ public class Measurement extends XRDcat {
             + 1.0 / MoreMath.sind(omega));
   }
 
-  public double getCorrectedPosition(Sample asample, double x, double[] tilting_angles, double radius, DiffrDataFile adatafile) {
+  public double getCorrectedPosition(Sample asample, double x, double[] tilting_angles, double radius, DiffrDataFile adatafile, int ppp) {
     return x;
   }
 

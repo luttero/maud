@@ -1970,7 +1970,7 @@ System.out.println(SpecialSMx_Identity);*/
 
     for (i = 0; i < nList; i++) vectorList.addElement(i);
 
-    Collections.sort(vectorList, new listComparer());
+    vectorList.sort(new listComparer());
 
     for (i = 0; i < nList; i++) List_iList[i] = ((Integer) vectorList.elementAt(i)).intValue();
 

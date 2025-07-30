@@ -184,7 +184,6 @@ public class MarchDollaseTexture extends Texture {
 		    DataFileSet dataset = asample.getActiveDataSet(j);
 		    for (int k = 0; k < dataset.activedatafilesnumber(); k++) {
 			    DiffrDataFile datafile = dataset.getActiveDataFile(k);
-//			      for (int ppp = 0; ppp < datafile.positionsPerPattern; ppp++)
 			    datafile.setTextureFactors(aphase, textF);
 		    }
 	    }

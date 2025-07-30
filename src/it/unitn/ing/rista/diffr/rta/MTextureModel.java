@@ -421,17 +421,17 @@ public class MTextureModel extends DiscreteODFTexture {
 				int numberDataPoints = 0;
 				for (int i = 0; i < numberDatasets; i++) {
 					DataFileSet dataset = asample.getActiveDataSet(i);
-					int radCount = dataset.getInstrument().getRadiationType().getLinesCount();
+//					int radCount = dataset.getInstrument().getRadiationType().getLinesCount();
 					for (int k = 0; k < dataset.activedatafilesnumber(); k++) {
 						DiffrDataFile datafile = dataset.getActiveDataFile(k);
 						for (int ppp = 0; ppp < datafile.positionsPerPattern; ppp++) {
-							for (int l = 0; l < radCount; l++) {
+							for (int l = 0; l < datafile.radiationsNumber; l++) {
 								double[] pfd = new double[3];
-								pfd[2] = datafile.getExperimentalTextureFactors(aphase, j)[ppp][0];
-								double position = datafile.getPositions(aphase)[j][ppp][0];
+								pfd[2] = datafile.getExperimentalTextureFactors(aphase, j)[ppp][l];
+								double position = datafile.getPositions(aphase)[j][ppp][l];
 								if (!Double.isNaN(pfd[2]) && datafile.isInsideRange(position)) {
 									numberDataPoints++;
-									double[] angles = datafile.getTextureAngles(position);
+									double[] angles = datafile.getTextureAngles(position, ppp);
 									pfd[0] = angles[0];
 									pfd[1] = angles[1];
 //									System.out.println(pfd[0] + " " + pfd[1] + " " + (pfd[2] * 100));
@@ -494,7 +494,7 @@ public class MTextureModel extends DiscreteODFTexture {
 		return 0;
 	}
 
-	public Reflection getReflection(int pole, int partial) {
+/*	public Reflection getReflection(int pole, int partial) {
 		return getPhase().getReflectionVector().elementAt(poleFigureIndex[pole] + partial);
 	}
 
@@ -530,7 +530,7 @@ public class MTextureModel extends DiscreteODFTexture {
 	public int getPoint(int reflexindex, int point) {
 		Reflection reflex = getReflection(reflexindex, 0);
 		return getPoint(reflex, point);
-	}
+	}*/
 
 	public double[] applySampleSymmetry(double[] angles, int point, int truepointmax) {
 		int sector = point / truepointmax;
@@ -608,7 +608,7 @@ public class MTextureModel extends DiscreteODFTexture {
 		return angles;
 	}
 
-	public double getPoleIntensity(int pole, int point) {
+/*	public double getPoleIntensity(int pole, int point) {
 		int izoveri = getIzoveri(pole);
 		double texturefactor = 0.0;
 		Phase phase = getPhase();
@@ -619,7 +619,7 @@ public class MTextureModel extends DiscreteODFTexture {
 					phase.getReflex(reflexIndex).getOverlappedWeight(); // * mult;
 		}
 		return texturefactor;
-	}
+	}*/
 
 /*	public double getWeight(int pole, int point) {
 //		if (!useIntensityWeigth())
@@ -636,7 +636,7 @@ public class MTextureModel extends DiscreteODFTexture {
 		// // we decrease the weight of the superposed reflections by an additional factor
 //		return 1.0f;
 	}*/
-
+/*
 	public int getH(int pole) {
 		return getReflection(pole, 0).getH();
 	}
@@ -681,11 +681,11 @@ public class MTextureModel extends DiscreteODFTexture {
 		if (!fromPF)
 			reflex = getReflection(pole, i);
 		int mult;
-/*    if (useAllhklForCubic && !fromPF)
-      mult = reflex.multiplicity;
-    else if (useAllhklForCubic)
-      mult = allhklmult[pole][i];
-    else  */
+//    if (useAllhklForCubic && !fromPF)
+//      mult = reflex.multiplicity;
+//    else if (useAllhklForCubic)
+//      mult = allhklmult[pole][i];
+//    else
 		mult = 1;
 		int mult2 = mult / 2;
 
@@ -715,7 +715,7 @@ public class MTextureModel extends DiscreteODFTexture {
 			}
 		}
 		return hkllist;
-	}
+	}*/
 
 	public void computeTextureFactor(Phase aphase, Sample asample) {
 
@@ -773,7 +773,7 @@ public class MTextureModel extends DiscreteODFTexture {
 		recomputedTextureFactor(aphase, asample, true);
 	}
 
-	public double[][] recomputedTextureFactor(Phase aphase, Sample asample, boolean setValues) {
+	public double[][][] recomputedTextureFactor(Phase aphase, Sample asample, boolean setValues) {
 
 		if (odf == null)
 			return null;
@@ -789,32 +789,29 @@ public class MTextureModel extends DiscreteODFTexture {
 		Vector<Array1D> allData = new Vector<>(hkln, 1);
 		for (int j = 0; j < hkln; j++) {
 			Reflection refl = aphase.getReflectionVector().elementAt(j);
-
 			Vector<double[]> pf_data = new Vector<>(100, 100);
 			int numberDatasets = asample.activeDatasetsNumber();
 			int numberDataPoints = 0;
 			for (int i = 0; i < numberDatasets; i++) {
 				DataFileSet dataset = asample.getActiveDataSet(i);
-				int radCount = dataset.getInstrument().getRadiationType().getLinesCount();
 				for (int k = 0; k < dataset.activedatafilesnumber(); k++) {
 					DiffrDataFile datafile = dataset.getActiveDataFile(k);
+          double[][][] positions = datafile.getPositions(aphase);
 					for (int ppp = 0; ppp < datafile.positionsPerPattern; ppp++) {
-						for (int l = 0; l < radCount; l++) {
+						for (int l = 0; l < datafile.radiationsNumber; l++) {
 							double[] pfd = new double[2];
-//						pfd[2] = datafile.getExperimentalTextureFactors(aphase, j)[ppp][l];
-							double position = datafile.getPositions(aphase)[j][ppp][l];
-//							if (!Double.isNaN(pfd[2])) {
-							numberDataPoints++;
-							double[] angles = datafile.getTextureAngles(position);
-							pfd[0] = angles[0] * Constants.DEGTOPI;
-							pfd[1] = angles[1] * Constants.DEGTOPI;
-							pf_data.add(pfd);
-//							}
+              if (datafile.isInsideRange(positions[j][ppp][l])) {
+                numberDataPoints++;
+                double[] angles = datafile.getTextureAngles(positions[j][ppp][l], ppp);
+                pfd[0] = angles[0] * Constants.DEGTOPI;
+                pfd[1] = angles[1] * Constants.DEGTOPI;
+                pf_data.add(pfd);
+							}
 						}
 					}
 				}
 			}
-			double[] theta = new double[numberDataPoints], rho = new double[numberDataPoints], data = new double[numberDataPoints];
+			double[] theta = new double[numberDataPoints], rho = new double[numberDataPoints]; //, data = new double[numberDataPoints];
 			for (int i = 0; i < numberDataPoints; i++) {
 				double[] pfd = pf_data.elementAt(i);
 				theta[i] = pfd[0];
@@ -832,17 +829,22 @@ public class MTextureModel extends DiscreteODFTexture {
 			for (int i = 0; i < asample.activeDatasetsNumber(); i++) {
 				DataFileSet adataset = asample.getActiveDataSet(i);
 				int datafilenumber = adataset.activedatafilesnumber();
-				int radCount = adataset.getInstrument().getRadiationType().getLinesCount();
 				for (int i1 = 0; i1 < datafilenumber; i1++) {
 					DiffrDataFile adatafile = adataset.getActiveDataFile(i1);
-					if (adatafile.positionsPerPattern <= 0)
-						adatafile.positionsPerPattern = 1;
-					int totalNumber = adatafile.positionsPerPattern * radCount;
-					double[] textF = new double[totalNumber];
-					for (int k = 0; k < totalNumber; k++)
-						textF[k] = reflData.get(index + k);
+          int totalNumber = adatafile.positionsPerPattern * adatafile.radiationsNumber;
+          double[] textF = new double[totalNumber];
+          int k = 0;
+          double[][][] positions = adatafile.getPositions(aphase);
+          for (int ppp = 0; ppp < adatafile.positionsPerPattern; ppp++) {
+            for (int l = 0; l < adatafile.radiationsNumber; l++) {
+              if (adatafile.isInsideRange(positions[j][ppp][l]))
+                textF[k++] = reflData.get(index++);
+              else
+                textF[k] = 1.0;
+              k++;
+            }
+          }
 					adatafile.setTextureFactors(aphase, j, textF);
-					index += totalNumber;
 				}
 			}
 		}
@@ -862,22 +864,24 @@ public class MTextureModel extends DiscreteODFTexture {
 	}
 
 	public double[] computeTextureFactor(double[][] texture_angles,
-	                                     double[] sctf, double fhir, int inv,
-	                                     int h, int k, int l) {
+                                       double[] sctf, double fhir, int inv,
+                                       int h, int k, int l, int factorsNumber) {
 
 		if (odf != null) {
-			return computePF(getPhase(), texture_angles, h, k, l);
+			return computePF(getPhase(), texture_angles, factorsNumber, h, k, l);
 		}
 		return null;
 	}
 
-	public double[] computePF(Phase aphase, double[][] texture_angles, int h, int k, int l) {
+	public double[] computePF(Phase aphase, double[][] texture_angles, int factorsNumber, int h, int k, int l) {
 
 		if (odf == null)
 			return null;
 
-		int numberOfPoints = texture_angles[0].length;
+		int numberOfPoints = factorsNumber; // texture_angles[0].length;
 		double[] fs = new double[numberOfPoints];
+    if (numberOfPoints <= 0)
+      return fs;
 
 		int LGIndex = SpaceGroups.getLGNumber(getPhase().getPointGroup());
 

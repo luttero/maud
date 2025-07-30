@@ -53,6 +53,10 @@ public class GeometryDebyeScherrer extends GeometryDiffractometer {
     description = "Debye-Scherrer instrument geometry";
   }
 
+  public boolean isReflection() {
+    return false;  // transmission geometry
+  }
+
   public double Lorentz(DiffrDataFile adatafile, double position) {
   	double lp = 0.0;
   	if (position < Constants.PI) {

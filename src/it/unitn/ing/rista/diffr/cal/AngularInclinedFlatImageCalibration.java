@@ -354,6 +354,9 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
     DataFileSet dataset = datafile.getDataFileSet();
     double zs = dataset.getZshift();
     double ys = dataset.getYshift();
+    double xs = dataset.getXshift();
+    if (datafile.getDataFileSet().getInstrument().getGeometry().isReflection())
+      xs = 0; // x displacement cause no errors in reflection
     double rx = dataset.getSample().getRadiusDimensionXD();
     double ry = dataset.getSample().getRadiusDimensionYD();
     double[] tiltingAngles = datafile.getTiltingAngle();
@@ -361,13 +364,14 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 	  double chi = tiltingAngles[1];
 	  double detectorProper2Theta = detector2Theta + tiltingAngles[4];
 
-    if (chi != 0 && ys != 0)
+    if (chi != 0 && ys != 0 && (Math.abs(Math.abs(chi) - 90.0) > 1E-6 && Math.abs(Math.abs(chi) - 270.0) > 1E-6))
       zs += ys * Math.tan(chi * Constants.DEGTOPI);
-	  if (Math.abs(omega) > 1.0E-18)
+	  if (Math.abs(omega) > 1.0E-6)
       zs /= Math.cos((90.0 - omega) * Constants.DEGTOPI);
-    zs /= Math.cos(chi * Constants.DEGTOPI);
-    double dx = zs * Math.cos((detectorProper2Theta - 90.0) * Constants.DEGTOPI);
-    double dd = zs * Math.sin((detectorProper2Theta - 90.0) * Constants.DEGTOPI);
+    if (Math.abs(Math.abs(chi) - 90.0) > 1E-6 && Math.abs(Math.abs(chi) - 270.0) > 1E-6)
+      zs /= Math.cos(chi * Constants.DEGTOPI);
+    double dx = zs * Math.cos((detectorProper2Theta - 90.0) * Constants.DEGTOPI) - xs * Math.sin((detectorProper2Theta - omega) * Constants.DEGTOPI);
+    double dd = zs * Math.sin((detectorProper2Theta - 90.0) * Constants.DEGTOPI) + xs * Math.cos((detectorProper2Theta - omega) * Constants.DEGTOPI);
 
     double[][] tmat = ConvertImageToSpectra.getTransformationMatrixNew(detectorOmegaDN, detectorPhiDA,
         detectorEtaDA, detectorProper2Theta, omega);

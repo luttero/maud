@@ -584,6 +584,13 @@
       <JAVADOC />
       <SOURCES />
     </library>
+    <library name="xraylib">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/libs/current/xraylib.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
   </component>
   <component name="uidesigner-configuration">
     <option name="INSTRUMENT_CLASSES" value="false" />

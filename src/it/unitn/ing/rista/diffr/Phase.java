@@ -2022,7 +2022,7 @@ public static final String getSpaceGroup(int index, int sgconv) {
       if (Constants.testtime)
         System.out.println("Reflection list computation for phase " + getLabel() + ": " +
             (-previousTime + (previousTime = System.currentTimeMillis())) + " millisecs.");
-      Collections.sort(reflectionv, new dComparer());
+      reflectionv.sort(new dComparer());
       if (Constants.testtime)
         System.out.println("Reflection list sorting for phase " + getLabel() + ": " +
             (-previousTime + (previousTime = System.currentTimeMillis())) + " millisecs.");
@@ -2754,7 +2754,7 @@ public static final String getSpaceGroup(int index, int sgconv) {
         tmpSymmetry = "end";
 
     } while (!tmpSymmetry.equals("end"));
-    Collections.sort(spaceGroupList, new figureOfMerit());
+    spaceGroupList.sort(new figureOfMerit());
 //    Enumeration enumeration = Collections.enumeration(spaceGroupList);
 
     for (Enumeration e = spaceGroupList.elements(); e.hasMoreElements();) {
@@ -3019,6 +3019,7 @@ public static final String getSpaceGroup(int index, int sgconv) {
   public void computeStrain(Sample asample) {
     getActiveStrain().computeStrain(this, asample);
 // todo: transform this to export only from menu	  getActiveStrain().saveStrainValues(this, asample);
+    getActiveStrain().saveStrainValues(this, asample);
   }
 
 /*  public void setStrain(int datafile, Reflection reflex, double value) {
@@ -3302,7 +3303,7 @@ public static final String getSpaceGroup(int index, int sgconv) {
       System.out.println("Reflection list computation for phase " + getLabel() + ": " +
           (-previousTime + (previousTime = System.currentTimeMillis())) + " millisecs.");
 
-    Collections.sort(reflectionList, new ComparerPured());
+    reflectionList.sort(new ComparerPured());
 
     if (Constants.testtime)
       System.out.println("Reflection list sorting: " +

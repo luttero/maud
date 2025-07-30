@@ -21,8 +21,6 @@
 package it.unitn.ing.rista.diffr.shape;
 
 		import it.unitn.ing.rista.awt.JOptionsDialog;
-		import it.unitn.ing.rista.diffr.SampleShape;
-		import it.unitn.ing.rista.diffr.XRDcat;
 		import it.unitn.ing.rista.diffr.*;
 		import it.unitn.ing.rista.util.Constants;
 

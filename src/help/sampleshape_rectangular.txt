@@ -1,0 +1,18 @@
+Rectangular spot integration model
+
+This model should be used only for reflection geometry, X-ray, and a rectangular spot size.
+It provides a correction for the spot aberrations with texture measurements when at low
+diffraction angles and high chi tiltings the incident spot will elongate and incline.
+There is only one filed, the number of divisions. For the calculation, the method will
+divide the spot into the number of divisions along the longer spot dimension parallel
+to the chi inclination, and for each division compute the different geometrical
+aberrations (peak position etc.).
+The number of divisions affect a lot the computation, so it is advisable to not exceed
+a value of 15, but stay around 5-9. Use always an odd number to include one element
+at the center.
+
+In order to work, you need also to setup the axial dimension in the sample. The value should
+to the beam spot size on the sample in the Y/axial direction.
+
+Don't use the model if you are not mesuring in reflection, tilting in chi and with a strongly
+textured sample (epitaxial films, single crystals etc.).

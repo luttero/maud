@@ -400,10 +400,10 @@ public class WIMVTexture extends DiscreteODFTexture {
       return numberPoleFigures;
   }
 
-  public int getPointNumber(int pole) {
+/*  public int getPointNumber(int pole) {
     return getFilePar().getActiveSample().getNumberActiveDatafiles()
             * getSampleSymmetryMultiplicity();
-  }
+  }*/
 
   public Reflection getReflectionAll(int pole) {
     return getPhase().getReflectionVector().elementAt(pole);
@@ -438,7 +438,7 @@ public class WIMVTexture extends DiscreteODFTexture {
     int sector = point / truepointmax;
     int residual = point - sector * truepointmax;
 
-    double[] angles = getFilePar().getActiveSample().getActiveTextureAngles(reflex, residual);
+    double[] angles = getActiveTextureAngles(reflex, residual);
 
     if (angles[0] < 0) {
       angles[0] = -angles[0];
@@ -517,7 +517,7 @@ public class WIMVTexture extends DiscreteODFTexture {
     return angles;
   }
 
-  public double getPoleIntensity(int pole, int point) {
+  public double getPoleIntensity(int pole, int point, int ppp, int l) {
     int izoveri = getIzoveri(pole);
     double texturefactor = 0.0;
     double wgt, wgtsum = 0.0;
@@ -528,7 +528,7 @@ public class WIMVTexture extends DiscreteODFTexture {
       wgtsum += wgt;
 	    int reflexIndex = poleFigureIndex[pole] + i;
 //		 	int mult = reflex.multiplicity;
-	    texturefactor += getPointFromAll(point).getExperimentalTextureFactors(phase, reflexIndex)[0][0] *         // todo: for all radiations?
+	    texturefactor += getPointFromAll(point).getExperimentalTextureFactors(phase, reflexIndex)[ppp][l] *         // todo: for all radiations?
 			    wgt; // * mult;
     }
     return texturefactor / wgtsum;
@@ -616,6 +616,12 @@ public class WIMVTexture extends DiscreteODFTexture {
     FilePar aparFile = getFilePar();
 
     fromPF = false;
+    maxRadiations = Integer.MAX_VALUE;
+    if (resolution > 1.0)
+      maxRadiations = 1; // we treat all wavelength together
+//    System.out.println("maxRadiations, init : " + maxRadiations);
+
+    checkPointNumbers();
 
     if (aparFile.isTextureComputationPermitted() && ODFisRefinable()) {
 //      actualsample = asample;
@@ -661,7 +667,7 @@ public class WIMVTexture extends DiscreteODFTexture {
 
   public double[] computeTextureFactor(double[][] texture_angles,
                                        double[] sctf, double fhir, int inv,
-                                       int h, int k, int l) {
+                                       int h, int k, int l, int factorsNumber) {
 
     if (odf != null) {
       inv = Uwimvuo.equiv(getLaueGroupNumber(), sctf);
@@ -1152,8 +1158,8 @@ public class WIMVTexture extends DiscreteODFTexture {
 
     for (int nty = 0; nty < betamax; ++nty) {
       for (int nfy = 0; nfy < alphamax; ++nfy) {
-        texture_angles[0] = (double) (nty * res * Constants.DEGTOPI);
-        texture_angles[1] = (double) (nfy * res * Constants.DEGTOPI);
+        texture_angles[0] = nty * res * Constants.DEGTOPI;
+        texture_angles[1] = nfy * res * Constants.DEGTOPI;
         double textF = computeTextureFactor(odfl, cdsc, texture_angles, sctf, fhir, inv,
                 phoninp, res);
         int imh = (int) (textF * 100.000001);
@@ -1821,75 +1827,78 @@ C  *****************************************
     g2r = Constants.PI - fhir;
     boolean checkL13 = false;
     boolean nextCheck = false;
-    double cr = Math.cos(theta);
-    double sr = Math.sin(theta);
+    if (theta != Double.NaN) {
+      double cr = Math.cos(theta);
+      double sr = Math.sin(theta);
 
-    int nfismax = (int) (Constants.PI2 / Constants.integrationStepPFR + 1.000001);
-    do {
-      while (g2r < 0.) {
-        g2r += Constants.PI2;
-      }
-      for (nfis = 0; nfis < nfismax; nfis++) {
-        double ang = nfis * Constants.integrationStepPFR;
-        ca2 = -Math.cos(ang);
-        sa2 = Math.sin(ang);
+      int nfismax = (int) (Constants.PI2 / Constants.integrationStepPFR + 1.000001);
+      do {
+        while (g2r < 0.) {
+          g2r += Constants.PI2;
+        }
+        for (nfis = 0; nfis < nfismax; nfis++) {
+          double ang = nfis * Constants.integrationStepPFR;
+          ca2 = -Math.cos(ang);
+          sa2 = Math.sin(ang);
 //				for (ntety = 1; ntety <= 19; ++ntety) {
-        double[] angles = Uwimvuo.g20g100(ca2, sa2, cb2, sthi, cr, sr);
-        angles[0] += phi;
-        angles[2] += g2r;
-        while (angles[1] >= Constants.PI2)
-          angles[1] -= Constants.PI2;
-        while (angles[1] < 0)
-          angles[1] += Constants.PI2;
-        if (angles[1] >= Constants.PI) {
-          angles[1] = Constants.PI2 - angles[1];
-          angles[0] += Constants.PI;
-          angles[2] += Constants.PI;
-        }
-        while (angles[0] >= Constants.PI2)
-          angles[0] -= Constants.PI2;
-        while (angles[0] < 0)
-          angles[0] += Constants.PI2;
-        while (angles[2] >= Constants.PI2) {
-          angles[2] -= Constants.PI2;
-        }
-        while (angles[2] < 0) {
-          angles[2] += Constants.PI2;
-        }
-        nal = (int) ((angles[0] + pi25g) / pi5g + .000001);
-        nb = (int) ((angles[1] + pi25g) / pi5g + .000001);
-        nga = (int) ((angles[2] + pi25g) / pi5g + .000001);
-        ffak = f[nal][nb][nga];
-        if (ffak < 0.0) {
-          ffak -= ffak;
-          if (negODFout)
-            System.out.println("Negative odf: " + nal + " " + nb + " " + nga);
-        }
-        if (ffak > phonstep) {
-          ffak = (ffak - phoninp) * Constants.pisimg;
-//				ffak *= pisimg;
-          if (!(nfis == 0 || nfis == nfismax - 1)) {
-            if (MoreMath.powint(-1, nfis + 1) < 0)
-              ffak *= 2.;
-            else
-              ffak *= 4.;
+          double[] angles = Uwimvuo.g20g100(ca2, sa2, cb2, sthi, cr, sr);
+          angles[0] += phi;
+          angles[2] += g2r;
+          while (angles[1] >= Constants.PI2)
+            angles[1] -= Constants.PI2;
+          while (angles[1] < 0)
+            angles[1] += Constants.PI2;
+          if (angles[1] >= Constants.PI) {
+            angles[1] = Constants.PI2 - angles[1];
+            angles[0] += Constants.PI;
+            angles[2] += Constants.PI;
           }
-          fs += ffak;
+          while (angles[0] >= Constants.PI2)
+            angles[0] -= Constants.PI2;
+          while (angles[0] < 0)
+            angles[0] += Constants.PI2;
+          while (angles[2] >= Constants.PI2) {
+            angles[2] -= Constants.PI2;
+          }
+          while (angles[2] < 0) {
+            angles[2] += Constants.PI2;
+          }
+          nal = (int) ((angles[0] + pi25g) / pi5g + .000001);
+          nb = (int) ((angles[1] + pi25g) / pi5g + .000001);
+          nga = (int) ((angles[2] + pi25g) / pi5g + .000001);
+          ffak = f[nal][nb][nga];
+          if (ffak < 0.0) {
+            ffak -= ffak;
+            if (negODFout)
+              System.out.println("Negative odf: " + nal + " " + nb + " " + nga);
+          }
+          if (ffak > phonstep) {
+            ffak = (ffak - phoninp) * Constants.pisimg;
+//				ffak *= pisimg;
+            if (!(nfis == 0 || nfis == nfismax - 1)) {
+              if (MoreMath.powint(-1, nfis + 1) < 0)
+                ffak *= 2.;
+              else
+                ffak *= 4.;
+            }
+            fs += ffak;
+          }
         }
-      }
-      fs += phoninp;
-      if (inv == 1 || nextCheck) {
-        checkL13 = true;
-      } else {
-        nextCheck = true;
-        cb2 = -cb2;
-        g2r -= Constants.PI;
-      }
-    } while (!checkL13); /*goto L13; */
+        fs += phoninp;
+        if (inv == 1 || nextCheck) {
+          checkL13 = true;
+        } else {
+          nextCheck = true;
+          cb2 = -cb2;
+          g2r -= Constants.PI;
+        }
+      } while (!checkL13); /*goto L13; */
 
-    if (inv != 1) {
-      fs /= 2.;
-    }
+      if (inv != 1) {
+        fs /= 2.;
+      }
+    } else
+      fs = 1.0;
 /*                                          Normalization to PINPF */
 //		System.out.println(fs);
     return fs;

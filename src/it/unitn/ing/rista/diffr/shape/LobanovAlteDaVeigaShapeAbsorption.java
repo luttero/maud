@@ -20,8 +20,7 @@
 
 package it.unitn.ing.rista.diffr.shape;
 
-import it.unitn.ing.rista.diffr.SampleShape;
-import it.unitn.ing.rista.diffr.XRDcat;
+import it.unitn.ing.rista.diffr.*;
 
 /**
  *  The LobanovAlteDaVeigaShapeAbsorption is a class

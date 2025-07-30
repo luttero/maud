@@ -57,6 +57,10 @@ public class GeometryDubnaSkat extends GeometryDebyeScherrer {
     description = "Dubna/SKAT TOF instrument geometry";
   }
 
+  public boolean isReflection() {
+    return false;  // transmission geometry
+  }
+
   public double getThetaDetector(double twotheta) {
     return getDetector().getThetaDetector(null, twotheta);
   }

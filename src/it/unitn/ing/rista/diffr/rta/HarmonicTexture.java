@@ -389,17 +389,19 @@ public class HarmonicTexture extends Texture implements Function {
 		    for (int i1 = 0; i1 < datafilenumber; i1++) {
 			    DiffrDataFile adatafile = adataset.getActiveDataFile(i1);
 			    double[][][] positions = adatafile.getPositions(aphase);
-//			    for (int ppp = 0; ppp < adatafile.positionsPerPattern; ppp++) {
-				    for (int j = 0; j < hkln; j++) {
-					    Reflection refl = aphase.getReflex(j);
-					    double texture_angles[] = adatafile.getTextureAngles(positions[j][0][0]);
-					    textF[j] = computeTextureFactor(refl.phi[0], refl.beta[0],
-							    texture_angles[0] * Constants.DEGTOPI,
-							    texture_angles[1] * Constants.DEGTOPI);
+			    for (int ppp = 0; ppp < adatafile.positionsPerPattern; ppp++) {
+            for (int l = 0; l < adatafile.radiationsNumber; l++) {
+              for (int j = 0; j < hkln; j++) {
+                Reflection refl = aphase.getReflex(j);
+                double texture_angles[] = adatafile.getTextureAngles(positions[j][ppp][l], ppp);
+                textF[j] = computeTextureFactor(refl.phi[0], refl.beta[0],
+                    texture_angles[0] * Constants.DEGTOPI,
+                    texture_angles[1] * Constants.DEGTOPI);
 //						refl.setExpTextureFactor(adatafile.getIndex(), textF);
-				    }
-				    adatafile.setTextureFactors(aphase, textF);
-//			    }
+              }
+              adatafile.setTextureFactors(aphase, textF);
+            }
+          }
 		    }
 	    }
     }

@@ -61,7 +61,7 @@ public class GeometryIPNS_LANSCE extends GeometryDebyeScherrer {
   }
 
   public double[] getTextureAngles(DiffrDataFile datafile, double[] tilting_angles,
-                                  double[] sampleAngles, double twotheta) {
+                                   Sample sample, double twotheta, int ppp) {
     double[] newtilting_angles = new double[4];
     newtilting_angles[0] = tilting_angles[0];
     newtilting_angles[1] = tilting_angles[1];
@@ -71,7 +71,7 @@ public class GeometryIPNS_LANSCE extends GeometryDebyeScherrer {
     double theta_detector = getThetaDetector(datafile, twotheta);
 
     double newTwoTheta = theta_detector; //180.0 - theta_detector;
-    return super.getTextureAngles(datafile, newtilting_angles, sampleAngles, newTwoTheta);
+    return super.getTextureAngles(datafile, newtilting_angles, sample, newTwoTheta, ppp);
   }
 
   public double[][] getIncidentAndDiffractionAngles(DiffrDataFile datafile, double[] tilting_angles,
@@ -110,9 +110,15 @@ public class GeometryIPNS_LANSCE extends GeometryDebyeScherrer {
     return ((Instrument) getParent()).getAngularCalibration().getDetectorDistanceValue(adatafile);
   }
 
-  public double getCorrectedPosition(Sample asample, double x, double[] tilting_angles,
-                                     DiffrDataFile adatafile) {
+/*  public double getCorrectedPosition(Sample asample, double x, double[] tilting_angles,
+                                     DiffrDataFile adatafile, int ppp) {
     double[] angles = getTrueTiltingAngles(adatafile, tilting_angles, x);
+    return getMeasurement().getCorrectedPosition(asample, x, angles, getRadius(adatafile), adatafile, ppp);
+
+    double[] angles = getTrueTiltingAngles(adatafile, tilting_angles, x);
+    double yShift = 0;
+    if (ppp > 0)
+      yShift = asample.getSampleShapeModel().getYShiftFor(ppp);
 
     double[] xyz = asample.getSpecimenPrecessionError().getXYZForPrecession(angles, x);
 
@@ -181,19 +187,9 @@ public class GeometryIPNS_LANSCE extends GeometryDebyeScherrer {
 //    if (toLambda > 0)
 //      xt += dp * x / toLambda;
 //    xt = ((Instrument) getParent()).getAngularCalibration().calibrateX(adatafile, (double) xt);
-/*    double s = -yp * MoreMath.sind(angles[3] - 90.0) + zp * MoreMath.sind(angles[3]);
-
-    double den = MoreMath.sind(ttheta / 2.0 + (s * MoreMath.cosd(ttheta) +
-            xp * MoreMath.sind(ttheta)) / (2.0 * getRadius(adatafile)));
-    if (den == 0.0)
-      return x;
-    den = MoreMath.sind(ttheta / 2.0) / den;
-//		System.out.println("Corr: " + den + " " + adatafile + " " + x);
-
-    return x * den;       */
 
     return x * dp;
-  }
+  }*/
 
   public JOptionsDialog getOptionsDialog(Frame parent) {
     JOptionsDialog adialog = new JGeometryILOptionsD(parent, this);

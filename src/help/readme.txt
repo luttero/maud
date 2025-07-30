@@ -43,6 +43,21 @@ from the older one.
 
 Maud Version notes:
 
+(02/07/2025):   2.99991. The "Folgen" release.
+                On german highways is important to know the meaning.
+                Major release.
+                The sample displacement x is working now to correct an
+                error in transmission for inclined flat images calibration.
+                Added the preference "sumSpectra.meanIntensity", when
+                true and summing spectra it saves the mean intensity,
+                otherwise the pure sum.
+                In imageJ there is a new plugin to sum images by rules
+                or all.
+                Texture now works for different wavelengths and different
+                sample parts.
+                Corrected a bug causing a problem for calibration of
+                transmission/reflectio images with omega 0 and chi 90.
+
 (28/05/2025):   2.9999. The "Van Kilmer" release.
                 The instrument INES is now supported for the Hippo wizard.
                 Use Mantid to export a GSAS instrument file (.prm) and the

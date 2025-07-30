@@ -162,8 +162,8 @@ public class XRFDetector extends Detector {
 		if (version < 2.72) {
 			parameterField[escape_peaks_id].setValue(1.0);
 			parameterField[sum_peaks_id].setValue(0.0);
-			System.out.println("Warning: cenversion from old Maud version (< 2.72): escape peaks parameter reset to 1.0");
-			System.out.println("Warning: cenversion from old Maud version (< 2.72): pile-up parameter reset to 0.0");
+			System.out.println("Warning: conversion from old Maud version (< 2.72): escape peaks parameter reset to 1.0");
+			System.out.println("Warning: conversion from old Maud version (< 2.72): pile-up parameter reset to 0.0");
 		}
 	}
 
@@ -334,17 +334,16 @@ public class XRFDetector extends Detector {
 			for (int j = 0; j < energy.length; j++) {
 				double energyKeV = energy[j] * 0.001;
 				if (Constants.useXrayLib)
-					absorption[j] += atomFraction * Xraylib.CS_Total(atomNumber, energyInKeV);
+          absorption[j] += atomFraction * Xraylib.CS_Total(atomNumber, energyKeV);
 				else
-					absorption[j] += atomFraction * XRayDataSqLite.getTotalAbsorptionForAtomAndEnergy(atomNumber, energyKeV);
+          absorption[j] += atomFraction * XRayDataSqLite.getTotalAbsorptionForAtomAndEnergy(atomNumber, energyKeV);
 			}
 			for (int j = 0; j < linesForSubtraction.size(); j++) {
 				FluorescenceLine lineSemiconductor = linesForSubtraction.get(j);
 				if (Constants.useXrayLib)
-					absorptionSi[j] += atomFraction * Xraylib.CS_Total(atomNumber, lineSemiconductor.getEnergy());
+          absorptionSi[j] += atomFraction * Xraylib.CS_Total(atomNumber, lineSemiconductor.getEnergy());
 				else
-					absorptionSi[j] += atomFraction * XRayDataSqLite.getTotalAbsorptionForAtomAndEnergy(atomNumber,
-						lineSemiconductor.getEnergy());
+          absorptionSi[j] += atomFraction * XRayDataSqLite.getTotalAbsorptionForAtomAndEnergy(atomNumber, lineSemiconductor.getEnergy());
 			}
 		}
 

@@ -728,7 +728,7 @@ public class CIFParser {
       for (int i = 0; i < unsortedvector.size(); i++) {
         tmpvector.addElement(new IndexedObject(i, (String) unsortedvector.elementAt(i)));
       }
-      Collections.sort(tmpvector, new phComparer());
+      tmpvector.sort(new phComparer());
       for (int i = 0, n = unsortedvector.size(); i < n; i++) {
         newsortedvector.addElement(tmpvector.elementAt(i));
 //        Integer theindex = new Integer(((IndexedObject) tmpvector.elementAt(i)).index);

@@ -45,7 +45,7 @@ import it.unitn.ing.rista.interfaces.*;
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 
-import static com.github.tschoonj.xraylib.Xraylib.XRayInit;
+//import static com.github.tschoonj.xraylib.Xraylib.XRayInit;
 
 /**
  * The Constants is a class providing general constants used by the program.
@@ -267,13 +267,13 @@ public class Constants {
   public static String resultsFile = "results.txt";
   public static String userName = null;
   public static String startPath = "/";
-  public static String maudReleaseBuilt = "$Revision: 2.9999 $";
-  public static String maudDateBuilt = "$Date: 2025/03/24 11:49:00 $";
+  public static String maudReleaseBuilt = "$Revision: 2.99991 $";
+  public static String maudDateBuilt = "$Date: 2025/07/2 11:49:00 $";
 
   public static final double arg2PIover3 = PI2 / 3.;
   public static final double sinArg2PIover3 = Math.sin(arg2PIover3);
   public static final double cosArg2PIover3 = Math.cos(arg2PIover3);
-  public static double maud_version = 2.9999;
+  public static double maud_version = 2.99991;
   public static boolean useOpenCL = false;
   public static Vector<OpenCLDevice> openClDevices= null;
   public static OpenCLDevice openclDevice = null;
@@ -904,10 +904,18 @@ public class Constants {
 
 			    try {
 					 AtomInfo.loadAtomConstants();
-				    if (!useXrayLib)
-					    allXrayTablesLoaded = XRayDataSqLite.loadEbelAndShellTables(true);
+				    if (useXrayLib)
+              try {
+                // we force XrayLib to call the static initialiser (it's private)
+                int z = com.github.tschoonj.xraylib.Xraylib.SymbolToAtomicNumber("H");
+                allXrayTablesLoaded = true;
+              } catch (Exception xe) {
+                xe.printStackTrace();
+                System.out.println("XrayLib could not be loaded, switching to included alternate database");
+                allXrayTablesLoaded = XRayDataSqLite.loadEbelAndShellTables(true);
+              }
 				    else
-					    allXrayTablesLoaded = XRayInit();
+              allXrayTablesLoaded = XRayDataSqLite.loadEbelAndShellTables(true);
 				    Sla33Constants.initConstants();
 			    } catch (java.lang.Exception e) {
 				    e.printStackTrace(System.out);

@@ -127,21 +127,21 @@ public class hklTableModel extends AbstractTableModel {
       return null;
     switch (column) {
       case 0:
-        return new Integer(row + 1);
+        return row + 1;
       case 1:
-        return new Integer(thephase.geth(row));
+        return thephase.geth(row);
       case 2:
-        return new Integer(thephase.getk(row));
+        return thephase.getk(row);
       case 3:
-        return new Integer(thephase.getl(row));
+        return thephase.getl(row);
       case 4:
-        return new Integer(thephase.getMultiplicity(row));
+        return thephase.getMultiplicity(row);
       case 5:
-        return new Double(thephase.getDspacing(row));
+        return thephase.getDspacing(row);
       case 6:
-        return new Double(thephase.getCrystallite(row));
+        return thephase.getCrystallite(row);
       case 7:
-        return new Double(thephase.getMicrostrainD(row));
+        return thephase.getMicrostrainD(row);
       default:
         {
           return null;

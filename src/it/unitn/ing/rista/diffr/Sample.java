@@ -1101,24 +1101,6 @@ public class Sample extends Maincat {
     return totnumber;
   }
 
-	public double[] getActiveTextureAngles(Reflection refl, int index) {
-		int totnumber = 0;
-		Phase phase = refl.getParent();
-		int reflIndex = phase.getReflexIndex(refl);
-		for (int i = 0; i < activeDatasetsNumber(); i++) {
-			DataFileSet adataset = getActiveDataSet(i);
-			for (int j = 0; j < adataset.activedatafilesnumber(); j++) {
-				DiffrDataFile datafile = adataset.getActiveDataFile(j);
-				if (totnumber == index) {
-					double position = datafile.getPositions(phase)[reflIndex][0][0];
-					return datafile.getTextureAngles(position);
-				}
-				totnumber++; // todo positionsPerPattern
-			}
-		}
-		return null;
-	}
-
   public void checkForOldPhasesBehaviour() {
     boolean oldBehaviour = true;
     if (getDataSet(0) != null) {
@@ -1440,6 +1422,10 @@ public class Sample extends Maincat {
             return;
           }
           if (i > 5 && i < 11) {
+            if (i > 6 && i < 9) {
+              getSampleShapeModel().setRefreshComputationForGeometry(true);
+              notifyParameterChanged(source, Constants.ERROR_POSITION_CHANGED, -1);
+            }
             notifyParameterChanged(source, Constants.ANGULAR_CALIBRATION, -1);
             notifyParameterChanged(source, Constants.LORENTZ_POLARIZATION_CHANGED, -1);
             return;
@@ -1554,10 +1540,10 @@ public class Sample extends Maincat {
     double expAbsorption = 1.0;
     Layer alayer = getlayer(layerIndex);
 
-    double[] radAbs = new double[rad.getLinesCount()];
+    double[] radAbs = new double[incidentDiffractionAngles.length];
 //    System.out.println(incidentDiffractionAngles[0][0] * Constants.PITODEG
 //        + " " + incidentDiffractionAngles[0][2] * Constants.PITODEG);
-	  for (int i = 0; i < rad.getLinesCount(); i++) {
+	  for (int i = 0; i < incidentDiffractionAngles.length; i++) {
 		  if (incidentDiffractionAngles[i][0] < 1.0E-5 || incidentDiffractionAngles[i][2] < 1.0E-5)
 			  radAbs[i] = 0;
 		  else {
@@ -1750,7 +1736,7 @@ public class Sample extends Maincat {
 
 //    }
 
-    getActiveSubordinateModel(sampleShapeID).refreshComputation = false;
+    getSampleShapeModel().setRefreshComputationForAbsorption(false);
   }
 
   private boolean[] computeInstrumentBroadening() {
@@ -1834,24 +1820,20 @@ public class Sample extends Maincat {
 		}
 	}
 
+  public SampleShape getSampleShapeModel() {
+    return (SampleShape) getActiveSubordinateModel(sampleShapeID);
+  }
+
 	public void computeAbsorptionTroughPath(RadiationType rad, double[][][] incidentAndDiffraction_angles, double[][] position,
                                           double[][] intensity, double toLambda) {
     // only an approximation
-
-    double[] absorption = getAbsorption(rad);
-    SampleShape sampleShape = (SampleShape) getActiveSubordinateModel(sampleShapeID);
-    sampleShape.computeAbsorptionPath(incidentAndDiffraction_angles, absorption, position, intensity, toLambda);
-
+    getSampleShapeModel().computeAbsorptionPath(incidentAndDiffraction_angles, getAbsorption(rad), position, intensity, toLambda);
   }
 
 	public void computeAbsorptionTroughPath(RadiationType rad, double[][] incidentAndDiffraction_angles, double[] position,
 	                                        double[] intensity, double toLambda) {
 		// only an approximation
-
-		double absorption = getMeanAbsorption(rad);
-		SampleShape sampleShape = (SampleShape) getActiveSubordinateModel(sampleShapeID);
-		sampleShape.computeAbsorptionPath(incidentAndDiffraction_angles, absorption, position, intensity, toLambda);
-
+    getSampleShapeModel().computeAbsorptionPath(incidentAndDiffraction_angles, getMeanAbsorption(rad), position, intensity, toLambda);
 	}
 
 	public double getAbsorptionTroughPath(RadiationType rad, double[][] incidentAndDiffraction_angles, double[] position,
@@ -1902,11 +1884,12 @@ public class Sample extends Maincat {
     } else if (positionInEnergy) {  // don't know what to do
       position[0] = refl.d_space;
       tilting_angles[0] = ageometry.getThetaDetector(adataset.getDataFile(0), position[0]) / 2.0f;
-    } else{
-      position[0] = adataset.getDataFile(0).computeposition(refl.d_space, rad.getRadiationWavelength(0));
-      position[0] = adataset.getDataFile(0).getCorrectedPosition(this, position[0], tilting_angles);
+    } else {
+      position[0] = adataset.getDataFile(0). computeposition(refl.d_space, rad.getRadiationWavelength(0));
+      position[0] = adataset.getDataFile(0).getCorrectedPosition(this, position[0], -1, -1);
       tilting_angles[0] = position[0] / 2;
     }
+
     double toLambda = 0.0f;
     if (isTOF) {
       toLambda = (2.0 * position[0] * MoreMath.sind(Math.abs(tilting_angles[0])));
@@ -2573,13 +2556,13 @@ public class Sample extends Maincat {
 		return -1;
 	}
 
-	public int getNumberOfTexturePoints(Phase phase, int index) {
+/*	public int getNumberOfTexturePoints(Phase phase, int index) {
 		int totalPoints = 0;
 		for (int i = 0; i < activeDatasetsNumber(); i++) {
 			totalPoints += getActiveDataSet(i).getNumberOfTexturePoints(phase, index);
 		}
 		return totalPoints;
-	}
+	}*/
 
   public void exportExperimentalComputedData(BufferedWriter output) {
     int datasetnumber = activeDatasetsNumber();

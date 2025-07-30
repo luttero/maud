@@ -624,10 +624,10 @@ public class EPSCmodel extends Strain {
                 for (int ppp = 0; ppp < datafile.positionsPerPattern; ppp++) {
                   for (int l = 0; l < radCount; l++) {
                     double[] pfd = new double[3];
-                    pfd[2] = datafile.getExperimentalTextureFactors(aphase, j)[ppp][0];
-                    double position = datafile.getPositions(aphase)[j][ppp][0];
+                    pfd[2] = datafile.getExperimentalTextureFactors(aphase, j)[ppp][l];
+                    double position = datafile.getPositions(aphase)[j][ppp][l];
                     if (!Double.isNaN(pfd[2]) && datafile.isInsideRange(position)) {
-                      double[] angles = datafile.getTextureAngles(position);
+                      double[] angles = datafile.getTextureAngles(position, ppp);
                       pfd[0] = angles[0];
                       pfd[1] = angles[1];
                       pf_data.add(pfd);

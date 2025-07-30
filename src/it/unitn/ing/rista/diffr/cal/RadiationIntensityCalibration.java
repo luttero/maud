@@ -91,7 +91,7 @@ public class RadiationIntensityCalibration extends IntensityCalibration {
       EnergyIntensity eni = new EnergyIntensity(coordinate, intensity);
       calIntensity.addElement(eni);
     }
-    Collections.sort(calIntensity, new IncreasingEnergy());
+    calIntensity.sort(new IncreasingEnergy());
   }
 
   public double calibrateData(DiffrDataFile datafile, double x, int index, double coord) {

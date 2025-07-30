@@ -121,8 +121,8 @@ public class LinearInterpolation extends Interpolation {
     return getWIMV().getTextureAngles(pole, point);
   }
 
-  public double getPoleIntensity(int pole, int point) {
-    return getWIMV().getPoleIntensity(pole, point);
+  public double getPoleIntensity(int pole, int point, int ppp, int l) {
+    return getWIMV().getPoleIntensity(pole, point, ppp, l);
   }
 
   public double getWeight(int pole, int point) {
@@ -258,7 +258,7 @@ public class LinearInterpolation extends Interpolation {
       double sintheta = MoreMath.sind(angles[0]);
       expPole[point][0] = sintheta * MoreMath.cosd(angles[1]);
       expPole[point][1] = sintheta * MoreMath.sind(angles[1]);
-      expPole[point][2] = getPoleIntensity(poleNumber, point);
+      expPole[point][2] = getPoleIntensity(poleNumber, point, 0, 0);
       if (thetaMax < angles[0])
         thetaMax = angles[0];
       if (thetaMin > angles[0])
@@ -298,7 +298,7 @@ public class LinearInterpolation extends Interpolation {
               singlePoleIntensity[i][j] = pole[2];
           }
           if (neighboor.size() > 2) {
-            Collections.sort(neighboor, new DistanceComparer());
+            neighboor.sort(new DistanceComparer());
             collapse(neighboor);
             if (neighboor.size() > 2) {
               double[] pole = (double[]) neighboor.elementAt(0);

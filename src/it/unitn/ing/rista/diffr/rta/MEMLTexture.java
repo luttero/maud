@@ -42,7 +42,7 @@ import java.io.OutputStream;
  * method.
  *
  * @author Luca Lutterotti
- * @version $Revision: 1.37 $, $Date: 2006/12/04 14:30:05 $
+ * @version $Revision: 1.40 $, $Date: 2025/06/24 13:35:00 $
  * @since JDK1.1
  */
 
@@ -290,7 +290,7 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 		stringField[0] = value;
 	}
 
-	public int getEWIMVSampleSymmetryMultiplicity() {
+	public int getSampleSymmetryMultiplicity() {
 		switch (getSampleSymmetryValue()) {
 			case 0:
 			case 1:
@@ -491,9 +491,11 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 		double diff;
 
 		for (int i = 0; i < getNumberOfData(); i++) {
-			if (!Double.isNaN(getData(i))) {
-				diff = (getFit(i) - getData(i)) * getWeight(i);
-//      System.out.println(i + " " + getFit(i) + " " + getData(i) + " " + getWeight(i));
+			double fitt = getFit(i);
+			double dtat = getData(i);
+			if (!Double.isNaN(dtat) && !Double.isNaN(fitt)) {
+				diff = (fitt - dtat) * getWeight(i);
+//          System.out.println("WSS: " + i + " " + fitt + " " + dtat + " " + getWeight(i));
 				WSS += diff * diff;
 			}
 		}
@@ -509,7 +511,7 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 		double rw = 0.0;
 		double diff;
 		double wgt_s;
-		double dtat;
+		double dtat, dfit;
 		double den = 0.0;
 		int index = 0;
 		int npole = getPoleFigureNumber();
@@ -525,9 +527,10 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 			for (int j = 0; j < numberDta; j++) {
 				wgt_s = getWeight(index);
 				dtat = getData(index);
+				dfit = getFit(index);
 //        System.out.println(npole + " " + j + " " + getFit(index)+" "+dtat+" "+wgt_s);
-				if (!Double.isNaN(dtat))
-					diff = (getFit(index) - dtat) * wgt_s;
+				if (!Double.isNaN(dtat) && !Double.isNaN(dfit))
+					diff = (dfit - dtat) * wgt_s;
 				else
 					diff = 0.0;
 				singlePoleRw[i] += diff * diff;
@@ -608,13 +611,13 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 			endofline5++;
 			tmp.append(Misc.getDoubleStringFormatted(poleFactor[npolex], 5, 6));
 			if (endofline5 == 5) {
-				System.out.println(tmp.toString());
+				System.out.println(tmp);
 				endofline5 = 0;
 				tmp = new StringBuffer("  NORMFAKs : ");
 			}
 		}
 		if (endofline5 != 0)
-			System.out.println(tmp.toString());
+			System.out.println(tmp);
 
 		endofline5 = 0;
 
@@ -623,13 +626,13 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 			endofline5++;
 			tmp.append(Misc.getDoubleStringFormatted(Rw[npolex] * 100, 5, 6));
 			if (endofline5 == 5) {
-				System.out.println(tmp.toString());
+				System.out.println(tmp);
 				endofline5 = 0;
 				tmp = new StringBuffer("  RWPFAKs : ");
 			}
 		}
 		if (endofline5 != 0)
-			System.out.println(tmp.toString());
+			System.out.println(tmp);
 	}
 
 	public void setR(double R) {
@@ -644,13 +647,13 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 			endofline5++;
 			tmp.append(Misc.getDoubleStringFormatted(R[npolex] * 100, 5, 6));
 			if (endofline5 == 5) {
-				System.out.println(tmp.toString());
+				System.out.println(tmp);
 				endofline5 = 0;
 				tmp = new StringBuffer("   RPFAKs : ");
 			}
 		}
 		if (endofline5 != 0)
-			System.out.println(tmp.toString());
+			System.out.println(tmp);
 	}
 
 	public void setRexp(double R) {
@@ -658,11 +661,13 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 
 	public double getSS() {
 		double SS = 0.0;
-		double diff;
+		double diff, dtat, fitt;
 
 		for (int i = 0; i < getNumberOfData(); i++) {
-			if (!Double.isNaN(getData(i))) {
-				diff = getFit(i) - getData(i);
+			dtat = getData(i);
+			fitt = getFit(i);
+			if (!Double.isNaN(dtat) && !Double.isNaN(fitt)) {
+				diff = fitt - dtat;
 				SS += diff * diff;
 			}
 		}
@@ -793,23 +798,40 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 	}
 
 	public void computeFit() {
-		double[][] textF = recomputedTextureFactor(getPhase(), getFilePar().getActiveSample(), false);
+		double[][][] textF = recomputedTextureFactor(getPhase(), getFilePar().getActiveSample(), false);
 		int index = 0;
 		int npole = getPoleFigureNumber();
 		for (int i = 0; i < npole; i++) {
 			Reflection reflex = getReflection(i, 0);
-			int numberDta = getPointNumber(i);
-			for (int j = 0; j < numberDta; j++) {
-				int izoveri = reflex.izoveri;
-				double texturefactor = 0.0;
-				for (int ih = 0; ih < izoveri; ih++) {
-					if (!Double.isNaN(textF[getPoint(reflex, j)][poleFigureIndex[i] + ih]))
-						texturefactor += textF[getPoint(reflex, j)][poleFigureIndex[i] + ih] * getOverlappedWeight(i, ih);
-				}
-				fit[index++] = texturefactor;
+      int izoveri = reflex.izoveri;
+//			int numberDta = getPointNumber(i);
+
+      Sample asample = getFilePar().getActiveSample();
+      int indexD = 0;
+      for (int d = 0; d < asample.activeDatasetsNumber(); d++) {
+        DataFileSet dataset = asample.getActiveDataSet(d);
+        for (int dd = 0; dd < dataset.activedatafilesnumber(); dd++) {
+          DiffrDataFile datafile = dataset.getActiveDataFile(dd);
+          double[][][] positions = datafile.getPositions(getPhase());
+          int indexpr = 0;
+          for (int ppp = 0; ppp < datafile.positionsPerPattern; ppp++) {
+            for (int r = 0; r < Math.min(datafile.radiationsNumber, maxRadiations); r++) {
+              if (datafile.isInsideRange(positions[i][ppp][r])) {
+                double texturefactor = 0.0;
+                for (int ih = 0; ih < izoveri; ih++) {
+                  double texft = textF[indexD][poleFigureIndex[i] + ih][indexpr]; // todo : test more radiotions
+                  if (!Double.isNaN(texft))
+                    texturefactor += texft * getOverlappedWeight(i, ih);
+                }
+                fit[index++] = texturefactor;
+              }
+              indexpr++;
+            }
+          }
+          indexD++;
+        }
 			}
 		}
-
 	}
 
 	public void computeFit(double[] parmn) {
@@ -845,8 +867,8 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 									for (int k = 0; k < cellNumber; k++)
 										texturefactor[j] += Math.abs(parmnt[cellID[k]]);
 								else
-									for (int k = 0; k < cellNumber; k++)
-										texturefactor[j] += Math.abs(parmnt[cellID[k]] * cellWGT[k]);
+                  for (int k = 0; k < cellNumber; k++)
+                    texturefactor[j] += Math.abs(parmnt[cellID[k]] * cellWGT[k]);
 							}
 							synchronized (lock) {
 								index = baseDataIndex[i];
@@ -898,7 +920,7 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 							texturefactor += Math.abs(parmn[cellID[k]]);
 					else
 						for (int k = 0; k < cellNumber; k++)
-							texturefactor += Math.abs(parmn[cellID[k]] * cellWGT[k]);
+              texturefactor += Math.abs(parmn[cellID[k]] * cellWGT[k]);
 					fit[index++] = texturefactor;
 				}
 			}
@@ -1092,39 +1114,38 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 		datasetindex = new int[getNumberOfData()];
 		datafileindex = new int[getNumberOfData()];
 
+    int symNumber = getSampleSymmetryMultiplicity();
 		int index = 0;
+    poleFactor = new double[getPoleFigureNumber()];
 		for (int i = 0; i < getPoleFigureNumber(); i++) {
-			for (int k = 0; k < getEWIMVSampleSymmetryMultiplicity(); k++)
+      poleFactor[i] = 1.0f;
+      int point = 0;
 				for (int d = 0; d < asample.activeDatasetsNumber(); d++) {
 					DataFileSet dataset = asample.getActiveDataSet(d);
 					for (int dd = 0; dd < dataset.activedatafilesnumber(); dd++) {
-						datasetindex[index] = d;
-						datafileindex[index++] = dd;
+            DiffrDataFile datafile = dataset.getActiveDataFile(dd);
+            for (int ppp = 0; ppp < datafile.positionsPerPattern; ppp++) {
+              for (int r = 0; r < Math.min(datafile.radiationsNumber, maxRadiations); r++) {
+                if (datafile.isInsideRange(datafile.getPositions(phase)[poleFigureIndex[i]][ppp][r])) {
+                  double dta = getPoleIntensity(i, datafile, ppp, r);
+                  double radl = dataset.getInstrument().getRadiationType().getRadiationWeigth(r);
+                  double weight = getReflectionWeight(i, radl);
+                  for (int sy =  0; sy < symNumber; sy++) {
+                    datasetindex[index] = d;
+                    datafileindex[index] = dd;
+                    dta_fix[index] = dta;
+                    wgt[index] = weight;
+                    poleindex[index] = i;
+                    pointindex[index++] = point;
+                  }
+                }
+                point++;
+              }
+            }
 					}
 				}
 		}
 //	  symmetryindex = new int[getNumberOfData()];
-		poleFactor = new double[getPoleFigureNumber()];
-
-		index = 0;
-		for (int i = 0; i < getPoleFigureNumber(); i++) {
-			poleFactor[i] = 1.0f;
-			int numberDta = getPointNumber(i);
-			for (int j = 0; j < numberDta; j++) {
-				DiffrDataFile datafile = getPointFromAll(j);
-				if (datafile.isInsideRange(datafile.getPositions(phase)[poleFigureIndex[i]][0][0])) {
-					dta_fix[index] = getPoleIntensity(i, j);
-					wgt[index] = getWeight(i, j);
-				} else {
-					dta_fix[index] = 0;
-					wgt[index] = 0;
-				}
-
-				poleindex[index] = i;
-//	      symmetryindex = new int[getNumberOfData()];
-				pointindex[index++] = j;
-			}
-		}
 
 		for (int i = 0; i < totalWeight.length; i++) {
 			totalWeight[i] = 0.0f;
@@ -1269,11 +1290,12 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 
 //  	FilePar aparFile = (FilePar) getFilePar();
 
+    numberPoleFigures = experimentalPF.length;
+
 		textureInitialization();
 
 		Phase aphase = getPhase();
 		cdsc = aphase.lattice();
-		numberPoleFigures = experimentalPF.length;
 //    numberOfPFPoint = new int[getPoleFigureNumber()];
 
 		numberOfData = 0;
@@ -1378,6 +1400,14 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 			totalWeight = new double[numberOfParameters];
 			totalHits = new int[numberOfParameters];
 		}
+
+    maxRadiations = Integer.MAX_VALUE;
+    if (resolution > 1.0)
+      maxRadiations = 1; // we treat all wavelength together
+//    System.out.println("maxRadiations, init : " + maxRadiations);
+
+    checkPointNumbers();
+
 		return numberOfParameters;
 	}
 
@@ -1390,14 +1420,6 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
       return asample.getNumberActiveDatafiles() * 72;
     return asample.getNumberActiveDatafiles() * getSampleSymmetryMultiplicity();
   }*/
-
-	public int getPointNumber(int pole) {
-		if (fromPF)
-			return numberOfPFPoint[pole];
-		else
-			return getFilePar().getActiveSample().getNumberActiveDatafiles()
-					* getEWIMVSampleSymmetryMultiplicity();
-	}
 
 	public Reflection getReflection(int pole, int partial) {
 		return getPhase().getReflectionVector().elementAt(poleFigureIndex[pole] + partial);
@@ -1417,7 +1439,7 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 		return applySampleSymmetry(reflex, point, np);
 	}
 
-	public int getPoint(Reflection reflex, int point) {
+/*	public int getPoint(Reflection reflex, int point) {
 		int truepointmax = getFilePar().getActiveSample().getNumberActiveDatafiles();
 		int sector = point / truepointmax;
 		int residual = point - sector * truepointmax;
@@ -1426,22 +1448,20 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 
 	public DiffrDataFile getPointFromAll(int point) {
 		Sample asample = getFilePar().getActiveSample();
-		int truepointmax = asample.getNumberActiveDatafiles();
-		int sector = point / truepointmax;
-		int residual = point - sector * truepointmax;
-		return asample.getActiveDiffrDataFile(residual);
+    DataFileSet dataset = asample.getActiveDataSet(datasetindex[point]);
+		return dataset.getActiveDataFile(datafileindex[point]);
 	}
 
 	public int getPoint(int reflexindex, int point) {
 		Reflection reflex = getReflection(reflexindex, 0);
 		return getPoint(reflex, point);
-	}
+	}*/
 
 	public double[] applySampleSymmetry(Reflection reflex, int point, int truepointmax) {
 		int sector = point / truepointmax;
 		int residual = point - sector * truepointmax;
 
-		double[] angles = getFilePar().getActiveSample().getActiveTextureAngles(reflex, residual);
+		double[] angles = getActiveTextureAngles(reflex, residual);
 //		System.out.println(residual + " " +actualsample+" "+angles[0] +" "+ angles[1]);
 
 		if (angles[0] < 0) {
@@ -1516,20 +1536,20 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 		return angles;
 	}
 
-	public double getPoleIntensity(int pole, int point) {
+	public double getPoleIntensity(int pole, DiffrDataFile datafile, int ppp, int l) {
 		int izoveri = getIzoveri(pole);
 		double texturefactor = 0.0;
 		Phase phase = getPhase();
 		for (int i = 0; i < izoveri; i++) {
 			int reflexIndex = poleFigureIndex[pole] + i;
 //		 	int mult = reflex.multiplicity;
-			texturefactor += getPointFromAll(point).getExperimentalTextureFactors(phase, reflexIndex)[0][0] *            // todo: for all radiations?
+			texturefactor += datafile.getExperimentalTextureFactors(phase, reflexIndex)[ppp][l] *
 					phase.getReflex(reflexIndex).getOverlappedWeight(); // * mult;
 		}
 		return texturefactor;
 	}
 
-	public double getWeight(int pole, int point) {
+	public double getReflectionWeight(int pole, double radl) {
 //		if (!useIntensityWeigth())
 //			return 1.0;
 		int izoveri = getIzoveri(pole);
@@ -1538,7 +1558,7 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 			Reflection reflex = getReflection(pole, i);
 //      int mult = reflex.multiplicity;
 //			System.out.println(reflex.getH() + " " + reflex.getK() + " " + reflex.getL() + ", weight(" + i + "): " + reflex.getWeight());
-			wgt += reflex.getWeight();// * mult;
+			wgt += reflex.getWeight() * radl;// * mult;
 		}
 		return Math.pow(wgt, getWeightsExponent()); // (wgt / izoveri);
 		// // we decrease the weight of the superposed reflections by an additional factor
@@ -1777,50 +1797,43 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 
 		Phase phase = getPhase();
 		Sample sample = phase.getSample();
-		boolean checkIn = true;
 
-		if (!fromPF) {
-			DiffrDataFile diffrDataFile = sample.getActiveDataSet(datasetindex[dataindex]).getActiveDataFile(datafileindex[dataindex]);
-			checkIn = diffrDataFile.isInsideRange(diffrDataFile.getPositions(phase)[poleFigureIndex[pole]][0][0]);
-		}
-
-		if (checkIn) {
-			double[] textAngles = getTextureAngles(pole, point);
+    double[] textAngles = getTextureAngles(pole, point);
 
 //		System.out.println(pole + " " + point+" "+textAngles[0] + " " + textAngles[1]);
 
-			Vector cellIDandWGT = new Vector(0, 2);
+    Vector cellIDandWGT = new Vector(0, 2);
 
-			int izoveri = getIzoveri(pole);
+    int izoveri = getIzoveri(pole);
 
-			int totalcell = 0;
+    int totalcell = 0;
 
-			int tk = 0;
-			double[] wgtcellt = new double[maxindex];
-			int[] cellidt = new int[maxindex];
+    int tk = 0;
+    double[] wgtcellt = new double[maxindex];
+    int[] cellidt = new int[maxindex];
 
-			double[][] odfpath;
+    double[][] odfpath;
 
-			double totReflexWeigth = 1.0;
+    double totReflexWeigth = 1.0;
 /*			if (!fromPF && useIntensityWeigth()) {
 				totReflexWeigth = getWeight(pole, 0);
 			}*/
-			for (int i = 0; i < izoveri; i++) {
-				int[][] hklList = gethklList(pole, i);
+    for (int i = 0; i < izoveri; i++) {
+      int[][] hklList = gethklList(pole, i);
 
-				int mult = hklList[0].length;
-				double oneOverMult = 1.0 / mult;
+      int mult = hklList[0].length;
+      double oneOverMult = 1.0 / mult;
 
-				double overlappingWgt = getOverlappedWeight(pole, i);
+      double overlappingWgt = getOverlappedWeight(pole, i);
 
-				double reflexWeigth = 1.0; // / izoveri;
-				for (int imult = 0; imult < mult; imult++) {
+      double reflexWeigth = 1.0; // / izoveri;
+      for (int imult = 0; imult < mult; imult++) {
 
 //        System.out.println("hkl: "+hklList[0][imult] +" "+ hklList[1][imult]+" "+ hklList[2][imult]);
-					double[] sctf = Uwimvuo.tfhkl(hklList[0][imult], hklList[1][imult], hklList[2][imult],
-							cdsc[7], cdsc[5], cdsc[3], cdsc[6], cdsc[0], cdsc[1]);
-					double fhir = Math.acos(sctf[3]);
-					int inv = Uwimvuo.equiv(LaueGroupSnumber, sctf);
+        double[] sctf = Uwimvuo.tfhkl(hklList[0][imult], hklList[1][imult], hklList[2][imult],
+            cdsc[7], cdsc[5], cdsc[3], cdsc[6], cdsc[0], cdsc[1]);
+        double fhir = Math.acos(sctf[3]);
+        int inv = Uwimvuo.equiv(LaueGroupSnumber, sctf);
 
 //			System.out.println(Integer.toXRDcatString(i) + " " + Fmt.format(textAngles[0]) + " " + Fmt.format(textAngles[1]));
 
@@ -1828,104 +1841,101 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 //        if (inv != 1)
 //          inversion++;
 
-					if (cubic)
-						odfpath = calculateCellPathAnglesForCubic(textAngles[0], textAngles[1],
-								sctf[0], sctf[1],
-								fhir, inv, odfMaxAnglesR, mdb, cubic7);
-					else
-						odfpath = calculateCellPathAngles(textAngles[0], textAngles[1],
-								sctf[0], sctf[1],
-								fhir, inv, odfMaxAnglesR, mdb, cubic7);
+        if (cubic)
+          odfpath = calculateCellPathAnglesForCubic(textAngles[0], textAngles[1],
+              sctf[0], sctf[1],
+              fhir, inv, odfMaxAnglesR, mdb, cubic7);
+        else
+          odfpath = calculateCellPathAngles(textAngles[0], textAngles[1],
+              sctf[0], sctf[1],
+              fhir, inv, odfMaxAnglesR, mdb, cubic7);
 
-					int cellNumber = odfpath[0].length; //nfismax * inversion;
+        int cellNumber = odfpath[0].length; //nfismax * inversion;
 
-					for (k = 0; k < cellNumber; k++) {
+        for (k = 0; k < cellNumber; k++) {
 
-						tmp_angles[0] = odfpath[0][k];
-						tmp_angles[1] = odfpath[1][k];
-						tmp_angles[2] = odfpath[2][k];
+          tmp_angles[0] = odfpath[0][k];
+          tmp_angles[1] = odfpath[1][k];
+          tmp_angles[2] = odfpath[2][k];
 /*			System.out.println(tmp_angles[0]*Constants.PITODEG + " " + tmp_angles[1]*Constants.PITODEG + " " +
               tmp_angles[2]*Constants.PITODEG);       */
 
-						getIndicesR(tmp_angles, findex);
+          getIndicesR(tmp_angles, findex);
 //			System.out.println(findex[0] + " " + findex[1] + " " + findex[2]);
-						int cellid = ODFindex(findex);
+          int cellid = ODFindex(findex);
 //			System.out.println(cellid);
 
-						double wgtcell = odfpath[3][k] * oneOverMult * overlappingWgt * reflexWeigth;
+          double wgtcell = odfpath[3][k] * oneOverMult * overlappingWgt * reflexWeigth;
 
-						increaseCoverage(cellid, wgtcell, totReflexWeigth);
+          increaseCoverage(cellid, wgtcell, totReflexWeigth);
 
-						if (tk == 0 || !testCollapse) {
-							cellidt[tk] = cellid;
-							wgtcellt[tk++] = wgtcell;
+          if (tk == 0 || !testCollapse) {
+            cellidt[tk] = cellid;
+            wgtcellt[tk++] = wgtcell;
 //              System.out.println("Not testing " + totalcell);
-						} else {
-							collapse = false;
-							for (int j = tk - 1; j >= 0 && !collapse; j--) {
-								if (cellid == cellidt[j]) {
-									wgtcellt[j] += wgtcell;
-									collapse = true;
-								}
-							}
-							if (!collapse) {
-								int actualsize = cellIDandWGT.size();
-								for (int j = 0; j < actualsize && !collapse; j += 2) {
-									int[] cellidk = (int[]) cellIDandWGT.elementAt(j);
-									for (int ij = 0; ij < maxindex && !collapse; ij++) {
-										if (cellid == cellidk[ij]) {
-											double[] wgtcellk = (double[]) cellIDandWGT.elementAt(j + 1);
-											wgtcellk[ij] += wgtcell;
-											collapse = true;
-										}
-									}
-								}
-							}
-							if (!collapse) {
-								cellidt[tk] = cellid;
-								wgtcellt[tk++] = wgtcell;
-							}
-						}
-						if (tk == maxindex) {
-							cellIDandWGT.addElement(cellidt);
-							cellIDandWGT.addElement(wgtcellt);
-							totalcell += tk;
-							tk = 0;
-							wgtcellt = new double[maxindex];
-							cellidt = new int[maxindex];
-						}
-					}
-				}
-			}
-			totalcell += tk;
+          } else {
+            collapse = false;
+            for (int j = tk - 1; j >= 0 && !collapse; j--) {
+              if (cellid == cellidt[j]) {
+                wgtcellt[j] += wgtcell;
+                collapse = true;
+              }
+            }
+            if (!collapse) {
+              int actualsize = cellIDandWGT.size();
+              for (int j = 0; j < actualsize && !collapse; j += 2) {
+                int[] cellidk = (int[]) cellIDandWGT.elementAt(j);
+                for (int ij = 0; ij < maxindex && !collapse; ij++) {
+                  if (cellid == cellidk[ij]) {
+                    double[] wgtcellk = (double[]) cellIDandWGT.elementAt(j + 1);
+                    wgtcellk[ij] += wgtcell;
+                    collapse = true;
+                  }
+                }
+              }
+            }
+            if (!collapse) {
+              cellidt[tk] = cellid;
+              wgtcellt[tk++] = wgtcell;
+            }
+          }
+          if (tk == maxindex) {
+            cellIDandWGT.addElement(cellidt);
+            cellIDandWGT.addElement(wgtcellt);
+            totalcell += tk;
+            tk = 0;
+            wgtcellt = new double[maxindex];
+            cellidt = new int[maxindex];
+          }
+        }
+      }
+    }
+    totalcell += tk;
 
 /*    if (Constants.testing && MaudPreferences.getBoolean("debug.negativeODFout", false)) {
       System.out.println(totalcell);
     }*/
-			double[] cellWGT = new double[totalcell];
-			int[] cellID = new int[totalcell];
+    double[] cellWGT = new double[totalcell];
+    int[] cellID = new int[totalcell];
 
-			int sizev = cellIDandWGT.size() / 2;
-			int index = 0;
-			for (int i = 0; i < sizev; i++) {
-				int[] tcellid = (int[]) cellIDandWGT.elementAt(i * 2);
-				double[] twgtcell = (double[]) cellIDandWGT.elementAt(i * 2 + 1);
-				for (int j = 0; j < maxindex; j++) {
-					cellID[index] = tcellid[j];
-					cellWGT[index++] = twgtcell[j];
-				}
-			}
-			for (int j = 0; j < tk; j++) {
-				cellID[index] = cellidt[j];
-				cellWGT[index++] = wgtcellt[j];
-			}
-			result.add(cellID);
-			result.add(cellWGT);
-		} else {
-			result.add(new int[0]);
-			result.add(new double[0]);
-		}
-		return result;
+    int sizev = cellIDandWGT.size() / 2;
+    int index = 0;
+    for (int i = 0; i < sizev; i++) {
+      int[] tcellid = (int[]) cellIDandWGT.elementAt(i * 2);
+      double[] twgtcell = (double[]) cellIDandWGT.elementAt(i * 2 + 1);
+      for (int j = 0; j < maxindex; j++) {
+        cellID[index] = tcellid[j];
+        cellWGT[index++] = twgtcell[j];
+      }
+    }
+    for (int j = 0; j < tk; j++) {
+      cellID[index] = cellidt[j];
+      cellWGT[index++] = wgtcellt[j];
+    }
+    result.add(cellID);
+    result.add(cellWGT);
+
+    return result;
 	}
 
 	private void increaseCoverage(int cellid, double wgtcell, double totReflexWeigth) {
@@ -1959,165 +1969,155 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 		int pole = poleindex[dataindex];
 		int point = pointindex[dataindex];
 
-		Phase phase = getPhase();
-		Sample sample = phase.getSample();
-		boolean checkIn = true;
+    double[] textAngles = getTextureAngles(pole, point);
 
-		if (!fromPF) {
-			DiffrDataFile diffrDataFile = sample.getActiveDataSet(datasetindex[dataindex]).getActiveDataFile(datafileindex[dataindex]);
-			checkIn = diffrDataFile.isInsideRange(diffrDataFile.getPositions(phase)[poleFigureIndex[pole]][0][0]);
-		}
-
-		if (checkIn) {
-			double[] textAngles = getTextureAngles(pole, point);
-
-			double[] wgtcellt;
-			if (wgtContainer != null)
-				wgtcellt = wgtContainer.elementAt(threadIndex);
-			else
-				wgtcellt = new double[maxindex];
+    double[] wgtcellt;
+    if (wgtContainer != null)
+      wgtcellt = wgtContainer.elementAt(threadIndex);
+    else
+      wgtcellt = new double[maxindex];
 
 //l			Vector cellIDandWGT = new Vector(0, 2);
 
-			int izoveri = getIzoveri(pole);
+    int izoveri = getIzoveri(pole);
 
-			int totalcell = 0;
+    int totalcell = 0;
 
 //l			int tk = 0;
 //l			int[] cellidt = new int[maxindex];
 
-			double[][] odfpath;
-			double totReflexWeigth = 1;
+    double[][] odfpath;
+    double totReflexWeigth = 1;
 /*			if (!fromPF && useIntensityWeigth())
 				totReflexWeigth = getWeight(pole, 0);*/
-			for (int i = 0; i < izoveri; i++) {
-				int[][] hklList = gethklList(pole, i);
+    for (int i = 0; i < izoveri; i++) {
+      int[][] hklList = gethklList(pole, i);
 
-				int mult = hklList[0].length;
-				double oneOverMult = 1.0 / mult;
+      int mult = hklList[0].length;
+      double oneOverMult = 1.0 / mult;
 
-				double overlappingWgt = getOverlappedWeight(pole, i);
+      double overlappingWgt = getOverlappedWeight(pole, i);
 
 //			overlappingWeigth[i] = reflex.getWeight();
 //			overlappingWeigthTotal += overlappingWeigth[i];
 
-				double reflexWeigth = 1.0; // / izoveri;
+      double reflexWeigth = 1.0; // / izoveri;
 // System.out.println("tot " + totReflexWeigth);
-				for (int imult = 0; imult < mult; imult++) {
+      for (int imult = 0; imult < mult; imult++) {
 
-					double[] sctf = Uwimvuo.tfhkl(hklList[0][imult], hklList[1][imult], hklList[2][imult],
-							cdsc[7], cdsc[5], cdsc[3], cdsc[6], cdsc[0], cdsc[1]);
-					double fhir = Math.acos(sctf[3]);
-					int inv = Uwimvuo.equiv(LaueGroupSnumber, sctf);
+        double[] sctf = Uwimvuo.tfhkl(hklList[0][imult], hklList[1][imult], hklList[2][imult],
+            cdsc[7], cdsc[5], cdsc[3], cdsc[6], cdsc[0], cdsc[1]);
+        double fhir = Math.acos(sctf[3]);
+        int inv = Uwimvuo.equiv(LaueGroupSnumber, sctf);
 
 //        int inversion = 1;
 //        if (inv != 1)
 //          inversion++;
 
-					if (cubic)
-						odfpath = calculateCellPathAnglesForCubic(textAngles[0], textAngles[1],
-								sctf[0], sctf[1],
-								fhir, inv, odfMaxAnglesR, mdb, cubic7);
-					else
-						odfpath = calculateCellPathAngles(textAngles[0], textAngles[1],
-								sctf[0], sctf[1],
-								fhir, inv, odfMaxAnglesR, mdb, cubic7);
+        if (cubic)
+          odfpath = calculateCellPathAnglesForCubic(textAngles[0], textAngles[1],
+              sctf[0], sctf[1],
+              fhir, inv, odfMaxAnglesR, mdb, cubic7);
+        else
+          odfpath = calculateCellPathAngles(textAngles[0], textAngles[1],
+              sctf[0], sctf[1],
+              fhir, inv, odfMaxAnglesR, mdb, cubic7);
 
-					int cellNumber = odfpath[0].length; //nfismax * inversion;
-//		    System.out.println(i + " " + Fmt.format(textAngles[0]) + " " + Fmt.format(textAngles[1]) + " " + cellNumber);
+        int cellNumber = odfpath[0].length; //nfismax * inversion;
+//		    System.out.println(i + " " + imult + " " + cellNumber);
 
 
-					for (k = 0; k < cellNumber; k++) {
+        for (k = 0; k < cellNumber; k++) {
 
-						tmp_angles[0] = odfpath[0][k];
-						tmp_angles[1] = odfpath[1][k];
-						tmp_angles[2] = odfpath[2][k];
+          tmp_angles[0] = odfpath[0][k];
+          tmp_angles[1] = odfpath[1][k];
+          tmp_angles[2] = odfpath[2][k];
 
-						getIndicesR(tmp_angles, iaindex);
+          getIndicesR(tmp_angles, iaindex);
 
-						getAnglesR(iaindex, gridAngles);
+          getAnglesR(iaindex, gridAngles);
 
-						if (gridAngles[0] > tmp_angles[0]) {
-							stepa = -1;
-							maxa = -2;
-						} else if (gridAngles[0] == tmp_angles[0]) {
-							stepa = 1;
-							maxa = 1;
-						} else {
-							stepa = 1;
-							maxa = 2;
-						}
-						if (gridAngles[1] > tmp_angles[1]) {
-							stepb = -1;
-							maxb = -2;
-						} else if (gridAngles[1] == tmp_angles[1]) {
-							stepb = 1;
-							maxb = 1;
-						} else {
-							stepb = 1;
-							maxb = 2;
-						}
-						if (gridAngles[2] > tmp_angles[2]) {
-							stepg = -1;
-							maxg = -2;
-						} else if (gridAngles[2] == tmp_angles[2]) {
-							stepg = 1;
-							maxg = 1;
-						} else {
-							stepg = 1;
-							maxg = 2;
-						}
+          if (gridAngles[0] > tmp_angles[0]) {
+            stepa = -1;
+            maxa = -2;
+          } else if (gridAngles[0] == tmp_angles[0]) {
+            stepa = 1;
+            maxa = 1;
+          } else {
+            stepa = 1;
+            maxa = 2;
+          }
+          if (gridAngles[1] > tmp_angles[1]) {
+            stepb = -1;
+            maxb = -2;
+          } else if (gridAngles[1] == tmp_angles[1]) {
+            stepb = 1;
+            maxb = 1;
+          } else {
+            stepb = 1;
+            maxb = 2;
+          }
+          if (gridAngles[2] > tmp_angles[2]) {
+            stepg = -1;
+            maxg = -2;
+          } else if (gridAngles[2] == tmp_angles[2]) {
+            stepg = 1;
+            maxg = 1;
+          } else {
+            stepg = 1;
+            maxg = 2;
+          }
 
-						double orDista = -stepa * (gridAngles[0] - tmp_angles[0]);
-						double orDistb = -stepb * (gridAngles[1] - tmp_angles[1]);
-						double orDistg = -stepg * (gridAngles[2] - tmp_angles[2]);
+          double orDista = -stepa * (gridAngles[0] - tmp_angles[0]);
+          double orDistb = -stepb * (gridAngles[1] - tmp_angles[1]);
+          double orDistg = -stepg * (gridAngles[2] - tmp_angles[2]);
 
 //	  		int maxCount = (1 + Math.abs(stepa)) * (1 + Math.abs(stepb)) * (1 + Math.abs(stepg));
-						double wgtot = 0.0;
-						int kcell = 0;
-						for (int ia = 0; ia != maxa; ia += stepa) {
-							dist_a = ia * resolutionR * stepa - orDista;
-							dist_a *= dist_a;
-							for (int ib = 0; ib != maxb; ib += stepb) {
-								dist_b = ib * resolutionR * stepb - orDistb;
-								dist_b *= dist_b;
-								for (int ig = 0; ig != maxg; ig += stepg) {
-									dist_g = ig * resolutionR * stepg - orDistg;
-									real_dist = Math.sqrt(dist_a + dist_b + dist_g * dist_g);
-									if (real_dist <= dist_factor) {
-										if (real_dist > 1.0E-5)
-											wgtcell[kcell] = (1.0 / Math.pow(real_dist, tubeWeight));
-										else
-											wgtcell[kcell] = 1.0E5f;
+          double wgtot = 0.0;
+          int kcell = 0;
+          for (int ia = 0; ia != maxa; ia += stepa) {
+            dist_a = ia * resolutionR * stepa - orDista;
+            dist_a *= dist_a;
+            for (int ib = 0; ib != maxb; ib += stepb) {
+              dist_b = ib * resolutionR * stepb - orDistb;
+              dist_b *= dist_b;
+              for (int ig = 0; ig != maxg; ig += stepg) {
+                dist_g = ig * resolutionR * stepg - orDistg;
+                real_dist = Math.sqrt(dist_a + dist_b + dist_g * dist_g);
+                if (real_dist <= dist_factor) {
+                  if (real_dist > 1.0E-5)
+                    wgtcell[kcell] = (1.0 / Math.pow(real_dist, tubeWeight));
+                  else
+                    wgtcell[kcell] = 1.0E5f;
 //								wgtcell[kcell] = (double) ((dist_factor - Math.sqrt(real_dist)) / dist_factor);
 //								wgtcell[kcell] *= wgtcell[kcell];
-										tmp_index[0] = ia + iaindex[0];
-										tmp_index[1] = ib + iaindex[1];
-										tmp_index[2] = ig + iaindex[2];
+                  tmp_index[0] = ia + iaindex[0];
+                  tmp_index[1] = ib + iaindex[1];
+                  tmp_index[2] = ig + iaindex[2];
 //L_last1202								applyCrystalSymmetryAndCheck(tmp_index);
-										wgtot += wgtcell[kcell];
-										cellid[kcell++] = ODFindexAndCheck(tmp_index);//L_last1202
-									}
-								}
-							}
-						}
+                  wgtot += wgtcell[kcell];
+                  cellid[kcell++] = ODFindexAndCheck(tmp_index);//L_last1202
+                }
+              }
+            }
+          }
 
-						double wgtcells = odfpath[3][k] * oneOverMult * overlappingWgt * reflexWeigth;
+          double wgtcells = odfpath[3][k] * oneOverMult * overlappingWgt * reflexWeigth;
 
-						if (kcell == 0) {
-							wgtcell[kcell] = wgtcells;
-							wgtot = 1.0;
+          if (kcell == 0) {
+            wgtcell[kcell] = wgtcells;
+            wgtot = 1.0;
 //L_last1202					applyCrystalSymmetryAndCheck(iaindex);
-							cellid[kcell++] = ODFindexAndCheck(iaindex);//L_last1202
-						}
+            cellid[kcell++] = ODFindexAndCheck(iaindex);//L_last1202
+          }
 
-						double wgtw = wgtcells / wgtot;
-						for (int ks = 0; ks < kcell; ks++)
-							wgtcell[ks] *= wgtw;
+          double wgtw = wgtcells / wgtot;
+          for (int ks = 0; ks < kcell; ks++)
+            wgtcell[ks] *= wgtw;
 //						increaseCoverage(cellid, wgtcell, kcell, totReflexWeigth);
 
-						for (int ks = 0; ks < kcell; ks++) {
-							wgtcellt[cellid[ks]] += wgtcell[ks];
+          for (int ks = 0; ks < kcell; ks++) {
+            wgtcellt[cellid[ks]] += wgtcell[ks];
 /*l							if (tk == 0 || !testCollapse) {
 								cellidt[tk] = cellid[ks];
 								wgtcellt[tk++] = wgtcell[ks];
@@ -2156,21 +2156,21 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 									cellidt = new int[maxindex];
 								}
 							}l*/
-						}
-					}
+          }
+        }
 
-				}
+      }
 
-			}
+    }
 
-			for (int i = 0; i < maxindex; i++)
-				if (wgtcellt[i] > 0)
-					totalcell++;
+    for (int i = 0; i < maxindex; i++)
+      if (wgtcellt[i] > 0)
+        totalcell++;
 //l			totalcell += tk;
 /*    if (Constants.testing && MaudPreferences.getBoolean("debug.negativeODFout", false))
       System.out.println(totalcell);*/
-			double[] cellWGT = new double[totalcell];
-			int[] cellID = new int[totalcell];
+    double[] cellWGT = new double[totalcell];
+    int[] cellID = new int[totalcell];
 
 /*l			int sizev = cellIDandWGT.size() / 2;
 			int index = 0;
@@ -2186,20 +2186,17 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 				cellID[index] = cellidt[j];
 				cellWGT[index++] = wgtcellt[j];
 			}l*/
-			int index = 0;
-			for (int i = 0; i < maxindex; i++)
-				if (wgtcellt[i] > 0) {
-					cellID[index] = i;
-					cellWGT[index++] = wgtcellt[i];
-					wgtcellt[i] = 0; // we reset for next
-				}
-			increaseCoverage(cellID, cellWGT, totalcell, totReflexWeigth); // we divide by izoveri to weight less overlapped
-			result.add(cellID);
-			result.add(cellWGT);
-		} else {
-			result.add(new int[0]);
-			result.add(new double[0]);
-		}
+    int index = 0;
+    for (int i = 0; i < maxindex; i++)
+      if (wgtcellt[i] > 0) {
+        cellID[index] = i;
+        cellWGT[index++] = wgtcellt[i];
+        wgtcellt[i] = 0; // we reset for next
+      }
+    increaseCoverage(cellID, cellWGT, totalcell, totReflexWeigth); // we divide by izoveri to weight less overlapped
+    result.add(cellID);
+    result.add(cellWGT);
+
 		return result;
 	}
 
@@ -2526,12 +2523,12 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 
 	}
 
-	public double[] calculatePF(double[][] thetaphi,
+	public double[] calculatePF(double[][] thetaphi, int factorsNumber,
 	                            double sthi, double cthi, double fhir, int inv) {
-/* Local variables */
-		double ang;
-		int nfis;
-		double ca2, cb2, sa2;
+    /* Local variables */
+    double ang;
+    int nfis;
+    double ca2, cb2, sa2;
 
 /*     Calculation of a complete reduced pole figure
        INPUT FIO given in the whole G-space OUTPUT POLREF=FS */
@@ -2540,144 +2537,146 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 //    if (Constants.testing)
 //    	negODFout = MaudPreferences.getBoolean("debug.negativeODFout", false);
 
-		cb2 = cthi;
-		int nfismax = (int) (Constants.PI2 / integrationStepPFR + 1.000001);
+    cb2 = cthi;
+    int nfismax = (int) (Constants.PI2 / integrationStepPFR + 1.000001);
 
-		int numberOfPoints = thetaphi[0].length;
-		double[] fs = new double[numberOfPoints];
+    int numberOfPoints = factorsNumber; // thetaphi[0].length;
+    double[] fs = new double[numberOfPoints];
+    if (numberOfPoints <= 0)
+      return fs;
 
-		int[] referenceCounter = new int[numberOfPoints];
-		int[] references = new int[numberOfPoints];
-		int[] pointReference = new int[numberOfPoints];
+    int[] referenceCounter = new int[numberOfPoints];
+    int[] references = new int[numberOfPoints];
+    int[] pointReference = new int[numberOfPoints];
 
-		pointReference[0] = 0;
-		references[0] = 0;
-		int numberOfReferences = 0;
-		for (int n = 0; n < numberOfPoints; n++) {
+    pointReference[0] = 0;
+    references[0] = 0;
+    int numberOfReferences = 0;
+    for (int n = 0; n < numberOfPoints; n++) {
 //      thetaphi[0][n] *= Constants.DEGTOPI;
 //      thetaphi[1][n] *= Constants.DEGTOPI;
-			boolean isNewReference = true;
-			for (int nscan = 0; nscan < numberOfReferences; nscan++)
-				if (Math.abs(thetaphi[0][references[nscan]] - thetaphi[0][n]) < 0.0002) {
-					isNewReference = false;
-					referenceCounter[pointReference[references[nscan]]]++;
-					pointReference[n] = pointReference[references[nscan]];
-					break;
-				}
-			if (isNewReference) {
-				references[numberOfReferences] = n;
-				pointReference[n] = numberOfReferences;
-				referenceCounter[numberOfReferences]++;
-				numberOfReferences++;
-			}
-		}
+        boolean isNewReference = true;
+        for (int nscan = 0; nscan < numberOfReferences; nscan++)
+          if (Math.abs(thetaphi[0][references[nscan]] - thetaphi[0][n]) < 0.0002) {
+            isNewReference = false;
+            referenceCounter[pointReference[references[nscan]]]++;
+            pointReference[n] = pointReference[references[nscan]];
+            break;
+          }
+        if (isNewReference) {
+          references[numberOfReferences] = n;
+          pointReference[n] = numberOfReferences;
+          referenceCounter[numberOfReferences]++;
+          numberOfReferences++;
+        }
+    }
 
-		int[] finalPointReference = new int[numberOfReferences];
-		finalPointReference[0] = referenceCounter[0];
-		references[0] = 0;
-		for (int n = 1; n < numberOfReferences; n++) {
-			references[n] = finalPointReference[n - 1];
-			finalPointReference[n] = finalPointReference[n - 1] + referenceCounter[n];
-		}
+    int[] finalPointReference = new int[numberOfReferences];
+    finalPointReference[0] = referenceCounter[0];
+    references[0] = 0;
+    for (int n = 1; n < numberOfReferences; n++) {
+      references[n] = finalPointReference[n - 1];
+      finalPointReference[n] = finalPointReference[n - 1] + referenceCounter[n];
+    }
 
-		for (int n = 0; n < numberOfPoints; n++) {
-			referenceCounter[references[pointReference[n]]] = n;
-			references[pointReference[n]]++;
-		}
+    for (int n = 0; n < numberOfPoints; n++) {
+        referenceCounter[references[pointReference[n]]] = n;
+        references[pointReference[n]]++;
+    }
 
-		int startingPoint = 0;
+    int startingPoint = 0;
 
-		double[] angles = new double[3];
-		int[] iaindex = new int[3];
+    double[] angles = new double[3];
+    int[] iaindex = new int[3];
 
-		int maxRepeat = 2 - inv;
-		double[][] phiRef = new double[maxRepeat][nfismax];
-		int[][] cellIndex1 = new int[maxRepeat][nfismax];
-		int[][] cellIndex2 = new int[maxRepeat][nfismax];
-		double[] g2rv = new double[maxRepeat];
-		double[] cb2v = new double[maxRepeat];
-		g2rv[0] = Constants.PI - fhir;
-		while (g2rv[0] < 0.)
-			g2rv[0] += Constants.PI2;
-		cb2v[0] = cb2;
-		for (int iu = 1; iu < maxRepeat; iu++) {
-			cb2v[iu] = -cb2;
-			g2rv[iu] = g2rv[0] - Constants.PI;
-			while (g2rv[iu] < 0.)
-				g2rv[iu] += Constants.PI2;
-		}
+    int maxRepeat = 2 - inv;
+    double[][] phiRef = new double[maxRepeat][nfismax];
+    int[][] cellIndex1 = new int[maxRepeat][nfismax];
+    int[][] cellIndex2 = new int[maxRepeat][nfismax];
+    double[] g2rv = new double[maxRepeat];
+    double[] cb2v = new double[maxRepeat];
+    g2rv[0] = Constants.PI - fhir;
+    while (g2rv[0] < 0.)
+      g2rv[0] += Constants.PI2;
+    cb2v[0] = cb2;
+    for (int iu = 1; iu < maxRepeat; iu++) {
+      cb2v[iu] = -cb2;
+      g2rv[iu] = g2rv[0] - Constants.PI;
+      while (g2rv[iu] < 0.)
+        g2rv[iu] += Constants.PI2;
+    }
 
-		for (int nref = 0; nref < numberOfReferences; nref++) {
-			// evaluate the first new theta value, all the other change only in phi
-			int n1 = referenceCounter[startingPoint];
-			fs[n1] = 0.;
+    for (int nref = 0; nref < numberOfReferences; nref++) {
+      // evaluate the first new theta value, all the other change only in phi
+      int n1 = referenceCounter[startingPoint];
+      fs[n1] = 0.;
 
-/* Projection thread loop, Simpson integration */
-			double cr = Math.cos(thetaphi[0][n1]);
-			double sr = Math.sin(thetaphi[0][n1]);
-			for (nfis = 0; nfis < nfismax; nfis++) {
-				ang = nfis * integrationStepPFR;
-				ca2 = -Math.cos(ang);
-				sa2 = Math.sin(ang);
-				double ffak1 = 0.0;
-				for (int repeat = 0; repeat < maxRepeat; repeat++) {
-					Angles.g20g100(angles, ca2, sa2, cb2v[repeat], sthi, cr, sr);
-					phiRef[repeat][nfis] = angles[0]; // - iaindex[0] * resolutionR;
-					angles[0] += thetaphi[1][n1];
-					angles[2] += g2rv[repeat];
-					getIndicesNoCheckR(angles, iaindex);
-					cellIndex1[repeat][nfis] = iaindex[1];
-					cellIndex2[repeat][nfis] = iaindex[2];
-					ffak1 += getODF(iaindex);
-				}
-				if (0 < nfis && nfis < nfismax - 1) {
-					if (MoreMath.odd(nfis + 1))
-						ffak1 *= 2;
-					else
-						ffak1 *= 4;
-				}
-				fs[n1] += ffak1;
-			}
+      /* Projection thread loop, Simpson integration */
+        double cr = Math.cos(thetaphi[0][n1]);
+        double sr = Math.sin(thetaphi[0][n1]);
+        for (nfis = 0; nfis < nfismax; nfis++) {
+          ang = nfis * integrationStepPFR;
+          ca2 = -Math.cos(ang);
+          sa2 = Math.sin(ang);
+          double ffak1 = 0.0;
+          for (int repeat = 0; repeat < maxRepeat; repeat++) {
+            Angles.g20g100(angles, ca2, sa2, cb2v[repeat], sthi, cr, sr);
+            phiRef[repeat][nfis] = angles[0]; // - iaindex[0] * resolutionR;
+            angles[0] += thetaphi[1][n1];
+            angles[2] += g2rv[repeat];
+            getIndicesNoCheckR(angles, iaindex);
+            cellIndex1[repeat][nfis] = iaindex[1];
+            cellIndex2[repeat][nfis] = iaindex[2];
+            ffak1 += getODF(iaindex);
+          }
+          if (0 < nfis && nfis < nfismax - 1) {
+            if (MoreMath.odd(nfis + 1))
+              ffak1 *= 2;
+            else
+              ffak1 *= 4;
+          }
+          fs[n1] += ffak1;
+        }
 
-			fs[n1] *= pisimg / maxRepeat;
+        fs[n1] *= pisimg / maxRepeat;
 
-			startingPoint++;
-			for (int n = startingPoint; n < finalPointReference[nref]; n++) {
-				// referenceCounter[n] is the point to evaluate
-				n1 = referenceCounter[n];
-				fs[n1] = 0.;
+        startingPoint++;
+        for (int n = startingPoint; n < finalPointReference[nref]; n++) {
+          // referenceCounter[n] is the point to evaluate
+          n1 = referenceCounter[n];
+          fs[n1] = 0.;
 
-        /* Projection thread loop, Simpson integration */
-				for (nfis = 0; nfis < nfismax; nfis++) {
-					double ffak1 = 0.0;
-					for (int repeat = 0; repeat < maxRepeat; repeat++) {
-						double anglesPhi = phiRef[repeat][nfis] + thetaphi[1][n1];
-						iaindex[0] = (int) ((anglesPhi + pi25g) / resolutionR + .000001);
-						iaindex[1] = cellIndex1[repeat][nfis];
-						iaindex[2] = cellIndex2[repeat][nfis];
+          /* Projection thread loop, Simpson integration */
+          for (nfis = 0; nfis < nfismax; nfis++) {
+            double ffak1 = 0.0;
+            for (int repeat = 0; repeat < maxRepeat; repeat++) {
+              double anglesPhi = phiRef[repeat][nfis] + thetaphi[1][n1];
+              iaindex[0] = (int) ((anglesPhi + pi25g) / resolutionR + .000001);
+              iaindex[1] = cellIndex1[repeat][nfis];
+              iaindex[2] = cellIndex2[repeat][nfis];
 
 //						double f_odf = getODF(iaindex); // Luca_last1202 f[findex[0]][findex[1]][findex[2]];
-						ffak1 += getODF(iaindex);
-					}
-					if (0 < nfis && nfis < nfismax - 1) {
-						if (MoreMath.odd(nfis + 1))
-							ffak1 *= 2.;
-						else
-							ffak1 *= 4.;
-					}
-					fs[n1] += ffak1;
-				}
-				fs[n1] *= pisimg / maxRepeat;
-			}
-			startingPoint = finalPointReference[nref];  // next one
-		}
+              ffak1 += getODF(iaindex);
+            }
+            if (0 < nfis && nfis < nfismax - 1) {
+              if (MoreMath.odd(nfis + 1))
+                ffak1 *= 2.;
+              else
+                ffak1 *= 4.;
+            }
+            fs[n1] += ffak1;
+          }
+          fs[n1] *= pisimg / maxRepeat;
+        }
+        startingPoint = finalPointReference[nref];  // next one
+    }
 
 /*                                          Normalization to PINPF */
 //		System.out.println(fs);
 		return fs;
 	}
 
-	public double[] calculatePFbyTubeProjection(double[][] thetaphi,
+	public double[] calculatePFbyTubeProjection(double[][] thetaphi, int factorsNumber,
 	                                            double sthi, double cthi, double fhir, int inv) {
 /* Local variables */
 		double ffak, ang, ca2, cb2, sa2,
@@ -2695,8 +2694,10 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 		cb2 = cthi;
 		int nfismax = (int) (Constants.PI2 / integrationStepPFR + 1.000001);
 
-		int numberOfPoints = thetaphi[0].length;
+		int numberOfPoints = factorsNumber; // thetaphi[0].length;
 		double[] fs = new double[numberOfPoints];
+    if (numberOfPoints <= 0)
+      return fs;
 
 		int[] referenceCounter = new int[numberOfPoints];
 		int[] references = new int[numberOfPoints];
@@ -2708,20 +2709,20 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 		for (int n = 0; n < numberOfPoints; n++) {
 			//     thetaphi[0][n] *= Constants.DEGTOPI;
 			//     thetaphi[1][n] *= Constants.DEGTOPI;
-			boolean isNewReference = true;
-			for (int nscan = 0; nscan < numberOfReferences; nscan++)
-				if (Math.abs(thetaphi[0][references[nscan]] - thetaphi[0][n]) < 0.0002) {
-					isNewReference = false;
-					referenceCounter[pointReference[references[nscan]]]++;
-					pointReference[n] = pointReference[references[nscan]];
-					break;
-				}
-			if (isNewReference) {
-				references[numberOfReferences] = n;
-				pointReference[n] = numberOfReferences;
-				referenceCounter[numberOfReferences]++;
-				numberOfReferences++;
-			}
+        boolean isNewReference = true;
+        for (int nscan = 0; nscan < numberOfReferences; nscan++)
+          if (Math.abs(thetaphi[0][references[nscan]] - thetaphi[0][n]) < 0.0002) {
+            isNewReference = false;
+            referenceCounter[pointReference[references[nscan]]]++;
+            pointReference[n] = pointReference[references[nscan]];
+            break;
+          }
+        if (isNewReference) {
+          references[numberOfReferences] = n;
+          pointReference[n] = numberOfReferences;
+          referenceCounter[numberOfReferences]++;
+          numberOfReferences++;
+        }
 		}
 
 		int[] finalPointReference = new int[numberOfReferences];
@@ -2733,8 +2734,8 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 		}
 
 		for (int n = 0; n < numberOfPoints; n++) {
-			referenceCounter[references[pointReference[n]]] = n;
-			references[pointReference[n]]++;
+        referenceCounter[references[pointReference[n]]] = n;
+        references[pointReference[n]]++;
 		}
 
 		int startingPoint = 0;
@@ -2767,195 +2768,195 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 		}
 
 		for (int nref = 0; nref < numberOfReferences; nref++) {
-			// evaluate the first new theta value, all the other change only in phi
-			int n1 = referenceCounter[startingPoint];
-			fs[n1] = 0.;
+      // evaluate the first new theta value, all the other change only in phi
+      int n1 = referenceCounter[startingPoint];
+      fs[n1] = 0.;
 
-/* Projection thread loop, Simpson integration */
-			double cr = Math.cos(thetaphi[0][n1]);
-			double sr = Math.sin(thetaphi[0][n1]);
-			for (nfis = 0; nfis < nfismax; nfis++) {
-				ang = nfis * integrationStepPFR;
-				ca2 = -Math.cos(ang);
-				sa2 = Math.sin(ang);
-				double ffak1 = 0.0;
-				for (int repeat = 0; repeat < maxRepeat; repeat++) {
-					Angles.g20g100(angles, ca2, sa2, cb2v[repeat], sthi, cr, sr);
-					phiRef[repeat][nfis] = angles[0];
-					angles[0] += thetaphi[1][n1];
-					angles[2] += g2rv[repeat];
-					getIndicesNoCheckR(angles, iaindex);
-					getAnglesR(iaindex, gridAngles);
-					cellIndex1[repeat][nfis] = iaindex[1];
-					cellIndex2[repeat][nfis] = iaindex[2];
-					if (gridAngles[0] > angles[0]) {
-						stepa = -1;
-						maxa = -2;
-					} else if (gridAngles[0] == angles[0]) {
-						stepa = 1;
-						maxa = 1;
-					} else {
-						stepa = 1;
-						maxa = 2;
-					}
-					if (gridAngles[1] > angles[1]) {
-						stepb = -1;
-						maxb = -2;
-					} else if (gridAngles[1] == angles[1]) {
-						stepb = 1;
-						maxb = 1;
-					} else {
-						stepb = 1;
-						maxb = 2;
-					}
-					if (gridAngles[2] > angles[2]) {
-						stepg = -1;
-						maxg = -2;
-					} else if (gridAngles[2] == angles[2]) {
-						stepg = 1;
-						maxg = 1;
-					} else {
-						stepg = 1;
-						maxg = 2;
-					}
+      /* Projection thread loop, Simpson integration */
+        double cr = Math.cos(thetaphi[0][n1]);
+        double sr = Math.sin(thetaphi[0][n1]);
+        for (nfis = 0; nfis < nfismax; nfis++) {
+          ang = nfis * integrationStepPFR;
+          ca2 = -Math.cos(ang);
+          sa2 = Math.sin(ang);
+          double ffak1 = 0.0;
+          for (int repeat = 0; repeat < maxRepeat; repeat++) {
+            Angles.g20g100(angles, ca2, sa2, cb2v[repeat], sthi, cr, sr);
+            phiRef[repeat][nfis] = angles[0];
+            angles[0] += thetaphi[1][n1];
+            angles[2] += g2rv[repeat];
+            getIndicesNoCheckR(angles, iaindex);
+            getAnglesR(iaindex, gridAngles);
+            cellIndex1[repeat][nfis] = iaindex[1];
+            cellIndex2[repeat][nfis] = iaindex[2];
+            if (gridAngles[0] > angles[0]) {
+              stepa = -1;
+              maxa = -2;
+            } else if (gridAngles[0] == angles[0]) {
+              stepa = 1;
+              maxa = 1;
+            } else {
+              stepa = 1;
+              maxa = 2;
+            }
+            if (gridAngles[1] > angles[1]) {
+              stepb = -1;
+              maxb = -2;
+            } else if (gridAngles[1] == angles[1]) {
+              stepb = 1;
+              maxb = 1;
+            } else {
+              stepb = 1;
+              maxb = 2;
+            }
+            if (gridAngles[2] > angles[2]) {
+              stepg = -1;
+              maxg = -2;
+            } else if (gridAngles[2] == angles[2]) {
+              stepg = 1;
+              maxg = 1;
+            } else {
+              stepg = 1;
+              maxg = 2;
+            }
 
-					double orDista = -stepa * (gridAngles[0] - angles[0]);
-					double orDistb = -stepb * (gridAngles[1] - angles[1]);
-					double orDistg = -stepg * (gridAngles[2] - angles[2]);
-					cellstepb[repeat][nfis] = stepb;
-					cellmaxb[repeat][nfis] = maxb;
-					cellstepg[repeat][nfis] = stepg;
-					cellmaxg[repeat][nfis] = maxg;
-					cellDistb[repeat][nfis] = orDistb;
-					cellDistg[repeat][nfis] = orDistg;
+            double orDista = -stepa * (gridAngles[0] - angles[0]);
+            double orDistb = -stepb * (gridAngles[1] - angles[1]);
+            double orDistg = -stepg * (gridAngles[2] - angles[2]);
+            cellstepb[repeat][nfis] = stepb;
+            cellmaxb[repeat][nfis] = maxb;
+            cellstepg[repeat][nfis] = stepg;
+            cellmaxg[repeat][nfis] = maxg;
+            cellDistb[repeat][nfis] = orDistb;
+            cellDistg[repeat][nfis] = orDistg;
 
-					ffak = 0.0;
-					double wgtot = 0.0;
+            ffak = 0.0;
+            double wgtot = 0.0;
 //					int cellNumber = 0;
-					for (int ia = 0; ia != maxa; ia += stepa) {
-						dist_a = ia * resolutionR * stepa - orDista;
-						dist_a *= dist_a;
-						for (int ib = 0; ib != maxb; ib += stepb) {
-							dist_b = ib * resolutionR * stepb - orDistb;
-							dist_b *= dist_b;
-							for (int ig = 0; ig != maxg; ig += stepg) {
-								dist_g = ig * resolutionR * stepg - orDistg;
-								real_dist = dist_a + dist_b + dist_g * dist_g;
-								if (real_dist <= dist_factor2) {
-									if (real_dist < 1.0E-4)
-										real_dist = 1.0E-4;
-									wgtcell = 1.0 / Math.sqrt(real_dist);
+            for (int ia = 0; ia != maxa; ia += stepa) {
+              dist_a = ia * resolutionR * stepa - orDista;
+              dist_a *= dist_a;
+              for (int ib = 0; ib != maxb; ib += stepb) {
+                dist_b = ib * resolutionR * stepb - orDistb;
+                dist_b *= dist_b;
+                for (int ig = 0; ig != maxg; ig += stepg) {
+                  dist_g = ig * resolutionR * stepg - orDistg;
+                  real_dist = dist_a + dist_b + dist_g * dist_g;
+                  if (real_dist <= dist_factor2) {
+                    if (real_dist < 1.0E-4)
+                      real_dist = 1.0E-4;
+                    wgtcell = 1.0 / Math.sqrt(real_dist);
 //									wgtcell = ((dist_factor - Math.sqrt(real_dist)) / dist_factor);
 //									wgtcell = *= wgtcell;
-									tmp_index[0] = ia + iaindex[0];
-									tmp_index[1] = ib + iaindex[1];
-									tmp_index[2] = ig + iaindex[2];
-									ffak += getODF(tmp_index) * wgtcell;
-									wgtot += wgtcell;
-								}
-							}
-						}
-					}
-					if (wgtot == 0.0)
-						ffak1 += getODF(iaindex);
-					else
-						ffak1 += ffak / wgtot;
-				}
-				if (0 < nfis && nfis < nfismax - 1) {
-					if (MoreMath.odd(nfis + 1))
-						ffak1 *= 2;
-					else
-						ffak1 *= 4;
-				}
-				fs[n1] += ffak1;
-			}
+                    tmp_index[0] = ia + iaindex[0];
+                    tmp_index[1] = ib + iaindex[1];
+                    tmp_index[2] = ig + iaindex[2];
+                    ffak += getODF(tmp_index) * wgtcell;
+                    wgtot += wgtcell;
+                  }
+                }
+              }
+            }
+            if (wgtot == 0.0)
+              ffak1 += getODF(iaindex);
+            else
+              ffak1 += ffak / wgtot;
+          }
+          if (0 < nfis && nfis < nfismax - 1) {
+            if (MoreMath.odd(nfis + 1))
+              ffak1 *= 2;
+            else
+              ffak1 *= 4;
+          }
+          fs[n1] += ffak1;
+        }
 
-			fs[n1] *= pisimg / maxRepeat;
+        fs[n1] *= pisimg / maxRepeat;
 
-			startingPoint++;
-			for (int n = startingPoint; n < finalPointReference[nref]; n++) {
-				// referenceCounter[n] is the point to evaluate
-				n1 = referenceCounter[n];
-				fs[n1] = 0.;
+        startingPoint++;
+        for (int n = startingPoint; n < finalPointReference[nref]; n++) {
+          // referenceCounter[n] is the point to evaluate
+          n1 = referenceCounter[n];
+          fs[n1] = 0.;
 
-        /* Projection thread loop, Simpson integration */
-				for (nfis = 0; nfis < nfismax; nfis++) {
-					double ffak1 = 0.0;
-					for (int repeat = 0; repeat < maxRepeat; repeat++) {
-						double anglesPhi = phiRef[repeat][nfis] + thetaphi[1][n1];
-						iaindex[0] = (int) ((anglesPhi + pi25g) / resolutionR + .000001);
-						double anglesGridPhi = iaindex[0] * resolutionR;
+          /* Projection thread loop, Simpson integration */
+          for (nfis = 0; nfis < nfismax; nfis++) {
+            double ffak1 = 0.0;
+            for (int repeat = 0; repeat < maxRepeat; repeat++) {
+              double anglesPhi = phiRef[repeat][nfis] + thetaphi[1][n1];
+              iaindex[0] = (int) ((anglesPhi + pi25g) / resolutionR + .000001);
+              double anglesGridPhi = iaindex[0] * resolutionR;
 
-						iaindex[1] = cellIndex1[repeat][nfis];
-						iaindex[2] = cellIndex2[repeat][nfis];
+              iaindex[1] = cellIndex1[repeat][nfis];
+              iaindex[2] = cellIndex2[repeat][nfis];
 
-						anglesGridPhi = anglesGridPhi - anglesPhi;
-						if (anglesGridPhi > 0.0) {
-							stepa = -1;
-							maxa = -2;
-						} else if (anglesGridPhi == 0.0) {
-							stepa = 1;
-							maxa = 1;
-						} else {
-							stepa = 1;
-							maxa = 2;
-						}
+              anglesGridPhi = anglesGridPhi - anglesPhi;
+              if (anglesGridPhi > 0.0) {
+                stepa = -1;
+                maxa = -2;
+              } else if (anglesGridPhi == 0.0) {
+                stepa = 1;
+                maxa = 1;
+              } else {
+                stepa = 1;
+                maxa = 2;
+              }
 
-						stepb = cellstepb[repeat][nfis];
-						maxb = cellmaxb[repeat][nfis];
-						stepg = cellstepg[repeat][nfis];
-						maxg = cellmaxg[repeat][nfis];
-						double orDista = -stepa * anglesGridPhi;
-						double orDistb = cellDistb[repeat][nfis];
-						double orDistg = cellDistg[repeat][nfis];
+              stepb = cellstepb[repeat][nfis];
+              maxb = cellmaxb[repeat][nfis];
+              stepg = cellstepg[repeat][nfis];
+              maxg = cellmaxg[repeat][nfis];
+              double orDista = -stepa * anglesGridPhi;
+              double orDistb = cellDistb[repeat][nfis];
+              double orDistg = cellDistg[repeat][nfis];
 
-						ffak = 0.0;
-						double wgtot = 0.0;
-						for (int ia = 0; ia != maxa; ia += stepa) {
-							dist_a = ia * resolutionR * stepa - orDista;
-							dist_a *= dist_a;
-							for (int ib = 0; ib != maxb; ib += stepb) {
-								dist_b = ib * resolutionR * stepb - orDistb;
-								dist_b *= dist_b;
-								for (int ig = 0; ig != maxg; ig += stepg) {
-									dist_g = ig * resolutionR * stepg - orDistg;
-									real_dist = dist_a + dist_b + dist_g * dist_g;
-									if (real_dist <= dist_factor2) {
-										if (real_dist < 1.0E-4)
-											real_dist = 1.0E-4;
-										wgtcell = 1.0 / Math.sqrt(real_dist);
+              ffak = 0.0;
+              double wgtot = 0.0;
+              for (int ia = 0; ia != maxa; ia += stepa) {
+                dist_a = ia * resolutionR * stepa - orDista;
+                dist_a *= dist_a;
+                for (int ib = 0; ib != maxb; ib += stepb) {
+                  dist_b = ib * resolutionR * stepb - orDistb;
+                  dist_b *= dist_b;
+                  for (int ig = 0; ig != maxg; ig += stepg) {
+                    dist_g = ig * resolutionR * stepg - orDistg;
+                    real_dist = dist_a + dist_b + dist_g * dist_g;
+                    if (real_dist <= dist_factor2) {
+                      if (real_dist < 1.0E-4)
+                        real_dist = 1.0E-4;
+                      wgtcell = 1.0 / Math.sqrt(real_dist);
 //										wgtcell = ((dist_factor - Math.sqrt(real_dist)) / dist_factor);
 //										wgtcell *= wgtcell;
-										tmp_index[0] = ia + iaindex[0];
-										tmp_index[1] = ib + iaindex[1];
-										tmp_index[2] = ig + iaindex[2];
-										ffak += getODF(tmp_index) * wgtcell;
-										wgtot += wgtcell;
-									}
-								}
-							}
-						}
-						if (wgtot == 0.0)
-							ffak1 += getODF(iaindex);
-						else
-							ffak1 += ffak / wgtot;
-					}
-					if (0 < nfis && nfis < nfismax - 1) {
-						if (MoreMath.odd(nfis + 1))
-							ffak1 *= 2.;
-						else
-							ffak1 *= 4.;
-					}
-					fs[n1] += ffak1;
-				}
+                      tmp_index[0] = ia + iaindex[0];
+                      tmp_index[1] = ib + iaindex[1];
+                      tmp_index[2] = ig + iaindex[2];
+                      ffak += getODF(tmp_index) * wgtcell;
+                      wgtot += wgtcell;
+                    }
+                  }
+                }
+              }
+              if (wgtot == 0.0)
+                ffak1 += getODF(iaindex);
+              else
+                ffak1 += ffak / wgtot;
+            }
+            if (0 < nfis && nfis < nfismax - 1) {
+              if (MoreMath.odd(nfis + 1))
+                ffak1 *= 2.;
+              else
+                ffak1 *= 4.;
+            }
+            fs[n1] += ffak1;
+          }
 
-				fs[n1] *= pisimg / maxRepeat;
+          fs[n1] *= pisimg / maxRepeat;
 
-			}
-			startingPoint = finalPointReference[nref];  // next one
-		}
+        }
+        startingPoint = finalPointReference[nref];  // next one
+    }
 
-/*                                          Normalization to PINPF */
+      /*                                          Normalization to PINPF */
 //		System.out.println(fs);
 		return fs;
 	} /* calpolo_ */
@@ -3188,14 +3189,14 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 	}
 
 	public double[] computeTextureFactor(double[][] texture_angles,
-	                                     double[] sctf, double fhir, int inv,
-	                                     int h, int k, int l) {
+                                       double[] sctf, double fhir, int inv,
+                                       int h, int k, int l, int factorsNumber) {
 
 		if (odf != null) {
 			if (useTubeProjection())
-				return calculatePFbyTubeProjection(texture_angles, sctf[0], sctf[1], fhir, inv);
+				return calculatePFbyTubeProjection(texture_angles, factorsNumber, sctf[0], sctf[1], fhir, inv);
 			else
-				return calculatePF(texture_angles, sctf[0], sctf[1], fhir, inv);
+				return calculatePF(texture_angles, factorsNumber, sctf[0], sctf[1], fhir, inv);
 
 		}
 		return null;
@@ -3276,7 +3277,7 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 		double fhir = Math.acos(sctf[3]);
 		int inv = Uwimvuo.equiv(LaueGroupSnumber, sctf);
 
-		return computeTextureFactor(alphabeta, sctf, fhir, inv, reflex.getH(), reflex.getK(), reflex.getL());
+		return  computeTextureFactor(alphabeta, sctf, fhir, inv, reflex.getH(), reflex.getK(), reflex.getL(), alphabeta[0].length);
 	}
 
 /*  public void checkComputation() {

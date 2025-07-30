@@ -150,7 +150,7 @@ public class ListSelection {
         newsortedvector.addElement(new IndexedObject(i, (String) unsortedvector.elementAt(i)));
       }
       if (sort)
-        Collections.sort(newsortedvector, new phComparer());
+        newsortedvector.sort(new phComparer());
       return newsortedvector;
     }
 

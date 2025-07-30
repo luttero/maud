@@ -16,7 +16,7 @@
     <property name="myself" value="myself"/>
     <property name="bundle.icon" value="maud.icns"/>
     <property name="icon" value="src/images/${bundle.icon}"/>
-    <property name="maud_version" value="2.9999"/>
+    <property name="maud_version" value="2.99991"/>
     <property name="application_OSX.title" value="Maud.app"/>
     <property name="app_osx_295" location="${user.home}/Projects/maud/osx_295"/>
     <property name="app_osx_arm" location="${user.home}/Projects/maud/osx_arm"/>
@@ -148,7 +148,7 @@
                 <pathelement location="libs/current/aparapi.jar"/>
                 <pathelement location="libs/current/joone-engine.jar"/>
                 <pathelement location="libs/current/swingx.jar"/>
-                <pathelement location="libs/current/com.github.tschoonj.xraylib.jar"/>
+                <pathelement location="libs/current/xraylib.jar"/>
                 <pathelement location="libs/current/commons-math.jar"/>
                 <pathelement location="libs/current/JTransforms-3.1-with-dependencies.jar"/>
                 <!--pathelement location="${build}/jdic.jar"/>
@@ -267,7 +267,7 @@
                 <pathelement location="libs/current/aparapi.jar"/>
                 <pathelement location="libs/current/joone-engine.jar"/>
                 <pathelement location="libs/current/swingx.jar"/>
-                <pathelement location="libs/current/com.github.tschoonj.xraylib.jar"/>
+                <pathelement location="libs/current/xraylib.jar"/>
                 <pathelement location="libs/current/commons-math.jar"/>
                 <pathelement location="libs/current/JTransforms-3.1-with-dependencies.jar"/>
                 <!--pathelement location="${build}/jdic.jar"/>
@@ -650,7 +650,7 @@
                 <pathelement location="libs/current/aparapi.jar"/>
                 <pathelement location="libs/current/joone-engine.jar"/>
                 <pathelement location="libs/current/swingx.jar"/>
-                <pathelement location="libs/current/com.github.tschoonj.xraylib.jar"/>
+                <pathelement location="libs/current/xraylib.jar"/>
                 <pathelement location="libs/current/commons-math.jar"/>
                 <pathelement location="libs/current/JTransforms-3.1-with-dependencies.jar"/>
                 <!--pathelement location="${build}/jdic.jar"/>
@@ -1135,7 +1135,7 @@
                 <pathelement location="libs/current/aparapi.jar"/>
                 <pathelement location="libs/current/joone-engine.jar"/>
                 <pathelement location="libs/current/swingx.jar"/>
-                <pathelement location="libs/current/com.github.tschoonj.xraylib.jar"/>
+                <pathelement location="libs/current/xraylib.jar"/>
                 <pathelement location="libs/current/commons-math.jar"/>
                 <pathelement location="libs/current/JTransforms-3.1-with-dependencies.jar"/>
                 <!--pathelement location="${build}/jdic.jar"/>
@@ -2139,7 +2139,7 @@
             <classpath file="libs/current/sqlite-jdbc.jar"/>
             <!--classpath file="libs/current/xgridagent.jar"/>
             <classpath file="libs/current/xgridlib.jar"/-->
-            <classpath file="libs/current/com.github.tschoonj.xraylib.jar"/>
+            <classpath file="libs/current/xraylib.jar"/>
             <classpath file="libs/current/commons-math.jar"/>
             <classpath file="libs/current/JTransforms-3.1-with-dependencies.jar"/>
 
@@ -2322,7 +2322,7 @@
             <classpath file="libs/current/sqlite-jdbc.jar"/>
             <!--classpath file="libs/current/xgridagent.jar"/>
             <classpath file="libs/current/xgridlib.jar"/-->
-            <classpath file="libs/current/com.github.tschoonj.xraylib.jar"/>
+            <classpath file="libs/current/xraylib.jar"/>
             <classpath file="libs/current/commons-math.jar"/>
             <classpath file="libs/current/JTransforms-3.1-with-dependencies.jar"/>
 
@@ -2503,7 +2503,7 @@
             <classpath file="libs/current/sqlite-jdbc.jar"/>
             <!--classpath file="libs/current/xgridagent.jar"/>
             <classpath file="libs/current/xgridlib.jar"/-->
-            <classpath file="libs/current/com.github.tschoonj.xraylib.jar"/>
+            <classpath file="libs/current/xraylib.jar"/>
             <classpath file="libs/current/commons-math.jar"/>
             <classpath file="libs/current/JTransforms-3.1-with-dependencies.jar"/>
 
@@ -2605,7 +2605,7 @@
             <classpath file="libs/current/sqlite-jdbc.jar"/>
             <!--classpath file="libs/current/xgridagent.jar"/>
             <classpath file="libs/current/xgridlib.jar"/-->
-            <classpath file="libs/current/com.github.tschoonj.xraylib.jar"/>
+            <classpath file="libs/current/xraylib.jar"/>
             <classpath file="libs/current/commons-math.jar"/>
             <classpath file="libs/current/JTransforms-3.1-with-dependencies.jar"/>
 
@@ -2861,7 +2861,7 @@
             <classpath file="libs/current/sqlite-jdbc.jar"/>
             <!--classpath file="libs/current/xgridagent.jar"/>
             <classpath file="libs/current/xgridlib.jar"/-->
-            <classpath file="libs/current/com.github.tschoonj.xraylib.jar"/>
+            <classpath file="libs/current/xraylib.jar"/>
             <classpath file="libs/current/commons-math.jar"/>
             <classpath file="libs/current/JTransforms-3.1-with-dependencies.jar"/>
 

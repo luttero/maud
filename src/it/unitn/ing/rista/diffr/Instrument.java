@@ -212,8 +212,8 @@ public class Instrument extends XRDcat {
   }
 
   public double[] getTextureAngles(DiffrDataFile datafile, double[] tilting_angles,
-                                  double[] sampleAngles, double twotheta) {
-    return getGeometry().getTextureAngles(datafile, tilting_angles, sampleAngles, twotheta);
+                                  Sample sample, double twotheta, int ppp) {
+    return getGeometry().getTextureAngles(datafile, tilting_angles, sample, twotheta, ppp);
   }
 
   public double[][] getTextureAngles(DiffrDataFile datafile, double[] tilting_angles,
@@ -304,11 +304,11 @@ public class Instrument extends XRDcat {
   }*/
 
   public double getCorrectedPosition(Sample asample, double x, double[] tilting_angles,
-                                     DiffrDataFile adatafile) {
+                                     DiffrDataFile adatafile, int ppp) {
 
 	  if (getAngularCalibration().positionAlreadyCorrected())
 		  return x;
-    return getGeometry().getCorrectedPosition(asample, x, tilting_angles, adatafile);
+    return getGeometry().getCorrectedPosition(asample, x, tilting_angles, adatafile, ppp);
   }
 
 	public double getCorrectedCoordinate(double x) {
@@ -586,7 +586,7 @@ public class Instrument extends XRDcat {
 
 	  RadiationType rad = getRadiationType();
     int phaseindex = asample.getPhase(aphase);
-    int radNumber = rad.getLinesCount();
+    int radNumber = adatafile.radiationsNumber;
 	  double[][] incidentDiffractionangles = new double[radNumber][4];
     double[] correction = new double[radNumber]; //, sintheta = 1.0;
     double[] tiltingAngles = adatafile.getTiltingAngle();

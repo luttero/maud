@@ -2438,6 +2438,11 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
     updatePlotForPeaks();
   }
 
+  public void removeAllPeaks() {
+    peaksList = new double[2][0];
+    updatePlotForPeaks();
+  }
+
   public void updatePlotForPeaks() {
 
     if (peaksList == null)
@@ -2589,6 +2594,15 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
         });
         popup.add(mi);
 
+        mi = new JMenuItem("Remove all peaks");
+        mi.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent ae) {
+            double d[] = positionBox.getClosestPoint(x1, y1);
+            removeAllPeaks();
+          }
+        });
+        popup.add(mi);
+
         popup.show(e.getComponent(), e.getX(), e.getY());
       }
     }
@@ -2618,6 +2632,15 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
           public void actionPerformed(ActionEvent ae) {
             double d[] = positionBox.getClosestPoint(x1, y1);
             removePeak(d[0]);
+          }
+        });
+        popup.add(mi);
+
+        mi = new JMenuItem("Remove all peaks");
+        mi.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent ae) {
+            double d[] = positionBox.getClosestPoint(x1, y1);
+            removeAllPeaks();
           }
         });
         popup.add(mi);

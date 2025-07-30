@@ -54,7 +54,7 @@ public class GeometryBraggBrentano extends GeometryDiffractometer {
   }
 
   public double[] getTextureAngles(DiffrDataFile datafile, double[] tilting_angles,
-                                  double[] sampleAngles, double twotheta) {
+                                   Sample sample, double twotheta, int ppp) {
 
     double[] newtilting_angles = new double[4];
     newtilting_angles[0] = getMeasurement().getOmega(tilting_angles[0], twotheta);
@@ -64,7 +64,7 @@ public class GeometryBraggBrentano extends GeometryDiffractometer {
 
     double theta_detector = getThetaDetector(datafile, twotheta);
 
-    return super.getTextureAngles(datafile, newtilting_angles, sampleAngles, theta_detector);
+    return super.getTextureAngles(datafile, newtilting_angles, sample, theta_detector, ppp);
   }
 
   boolean warningAlreadyPrinted = false;

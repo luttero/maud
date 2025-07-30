@@ -52,6 +52,10 @@ public class GeometryLaueTransmissionSymmetrical extends GeometryDiffractometer 
     description = id2;
   }
 
+  public boolean isReflection() {
+    return false;  // transmission geometry
+  }
+
   public double Lorentz(DiffrDataFile adatafile, double position) {
     // Lorentz - velocity
 	  double lp = 0.0;
@@ -76,7 +80,7 @@ public class GeometryLaueTransmissionSymmetrical extends GeometryDiffractometer 
     asample.computeAbsorptionTroughPath(rad, angles, position, intensity, toLambda);
   }
 
-  public double getCorrectedPosition(Sample asample, double x, double[] tilting_angles, DiffrDataFile adatafile) {
+  public double getCorrectedPosition(Sample asample, double x, double[] tilting_angles, DiffrDataFile adatafile, int ppp) {
 //    System.out.println("Omega = " + tilting_angles[0]);
 //    System.out.println("2theta = " + x);
     double radius = getRadius(null);

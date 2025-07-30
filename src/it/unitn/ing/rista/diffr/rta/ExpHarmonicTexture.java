@@ -349,11 +349,12 @@ public class ExpHarmonicTexture extends HarmonicTexture {
 		cdsc = aphase.lattice();
 
 		int hkln = aphase.gethklNumber();
-
+/*
 		int totdatafile = 0;
 		for (int i = 0; i < asample.activeDatasetsNumber(); i++) {
 			for (int j = 0; j < asample.getActiveDataSet(i).activedatafilesnumber(); j++)
-				totdatafile += asample.getActiveDataSet(i).getActiveDataFile(j).positionsPerPattern;
+				totdatafile += asample.getActiveDataSet(i).getActiveDataFile(j).positionsPerPattern *
+            asample.getActiveDataSet(i).getActiveDataFile(j).radiationsNumber;
 		}
 
 		double[][] textF = new double[totdatafile][hkln];
@@ -390,12 +391,14 @@ public class ExpHarmonicTexture extends HarmonicTexture {
 								for (int ij1 = 0; ij1 < datafilenumber; ij1++) {
 									DiffrDataFile adatafile = asample.getActiveDataSet(i).getActiveDataFile(ij1);
 									double[][][] positions = adatafile.getPositions(aphase);
-//								  for (int ppp = 0; ppp < adatafile.positionsPerPattern; ppp++) {
-									double texture_angles[] = adatafile.getTextureAngles(positions[ij][0][0]);
-									texAngle[0][idatafile] = (texture_angles[0] * Constants.DEGTOPI);
-									texAngle[1][idatafile] = (texture_angles[1] * Constants.DEGTOPI);
-									idatafile++;
-//								  }
+								  for (int ppp = 0; ppp < adatafile.positionsPerPattern; ppp++) {
+                    for (int l = 0; l < adatafile.radiationsNumber; l++) {
+                      double texture_angles[] = adatafile.getTextureAngles(positions[ij][ppp][l]);
+                      texAngle[0][idatafile] = (texture_angles[0] * Constants.DEGTOPI);
+                      texAngle[1][idatafile] = (texture_angles[1] * Constants.DEGTOPI);
+                      idatafile++;
+                    }
+                  }
 								}
 							}
 							double[] texFactor = computeTextureFactor(texAngle, sctf, fhir, inv, refl.getH(), refl.getK(), refl.getL());
@@ -438,9 +441,8 @@ public class ExpHarmonicTexture extends HarmonicTexture {
 				}
 			} while (running);
 
-		} else {
+		} else {*/
 			for (int ij = 0; ij < hkln; ij++) {
-				double texAngle[][] = new double[2][totdatafile];
 
 				Reflection refl = aphase.getReflectionVector().elementAt(ij);
 				double[] sctf = Uwimvuo.tfhkl(refl.getH(), refl.getK(), refl.getL(), cdsc[7], cdsc[5], cdsc[3], cdsc[6], cdsc[0], cdsc[1]);
@@ -448,32 +450,38 @@ public class ExpHarmonicTexture extends HarmonicTexture {
 				int inv = Uwimvuo.equiv(LaueGroupSnumber, sctf);
 //      System.out.println("h k l, inv : " + refl.h + refl.k + refl.l + ", " + inv);
 
-				int idatafile = 0;
 				for (int i = 0; i < asample.activeDatasetsNumber(); i++) {
 					int datafilenumber = asample.getActiveDataSet(i).activedatafilesnumber();
 					for (int ij1 = 0; ij1 < datafilenumber; ij1++) {
 						DiffrDataFile adatafile = asample.getActiveDataSet(i).getActiveDataFile(ij1);
 						double[][][] positions = adatafile.getPositions(aphase);
-//					  for (int ppp = 0; ppp < adatafile.positionsPerPattern; ppp++) {
-						double texture_angles[] = adatafile.getTextureAngles(positions[ij][0][0]);
-						texAngle[0][idatafile] = (texture_angles[0] * Constants.DEGTOPI);
-						texAngle[1][idatafile] = (texture_angles[1] * Constants.DEGTOPI);
-						idatafile++;
-//					  }
-					}
+            double texAngle[][] = new double[2][adatafile.positionsPerPattern * adatafile.radiationsNumber];
+            int datanumber = 0;
+            for (int ppp = 0; ppp < adatafile.positionsPerPattern; ppp++) {
+              for (int l = 0; l < adatafile.radiationsNumber; l++) {
+                double texture_angles[] = adatafile.getTextureAngles(positions[ij][ppp][l], ppp);
+                texAngle[0][datanumber] = (texture_angles[0] * Constants.DEGTOPI);
+                texAngle[1][datanumber++] = (texture_angles[1] * Constants.DEGTOPI);
+              }
+            }
+            double[] texFactor = computeTextureFactor(texAngle, sctf, fhir, inv, refl.getH(), refl.getK(), refl.getL());
+            if (setValues) {
+              int idatafile = 0;
+              adatafile.setTextureFactors(aphase, ij, texFactor);  // Phase aphase, int i, double[] textureValues
+            }
+          }
 				}
-				double[] texFactor = computeTextureFactor(texAngle, sctf, fhir, inv, refl.getH(), refl.getK(), refl.getL());
-				idatafile = 0;
+/*				idatafile = 0;
 				for (int i = 0; i < asample.activeDatasetsNumber(); i++) {
 					int datafilenumber = asample.getActiveDataSet(i).activedatafilesnumber();
 					for (int ij1 = 0; ij1 < datafilenumber; ij1++) {
 						textF[idatafile][ij] = texFactor[idatafile];
 						idatafile++;
 					}
-				}
+				}*/
 			}
-		}
-		if (setValues) {
+//		}
+/*		if (setValues) {
 			int idatafile = 0;
 			for (int i = 0; i < asample.activeDatasetsNumber(); i++) {
 				int datafilenumber = asample.getActiveDataSet(i).activedatafilesnumber();
@@ -482,9 +490,9 @@ public class ExpHarmonicTexture extends HarmonicTexture {
 					adatafile.setTextureFactors(aphase, textF[idatafile++]);
 				}
 			}
-		}
+		}*/
 
-		return textF;
+		return null;
 	}
 
 	public double[] computeTextureFactor(double[][] alphabeta, Reflection reflex) {

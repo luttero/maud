@@ -366,8 +366,8 @@ public class Agtorgl {
       double angles[] = interpolation.getTextureAngles(pole_number - 1, jh - 1);
       fiag = angles[1];
       tetag = angles[0];
-      cpfag_pfag[j - 1] = (double) interpolation.getPoleIntensity(pole_number - 1, jh - 1);
-      cpfag_wgt[j - 1] = (double) interpolation.getWeight(pole_number - 1, jh - 1);
+      cpfag_pfag[j - 1] = interpolation.getPoleIntensity(pole_number - 1, jh - 1, 0, 0);
+      cpfag_wgt[j - 1] = interpolation.getWeight(pole_number - 1, jh - 1);
 
 /*    	System.out.println("fi, teta");
     	System.out.println(fiag);

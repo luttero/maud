@@ -63,6 +63,10 @@ public class Geometry extends XRDcat {
 	  newRotationMatrices = MaudPreferences.getBoolean("testing.useNewRotationMatrices", true);
   }
 
+  public boolean isReflection() {
+    return true;  // default for reflection geometry
+  }
+
   /**
    * Return the AngularCalibration object. Convenient method. It asks to the instrument (the
    * parent) to return the actual AngularCalibration.
@@ -133,18 +137,32 @@ public class Geometry extends XRDcat {
    * @param datafile  the spectrum or datafile for which the angles should be computed
    * @param tilting_angles  array containing omega, chi, phi and eta for the spectrum in
    *                        the insturment coordinates
-   * @param sampleAngles  array containing omega, chi and phi angular position of the sample
+   * @param asample   the sample
    * @param twotheta  the 2-theta or d-spacing (if the spectrum is in d-spacing) of the
    * peak for which the angles should be computed.
    */
 
   public double[] getTextureAngles(DiffrDataFile datafile, double[] tilting_angles,
-                                  double[] sampleAngles, double twotheta) {
+                                  Sample asample, double twotheta, int ppp) {
 
-    double tilting_angles0 = tilting_angles[0];
-    double tilting_angles1 = tilting_angles[1];
+    double stepOmega = 0;
+    double stepChi = 0;
+    double theta2 = twotheta / 2.0f;
+    if (ppp > 0) {
+      double sintheta = MoreMath.sind(theta2);
+      double radius = getRadius(datafile);
+      SampleShape sampleShape = asample.getSampleShapeModel();
+      stepOmega = 0; // sampleShape.getOmegaStepFor(ppp, radius) * Constants.PITODEG;
+      stepChi = sampleShape.getChiStepFor(ppp, radius) * Constants.PITODEG * sintheta;
+ //     System.out.println(ppp + " " + stepOmega + " " + stepChi);
+    }
+
+    double tilting_angles0 = tilting_angles[0] + stepOmega;
+    double tilting_angles1 = tilting_angles[1] + stepChi;
     double tilting_angles2 = tilting_angles[2];
     double tilting_angles3 = tilting_angles[3] + getEtaDetector(datafile);
+
+    double[] sampleAngles = asample.getSampleAngles();
 
     double[] addSampleAngles = datafile.getDataFileSet().getAdditionalSampleAngles();
     double[] newSampleAngles = new double[3];
@@ -1115,7 +1133,7 @@ public class Geometry extends XRDcat {
    */
 
   public double getCorrectedPosition(Sample asample, double position, double[] tilting_angles,
-                                     DiffrDataFile adatafile) {
+                                     DiffrDataFile adatafile, int ppp) {
     return position;
   }
 

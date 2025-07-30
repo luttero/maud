@@ -29,6 +29,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FilenameFilter;
 
 
 /**
@@ -137,6 +138,38 @@ public class Utility {
           folderAndName[0]);
     }
     return filename;
+  }
+
+  public static String browseFolder(Frame parent, String title, String preferredPath) {
+
+/*    FileDialog filedialog = new FileDialog(parent, title,
+        FileDialog.LOAD);
+    filedialog.setDirectory(".");
+    filedialog.setVisible(true);
+    String directory = filedialog.getDirectory();
+    String filename = filedialog.getFile();
+
+    FilenameFilter filenameFilter = filedialog.getFilenameFilter();
+    filedialog.getFiles();
+    int mode = filedialog.getMode();
+    filedialog.isMultipleMode();
+    filedialog.setFile(filename);
+    filedialog.setFilenameFilter(filenameFilter);
+    filedialog.setMode(1);
+    filedialog.setMultipleMode(true);*/
+
+    JFileChooser fc = new JFileChooser();
+    if (preferredPath != null)
+      fc.setCurrentDirectory(new java.io.File(Misc.checkForWindowsPath(preferredPath)));
+//    else
+//      fc.setCurrentDirectory(new java.io.File(".")); // start at application current directory
+    fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+    int returnVal = fc.showSaveDialog(parent);
+    if (returnVal == JFileChooser.APPROVE_OPTION) {
+      File yourFolder = fc.getSelectedFile();
+      return yourFolder.getAbsolutePath();
+    }
+    return "";
   }
 
   public static String browseFilenameForAppend(String title, String folder_filename) {

@@ -117,6 +117,36 @@ public class SampleShape extends XRDcat {
     return 1.0;
   }
 
+  public void setRefreshComputationForAbsorption(boolean value) {
+    refreshComputation = value;
+  }
+
+  public void setRefreshComputationForGeometry(boolean value) {
+//    refreshComputation = value;
+  }
+
+  public int getDifferentPositionsNumber() {
+    return 1;
+  }
+
+  public double getXShiftFor(int ppp) {
+    return 0;
+  }
+
+  public double getYShiftFor(int ppp) {
+    return 0;
+  }
+
+  public double getOmegaStepFor(int ppp, double radius) {
+    // in radiant
+    return 0;
+  }
+
+  public double getChiStepFor(int ppp, double radius) {
+    // in radiant
+    return 0;
+  }
+
   public class JShapeOptionsD extends JOptionsDialog {
 
     public JShapeOptionsD(Frame parent, XRDcat obj) {

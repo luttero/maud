@@ -54,7 +54,7 @@ public class GeometryBBReflectivity extends GeometryDiffractometer {
   }
 
   public double[] getTextureAngles(DiffrDataFile datafile, double[] tilting_angles,
-                                  double[] sampleAngles, double twotheta) {
+                                  Sample sample, double twotheta, int ppp) {
     double[] newtilting_angles = new double[4];
     newtilting_angles[0] = tilting_angles[0];
     newtilting_angles[1] = tilting_angles[1];
@@ -63,7 +63,7 @@ public class GeometryBBReflectivity extends GeometryDiffractometer {
 
     double theta_detector = tilting_angles[0] * 2; //getThetaDetector(datafile, twotheta);
 
-    return super.getTextureAngles(datafile, newtilting_angles, sampleAngles, theta_detector);
+    return super.getTextureAngles(datafile, newtilting_angles, sample, theta_detector, ppp);
   }
 
   public double LorentzPolarization(DiffrDataFile adatafile, Sample asample, double position, boolean dspacingbase, boolean energyDispersive) {

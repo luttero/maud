@@ -741,6 +741,13 @@ public class Misc {
 
   }
 
+  public static final String addQuotesToStringWithBlank(String original) {
+    if (original.indexOf(' ') >= 0) {
+      original = '"' + original + '"';
+    }
+    return original;
+  }
+
   public static final String replaceSubstringInStringIgnoreCase(String astring,
                                                                 String oldsubstring,
                                                                 String newsubstring) {
@@ -1297,5 +1304,9 @@ public class Misc {
 		}
 		return s;
 	}
+
+  public static String getFilenameNoExtension(String tmpString) {
+    return tmpString.substring(0, tmpString.lastIndexOf("."));
+  }
 
 }

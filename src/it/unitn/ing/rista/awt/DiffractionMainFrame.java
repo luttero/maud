@@ -42,6 +42,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.*;
 import java.util.StringTokenizer;
+import java.util.Vector;
 
 
 /**
@@ -80,6 +81,7 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
 
   static final String MENU_SPECIAL = "Special";
   static final String MENU_HELP = "Help";
+  static final String NEW_ANALYSIS = "New analysis";
   static final String MENU_NEW_ANALYSIS = "General analysis";
   static final String MENU_HIPPO_WIZARD = "Hippo wizard";
   static final String MENU_LCLS2_WIZARD = "LCLS2 wizard";
@@ -89,29 +91,44 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
   static final String ANALYSIS_CAPILLARY = " capillary analysis";
   static final String ANALYSIS_BRAGG = " Bragg analysis";
   static final String ANALYSIS_GOEBBELS = " reflectivity analysis";
+  static final String DATA_REMOVE_PATTERN = "Remove patterns";
+  static final String DATA_RESET_BACKGROUND = "Reset background";
+  static final String OPEN_ANALYSIS = "Open analysis...";
+  static final String LOAD_DATAFILE = "Load datafile...";
+  static final String RESTORE = "Restore";
+  static final String SAVE_ANALYSIS = "Save analysis";
+  static final String SAVE_ANALYSIS_AS = "Save analysis as...";
+  static final String APPEND_SIMPLE_RESULTS = "Append simple results to...";
+  static final String APPEND_RESULTS = "Append results to...";
+  static final String PRINT_PLOT = "Print plot";
+  static final String PRINT_WINDOW = "Print window";
+  static final String QUIT_MAUD = "Quit";
+  static final String BATCH_FILE = "Prepare batch file";
+  static final String BATCH_REFINE = "Refine batch file";
 
   static String[] mainMenuLabels = {
       "File:15",
-        "New:4",
-          MENU_NEW_ANALYSIS,
-          MENU_HIPPO_WIZARD,
-		    MENU_LCLS2_WIZARD,
-		    MENU_LOSKO_WIZARD,
-        "Open analysis...",
-        "Load datafile...",
-        "Restore",
-        "-",
-        "Save analysis",
-        "Save analysis as...",
-        "-",
-        "Append simple results to...",
-        "Append results to...",
-        "-",
-        "Print plot",
-        "Print window",
-        "-",
-        "Quit",
-      "Edit:8",
+      "New:4",
+        MENU_NEW_ANALYSIS,
+        MENU_HIPPO_WIZARD,
+        MENU_LCLS2_WIZARD,
+        MENU_LOSKO_WIZARD,
+      OPEN_ANALYSIS,
+      LOAD_DATAFILE,
+      RESTORE,
+      "-",
+      SAVE_ANALYSIS,
+      SAVE_ANALYSIS_AS,
+      "-",
+      APPEND_SIMPLE_RESULTS,
+      APPEND_RESULTS,
+      "-",
+      PRINT_PLOT,
+      PRINT_WINDOW,
+      "-",
+      QUIT_MAUD,
+
+      "Edit:9",
         "Add new object",
         "Load object from CIF...",
         "Save object to database",
@@ -120,6 +137,10 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
         "Edit object",
         "-",
         "Duplicate object",
+        "Selected objects:2",
+          DATA_REMOVE_PATTERN,
+          DATA_RESET_BACKGROUND,
+
       "Analysis:8",
         "Options",
         "Wizard",
@@ -129,6 +150,7 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
         "Results",
         "-",
         "Preferences",
+
       "Graphic:10",
         "Plot selected dataset",
         "MapPlot of selected dataset",
@@ -140,16 +162,22 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
         "Plot options",
         "-",
         "Waiting for computation...",
-      MENU_SPECIAL + ":9",
+
+      MENU_SPECIAL + ":7",
         "Submit structure to COD",
         "Load RSS feed",
         "-",
-        "Refine in batch...",
-		  "Train data for AI",
-		  "-",
-		  "mtex Dubna demo",
-		  "mtex SantaFe demo",
-		  "mtex BrukerGPol demo",
+        "Batch:2",
+      BATCH_FILE,
+      BATCH_REFINE,
+		    "AI:1",
+          "generate data",
+		    "-",
+        "Demo:3",
+		      "mtex Dubna",
+		      "mtex SantaFe",
+		      "mtex BrukerGPol",
+
       MENU_HELP + ":7",
         "Readme", // Help
         "Introduction",
@@ -167,10 +195,10 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
   static final int[] menuNewKeyEvent = {
       nullKeyEvent,
       nullKeyEvent,
-      KeyEvent.VK_N,
-      nullKeyEvent,
-		  nullKeyEvent,
-		  nullKeyEvent,
+        KeyEvent.VK_N,
+        nullKeyEvent,
+		    nullKeyEvent,
+		    nullKeyEvent,
       KeyEvent.VK_O,
       nullKeyEvent,
       nullKeyEvent,
@@ -195,6 +223,9 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
       KeyEvent.VK_E,
       nullKeyEvent,
       nullKeyEvent,
+      nullKeyEvent,
+        nullKeyEvent,
+        nullKeyEvent,
 
       nullKeyEvent,
       nullKeyEvent,
@@ -222,12 +253,16 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
       nullKeyEvent,
       nullKeyEvent,
       nullKeyEvent,
+      nullKeyEvent,
+        nullKeyEvent,
+        nullKeyEvent,
+		  nullKeyEvent,
+        nullKeyEvent,
 		  nullKeyEvent,
 		  nullKeyEvent,
-		  nullKeyEvent,
-		  nullKeyEvent,
-		  nullKeyEvent,
-		  nullKeyEvent,
+		    nullKeyEvent,
+		    nullKeyEvent,
+		    nullKeyEvent,
 
       nullKeyEvent,
       nullKeyEvent,
@@ -243,11 +278,24 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
       true,
       true,
         true, // Wizards start here
-		  true,
+		    true,
         true,
         false,
-		true,
+		  true,
       true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+        true,
+        true,
+
       true,
       true,
       true,
@@ -280,16 +328,6 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
       true,
       true,
       true,
-
-      true,
-      true,
-      true,
-      true,
-      true,
-      true,
-      true,
-      true,
-      true,
 		  true,
       true,
 
@@ -298,11 +336,15 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
       true,
       true,
       true,
+        true,
+		    true,
+		  true,
+		    true,
 		  true,
 		  true,
-		  true,
-		  true,
-		  true,
+        true,
+        true,
+        true,
 
       true,
       true,
@@ -314,7 +356,8 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
       true
   };
 
-  static String[][] mainMenuCommand = {{"New analysis", // File
+  static String[][] mainMenuCommand = {{   // todo: remove and replace in the toolbar the commands
+      "New analysis", // File
       "Open analysis...",
       "Load datafile...",
       "Restore",
@@ -336,11 +379,8 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
           "-",
           "Edit object",
           "-",
-          //"Cut object",
-          //"Copy object",
-          //"Paste object",
           "Duplicate object",
-          null,
+          "Selected objects",
           null,
           null,
           null,
@@ -384,12 +424,12 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
           Constants.testing ? "Test COD JDBC connection" : null,
           Constants.testing ? "Test COD HTTP connection" : null,
           //Constants.testing ? "Start refine on Xgrid" : null,
-		      "Refine in batch...",
-		      "Train data for AI",
+		      "Batch",
+		      "AI",
 		      "-",
-		      "mtex Dubna demo",
-		      "mtex SantaFe demo",
-		      "mtex BrukerGPol demo",
+		      "Demo",
+          null,
+          null,
 		      null,
           null,
           null,
@@ -412,13 +452,20 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
           null}
   };
 
+  static String[] helpMenuCommand = {
+      "Readme",
+      "Introduction",
+      "Tutorial",
+      "Content",
+      "License Agreement"};
+
   static String[] helpFilenames = {"readme.txt",
       "intro.txt",
       "tutorial.txt",
       "content.txt",
       "license_maud.txt"};
 
-  static String[] buttonMenuCommand = {"New", "Load", "Save", "Delete"};
+//  static String[] buttonMenuCommand = {"New", "Load", "Save", "Delete"};
 
   static boolean simple = false;
 
@@ -1256,6 +1303,50 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
     initParameters();
   }
 
+  public void removePatterns() {
+    int index = getVisibleTabPanelIndex();
+    switch (index) {
+      case 0: // datasets
+        ListVector list = getFocusedList();
+        if (list != null) {
+          Vector slist = list.selectedElements();
+          if (slist != null && slist.size() > 0) {
+            for (Object ocat: slist) {
+              ((DataFileSet) ocat).removeAllFiles();
+            }
+            break;
+          }
+        }
+      case 1: // phases
+      case 2: // samples
+      default: {
+          WarningNothingSelected();
+      }
+    }
+  }
+
+  public void resetBackgrounds() {
+    int index = getVisibleTabPanelIndex();
+    switch (index) {
+      case 0: // datasets
+        ListVector list = getFocusedList();
+        if (list != null) {
+          Vector slist = list.selectedElements();
+          if (slist != null && slist.size() > 0) {
+            for (Object ocat: slist) {
+              ((DataFileSet) ocat).resetBackgrounds();
+            }
+            break;
+          }
+        }
+      case 1: // phases
+      case 2: // samples
+      default: {
+        WarningNothingSelected();
+      }
+    }
+  }
+
   boolean result = false;
 
   myJFrame parListFrame = null;
@@ -1326,7 +1417,15 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
     }).start();
   }*/
 
-	void startBatchMode() {
+  void prepareBatchMode() {
+//    (new PersistentThread() {
+//      public void executeJob() {
+        (new BatchFileDialog("Prepare batch file")).setVisible(true);
+ //     }
+//    }).start();
+  }
+
+  void startBatchMode() {
 		(new PersistentThread() {
 			public void executeJob() {
 				String filename = Utility.browseFilename(DiffractionMainFrame.this, "Load the batch instruction file");
@@ -1454,8 +1553,8 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
       String command = event.getActionCommand();
 
       // File menu actions
-      int index = 0;
-      if (command.equals(mainMenuCommand[index][0])) {                 // New
+//      int index = 0;
+      if (command.equals(NEW_ANALYSIS)) {                 // New
         newWizard_Action();
         return;
       } else if (command.equals(MENU_NEW_ANALYSIS)) {
@@ -1470,28 +1569,28 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
       } else if (command.equals(MENU_LOSKO_WIZARD)) {
 	      loskoWizard();
 	      return;
-      } else if (command.equals(mainMenuCommand[index][1])) {         // Open...
+      } else if (command.equals(OPEN_ANALYSIS)) {         // Open...
         openFile_Action();
         return;
-      } else if (command.equals(mainMenuCommand[index][2])) {         // Load datafile....
+      } else if (command.equals(LOAD_DATAFILE)) {         // Load datafile....
         openDatafile_Action();
         return;
-      } else if (command.equals(mainMenuCommand[index][3])) {         // Restore
+      } else if (command.equals(RESTORE)) {         // Restore
         restoreFile_Action();
         return;
-      } else if (command.equals(mainMenuCommand[index][5])) {          // Save
+      } else if (command.equals(SAVE_ANALYSIS)) {          // Save
         saveFile_Action();
         return;
-      } else if (command.equals(mainMenuCommand[index][6])) {          // Save as...
+      } else if (command.equals(SAVE_ANALYSIS_AS)) {          // Save as...
         saveasFile_Action();
         return;
-      } else if (command.equals(mainMenuCommand[index][8])) {          // Append simple results to...
+      } else if (command.equals(APPEND_SIMPLE_RESULTS)) {          // Append simple results to...
         appendResults_Action(true);
         return;
-      } else if (command.equals(mainMenuCommand[index][9])) {          // Append results to...
+      } else if (command.equals(APPEND_RESULTS)) {          // Append results to...
         appendResults_Action(false);
         return;
-      } else if (command.equals(mainMenuCommand[index][11])) {          // Print plot...
+      } else if (command.equals(PRINT_PLOT)) {          // Print plot...
 //        DiffractionMainFrame.this.setComponentToPrint(datafilePlotPanel);
 //        DiffractionMainFrame.this.letsTryToPrint();
         if (datafilePlotPanel.isVisible())
@@ -1504,120 +1603,111 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
           else if (isResVisible)
             residuals2DPlotPanel.letsTryToPrint();
         }
-
         return;
-      } else if (command.equals(mainMenuCommand[index][12])) {          // Printing all...
+      } else if (command.equals(PRINT_WINDOW)) {          // Printing all...
         DiffractionMainFrame.this.setComponentToPrint(DiffractionMainFrame.this.getContentPane());
         DiffractionMainFrame.this.letsTryToPrint();
         return;
-      } else if (command.equals(mainMenuCommand[index][14])) {          // Quit
+      } else if (command.equals(QUIT_MAUD)) {          // Quit
         myFrame_WindowClosing();
         return;
-      }
-
-// Edit menu actions
-      index++;
-      if (command.equals(mainMenuCommand[index][0])) {                 // Add new phase
+      } else if (command.equals("Add new object")) {                 // Add new phase
         newObject();
         return;
-      } else if (command.equals(mainMenuCommand[index][1])) {         // Load phase from CIF
+      } else if (command.equals("Load object from CIF...")) {         // Load phase from CIF
         addObjectFromDB();
         return;
-      } else if (command.equals(mainMenuCommand[index][2])) {         // Save phase to database
+      } else if (command.equals("Save object to database")) {         // Save phase to database
         storeObjectOnDB();
         return;
-      } else if (command.equals(mainMenuCommand[index][3])) {          // Delete phase
+      } else if (command.equals("Delete object")) {          // Delete phase
         removeObject();
         return;
-      } else if (command.equals(mainMenuCommand[index][5])) {         // Edit phase
+      } else if (command.equals("Edit object")) {         // Edit phase
         editObject();
         return;
-      } else if (command.equals(mainMenuCommand[index][7])) {        // Duplicate phase
+      } else if (command.equals("Duplicate object")) {        // Duplicate phase
         duplicateObject();
         return;
-      }
-
-// Refinement menu actions
-      index++;
-      if (command.equals(mainMenuCommand[index][0])) {                 // Options
+      } else if (command.equals(DATA_REMOVE_PATTERN)) {
+        removePatterns();
+        return;
+      } else if (command.equals(DATA_RESET_BACKGROUND)) {
+        resetBackgrounds();
+        return;
+      } else if (command.equals("Options")) {                 // Options
         refinementOptions_Action();
         return;
-      } else if (command.equals(mainMenuCommand[index][1])) {         // Wizard
+      } else if (command.equals("Wizard")) {         // Wizard
         refinementWizard_Action();
         return;
-      } else if (command.equals(mainMenuCommand[index][2])) {         // Parameters list
+      } else if (command.equals("Parameters list")) {         // Parameters list
         parameterList_Action();
         return;
-      } else if (command.equals(mainMenuCommand[index][3])) {          // Compute spectra
+      } else if (command.equals("Compute spectra")) {          // Compute spectra
         compute_Action();
         return;
-      } else if (command.equals(mainMenuCommand[index][4])) {         // Refine
+      } else if (command.equals("Refine")) {         // Refine
         refine_Action();
         return;
-      } else if (command.equals(mainMenuCommand[index][5])) {         // Results
+      } else if (command.equals("Results")) {         // Results
         results_Action();
         return;
       } else if (command.startsWith("Preference")) {                     // Preferences...
         Utility.showPrefs(DiffractionMainFrame.this);
         return;
-      }
-
-      // Graphic menu actions
-      index++;
-      if (command.equals(mainMenuCommand[index][0])) {                 // Plot selected dataset
+      } else if (command.equals("Plot selected dataset")) {                 // Plot selected dataset
         multiPlot_Action();
         return;
-      } else if (command.equals(mainMenuCommand[index][1])) {         // MapPlot selected dataset
+      } else if (command.equals("MapPlot of selected dataset")) {         // MapPlot selected dataset
         multiPlot2D_Action();
         return;
-      } else if (command.equals(mainMenuCommand[index][2])) {         // Difference MapPlot selected dataset
+      } else if (command.equals("Difference 2D Plot of selected dataset")) {         // Difference MapPlot selected dataset
         differencePlot2D_Action();
         return;
-      } else if (command.equals(mainMenuCommand[index][3])) {         // Polar Plot selected dataset
+      } else if (command.equals("Polar plot of selected dataset")) {         // Polar Plot selected dataset
         polarPlot2D_Action();
         return;
-      } else if (command.equals(mainMenuCommand[index][4])) {         // Section Plot selected dataset
+      } else if (command.equals("Section plot of selected dataset")) {         // Section Plot selected dataset
 	      sectionPlot2D_Action();
 	      return;
-      } else if (command.equals(mainMenuCommand[index][5])) {         // Texture Strain plot
+      } else if (command.equals("Texture plot")) {         // Texture Strain plot
         texturePlot_Action();
         return;
-      } else if (command.equals(mainMenuCommand[index][7])) {          //  plot options...
+      } else if (command.equals("Plot options")) {          //  plot options...
         datafilePlotPanel.showOptionsDialog();
         return;
-      } else if (command.equals(mainMenuCommand[index][9])) {          // fun
+      } else if (command.equals("Waiting for computation...")) {          // fun
         MidiSynth.createSynthAndShow();
         return;
-      }
-
-      // Special menu actions
-      index++;
-      if (command.equals(mainMenuCommand[index][0])) {                 // Submit to COD
+      } else if (command.equals("Submit structure to COD")) {                 // Submit to COD
         CODsubmission();
         return;
-      } else if (command.equals(mainMenuCommand[index][1])) {      // Load Maud RSS feed
+      } else if (command.equals("Load RSS feed")) {      // Load Maud RSS feed
         /*String url = MaudPreferences.getPref("MaudRSSfeed.url",
             "http://www.ing.unitn.it/~maud/feed/MaudRSSfeed.xml");
         (new RSSFeedLoader(url)).loadTheFeed();*/
         return;
-      } else if (command.equals(mainMenuCommand[index][2])) {         // ESQUI client
+      } else if (command.equals(Constants.testing ? "ESQUI client" : null)) {         // ESQUI client
         esquiClient_Action();
         return;
-      } else if (command.equals(mainMenuCommand[index][3])) {      // Test COD JDBC connection
+      } else if (command.equals(Constants.testing ? "Test COD JDBC connection" : null)) {      // Test COD JDBC connection
         (new CODdatabaseConnector()).testConnection("localhost/cod", "root", "cod");
         return;
-      } else if (command.equals(mainMenuCommand[index][4])) {      // Test COD HTTP connection
+      } else if (command.equals(Constants.testing ? "Test COD HTTP connection" : null)) {      // Test COD HTTP connection
         (new CODdatabaseConnector()).testConnection("localhost/cod", "root", "cod");
         return;
-      } else if (command.equals(mainMenuCommand[index][5])) {     // batch mode
-	      startBatchMode();
-      } else if (command.equals(mainMenuCommand[index][6])) {     // batch mode
+      } else if (command.equals(BATCH_FILE)) {     // prepare batch file
+	      prepareBatchMode();
+      } else if (command.equals(BATCH_REFINE)) {     // refine batch mode
+        startBatchMode();
+      } else if (command.equals("generate data")) {     // AI: generate data
 	      openDialogForAI();
-      } else if (command.equals(mainMenuCommand[index][8])) {     // batch mode
+      } else if (command.equals("mtex Dubna")) {     // batch mode
 	      com.jtex.qta.ODFDemo.DubnaDemo();
-      } else if (command.equals(mainMenuCommand[index][9])) {     // batch mode
+      } else if (command.equals("mtex SantaFe")) {     // batch mode
 	      com.jtex.qta.ODFDemo.SantaFeDemo();
-      } else if (command.equals(mainMenuCommand[index][10])) {     // batch mode
+      } else if (command.equals("mtex BrukerGPol")) {     // batch mode
 	      com.jtex.qta.ODFDemo.BrukerGPolDemo();
       } else if (command.equals(JPVMNetworkComputingCommand[0])) {     // Distribute computing configuration
         ParallelComputationController.configure();
@@ -1631,43 +1721,17 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
       } else if (command.equals(XGRIDNetworkComputingCommand[0])) {     // Distribute computing agent
         ParallelComputationController.runAsAgent();
         return;
-      }
-
-      // Help menu commands, show the help Window loading the appropriate help file
-      index++;
-      for (int i = 0; i < helpFilenames.length; i++) {
-        if (command.equals(mainMenuCommand[index][i])) {
-          showHelp(helpFilenames[i]);
-          return;
-        }
-      }
-      if (command.equals(mainMenuCommand[index][helpFilenames.length + 1])) {   // About Maud...
+      } else if (command.equals("About the program...")) {   // About Maud...
         aboutHelp_Action();
         return;
       }
 
-      // Button menu actions
-/*
-      if (command.equals(buttonMenuCommand[0])) { 							// Add object from database
-        newObject();
-        return;
-      } else if (command.equals(buttonMenuCommand[1])) { 				// New object
-        addObjectFromDB();
-        return;
-      } else if (command.equals(buttonMenuCommand[2])) { 				// Edit object
-        editObject(2);
-        return;
-      } else if (command.equals(buttonMenuCommand[2])) { 				// Remove object
-        storeObjectOnDB();
-        return;
-      } else if (command.equals(buttonMenuCommand[3])) { 				// Store object on database
-        removeObject();
-        return;
-      } else if (command.equals(buttonMenuCommand[5])) { 				// Duplicate object
-        duplicateObject();
-        return;
-      }*/
-
+      for (int i = 0; i < helpFilenames.length; i++) {
+        if (command.equals(helpMenuCommand[i])) {
+          showHelp(helpFilenames[i]);
+          return;
+        }
+      }
     }
 
   }

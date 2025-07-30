@@ -311,12 +311,14 @@ public class ExpHarmonicTextureGPU extends HarmonicTexture {
 			  for (int ij1 = 0; ij1 < datafilenumber; ij1++) {
 				  DiffrDataFile adatafile = asample.getActiveDataSet(i).getActiveDataFile(ij1);
 				  double[][][] positions = adatafile.getPositions(aphase);
-//				  for (int ppp = 0; ppp < adatafile.positionsPerPattern; ppp++) {
-					  double texture_angles[] = adatafile.getTextureAngles(positions[ij][0][0]);
-					  texAngle[0][idatafile] = (texture_angles[0] * Constants.DEGTOPI);
-					  texAngle[1][idatafile] = (texture_angles[1] * Constants.DEGTOPI);
-					  idatafile++;
-//				  }
+				  for (int ppp = 0; ppp < adatafile.positionsPerPattern; ppp++) {
+            for (int l = 0; l < adatafile.radiationsNumber; l++) {
+              double texture_angles[] = adatafile.getTextureAngles(positions[ij][ppp][l], ppp);
+              texAngle[0][idatafile] = (texture_angles[0] * Constants.DEGTOPI);
+              texAngle[1][idatafile] = (texture_angles[1] * Constants.DEGTOPI);
+              idatafile++;
+            }
+				  }
 			  }
 		  }
 		  double[] texFactor = computeTextureFactor(texAngle, sctf, fhir, inv);

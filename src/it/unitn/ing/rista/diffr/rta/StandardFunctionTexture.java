@@ -43,6 +43,7 @@ import java.awt.event.ActionEvent;
 public class StandardFunctionTexture extends Texture {
 
   public static String[] diclistc = {"_rita_sample_symmetry", "_rita_odf_sharpness",
+//                                     "_rita_differentiate_by_energy",
 
                                      "_rita_odf_background",
 
@@ -50,6 +51,7 @@ public class StandardFunctionTexture extends Texture {
                                      "_texture_spherical_component_id"
   };
   public static String[] diclistcrm = {"_rita_sample_symmetry", "_rita_odf_sharpness",
+//                                     "_rita_differentiate_by_energy",
 
                                      "_rita_odf_background",
 
@@ -96,6 +98,8 @@ public class StandardFunctionTexture extends Texture {
 
   public int IRED = 0; // 0 = unred , 1 = upper, 2 = lower
 
+  public static int DIFF_ENERGY_ID = 2;
+
   public StandardFunctionTexture(XRDcat aobj, String alabel) {
     super(aobj, alabel);
     initBaseObject();
@@ -137,6 +141,7 @@ public class StandardFunctionTexture extends Texture {
     super.initParameters();
 
     setSampleSymmetry(0);
+//    setDifferentiateByEnergy(MaudPreferences.getPref(prefs[8], prefVal[8]));
     parameterField[0] = new Parameter(this, getParameterString(0), 0.0,
         ParameterPreferences.getDouble(getParameterString(0) + ".min", 0.0),
         ParameterPreferences.getDouble(getParameterString(0) + ".max", 1.0));
@@ -144,7 +149,7 @@ public class StandardFunctionTexture extends Texture {
     refreshComputation = true;
   }
 
-	public void rotateODFBy(double alpha, double beta, double gamma, int multAlpha, int multBeta, int multGamma) {
+  public void rotateODFBy(double alpha, double beta, double gamma, int multAlpha, int multBeta, int multGamma) {
 		int numberOfFiberComponent = fiberTextureComponentsNumber();
 		for (int i = 0; i < numberOfFiberComponent; i++) {
 			FiberTextureComponent fiberComp = getFiberTextureComponent(i);
@@ -178,6 +183,21 @@ public class StandardFunctionTexture extends Texture {
       super.notifyParameterChanged(source);
     }
   }
+
+/*  public void setDifferentiateByEnergy(boolean value) {
+    if (value)
+      stringField[DIFF_ENERGY_ID] = "true";
+    else
+      stringField[DIFF_ENERGY_ID] = "false";
+  }
+
+  public void setDifferentiateByEnergy(String value) {
+    stringField[DIFF_ENERGY_ID] = value;
+  }
+
+  public boolean differentiateTextureByEnergy() {
+    return stringField[DIFF_ENERGY_ID].equalsIgnoreCase("true");
+  }*/
 
   public void initializeReflexes(Sample asample) {
   }
@@ -381,60 +401,129 @@ public class StandardFunctionTexture extends Texture {
 //			setSharpness(computeAndGetSharpness());
       refreshComputation = false;
 	    int hkln = aphase.gethklNumber();
-	    double[] textF = new double[hkln];
-	    for (int i = 0; i < asample.activeDatasetsNumber(); i++) {
-		    DataFileSet adataset = asample.getActiveDataSet(i);
+
+      // here we differentiate for energy
+/*      boolean dffEnergy = differentiateTextureByEnergy();*/
+
+ //     if (dffEnergy) {
+        for (int i = 0; i < asample.activeDatasetsNumber(); i++) {
+          DataFileSet adataset = asample.getActiveDataSet(i);
 //					Instrument ainstrument = adataset.getInstrument();
 //					Radiation rad = ainstrument.getRadiationType().getRadiation(0);
-		    double betaBroad = adataset.getInstrument().getInstrumentBroadening().getTextureBroadeningAt(0);
-		    if (betaBroad >= 0.0) {
+          double betaBroad = adataset.getInstrument().getInstrumentBroadening().getTextureBroadeningAt(0);
+          if (betaBroad >= 0.0) {
 //		            System.out.println(snumber);
-			    for (int ig = 0; ig < fnumber; ig++) {
-				    FiberTextureComponent fiberComp = getFiberTextureComponent(ig);
+            for (int ig = 0; ig < fnumber; ig++) {
+              FiberTextureComponent fiberComp = getFiberTextureComponent(ig);
 //		              System.out.println(ig + " " + fiberComp.betag + betaBroad);
-				    fiberComp.PARFP(fiberComp.betag + betaBroad);
-			    }
-			    for (int ig = 0; ig < snumber; ig++) {
-				    SphericalTextureComponent sphericalComp = getSphericalTextureComponent(ig);
+              fiberComp.PARFP(fiberComp.betag + betaBroad);
+            }
+            for (int ig = 0; ig < snumber; ig++) {
+              SphericalTextureComponent sphericalComp = getSphericalTextureComponent(ig);
 //		              System.out.println(ig + " " + sphericalComp.betag + betaBroad);
-				    sphericalComp.PARGLP(sphericalComp.betag + betaBroad);
-			    }
-		    }
-
-		    int datafilenumber = adataset.activedatafilesnumber();
-		    for (int i1 = 0; i1 < datafilenumber; i1++) {
-			    DiffrDataFile adatafile = adataset.getActiveDataFile(i1);
-			    double[][][] positions = adatafile.getPositions(aphase);
+              sphericalComp.PARGLP(sphericalComp.betag + betaBroad);
+            }
+          }
+          int datafilenumber = adataset.activedatafilesnumber();
+          for (int i1 = 0; i1 < datafilenumber; i1++) {
+            DiffrDataFile adatafile = adataset.getActiveDataFile(i1);
+            double[][][] positions = adatafile.getPositions(aphase);
 //			    for (int ppp = 0; ppp < adatafile.positionsPerPattern; ppp++) {
-				    for (int j = 0; j < hkln; j++) {
-					    Reflection refl = aphase.getReflex(j);
-					    double texture_angles[] = adatafile.getTextureAngles(positions[j][0][0]);
-					    double newBetaBroad = adataset.getInstrument().getInstrumentBroadening().getTextureBroadeningAt(positions[j][0][0]);
+            int numberPositions = positions[0].length;
+            int numberEnergies = positions[0][0].length;
+
+            double[][][] textF = new double[hkln][numberPositions][numberEnergies];
+            for (int j = 0; j < hkln; j++) {
+              Reflection refl = aphase.getReflex(j);
+              for (int p = 0; p < numberPositions; p++) {
+                for (int e = 0; e < numberEnergies; e++) {
+                  double texture_angles[] = adatafile.getTextureAngles(positions[j][p][e], p);
+                  double newBetaBroad = adataset.getInstrument().getInstrumentBroadening().getTextureBroadeningAt(positions[j][p][e]);
 //	            System.out.println(snumber + " " + betaBroad);
-					    if (betaBroad != newBetaBroad) {
+                  if (betaBroad != newBetaBroad) {
 //		            System.out.println(snumber);
-						    for (int ig = 0; ig < fnumber; ig++) {
-							    FiberTextureComponent fiberComp = getFiberTextureComponent(ig);
+                    for (int ig = 0; ig < fnumber; ig++) {
+                      FiberTextureComponent fiberComp = getFiberTextureComponent(ig);
 //		              System.out.println(ig + " " + fiberComp.betag + betaBroad);
-							    fiberComp.PARFP(fiberComp.betag + betaBroad);
-						    }
-						    for (int ig = 0; ig < snumber; ig++) {
-							    SphericalTextureComponent sphericalComp = getSphericalTextureComponent(ig);
+                      fiberComp.PARFP(fiberComp.betag + betaBroad);
+                    }
+                    for (int ig = 0; ig < snumber; ig++) {
+                      SphericalTextureComponent sphericalComp = getSphericalTextureComponent(ig);
 //		              System.out.println(ig + " " + sphericalComp.betag + betaBroad);
-							    sphericalComp.PARGLP(sphericalComp.betag + betaBroad);
-						    }
-					    }
-					    textF[j] = computeTextureFactor(refl.phi[0], refl.beta[0],
-							    texture_angles[0] * Constants.DEGTOPI,
-							    texture_angles[1] * Constants.DEGTOPI);
+                      sphericalComp.PARGLP(sphericalComp.betag + betaBroad);
+                    }
+                  }
+                  textF[j][p][e] = computeTextureFactor(refl.phi[0], refl.beta[0],
+                      texture_angles[0] * Constants.DEGTOPI,
+                      texture_angles[1] * Constants.DEGTOPI);
 //		              System.out.println(positions[j][0][0] + " " + refl.getH() + " " + refl.getK() + " " + refl.getL() + " " +
 //				              refl.phi[0] * Constants.PITODEG + " " + refl.beta[0] * Constants.PITODEG + " " + texture_angles[0] + " " + texture_angles[1] + " " + textF[j]);
 //						refl.setExpTextureFactor(adatafile.getIndex(), textF);
-				    }
-			    adatafile.setTextureFactors(aphase, textF);
+                }
+              }
+            }
+            adatafile.setTextureFactors(aphase, textF);
 //			    }
-		    }
-	    }
+          }
+        }
+/*      } else {
+        double[] textF = new double[hkln];
+        for (int i = 0; i < asample.activeDatasetsNumber(); i++) {
+          DataFileSet adataset = asample.getActiveDataSet(i);
+//					Instrument ainstrument = adataset.getInstrument();
+//					Radiation rad = ainstrument.getRadiationType().getRadiation(0);
+          double betaBroad = adataset.getInstrument().getInstrumentBroadening().getTextureBroadeningAt(0);
+          if (betaBroad >= 0.0) {
+//		            System.out.println(snumber);
+            for (int ig = 0; ig < fnumber; ig++) {
+              FiberTextureComponent fiberComp = getFiberTextureComponent(ig);
+//		              System.out.println(ig + " " + fiberComp.betag + betaBroad);
+              fiberComp.PARFP(fiberComp.betag + betaBroad);
+            }
+            for (int ig = 0; ig < snumber; ig++) {
+              SphericalTextureComponent sphericalComp = getSphericalTextureComponent(ig);
+//		              System.out.println(ig + " " + sphericalComp.betag + betaBroad);
+              sphericalComp.PARGLP(sphericalComp.betag + betaBroad);
+            }
+          }
+
+          int datafilenumber = adataset.activedatafilesnumber();
+          for (int i1 = 0; i1 < datafilenumber; i1++) {
+            DiffrDataFile adatafile = adataset.getActiveDataFile(i1);
+            double[][][] positions = adatafile.getPositions(aphase);
+//			    for (int ppp = 0; ppp < adatafile.positionsPerPattern; ppp++) {
+            for (int j = 0; j < hkln; j++) {
+              Reflection refl = aphase.getReflex(j);
+              double texture_angles[] = adatafile.getTextureAngles(positions[j][0][0]);
+              double newBetaBroad = adataset.getInstrument().getInstrumentBroadening().getTextureBroadeningAt(positions[j][0][0]);
+//	            System.out.println(snumber + " " + betaBroad);
+              if (betaBroad != newBetaBroad) {
+//		            System.out.println(snumber);
+                for (int ig = 0; ig < fnumber; ig++) {
+                  FiberTextureComponent fiberComp = getFiberTextureComponent(ig);
+//		              System.out.println(ig + " " + fiberComp.betag + betaBroad);
+                  fiberComp.PARFP(fiberComp.betag + betaBroad);
+                }
+                for (int ig = 0; ig < snumber; ig++) {
+                  SphericalTextureComponent sphericalComp = getSphericalTextureComponent(ig);
+//		              System.out.println(ig + " " + sphericalComp.betag + betaBroad);
+                  sphericalComp.PARGLP(sphericalComp.betag + betaBroad);
+                }
+              }
+              textF[j] = computeTextureFactor(refl.phi[0], refl.beta[0],
+                  texture_angles[0] * Constants.DEGTOPI,
+                  texture_angles[1] * Constants.DEGTOPI);
+//		              System.out.println(positions[j][0][0] + " " + refl.getH() + " " + refl.getK() + " " + refl.getL() + " " +
+//				              refl.phi[0] * Constants.PITODEG + " " + refl.beta[0] * Constants.PITODEG + " " + texture_angles[0] + " " + texture_angles[1] + " " + textF[j]);
+//						refl.setExpTextureFactor(adatafile.getIndex(), textF);
+            }
+            adatafile.setTextureFactors(aphase, textF);
+//			    }
+          }
+        }
+      }*/
+      // up to here the energy differentiation
+
     }
   }
 
@@ -825,7 +914,7 @@ public class StandardFunctionTexture extends Texture {
     JLabel sharpL = null;
     JSubordListPane sphericalP;
     JSubordListPane fiberP;
-    JButton mybutton;
+//    JCheckBox energyCB;
     JTextField backGroundODFTF;
 
     public JSFTextureOptionsD(Frame parent, XRDcat obj) {
@@ -834,11 +923,15 @@ public class StandardFunctionTexture extends Texture {
 
       principalPanel.setLayout(new BorderLayout(3, 3));
 
-      JPanel upperPanel = new JPanel();
+      JPanel upperPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 3));
       principalPanel.add(BorderLayout.NORTH, upperPanel);
       upperPanel.add(new JLabel("ODF background: "));
       backGroundODFTF = new JTextField(Constants.FLOAT_FIELD);
       upperPanel.add(backGroundODFTF);
+  //    energyCB = new JCheckBox("Differentiate texture by energy/wavelength");
+  //    energyCB.setToolTipText("Check the box only if you have a very sharp texture or large wavelength/energy differences");
+  //    upperPanel.add(energyCB);
+
 
       upperPanel = new JPanel();
       principalPanel.add(BorderLayout.CENTER, upperPanel);
@@ -910,6 +1003,7 @@ public class StandardFunctionTexture extends Texture {
     }
 
     public void initParameters() {
+//      energyCB.setSelected(differentiateTextureByEnergy());
       symmetryCB.setSelectedItem(getSampleSymmetry());
       String[] labels = new String[6];
       labels[0] = "Intensity";
@@ -932,6 +1026,7 @@ public class StandardFunctionTexture extends Texture {
     }
 
     public void retrieveParameters() {
+//      setDifferentiateByEnergy(energyCB.isSelected());
       setSampleSymmetry(symmetryCB.getSelectedItem().toString());
       sphericalP.retrieveparlist();
       fiberP.retrieveparlist();

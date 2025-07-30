@@ -116,7 +116,7 @@ public class TwoThetaMeasurement extends Measurement {
 			return 1.0E79;
 	}*/
 
-  public double getCorrectedPosition(Sample asample, double x, double[] angles, double radius, DiffrDataFile adatafile) {
+  public double getCorrectedPosition(Sample asample, double x, double[] angles, double radius, DiffrDataFile adatafile, int ppp) {
 
     double sintheta = MoreMath.sind(x);
     double costheta = MoreMath.cosd(x);
@@ -157,7 +157,14 @@ public class TwoThetaMeasurement extends Measurement {
     double delta2thetaz = xyzg[2] * costheta * commonFactor;
 // todo : missing eta angle correction using yp1
 
-    return x + delta2thetax + delta2thetaz;
+    double yShift = 0;
+    if (ppp > 0)
+      yShift = asample.getSampleShapeModel().getYShiftFor(ppp);
+    double r_corr = 0;
+    if (sinomega != 0)
+      r_corr = yShift * sinchi * MoreMath.cosd(90.0 - x) / sinomega * 2.0 * commonFactor;
+
+    return x + delta2thetax + delta2thetaz - r_corr;
 /*
 //    old one method
 //    System.out.println("Omega = " + tilting_angles[0]);

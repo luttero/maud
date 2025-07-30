@@ -59,7 +59,7 @@ public class GeometryTOFGeneric extends GeometryDebyeScherrer {
   }
 
   public double[] getTextureAngles(DiffrDataFile datafile, double[] tilting_angles,
-                                  double[] sampleAngles, double twotheta) {
+                                   Sample sample, double twotheta, int ppp) {
 
     // tilting_angles[0] = Omega
     // tilting_angles[1] = Chi
@@ -75,7 +75,7 @@ public class GeometryTOFGeneric extends GeometryDebyeScherrer {
 
 //		double newTwoTheta = 0.0f;
 
-    return super.getTextureAngles(datafile, newtilting_angles, sampleAngles, twotheta);
+    return super.getTextureAngles(datafile, newtilting_angles, sample, twotheta, ppp);
 
   }
 
@@ -126,9 +126,12 @@ public class GeometryTOFGeneric extends GeometryDebyeScherrer {
     return lp;
   }
 
-	public double getCorrectedPosition(Sample asample, double x, double[] tilting_angles,
-	                                   DiffrDataFile adatafile) {
+/*	public double getCorrectedPosition(Sample asample, double x, double[] tilting_angles,
+	                                   DiffrDataFile adatafile, int ppp) {
 		double[] angles = getTrueTiltingAngles(adatafile, tilting_angles, x);
+    double yShift = 0;
+    if (ppp > 0)
+      yShift = asample.getSampleShapeModel().getYShiftFor(ppp);
 
 		double[] xyz = asample.getSpecimenPrecessionError().getXYZForPrecession(angles, x);
 
@@ -197,19 +200,8 @@ public class GeometryTOFGeneric extends GeometryDebyeScherrer {
 //    if (toLambda > 0)
 //      xt += dp * x / toLambda;
 //    xt = ((Instrument) getParent()).getAngularCalibration().calibrateX(adatafile, (double) xt);
-/*    double s = -yp * MoreMath.sind(angles[3] - 90.0) + zp * MoreMath.sind(angles[3]);
-
-    double den = MoreMath.sind(ttheta / 2.0 + (s * MoreMath.cosd(ttheta) +
-            xp * MoreMath.sind(ttheta)) / (2.0 * getRadius(adatafile)));
-    if (den == 0.0)
-      return x;
-    den = MoreMath.sind(ttheta / 2.0) / den;
-//		System.out.println("Corr: " + den + " " + adatafile + " " + x);
-
-    return x * den;       */
-
 		return x * dp;
-	}
+	}*/
 
 	public JOptionsDialog getOptionsDialog(Frame parent) {
     JOptionsDialog adialog = new JGeometryILOptionsD(parent, this);

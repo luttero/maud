@@ -490,6 +490,14 @@ public class DiffrDataFile extends XRDcat {
     return newvector;
   }
 
+  public int retrieveNumberOfRadiations() {
+    int radNumber = 1;
+    if (/*MaudPreferences.getBoolean("texture.use_all_radiations", true) &&*/
+        !(energyDispersive || dspacingbase))
+      radNumber = getDataFileSet().getInstrument().getRadiationType().getLinesCount();
+    return radNumber;
+  }
+
   @Override
   public void update(boolean firstLoading) {
     if (!dataLoaded) { // && readLater) {
@@ -607,7 +615,7 @@ public class DiffrDataFile extends XRDcat {
     }
     }
 	  Sample asample = getFilePar().getActiveSample();
-	  radiationsNumber = getDataFileSet().getInstrument().getRadiationType().getLinesCount();
+	  radiationsNumber = retrieveNumberOfRadiations();
 	  if (!getFilePar().compactSavingTextureFactors() && radiationsNumber < 5) { // we do not save the texture factors in compact saving
 		  try {
 			  out.newLine();
@@ -841,7 +849,7 @@ public class DiffrDataFile extends XRDcat {
 	  boolean newLoop = false;
 	  boolean startLoop = false;
 	  int maxCIFentries = 7;
-	  radiationsNumber = 1;
+//	  radiationsNumber = 1;
 
 	  try {
 		  do {
@@ -861,6 +869,7 @@ public class DiffrDataFile extends XRDcat {
 					  newLoop = false;
 					  break;
 				  case CIFtoken.TT_CIFE:
+            int dummy;
 					  // CIF item
 					  String thecife = ciffile.thestring;
 					  if (thecife.equalsIgnoreCase(CIFdictionary.texture_points_number)) {
@@ -870,8 +879,8 @@ public class DiffrDataFile extends XRDcat {
 					  } else if (thecife.equalsIgnoreCase(CIFdictionary.texture_radiations_number)) {
 					   int newtoken = ciffile.nextToken();
 					   if (newtoken == CIFtoken.TT_NUMBER)
-						  radiationsNumber = Integer.parseInt(ciffile.thestring);
-				      } else
+						  dummy = Integer.parseInt(ciffile.thestring); /* radiationsNumber */
+            } else
 						  cifVector.addElement(thecife);
 					  break;
 				  case CIFtoken.TT_LOOP:
@@ -1045,8 +1054,8 @@ public class DiffrDataFile extends XRDcat {
 	  for (int i = 4; i < maxAngleNumber; i++)
 		  corrected_tilting_angles[i] = tilting_angles[i];
 
-	  if (MaudPreferences.getBoolean("testing.invertEta", true) && !MaudPreferences.getBoolean("testing.useNewRotationMatrices", true))
-		  corrected_tilting_angles[3] = -corrected_tilting_angles[3];
+//	  if (MaudPreferences.getBoolean("testing.invertEta", true) && !MaudPreferences.getBoolean("testing.useNewRotationMatrices", true))
+//		  corrected_tilting_angles[3] = -corrected_tilting_angles[3];
 
     lorentzRestricted = dataset.isLorentzRestricted();
     oscillatorsNumber = backgOscillatorsNumber();
@@ -1059,6 +1068,8 @@ public class DiffrDataFile extends XRDcat {
 	  useNoBkg = getFilePar().useNoBkgForWeightingScheme();
 	  useCalibratedData = getFilePar().useIntensityCalibratedForWeights() &&
 			  getDataFileSet().getInstrument().getIntensityCalibration() != null && intensityCalibrated != null;
+
+    radiationsNumber = retrieveNumberOfRadiations();
 
     if (ainstrument != null) {
       IntensityCalibration intcal = ainstrument.getIntensityCalibration();
@@ -2613,10 +2624,9 @@ public class DiffrDataFile extends XRDcat {
       if (energyDispersive)
         q[j] = Constants.ENERGY_LAMBDA / q[j];
       if (!dspacingbase && !energyDispersive)
-        q[j] = 4.0 * Math.PI * MoreMath.sind(getCorrectedPosition(asample,
-            q[j]) / 2) / lambda;
+        q[j] = 4.0 * Math.PI * MoreMath.sind(q[j] / 2) / lambda;
       else
-        q[j] = 2.0 * Math.PI / getCorrectedPosition(asample, q[j]);
+        q[j] = 2.0 * Math.PI / q[j];
     }
     return q;
   }
@@ -3275,6 +3285,12 @@ public class DiffrDataFile extends XRDcat {
     return newAngles;
   }
 
+  public double[] getUncorrectedTiltingAngle() {
+    double[] newAngles = new double[maxAngleNumber];
+    arraycopy(tilting_angles, 0, newAngles, 0, newAngles.length);
+    return newAngles;
+  }
+
   double[][] getTextureAnglesAndIntensityNoBkg(boolean experimental) {
     double[][] texture_angles = new double[3][getNumberOfData()];
     double[] twothetaang = getXData();
@@ -3290,10 +3306,10 @@ public class DiffrDataFile extends XRDcat {
     return texture_angles;
   }
 
-  public double[] getTextureAngles(double twothetaang) {  // todo this do not differentiate for different positions
+  public double[] getTextureAngles(double twothetaang, int ppp) {  // todo this do not differentiate for different positions
 //    double[] ta = getTiltingAngle();
 //	System.out.println(this+" "+twothetaang+" "+ta[0]+" "+ta[1]+" "+ta[2]+" " +ta[3]);
-    return getDataFileSet().getTextureAngles(this, getTiltingAngle(), twothetaang);
+    return getDataFileSet().getTextureAngles(this, getTiltingAngle(), twothetaang, ppp);
   }
 
   public double[] getAlternateTextureAngles(double twothetaang) {
@@ -4608,6 +4624,18 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
     return MoreMath.getPolinomialValue(x, MoreMath.getPolinomialInterpolation(2, xdata1, ydata1));
   }
 
+  public double[][] peaksLocationManual(double[] fitData) {
+//    double[] peaks = aphase.getCustomPeakPositions();
+    double[][] peakList = new double[2][1];
+    int dtanumber = computeDataNumber();
+    peakList[0][0] = getXData(startingindex + dtanumber / 5);
+    peakList[1][0] = getFit(startingindex + dtanumber / 5);
+    for (int i = 0; i < dtanumber; i++) {
+      fitData[i] = getFit(i + startingindex);
+    }
+    return peakList;
+  }
+
   public double[][] peaksLocation(double[] derivative2) {
     int pointsToInterpolate = MaudPreferences.getInteger("peaksLocation.interpolatedPoints", 7);
     int dtanumber = computeDataNumber();
@@ -5149,9 +5177,9 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 
 	public void refreshIndices(Phase phase) {
 		int numberOfReflections = phase.gethklNumber();
-		int radNumber = getDataFileSet().getInstrument().getRadiationType().getLinesCount();
-    if (energyDispersive || dspacingbase)
-      radNumber = 1;
+		int radNumber = retrieveNumberOfRadiations();
+
+    positionsPerPattern = getFilePar().getActiveSample().getSampleShapeModel().getDifferentPositionsNumber();
 //		System.out.println("Diffraction datafile: " + this.getLabel() + ", refresh indices: " + numberOfReflections);
 		int[] reflectionsIDs = getReflectionIDs(phase);
 		boolean reflectionsChanged = false;
@@ -5601,8 +5629,8 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 		needRestore = null;
 			if (needRestore != null && needRestore.length > phaseIndex && needRestore[phaseIndex]) {
 				for (int i1 = 0; i1 < textureFactors[0].length; i1++) {
-					for (int j = 0; j < textureFactors[0][i1].length; j++) {
-						for (int j1 = 0; j1 < textureFactors[0][i1][j].length; j1++) {
+					for (int j = 0; j < textureFactors[0][0].length; j++) {
+						for (int j1 = 0; j1 < textureFactors[0][0][0].length; j1++) {
 							textureFactors[0][i1][j][j1] = 1.0;
 							textureFactors[1][i1][j][j1] = 1.0;
 						}
@@ -5743,8 +5771,8 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 	public double[][][][] getTextureFactors(Phase phase) {
 		double[][][][] temp = phaseTextureFactors.get(phase);
 		if (temp == null) {
-			int radNumber = getDataFileSet().getInstrument().getRadiationType().getLinesCount();
-			temp = new double[2][phase.gethklNumber()][positionsPerPattern][radNumber];
+			radiationsNumber = retrieveNumberOfRadiations();
+			temp = new double[2][phase.gethklNumber()][positionsPerPattern][radiationsNumber];
 			phaseTextureFactors.put(phase, temp);
 			resetTextureFactors(phase);
 		}
@@ -5754,8 +5782,8 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 	public double[][][][] getStrainFactors(Phase phase) {
 		double[][][][] temp = phaseStrainFactors.get(phase);
 		if (temp == null) {
-			int radNumber = getDataFileSet().getInstrument().getRadiationType().getLinesCount();
-			temp = new double[2][phase.gethklNumber()][positionsPerPattern][radNumber];
+      radiationsNumber = retrieveNumberOfRadiations();
+			temp = new double[2][phase.gethklNumber()][positionsPerPattern][radiationsNumber];
 			phaseStrainFactors.put(phase, temp);
 			resetStrainFactors(phase);
 		}
@@ -5765,8 +5793,8 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 	public double[][][][] getBroadFactors(Phase phase) {
 		double[][][][] temp = phaseBroadFactors.get(phase);
 		if (temp == null) {
-			int radNumber = getDataFileSet().getInstrument().getRadiationType().getLinesCount();
-			temp = new double[2][phase.gethklNumber()][positionsPerPattern][radNumber];
+      radiationsNumber = retrieveNumberOfRadiations();
+			temp = new double[2][phase.gethklNumber()][positionsPerPattern][radiationsNumber];
 			phaseBroadFactors.put(phase, temp);
 			resetBroadFactors(phase);
 		}
@@ -5776,8 +5804,8 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 	public double[][][][] getInstBroadFactors(Phase phase) {
 		double[][][][] temp = phaseInstBroadFactors.get(phase);
 		if (temp == null) {
-			int radNumber = getDataFileSet().getInstrument().getRadiationType().getLinesCount();
-			temp = new double[instrumentBroadeningParNumber][phase.gethklNumber()][positionsPerPattern][radNumber];
+      radiationsNumber = retrieveNumberOfRadiations();
+			temp = new double[instrumentBroadeningParNumber][phase.gethklNumber()][positionsPerPattern][radiationsNumber];
 			phaseInstBroadFactors.put(phase, temp);
 			resetInstBroadFactors(phase);
 		}
@@ -5788,8 +5816,8 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 		double[][][][] temp = phaseCrystallitesMicrostrains.get(phase);
 		if (temp == null) {
 			int numberCrystStrains = phase.getNumberOfSizeStrainCoefficients();
-			int radNumber = getDataFileSet().getInstrument().getRadiationType().getLinesCount();
-			temp = new double[numberCrystStrains][phase.gethklNumber()][positionsPerPattern][radNumber];
+      radiationsNumber = retrieveNumberOfRadiations();
+			temp = new double[numberCrystStrains][phase.gethklNumber()][positionsPerPattern][radiationsNumber];
 			phaseCrystallitesMicrostrains.put(phase, temp);
 			resetCrystallitesMicrostrains(phase);
 		}
@@ -5799,10 +5827,8 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 	public double[][][] getPositions(Phase phase) {
 		double[][][] temp = phasePositions.get(phase);
 		if (temp == null) {
-			int radNumber = getDataFileSet().getInstrument().getRadiationType().getLinesCount();
-      if (energyDispersive || dspacingbase)
-        radNumber = 1;
-			temp = new double[phase.gethklNumber()][positionsPerPattern][radNumber];
+      radiationsNumber = retrieveNumberOfRadiations();
+			temp = new double[phase.gethklNumber()][positionsPerPattern][radiationsNumber];
 			phasePositions.put(phase, temp);
 			resetPositions(phase);
 		}
@@ -5812,8 +5838,8 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 	public double[][][] getShapeAbsFactors(Phase phase) {
 		double[][][] temp = phaseShapeAbsFactors.get(phase);
 		if (temp == null) {
-			int radNumber = getDataFileSet().getInstrument().getRadiationType().getLinesCount();
-			temp = new double[phase.gethklNumber()][positionsPerPattern][radNumber];
+      radiationsNumber = retrieveNumberOfRadiations();
+			temp = new double[phase.gethklNumber()][positionsPerPattern][radiationsNumber];
 			phaseShapeAbsFactors.put(phase, temp);
 			resetShapeAbsFactors(phase);
 		}
@@ -5823,8 +5849,8 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 	public double[][][] getLorentzPolarization(Phase phase) {
 		double[][][] temp = phaseLorentzPolarization.get(phase);
 		if (temp == null) {
-			int radNumber = getDataFileSet().getInstrument().getRadiationType().getLinesCount();
-			temp = new double[phase.gethklNumber()][positionsPerPattern][radNumber];
+      radiationsNumber = retrieveNumberOfRadiations();
+			temp = new double[phase.gethklNumber()][positionsPerPattern][radiationsNumber];
 			phaseLorentzPolarization.put(phase, temp);
 			resetLorentzPolarization(phase);
 		}
@@ -5834,8 +5860,8 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 	public int[][][][] getMinMaxIndices(Phase phase) {
 		int[][][][] temp = phaseMinMaxIndices.get(phase);
 		if (temp == null) {
-			int radNumber = getDataFileSet().getInstrument().getRadiationType().getLinesCount();
-			temp = new int[2][phase.gethklNumber()][positionsPerPattern][radNumber];
+      radiationsNumber = retrieveNumberOfRadiations();
+			temp = new int[2][phase.gethklNumber()][positionsPerPattern][radiationsNumber];
 			phaseMinMaxIndices.put(phase, temp);
 			resetMinMaxIndices(phase);
 		}
@@ -5861,9 +5887,7 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 
 	public void computePosition(Phase aphase) { // no errors correction applied
 		double PI_TO_2DEG = Constants.PITODEG * 2.0;
-		int radNumber = getDataFileSet().getInstrument().getRadiationType().getLinesCount();
-    if (energyDispersive || dspacingbase)
-      radNumber = 1;
+		int radNumber = retrieveNumberOfRadiations();
 		double[][][] positions = phasePositions.get(aphase);
 //		Sample sample = aphase.getSample();
 
@@ -5901,9 +5925,7 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 
 	public void computePositionForStrained(Phase aphase) {
 //		double PI_TO_2DEG = Constants.PITODEG * 2.0;
-		int radNumber = getDataFileSet().getInstrument().getRadiationType().getLinesCount();
-    if (dspacingbase || energyDispersive)
-      radNumber = 1;
+		int radNumber = retrieveNumberOfRadiations();;
 		double[][][] positions = phasePositions.get(aphase);
 //		double[][][][] strain = getStrainFactors(aphase);
 		Sample sample = aphase.getSample();
@@ -5915,7 +5937,7 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 				for (int j = 0; j < positionsPerPattern && j < positions[0].length; j++)
 					for (int rad = 0; rad < radNumber && rad < positions[0][0].length; rad++) {
 						double strain = getStrains(aphase, i)[j][rad];
-						positions[i][j][rad] = computeFinalPosition(sample, refl, strain, positions[i][j][rad]);
+						positions[i][j][rad] = computeFinalPosition(sample, refl, strain, positions[i][j][rad], j, rad);  // herework
 					}
 			}
 /*		} else {
@@ -5929,39 +5951,42 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 		}*/
 	}
 
-	public double getCorrectedPosition(Sample asample, double x) {
-		return getCorrectedPosition(asample, x, getTiltingAngle());
-	}
-
-	public double getCorrectedPosition(Sample asample, double x, double[] tilting_angles) {
+	public double getCorrectedPosition(Sample asample, double x, int ppp, int radl) {
 		if (!dspacingbase && !energyDispersive && x == 180)
-			return x;
+			return x;  // 2theta >= 180
+
 		double position = x;
 		for (int i = 0; i < thetaDisplacementN; i++) {
 			position += thetaDisplacement[i] * MoreMath.pow(x, i);
 		}
 		if (theta2thetaMeasurement)
 			x /= 2;
-		if (getParameterValue(sampleDisplacementYID) != 0.0)
-			if (dspacingbase)
-				position -= getDSpaceFrom2Theta(Constants.PITODEG * getParameterValue(sampleDisplacementYID) *
-						Math.sin(get2ThetaFromDSpace(x)));
-			else if (energyDispersive)
-				position -= getEnergyFrom2Theta(Constants.PITODEG * getParameterValue(sampleDisplacementYID) *
-						Math.sin(get2ThetaFromEnergy(x)));
-			else
-				position -= Constants.PITODEG * getParameterValue(sampleDisplacementYID) * MoreMath.sind(x);
-		if (getParameterValue(sampleDisplacementZID) != 0.0)
-			if (dspacingbase)
-				position += getDSpaceFrom2Theta(Constants.PITODEG * getParameterValue(sampleDisplacementZID) *
-						Math.cos(get2ThetaFromDSpace(x)));
-			else if (energyDispersive)
-				position += getEnergyFrom2Theta(Constants.PITODEG * getParameterValue(sampleDisplacementZID) *
-						Math.cos(get2ThetaFromEnergy(x)));
-			else
-				position += Constants.PITODEG * getParameterValue(sampleDisplacementZID) * MoreMath.cosd(x);
 
-		return getDataFileSet().getCorrectedPosition(asample, position, tilting_angles, this);
+    double yDisplacement = getParameterValue(sampleDisplacementYID);
+    double zDisplacement = getParameterValue(sampleDisplacementZID);
+
+    if (yDisplacement != 0.0) {
+      if (dspacingbase)
+        position -= getDSpaceFrom2Theta(Constants.PITODEG * yDisplacement *
+            Math.sin(get2ThetaFromDSpace(x)));
+      else if (energyDispersive)
+        position -= getEnergyFrom2Theta(Constants.PITODEG * yDisplacement *
+            Math.sin(get2ThetaFromEnergy(x)));
+      else
+        position -= Constants.PITODEG * yDisplacement * MoreMath.sind(x);
+    }
+		if (zDisplacement != 0.0) {
+      if (dspacingbase)
+        position += getDSpaceFrom2Theta(Constants.PITODEG * zDisplacement *
+            Math.cos(get2ThetaFromDSpace(x)));
+      else if (energyDispersive)
+        position += getEnergyFrom2Theta(Constants.PITODEG * zDisplacement *
+            Math.cos(get2ThetaFromEnergy(x)));
+      else
+        position += Constants.PITODEG * zDisplacement * MoreMath.cosd(x);
+    }
+
+		return getDataFileSet().getCorrectedPosition(asample, position, getTiltingAngle(), this, ppp);
 	}
 
 	public double getPositionForStrained(double position, double strain) {
@@ -5984,34 +6009,16 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 		return position;
 	}
 
-/*  public double[] getFinalPosition(Sample asample, Reflection refl, int computeStrain) {
+  public double computeFinalPosition(Sample asample, Reflection refl, double strain, double pos, int ppp, int radl) {
     // in deg if an angle
 
-    Radiation[] rad = getDataFileSet().getRadiations();
-    if (dspacingbase || rad == null)
-      return new double[]{refl.d_space};
-    if (energyDispersive)
-      return new double[]{Constants.ENERGY_LAMBDA / refl.d_space};
-
-    double[] position = new double[rad.length];
-    for (int i = 0; i < rad.length; i++) {
-      position[i] = getDataFileSet().computeposition(refl.d_space, i);
-    }
-    computeFinalPosition(asample, refl, computeStrain, position);
-//	  System.out.println(position[0]);
-    return position;
-  }*/
-
-  public double computeFinalPosition(Sample asample, Reflection refl, double strain, double pos) {
-    // in deg if an angle
-
-// position from d-space + sample positioning errors
-    pos = getCorrectedPosition(asample, pos);
-
-//	  System.out.println(strain);
     if (strain != 0.0)
       pos = getPositionForStrained(pos, strain);
-	  return pos;
+
+// position from d-space + sample positioning errors
+    pos = getCorrectedPosition(asample, pos, ppp, radl);
+
+    return pos;
   }
 
 
@@ -6020,7 +6027,7 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 		double[][][] lorentzPolarization = phaseLorentzPolarization.get(aphase);
 		Sample asample = getDataFileSet().getSample();
 		Instrument ainstrument = getDataFileSet().getInstrument();
-		int radNumber = ainstrument.getRadiationType().getLinesCount();
+		int radNumber = retrieveNumberOfRadiations();;
     if (energyDispersive || dspacingbase)
       radNumber = 1;
 
@@ -6040,7 +6047,7 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
   	   double abs = getParameter(absorptionFactorID).getValueD();
 		Sample asample = getDataFileSet().getSample();
 		Instrument ainstrument = getDataFileSet().getInstrument();
-		int radNumber = ainstrument.getRadiationType().getLinesCount();
+		int radNumber = retrieveNumberOfRadiations();;
 		boolean isTOF = ainstrument.isTOF();
     boolean isEDX =  ainstrument.isEDX();
 		double[][][] positions = phasePositions.get(aphase);
@@ -6052,39 +6059,41 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 			for (int i = 0; i < reflNumber; i++) {
 				for (int j = 0; j < positionsPerPattern; j++)
 					for (int k = 0; k < radNumber; k++)
-					intensity[j][k] = 1.0f;
+					  intensity[j][k] = 1.0f;
 				ainstrument.computeShapeAbsorptionCorrection(this, asample, positions[i],
 						dspacingbase, energyDispersive, intensity);
 				for (int j = 0; j < positionsPerPattern; j++) {
-					double[] layer_abs = ainstrument.PhaseAndLayerAbsorption(this, asample, aphase, positions[i][j]);
-					// computeAbsorptionAndPhaseQuantity(ainstrument, aphase.getSample(), aphase, positions[0][i][j]);
+          for (int k = 0; k < radNumber; k++) {
+            double[] layer_abs = ainstrument.PhaseAndLayerAbsorption(this, asample, aphase, positions[i][j]);
+            // computeAbsorptionAndPhaseQuantity(ainstrument, aphase.getSample(), aphase, positions[0][i][j]);
 //					System.out.println(i + " " + intensity[j][0] + " " + layer_abs[0]);
-					double linearCorrection = 1.0;
-					if (isTOF) { // dspacingbase
-							double arg1 = abs * getWavelengthFromDSpace(positions[i][j][0]);
-							if (i == 50)
+            double linearCorrection = 1.0;
+            if (isTOF) { // dspacingbase
+              double arg1 = abs * getWavelengthFromDSpace(positions[i][j][k]);
+              if (i == 50)
 //						      System.out.println(abs + " " + positions[i][j][0] + " " + arg1 + " " + layer_abs[0]);
-							if (arg1 != 0.0) {
-								if (arg1 < 200.0)
-									arg1 = Math.exp(-arg1);
-								else
-									arg1 = 0.0f;
-								linearCorrection = arg1;
-							}
-					} else if (isEDX) {
-            double arg1 = abs * getWavelengthFromEnergy(positions[i][j][0]);
-            if (arg1 != 0.0) {
-              if (arg1 < 200.0)
-                arg1 = Math.exp(-arg1);
-              else
-                arg1 = 0.0f;
-              linearCorrection = arg1;
+                if (arg1 != 0.0) {
+                  if (arg1 < 200.0)
+                    arg1 = Math.exp(-arg1);
+                  else
+                    arg1 = 0.0f;
+                  linearCorrection = arg1;
+                }
+            } else if (isEDX) {
+              double arg1 = abs * getWavelengthFromEnergy(positions[i][j][k]);
+              if (arg1 != 0.0) {
+                if (arg1 < 200.0)
+                  arg1 = Math.exp(-arg1);
+                else
+                  arg1 = 0.0f;
+                linearCorrection = arg1;
+              }
+            }
+
+            for (int a = 0; a < layer_abs.length; a++) {
+              shapeAbsorption[i][j][a] = intensity[j][a] * layer_abs[a] * linearCorrection;
             }
           }
-
-					for (int a = 0; a < layer_abs.length; a++) {
-						shapeAbsorption[i][j][a] = intensity[j][a] * layer_abs[a] * linearCorrection;
-					}
 				}
 			}
 	}
@@ -6114,7 +6123,7 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 		double[][][] positions = getPositions(aphase);
 		int reflNumber = aphase.getReflectionVector().size();
 		for (int i = 0; i < reflNumber; i++) {
-			double crst[] = aphase.getCrystalliteMicrostrain(aphase.getReflex(i), getTextureAngles(positions[i][0][0]));
+			double crst[] = aphase.getCrystalliteMicrostrain(aphase.getReflex(i), getTextureAngles(positions[i][0][0], 0));
 			for (int b = 0; b < crst.length; b++) {
 				for (int l = 0; l < sizeStrains[0][0].length; l++)
 					for (int k = 0; k < sizeStrains[0][0][0].length; k++)
@@ -6132,7 +6141,7 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 			for (int i = 0; i < reflNumber; i++) {
 				for (int l = 0; l < strains[0][0].length; l++) {
 					for (int k = 0; k < strains[0][0][0].length; k++) {
-						double strain = aphase.getActiveStrain().computeStrain(aphase.getReflex(i), getTextureAngles(positions[i][l][k]));
+						double strain = aphase.getActiveStrain().computeStrain(aphase.getReflex(i), getTextureAngles(positions[i][l][k], 0));
 						strains[1][i][l][k] = strain;
 					}
 				}
@@ -6158,7 +6167,7 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 					betaf[1] = aphase.getActiveSizeStrain().getBetaGauss(refl.d_space, sizeStrains[0][kj][i][k],
 							sizeStrains[1][kj][i][k]); // / 2.0;
 					if (!dspacingbase && !energyDispersive) {
-						double position = positions[kj][i][0] / 2 * Constants.DEGTOPI;
+						double position = positions[kj][i][k] / 2 * Constants.DEGTOPI;
 						double sintheta = Math.sin(position);
 						sintheta *= sintheta;
 						double costheta = Math.cos(position);
@@ -6255,9 +6264,11 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 
 	public boolean checkPeakInsideRange(Phase phase, int reflIndex) {
 		boolean isIn = false;
-		for (int i = 0; i < positionsPerPattern; i++) {
-			if (xInsideRange(getPositions(phase)[reflIndex][i][0]))
-				isIn = true;
+      for (int i = 0; i < positionsPerPattern; i++) {
+        for (int j = 0; j < radiationsNumber; j++) {
+          if (xInsideRange(getPositions(phase)[reflIndex][i][j]))
+            isIn = true;
+        }
 		}
 		return isIn;
 	}
@@ -6265,10 +6276,12 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 	public boolean checkPeakInsideRange(Phase phase, int reflIndex, double rangeFactor) {
 		boolean isIn = false;
 		for (int i = 0; i < positionsPerPattern; i++) {
-			double pos = getPositions(phase)[reflIndex][i][0];
-			double hwhm = Math.abs(getBroadFactors(phase)[0][reflIndex][i][0] * rangeFactor * getCutoffAngle());
-			if (xInsideRange(pos) || xInsideRange(pos + hwhm) || xInsideRange(pos - hwhm))
-				isIn = true;
+      for (int j = 0; j < radiationsNumber; j++) {
+        double pos = getPositions(phase)[reflIndex][i][j];
+        double hwhm = Math.abs(getBroadFactors(phase)[0][reflIndex][i][0] * rangeFactor * getCutoffAngle());
+        if (xInsideRange(pos) || xInsideRange(pos + hwhm) || xInsideRange(pos - hwhm))
+          isIn = true;
+      }
 		}
 		return isIn;
 	}
@@ -6292,8 +6305,8 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 	}
 
 	public double[][] getTextureFactors(Phase aphase, int j) {
-		if (j > getTextureFactors(aphase)[1].length)
-			out.println(aphase.getPhaseName() + " " + aphase.gethklNumber() + " " + j + " " + getTextureFactors(aphase)[1].length);
+//		if (j > getTextureFactors(aphase)[1].length)
+//			out.println(aphase.getPhaseName() + " " + aphase.gethklNumber() + " " + j + " " + getTextureFactors(aphase)[1].length);
 		return getTextureFactors(aphase)[1][j];  //To change body of created methods use File | Settings | File Templates.
 	}
 
@@ -6319,7 +6332,7 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 			expValues[i] = value;
 	}
 
-	public void setTextureFactor(Phase phase, Peak peak, int pointNumber, double value) {
+/*	public void setTextureFactor(Phase phase, Peak peak, int pointNumber, double value) {
 //		peak.getReflex().setTextureFactor(getIndex(), peak.getLayer().getIndex(), value);
 		setTextureFactor(phase, peak.getOrderPosition(), pointNumber, value);
 	}
@@ -6329,7 +6342,7 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 		double[] calcValues = getTextureFactors(phase, reflIndex)[pointNumber];
 		for (int i = 0; i < calcValues.length; i++)
 			calcValues[i] = value;
-	}
+	}*/
 
 	public void setTextureFactors(Phase aphase, double[] textureValues) {
 		if (!getDataFileSet().hasRandomTexture()) {
@@ -6338,31 +6351,58 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 				int hkln = aphase.gethklNumber();
 				for (int i = 0; i < hkln; i++)
 					for (int k = 0; k < textF[i].length; k++)
-						for (int l = 0; l < textF[0][0].length; l++)
+						for (int l = 0; l < textF[i][k].length; l++)
 							textF[i][k][l] = textureValues[i];
 			}
 		}
 	}
 
-	public void setTextureFactors(Phase aphase, int i, double[] textureValues) {
+  public void setTextureFactors(Phase aphase, double[][][] textureValues) {
+    if (!getDataFileSet().hasRandomTexture()) {
+      synchronized (this) {
+        double[][][] textF = getTextureFactors(aphase)[1];
+        int hkln = aphase.gethklNumber();
+        for (int i = 0; i < hkln; i++)
+          for (int k = 0; k < textF[i].length; k++)
+            for (int l = 0; l < textF[i][k].length; l++)
+              textF[i][k][l] = textureValues[i][k][l];
+      }
+    }
+  }
+
+  public void setTextureFactors(Phase aphase, double[][] textureValues) {
+    if (!getDataFileSet().hasRandomTexture()) {
+      synchronized (this) {
+        double[][][] textF = getTextureFactors(aphase)[1];
+        for (int i = 0; i < textF.length; i++) {
+          int index = 0;
+          for (int k = 0; k < textF[i].length; k++)
+            for (int l = 0; l < textF[i][k].length; l++)
+              textF[i][k][l] = textureValues[i][index++];
+        }
+      }
+    }
+  }
+
+  public void setTextureFactors(Phase aphase, int i, double[] textureValues) {
 		if (!getDataFileSet().hasRandomTexture()) {
 			synchronized (this) {
 				double[][][] textF = getTextureFactors(aphase)[1];
 				int index = 0;
-				for (int k = 0; k < textF[0].length; k++)
-					for (int l = 0; l < textF[0][0].length; l++) {
+				for (int k = 0; k < textF[i].length; k++)
+					for (int l = 0; l < textF[i][k].length; l++) {
 						textF[i][k][l] = textureValues[index++];
 					}
 			}
 		}
 	}
 
-	public void setStrain(Phase phase, Peak peak, int pointNumber, double value) {
+/*	public void setStrain(Phase phase, Peak peak, int pointNumber, double value) {
 		//		peak.getReflex().setStrain(getIndex(), peak.getLayer().getIndex(), value);
 		double[] expValues = getStrains(phase, peak.getOrderPosition())[pointNumber];
 		for (int i = 0; i < expValues.length; i++)
 			expValues[i] = value;
-	}
+	}*/
 
 /*	@Override
 	protected void finalize() throws Throwable {

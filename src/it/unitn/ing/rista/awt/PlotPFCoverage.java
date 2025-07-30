@@ -140,78 +140,79 @@ public class PlotPFCoverage extends GraphFrame {
 
 	    if (np > 0) {
 
-		    np = 0;
+//		    np = 0;
 		    if (plotScaleFactorsBW) {
 			    for (int n = 0; n < nd; n++) {
 				    DataFileSet adataset = asample.getActiveDataSet(n);
-				    np = adataset.getNumberOfTexturePoints(aphase, hklnumbersel);
+//				    np = adataset.getNumberOfTexturePoints(aphase, hklnumbersel);
 				    double[] angles;
 				    double min = 1.0E150;
 				    double max = -1.0E150;
 				    j = 0;
 				    for (i = 0; i < adataset.activedatafilesnumber(); i++) {
 					    DiffrDataFile adatafile = adataset.getActiveDataFile(i);
-					    for (int ppp = 0; ppp < adatafile.positionsPerPattern; ppp++)
-						    if (adatafile.isInsideRange(adatafile.getPositions(aphase)[hklnumbersel][ppp][0])) {
-							    j++;
+					    for (int ppp = 0; ppp < adatafile.positionsPerPattern; ppp++) {
+                for (int l = 0; l < adatafile.radiationsNumber; l++) {
+                  if (adatafile.isInsideRange(adatafile.getPositions(aphase)[hklnumbersel][ppp][l])) {
+                    j++;
 //todo            if (!Double.isNaN(reflex.getExpTextureFactor(i))) {
-							    double data[] = new double[2 * multi];
-							    double color_data[] = new double[multi];
-							    if (plotScaleFactors) {
-								    color_data[0] = adatafile.getMonitorCountsValue();
-							    } else {
-								    // todo modify for more peaks par pattern
-								    color_data[0] = adatafile.getShapeAbsFactors(aphase, hklnumbersel)[0][0];
-							    }
-							    if (color_data[0] < min)
-								    min = color_data[0];
-							    if (color_data[0] > max)
-								    max = color_data[0];
-							    double position = adatafile.getPositions(aphase)[hklnumbersel][ppp][0];
-							    if (plotAlternateCoverage)
-								    angles = adatafile.getAlternateTextureAngles(position);
-							    else
-								    angles = adatafile.getTextureAngles(position);
-							    double[] iangles = adatafile.getIncidentAndDiffractionAngles(position);
+                    double data[] = new double[2 * multi];
+                    double color_data[] = new double[multi];
+                    if (plotScaleFactors) {
+                      color_data[0] = adatafile.getMonitorCountsValue();
+                    } else {
+                      // todo modify for more peaks par pattern
+                      color_data[0] = adatafile.getShapeAbsFactors(aphase, hklnumbersel)[ppp][l];
+                    }
+                    if (color_data[0] < min)
+                      min = color_data[0];
+                    if (color_data[0] > max)
+                      max = color_data[0];
+                    double position = adatafile.getPositions(aphase)[hklnumbersel][ppp][l];
+                    if (plotAlternateCoverage)
+                      angles = adatafile.getAlternateTextureAngles(position);
+                    else
+                      angles = adatafile.getTextureAngles(position, ppp);
+                    double[] iangles = adatafile.getIncidentAndDiffractionAngles(position);
 
-							    double projection = Constants.sqrt2 * Math.sin(angles[0] * Constants.DEGTOPI / 2.0);
+                    double projection = Constants.sqrt2 * Math.sin(angles[0] * Constants.DEGTOPI / 2.0);
 //            System.out.println(angles[0] + " " + angles[1]);
-							    if (angles[0] > 90.) {
-								    projection = Constants.sqrt2 * Math.sin((180. - angles[0]) * Constants.DEGTOPI / 2.0);
-							    }
-							    angles[1] += Texture.rotatePoleFigureDeg;    // test ODF beta angle problem
-							    data[0] = projection * Math.cos(angles[1] * Constants.DEGTOPI);
-							    data[1] = projection * Math.sin(angles[1] * Constants.DEGTOPI);
+                    if (angles[0] > 90.) {
+                      projection = Constants.sqrt2 * Math.sin((180. - angles[0]) * Constants.DEGTOPI / 2.0);
+                    }
+                    angles[1] += Texture.rotatePoleFigureDeg;    // test ODF beta angle problem
+                    data[0] = projection * Math.cos(angles[1] * Constants.DEGTOPI);
+                    data[1] = projection * Math.sin(angles[1] * Constants.DEGTOPI);
 
-							    if (plotIncidentAndDiffraction) {
-								    j += 2;
-								    projection = Constants.sqrt2 * Math.sin(iangles[0] / 2.0);
+                    if (plotIncidentAndDiffraction) {
+                      j += 2;
+                      projection = Constants.sqrt2 * Math.sin(iangles[0] / 2.0);
 //            System.out.println(angles[0] + " " + angles[1]);
-								    if (iangles[0] > 90.) {
-									    projection = Constants.sqrt2 * Math.sin((Math.PI - iangles[0]) / 2.0);
-								    }
-								    data[0] = projection * Math.cos(iangles[1]);
-								    data[1] = projection * Math.sin(iangles[1]);
-								    j += 2;
-								    projection = Constants.sqrt2 * Math.sin(iangles[2] / 2.0);
+                      if (iangles[0] > 90.) {
+                        projection = Constants.sqrt2 * Math.sin((Math.PI - iangles[0]) / 2.0);
+                      }
+                      data[0] = projection * Math.cos(iangles[1]);
+                      data[1] = projection * Math.sin(iangles[1]);
+                      j += 2;
+                      projection = Constants.sqrt2 * Math.sin(iangles[2] / 2.0);
 //            System.out.println(angles[0] + " " + angles[1]);
-								    if (iangles[2] > 90.) {
-									    projection = Constants.sqrt2 * Math.sin((Math.PI - iangles[2]) / 2.0);
-								    }
-								    data[0] = projection * Math.cos(iangles[3]);
-								    data[1] = projection * Math.sin(iangles[3]);
-							    }
+                      if (iangles[2] > 90.) {
+                        projection = Constants.sqrt2 * Math.sin((Math.PI - iangles[2]) / 2.0);
+                      }
+                      data[0] = projection * Math.cos(iangles[3]);
+                      data[1] = projection * Math.sin(iangles[3]);
+                    }
 
 //          System.out.println("Data loaded");
 
-							    if (multi > 0) {
-								    data1 = lgraph.loadDataSet(data, multi);
-								    data1.linestyle = 0;
-								    data1.marker = 3;
-								    if (plotScaleFactorsBW)
-									    data1.markerscale = plotScaleFactorsBWZoom * Math.pow(color_data[0], plotScaleFactorsBWZoom) / 2.0;
-								    else
-									    data1.markerscale = plotScaleFactorsBWZoom * 0.5;
+                    if (multi > 0) {
+                      data1 = lgraph.loadDataSet(data, multi);
+                      data1.linestyle = 0;
+                      data1.marker = 3;
+                      if (plotScaleFactorsBW)
+                        data1.markerscale = plotScaleFactorsBWZoom * Math.pow(color_data[0], plotScaleFactorsBWZoom) / 2.0;
+                      else
+                        data1.markerscale = plotScaleFactorsBWZoom * 0.5;
               /*           ThermalColorMap thermalMap = null;
       if (plotScaleFactorsBW)
         thermalMap = new ThermalColorMap(1, 1, 32, false);
@@ -222,52 +223,53 @@ public class PlotPFCoverage extends GraphFrame {
 
 //            data1.setColorMap(thermalMap);
 //            data1.setColorData(color_data);
-								    data1.markercolor = Color.black;
-								    if (adataset.toXRDcatString().length() > 4)
-									    data1.legend(1, n * 20 + 30, "#" + (n + 1)/*adataset.toXRDcatString()*/);
-								    else
-									    data1.legend(1, n * 20 + 30, adataset.toXRDcatString());
-								    data1.legendColor(Color.black);
-								    /*
-								     **      Attach data sets to the Xaxis
-								     */
+                      data1.markercolor = Color.black;
+                      if (adataset.toXRDcatString().length() > 4)
+                        data1.legend(1, n * 20 + 30, "#" + (n + 1)/*adataset.toXRDcatString()*/);
+                      else
+                        data1.legend(1, n * 20 + 30, adataset.toXRDcatString());
+                      data1.legendColor(Color.black);
+                      /*
+                       **      Attach data sets to the Xaxis
+                       */
 //          System.out.println("Attaching X-axis....");
 
-								    if (xaxis == null) {
-									    xaxis = lgraph.createXAxis();
-									    xaxis.setTitleText("");
-									    xaxis.setTitleFont(new Font("TimesRoman", Font.BOLD, 14));
-									    xaxis.setLabelFont(new Font("Helvetica", Font.PLAIN, 12));
-									    xaxis.setTitleColor(Color.white);
-									    xaxis.setLabelColor(Color.white);
-									    xaxis.drawLine = false;
+                      if (xaxis == null) {
+                        xaxis = lgraph.createXAxis();
+                        xaxis.setTitleText("");
+                        xaxis.setTitleFont(new Font("TimesRoman", Font.BOLD, 14));
+                        xaxis.setLabelFont(new Font("Helvetica", Font.PLAIN, 12));
+                        xaxis.setTitleColor(Color.white);
+                        xaxis.setLabelColor(Color.white);
+                        xaxis.drawLine = false;
                 /* axiscolor = Color.white;
          xaxis.minor_tic_size = 0;
          xaxis.major_tic_size = 0;     */
-								    }
-								    if (yaxis == null) {
-									    yaxis = lgraph.createYAxis();
-									    yaxis.setTitleText("");
-									    yaxis.setTitleFont(new Font("TimesRoman", Font.BOLD, 24));
-									    yaxis.setLabelFont(new Font("Helvetica", Font.PLAIN, 12));
-									    yaxis.setTitleColor(Color.white);
-									    yaxis.setLabelColor(Color.white);
-									    yaxis.drawLine = false;
+                      }
+                      if (yaxis == null) {
+                        yaxis = lgraph.createYAxis();
+                        yaxis.setTitleText("");
+                        yaxis.setTitleFont(new Font("TimesRoman", Font.BOLD, 24));
+                        yaxis.setLabelFont(new Font("Helvetica", Font.PLAIN, 12));
+                        yaxis.setTitleColor(Color.white);
+                        yaxis.setLabelColor(Color.white);
+                        yaxis.drawLine = false;
                 /* yaxis.axiscolor = Color.white;
            yaxis.minor_tic_size = 0;
            yaxis.major_tic_size = 0;   */
-								    }
+                      }
 
-								    xaxis.attachDataSet(data1);
-								    yaxis.attachDataSet(data1);
-								    xaxis.minimum = -1.0;
-								    xaxis.maximum = 1.0;
-								    yaxis.minimum = -1.0;
-								    yaxis.maximum = 1.0;
-								    j += 2;
-							    }
-						    }
-					    //todo }
+                      xaxis.attachDataSet(data1);
+                      yaxis.attachDataSet(data1);
+                      xaxis.minimum = -1.0;
+                      xaxis.maximum = 1.0;
+                      yaxis.minimum = -1.0;
+                      yaxis.maximum = 1.0;
+                      j += 2;
+                    }
+                  }
+                }
+					    }
 				    }
 			    }
 		    } else {
@@ -277,61 +279,63 @@ public class PlotPFCoverage extends GraphFrame {
 				    np = adataset.getNumberOfTexturePoints(aphase, hklnumbersel);
 				    double[] angles = null;
 				    double data[] = new double[2 * np * multi];
-				    System.out.println(data.length);
+//				    System.out.println(data.length);
 				    double color_data[] = new double[adataset.activedatafilesnumber()];
 				    double min = 1.0E150;
 				    double max = -1.0E150;
 				    j = 0;
 				    for (i = 0; i < adataset.activedatafilesnumber(); i++) {
 					    DiffrDataFile adatafile = adataset.getActiveDataFile(i);
-					    for (int ppp = 0; ppp < adatafile.positionsPerPattern; ppp++)
-						    if (adatafile.isInsideRange(adatafile.getPositions(aphase)[hklnumbersel][ppp][0])) {
+					    for (int ppp = 0; ppp < adatafile.positionsPerPattern; ppp++) {
+                for (int l = 0; l < adatafile.radiationsNumber; l++) {
+                  if (adatafile.isInsideRange(adatafile.getPositions(aphase)[hklnumbersel][ppp][l])) {
 //todo            if (!Double.isNaN(reflex.getExpTextureFactor(i))) {
-							    adatafile = adataset.getActiveDataFile(i);
+                    adatafile = adataset.getActiveDataFile(i);
 
-							    if (plotScaleFactors)
-								    color_data[i] = adatafile.getMonitorCountsValue();
-							    else
-								    color_data[i] = adatafile.getShapeAbsFactors(aphase, hklnumbersel)[0][0];
-							    if (color_data[i] < min)
-								    min = color_data[i];
-							    if (color_data[i] > max)
-								    max = color_data[i];
-							    double position = adatafile.getPositions(aphase)[hklnumbersel][ppp][0];
-							    angles = adatafile.getTextureAngles(position);
-							    double[] iangles = adatafile.getIncidentAndDiffractionAngles(position);
+                    if (plotScaleFactors)
+                      color_data[i] = adatafile.getMonitorCountsValue();
+                    else
+                      color_data[i] = adatafile.getShapeAbsFactors(aphase, hklnumbersel)[ppp][l];
+                    if (color_data[i] < min)
+                      min = color_data[i];
+                    if (color_data[i] > max)
+                      max = color_data[i];
+                    double position = adatafile.getPositions(aphase)[hklnumbersel][ppp][l];
+                    angles = adatafile.getTextureAngles(position, ppp);
+                    double[] iangles = adatafile.getIncidentAndDiffractionAngles(position);
 
-							    double projection = Constants.sqrt2 * Math.sin(angles[0] * Constants.DEGTOPI / 2.0);
+                    double projection = Constants.sqrt2 * Math.sin(angles[0] * Constants.DEGTOPI / 2.0);
 //            System.out.println(angles[0] + " " + angles[1]);
-							    if (angles[0] > 90.) {
-								    projection = Constants.sqrt2 * Math.sin((180. - angles[0]) * Constants.DEGTOPI / 2.0);
-							    }
-							    angles[1] += Texture.rotatePoleFigureDeg;    // test ODF beta angle problem
-							    data[j] = projection * Math.cos(angles[1] * Constants.DEGTOPI);
-							    data[j + 1] = projection * Math.sin(angles[1] * Constants.DEGTOPI);
+                    if (angles[0] > 90.) {
+                      projection = Constants.sqrt2 * Math.sin((180. - angles[0]) * Constants.DEGTOPI / 2.0);
+                    }
+                    angles[1] += Texture.rotatePoleFigureDeg;    // test ODF beta angle problem
+                    data[j] = projection * Math.cos(angles[1] * Constants.DEGTOPI);
+                    data[j + 1] = projection * Math.sin(angles[1] * Constants.DEGTOPI);
 
-							    if (plotIncidentAndDiffraction) {
-								    j += 2;
-								    projection = Constants.sqrt2 * Math.sin(iangles[0] / 2.0);
+                    if (plotIncidentAndDiffraction) {
+                      j += 2;
+                      projection = Constants.sqrt2 * Math.sin(iangles[0] / 2.0);
 //            System.out.println(angles[0] + " " + angles[1]);
-								    if (iangles[0] > 90.) {
-									    projection = Constants.sqrt2 * Math.sin((Math.PI - iangles[0]) / 2.0);
-								    }
-								    data[j] = projection * Math.cos(iangles[1]);
-								    data[j + 1] = projection * Math.sin(iangles[1]);
-								    j += 2;
-								    projection = Constants.sqrt2 * Math.sin(iangles[2] / 2.0);
+                      if (iangles[0] > 90.) {
+                        projection = Constants.sqrt2 * Math.sin((Math.PI - iangles[0]) / 2.0);
+                      }
+                      data[j] = projection * Math.cos(iangles[1]);
+                      data[j + 1] = projection * Math.sin(iangles[1]);
+                      j += 2;
+                      projection = Constants.sqrt2 * Math.sin(iangles[2] / 2.0);
 //            System.out.println(angles[0] + " " + angles[1]);
-								    if (iangles[2] > 90.) {
-									    projection = Constants.sqrt2 * Math.sin((Math.PI - iangles[2]) / 2.0);
-								    }
-								    data[j] = projection * Math.cos(iangles[3]);
-								    data[j + 1] = projection * Math.sin(iangles[3]);
-							    }
-							    j += 2;
-							    totalPlotting++;
-						    }
-//todo            }
+                      if (iangles[2] > 90.) {
+                        projection = Constants.sqrt2 * Math.sin((Math.PI - iangles[2]) / 2.0);
+                      }
+                      data[j] = projection * Math.cos(iangles[3]);
+                      data[j + 1] = projection * Math.sin(iangles[3]);
+                    }
+                    j += 2;
+                    totalPlotting++;
+                  }
+                }
+              }
 				    }
 
 				    if (totalPlotting > 0) {

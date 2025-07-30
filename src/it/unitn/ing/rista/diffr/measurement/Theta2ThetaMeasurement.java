@@ -120,7 +120,7 @@ public class Theta2ThetaMeasurement extends Measurement {
 			return x;
 	}*/
 
-  public double getCorrectedPosition(Sample asample, double x, double[] angles, double radius, DiffrDataFile adatafile) {
+  public double getCorrectedPosition(Sample asample, double x, double[] angles, double radius, DiffrDataFile adatafile, int ppp) {
 
     double omega = getOmega(angles[0], x);
     double sintheta = MoreMath.sind(x / 2);
@@ -146,8 +146,8 @@ public class Theta2ThetaMeasurement extends Measurement {
 	  xyzg[2] = -xyzg[1] * sinchi + xyzg[2] * coschi;
 	  xyzg[1] = x1;
 
-	  double cosomega = MoreMath.cosd(angles[0]);
-	  double sinomega = MoreMath.sind(angles[0]);
+	  double cosomega = MoreMath.cosd(omega);
+	  double sinomega = MoreMath.sind(omega);
 	  x1 = xyzg[0] * cosomega + xyzg[1] * sinomega;
 	  xyzg[1] = -xyzg[0] * sinomega + xyzg[1] * cosomega;
 	  xyzg[0] = x1;
@@ -162,7 +162,14 @@ public class Theta2ThetaMeasurement extends Measurement {
     double delta2thetaz = xyzg[2] * costheta * commonFactor;
 // todo : missing eta angle correction using yp1
 
-    return x + delta2thetax + delta2thetaz;
+    double yShift = 0;
+    if (ppp > 0)
+      yShift = asample.getSampleShapeModel().getYShiftFor(ppp);
+    double r_corr = 0;
+    if (sinomega != 0)
+      r_corr = yShift * sinchi * MoreMath.cosd(90.0 - x) / sinomega * 2.0 * commonFactor;
+
+    return x + delta2thetax + delta2thetaz - r_corr;
 
 /*    double omega = getOmega(tilting_angles[0], x);
     double sinomega = MoreMath.sind(omega);

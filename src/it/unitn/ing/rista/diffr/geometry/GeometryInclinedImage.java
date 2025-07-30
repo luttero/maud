@@ -47,7 +47,7 @@ public class GeometryInclinedImage extends GeometryBraggBrentano {
     description = "Reflection flat image instrument geometry";
   }
 
-  public double getCorrectedPosition(Sample asample, double x, double[] tilting_angles, DiffrDataFile adatafile) {
+  public double getCorrectedPosition(Sample asample, double x, double[] tilting_angles, DiffrDataFile adatafile, int ppp) {
     return x;
   }
 

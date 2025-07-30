@@ -1432,7 +1432,7 @@ public class MetaDynamicsSearch extends OptimizationAlgorithm {
     if (isNewSolution) {
       filler.add(new FillerMat(parm, dparm, wss));
       multipleSolution.add(new Solution(parm, wss));
-      Collections.sort(multipleSolution, new bestSolution());
+      multipleSolution.sort(new bestSolution());
       System.out.println("New solution, wss:" + wss);
 //      for (int i = 0; i < parm.length; i++)
 //        System.out.println(i + ": " + parm[i] + "(" + dparm[i] + ")");

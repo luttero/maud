@@ -68,7 +68,7 @@ public class FromOdeigerToTiff implements PlugIn {
 						String open_cmd = "open=[" + fileNameNumbered + "] image=[32-bit Signed] width=1030 height=1065 offset=5120 white little-endian";
 						IJ.run("Raw...", open_cmd);
 						IJ.run("Properties...", "channels=1 slices=1 frames=1 unit=mm pixel_width=0.075 pixel_height=0.075 voxel_depth=0.075");
-						IJ.run("Add...", "value=-2");
+						IJ.run("Add...", "value=-1");
 						IJ.saveAs("Tiff", fileNameNoExt + ".tif");
 						IJ.run("Close All", "");
 						firstIndex++;
