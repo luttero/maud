@@ -5,89 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="61caab25-241f-4ab1-85f0-b423f2950da9" name="Changes" comment="Fix to post on the website">
-      <change afterPath="$PROJECT_DIR$/src/help/sampleshape_rectangular.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/BatchFileDialog.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/shape/SampleShapeRectangularInReflection.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/models/BatchDataModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Maud.iml" beforeDir="false" afterPath="$PROJECT_DIR$/Maud.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Maud.ipr" beforeDir="false" afterPath="$PROJECT_DIR$/Maud.ipr" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Maud.iws" beforeDir="false" afterPath="$PROJECT_DIR$/Maud.iws" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.xml" beforeDir="false" afterPath="$PROJECT_DIR$/build.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libs/current/Examples.jar" beforeDir="false" afterPath="$PROJECT_DIR$/libs/current/Examples.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libs/current/Files.jar" beforeDir="false" afterPath="$PROJECT_DIR$/libs/current/Files.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libs/current/Help.jar" beforeDir="false" afterPath="$PROJECT_DIR$/libs/current/Help.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libs/current/com.github.tschoonj.xraylib.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/libs/current/ij.jar" beforeDir="false" afterPath="$PROJECT_DIR$/libs/current/ij.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libs/current/miscLib.jar" beforeDir="false" afterPath="$PROJECT_DIR$/libs/current/miscLib.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/github/tschoonj/xraylib/Xraylib.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/github/tschoonj/xraylib/XraylibException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/github/tschoonj/xraylib/radioNuclideData.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/files/xraylib.dat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/help/readme.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/help/readme.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ij/plugin/FromOdeigerToTiff.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ij/plugin/FromOdeigerToTiff.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ij/plugin/SumImagesByRules.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ij/plugin/SumImagesByRules.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/jsginfo/T_SgInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/jsginfo/T_SgInfo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/DiffractionMainFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/DiffractionMainFrame.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/MultiPlotFitting.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/MultiPlotFitting.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/PlotDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/PlotDataFile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/PlotFitting.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/PlotFitting.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/PlotPFCoverage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/PlotPFCoverage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/SpectrumPlotPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/SpectrumPlotPanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/TexturePlot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/TexturePlot.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/Utility.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/Utility.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/refinementWizardD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/refinementWizardD.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/chemistry/XRayDataSqLite.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/chemistry/XRayDataSqLite.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/comp/MetaDynamicsSearch.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/comp/MetaDynamicsSearch.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/DataFileSet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/DataFileSet.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/DiffrDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/DiffrDataFile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Geometry.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Geometry.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Instrument.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Instrument.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Layer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Layer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Measurement.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Measurement.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Phase.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Phase.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Reflection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Reflection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Sample.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Sample.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/SampleShape.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/SampleShape.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Strain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Strain.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Texture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Texture.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/AngularInclinedFlatImageCalibration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/AngularInclinedFlatImageCalibration.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/RadiationIntensityCalibration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/RadiationIntensityCalibration.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/xyDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/xyDataFile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/detector/XRFDetector.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/detector/XRFDetector.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/geometry/GeometryBBReflectivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/geometry/GeometryBBReflectivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/geometry/GeometryBraggBrentano.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/geometry/GeometryBraggBrentano.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/geometry/GeometryDebyeScherrer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/geometry/GeometryDebyeScherrer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/geometry/GeometryDiffractometer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/geometry/GeometryDiffractometer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/geometry/GeometryDubnaSkat.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/geometry/GeometryDubnaSkat.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/geometry/GeometryIPNS_LANSCE.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/geometry/GeometryIPNS_LANSCE.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/geometry/GeometryInclinedImage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/geometry/GeometryInclinedImage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/geometry/GeometryLaueTransmissionSymmetrical.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/geometry/GeometryLaueTransmissionSymmetrical.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/geometry/GeometryTOFGeneric.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/geometry/GeometryTOFGeneric.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/measurement/TOFMeasurement.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/measurement/TOFMeasurement.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/measurement/Theta2ThetaMeasurement.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/measurement/Theta2ThetaMeasurement.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/measurement/TwoThetaMeasurement.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/measurement/TwoThetaMeasurement.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rsa/EPSCmodel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rsa/EPSCmodel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/Agtorgl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/Agtorgl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/DiscreteODFTexture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/DiscreteODFTexture.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/ExpHarmonicTexture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/ExpHarmonicTexture.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/ExpHarmonicTextureGPU.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/ExpHarmonicTextureGPU.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/HarmonicTexture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/HarmonicTexture.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/LinearInterpolation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/LinearInterpolation.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/MEMLTexture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/MEMLTexture.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/MTextureModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/MTextureModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/MarchDollaseTexture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/MarchDollaseTexture.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/StandardFunctionTexture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/StandardFunctionTexture.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/TriangularInterpolation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/TriangularInterpolation.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/WIMVTexture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/WIMVTexture.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/shape/LinearAbsorptionCorrection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/shape/LinearAbsorptionCorrection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/shape/LobanovAlteDaVeigaShapeAbsorption.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/shape/LobanovAlteDaVeigaShapeAbsorption.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/shape/SampleShapeIntegral.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/shape/SampleShapeIntegral.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/io/cif/CIFParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/io/cif/CIFParser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/models/hklTableModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/models/hklTableModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/models/simplehklTableModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/models/simplehklTableModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/Constants.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/ListSelection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/ListSelection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/Misc.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/Misc.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

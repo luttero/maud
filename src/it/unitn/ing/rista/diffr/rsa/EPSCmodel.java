@@ -20,29 +20,30 @@
 
 package it.unitn.ing.rista.diffr.rsa;
 
-    import java.awt.*;
-    import javax.swing.*;
+import java.awt.*;
+import javax.swing.*;
 
-    import com.jtex.arrays.Array1D;
-    import com.jtex.geom.Miller;
-    import com.jtex.geom.Vec3;
-    import it.unitn.ing.fortran.Format;
-    import it.unitn.ing.rista.diffr.*;
-    import it.unitn.ing.rista.awt.*;
-    import it.unitn.ing.rista.diffr.radiation.XrayEbelTubeRadiation;
-    import it.unitn.ing.rista.diffr.rta.DiscreteODFTexture;
-    import it.unitn.ing.rista.diffr.rta.Uwimvuo;
-    import it.unitn.ing.rista.util.*;
+import com.jtex.arrays.Array1D;
+import com.jtex.geom.Miller;
+import com.jtex.geom.Vec3;
+import it.unitn.ing.fortran.Format;
+import it.unitn.ing.rista.diffr.*;
+import it.unitn.ing.rista.awt.*;
+import it.unitn.ing.rista.diffr.radiation.XrayEbelTubeRadiation;
+import it.unitn.ing.rista.diffr.rta.DiscreteODFTexture;
+import it.unitn.ing.rista.diffr.rta.Uwimvuo;
+import it.unitn.ing.rista.util.*;
 
-    import javax.swing.border.*;
-    import java.io.*;
-    import java.util.StringTokenizer;
-    import java.util.Vector;
+import javax.swing.border.*;
+import java.io.*;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 /**
  *  The EPSCmodel is a class to compute the diffraction shift from
- *  the EPSC model of C. N. Tomè and R. A. Lebenshon, LANL.
+ *  the EPSC model of C. N. Tomè and R. A. Lebensohn, LANL.
  *  Based on EPSC4 version
+ *  with contributions from B. Clausen, L. Capolungo, S. Merkel
  *
  * @version $Revision: 1.0 $, $Date: 2024/12/13 12:44:00 $
  * @author Luca Lutterotti
