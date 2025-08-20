@@ -16,7 +16,7 @@
     <property name="myself" value="myself"/>
     <property name="bundle.icon" value="maud.icns"/>
     <property name="icon" value="src/images/${bundle.icon}"/>
-    <property name="maud_version" value="2.99991"/>
+    <property name="maud_version" value="2.99993"/>
     <property name="application_OSX.title" value="Maud.app"/>
     <property name="app_osx_295" location="${user.home}/Projects/maud/osx_295"/>
     <property name="app_osx_arm" location="${user.home}/Projects/maud/osx_arm"/>
@@ -2445,6 +2445,13 @@
         <exec executable="chmod">
             <arg line=" -R a+x ${app_osx_arm}/Maud.app/Contents/MacOS/mtex"/>
         </exec>
+        <mkdir dir="${app_osx_arm}/Maud.app/Contents/MacOS/epsc4" />
+        <copy todir="${app_osx_arm}/Maud.app/Contents/MacOS/epsc4" >
+            <fileset dir="${src}/gov/lanl/epsc4/bin/macarm" includes="**"/>
+        </copy>
+        <exec executable="chmod">
+            <arg line=" -R a+x ${app_osx_arm}/Maud.app/Contents/MacOS/epsc4"/>
+        </exec>
         <copy file="${src}/com/radiographema/fpsm/macarm/libfpsm_shared.dylib"
               tofile="${app_osx_arm}/Maud.app/Contents/PlugIns/Home/lib/libfpsm_shared.dylib"/>
         <exec executable="chmod">
@@ -2547,6 +2554,13 @@
         </copy>
         <exec executable="chmod">
             <arg line=" -R a+x ${app_osx_arm}/Maud.app/Contents/MacOS/mtex"/>
+        </exec>
+        <mkdir dir="${app_osx_arm}/Maud.app/Contents/MacOS/epsc4" />
+        <copy todir="${app_osx_arm}/Maud.app/Contents/MacOS/epsc4" >
+            <fileset dir="${src}/gov/lanl/epsc4/bin/macarm" includes="**"/>
+        </copy>
+        <exec executable="chmod">
+            <arg line=" -R a+x ${app_osx_arm}/Maud.app/Contents/MacOS/epsc4"/>
         </exec>
         <copy file="${src}/com/radiographema/fpsm/macarm/libfpsm_shared.dylib"
               tofile="${app_osx_arm}/Maud.app/Contents/PlugIns/Home/lib/libfpsm_shared.dylib"/>
@@ -2736,6 +2750,10 @@
         <apply dir="${app_osx_arm}" executable="codesign">
             <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; "/>
             <fileset dir="${app_osx_arm}/Maud.app/Contents/MacOS/mtex" />
+        </apply>
+        <apply dir="${app_osx_arm}" executable="codesign">
+            <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; "/>
+            <fileset dir="${app_osx_arm}/Maud.app/Contents/MacOS/epsc4" />
         </apply>
         <exec dir="${app_osx_arm}" executable="codesign" os="Mac OS X">
             <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; ${app_osx_arm}/Maud.app/Contents/PlugIns/Home/release"/>

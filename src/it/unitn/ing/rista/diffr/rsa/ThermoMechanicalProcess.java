@@ -89,16 +89,49 @@ public class ThermoMechanicalProcess extends XRDcat {
 
   // these are the corresponding labels that will appear in the GUI in the parameter list window etc.
   public static String[] diclistcrm = {
-      "_rista_epsc_tm_process_filename",
+      "_rista_epsc_tm_process_filename", // 0
       "_rista_epsc_tm_process_title",
       "_rista_epsc_tm_process_nsteps",
       "_rista_epsc_tm_process_ctrl_var",
-      "_rista_epsc_tm_process_boundary_cond",
-      "_rista_epsc_tm_process_",
-      "_rista_epsc_tm_process_",
-      "_rista_epsc_tm_process_",
-      "_rista_epsc_tm_process_",
-      "_rista_epsc_tm_process_"
+      "_rista_epsc_tm_process_boundary_cond", // 4
+
+      "_rista_epsc_tm_process_ietbc_11", // 5
+      "_rista_epsc_tm_process_ietbc_12",
+      "_rista_epsc_tm_process_ietbc_13",
+      "_rista_epsc_tm_process_ietbc_21",
+      "_rista_epsc_tm_process_ietbc_22",
+      "_rista_epsc_tm_process_ietbc_23",
+      "_rista_epsc_tm_process_ietbc_31",
+      "_rista_epsc_tm_process_ietbc_32",
+      "_rista_epsc_tm_process_ietbc_33",
+      "_rista_epsc_tm_process_istbc_11", // 14
+      "_rista_epsc_tm_process_istbc_12",
+      "_rista_epsc_tm_process_istbc_13",
+      "_rista_epsc_tm_process_istbc_22",
+      "_rista_epsc_tm_process_istbc_23",
+      "_rista_epsc_tm_process_istbc_33",
+
+      "_rista_epsc_tm_process_temp_start", // 20
+      "_rista_epsc_tm_process_temp_delta",
+      "_rista_epsc_tm_process_elastic_t_dep",
+      "_rista_epsc_tm_process_iref_et",
+      "_rista_epsc_tm_process_iref_st", // 24
+
+      "_rista_epsc_tm_process_etbc_11", // 0
+      "_rista_epsc_tm_process_etbc_12",
+      "_rista_epsc_tm_process_etbc_13",
+      "_rista_epsc_tm_process_etbc_21",
+      "_rista_epsc_tm_process_etbc_22",
+      "_rista_epsc_tm_process_etbc_23",
+      "_rista_epsc_tm_process_etbc_31",
+      "_rista_epsc_tm_process_etbc_32",
+      "_rista_epsc_tm_process_etbc_33", // 8
+      "_rista_epsc_tm_process_stbc_11", // 9
+      "_rista_epsc_tm_process_stbc_12",
+      "_rista_epsc_tm_process_stbc_13",
+      "_rista_epsc_tm_process_stbc_22",
+      "_rista_epsc_tm_process_stbc_23",
+      "_rista_epsc_tm_process_stbc_33" // 14
   };
 
   // this model does not have subobjects, so the class list for subobjects is empty
@@ -153,13 +186,13 @@ public class ThermoMechanicalProcess extends XRDcat {
   public void initParameters() {
     super.initParameters();
 
-    stringField[0] = "";
+    stringField[0] = "Tension.pro";
     stringField[1] = "Describe the thermomechanical process";
     stringField[2] = "100";
     stringField[3] = "3";
     stringField[4] = "1";
     for (int i = 5; i < 13; i++)
-      stringField[i] = "";
+      stringField[i] = "0";
     stringField[13] = "1";
     for (int i = 14; i < 19; i++)
       stringField[i] = "1";
@@ -171,10 +204,13 @@ public class ThermoMechanicalProcess extends XRDcat {
     stringField[23] = "0";
     stringField[24] = "0";
 
-    for (int i = 0; i < 9; i++)
-      parameterField[i] = new Parameter(this, getParameterString(i), 0,
+    for (int i = 0; i < 8; i++)
+      parameterField[i] = new Parameter(this, getParameterString(i), 0.0,
         ParameterPreferences.getDouble(getParameterString(i) + ".min", -0.1),
         ParameterPreferences.getDouble(getParameterString(i) + ".max", 0.1));
+    parameterField[8] = new Parameter(this, getParameterString(8), 0.001,
+        ParameterPreferences.getDouble(getParameterString(8) + ".min", -0.1),
+        ParameterPreferences.getDouble(getParameterString(8) + ".max", 0.1));
     for (int i = 9; i < 15; i++)
       parameterField[i] = new Parameter(this, getParameterString(i), 0.0,
         ParameterPreferences.getDouble(getParameterString(i) + ".min", -1),
@@ -252,7 +288,7 @@ public class ThermoMechanicalProcess extends XRDcat {
   }
 
   public void writeInputFile() {
-    String filename = getFilename();
+    String filename = getFilePar().getDirectory() + getFilename();
     BufferedWriter output = null;
     if (filename != null) {
       try {
@@ -306,9 +342,9 @@ public class ThermoMechanicalProcess extends XRDcat {
         output.newLine();
         output.write(parameterField[9].getValue() + "  " + parameterField[10].getValue() + "  " + parameterField[11].getValue());
         output.newLine();
-        output.write("             " + parameterField[12].getValue() + "  " + parameterField[13].getValue());
+        output.write("    " + parameterField[12].getValue() + "  " + parameterField[13].getValue());
         output.newLine();
-        output.write("                               " + parameterField[14].getValue());
+        output.write("              " + parameterField[14].getValue());
         output.newLine();
         output.write("__________________________________");
         output.newLine();
@@ -342,7 +378,6 @@ public class ThermoMechanicalProcess extends XRDcat {
         io.printStackTrace();
       }
     }
-
 
   }
 
@@ -407,10 +442,10 @@ public class ThermoMechanicalProcess extends XRDcat {
       JPanel tensorPanel = new JPanel(new BorderLayout(3, 3));
       tabPanel.addTab("Strain BC", tensorPanel);
       JPanel labelPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-      tensorPanel.add(labelPanel, BorderLayout.NORTH);
+      tensorPanel.add(BorderLayout.NORTH, labelPanel);
       labelPanel.add(new JLabel("Boundary conditions on deformation step"));
-      JPanel centerPanel = new JPanel(new GridLayout(4, 4));
-      tensorPanel.add(centerPanel, BorderLayout.CENTER);
+      JPanel centerPanel = new JPanel(new GridLayout(0, 4));
+      tensorPanel.add(BorderLayout.CENTER, centerPanel);
       for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
           if (i == 0 || j == 0) {
@@ -421,6 +456,8 @@ public class ThermoMechanicalProcess extends XRDcat {
             else
               centerPanel.add(new Label(Integer.toString(i)));
           } else {
+//            System.out.println("ietbc " + (i-1) + " " + (j - 1));
+            ietbcTF[i-1][j-1] = new JTextField(Constants.FLOAT_FIELD);
             centerPanel.add(ietbcTF[i-1][j-1]);
             ietbcTF[i-1][j-1].setText(getStrainsBoundaryCondition(i, j));
             ietbcTF[i-1][j-1].setToolTipText("0=no strain BC, 1=strain BC");
@@ -439,6 +476,8 @@ public class ThermoMechanicalProcess extends XRDcat {
             else
               centerPanel.add(new Label(Integer.toString(i)));
           } else {
+  //          System.out.println("parsetbc " + (i-1) + " " + (j - 1));
+            parsETBC[i-1][j-1] = new JTextField(Constants.FLOAT_FIELD);
             centerPanel.add(parsETBC[i-1][j-1]);
             parsETBC[i-1][j-1].setToolTipText("Applied strain");
           }
@@ -466,6 +505,7 @@ public class ThermoMechanicalProcess extends XRDcat {
             if (i > j)
               centerSPanel.add(new JLabel(" "));
             else {
+              istbcTF[index] = new JTextField(Constants.FLOAT_FIELD);
               centerSPanel.add(istbcTF[index]);
               istbcTF[index].setText(getStressesBoundaryCondition(index));
               istbcTF[index].setToolTipText("0=no stress BC, 1=stress BC");
@@ -490,6 +530,7 @@ public class ThermoMechanicalProcess extends XRDcat {
             if (i > j)
               centerSPanel.add(new JLabel(" "));
             else {
+              parsSTBC[index] = new JTextField(Constants.FLOAT_FIELD);
               centerSPanel.add(parsSTBC[index]);
               parsSTBC[index].setToolTipText("Applied stress (same unit as elastic tensor)");
               index++;
@@ -549,6 +590,14 @@ public class ThermoMechanicalProcess extends XRDcat {
         parameterField[i + 9].setValue(parsSTBC[i].getText());
       for (int i = 0; i < temperatureLabels.length; i++)
         stringField[20 + i] = temperatureTF[i].getText();
+      index = 0;
+      for (int i = 1; i < 4; i++)
+        for (int j = 1; j < 4; j++)
+          if (i <= j) {
+            setStressesBoundaryCondition(index, istbcTF[index].getText());
+            index++;
+          }
+
     }
 
   }

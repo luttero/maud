@@ -267,13 +267,13 @@ public class Constants {
   public static String resultsFile = "results.txt";
   public static String userName = null;
   public static String startPath = "/";
-  public static String maudReleaseBuilt = "$Revision: 2.99991 $";
-  public static String maudDateBuilt = "$Date: 2025/07/2 11:49:00 $";
+  public static String maudReleaseBuilt = "$Revision: 2.99993 $";
+  public static String maudDateBuilt = "$Date: 2025/08/20 23:45:00 $";
 
   public static final double arg2PIover3 = PI2 / 3.;
   public static final double sinArg2PIover3 = Math.sin(arg2PIover3);
   public static final double cosArg2PIover3 = Math.cos(arg2PIover3);
-  public static double maud_version = 2.99991;
+  public static double maud_version = 2.99993;
   public static boolean useOpenCL = false;
   public static Vector<OpenCLDevice> openClDevices= null;
   public static OpenCLDevice openclDevice = null;
@@ -439,7 +439,7 @@ public class Constants {
 	public static String startingLog = "startingLog";
   public static String startingAppDirectory = "";
 
-  public static String generateDummyDatafile = "GenerateDummyDatafile";
+  public static String generateDummyDatafile = "GenerateDummyDatafile.dum";
 
 	public static String refineIcon = "slot_machine_20.gif";
 

@@ -1148,6 +1148,7 @@ public class Sample extends Maincat {
 	  Texture.rotateAlpha = MaudPreferences.getDouble("Texture.phiZero", -90.0);
 
 	  // compute spectra
+//    System.out.println(numberOfLayers + " " + numberOfPhases + " " + activeDatasetsNumber());
     phaseQuantity = new double[numberOfLayers][numberOfPhases][activeDatasetsNumber()];
     for (int j = 0; j < numberOfLayers; j++) {
       Layer alayer = getlayer(j);
@@ -1191,6 +1192,7 @@ public class Sample extends Maincat {
 	        for (phaseIndex = 0; phaseIndex < numberOfPhases;) {
             double totQuantity = 0.0;
             for (int j = 0; j < numberOfLayers; j++) {
+//              System.out.println("Check " + j + " " + phaseIndex + " " + index);
               totQuantity += phaseQuantity[j][phaseIndex][index];
             }
             if (totQuantity != 0.0) {

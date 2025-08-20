@@ -85,7 +85,7 @@ public class Strain extends XRDcat {
 
   }
 
-	public double computeStrain(Reflection refl, double[] strain_angles) { // you don't need to modify this unless
+	public double computeStrain(Reflection refl, double[] strain_angles, double previousStrain) { // you don't need to modify this unless
 			return computeStrain(refl.phi[0], refl.beta[0],
 									strain_angles[0] * Constants.DEGTOPI,
 									strain_angles[1] * Constants.DEGTOPI);

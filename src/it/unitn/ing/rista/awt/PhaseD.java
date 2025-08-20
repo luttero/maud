@@ -644,7 +644,7 @@ public class PhaseD extends myJFrame {
 
     JMenuItem menuitem = null;
 
-    JMenu optionsMenu = new JMenu("SDPD tools");
+    JMenu optionsMenu = new JMenu("SDPD/PDF tools");
     optionsMenu.add(menuitem = new JMenuItem("Fix space group for texture (standard setting)"));
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -737,7 +737,7 @@ public class PhaseD extends myJFrame {
     });
 
     if (Constants.testing) {
-	    optionsMenu.add(menuitem = new JMenuItem("Generate pattern for G(r) PDF calculation"));
+	    optionsMenu.add(menuitem = new JMenuItem("G(r) PDF calculation"));
 	    menuitem.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
 			    (new PDFUtilitiesUI(getData(), true)).setVisible(true);

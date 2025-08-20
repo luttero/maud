@@ -24,8 +24,7 @@ import it.unitn.ing.rista.awt.ProgressFrame;
 import it.unitn.ing.rista.diffr.*;
 import it.unitn.ing.rista.diffr.instbroad.InstrumentBroadeningPVCaglioti;
 import it.unitn.ing.rista.diffr.instrument.DefaultInstrument;
-import it.unitn.ing.rista.util.Constants;
-import it.unitn.ing.rista.util.PersistentThread;
+import it.unitn.ing.rista.util.*;
 
 import java.util.Vector;
 
@@ -59,7 +58,7 @@ public class GeneratePatternAndPDF {
 	public void generateData(String radiation) {
 		computing = true;
 		int i;
-		double radWave = 0.1;
+		double radWave = MaudPreferences.getDouble("dummyDatafile.radiation_wavelength", 0.2);
 
 		Sample theSample = thePhase.getSample();
 
@@ -89,6 +88,7 @@ public class GeneratePatternAndPDF {
 			inb.getAsymmetryList().addItem(new Parameter(inb, "Asymmetry coeff 1", -0.2044876));
 			inb.getAsymmetryList().addItem(new Parameter(inb, "Asymmetry coeff 2", -2.3630368E-5));*/
 			inb.getCagliotiList().removeAllItems();
+      inb.getCagliotiList().addItem(new Parameter(inb, "Caglioti coeff W", 1.0E-6));
 /*			inb.getCagliotiList().addItem(new Parameter(inb, "Caglioti coeff W", 0.0103287235));
 			inb.getCagliotiList().addItem(new Parameter(inb, "Caglioti coeff V", -0.035830247));
 			inb.getCagliotiList().addItem(new Parameter(inb, "Caglioti coeff U", 0.08134942));*/
@@ -100,6 +100,9 @@ public class GeneratePatternAndPDF {
 
 		// now we add the data
 		adatafileset.addDatafiles(Constants.generateDummyDatafile); //addDataFileforName(folderAndName[0] + folderAndName[1], true);
+    adatafileset.setPeakCutoff("300");
+    theSample.getFilePar().refreshAll(false);
+    adatafileset.forceRangeCut();
 //		adatafileset.addBackgroudCoeff();
 //		adatafileset.addBackgroudCoeff();
 //		adatafileset.addBackgroudCoeff();
@@ -109,61 +112,26 @@ public class GeneratePatternAndPDF {
 		actualRunningThreads = 0;
 		listData = new Vector(100, 100);
 
-		int maxRunning = 1; //Constants.maxNumberOfThreads;
 		if (Constants.debugThreads)
-			System.out.println("Thread to generate G(r)");
+			System.out.println("Thread to generate data for pdf");
 
-		Vector data = new Vector(1, 1);
+//    int datasetsNumber = theSample.datasetsNumber() - 1;
+//    boolean datasetEnabled[] = new boolean[datasetsNumber];
+//    for (int j = 0; j < datasetsNumber; j++) {
+//      datasetEnabled[j] = theSample.getDataSet(j).isEnabled();
+//      theSample.getDataSet(j).setEnabled(false);
+//    }
 
-		if (maxRunning > data.size())
-			maxRunning = data.size();
-
-		PersistentThread[] threads = new PersistentThread[maxRunning];
-		for (i = 0; i < maxRunning; i++) {
-			threads[i] = new PersistentThread(i) {
+		PersistentThread thread = new PersistentThread(0) {
 				public void executeJob() {
-					actualRunningThreads++;
-					int index = this.threadNumber;
-					int number = this.data.size();
-					ProgressFrame prF = null;
-					if (!Constants.textonly && Constants.showProgressFrame)
-						try {
-							prF = new ProgressFrame(number, 2);
-							prF.setTitle("Generating G(r) and PDF");
-						} catch (NullPointerException npe) {
-							System.out.println("Not able to create frame, MacOSX display sleep bug?");
-						}
-
-					for (int i = 0; i < number; i++) {
-						if (!Constants.textonly && prF != null) {
-							prF.setProgressText("......" );
-						}
-						Vector dataVector = generateData(thePhase, adatafileset, prF);
-						addData(dataVector);
-					}
-					if (!Constants.textonly && prF != null) {
-						prF.setVisible(false);
-						prF.dispose();
-//            prF = null;
-					}
-					actualRunningThreads--;
+          actualRunningThreads++;
+//					int index = this.threadNumber;
+          theSample.getFilePar().refreshAll(true);
+          theSample.getFilePar().compute(theSample.getFilePar().outputframe);
+          actualRunningThreads--;
 				}
 			};
-		}
-		i = 0;
-		int istep = data.size() / maxRunning;
-		for (int j = 0; j < maxRunning; j++) {
-			int is = i;
-			if (j < maxRunning - 1)
-				i = Math.min(i + istep, data.size());
-			else
-				i = data.size();
-			threads[j].setJobRange(is, i);
-			threads[j].data = new Vector(istep, 10);
-			for (int k = is; k < i; k++)
-				threads[j].data.add(data.elementAt(k));
-			threads[j].start();
-		}
+			thread.start();
 		do {
 			try {
 				Thread.sleep(Constants.timeToWaitThreadsEnding);
@@ -172,11 +140,14 @@ public class GeneratePatternAndPDF {
 			}
 		} while (actualRunningThreads > 0);
 
-		for (int j = 0; j < maxRunning; j++) {
-			theSample.removeData(adatafileset);
-			threads[j] = null;
-		}
-//    threads = null;
+//    for (int j = 0; j < datasetsNumber; j++)
+//      theSample.getDataSet(j).setEnabled(datasetEnabled[j]);
+
+    boolean removeDataset = MaudPreferences.getBoolean("pdf_generate.removeDummyDatasetAfter", true);
+    if (removeDataset)
+      theSample.removeData(adatafileset);
+
+    thread = null;  // probably not needed
 
 		computing = false;
 

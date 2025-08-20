@@ -84,11 +84,11 @@ public class EpscDeformationMode extends XRDcat {
     stringField[1] = value.toLowerCase();
   }
 
-  public String getTitle() {
+  public String getModeTitle() {
     return stringField[0];
   }
 
-  public void setTitle(String atitle) {
+  public void setModeTitle(String atitle) {
     stringField[0] = atitle;
   }
 
@@ -173,7 +173,7 @@ public class EpscDeformationMode extends XRDcat {
   }
 
   public void addPlaneDirection() {
-    addsubordinateloopField(0, new PlaneDirectionSystem());
+    addsubordinateloopField(0, new PlaneDirectionSystem(this, "plane-dir X"));
   }
 
   public boolean isTwin() {
@@ -187,7 +187,7 @@ public class EpscDeformationMode extends XRDcat {
   class JDeformationModeOptionsD extends JOptionsDialog {
 
     JTextField titleTF;
-    JTextField stressTF;
+    JTextField[] parsTF;
     HKLTableModel hklmodel;
     boolean istwin = false; // otherwise is a slip
     JCheckBox enabled;
@@ -220,7 +220,7 @@ public class EpscDeformationMode extends XRDcat {
       jb1.setToolTipText("Add a new plane and direction");
 
       JButton jb2;
-      bottomTablePanel.add(jb2 = new JButton("Remove pixel"));
+      bottomTablePanel.add(jb2 = new JButton("Remove plane/dir"));
       jb2.addActionListener(event -> hklmodel.remove(hklTable.getSelectedRow()));
       jb2.setToolTipText("Remove the selected plane and direction");
 
@@ -232,43 +232,50 @@ public class EpscDeformationMode extends XRDcat {
       principalPanel.add(BorderLayout.CENTER, tablePanel);
 
       JPanel jPanel8 = new JPanel();
-      jPanel8.setLayout(new GridLayout(0, 2, 3, 3));
+      jPanel8.setLayout(new GridLayout(0, 4, 3, 3));
       principalPanel.add(BorderLayout.NORTH, jPanel8);
       jPanel8.add(new JLabel("Title: "));
-      titleTF = new JTextField(50);
+      titleTF = new JTextField(18);
       jPanel8.add(titleTF);
       enabled = new JCheckBox("enabled");
       enabled.setToolTipText("Set if this mode will be used or not in the calculation");
       jPanel8.add(enabled);
       jPanel8.add(new JLabel(" "));
-      if (istwin) {
-        jPanel8.add(new JLabel("Twin shear: "));
-        stressTF = new JTextField(Constants.FLOAT_FIELD);
-        jPanel8.add(stressTF);
-        stressTF.setToolTipText("Set the characteristic twin shear");
-        setTitle("Twinning modes");
-      } else {
-        setTitle("Slip modes");
+      if (Nparameter > 0) {
+        parsTF = new JTextField[Nparameter];
+        int baseIndex = Nstring + Nstringloop;
+        for (int i = 0; i < Nparameter; i++) {
+          jPanel8.add(new JLabel(diclistRealMeaning[baseIndex + i] + ": "));
+          parsTF[i] = new JTextField(Constants.FLOAT_FIELD);
+          jPanel8.add(parsTF[i]);
+        }
       }
+      if (istwin)
+        setTitle("Twinning modes");
+      else
+        setTitle("Slip modes");
       initParameters();
       pack();
 
     }
 
     public void initParameters() {
-      titleTF.setText(getTitle());
-      enabled.setEnabled(isEnabled());
-      if (istwin) {
-        stressTF.setText(getCharacteristicTwinStress());
-        addComponenttolist(stressTF, parameterField[0]);
+      titleTF.setText(getModeTitle());
+      enabled.setSelected(isEnabled());
+      if (Nparameter > 0) {
+        for (int i = 0; i < Nparameter; i++) {
+          parsTF[i].setText(parameterField[i].getValue());
+          addComponenttolist(parsTF[i], parameterField[i]);
+        }
       }
     }
 
     public void retrieveParameters() {
-      setTitle(titleTF.getText());
-      setEnabled(enabled.isEnabled());
-      if (istwin)
-        setCharacteristicTwinStress(stressTF.getText());
+      setModeTitle(titleTF.getText());
+      setEnabled(enabled.isSelected());
+      if (Nparameter > 0)
+        for (int i = 0; i < Nparameter; i++)
+          parameterField[i].setValue(parsTF[i].getText());
     }
 
   }

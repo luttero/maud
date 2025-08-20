@@ -173,7 +173,7 @@ public class Texture extends XRDcat {
                         double phi = angles[1];
                         PFwriter.write(chi + " " + phi + " " + pf + " " + pfc + " " + numberDataPoints + " " + wgt
                             + " " + mAngles[0] + " " + mAngles[1] + " " + mAngles[2] + " " + mAngles[3]
-                            + " " + bankNumber);
+                            + " " + bankNumber); // todo add uncertainties
                         PFwriter.write(Constants.lineSeparator);
                       }
                     }

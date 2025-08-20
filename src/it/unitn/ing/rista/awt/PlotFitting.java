@@ -934,7 +934,7 @@ public class PlotFitting extends PlotDataFile {
 
       BufferedWriter output = Misc.getWriter(folder, filename);
       try {
-        for (int i = 0; i < dataToExport.length; i++) {
+        for (int i = 0; i < dataToExport[1].length; i++) {
           output.write(Fmt.format(dataToExport[1][i] / total));
           output.newLine();
         }
@@ -947,40 +947,72 @@ public class PlotFitting extends PlotDataFile {
     }
   }
 
-  public void exportComputedPDF(double[] r, double[] gr) {
+  public void exportForPDF() {
 
-		if (thePlotPanel.datafile == null || thePlotPanel.datafile[0] == null)
-			return;
+    if (thePlotPanel.datafile == null || thePlotPanel.datafile[0] == null)
+      return;
 
-		String filename = Utility.openFileDialog(this, "Save as prn",
-				FileDialog.SAVE, thePlotPanel.datafile[0].getFilePar().getDirectory(), null, "put a name.prn");
-		if (filename == null)
-			return;
+    String filename = Utility.openFileDialog(this, "Save as ...",
+        FileDialog.SAVE, thePlotPanel.datafile[0].getFilePar().getDirectory(), null, "put a name.txt");
+    if (filename == null)
+      return;
 
-		String[] folderAndName = Misc.getFolderandName(filename);
+    String[] folderAndName = Misc.getFolderandName(filename);
 
-		String folder = folderAndName[0];
-		filename = folderAndName[1];
+    String folder = folderAndName[0];
+    filename = folderAndName[1];
 
-		if (!filename.endsWith(".prn"))
-			filename = filename + ".prn";
+    if (filename != null) {
+      int mode = 2;
+      double[][] dataToExport = DataFileSet.getSummedDataForPDF(thePlotPanel.datafile, mode, true);
+      // normalize
+      BufferedWriter output = Misc.getWriter(folder, filename);
+      try {
+        for (int i = 0; i < dataToExport[0].length; i++) {
+          output.write(Fmt.format(dataToExport[0][i]) + " " + Fmt.format(dataToExport[1][i]));
+          output.newLine();
+        }
+      } catch (IOException io) {
+      }
+      try {
+        output.close();
+      } catch (IOException io) {
+      }
+    }
+  }
 
-		if (filename != null) {
+  public void exportComputedPDF() {
 
-			BufferedWriter output = Misc.getWriter(folder, filename);
-			try {
-				int nPoints = r.length;
-				for (int i = 0; i < nPoints; i++) {
-					output.write(" " + Fmt.format(r[i]) + " " + Fmt.format(gr[i]));
-					output.newLine();
-				}
-			} catch (IOException io) {
-			}
-			try {
-				output.close();
-			} catch (IOException io) {
-			}
-		}
+    if (thePlotPanel.datafile == null || thePlotPanel.datafile[0] == null)
+      return;
+
+    String filename = Utility.openFileDialog(this, "Save as ...",
+        FileDialog.SAVE, thePlotPanel.datafile[0].getFilePar().getDirectory(), null, "put a name.txt");
+    if (filename == null)
+      return;
+
+    String[] folderAndName = Misc.getFolderandName(filename);
+
+    String folder = folderAndName[0];
+    filename = folderAndName[1];
+
+    if (filename != null) {
+      int mode = 2;
+      double[][] dataToExport = DataFileSet.getSummedDataForPDF(thePlotPanel.datafile, mode, true);
+      // normalize
+      BufferedWriter output = Misc.getWriter(folder, filename);
+      try {
+        for (int i = 0; i < dataToExport[0].length; i++) {
+          output.write(Fmt.format(dataToExport[0][i]) + " " + Fmt.format(dataToExport[2][i]));
+          output.newLine();
+        }
+      } catch (IOException io) {
+      }
+      try {
+        output.close();
+      } catch (IOException io) {
+      }
+    }
 	}
 
   public void exportComputedData() {
@@ -1214,6 +1246,7 @@ public class PlotFitting extends PlotDataFile {
       try {
 
         int mode = checkScaleModeX();
+        boolean subtractBackground = PlotDataFile.subtractBackground();
         for (i = j = 0; i < thePlotPanel.np; i++, j += 2) {
           data[j] = thePlotPanel.datafile[0].getXDataForPlot(i +
               thePlotPanel.datafile[0].startingindex, mode);
@@ -1233,7 +1266,7 @@ public class PlotFitting extends PlotDataFile {
           if (datafile[0].xInsideRange(thePlotPanel.datafile[0].getXData(i + thePlotPanel.datafile[0].startingindex))
               || !markExcludedRegion)
             data[j + 1] = thePlotPanel.datafile[0].getFitSqrtData(i + thePlotPanel.datafile[0].startingindex) -
-                  thePlotPanel.datafile[0].getYSqrtData(i + thePlotPanel.datafile[0].startingindex);
+                  thePlotPanel.datafile[0].getYSqrtData(i + thePlotPanel.datafile[0].startingindex, subtractBackground);
           else
             data[j + 1] = Double.NaN;
         }

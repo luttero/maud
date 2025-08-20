@@ -43,6 +43,25 @@ from the older one.
 
 Maud Version notes:
 
+(20/08/2025):   2.99993. The "Extinction" release.
+                Will it happen to Maud? Is this the last version?.
+                Reworked the dynamical correction/extinction models
+                in Maud to have them as a plugin like the rest.
+                So the electron diffraction dynamical 2 beams approx
+                is now a plugin (extinction models are selected in
+                the phase editing window under advanced models).
+                Added the Sabine extinction models for Neutrons/X-rays.
+                This is the same model used in GSAS (see the Sabine,
+                Von Dreele et al. paper).
+
+(05/08/2025):   2.99992. The "Skip" release.
+                This one was not released.
+                Working on EPSC4 integration + some bugs corrections.
+                Is basically working but it needs more coding.
+                Added export in the separated plot window (and the phase
+                editing tools menu) to export data for pdfget3(x,n)
+                PDF plotting or post processing.
+
 (02/07/2025):   2.99991. The "Folgen" release.
                 On german highways is important to know the meaning.
                 Major release.

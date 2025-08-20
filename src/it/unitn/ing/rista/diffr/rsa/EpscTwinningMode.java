@@ -36,8 +36,18 @@ public class EpscTwinningMode extends EpscDeformationMode {
 
   public static String[] diclistc = {
       "_rista_epsc_twinning_mode_title",
+      "_rista_epsc_twinning_mode_enabled",
 
       "_rista_epsc_characteristic_twin_shear",
+      "_rista_epsc_twinning_tau_crit_A",
+      "_rista_epsc_twinning_tau_crit_B",
+      "_rista_epsc_twinning_tau_crit_C",
+      "_rista_epsc_twinning_tau_prop_A",
+      "_rista_epsc_twinning_tau_prop_B",
+      "_rista_epsc_twinning_tau_prop_C",
+      "_rista_epsc_twin_burgers_vector",
+      "_rista_epsc_twin_fraction",
+      "_rista_epsc_twin_CRSS",
 
       "_rista_plane_direction_system_id"
   };
@@ -45,8 +55,18 @@ public class EpscTwinningMode extends EpscDeformationMode {
   // these are the corresponding labels that will appear in the GUI in the parameter list window etc.
   public static String[] diclistcrm = {
       "twinning mode title",
+      "twinning mode enabled",
 
-      "characteristic twin shear",
+      "Twin shear",
+      "Tau crit coeff A",
+      "Tau crit coeff B",
+      "Tau crit coeff C",
+      "Tau prop coeff A",
+      "Tau prop coeff B",
+      "Tau prop coeff C",
+      "Twin Burgers vector (m)",
+      "Twin fraction",
+      "Twin CRSS",
 
       "Plane and direction for twin"
   };
@@ -91,9 +111,9 @@ public class EpscTwinningMode extends EpscDeformationMode {
   }
 
   public void initConstant() {
-    Nstring = 1;    // number of options, treated as strings only, in this case only the first
+    Nstring = 2;    // number of options, treated as strings only, in this case only the first
     Nstringloop = 0;  // no vectors of strings for options
-    Nparameter = 1;   // 0 parameters refinables in the model
+    Nparameter = 10;   // 0 parameters refinables in the model
     Nparameterloop = 0;  // no parameter vectors in this model, to be used when the number of parameters may
     // change in the model and/or is defined by other options
     Nsubordinate = 0;    // no subobjects or subordinate objects
@@ -104,10 +124,32 @@ public class EpscTwinningMode extends EpscDeformationMode {
     super.initParameters();
 
     stringField[0] = "<111>{112} TWIN";
+    stringField[1] = "true";
 
-    parameterField[0] = new Parameter(this, getParameterString(0), 0.25,
-        ParameterPreferences.getDouble(getParameterString(0) + ".min", 0.01),
-        ParameterPreferences.getDouble(getParameterString(0) + ".max", 2.0));
+    int index = 0;
+    parameterField[index] = new Parameter(this, getParameterString(index), 0.25,
+        ParameterPreferences.getDouble(getParameterString(index) + ".min", 0.01),
+        ParameterPreferences.getDouble(getParameterString(index++) + ".max", 2.0));
+    for (int i = 0; i < 2; i++) {
+      parameterField[index] = new Parameter(this, getParameterString(index), 62.0,
+          ParameterPreferences.getDouble(getParameterString(index) + ".min", 10),
+          ParameterPreferences.getDouble(getParameterString(index++) + ".max", 100));
+      parameterField[index] = new Parameter(this, getParameterString(index), 0.0,
+          ParameterPreferences.getDouble(getParameterString(index) + ".min", 0.0),
+          ParameterPreferences.getDouble(getParameterString(index++) + ".max", 10.0));
+      parameterField[index] = new Parameter(this, getParameterString(index), 10.0,
+          ParameterPreferences.getDouble(getParameterString(index) + ".min", 1.0),
+          ParameterPreferences.getDouble(getParameterString(index++) + ".max", 100.0));
+    }
+    parameterField[index] = new Parameter(this, getParameterString(index), 6.326E-11,
+        ParameterPreferences.getDouble(getParameterString(index) + ".min", 0.0),
+        ParameterPreferences.getDouble(getParameterString(index++) + ".max", 1E-6));
+    parameterField[index] = new Parameter(this, getParameterString(index), 0.03,
+        ParameterPreferences.getDouble(getParameterString(index) + ".min", 0.01),
+        ParameterPreferences.getDouble(getParameterString(index++) + ".max", 0.1));
+    parameterField[index] = new Parameter(this, getParameterString(index), 1.0,
+        ParameterPreferences.getDouble(getParameterString(index) + ".min", 0.0),
+        ParameterPreferences.getDouble(getParameterString(index++) + ".max", 10.0));
 
     refreshComputation = true; // we specify the computation need to be refreshed (it has never done up to now)
   }

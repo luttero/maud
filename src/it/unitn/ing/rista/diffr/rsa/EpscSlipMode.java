@@ -21,6 +21,7 @@ package it.unitn.ing.rista.diffr.rsa;
  */
 
 import it.unitn.ing.rista.diffr.*;
+import it.unitn.ing.rista.util.ParameterPreferences;
 
 /**
  *  The EpscSlipMode is a class used by EPSC4
@@ -35,6 +36,26 @@ public class EpscSlipMode extends EpscDeformationMode {
 
   public static String[] diclistc = {
       "_rista_epsc_slip_mode_title",
+      "_rista_epsc_slip_mode_enabled",
+
+      "_rista_epsc_slip_burg_m",
+      "_rista_epsc_slip_norm_actener_g",
+      "_rista_epsc_slip_K1_1/m",
+      "_rista_epsc_slip_drag_stress_D",
+      "_rista_epsc_slip_edot_0",
+      "_rista_epsc_slip_init_rhos",
+      "_rista_epsc_slip_init_rho_deb",
+      "_rista_epsc_slip_athermal_tau_A",
+      "_rista_epsc_slip_athermal_tau_B",
+      "_rista_epsc_slip_athermal_tau_C",
+      "_rista_epsc_slip_T_latent_hardening_twin1",
+      "_rista_epsc_slip_T_latent_hardening_twin2",
+      "_rista_epsc_slip_HPFAC_grain_boundary",
+      "_rista_epsc_slip_HPFAC_twin1_boundary",
+      "_rista_epsc_slip_HPFAC_twin2_boundary",
+      "_rista_epsc_slip_A_deb_a",
+      "_rista_epsc_slip_A_deb_b",
+      "_rista_epsc_slip_A_deb_c",
 
       "_rista_plane_direction_system_id"
   };
@@ -42,6 +63,26 @@ public class EpscSlipMode extends EpscDeformationMode {
   // these are the corresponding labels that will appear in the GUI in the parameter list window etc.
   public static String[] diclistcrm = {
       "Slip mode title",
+      "Slip mode enabled",
+
+      "Burg m (Eq. 3.12)",
+      "Norm actener (Eq. 3.12)",
+      "K1 (1/m) (Eq. 3.8)",
+      "Drag stress-D (Eq. 3.12)",
+      "Edot_0 (Eq. 3.12)",
+      "Initial rho_s (1/m^2)",
+      "Initial rho_deb (1/m^2)",
+      "Athermal tau A (Eq. 3.17)",
+      "Athermal tau B (Eq. 3.17)",
+      "Athermal tau C (Eq. 3.17)",
+      "T latent hardening on twin1",
+      "T latent hardening on twin2",
+      "HPFAC coeff for grain boundary",
+      "HPFAC coeff for twin1 boundary",
+      "HPFAC coeff for twin2 boundary",
+      "A_deb_a (Eq. 3.15)",
+      "A_deb_b (Eq. 3.15)",
+      "A_deb_c (Eq. 3.15)",
 
       "Plane and direction for the slip"
   };
@@ -86,9 +127,9 @@ public class EpscSlipMode extends EpscDeformationMode {
   }
 
   public void initConstant() {
-    Nstring = 1;    // number of options, treated as strings only, in this case only the first
+    Nstring = 2;    // number of options, treated as strings only, in this case only the first
     Nstringloop = 0;  // no vectors of strings for options
-    Nparameter = 0;   // 0 parameters refinables in the model
+    Nparameter = 18;   // 0 parameters refinables in the model
     Nparameterloop = 0;  // no parameter vectors in this model, to be used when the number of parameters may
     // change in the model and/or is defined by other options
     Nsubordinate = 0;    // no subobjects or subordinate objects
@@ -98,7 +139,64 @@ public class EpscSlipMode extends EpscDeformationMode {
   public void initParameters() {
     super.initParameters();
 
-    stringField[0] = "<111>{112} SLIP";
+    stringField[0] = "<111>{110} SLIP";
+    stringField[1] = "true";
+
+    int index = 0;
+    parameterField[index] = new Parameter(this, getParameterString(index), 2.546e-10,
+        ParameterPreferences.getDouble(getParameterString(index) + ".min", 0.0),
+        ParameterPreferences.getDouble(getParameterString(index++) + ".max", 0.0001));
+    parameterField[index] = new Parameter(this, getParameterString(index), 0.00375,
+        ParameterPreferences.getDouble(getParameterString(index) + ".min", 0),
+        ParameterPreferences.getDouble(getParameterString(index++) + ".max", 0.01));
+    parameterField[index] = new Parameter(this, getParameterString(index), 2.75E8,
+        ParameterPreferences.getDouble(getParameterString(index) + ".min", 1.0E7),
+        ParameterPreferences.getDouble(getParameterString(index++) + ".max", 1.0E9));
+    parameterField[index] = new Parameter(this, getParameterString(index), 3.0E2,
+        ParameterPreferences.getDouble(getParameterString(index) + ".min", 1.0E2),
+        ParameterPreferences.getDouble(getParameterString(index++) + ".max", 1.0E3));
+    parameterField[index] = new Parameter(this, getParameterString(index), 1.0E7,
+        ParameterPreferences.getDouble(getParameterString(index) + ".min", 1.0E6),
+        ParameterPreferences.getDouble(getParameterString(index++) + ".max", 1.0E8));
+    parameterField[index] = new Parameter(this, getParameterString(index), 5.0E9,
+        ParameterPreferences.getDouble(getParameterString(index) + ".min", 1.0E9),
+        ParameterPreferences.getDouble(getParameterString(index++) + ".max", 1.0E10));
+    parameterField[index] = new Parameter(this, getParameterString(index), 1.0E11,
+        ParameterPreferences.getDouble(getParameterString(index) + ".min", 1.0E+10),
+        ParameterPreferences.getDouble(getParameterString(index++) + ".max", 1.0E+12));
+    parameterField[index] = new Parameter(this, getParameterString(index), 87.0,
+        ParameterPreferences.getDouble(getParameterString(index) + ".min", 10.0),
+        ParameterPreferences.getDouble(getParameterString(index++) + ".max", 1000.0));
+    parameterField[index] = new Parameter(this, getParameterString(index), 0.0,
+        ParameterPreferences.getDouble(getParameterString(index) + ".min", 0.0),
+        ParameterPreferences.getDouble(getParameterString(index++) + ".max", 10.0));
+    parameterField[index] = new Parameter(this, getParameterString(index), 1.0,
+        ParameterPreferences.getDouble(getParameterString(index) + ".min", 0.0),
+        ParameterPreferences.getDouble(getParameterString(index++) + ".max", 10.0));
+    parameterField[index] = new Parameter(this, getParameterString(index), 1.0,
+        ParameterPreferences.getDouble(getParameterString(index) + ".min", 0.0),
+        ParameterPreferences.getDouble(getParameterString(index++) + ".max", 10.0));
+    parameterField[index] = new Parameter(this, getParameterString(index), 1.0,
+        ParameterPreferences.getDouble(getParameterString(index) + ".min", 0.0),
+        ParameterPreferences.getDouble(getParameterString(index++) + ".max", 10.0));
+    parameterField[index] = new Parameter(this, getParameterString(index), 0.0,
+        ParameterPreferences.getDouble(getParameterString(index) + ".min", 0.0),
+        ParameterPreferences.getDouble(getParameterString(index++) + ".max", 10.0));
+    parameterField[index] = new Parameter(this, getParameterString(index), 0.0,
+        ParameterPreferences.getDouble(getParameterString(index) + ".min", 0.0),
+        ParameterPreferences.getDouble(getParameterString(index++) + ".max", 10.0));
+    parameterField[index] = new Parameter(this, getParameterString(index), 250.0,
+        ParameterPreferences.getDouble(getParameterString(index) + ".min", 100.0),
+        ParameterPreferences.getDouble(getParameterString(index++) + ".max", 1000.0));
+    parameterField[index] = new Parameter(this, getParameterString(index), 70.0,
+        ParameterPreferences.getDouble(getParameterString(index) + ".min", 10.0),
+        ParameterPreferences.getDouble(getParameterString(index++) + ".max", 1000.0));
+    parameterField[index] = new Parameter(this, getParameterString(index), 0.0,
+        ParameterPreferences.getDouble(getParameterString(index) + ".min", 0.0),
+        ParameterPreferences.getDouble(getParameterString(index++) + ".max", 10.0));
+    parameterField[index] = new Parameter(this, getParameterString(index), 1.0,
+        ParameterPreferences.getDouble(getParameterString(index) + ".min", 0.0),
+        ParameterPreferences.getDouble(getParameterString(index++) + ".max", 10.0));
 
     refreshComputation = true; // we specify the computation need to be refreshed (it has never done up to now)
   }

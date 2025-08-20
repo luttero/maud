@@ -425,8 +425,8 @@ public class DataFileSet extends XRDcat {
 					if (xstartmin > datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode))
 						xstartmin = datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode);
 					if (dataToExport[0][is1] >= xstartmin && dataToExport[0][is1] <= xendmax) {
-						double value = datafile[sn].getInterpolatedYForSummation(dataToExport[0][is1]);
-						double valuec = datafile[sn].getInterpolatedFitForSummation(dataToExport[0][is1]);
+						double value = datafile[sn].getInterpolatedYForPDF(dataToExport[0][is1]);
+						double valuec = datafile[sn].getInterpolatedFitForPDF(dataToExport[0][is1]);
 						if (!Double.isNaN(value)) {
 							dataToExport[1][is1] += value;
 							total++;
@@ -445,6 +445,63 @@ public class DataFileSet extends XRDcat {
 		}
 		return dataToExport;
 	}
+
+  static public double[][] getSummedDataForPDF(DiffrDataFile[] datafile, int mode,
+                                                             boolean meanIntensity) {
+
+    if (datafile == null || datafile.length == 0)
+      return null;
+
+    int ylength = datafile.length;
+
+    double stepX = 1.0E10;
+    double xmin = 1.0E10, xmax = -1.0E10;
+
+    // minimum maximum range
+
+    for (int is1 = 0; is1 < ylength; is1++) {
+      int xlength = datafile[is1].finalindex - datafile[is1].startingindex - 1;
+      double x1 = datafile[is1].getXDataForPlot(datafile[is1].startingindex, mode);
+      double x2 = datafile[is1].getXDataForPlot(datafile[is1].finalindex - 1, mode);
+      double lstepX = Math.abs((x2 - x1) / xlength);
+      if (lstepX < stepX)
+        stepX = lstepX;
+      if (xmin > x1)
+        xmin = x1;
+      if (xmax < x2)
+        xmax = x2;
+      if (xmin > x2)
+        xmin = x2;
+      if (xmax < x1)
+        xmax = x1;
+    }
+    int np = (int) Math.abs((xmax - xmin) / stepX) + 1;
+    double[][] dataToExport = new double[3][np];
+
+    if (np > 0) {
+      for (int is1 = 0; is1 < np; is1++) {
+        dataToExport[0][is1] = xmin + is1 * stepX;
+// data
+        for (int sn = 0; sn < ylength; sn++) {
+          double xstartmin = datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode);
+          double xendmax = datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode);
+          if (xendmax < datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode))
+            xendmax = datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode);
+          if (xstartmin > datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode))
+            xstartmin = datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode);
+          if (dataToExport[0][is1] >= xstartmin && dataToExport[0][is1] <= xendmax) {
+            double value = datafile[sn].getInterpolatedYForPDF(dataToExport[0][is1]);
+            double valuec = datafile[sn].getInterpolatedFitForPDF(dataToExport[0][is1]);
+            if (!Double.isNaN(value))
+              dataToExport[1][is1] += value;
+            if (!Double.isNaN(valuec))
+              dataToExport[2][is1] += valuec;
+          }
+        }
+      }
+    }
+    return dataToExport;
+  }
 
   public void updateDataForPlot() {
 

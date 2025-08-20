@@ -1830,12 +1830,13 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 
 //          boolean forceDspace = MaudPreferences.getBoolean(xaxisModePref, xplotMode[0]);
       mode = PlotDataFile.checkScaleModeX();
+      boolean subtractBackground = PlotDataFile.subtractBackground();
       for (i = j = 0; i < np; i++, j += 2) {
         int index = i + startingIndexG;
         if (index >= afile.startingindex && index < afile.finalindex) {
           data[j] = afile.getXDataForPlot(index, mode);
 //            System.out.println(j + " " + data[j]);
-          data[j + 1] = afile.getYSqrtData(index);
+          data[j + 1] = afile.getYSqrtData(index, subtractBackground);
         }
       }
 //          System.out.println("Data loaded");

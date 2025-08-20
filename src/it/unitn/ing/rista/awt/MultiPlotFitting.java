@@ -165,9 +165,10 @@ public class MultiPlotFitting extends PlotFitting {
 
         double data[] = new double[2 * np];
         mode = checkScaleModeX();
+        boolean subtractBackground = PlotDataFile.subtractBackground();
         for (i = j = 0; i < np; i++, j += 2) {
           data[j] = datafile[sn].getXDataForPlot(i + datafile[sn].startingindex, mode);
-          data[j + 1] = datafile[sn].getYSqrtData(i + datafile[sn].startingindex) + offset * sn;
+          data[j + 1] = datafile[sn].getYSqrtData(i + datafile[sn].startingindex, subtractBackground) + offset * sn;
 
           if (sn == 0)
             if (data[j + 1] > maxY)
@@ -434,11 +435,12 @@ public class MultiPlotFitting extends PlotFitting {
 
         double data[] = new double[2 * np];
         mode = checkScaleModeX();
+        boolean subtractBackground = PlotDataFile.subtractBackground();
         for (i = j = 0; i < np; i++, j += 2) {
           data[j] = (double) datafile[0].getXDataForPlot(i + datafile[0].startingindex, mode);
           if (datafile[0].xInsideRange(datafile[0].getXData(i + datafile[0].startingindex)) || !markExcludedRegion)
             data[j + 1] = datafile[0].getFitSqrtData(i + datafile[0].startingindex) -
-                  datafile[0].getYSqrtData(i + datafile[0].startingindex);
+                  datafile[0].getYSqrtData(i + datafile[0].startingindex, subtractBackground);
           else
             data[j + 1] = Double.NaN;
         }
@@ -559,6 +561,7 @@ public class MultiPlotFitting extends PlotFitting {
 
     try {
       int mode = checkScaleModeX();
+      boolean subtractBackground = PlotDataFile.subtractBackground();
       for (i = 0; i < numberphases; i++)
         phaselist[i] = filepar.getActiveSample().getPhase(i);
       for (int sn = 0; sn < datafile.length; sn++) {
@@ -569,7 +572,7 @@ public class MultiPlotFitting extends PlotFitting {
         double data[] = new double[2 * np];
         for (i = j = 0; i < np; i++, j += 2) {
           data[j] = (double) datafile[sn].getXDataForPlot(i + datafile[sn].startingindex, mode);
-          data[j + 1] = datafile[sn].getYSqrtData(i + datafile[sn].startingindex) + offset * sn;
+          data[j + 1] = datafile[sn].getYSqrtData(i + datafile[sn].startingindex, subtractBackground) + offset * sn;
 
           if (sn == 0)
             if (data[j + 1] > maxY)
@@ -793,6 +796,74 @@ public class MultiPlotFitting extends PlotFitting {
         }
         for (int i = starting; i != ending; i ++) {
           output.write(Fmt.format(intens[i - starting] / total));
+          output.newLine();
+        }
+      } catch (IOException io) {
+      }
+      try {
+        output.close();
+      } catch (IOException io) {
+      }
+    }
+  }
+
+  public void exportForPDF() {
+
+    if (thePlotPanel.datafile == null || thePlotPanel.datafile[0] == null)
+      return;
+
+    String filename = Utility.openFileDialog(this, "Save as ...",
+        FileDialog.SAVE, thePlotPanel.datafile[0].getFilePar().getDirectory(), null, "put a name.txt");
+    if (filename == null)
+      return;
+
+    String[] folderAndName = Misc.getFolderandName(filename);
+
+    String folder = folderAndName[0];
+    filename = folderAndName[1];
+
+    if (filename != null) {
+      int mode = 2;
+      double[][] dataToExport = DataFileSet.getSummedDataForPDF(thePlotPanel.datafile, mode, true);
+      // normalize
+      BufferedWriter output = Misc.getWriter(folder, filename);
+      try {
+        for (int i = 0; i < dataToExport[0].length; i++) {
+          output.write(Fmt.format(dataToExport[0][i]) + " " + Fmt.format(dataToExport[1][i]));
+          output.newLine();
+        }
+      } catch (IOException io) {
+      }
+      try {
+        output.close();
+      } catch (IOException io) {
+      }
+    }
+  }
+
+  public void exportComputedPDF() {
+
+    if (thePlotPanel.datafile == null || thePlotPanel.datafile[0] == null)
+      return;
+
+    String filename = Utility.openFileDialog(this, "Save as ...",
+        FileDialog.SAVE, thePlotPanel.datafile[0].getFilePar().getDirectory(), null, "put a name.txt");
+    if (filename == null)
+      return;
+
+    String[] folderAndName = Misc.getFolderandName(filename);
+
+    String folder = folderAndName[0];
+    filename = folderAndName[1];
+
+    if (filename != null) {
+      int mode = 2;
+      double[][] dataToExport = DataFileSet.getSummedDataForPDF(thePlotPanel.datafile, mode, true);
+      // normalize
+      BufferedWriter output = Misc.getWriter(folder, filename);
+      try {
+        for (int i = 0; i < dataToExport[0].length; i++) {
+          output.write(Fmt.format(dataToExport[0][i]) + " " + Fmt.format(dataToExport[2][i]));
           output.newLine();
         }
       } catch (IOException io) {

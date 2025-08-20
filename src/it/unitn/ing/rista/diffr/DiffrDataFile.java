@@ -2685,22 +2685,23 @@ public class DiffrDataFile extends XRDcat {
     return x;
   }
 
-  public double getValueScaled(double intensity, int index) {
-	  int sign = 1;
+  public double getValueScaled(double intensity, int index, boolean calibrated,
+                               boolean lorentz, int mode) {
+    int sign = 1;
     double x = getXData(index);
-    if (PlotDataFile.calibrateIntensity()) {
+    if (calibrated) {
       double calibratingIntensity = computeIntensityCalibration(index);
       if (calibratingIntensity != 0.0)
         intensity /= calibratingIntensity;
     }
-	  if (PlotDataFile.calibrateIntensityForLorentzPolarization()) {
-		  Instrument ainstrument = getDataFileSet().getInstrument();
-		  Sample asample = getFilePar().getActiveSample();
-		  double calibratingIntensity = ainstrument.LorentzPolarization(this, asample, x, dspacingbase, energyDispersive);
-		  if (calibratingIntensity != 0.0)
-			  intensity /= calibratingIntensity;
-	  }
-    switch (PlotDataFile.getScaleMode()) {
+    if (lorentz) {
+      Instrument ainstrument = getDataFileSet().getInstrument();
+      Sample asample = getFilePar().getActiveSample();
+      double calibratingIntensity = ainstrument.LorentzPolarization(this, asample, x, dspacingbase, energyDispersive);
+      if (calibratingIntensity != 0.0)
+        intensity /= calibratingIntensity;
+    }
+    switch (mode) {
       case 1:
         return intensity;
       case 2:
@@ -2710,72 +2711,72 @@ public class DiffrDataFile extends XRDcat {
           intensity = Math.log(intensity) * Constants.log10Conv;
         return intensity;
       case 3:
-	      intensity *= getXInQ(x);
-	      if (intensity < 0.0) {
-		      sign = -1;
-		      intensity = -intensity;
-	      }
+        intensity *= getXInQ(x);
+        if (intensity < 0.0) {
+          sign = -1;
+          intensity = -intensity;
+        }
         return Math.sqrt(intensity) * sign;
       case 4:
-	      intensity *= MoreMath.pow(getXInQ(x), 2);
-	      if (intensity < 0.0) {
-		      sign = -1;
-		      intensity = -intensity;
-	      }
-	      return Math.sqrt(intensity) * sign;
+        intensity *= MoreMath.pow(getXInQ(x), 2);
+        if (intensity < 0.0) {
+          sign = -1;
+          intensity = -intensity;
+        }
+        return Math.sqrt(intensity) * sign;
       case 5:
-	      intensity *= MoreMath.pow(getXInQ(x), 4);
-	      if (intensity < 0.0) {
-		      sign = -1;
-		      intensity = -intensity;
-	      }
-	      return Math.sqrt(intensity) * sign;
-	    case 6:
-		    intensity *= getXInQ(x);
-		    return intensity;
-	    case 7:
-		    intensity *= MoreMath.pow(getXInQ(x), 2);
-		    return intensity;
-	    case 8:
-		    intensity *= MoreMath.pow(getXInQ(x), 4);
-		    return intensity;
-	    case 9:
-		    intensity *= getXInQ(x);
-		    if (intensity == 0.0)
-			    return 0.0;
-		    else if (intensity < 0.0) {
-			    sign = -1;
-			    intensity = -intensity;
-		    }
-		    return Math.log(intensity) * Constants.log10Conv * sign;
-	    case 10:
-		    intensity *= MoreMath.pow(getXInQ(x), 2);
-		    if (intensity == 0.0)
-			    return 0.0;
-		    else if (intensity < 0.0) {
-			    sign = -1;
-			    intensity = -intensity;
-		    }
-		    return Math.log(intensity) * Constants.log10Conv * sign;
-	    case 11:
-		    intensity *= MoreMath.pow(getXInQ(x), 4);
-		    if (intensity == 0.0)
-			    return 0.0;
-		    else if (intensity < 0.0) {
-			    sign = -1;
-			    intensity = -intensity;
-		    }
-		    return Math.log(intensity) * Constants.log10Conv * sign;
-	    case 12:
-			 double factor = Math.sqrt(Math.abs(getXInQ(x)));
-			 if (factor > 0)
-		      intensity /= factor;
-		    return intensity;
-	    case 13:
-		    double factor1 = getXInQ(x);
-		    if (factor1 > 0)
-			    intensity /= factor1;
-		    return intensity;
+        intensity *= MoreMath.pow(getXInQ(x), 4);
+        if (intensity < 0.0) {
+          sign = -1;
+          intensity = -intensity;
+        }
+        return Math.sqrt(intensity) * sign;
+      case 6:
+        intensity *= getXInQ(x);
+        return intensity;
+      case 7:
+        intensity *= MoreMath.pow(getXInQ(x), 2);
+        return intensity;
+      case 8:
+        intensity *= MoreMath.pow(getXInQ(x), 4);
+        return intensity;
+      case 9:
+        intensity *= getXInQ(x);
+        if (intensity == 0.0)
+          return 0.0;
+        else if (intensity < 0.0) {
+          sign = -1;
+          intensity = -intensity;
+        }
+        return Math.log(intensity) * Constants.log10Conv * sign;
+      case 10:
+        intensity *= MoreMath.pow(getXInQ(x), 2);
+        if (intensity == 0.0)
+          return 0.0;
+        else if (intensity < 0.0) {
+          sign = -1;
+          intensity = -intensity;
+        }
+        return Math.log(intensity) * Constants.log10Conv * sign;
+      case 11:
+        intensity *= MoreMath.pow(getXInQ(x), 4);
+        if (intensity == 0.0)
+          return 0.0;
+        else if (intensity < 0.0) {
+          sign = -1;
+          intensity = -intensity;
+        }
+        return Math.log(intensity) * Constants.log10Conv * sign;
+      case 12:
+        double factor = Math.sqrt(Math.abs(getXInQ(x)));
+        if (factor > 0)
+          intensity /= factor;
+        return intensity;
+      case 13:
+        double factor1 = getXInQ(x);
+        if (factor1 > 0)
+          intensity /= factor1;
+        return intensity;
       case 0:
       default: {
         if (intensity < 0.0) {
@@ -2786,6 +2787,11 @@ public class DiffrDataFile extends XRDcat {
       }
     }
 
+  }
+
+  public double getValueScaled(double intensity, int index) {
+    return getValueScaled(intensity, index, PlotDataFile.calibrateIntensity(),
+        PlotDataFile.calibrateIntensityForLorentzPolarization(), PlotDataFile.getScaleMode());
   }
 
   public double getInterpolatedYSqrtIntensity(double xvalue, double expT, double expT2, int mode) {
@@ -2800,14 +2806,33 @@ public class DiffrDataFile extends XRDcat {
   }
 
   public double getInterpolatedYSqrtIntensity(double xvalue, int exponent, int mode) {
+      return getInterpolatedYSqrtIntensity(xvalue, exponent, mode, PlotDataFile.subtractBackground(),
+          PlotDataFile.calibrateIntensity(), PlotDataFile.calibrateIntensityForLorentzPolarization(),
+          PlotDataFile.getScaleMode());
+  }
+
+  public double getInterpolatedYSqrtIntensity(double xvalue, int exponent, int mode, boolean subtractBackground,
+                                              boolean calibrate, boolean lorentz, int ymode) {
     xvalue = revertXDataForPlot(xvalue, mode);
     if (isInsideHoles(xvalue))
-    	return Double.NaN;
-    if (PlotDataFile.subtractBackground())
+      return Double.NaN;
+    if (subtractBackground)
       return getValueScaled(getInterpolatedIntensityAt(xvalue, exponent) -
-          getInterpolatedBkgFitAt(xvalue, exponent), getOldNearestPoint(xvalue));
+          getInterpolatedBkgFitAt(xvalue, exponent), getOldNearestPoint(xvalue), calibrate, lorentz, ymode);
     else
-      return getValueScaled(getInterpolatedIntensityAt(xvalue, exponent), getOldNearestPoint(xvalue));
+      return getValueScaled(getInterpolatedIntensityAt(xvalue, exponent), getOldNearestPoint(xvalue), calibrate, lorentz, ymode);
+  }
+
+  public double getInterpolatedFitSqrtIntensity(double xvalue, int exponent, int mode, boolean subtractBackground,
+                                              boolean calibrate, boolean lorentz, int ymode) {
+    xvalue = revertXDataForPlot(xvalue, mode);
+    if (isInsideHoles(xvalue))
+      return Double.NaN;
+    if (subtractBackground)
+      return getValueScaled(getInterpolatedFitAt(xvalue, exponent) -
+          getInterpolatedBkgFitAt(xvalue, exponent), getOldNearestPoint(xvalue), calibrate, lorentz, ymode);
+    else
+      return getValueScaled(getInterpolatedFitAt(xvalue, exponent), getOldNearestPoint(xvalue), calibrate, lorentz, ymode);
   }
 
   public double getInterpolatedYForSummation(double xvalue) {
@@ -2853,8 +2878,8 @@ public class DiffrDataFile extends XRDcat {
     return getValueScaled(getInterpolatedBkgFitAt(xvalue, exponent), getOldNearestPoint(xvalue));
   }
 
-  public double getYSqrtData(int index) {
-    if (PlotDataFile.subtractBackground())
+  public double getYSqrtData(int index, boolean backgroundSubtract) {
+    if (backgroundSubtract)
       return getValueScaled(getYData(index) - getBkgFit(index), index);
     else
       return getValueScaled(getYData(index), index);
@@ -2865,6 +2890,16 @@ public class DiffrDataFile extends XRDcat {
       return getValueScaled(getFit(index) - getBkgFit(index), index);
     else
       return getValueScaled(getFit(index), index);
+  }
+
+  public double getInterpolatedYForPDF(double xvalue) {
+    return getInterpolatedYSqrtIntensity(xvalue, 1, 2, true, true,
+        false, 1);
+  }
+
+  public double getInterpolatedFitForPDF(double xvalue) {
+    return getInterpolatedFitSqrtIntensity(xvalue, 1, 2, true, true,
+        false, 1);
   }
 
   public double getFitSqrtData(int index, int phaseIndex) {
@@ -6141,7 +6176,7 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 			for (int i = 0; i < reflNumber; i++) {
 				for (int l = 0; l < strains[0][0].length; l++) {
 					for (int k = 0; k < strains[0][0][0].length; k++) {
-						double strain = aphase.getActiveStrain().computeStrain(aphase.getReflex(i), getTextureAngles(positions[i][l][k], 0));
+						double strain = aphase.getActiveStrain().computeStrain(aphase.getReflex(i), getTextureAngles(positions[i][l][k], 0), strains[1][i][l][k]);
 						strains[1][i][l][k] = strain;
 					}
 				}

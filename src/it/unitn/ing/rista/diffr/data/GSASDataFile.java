@@ -244,6 +244,7 @@ public class GSASDataFile extends MultDiffrDataFile {
 
             int i = 0;
             int tmap_index = 0;
+            double x_start = 0;
             while (i < nchannel) {
               linedata = reader.readLine();
               if (linedata == null) {
@@ -344,9 +345,17 @@ public class GSASDataFile extends MultDiffrDataFile {
 			              datafile.setXData(i, (bcoeff[0] + bcoeff[2] * (i - bcoeff[1])) / 100.0);
 		              else if (bintyp == BINTYPE.LOG6)
 			              datafile.setXData(i, bcoeff[0] + bcoeff[1] * Math.log(i));
-		              else if (bintyp == BINTYPE.SLOG)
-			              datafile.setXData(i, x);
-		              else if (bintyp == BINTYPE.TIME_MAP) {
+		              else if (bintyp == BINTYPE.SLOG) {
+                    if (form == TYPE.FXY || form == TYPE.FXYE)
+                      datafile.setXData(i, x);
+                    else {
+                      if (i == 0)
+                        x_start = bcoeff[0];
+                      else
+                        x_start *= (1.0 + bcoeff[2]);
+                      datafile.setXData(i, x_start);
+                    }
+                  } else if (bintyp == BINTYPE.TIME_MAP) {
 			              String mapNumberKey = Integer.toString(mapNumber);
 			              if (tmapTable.containsKey(mapNumberKey))
 				              aTimeMap = (TimeMap) tmapTable.get(mapNumberKey);

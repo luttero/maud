@@ -785,9 +785,9 @@ public class MomentPoleStress extends Strain {
 	  }
   }
 
-	public double computeStrain(Reflection refl, double[] strain_angles) { // you don't need to modify this unless
+	public double computeStrain(Reflection refl, double[] strain_angles, double previousStrain) { // you don't need to modify this unless
 		actualReflexIndex = getPhase().getReflexIndex(refl);
-		return super.computeStrain(refl, strain_angles);
+		return super.computeStrain(refl, strain_angles, previousStrain);
 	}
 
 	public double computeStrain(double psi, double beta, double chi, double phi) {

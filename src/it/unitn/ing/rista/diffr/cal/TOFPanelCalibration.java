@@ -217,6 +217,10 @@ public class TOFPanelCalibration extends XRDcat {
 		zoom_x = getParameterValue(ZOOM_X_ID);
 		zoom_y = getParameterValue(ZOOM_Y_ID);
 
+    System.out.println("min/max 2Theta: " + minTheta + " (" + minThetaS + ") " + maxTheta + " (" + maxThetaS + ")");
+    System.out.println("min/max Eta: " + minEta + " (" + minEtaS + ") " + maxEta + " (" + maxEtaS + ")");
+    System.out.println("min/max Dist: " + minDist + " (" + minDistS + ") " + maxDist + " (" + maxDistS + ")");
+
 //		if (dist == 0)
 //			dist = 100.0;
 
@@ -253,6 +257,19 @@ public class TOFPanelCalibration extends XRDcat {
 	public void calibrateData(DiffrDataFile datafile) {
 	}
 
+  double maxTheta = -999.0;
+  double minTheta = 999.0;
+  double maxEta = -999.0;
+  double minEta = 999.0;
+  double maxDist = -999.0;
+  double minDist = 999.0;
+  String maxThetaS = "-";
+  String minThetaS = "-";
+  String maxEtaS = "-";
+  String minEtaS = "-";
+  String maxDistS = "-";
+  String minDistS = "-";
+
 	public void calibrateX(DiffrDataFile datafile) {
 		int datanumber = datafile.getTotalNumberOfData();
 		updateParametertoDoubleBuffering(false);
@@ -277,7 +294,7 @@ public class TOFPanelCalibration extends XRDcat {
 //		System.out.println("Datafile " + datafile.thelabel);
 //		System.out.println(datafile.getXDataImage(0) + " " + datafile.getYDataImage(0) + " " + datafile.getXDataOriginal(datafile.startingindex) + " " + datafile.getXDataOriginal(datafile.finalindex - 1));
 		for (int i = 0; i < datanumber; i++) {
-         double value = datafile.getXDataOriginal(i);
+      double value = datafile.getXDataOriginal(i);
 			double x = datafile.getXDataImage(i);
 			double y = datafile.getYDataImage(i);
 			double[] xf = getThetaEtaAndDist(x * zoom_x, y * zoom_y,
@@ -299,10 +316,36 @@ public class TOFPanelCalibration extends XRDcat {
 //			if (angcal_d < 2.0 && angcal_d > 1.99)
 //				System.out.println(difc + " " + x + " " + y + " " + value + " " + angcal_d + " " + (difc * difc - 4.0 * difa * (zero - value)) + " " + xf[0] + " " + xf[1] + " " + xf[2] + " " + (xf[2] * DIST_CONV + flightPath));
 
+      double theta2 = xf[0] * Constants.PITODEG;
+      double eta = xf[1] * Constants.PITODEG;
 			datafile.setCalibratedXDataOnly(i, angcal_d);
-			datafile.setTwothetaImage(i, xf[0] * Constants.PITODEG);
-			datafile.setEtaImage(i, xf[1] * Constants.PITODEG);
+			datafile.setTwothetaImage(i, theta2);
+			datafile.setEtaImage(i, eta);
 			datafile.setDistanceImage(i, xf[2]);
+      if (theta2 > maxTheta) {
+        maxTheta = theta2;
+        maxThetaS = datafile.getLabel();
+      }
+      if (theta2 < minTheta) {
+        minTheta = theta2;
+        minThetaS = datafile.getLabel();
+      }
+      if (eta > maxEta) {
+        maxEta = eta;
+        maxEtaS = datafile.getLabel();
+      }
+      if (eta < minEta) {
+        minEta = eta;
+        minEtaS = datafile.getLabel();
+      }
+      if (xf[2] > maxDist) {
+        maxDist = xf[2];
+        maxDistS = datafile.getLabel();
+      }
+      if (xf[2] < minDist) {
+        minDist = xf[2];
+        minDistS = datafile.getLabel();
+      }
 		}
 	}
 

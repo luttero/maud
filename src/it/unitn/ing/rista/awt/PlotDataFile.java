@@ -261,6 +261,20 @@ public class PlotDataFile extends GraphFrame {
       }
     });
 
+    toolsMenu.add(menuitem = new JMenuItem("Export for pdf analysis"));
+    menuitem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        exportForPDF();
+      }
+    });
+
+    toolsMenu.add(menuitem = new JMenuItem("Export fit for pdf plotting"));
+    menuitem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        exportComputedPDF();
+      }
+    });
+
     toolsMenu.add(menuitem = new JMenuItem("Edit interpolated background points"));
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -419,6 +433,10 @@ public class PlotDataFile extends GraphFrame {
   }
 
   public void exportForCalibrationData() {}
+
+  public void exportForPDF() {}
+
+  public void exportComputedPDF() {}
 
   public void exportComputedData() {
 

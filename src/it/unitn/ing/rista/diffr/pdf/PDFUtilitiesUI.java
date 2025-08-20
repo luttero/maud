@@ -53,9 +53,10 @@ public class PDFUtilitiesUI extends JFrame {
 			"PDFgenerateGr.maxQ",
 			"PDFgenerateGr.stepQ"};
 	String[] defValue = {GeneratePatternAndPDF.radiationType[0],
-			"0.5",
-			"40.0",
-			"0.01"};
+        MaudPreferences.getPref("dummyDatafile.Q_start", "0.1"),
+        MaudPreferences.getPref("dummyDatafile.Q_end", "40.1"),
+        MaudPreferences.getPref("dummyDatafile.Q_step", "0.005")
+  };
 
 	public PDFUtilitiesUI(Phase aphase, boolean toFile) {
 		thePhase = aphase;
@@ -118,6 +119,9 @@ public class PDFUtilitiesUI extends JFrame {
 	}
 
 	public void generateAndSaveData(String radiation, double minQ, double maxQ, double stepQ) {
+    MaudPreferences.setPref("dummyDatafile.Q_start", minQ);
+    MaudPreferences.setPref("dummyDatafile.Q_end", maxQ);
+    MaudPreferences.setPref("dummyDatafile.Q_step", stepQ);
 		GeneratePatternAndPDF gen = new GeneratePatternAndPDF(thePhase, minQ, maxQ, stepQ);
 		gen.generateData(radiation);
 		listData = gen.getGr();
