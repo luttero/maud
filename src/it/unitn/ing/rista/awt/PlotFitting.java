@@ -922,20 +922,27 @@ public class PlotFitting extends PlotDataFile {
 
     if (filename != null) {
 
-      boolean from_Plot = MaudPreferences.getBoolean("exportData.useXcoordinateFromPlot", false);
-      int mode = checkScaleModeX();
-      if (!from_Plot)
-        mode = 0;
-      double[][] dataToExport = DataFileSet.getSummedExperimentalComputedData(thePlotPanel.datafile, mode, true);
+      int dataNumber = thePlotPanel.data1.dataPoints();
+//      boolean from_Plot = MaudPreferences.getBoolean("exportData.useXcoordinateFromPlot", true);
+//      int mode = checkScaleModeX();
+//      if (!from_Plot)
+//        mode = 0;
+  //    double[][] dataToExport = DataFileSet.getSummedExperimentalComputedData(thePlotPanel.datafile, mode, true);
       // normalize
-      double total = 0.0;
-      for (int i = 0; i < dataToExport[1].length; i++)
-        total += dataToExport[1][i];
+//      double total = 0.0;
+//      for (int i = 0; i < dataToExport[1].length; i++)
+//        total += dataToExport[1][i];
 
       BufferedWriter output = Misc.getWriter(folder, filename);
       try {
-        for (int i = 0; i < dataToExport[1].length; i++) {
-          output.write(Fmt.format(dataToExport[1][i] / total));
+        for (int i = 0; i < dataNumber; i++) {
+          int number = thePlotPanel.data1.getPoint(i).length;
+          for (int j = 0; j < number; j++)
+            output.write(Fmt.format(thePlotPanel.data1.getPoint(i)[j]) + " ");
+          if (thePlotPanel.dataFit != null && i < thePlotPanel.dataFit.dataPoints()) {
+            for (int j = 1; j < thePlotPanel.dataFit.getPoint(i).length; j++)
+              output.write(Fmt.format(thePlotPanel.dataFit.getPoint(i)[j]) + " ");
+          }
           output.newLine();
         }
       } catch (IOException io) {

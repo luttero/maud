@@ -1,5 +1,5 @@
 /*
- * @(#)ExtinctionModel.java created 21/11/2025 Los Alamos
+ * @(#)ExtinctionModel.java created 20/08/2025 Los Alamos
  *
  * Copyright (c) 2025 Luca Lutterotti All Rights Reserved.
  *
@@ -20,29 +20,26 @@
 
 package it.unitn.ing.rista.diffr;
 
+import java.awt.*;
 import java.lang.*;
 
-import it.unitn.ing.rista.util.*;
+import it.unitn.ing.rista.awt.JOptionsDialog;
+
+import javax.swing.*;
 
 /**
  * The ExtinctionModel is a class for dynamical extinction
  * correction. This is the base model to be overwritten by
  * the proper models (inside the sfm subdirectory)
  *
- * @version $Revision: 1.0 $, $Date: 2025/05/06 10:50:00 $
+ * @version $Revision: 1.0 $, $Date: 2025/08/20 10:50:00 $
  * @author Luca Lutterotti
  * @since JDK1.1
  */
 
 public class ExtinctionModel extends XRDcat {
-  protected static String[] diclistc = {};
-  protected static String[] diclistcrm = {};
-
-  protected static String[] classlistc = {};
-
   public ExtinctionModel(XRDcat obj, String alabel) {
     super(obj, alabel);
-    initBaseObject();
   }
 
   public ExtinctionModel(XRDcat afile) {
@@ -51,45 +48,46 @@ public class ExtinctionModel extends XRDcat {
 
 	public ExtinctionModel() {}
 
-  public void initConstant() {
-    Nstring = 0;
-    Nstringloop = 0;
-    Nparameter = 0;
-    Nparameterloop = 0;
-    Nsubordinate = 0;
-    Nsubordinateloop = 0;
-  }
-
-  public void initDictionary() {
-    for (int i = 0; i < totsubordinateloop; i++)
-      diclist[i] = diclistc[i];
-    System.arraycopy(diclistcrm, 0, diclistRealMeaning, 0, totsubordinateloop);
-    for (int i = 0; i < totsubordinateloop - totsubordinate; i++)
-      classlist[i] = classlistc[i];
-  }
-
-  public void initParameters() {
-    super.initParameters();
-  }
-
-  public void notifyParameterChanged(Parameter source) {
-    FilePar filepar = getFilePar();
-    if ((filepar != null && !filepar.isLoadingFile()) && isAbilitatetoRefresh) {
-      if (parameterField != null)
-      for (int i = 0; i < parameterField.length; i++) {
-        if (parameterField[i] == source) {
-            notifyParameterChanged(source, Constants.STRUCTURE_FACTOR, -1);
-            return;
-        }
-      }
-      super.notifyParameterChanged(source);
-    }
-  }
-
   public void preparecomputing() {
   }
 
-  public double getExtinctionCorrection(int h, int k, int l, double structureFactor) {
-    return intensity;
+  public boolean canCorrect(DataFileSet adataset) {
+    return false;
   }
+
+  public double getExtinctionCorrectionByThetaRadiants(double dspace, double structureFactor, double thetar) {
+    return 1.0;
+  }
+
+  public double getExtinctionCorrectionByWave(double dspace, double structureFactor, double wavelength) {
+    return 1.0;
+  }
+
+  public JOptionsDialog getOptionsDialog(Frame parent) {
+    JOptionsDialog adialog = new ExtinctionModel.JExtinctionOptionsD(parent, this);
+    return adialog;
+  }
+
+  public class JExtinctionOptionsD extends JOptionsDialog {
+
+    public JExtinctionOptionsD(Frame parent, XRDcat obj) {
+
+      super(parent, obj);
+
+      principalPanel.setLayout(new FlowLayout());
+      principalPanel.add(new JLabel("No options for this model"));
+
+      setTitle("Options panel");
+      initParameters();
+      pack();
+    }
+
+    public void initParameters() {
+    }
+
+    public void retrieveParameters() {
+    }
+  }
+
+
 }

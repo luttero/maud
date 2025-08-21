@@ -48,12 +48,12 @@ import java.util.StringTokenizer;
 public class HarmonicTexture extends Texture implements Function {
 
   public static String[] diclistc = {"_rita_sample_symmetry", "_rita_harmonic_expansion_degree",
-                                     "_rita_odf_sharpness",
+                                     "_rita_odf_sharpness", "_rita_harmonic_cut_negative",
 
                                      "_rita_harmonic_parameter"
   };
   public static String[] diclistcrm = {"_rita_sample_symmetry", "_rita_harmonic_expansion_degree",
-                                     "_rita_odf_sharpness", "_rita_harmonic_GSAS_mode",
+                                     "_rita_odf_sharpness", "_rita_harmonic_cut_negative",
 
                                      "harmonic coeff "
   };
@@ -109,6 +109,8 @@ public class HarmonicTexture extends Texture implements Function {
   Vector backupPar;
   boolean computingDerivate = false;
   boolean isOptimizing = false;
+  boolean cutNegative = false;
+  int cutNegativeID = 3;
 
   public HarmonicTexture(XRDcat aobj, String alabel) {
     super(aobj, alabel);
@@ -129,7 +131,7 @@ public class HarmonicTexture extends Texture implements Function {
   }
 
   public void initConstant() {
-    Nstring = 3;
+    Nstring = 4;
     Nstringloop = 0;
     Nparameter = 0;
     Nparameterloop = 1;
@@ -153,6 +155,7 @@ public class HarmonicTexture extends Texture implements Function {
     setSampleSymmetry(11);
     checkCrystalSampleGroups();
     setHarmonicExpansion(4);
+    setCutNegative(false);
 
 	  applySymmetryRules();
   }
@@ -235,6 +238,19 @@ public class HarmonicTexture extends Texture implements Function {
 
   public String getSharpness() {
     return getString(2);
+  }
+
+  public void setCutNegative(boolean value) {
+    if (value)
+      setString(cutNegativeID, "true");
+    else
+      setString(cutNegativeID, "false");
+  }
+
+  public boolean shouldCutNegative() {
+    if (getString(cutNegativeID).equalsIgnoreCase("true"))
+      return true;
+    return false;
   }
 
   public int getLaueGroupNumber() {
@@ -359,6 +375,8 @@ public class HarmonicTexture extends Texture implements Function {
   }
 
   public void initializeAll() {
+    cutNegative = MaudPreferences.getBoolean("texture_harmonic.cutNegativeValues", false);
+    cutNegative = cutNegative || shouldCutNegative();
     applySymmetryRules();
   }
 
@@ -397,6 +415,8 @@ public class HarmonicTexture extends Texture implements Function {
                 textF[j] = computeTextureFactor(refl.phi[0], refl.beta[0],
                     texture_angles[0] * Constants.DEGTOPI,
                     texture_angles[1] * Constants.DEGTOPI);
+                if (cutNegative && textF[j] < 0.0)
+                  textF[j] = 0.0;
 //						refl.setExpTextureFactor(adatafile.getIndex(), textF);
               }
               adatafile.setTextureFactors(aphase, textF);
@@ -432,6 +452,9 @@ public class HarmonicTexture extends Texture implements Function {
       tmpIntensity *= (4.0 * Constants.PI) / (2 * l + 1);
       poleIntensity += tmpIntensity;
     }
+    if (cutNegative && poleIntensity < 0.0)
+      poleIntensity = 0.0;
+
     return poleIntensity;
   }
 
@@ -2254,6 +2277,19 @@ public class HarmonicTexture extends Texture implements Function {
       jp1.setLayout(new GridLayout(0, 1));
       jp1.setBorder(new TitledBorder(new BevelBorder(BevelBorder.LOWERED), "Options"));
       principalPanel.add(BorderLayout.SOUTH, jp1);
+
+      jp3 = new JPanel();
+      jp3.setLayout(new FlowLayout());
+      jp1.add(jp3);
+      JCheckBox jcb = new JCheckBox("Cut negative values");
+      jp3.add(jcb);
+      jcb.setToolTipText("If checked, negative points in the pole figures are set to zero (Warning: ODF will not correspond to PFs)");
+      jcb.setSelected(shouldCutNegative());
+      jcb.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent event) {
+          setCutNegative(jcb.isSelected());
+        }
+      });
 
       jp3 = new JPanel();
       jp3.setLayout(new FlowLayout());

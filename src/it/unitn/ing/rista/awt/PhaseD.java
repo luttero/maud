@@ -59,6 +59,7 @@ public class PhaseD extends myJFrame {
   JComboBox structureFactorExtractorCB;
 //  JComboBox structureSolutionCB;
   JComboBox tdsModelCB;
+  JComboBox extinctionModelCB;
   JTextField atomquantity;
   JTextField atomquantity_incell;
   JTextField xcoord;
@@ -408,6 +409,22 @@ public class PhaseD extends myJFrame {
       }
     });
     rowP.add(sfjb);
+
+    rowP = new JPanel();
+    rowP.setLayout(new FlowLayout(FlowLayout.LEFT, 1, 1));
+    SFPanel.add(rowP);
+    rowP.add(new JLabel("Extinction/dynamical model: "));
+    extinctionModelCB = new JComboBox();
+    extinctionModelCB.setToolTipText("Select the extinction/dynamical model to be used for structure factors correction");
+    rowP.add(extinctionModelCB);
+    sfjb = new JButton("Model options");
+    sfjb.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent event) {
+        extinctionOptions();
+      }
+    });
+    rowP.add(sfjb);
+
 
 /*		rowP = new JPanel();
 		rowP.setLayout(new FlowLayout(FlowLayout.LEFT, 1, 1));
@@ -839,11 +856,14 @@ public class PhaseD extends myJFrame {
 //      structureSolutionCB.addItem(thephase.getsubordIdentifier(Phase.structureSolutionMethodID, i));
     for (int i = 0; i < thephase.getsubordClassNumber(Phase.tdsModelID); i++)
       tdsModelCB.addItem(thephase.getsubordIdentifier(Phase.tdsModelID, i));
+    for (int i = 0; i < thephase.getsubordClassNumber(Phase.extinctionModelID); i++)
+      extinctionModelCB.addItem(thephase.getsubordIdentifier(Phase.extinctionModelID, i));
     structureFactorExtractorCB.setSelectedItem(thephase.getActiveSubordinateModel(
 		    Phase.structureFactorExtractorID).identifier);
     structureFactorModelsCB.setSelectedItem(thephase.getActiveSubordinateModel(
 		    Phase.structureFactorModelID).identifier);
     tdsModelCB.setSelectedItem(thephase.getActiveSubordinateModel(Phase.tdsModelID).identifier);
+    extinctionModelCB.setSelectedItem(thephase.getActiveSubordinateModel(Phase.extinctionModelID).identifier);
 //    structureSolutionCB.setSelectedItem(thephase.getActiveSubordinateModel(
 //        Phase.structureSolutionMethodID).identifier);
     for (int i = 0; i < optionsIndices.length; i++) { //absorption removed here
@@ -894,6 +914,12 @@ public class PhaseD extends myJFrame {
 		    thephase.gethklNumber();
 		    thephase.notifySubordinateReflectionListChanged();
 	    }
+    });
+    extinctionModelCB.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent event) {
+        thephase.setSubordinateModel(Phase.extinctionModelID,
+            extinctionModelCB.getSelectedItem().toString());
+      }
     });
     tdsModelCB.addItemListener(new ItemListener() {
 	    public void itemStateChanged(ItemEvent event) {
@@ -1130,6 +1156,11 @@ public class PhaseD extends myJFrame {
 
   public void TDSOptions() {
     thephase.getActiveSubordinateModel(Phase.tdsModelID).
+        getOptionsDialog(this).setVisible(true);
+  }
+
+  public void extinctionOptions() {
+    thephase.getActiveSubordinateModel(Phase.extinctionModelID).
         getOptionsDialog(this).setVisible(true);
   }
 

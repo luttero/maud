@@ -434,6 +434,7 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
   }
 
 	public CopyPrintPanel createGraph(boolean keepMaxima) {
+//    System.out.println("Creating graph, SpectrumPlotPanel");
 		CopyPrintPanel fullGraphPanel;
 		int mode = PlotDataFile.checkScaleModeX();
 		PlotDataFile.checkCalibrateIntensity();
@@ -997,6 +998,7 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 
 	public CopyPrintPanel createGraph(DiffrDataFile[] afile, double[][] peaks,
                                     double[] derivative2, boolean keepMaxima) {
+//    System.out.println("Creating multispectrum graph, SpectrumPlotPanel");
     double datafit[] = null;
     double dataphase[];
 	  CopyPrintPanel fullGraphPanel = null;
@@ -1086,8 +1088,10 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 			    }
 			    if (total > 0)
 				    data[is2 + 1] /= total;
+//          System.out.println(is2 + " " + data[is2] + " " + data[is2 + 1]);
 
-			    if (datafile[0].hasfit()) {
+
+          if (datafile[0].hasfit()) {
 				    datafit[is2] = data[is2];
 
 				    for (int sn = 0; sn < ylength; sn++) {
@@ -1722,6 +1726,7 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
                                           double[] derivative2, boolean keepMaxima) {
     double datafit[] = null;
     double dataphase[] = null;
+//    System.out.println("Creating single graph, SpectrumPlotPanel");
 
     if (afile == null) {
       return new NoDatafileCanvas();
@@ -1837,6 +1842,7 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
           data[j] = afile.getXDataForPlot(index, mode);
 //            System.out.println(j + " " + data[j]);
           data[j + 1] = afile.getYSqrtData(index, subtractBackground);
+//          System.out.println(j + " " + data[j] + " " + data[j + 1]);
         }
       }
 //          System.out.println("Data loaded");

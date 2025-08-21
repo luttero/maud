@@ -571,6 +571,7 @@ public class DataFileSet extends XRDcat {
 				}
 				if (total > 0)
 					dataForPlot[is2 + 1] /= total;
+//        System.out.println("Update: " + is2 + " " + dataForPlot[is2] + " " + dataForPlot[is2 + 1]);
 
 // fit
 

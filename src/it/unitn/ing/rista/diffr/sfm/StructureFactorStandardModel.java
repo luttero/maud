@@ -92,6 +92,7 @@ public class StructureFactorStandardModel extends StructureFactorModel {
 		final Phase phase = (Phase) getParent();
 		if (!phase.refreshFhklcomp)
 			return;
+    extinctionCorrection = ((Phase) getParent()).getActiveExtinctionModel().canCorrect(adataset);
 		computeStructureFactors(phase, asample, adataset);
 	}
 
@@ -99,6 +100,7 @@ public class StructureFactorStandardModel extends StructureFactorModel {
 	  double structureFactor, intA = 1;
 	  final double cuttingThreshold = 0.0001;
 	  final double thermalS = phase.getThermalStrainCached();
+    final ExtinctionModel extinction = ((Phase) getParent()).getActiveExtinctionModel();
 	  phase.refreshFhklcompv();
 	  int hkln = phase.gethklNumber();
 	  final double[] fhkl = new double[hkln];
@@ -109,7 +111,14 @@ public class StructureFactorStandardModel extends StructureFactorModel {
 		    fhkl[i] = phase.getReflex(i).structureFactor;
 	  } else {
 	  Instrument ainstrument = adataset.getInstrument();
+    RadiationType radType = ainstrument.getRadiationType();
+    boolean constantWavelength = radType.isConstantWavelenght();
 	  final Radiation rad1 = ainstrument.getRadiationType().getRadiation(0);
+      double theta = 45.0;
+      if (!constantWavelength)
+        theta = adataset.getInstrument().getDetector().getThetaDetector(adataset.getActiveDataFile(0), theta * 2);
+      final double thetar = theta * 0.5 * Constants.DEGTOPI;
+
 //	  final int radType = rad1.getRadiationIDNumber();
 	  Vector<AtomSite> atomList = phase.getFullAtomList();
 		double volume = phase.getCellVolume();
@@ -134,8 +143,8 @@ public class StructureFactorStandardModel extends StructureFactorModel {
 			double U0 = Math.sqrt(Fhklcomp0(phase, scatteringFactors)) * U0corr;
 		  double k = Math.sqrt(K02 + U0) * 2.0;
 			constV = Constants.E_SCAT_PI_FACTOR * t_corr / k * Math.PI;
-		  if (Constants.testing && !phase.getFilePar().isOptimizing())
-		    System.out.println("U0: " + constV + " " + k + " " + K02 + " " + U0 + " " + t + " " + t_corr);
+//		  if (Constants.testing && !phase.getFilePar().isOptimizing())
+//		    System.out.println("U0: " + constV + " " + k + " " + K02 + " " + U0 + " " + t + " " + t_corr);
 		}
 //		final double meanCrystallite_corr = phase.getMeanCrystallite() * thermalS + t;
 
@@ -177,8 +186,13 @@ public class StructureFactorStandardModel extends StructureFactorModel {
 //								  structureFactor = 1.207107;
 //								structureFactor *= volumeCorrection / thickness_corr; // we eliminate the thickness
 						  } else if (extinctionCorrection) {
-
-						  }
+                if (constantWavelength)
+                  structureFactor *= extinction.getExtinctionCorrectionByWave(refl.d_space, structureFactor,
+                      rad1.getWavelengthValue());
+                else
+                  structureFactor *= extinction.getExtinctionCorrectionByThetaRadiants(refl.d_space, structureFactor,
+                      thetar);
+              }
 						  fhkl_t[j - i1] = structureFactor;
 					  }
 
@@ -244,7 +258,14 @@ public class StructureFactorStandardModel extends StructureFactorModel {
 /*				  if (Constants.testing && !phase.getFilePar().isOptimizing())
 				    System.out.println(refl.getH() + " " + refl.getK() + " " + refl.getL() + " " + Fhkl + " " + A + ", IntA/A " + intA +
 				        " " + newCorrection + " " + structureFactor + " " + constV + " " + meanCrystallite + " " + t);*/
-			  }
+			  } else if (extinctionCorrection) {
+          if (constantWavelength)
+            structureFactor *= extinction.getExtinctionCorrectionByWave(refl.d_space, structureFactor,
+                rad1.getWavelengthValue());
+          else
+            structureFactor *= extinction.getExtinctionCorrectionByThetaRadiants(refl.d_space, structureFactor,
+                thetar);
+        }
 			  fhkl[i] = structureFactor;
 		  }
 	  }

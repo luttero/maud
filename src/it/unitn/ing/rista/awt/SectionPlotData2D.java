@@ -179,7 +179,7 @@ public class SectionPlotData2D extends myJFrame {
 			}
 		});
 
-    toolsMenu.add(menuitem = new JMenuItem("Export for calibration"));
+    toolsMenu.add(menuitem = new JMenuItem("Export from plot"));
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         exportForCalibrationData();

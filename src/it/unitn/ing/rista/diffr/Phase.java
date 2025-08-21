@@ -74,7 +74,7 @@ public class Phase extends XRDcat {
       "_riet_micro_absorption_model", "_riet_structure_model", "_riet_structure_factor_model",
       "_riet_structure_factor_extractor", /*"_riet_structure_solution_method",*/
 
-      "_riet_tds_model",
+      "_riet_tds_model", "_refine_ls_extinction_model",
 
       "_atom_site_label", "_diffrn_refln_id"
   };
@@ -102,7 +102,7 @@ public class Phase extends XRDcat {
       "_riet_micro_absorption_model", "_riet_structure_model", "_riet_structure_factor_model",
       "_riet_structure_factor_extractor", /*"_riet_structure_solution_method",*/
 
-      "_riet_tds_model",
+      "_riet_tds_model", "_refine_ls_extinction_model",
 
       "_atom_site_label", "_diffrn_refln_id"
   };
@@ -124,7 +124,8 @@ public class Phase extends XRDcat {
       "superclass:it.unitn.ing.rista.diffr.StructureFactorModel",
       "superclass:it.unitn.ing.rista.diffr.StructureFactorExtractor",
 //      "superclass:it.unitn.ing.rista.diffr.StructureSolutionMethod",
-      "superclass:it.unitn.ing.rista.diffr.TDSModel"
+      "superclass:it.unitn.ing.rista.diffr.TDSModel",
+      "superclass:it.unitn.ing.rista.diffr.ExtinctionModel"
   };
 
   public static int textureID = 0;
@@ -142,6 +143,7 @@ public class Phase extends XRDcat {
 
   public static int structureModelID = 8;
   public static int tdsModelID = 11;
+  public static int extinctionModelID = 12;
 
   public static final int scaleFactorID = 8;
 
@@ -269,7 +271,7 @@ public class Phase extends XRDcat {
     Nparameter = 9;
     Nparameterloop = 0;
     Nsubordinate = classlistcs.length;
-    Nsubordinateloop = 2;
+    Nsubordinateloop = classlistc.length;
   }
 
   public void initDictionary() {
@@ -337,6 +339,7 @@ public class Phase extends XRDcat {
 //    setSubordinateModel(structureSolutionMethodID, "Genetic Algorithm SDPD");
     setSubordinateModel(structureModelID, "Atomic Structure");
     setSubordinateModel(tdsModelID, "None TDS");
+    setSubordinateModel(extinctionModelID, "Extinctions none");
 
   }
 
@@ -1601,6 +1604,10 @@ public static final String getSpaceGroup(int index, int sgconv) {
     return ((TDSModel) getActiveSubordinateModel(tdsModelID));
   }
 
+  public ExtinctionModel getActiveExtinctionModel() {
+    return ((ExtinctionModel) getActiveSubordinateModel(extinctionModelID));
+  }
+
   /* diffrDataFile, expfit, this, intensity, Fhklist, actualPosition, minmaxindex  */
   private Parameter getCell(int i) {
     CellSymmetry();
@@ -2524,6 +2531,8 @@ public static final String getSpaceGroup(int index, int sgconv) {
   }
 
   public void computeStructureFactors(Sample asample, boolean structureSolution) {
+    ((ExtinctionModel) getActiveSubordinateModel(extinctionModelID)).
+        preparecomputing();
     ((StructureFactorModel) getActiveSubordinateModel(structureFactorModelID)).
         computeStructureFactors(asample, structureSolution);
     refreshFhklcomp = false;

@@ -1903,10 +1903,16 @@ public class DiffrDataFile extends XRDcat {
         return getXfromDspace(value);
       case 2:
         return getXfromQ(value);
-      case 3:
-        return getXDataInvertCalibration(value);
-	    case 4:
+	    case 3:
 		    return getXfromEnergy(value);
+      case 4:
+        Calibration angcal = null;
+        Instrument inst = getDataFileSet().getInstrument();
+        if (inst != null) {
+          angcal = inst.getAngularCalibration();
+          return angcal.calibrateX(this, value);
+        } else
+          return value;
 	    case 5:
 		    return getXData((int) value);
       default: {
@@ -2813,14 +2819,15 @@ public class DiffrDataFile extends XRDcat {
 
   public double getInterpolatedYSqrtIntensity(double xvalue, int exponent, int mode, boolean subtractBackground,
                                               boolean calibrate, boolean lorentz, int ymode) {
-    xvalue = revertXDataForPlot(xvalue, mode);
-    if (isInsideHoles(xvalue))
+    double xvaluen = revertXDataForPlot(xvalue, mode);
+//    System.out.println(xvalue + " " + xvaluen);
+    if (isInsideHoles(xvaluen))
       return Double.NaN;
     if (subtractBackground)
-      return getValueScaled(getInterpolatedIntensityAt(xvalue, exponent) -
-          getInterpolatedBkgFitAt(xvalue, exponent), getOldNearestPoint(xvalue), calibrate, lorentz, ymode);
+      return getValueScaled(getInterpolatedIntensityAt(xvaluen, exponent) -
+          getInterpolatedBkgFitAt(xvaluen, exponent), getOldNearestPoint(xvaluen), calibrate, lorentz, ymode);
     else
-      return getValueScaled(getInterpolatedIntensityAt(xvalue, exponent), getOldNearestPoint(xvalue), calibrate, lorentz, ymode);
+      return getValueScaled(getInterpolatedIntensityAt(xvaluen, exponent), getOldNearestPoint(xvaluen), calibrate, lorentz, ymode);
   }
 
   public double getInterpolatedFitSqrtIntensity(double xvalue, int exponent, int mode, boolean subtractBackground,

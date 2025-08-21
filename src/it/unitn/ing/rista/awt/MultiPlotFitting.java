@@ -83,7 +83,7 @@ public class MultiPlotFitting extends PlotFitting {
 
     getContentPane().setBackground(Color.white);
 
-	  int mode = PlotDataFile.checkScaleModeX();
+	  int mode = checkScaleModeX();
 	  PlotDataFile.checkCalibrateIntensity();
 	  PlotDataFile.checkBackgroundSubtraction();
 	  Constants.checkMinimumEnergy();
