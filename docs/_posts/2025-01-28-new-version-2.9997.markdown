@@ -24,6 +24,6 @@ To start tutorials are probably the best and can be found at [MAUD tutorials][ma
 
 [maud-docs]: /maud/documents/
 [maud-tutorials]: /maud/tutorials/
-[maud-download]: https://github.com/luttero/maud/releases/tag/v2.9996
+[maud-download]: https://github.com/luttero/maud/releases/tag/v2.9997
 [dropbox]: https://www.dropbox.com/sh/3l4jpjw7mkc3cfo/AAAtzz-9__TMmUdaxlolX68xa?dl=0
 [gdrive]: https://drive.google.com/drive/folders/1EQw0XPx6QPwE-VN7OpTvI8DtrvsW-V4i?usp=sharing
