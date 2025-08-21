@@ -269,7 +269,7 @@ The PF's of peaks of the same family are imposed equals for all the lines.
 		  double[][] datasetSFactors = dataset.getStructureFactors(phase);
 
       if (!useLastFactors) {
-        for (int np = 0; np < numberofpeaks; np++) {
+        for (int np = 0; np < numberofpeaks && np < numberReflections; np++) {
 	        Phase actualPhase = fullpeaklist.elementAt(np).getPhase();
           if (actualPhase == phase) {
             lastfactors[np] = Constants.STARTING_STRUCTURE_FACTOR * Constants.STARTING_STRUCTURE_FACTOR;
@@ -292,10 +292,15 @@ The PF's of peaks of the same family are imposed equals for all the lines.
             if (lastfactors[np] <= 1.0E-9)
               lastfactors[np] = Constants.MINIMUM_STRUCTURE_FACTOR * Constants.MINIMUM_STRUCTURE_FACTOR; // just we don't want to start from 0.0 otherwise will remain 0.0
             newfactors[np] = lastfactors[np];
-	          reflectionListIndices[fullpeaklist.elementAt(np).getOrderPosition()] = np;
+            int pos = fullpeaklist.elementAt(np).getOrderPosition();
+            if (pos < reflectionListIndices.length)
+	            reflectionListIndices[pos] = np;
           } else {
-            lastfactors[np] = dataset.getStructureFactors(actualPhase)[1][fullpeaklist.elementAt(np).getOrderPosition()];
-            newfactors[np] = lastfactors[np];
+            int pos = fullpeaklist.elementAt(np).getOrderPosition();
+            if (pos < reflectionListIndices.length) {
+              lastfactors[np] = dataset.getStructureFactors(actualPhase)[1][pos];
+              newfactors[np] = lastfactors[np];
+            }
           }
           weightfactors[np] = 0.0;
         }

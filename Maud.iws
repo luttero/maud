@@ -6,6 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="61caab25-241f-4ab1-85f0-b423f2950da9" name="Changes" comment="Fix to post on the website">
       <change beforePath="$PROJECT_DIR$/Maud.iws" beforeDir="false" afterPath="$PROJECT_DIR$/Maud.iws" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/current/ij.jar" beforeDir="false" afterPath="$PROJECT_DIR$/libs/current/ij.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/current/miscLib.jar" beforeDir="false" afterPath="$PROJECT_DIR$/libs/current/miscLib.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sfm/StructureFactorLeBailExtractor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sfm/StructureFactorLeBailExtractor.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
