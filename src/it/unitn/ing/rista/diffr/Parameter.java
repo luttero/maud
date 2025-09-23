@@ -653,24 +653,34 @@ public class Parameter extends Object implements Cloneable, basicObj {
 	// refinable section
 
   public void setRefinable() {
-    setFree(true);
-    resetParameterBound();
+    boolean preserveBound = MaudPreferences.getBoolean("parameter.preserve_bound", true);
+    if (preserveBound)
+      setRefinableCheckBound();
+    else {
+      setFree(true);
+      resetParameterBound();
+    }
   }
 
   public void setRefinableCheckBound() {
-    if (getStatusIndex() != MANUAL_BOUND) {
+    if (getStatusIndex() != MANUAL_BOUND && getStatusIndex() != AUTOMATIC_BOUND) {
       setFree(true);
       resetParameterBound();
     }
   }
 
   public void setNotRefinable() {
-    setFree(false);
-    resetParameterBound();
+    boolean preserveBound = MaudPreferences.getBoolean("parameter.preserve_bound", true);
+    if (preserveBound)
+      setNotRefinableCheckBound();
+    else {
+      setFree(false);
+      resetParameterBound();
+    }
   }
 
   public void setNotRefinableCheckBound() {
-    if (getStatusIndex() != MANUAL_BOUND) {
+    if (getStatusIndex() != MANUAL_BOUND && getStatusIndex() != AUTOMATIC_BOUND) {
       setFree(false);
       resetParameterBound();
     }

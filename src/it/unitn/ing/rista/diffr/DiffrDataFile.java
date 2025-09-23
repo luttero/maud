@@ -3192,8 +3192,7 @@ public class DiffrDataFile extends XRDcat {
   }
 
   public void checkIncreasingX() {
-    int datanumb = getTotalNumberOfData();
-    if (getXData(0) < getXData(datanumb - 1)) {
+    if (getXData(getMinIndex()) < getXData(getMaxIndex() - 1)) {
       increasingX = true;
       lastcalibrationX = 10000000.0;
       lastX = 10000000.0;
@@ -4146,6 +4145,36 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
       ydata[j++] = getYData(i);
     }
     return MoreMath.getPolinomialValue(x, MoreMath.getPolinomialInterpolation(polinomialDegree, xdata, ydata)); // * monitorCounts;
+  }
+
+  public double getBasicInterpolatedIntensity(double x) {
+    int index = getOldNearestPoint(x);
+//    System.out.println(index + " " + x + " " + getTotalNumberOfData());
+    double intensity = 0;
+    if (index > getMinIndex() && index < getMaxIndex() - 1) {
+      double x0 = getXData(index - 1);
+      double y0 = getYData(index - 1);
+      double x1 = getXData(index + 1);
+      double y1 = getYData(index + 1);
+      if (Math.abs(x - x0) <= Math.abs(x - x1)) {
+        x1 = getXData(index);
+        y1 = getYData(index);
+      } else {
+        x0 = getXData(index);
+        y0 = getYData(index);
+      }
+      if (Math.abs(x1 - x0) > 1.0E-6)
+        intensity = y0 +  (y1 - y0) * (x - x0) / (x1 - x0);
+      else
+        intensity = (y1 + y0) / 2.0;
+//      System.out.println(intensity + " " + x0 + " " + x1 + " " + y0 + " " + y1);
+    } else if (index <= getMinIndex()) {
+      intensity = getYData(getMinIndex());
+    } else if (index >= getMaxIndex() - 1) {
+      intensity = getYData(getMaxIndex() - 1);
+    }
+    return intensity;
+//	  return getYData(index) * monitorCounts;
   }
 
   public double getInterpolatedFit(double x0, double bkgExpShift, double bkgExpThermalShift) {

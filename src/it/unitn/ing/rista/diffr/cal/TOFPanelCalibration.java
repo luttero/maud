@@ -20,6 +20,7 @@
 
 package it.unitn.ing.rista.diffr.cal;
 
+import gov.noaa.pmel.sgt.Format;
 import it.unitn.ing.rista.diffr.*;
 
 import java.io.*;
@@ -217,9 +218,9 @@ public class TOFPanelCalibration extends XRDcat {
 		zoom_x = getParameterValue(ZOOM_X_ID);
 		zoom_y = getParameterValue(ZOOM_Y_ID);
 
-    System.out.println("min/max 2Theta: " + minTheta + " (" + minThetaS + ") " + maxTheta + " (" + maxThetaS + ")");
-    System.out.println("min/max Eta: " + minEta + " (" + minEtaS + ") " + maxEta + " (" + maxEtaS + ")");
-    System.out.println("min/max Dist: " + minDist + " (" + minDistS + ") " + maxDist + " (" + maxDistS + ")");
+//    System.out.println("min/max 2Theta: " + minTheta + " (" + minThetaS + ") " + maxTheta + " (" + maxThetaS + ")");
+//    System.out.println("min/max Eta: " + minEta + " (" + minEtaS + ") " + maxEta + " (" + maxEtaS + ")");
+//    System.out.println("min/max Dist: " + minDist + " (" + minDistS + ") " + maxDist + " (" + maxDistS + ")");
 
 //		if (dist == 0)
 //			dist = 100.0;
@@ -251,10 +252,22 @@ public class TOFPanelCalibration extends XRDcat {
 		return true;
 	}
 
-	public String getBankID() {
-		return stringField[0];
+  public void setBankID(String alabel) {
+    super.setLabel(alabel);
+    if (stringField != null) {
+      setString(0, alabel);
+    }
+  }
+
+  public void setLabel(String alabel) {
+    setBankID(alabel);
+  }
+
+  public String getBankID() {
+		return getString(0);
 	}
-	public void calibrateData(DiffrDataFile datafile) {
+
+  public void calibrateData(DiffrDataFile datafile) {
 	}
 
   double maxTheta = -999.0;
@@ -405,6 +418,57 @@ public class TOFPanelCalibration extends XRDcat {
 		double difc = difc_part * (dist * DIST_CONV + flightPath) * Math.sin(twotheta * 0.5);
 		return difc * x + difa * x * x + zero;
 	}
+
+  public double[] getCenterTotalPathDifcAndTheta() {
+
+    double flightPath = ((MultiTOFPanelCalibration) getParent()).getFlightPath();
+    double difc_part = Constants.LAMBDA_SPEED_NEUTRON_CONV_ANG * 2.0;
+
+    DataFileSet dataset = (DataFileSet) (((MultiTOFPanelCalibration) getParent()).getInstrument()).getParent();
+    double zs = dataset.getZshift();
+    double rx = dataset.getSample().getRadiusDimensionXD();
+    double ry = dataset.getSample().getRadiusDimensionYD();
+    double detectorProper2Theta = theta;
+
+    double[] xf = getThetaEtaAndDist(center_x * zoom_x, center_y * zoom_y,
+        0, detectorProper2Theta, eta, tilt_x,  rot_z,
+        center_x * zoom_x,  center_y * zoom_y,  dist,
+        0,  0,  rx,  zs);
+
+    double[] dist_difc_theta = new double[3];
+    dist_difc_theta[0] = xf[2] * DIST_CONV + flightPath;
+    dist_difc_theta[1] = difc_part * (xf[2] * DIST_CONV + flightPath) * Math.sin(xf[0] * 0.5);
+    dist_difc_theta[2] = xf[0] * Constants.PITODEG;
+    return dist_difc_theta;
+  }
+
+  public double getCenterDifc() {
+    return getCenterTotalPathDifcAndTheta()[1];
+  }
+
+  public String getCalInfoCenter() {
+    return "Center x: " + Misc.getFormattedValue(center_x) + ", center y: " + Misc.getFormattedValue(center_y);
+  }
+
+  public String getCalInfoZoom() {
+    return "zoom_x: " + Misc.getFormattedValue(zoom_x) + ", zoom_y: " + Misc.getFormattedValue(zoom_y);
+  }
+
+  public String getCalInfoAngles() {
+    return "Tilt_x: " + Misc.getFormattedValue(tilt_x) + ", rot_z: " + Misc.getFormattedValue(rot_z);
+  }
+
+  public String get2thetaInfo() {
+    return "min/max 2Theta: " + Misc.getFormattedValue(minTheta) + " (" + minThetaS + ") " + Misc.getFormattedValue(maxTheta) + " (" + maxThetaS + ")";
+  }
+
+  public String getEtaInfo() {
+    return "min/max Eta: " + Misc.getFormattedValue(minEta) + " (" + minEtaS + ") " + Misc.getFormattedValue(maxEta) + " (" + maxEtaS + ")";
+  }
+
+  public String getDistanceInfo() {
+    return "min/max Dist: " + Misc.getFormattedValue(minDist) + " (" + minDistS + ") " + Misc.getFormattedValue(maxDist) + " (" + maxDistS + ")";
+  }
 
 /*	public void panelUnrolling(DiffrDataFile datafile, double detector2Theta, double detectorEta,
 	                           double detectorTiltX, double detectorRotationZ,

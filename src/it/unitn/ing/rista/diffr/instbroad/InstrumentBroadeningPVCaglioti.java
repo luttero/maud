@@ -136,35 +136,36 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
     if (initialized)
       return;
     initialized = true;
-
-		setAsymmetryTanDependent(true);
-    addparameterloopField(0, new Parameter(this, getParameterString(0, 0), 72.17134,
-        ParameterPreferences.getDouble(getParameterString(0, 0) + ".min", 5.0),
-        ParameterPreferences.getDouble(getParameterString(0, 0) + ".max", 1000)));
-    addparameterloopField(0, new Parameter(this, getParameterString(0, 1), -.229337,
-        ParameterPreferences.getDouble(getParameterString(0, 1) + ".min", -10),
-        ParameterPreferences.getDouble(getParameterString(0, 1) + ".max", 10)));
-    addparameterloopField(1, new Parameter(this, getParameterString(1, 0), 0.00252935,
-        ParameterPreferences.getDouble(getParameterString(1, 0) + ".min", -0.1),
-        ParameterPreferences.getDouble(getParameterString(1, 0) + ".max", 0.1)));
-    addparameterloopField(1, new Parameter(this, getParameterString(1, 1), 0.002716717,
-        ParameterPreferences.getDouble(getParameterString(1, 1) + ".min", -0.3),
-        ParameterPreferences.getDouble(getParameterString(1, 1) + ".max", 0.3)));
-    addparameterloopField(1, new Parameter(this, getParameterString(1, 2), 0.002312246,
-        ParameterPreferences.getDouble(getParameterString(1, 2) + ".min", -0.5),
-        ParameterPreferences.getDouble(getParameterString(1, 2) + ".max", 0.5)));
-    addparameterloopField(2, new Parameter(this, getParameterString(2, 0), 0.0,
-        ParameterPreferences.getDouble(getParameterString(2, 0) + ".min", -1.0),
-        ParameterPreferences.getDouble(getParameterString(2, 0) + ".max", 2.0)));
-    addparameterloopField(2, new Parameter(this, getParameterString(2, 1), 0.012,
-        ParameterPreferences.getDouble(getParameterString(2, 1) + ".min", -0.1),
-        ParameterPreferences.getDouble(getParameterString(2, 1) + ".max", 0.1)));
-    addparameterloopField(3, new Parameter(this, getParameterString(3, 0), 0.0,
-        ParameterPreferences.getDouble(getParameterString(3, 0) + ".min", -1),
-        ParameterPreferences.getDouble(getParameterString(3, 0) + ".max", 1)));
-    addparameterloopField(10, new Parameter(this, getParameterString(10, 0), 0.0,
-				ParameterPreferences.getDouble(getParameterString(10, 0) + ".min", -0.9),
-				ParameterPreferences.getDouble(getParameterString(10, 0) + ".max", 2.0)));
+    if (parameterloopField[1].size() == 0) {
+      setAsymmetryTanDependent(true);
+      addparameterloopField(0, new Parameter(this, getParameterString(0, 0), 72.17134,
+          ParameterPreferences.getDouble(getParameterString(0, 0) + ".min", 5.0),
+          ParameterPreferences.getDouble(getParameterString(0, 0) + ".max", 1000)));
+      addparameterloopField(0, new Parameter(this, getParameterString(0, 1), -.229337,
+          ParameterPreferences.getDouble(getParameterString(0, 1) + ".min", -10),
+          ParameterPreferences.getDouble(getParameterString(0, 1) + ".max", 10)));
+      addparameterloopField(1, new Parameter(this, getParameterString(1, 0), 0.00252935,
+          ParameterPreferences.getDouble(getParameterString(1, 0) + ".min", -0.1),
+          ParameterPreferences.getDouble(getParameterString(1, 0) + ".max", 0.1)));
+      addparameterloopField(1, new Parameter(this, getParameterString(1, 1), 0.002716717,
+          ParameterPreferences.getDouble(getParameterString(1, 1) + ".min", -0.3),
+          ParameterPreferences.getDouble(getParameterString(1, 1) + ".max", 0.3)));
+      addparameterloopField(1, new Parameter(this, getParameterString(1, 2), 0.002312246,
+          ParameterPreferences.getDouble(getParameterString(1, 2) + ".min", -0.5),
+          ParameterPreferences.getDouble(getParameterString(1, 2) + ".max", 0.5)));
+      addparameterloopField(2, new Parameter(this, getParameterString(2, 0), 0.0,
+          ParameterPreferences.getDouble(getParameterString(2, 0) + ".min", -1.0),
+          ParameterPreferences.getDouble(getParameterString(2, 0) + ".max", 2.0)));
+      addparameterloopField(2, new Parameter(this, getParameterString(2, 1), 0.012,
+          ParameterPreferences.getDouble(getParameterString(2, 1) + ".min", -0.1),
+          ParameterPreferences.getDouble(getParameterString(2, 1) + ".max", 0.1)));
+      addparameterloopField(3, new Parameter(this, getParameterString(3, 0), 0.0,
+          ParameterPreferences.getDouble(getParameterString(3, 0) + ".min", -1),
+          ParameterPreferences.getDouble(getParameterString(3, 0) + ".max", 1)));
+      addparameterloopField(10, new Parameter(this, getParameterString(10, 0), 0.0,
+          ParameterPreferences.getDouble(getParameterString(10, 0) + ".min", -0.9),
+          ParameterPreferences.getDouble(getParameterString(10, 0) + ".max", 2.0)));
+    }
   }
 
   public void notifyParameterChanged(Parameter source) {

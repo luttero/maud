@@ -43,6 +43,27 @@ from the older one.
 
 Maud Version notes:
 
+(28/08/2025):   2.99994. The "Smithsonite" release.
+                Beautiful crystals in the Socorro museum.
+                Added export to GSAS datafile for the LumaCAM data.
+                The export can be done only if the calibration
+                using a "Multi TOF 2D banks" angular calibration
+                object has been selected. Also the bank number of the
+                datafiles should correspond to one defined there.
+                Added 2 new keywords for the batch analysis:
+                "_maud_export_lumaCAM_to_GSAS_datafile"
+                "_pd_meas_dataset_number"
+                the first specify a datafilename where the batch
+                process will export the LumaCAM data (if any)
+                provided at least the computation has been done
+                once. The second permits to load a datafile in
+                the dataset defied by the number. The dataset number
+                should appear before the filename of the data to
+                load in order to work properly. You can have
+                multiple datafiles loaded this way by repeating
+                the dataset number (starting with 0) and the datafile
+                name.
+
 (20/08/2025):   2.99993. The "Extinction" release.
                 Will it happen to Maud? Is this the last version?.
                 Reworked the dynamical correction/extinction models

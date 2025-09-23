@@ -60,7 +60,7 @@ public class simplehklTableModel extends hklTableModel {
   public simplehklTableModel(Phase aphase) {
     thephase = aphase;
 
-	  int maxNumbersOfReflections = MaudPreferences.getInteger("texturePlot.maxNumberOfReflections", 100);
+	  int maxNumbersOfReflections = MaudPreferences.getInteger("texturePlot.maxNumberOfReflections", 20);
     numRows = 0;
     if (thephase != null)
       numRows = thephase.gethklNumber();

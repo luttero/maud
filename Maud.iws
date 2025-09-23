@@ -6,9 +6,35 @@
   <component name="ChangeListManager">
     <list default="true" id="61caab25-241f-4ab1-85f0-b423f2950da9" name="Changes" comment="Fix to post on the website">
       <change beforePath="$PROJECT_DIR$/Maud.iws" beforeDir="false" afterPath="$PROJECT_DIR$/Maud.iws" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libs/current/ij.jar" beforeDir="false" afterPath="$PROJECT_DIR$/libs/current/ij.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libs/current/miscLib.jar" beforeDir="false" afterPath="$PROJECT_DIR$/libs/current/miscLib.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sfm/StructureFactorLeBailExtractor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sfm/StructureFactorLeBailExtractor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.xml" beforeDir="false" afterPath="$PROJECT_DIR$/build.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/_posts/2025-08-21-new-version-2.99993.markdown" beforeDir="false" afterPath="$PROJECT_DIR$/docs/_posts/2025-08-21-new-version-2.99993.markdown" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/current/Help.jar" beforeDir="false" afterPath="$PROJECT_DIR$/libs/current/Help.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/gov/lanl/epsc4/bin/macarm/epsc4" beforeDir="false" afterPath="$PROJECT_DIR$/src/gov/lanl/epsc4/bin/macarm/epsc4" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/gov/lanl/epsc4/bin/macarm/epsc4_old" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/help/readme.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/help/readme.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/BeartexPFPlot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/BeartexPFPlot.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/DataD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/DataD.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/DiffractionMainFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/DiffractionMainFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/JSubordinateLoopListPane.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/JSubordinateLoopListPane.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/treetable/ParameterTreeModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/treetable/ParameterTreeModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/DataFileSet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/DataFileSet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/DiffrDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/DiffrDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/FilePar.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/FilePar.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Instrument.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Instrument.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Parameter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Parameter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/XRDcat.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/XRDcat.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/MultiTOFPanelCalibration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/MultiTOFPanelCalibration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/TOFPanelCalibration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/TOFPanelCalibration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/GSASDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/GSASDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/LoskoDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/LoskoDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/instbroad/EDXRFInstrumentBroadening.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/instbroad/EDXRFInstrumentBroadening.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/instbroad/InstrumentBroadeningPVCaglioti.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/instbroad/InstrumentBroadeningPVCaglioti.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rsa/EPSCmodel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rsa/EPSCmodel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/interfaces/basicObj.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/interfaces/basicObj.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/models/simplehklTableModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/models/simplehklTableModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/Constants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/Misc.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/Misc.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/batchProcess.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/batchProcess.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -77,8 +103,8 @@
       </method>
     </configuration>
     <list>
-      <item itemvalue="Application.Maud" />
       <item itemvalue="Application.MaudSpeed" />
+      <item itemvalue="Application.Maud" />
     </list>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />

@@ -48,6 +48,7 @@ public class MultiTOFPanelCalibration extends AngularCalibration {
 
 	public static String[] diclistc = {
 			"_instrument_parameter_file",
+      "_instrument_default_bank_ID",
 
 			"_instrument_neutron_flight_path",
 
@@ -55,6 +56,7 @@ public class MultiTOFPanelCalibration extends AngularCalibration {
 	};
 	public static String[] diclistcrm = {
 			"_instrument_parameter_file",
+      "_instrument_default_bank_ID",
 
 			"_instrument_neutron_flight_path",
 
@@ -89,7 +91,7 @@ public class MultiTOFPanelCalibration extends AngularCalibration {
 	}
 
 	public void initConstant() {
-		Nstring = 1;
+		Nstring = 2;
 		Nstringloop = 0;
 		Nparameter = 1;
 		Nparameterloop = 0;
@@ -110,6 +112,8 @@ public class MultiTOFPanelCalibration extends AngularCalibration {
 	public void initParameters() {
 		super.initParameters();
 		setFileName("");
+    if (getString(1).length() == 0)
+      setDefaultBankID("Bank1");
 		double flightP = MaudPreferences.getDouble("TOFbank2D.flightPathToSample_m", 9.07617);
 		parameterField[FLIGHT_PATH_ID] = new Parameter(this, getParameterString(0), flightP,
 				ParameterPreferences.getDouble(getParameterString(0) + ".min", 0.0),
@@ -150,6 +154,14 @@ public class MultiTOFPanelCalibration extends AngularCalibration {
 		return true;
 	}
 
+  public void setDefaultBankID(String bankID) {
+    setString(1, bankID);
+  }
+
+  public String getDefaultBankID() {
+    return getString(1);
+  }
+
 	protected boolean bankIsActive(int bank) {
 		DataFileSet data = (DataFileSet) getParent().getParent();
 		int datafiles = data.activedatafilesnumber();
@@ -185,6 +197,7 @@ public class MultiTOFPanelCalibration extends AngularCalibration {
 	public double getFlightPath() {
 		return flightPath;
 	}
+
 	public double refreshAndGetFlightPath() {
 		flightPath = getParameterValue(FLIGHT_PATH_ID);
 		return flightPath;
@@ -228,6 +241,14 @@ public class MultiTOFPanelCalibration extends AngularCalibration {
 		for (int i = 0; i < banknumbers(); i++)
 			System.out.println(getBankID(i));
 	}
+
+  public double[] getCenterTotalPathDifcAndTheta(int bank) {
+    return getBank(bank).getCenterTotalPathDifcAndTheta();
+  }
+
+  public double getCenterDifc(int bank) {
+    return getBank(bank).getCenterDifc();
+  }
 
 /*	public String loadDataFile(Frame parent) {
 		String filename = Utility.openFileDialog(parent, "Import panel/bank calibration file",
@@ -367,12 +388,14 @@ public class MultiTOFPanelCalibration extends AngularCalibration {
 
 		public void initParameters() {
 			addComponenttolist(flightPathTF, parameterField[0]);
-			bank2DPanel.setList(MultiTOFPanelCalibration.this, 0);
+			bank2DPanel.setList(MultiTOFPanelCalibration.this, 0, getBankNumber(getDefaultBankID()));
 		}
 
 		public void retrieveParameters() {
 			parameterField[0].setValue(flightPathTF.getText());
 			removeComponentfromlist(flightPathTF);
+      setDefaultBankID(bank2DPanel.getSelectedObject().getLabel());
+      System.out.println("Default bankID: " + getDefaultBankID());
 		}
 
 		public void dispose() {

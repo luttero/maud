@@ -148,6 +148,19 @@ public class JSubordinateLoopListPane extends JPanel {
     initListener();
   }
 
+  public void setList(XRDcat aparent, int index, int sel) {
+    itsparent = aparent;
+    theindex = index;
+    if (itsparent != null) {
+      int numb = itsparent.subordinateloopField[theindex].setList(thelist);
+      if (numb > 0) {
+        setparameterlist(sel);
+        selected = sel;
+      }
+    }
+    initListener();
+  }
+
   public void setparameterlist(int numb) {
     int totnumb = itsparent.numberofelementSubL(theindex);
     if (totnumb > numb) {

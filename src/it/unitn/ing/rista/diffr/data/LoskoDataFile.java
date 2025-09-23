@@ -192,7 +192,7 @@ public class LoskoDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
 			try {
 				int index = 1;
 				clockWidth = 100.0;
-				int bankNumber = 1;
+				int bankNumber = getDataFileSet().getActualBankNumber() + 1;
 
 				String token = new String("");
 				StringTokenizer st = null;
@@ -291,7 +291,7 @@ public class LoskoDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
 									datafile.setXImage(i1, x1);
 									datafile.setYImage(i1, y1);
 								}
-								String bankID = new String(GSASbankCalibration.bankPrefix + Integer.toString(bankNumber));
+								String bankID = new String(GSASbankCalibration.bankPrefix + bankNumber);
 								datafile.setBankID(bankID);
 							} else index++;
 							if (datafile != null) {

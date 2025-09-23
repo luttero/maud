@@ -425,6 +425,7 @@ public class BeartexPFPlot extends Frame implements ClipboardOwner, Printable {
 	static double stepResolution = 5.0;
 
 	public static void computePFsAndOutput(Phase aphase, Vector<Reflection> reflList, String poleFiguresFilename) {
+    int maxNumbersOfReflections = MaudPreferences.getInteger("texturePlot.maxNumberOfReflections", 20);
 		int resolution = MaudPreferences.getInteger(TexturePlot.gridResString, 101);
 		double zoom = MaudPreferences.getDouble(TexturePlot.zoomString, 1);
 		double filterWidth = MaudPreferences.getDouble("texturePlot.gaussFilterWidth", 0.0);
@@ -442,7 +443,7 @@ public class BeartexPFPlot extends Frame implements ClipboardOwner, Printable {
 			pfOutput.openOutput();
 		}
 		Texture textureModel = aphase.getActiveTexture();
-		int hklnumber = reflList.size();
+		int hklnumber = Math.min(reflList.size(), maxNumbersOfReflections);
 		double max = 0.0;
 		double min = 10000.0;
 		double[][][] trialPole = new double[hklnumber][resolution][resolution];
@@ -544,11 +545,11 @@ public class BeartexPFPlot extends Frame implements ClipboardOwner, Printable {
 		BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		Graphics g = bi.getGraphics();
 		try {
-//      System.out.println("Saving picture file: " + dst);
 			g.drawImage(image, 0, 0, null);
 			ImageIO.write(bi, type, new File(dst));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
+      System.out.println("Saving picture file: " + dst);
 			e.printStackTrace();
 		}
 //    System.out.println("Saved in: " + dst);

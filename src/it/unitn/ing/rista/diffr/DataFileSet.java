@@ -23,13 +23,15 @@ package it.unitn.ing.rista.diffr;
 import java.util.*;
 
 import static java.lang.System.*;
+import static java.util.Collections.max;
 import static java.util.Collections.sort;
 import java.io.*;
 import java.awt.*;
 import java.util.concurrent.TimeUnit;
 
 import com.radiographema.MaudText;
-import it.unitn.ing.rista.diffr.cal.GSASbankIntCalibration;
+import it.unitn.ing.rista.diffr.cal.*;
+import it.unitn.ing.rista.diffr.data.GSASDataFile;
 import it.unitn.ing.rista.diffr.instrument.DefaultInstrument;
 import it.unitn.ing.rista.io.cif.*;
 import it.unitn.ing.rista.util.*;
@@ -913,6 +915,128 @@ public class DataFileSet extends XRDcat {
     removeselSubLField(2);
     Constants.refreshTreePermitted = true;
     notifyUpObjectChanged(this, 0, -1);
+  }
+
+  public int getActualBankNumber() {
+    try {
+      MultiTOFPanelCalibration calib = (MultiTOFPanelCalibration) getInstrument().getAngularCalibration();
+      return calib.getBankNumber(calib.getDefaultBankID());
+    } catch (Exception e) {
+      System.out.println("The angular calibration is not the Multi TOF Panel, set it before loading the data");
+      e.printStackTrace();
+    }
+    return 0;
+  }
+
+  public void exportGSASDatafiles(String filename) {
+    Constants.refreshTreePermitted = false;
+    Vector<DiffrDataFile> datafiles = getSelectedDatafiles();
+    String title = this.getLabel() + ", LumaCAM data binned by MAUD";
+    Vector<GSASDataFile.GSASfileData> allGdata = new Vector<>(1, 1);
+    GSASDataFile.GSASfileData data1 = exportGSASDatafiles(datafiles);
+    if (data1 != null)
+      allGdata.add(data1);
+    String instrumentParameterFile = getInstrument().getIntensityCalibration().getString(0);
+
+    String[] folderAndName = Misc.getFolderandName(instrumentParameterFile);
+    GSASDataFile.saveBankInXYEformat(filename, title, folderAndName[1], allGdata);
+    Constants.refreshTreePermitted = true;
+    notifyUpObjectChanged(this, 0, -1);
+  }
+
+  public GSASDataFile.GSASfileData exportAllGSASDatafiles() {
+    Vector<DiffrDataFile> datafiles = new Vector<>(activedatafilesnumber(), 1);
+    for (int i = 0; i < activedatafilesnumber(); i++)
+      datafiles.add(getActiveDataFile(i));
+    return exportGSASDatafiles(datafiles);
+  }
+
+  public GSASDataFile.GSASfileData exportGSASDatafiles(Vector<DiffrDataFile> diffrDatafiles) {
+    if (diffrDatafiles.size() < 1) return null;
+
+    if (!getInstrument().isTOF() ||
+        !Misc.areClassCompatibles("it.unitn.ing.rista.diffr.cal.MultiTOFPanelCalibration",
+            getInstrument().getAngularCalibration().getClass())) {
+      System.out.println("Only works for TOF data and Multi TOF panels calibration");
+      return null;
+    }
+
+    GSASDataFile.GSASfileData gdata = new GSASDataFile.GSASfileData();
+    double minD = 1.0E10;
+    double maxD = 0.0;
+    double stepD = 1.0e10;
+    for (int i = 0; i < diffrDatafiles.size(); i++) {
+      DiffrDataFile datafile = diffrDatafiles.elementAt(i);
+      int min = datafile.getMinIndex();
+      int max = datafile.getMaxIndex();
+//      double prev_x = 0;
+      for (int j = min; j < max; j++) {
+        double x = datafile.getXData(j);
+        if (x < minD)
+          minD = x;
+        if (x > maxD)
+          maxD = x;
+//        if (j > min && Math.abs(x - prev_x) < stepD) {
+//          stepD = Math.abs(x - prev_x);
+//          System.out.println("New stepD " + stepD + ", " + i + " " + j);
+//        }
+//        prev_x = x;
+      }
+    }
+    int tofNumber = MaudPreferences.getInteger("LumaCam.numberTOFpoints", 2048);
+    //(int) ((maxD - minD) / stepD);
+    stepD = (maxD - minD) / (tofNumber - 1);
+    double[][] data = new double[3][tofNumber];
+
+    MultiTOFPanelCalibration calib = (MultiTOFPanelCalibration) getInstrument().getAngularCalibration();
+    int bank = diffrDatafiles.elementAt(0).getBankNumber();
+    double[] dist_difc_theta = calib.getCenterTotalPathDifcAndTheta(bank);
+
+    for (int i = 0; i < tofNumber; i++) {
+      double d = minD + i * stepD;
+      double tof = dist_difc_theta[1] * d;
+      data[0][i] = tof;
+      data[1][i] = 0.0;
+      data[2][i] = 0.0;
+      double neutronCounts = 0.0;
+      int totalCounts = 0;
+      for (int j = 0; j < diffrDatafiles.size(); j++) {
+        DiffrDataFile datafile = diffrDatafiles.elementAt(j);
+        if (datafile.isInsideRange(d)) {
+          double intensity = datafile.getBasicInterpolatedIntensity(d);
+          if (intensity > 0) {
+            neutronCounts += intensity;
+            totalCounts++;
+          }
+        }
+      }
+//      System.out.println(i + " " + totalCounts);
+      if (totalCounts > 0) {
+        data[1][i] = neutronCounts * diffrDatafiles.size() / totalCounts;
+        if (data[1][i] > 0)
+          data[2][i] = Math.sqrt(data[1][i]);
+      }
+    }
+
+    gdata.setData(data);
+    gdata.setBank(bank + 1);
+    String[] comments = new String[12];
+    comments[0] = diffrDatafiles.size() + " superPixels calibrated by MAUD version " + Constants.maud_version;
+    comments[1] = calib.getBank(bank).get2thetaInfo();
+    comments[2] = calib.getBank(bank).getEtaInfo();
+    comments[3] = calib.getBank(bank).getDistanceInfo();
+    comments[4] = "Primary flight path " + calib.getFlightPath() + " m";
+    comments[5] = "Calibrated and binned data using: ";
+    comments[6] = calib.getBank(bank).getCalInfoCenter();
+    comments[7] = calib.getBank(bank).getCalInfoZoom();
+    comments[8] = calib.getBank(bank).getCalInfoAngles();
+    comments[9] = "Total flight path " + Misc.getFormattedValue(dist_difc_theta[0]) + ", tth " +
+        Misc.getFormattedValue(dist_difc_theta[2]) + " deg, DIFC " + Misc.getFormattedValue(dist_difc_theta[1]);
+    comments[10] = "Warnning: use the first column for TOF, data is constant in deltaTOF, not SLOG";
+    comments[11] = "Use d = DIFC / TOF, DIFA and ZERO are not used or 0";
+    gdata.setComments(comments);
+
+    return gdata;
   }
 
   public void disableByAngles(int angleNumber, double startingAngle, double finalAngle) {
@@ -2345,10 +2469,13 @@ public class DataFileSet extends XRDcat {
   }
 
   public void addAdditionalBackgroundToAll() {
-    int datafilenumber = datafilesnumber();
-
-    for (int i = 0; i < datafilenumber; i++)
+    for (int i = 0; i < datafilesnumber(); i++)
       getDataFile(i).addBackgroundParameter();
+  }
+
+  public void removeAdditionalBackgroundToAll() {
+    for (int i = 0; i < datafilesnumber(); i++)
+      getDataFile(i).removeAllBackgroundParameters();
   }
 
   public void removeDatafile(DiffrDataFile datafile) {
@@ -2736,9 +2863,9 @@ public class DataFileSet extends XRDcat {
     resetCoefficients(backgroundID);
     resetCoefficients(chiBackgroundID);
     resetCoefficients(etaBackgroundID);
-    if (numbercoefbackg() > 0) {
-      getbackgcoef(0).setValue(1.0);
-    }
+//    if (numbercoefbackg() > 0) {
+//      getbackgcoef(0).setValue(1.0);
+//    }
   }
 
   public void resetCoefficients(int index) {
@@ -2987,20 +3114,34 @@ public class DataFileSet extends XRDcat {
           if (ch == '_' || ch == '-')
             dst = plotOutput2DFileName + label + ".png";
           else {
-            if (!plotOutput2DFileName.endsWith(".png"))
-              dst = plotOutput2DFileName + ".png";
+            if (!plotOutput2DFileName.endsWith(".png")) {
+              if (getFilePar().getActiveSample().activeDatasetsNumber() > 1)
+                dst = plotOutput2DFileName + "_" + label + ".png";
+              else
+                dst = plotOutput2DFileName + ".png";
+            } else {
+              if (getFilePar().getActiveSample().activeDatasetsNumber() > 1) {
+                if (plotOutput2DFileName.endsWith(".png"))
+                  dst = plotOutput2DFileName.substring(0, plotOutput2DFileName.length() - 4) + "_" + label + ".png";
+                else
+                  dst = plotOutput2DFileName + "_" + label + ".png";
+              } else
+                dst = plotOutput2DFileName;
+            }
           }
-					Misc.deleteFile(dst);
+
+//					Misc.deleteFile(dst);
 //          System.out.println("Save 2D plot as: " + dst);
 					BeartexPFPlot.savePic(fileImage, "png", dst, comp);
 
 					boolean fileSaved = false;
 					while (!fileSaved) {
-						fileSaved = Misc.checkForFile(dst);
-						try {
-							TimeUnit.MILLISECONDS.sleep(500);
+            try {
+              TimeUnit.MILLISECONDS.sleep(500);
+						  fileSaved = Misc.checkForFile(dst);
 						} catch (InterruptedException e) {
 							e.printStackTrace();
+              break;
 						}
 					}
 
@@ -3056,6 +3197,8 @@ public class DataFileSet extends XRDcat {
           else {
             if (!plotOutputFileName.endsWith(".png"))
               dst = plotOutputFileName + ".png";
+            else
+              dst = plotOutputFileName;
           }
 					Misc.deleteFile(dst);
 					BeartexPFPlot.savePic(fileImage, "png", dst, comp);

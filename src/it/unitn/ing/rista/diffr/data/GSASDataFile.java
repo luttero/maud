@@ -924,4 +924,78 @@ public class GSASDataFile extends MultDiffrDataFile {
 		else // float
 			return Misc.getDoubleStringFormatted(value, digits, decimals);
 	}
+
+  public static void saveBankInXYEformat(String filename, String title, String instrumentParameterFile,
+                                         Vector<GSASfileData> datafiles) {
+    BufferedWriter gwriter = Misc.getWriter(filename);
+    if (gwriter != null) {
+      try {
+
+        gwriter.write(title);
+        gwriter.write(Constants.lineSeparator);
+        gwriter.write("Instrument parameter file:" + instrumentParameterFile);
+        gwriter.write(Constants.lineSeparator);
+
+        for (int i = 0; i < datafiles.size(); i++) {
+          GSASfileData datafile = datafiles.elementAt(i);
+          for (int j = 0; j < datafile.comments.length; j++) {
+            if (datafile.comments[j].length() > 78)
+              gwriter.write("# " + datafile.comments[j].substring(0, 78));
+            else
+              gwriter.write("# " + datafile.comments[j]);
+            gwriter.write(Constants.lineSeparator);
+          }
+          int totNumber = datafile.data[0].length;
+          double minTOF = datafile.data[0][0];
+          double maxTOF = datafile.data[0][totNumber - 1];
+          double firstStep = (datafile.data[0][1] - minTOF) / minTOF;
+          gwriter.write("BANK " + datafile.bank + " " + totNumber + " " + totNumber +
+              " SLOG " + Misc.getFormattedValue(minTOF) + " " + Misc.getFormattedValue(maxTOF) + " "
+              + Misc.getFormattedValue(firstStep) + " 0 FXYE");
+          gwriter.write(Constants.lineSeparator);
+          for (int j = 0; j < totNumber; j++) {
+            for (int k = 0; k < datafile.data.length; k++)
+              gwriter.write("   " + Misc.getFormattedValue(datafile.data[k][j]));
+            gwriter.write(Constants.lineSeparator);
+          }
+        }
+        gwriter.flush();
+        gwriter.close();
+      } catch (IOException io) {
+        try {
+          gwriter.flush();
+          gwriter.close();
+        } catch (IOException ieo) {
+        }
+      }
+    }
+  }
+
+  public static class GSASfileData {
+
+    int bank = 1;
+    double[][] data = null;
+    String[] comments = null;
+
+    public GSASfileData() {}
+
+    public GSASfileData(int bank, String[] comments, double[][] data) {
+      this.bank = bank;
+      this.comments = comments;
+      this.data = data;
+    }
+
+    public void setData(double[][] data) {
+      this.data = data;
+    }
+
+    public void setComments(String[] comments) {
+      this.comments = comments;
+    }
+
+    public void setBank(int bank) {
+      this.bank = bank;
+    }
+  }
+
 }

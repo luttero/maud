@@ -66,6 +66,9 @@ public class batchProcess {
   String stressFilename = null;
   String sin2psiOptions = null;
   String diffOutputDataFilename = null;
+  String GSASDataFilename = null;
+  int actualDatasetNumber = 0;
+
   public String[] diclist = {"_riet_analysis_file",
                              "_riet_analysis_iteration_number", "_riet_analysis_wizard_index",
                              "_riet_analysis_fileToSave", "_riet_meas_datafile_name",
@@ -79,7 +82,8 @@ public class batchProcess {
 		                       "_maud_LCLS2_detector_config_file", "_publ_section_title",
 		                       "_maud_output_stress_filename", "_maud_output_stress_options",
 		                       "_riet_meas_datains_name", "_riet_meas_datafile_fitting",
-		                       "_maud_output_diff_data_filename"
+		                       "_maud_output_diff_data_filename", "_maud_export_lumaCAM_to_GSAS_datafile",
+                           "_pd_meas_dataset_number"
   };
 
   public batchProcess(String insFileName) {
@@ -293,7 +297,8 @@ public class batchProcess {
         } else if (index == 4) {
 //	        System.out.println(analysis + " " + item.thestring);
           if (analysis != null) {
-	          lastDatafiles = analysis.getSample(0).getDataSet(0).addDataFileforName(workingDirectory + item.thestring, false);
+            analysis.getSample(0).getDataSet(actualDatasetNumber).refreshAll(true);
+	          lastDatafiles = analysis.getSample(0).getDataSet(actualDatasetNumber).addDataFileforName(workingDirectory + item.thestring, false);
           }
           avector.removeElementAt(i);
           loopitem--;
@@ -416,6 +421,14 @@ public class batchProcess {
 	        diffOutputDataFilename = workingDirectory + item.thestring;
 	        avector.removeElementAt(i);
 	        loopitem--;
+        } else if (index == 26) { //"_maud_export_lumaCAM_to_GSAS_datafile"
+          GSASDataFilename = workingDirectory + item.thestring;
+          avector.removeElementAt(i);
+          loopitem--;
+        } else if (index == 27) { //"_pd_meas_dataset_number"
+          actualDatasetNumber = Integer.parseInt(item.thestring);
+          avector.removeElementAt(i);
+          loopitem--;
         } else
           i++;
       } // end of while (i < loopitem)
@@ -604,6 +617,7 @@ public class batchProcess {
 			      }
 			      if (phaseNumber >= 0 && reflList.size() > 0) {
 			      	Phase phase = analysis.getSample(0).getPhase(phaseNumber);
+              //todo: add possibility to specify the reflections (h k l list)
 				      BeartexPFPlot.computePFsAndOutput(phase, reflList, poleFiguresFilename);
 			      }
 
@@ -659,6 +673,9 @@ public class batchProcess {
 			exportExperimentalComputedData(analysis, "", diffOutputDataFilename);
 
 		}
+      if (GSASDataFilename != null && !GSASDataFilename.isEmpty()){
+        analysis.exportGSASdataFromLumaCAM(GSASDataFilename);
+      }
 
 	  }
   }
@@ -683,6 +700,7 @@ public class batchProcess {
 
   public void exportExperimentalComputedData(FilePar analysis, String folder, String afilename) {
 
+    //todo: add calibrate data column
     String[] folderAndName = Misc.getFolderandName(filename);
 
     if (!afilename.endsWith(".cif"))

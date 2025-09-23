@@ -750,7 +750,11 @@ public class Instrument extends XRDcat {
   }
 
   public void checkIntensity() {
-    setIntensity(Double.toString(getIntensity().getValueD() * 2.0));
+    multiplyScaleFactorBy(2.0);
+  }
+
+  public void normalizeIntensityForNewAbsorption() {
+    multiplyScaleFactorBy(0.25);
   }
 
   public void multiplyScaleFactorBy(double totalquantity) {

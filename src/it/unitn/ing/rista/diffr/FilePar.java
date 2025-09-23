@@ -23,6 +23,7 @@ package it.unitn.ing.rista.diffr;
 import it.unitn.ing.rista.awt.*;
 import it.unitn.ing.rista.comp.*;
 import it.unitn.ing.rista.diffr.cal.*;
+import it.unitn.ing.rista.diffr.data.GSASDataFile;
 import it.unitn.ing.rista.diffr.detector.XRFDetector;
 import it.unitn.ing.rista.interfaces.Function;
 import it.unitn.ing.rista.io.cif.CIFItem;
@@ -1050,38 +1051,47 @@ public class FilePar extends XRDcat implements lFilePar, Function {
     boundList = null;
     loadingFile = false;
     MultDiffrDataFile.resetCache();
-    if (getVersion() < 2.06) {
-    if (Constants.testing)
+    double loadingVersion = getVersion();
+    System.out.println("Maud parameter file version: " + loadingVersion);
+    if (loadingVersion < 2.06) {
+      if (Constants.testing)
                 System.out.println("First refresh");
       refreshAll(true);
-    if (Constants.testing)
+      if (Constants.testing)
 								System.out.println("End refresh");
     }
     loadingFile = true;
-    if (getVersion() < 1.86)
+    if (loadingVersion < 1.86) {
       checkMonitorCounts();
-//								System.out.println("Monitor checked");
-    if (getVersion() < 1.57)
+      System.out.println("Monitor checked");
+    }
+    if (loadingVersion < 1.57) {
       checkPhiandChiAngles();
-//								System.out.println("PhiandChi checked");
-    if (getVersion() < 1.69)
+      System.out.println("PhiandChi checked");
+    }
+    if (loadingVersion < 1.69) {
       checkAsymmetryTanDep();
-//    System.out.println("Asymmetry checked");
-    if (getVersion() < 1.94)
+      System.out.println("Asymmetry checked");
+    }
+    if (loadingVersion < 1.94) {
       moveAtomsToStructureModel();
-//    System.out.println("Move atoms checked");
-    if (getVersion() < 1.95)
+      System.out.println("Move atoms checked");
+    }
+    if (loadingVersion < 1.95) {
       addMinMaxToParameters();
-//    System.out.println("Min max checked");
-    if (getVersion() < 1.96)
+      System.out.println("Min max checked");
+    }
+    if (loadingVersion < 1.96) {
       checkCagliotiTanDep();
-//    System.out.println("Caglioti checked");
-    if (getVersion() < 1.993)
+      System.out.println("Caglioti & tanDep checked");
+    }
+    if (loadingVersion < 1.993) {
       checkCrystalliteAndMicrostrain();
-//		System.out.println("tanDep chk, Start refresh");
-    if (getVersion() < 1.9993) {
+      System.out.println("Crystallite & microstrains checked");
+    }
+    if (loadingVersion < 1.9993) {
+      System.out.println("New absorption model, re-scale intensity");
       if (!Constants.textonly) {
-
         if (switchToNewAbsorptionModel(new Frame()))
           Constants.useNewAbsorption = true;
         else
@@ -1089,19 +1099,24 @@ public class FilePar extends XRDcat implements lFilePar, Function {
       } else {
         Constants.useNewAbsorption = true;
       }
-    } else if (getVersion() < 2.06) {
+    } else if (loadingVersion < 2.06) {
       checkIntensityAndCaglioti();
+      System.out.println("Caglioti & Intensity checked");
     }
-    if (getVersion() < 2.045)
+    if (loadingVersion < 2.045) {
       checkBkgPeak();
-    if (getVersion() < 2.3)
+      System.out.println("Bkg peaks checked");
+    }
+    if (loadingVersion < 2.3) {
       getSample(0).checkForOldPhasesBehaviour();
+      System.out.println("Old phases behaviour checked");
+    }
 
 	  loadingFile = false;
     if (Constants.testing)
       System.out.println("Last refresh");
     refreshAll(true);
-	  if (getVersion() < 2.4 && getVersion() > 1.8) {
+	  if (loadingVersion < 2.4 && loadingVersion > 1.8) {
 		  getSample(0).computeRange();
 		  for (int i = 0; i < getSample(0).getDatasetsList().size(); i++) {
 			  DataFileSet data = getSample(0).getDataSet(i);
@@ -1109,7 +1124,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 			    data.changeBackgroundInterpolation();
 		  }
 	  }
-	  if (getVersion() < 2.4) {
+	  if (loadingVersion < 2.4) {
 		  for (int i = 0; i < getSample(0).getDatasetsList().size(); i++) {
 			  InstrumentBroadening instrBr = getSample(0).getDataSet(i).getInstrument().getInstrumentBroadening();
 			  if (instrBr instanceof InstrumentBroadeningPVCaglioti)
@@ -1120,10 +1135,9 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 	  refreshAll(true);
 	  for (int i = 0; i < getSample(0).getDatasetsList().size(); i++) {
 		  DataFileSet data = getSample(0).getDataSet(i);
-
 		  data.forceRangeCut();
 	  }
-	  if (getVersion() < 2.61) {
+	  if (loadingVersion < 2.61) {
 		  for (int i = 0; i < getSample(0).getDatasetsList().size(); i++) {
 			  DataFileSet dataset = getSample(0).getDataSet(i);
 			  if (dataset.getInstrument().getDetector() instanceof XRFDetector) {
@@ -1133,7 +1147,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 					  dataset.getDataFile(j).setAngleValue(4, theta2 + dataset.getDataFile(j).getAngleValue(0));
 					  if (dataset.getDataFile(j).getAngleValue(3) == 45.0)
 						  dataset.getDataFile(j).setAngleValue(3, 0);
-					  if (getVersion() > 2.56) {
+					  if (loadingVersion > 2.56) {
 						  DiffrDataFile datafile = dataset.getDataFile(j);
 						  double start = datafile.getXDataOriginal(0);
 						  System.out.println("Shifting uncalibrated x by " + start);
@@ -1145,14 +1159,20 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 			  }
 		  }
 	  }
-	  if (getVersion() < 2.992) {
+	  if (loadingVersion < 2.992) {
 		  for (int i = 0; i < getSample(0).getDatasetsList().size(); i++) {
 			  DataFileSet dataset = getSample(0).getDataSet(i);
-			  for (int j = 0; j < dataset.datafilesnumber(); j++) // invert eta
-			  	 dataset.getDataFile(j).setAngleValue(3, -dataset.getDataFile(j).getAngleValue(3));
+        AngularCalibration angcal = dataset.getInstrument().getAngularCalibration();
+        if (!(angcal.identifier.equalsIgnoreCase("Flat Image Transmission") ||
+            angcal.identifier.equalsIgnoreCase("Inclined Reflection Image"))) {
+          for (int j = 0; j < dataset.datafilesnumber(); j++) // invert eta
+            dataset.getDataFile(j).setAngleValue(3, -dataset.getDataFile(j).getAngleValue(3));
+        }
 		  }
 	  }
-	  if (getVersion() < 2.993) {
+    if (loadingVersion < 2.94)
+      normalizeIntensityForNewAbsorption();
+    if (loadingVersion < 2.993) {
 		  for (int i = 0; i < getSample(0).getDatasetsList().size(); i++) {
 			  DataFileSet dataset = getSample(0).getDataSet(i);
 			  AngularCalibration angcal = dataset.getInstrument().getAngularCalibration();
@@ -1163,7 +1183,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 			  }
 		  }
 	  }
-	  checkForVersion(getVersion());
+	  checkForVersion(loadingVersion);
 
 	  stringField[1] = "Maud version " + Constants.maud_version;
 
@@ -1247,6 +1267,17 @@ public class FilePar extends XRDcat implements lFilePar, Function {
               ((InstrumentBroadeningPVCaglioti) instBroad).setCagliotiTanDependent(true);
           }
         }
+      }
+    }
+  }
+
+  public void normalizeIntensityForNewAbsorption() {
+    for (int j = 0; j < samplesNumber(); j++) {
+      Sample asample = getSample(j);
+      for (int i = 0; i < asample.datasetsNumber(); i++) {
+        DataFileSet adata = asample.getDataSet(i);
+        Instrument ainstrument = adata.getInstrument();
+        ainstrument.normalizeIntensityForNewAbsorption();
       }
     }
   }
@@ -2226,6 +2257,8 @@ public class FilePar extends XRDcat implements lFilePar, Function {
   public void compute(OutputPanel aframe) {
     setDerivate(false);
     setOptimizing(false);
+    if (aframe == null)
+      refreshAll(true);
     boolean canGo = validate();
     if (!canGo)
       return;
@@ -3671,7 +3704,22 @@ public class FilePar extends XRDcat implements lFilePar, Function {
     }
   }
 
-
+  public void exportGSASdataFromLumaCAM(String filename) {
+    String title = this.getLabel() + ", LumaCAM data binned by MAUD";
+    String instrumentParameterFile = null;
+    Vector<GSASDataFile.GSASfileData> allGdata = new Vector<>(getActiveSample().activeDatasetsNumber(), 1);
+    for (int i = 0; i < getActiveSample().activeDatasetsNumber(); i++) {
+      if (instrumentParameterFile == null) {
+        instrumentParameterFile = getActiveSample().getActiveDataSet(i).getInstrument().
+            getIntensityCalibration().getString(0);
+      }
+      GSASDataFile.GSASfileData data1 = getActiveSample().getActiveDataSet(i).exportAllGSASDatafiles();
+      if (data1 != null)
+        allGdata.add(data1);
+    }
+    String[] folderAndName = Misc.getFolderandName(instrumentParameterFile);
+    GSASDataFile.saveBankInXYEformat(filename, title, folderAndName[1], allGdata);
+  }
 
 }
 

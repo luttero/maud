@@ -951,13 +951,13 @@ public class EPSCmodel extends Strain {
             if (mode.isEnabled()) {
               output.write(mode.getString(TITLE_ID) + "------------------------------------------------------------------------------------");
               output.newLine();
-              output.write(" " + mode.parameterField[0].getValue() + " " + mode.parameterField[1].getValue() + " " + mode.parameterField[2].getValue() + "  !A,B,C FOR TAU_CRIT IN EQ. (3.26):  A + B*exp(-TEMP/C)");
+              output.write(" " + mode.parameterField[1].getValue() + " " + mode.parameterField[2].getValue() + " " + mode.parameterField[3].getValue() + "  !A,B,C FOR TAU_CRIT IN EQ. (3.26):  A + B*exp(-TEMP/C)");
               output.newLine();
-              output.write(" " + mode.parameterField[3].getValue() + " " + mode.parameterField[4].getValue() + " " + mode.parameterField[5].getValue() + "  !A,B,C FOR TAU_PROP IN EQ. (3.26):  A + B*exp(-TEMP/C)");
+              output.write(" " + mode.parameterField[4].getValue() + " " + mode.parameterField[5].getValue() + " " + mode.parameterField[6].getValue() + "  !A,B,C FOR TAU_PROP IN EQ. (3.26):  A + B*exp(-TEMP/C)");
               output.newLine();
-              output.write(" " + mode.parameterField[6].getValue() + "                               !TWIN BURGERS VECTOR (m) (see Yoo, 1969)");
+              output.write(" " + mode.parameterField[7].getValue() + "                               !TWIN BURGERS VECTOR (m) (see Yoo, 1969)");
               output.newLine();
-              output.write(" " + mode.parameterField[7].getValue() + " " + mode.parameterField[8].getValue() + "         !IniFraction,TwinCRSS ");
+              output.write(" " + mode.parameterField[8].getValue() + " " + mode.parameterField[9].getValue() + "         !IniFraction,TwinCRSS ");
               output.newLine();
             }
           }
@@ -1066,7 +1066,7 @@ public class EPSCmodel extends Strain {
       while (st.hasMoreTokens()) {
         String data = st.nextToken();
         if (index++ > 6) {
-          hklList.add(Double.parseDouble(data) / 1.0E6);
+          hklList.add(Double.parseDouble(data));
         }
       }
     }

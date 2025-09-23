@@ -23,11 +23,8 @@ package it.unitn.ing.rista.interfaces;
 import java.lang.*;
 import java.util.Enumeration;
 
-import it.unitn.ing.rista.comp.OutputPanel;
 import it.unitn.ing.rista.util.*;
 import it.unitn.ing.rista.diffr.*;
-
-import javax.swing.tree.TreeNode;
 
 /**
  * The basicObj is a class

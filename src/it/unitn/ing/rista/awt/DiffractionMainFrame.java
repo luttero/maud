@@ -93,6 +93,14 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
   static final String ANALYSIS_GOEBBELS = " reflectivity analysis";
   static final String DATA_REMOVE_PATTERN = "Remove patterns";
   static final String DATA_RESET_BACKGROUND = "Reset background";
+  static final String DATA_ADD_BKG_PAR = "Add parameter to common bkg";
+  static final String DATA_REMOVE_BKG_PAR = "Remove common background";
+  static final String DATA_ADD_IND_BKG_PAR = "Add parameter to individual bkg";
+  static final String DATA_REMOVE_IND_BKG_PAR = "Remove individual background";
+  static final String DATA_USE_CHEBYSHEV_BKG = "Use Chebyshev bkg";
+  static final String DATA_USE_POLYNOMIAL_BKG = "Use Polynomial bkg";
+  static final String DATA_ENABLE_DATASETS = "Enable datasets";
+  static final String DATA_DISABLE_DATASETS = "Disable datasets";
   static final String OPEN_ANALYSIS = "Open analysis...";
   static final String LOAD_DATAFILE = "Load datafile...";
   static final String RESTORE = "Restore";
@@ -104,7 +112,7 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
   static final String PRINT_WINDOW = "Print window";
   static final String QUIT_MAUD = "Quit";
   static final String BATCH_FILE = "Prepare batch file";
-  static final String BATCH_REFINE = "Refine batch file";
+  static final String BATCH_REFINE = "Launch batch file";
 
   static String[] mainMenuLabels = {
       "File:15",
@@ -137,9 +145,17 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
         "Edit object",
         "-",
         "Duplicate object",
-        "Selected objects:2",
+        "Selected objects:10",
           DATA_REMOVE_PATTERN,
           DATA_RESET_BACKGROUND,
+          DATA_ENABLE_DATASETS,
+          DATA_DISABLE_DATASETS,
+          DATA_ADD_BKG_PAR,
+          DATA_REMOVE_BKG_PAR,
+          DATA_ADD_IND_BKG_PAR,
+          DATA_REMOVE_IND_BKG_PAR,
+          DATA_USE_CHEBYSHEV_BKG,
+          DATA_USE_POLYNOMIAL_BKG,
 
       "Analysis:8",
         "Options",
@@ -163,13 +179,14 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
         "-",
         "Waiting for computation...",
 
-      MENU_SPECIAL + ":7",
+      MENU_SPECIAL + ":8",
         "Submit structure to COD",
         "Load RSS feed",
         "-",
         "Batch:2",
-      BATCH_FILE,
-      BATCH_REFINE,
+          BATCH_FILE,
+          BATCH_REFINE,
+        "Export LumaCAM to GSAS",
 		    "AI:1",
           "generate data",
 		    "-",
@@ -226,6 +243,14 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
       nullKeyEvent,
         nullKeyEvent,
         nullKeyEvent,
+        nullKeyEvent,
+        nullKeyEvent,
+        nullKeyEvent,
+        nullKeyEvent,
+        nullKeyEvent,
+        nullKeyEvent,
+        nullKeyEvent,
+        nullKeyEvent,
 
       nullKeyEvent,
       nullKeyEvent,
@@ -256,6 +281,7 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
       nullKeyEvent,
         nullKeyEvent,
         nullKeyEvent,
+      nullKeyEvent,
 		  nullKeyEvent,
         nullKeyEvent,
 		  nullKeyEvent,
@@ -295,6 +321,14 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
       true,
         true,
         true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
 
       true,
       true,
@@ -338,6 +372,7 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
       true,
         true,
 		    true,
+      true,
 		  true,
 		    true,
 		  true,
@@ -416,7 +451,6 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
           null,
           null,
           null,
-          null,
           null},
       {"Submit structure to COD",
           "Load RSS feed",
@@ -425,14 +459,13 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
           Constants.testing ? "Test COD HTTP connection" : null,
           //Constants.testing ? "Start refine on Xgrid" : null,
 		      "Batch",
+          "Export LumaCAM to GSAS",
 		      "AI",
 		      "-",
 		      "Demo",
           null,
           null,
 		      null,
-          null,
-          null,
           null,
           null},
       {"Readme", // Help
@@ -1347,6 +1380,186 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
     }
   }
 
+  public void enableSelectedDatasets() {
+    int index = getVisibleTabPanelIndex();
+    switch (index) {
+      case 0: // datasets
+        ListVector list = getFocusedList();
+        if (list != null) {
+          Vector slist = list.selectedElements();
+          if (slist != null && slist.size() > 0) {
+            for (Object ocat: slist) {
+              ((DataFileSet) ocat).setEnabled(true);
+            }
+            break;
+          }
+        }
+      case 1: // phases
+      case 2: // samples
+      default: {
+        WarningNothingSelected();
+      }
+    }
+  }
+
+  public void disableSelectedDatasets() {
+    int index = getVisibleTabPanelIndex();
+    switch (index) {
+      case 0: // datasets
+        ListVector list = getFocusedList();
+        if (list != null) {
+          Vector slist = list.selectedElements();
+          if (slist != null && slist.size() > 0) {
+            for (Object ocat: slist) {
+              ((DataFileSet) ocat).setEnabled(false);
+            }
+            break;
+          }
+        }
+      case 1: // phases
+      case 2: // samples
+      default: {
+        WarningNothingSelected();
+      }
+    }
+  }
+
+  public void addParameterToCommonBackground() {
+    int index = getVisibleTabPanelIndex();
+    switch (index) {
+      case 0: // datasets
+        ListVector list = getFocusedList();
+        if (list != null) {
+          Vector slist = list.selectedElements();
+          if (slist != null && slist.size() > 0) {
+            for (Object ocat: slist) {
+              ((DataFileSet) ocat).addBackgroudCoeff();
+            }
+            break;
+          }
+        }
+      case 1: // phases
+      case 2: // samples
+      default: {
+        WarningNothingSelected();
+      }
+    }
+  }
+
+  public void removeCommonBackground() {
+    int index = getVisibleTabPanelIndex();
+    switch (index) {
+      case 0: // datasets
+        ListVector list = getFocusedList();
+        if (list != null) {
+          Vector slist = list.selectedElements();
+          if (slist != null && slist.size() > 0) {
+            for (Object ocat: slist) {
+              ((DataFileSet) ocat).removeAllBackgroundCoeff();
+            }
+            break;
+          }
+        }
+      case 1: // phases
+      case 2: // samples
+      default: {
+        WarningNothingSelected();
+      }
+    }
+  }
+
+  public void addParameterToIndividualBackground() {
+    int index = getVisibleTabPanelIndex();
+    switch (index) {
+      case 0: // datasets
+        ListVector list = getFocusedList();
+        if (list != null) {
+          Vector slist = list.selectedElements();
+          if (slist != null && slist.size() > 0) {
+            for (Object ocat: slist) {
+              ((DataFileSet) ocat).addAdditionalBackgroundToAll();
+            }
+            break;
+          }
+        }
+      case 1: // phases
+      case 2: // samples
+      default: {
+        WarningNothingSelected();
+      }
+    }
+  }
+
+  public void removeIndividualBackground() {
+    int index = getVisibleTabPanelIndex();
+    switch (index) {
+      case 0: // datasets
+        ListVector list = getFocusedList();
+        if (list != null) {
+          Vector slist = list.selectedElements();
+          if (slist != null && slist.size() > 0) {
+            for (Object ocat: slist) {
+              ((DataFileSet) ocat).removeAdditionalBackgroundToAll();
+            }
+            break;
+          }
+        }
+      case 1: // phases
+      case 2: // samples
+      default: {
+        WarningNothingSelected();
+      }
+    }
+  }
+
+  public void useChebyshevBackground() {
+    int index = getVisibleTabPanelIndex();
+    switch (index) {
+      case 0: // datasets
+        ListVector list = getFocusedList();
+        if (list != null) {
+          Vector slist = list.selectedElements();
+          if (slist != null && slist.size() > 0) {
+            for (Object ocat: slist) {
+              ((DataFileSet) ocat).useChebyshevPolynomials(true);
+              for (int i = 0; i < ((DataFileSet) ocat).datafilesnumber(); i++)
+                ((DataFileSet) ocat).getDataFile(i).useChebyshevPolynomials(true);
+            }
+            break;
+          }
+        }
+      case 1: // phases
+      case 2: // samples
+      default: {
+        WarningNothingSelected();
+      }
+    }
+  }
+
+  public void usePolynomialBackground() {
+    int index = getVisibleTabPanelIndex();
+    switch (index) {
+      case 0: // datasets
+        ListVector list = getFocusedList();
+        if (list != null) {
+          Vector slist = list.selectedElements();
+          if (slist != null && slist.size() > 0) {
+            for (Object ocat: slist) {
+              ((DataFileSet) ocat).useChebyshevPolynomials(false);
+              for (int i = 0; i < ((DataFileSet) ocat).datafilesnumber(); i++)
+                ((DataFileSet) ocat).getDataFile(i).useChebyshevPolynomials(false);
+            }
+            break;
+          }
+        }
+      case 1: // phases
+      case 2: // samples
+      default: {
+        WarningNothingSelected();
+      }
+    }
+  }
+
   boolean result = false;
 
   myJFrame parListFrame = null;
@@ -1468,6 +1681,12 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
     TrainArtificialIntelligentStartDialog trainD = new TrainArtificialIntelligentStartDialog(
       this);
     trainD.setVisible(true);
+  }
+
+  public void exportLumaCAMtoGSAS() {
+    String filename = Utility.browseFilenametoSave(DiffractionMainFrame.this, "Save LumaCAM in GSAS format to...");
+    if (filename != null)
+      parameterfile.exportGSASdataFromLumaCAM(filename);
   }
 
 /*  void refineWithXgridUsingConsoleCommand() {
@@ -1635,6 +1854,30 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
       } else if (command.equals(DATA_RESET_BACKGROUND)) {
         resetBackgrounds();
         return;
+      } else if (command.equals(DATA_ADD_BKG_PAR)) {
+        addParameterToCommonBackground();
+        return;
+      } else if (command.equals(DATA_REMOVE_BKG_PAR)) {
+        removeCommonBackground();
+        return;
+      } else if (command.equals(DATA_ADD_IND_BKG_PAR)) {
+        addParameterToIndividualBackground();
+        return;
+      } else if (command.equals(DATA_REMOVE_IND_BKG_PAR)) {
+        removeIndividualBackground();
+        return;
+      } else if (command.equals(DATA_USE_CHEBYSHEV_BKG)) {
+        useChebyshevBackground();
+        return;
+      } else if (command.equals(DATA_USE_POLYNOMIAL_BKG)) {
+        usePolynomialBackground();
+        return;
+      } else if (command.equals(DATA_ENABLE_DATASETS)) {
+        enableSelectedDatasets();
+        return;
+      } else if (command.equals(DATA_DISABLE_DATASETS)) {
+        disableSelectedDatasets();
+        return;
       } else if (command.equals("Options")) {                 // Options
         refinementOptions_Action();
         return;
@@ -1703,6 +1946,8 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
         startBatchMode();
       } else if (command.equals("generate data")) {     // AI: generate data
 	      openDialogForAI();
+      } else if (command.equals("Export LumaCAM to GSAS")) {     // export LumaCAM in GSAS format after calibration
+        exportLumaCAMtoGSAS();
       } else if (command.equals("mtex Dubna")) {     // batch mode
 	      com.jtex.qta.ODFDemo.DubnaDemo();
       } else if (command.equals("mtex SantaFe")) {     // batch mode

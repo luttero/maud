@@ -26,7 +26,6 @@ import it.unitn.ing.rista.diffr.XRDcat;
 import it.unitn.ing.rista.interfaces.basicObj;
 
 import javax.swing.*;
-import java.awt.*;
 
 /**
  * ParameterTreeModel is a TreeTableModel representing a hierarchical file

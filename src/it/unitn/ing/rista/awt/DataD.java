@@ -948,6 +948,13 @@ public class DataD extends myJFrame {
       }
     });
 
+    toolsMenu.add(menuitem = new JMenuItem("Export datafiles for GSAS"));
+    menuitem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        exportGSASDatafiles();
+      }
+    });
+
     toolsMenu.add(menuitem = new JMenuItem("Sum GSAS datafiles"));
     menuitem.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
@@ -1121,7 +1128,7 @@ public class DataD extends myJFrame {
     thedata.setMinRange(minTF.getText());
     thedata.setMaxRange(maxTF.getText());
     thedata.setLorentzRestricted(lorentzRestrictedCB.isSelected());
-	 thedata.useChebyshevPolynomials(chebUseCB.isSelected());
+	  thedata.useChebyshevPolynomials(chebUseCB.isSelected());
     thedata.setBackgroundInterpolated(backgroundInterpolatedCB.isSelected());
     thedata.setInterpolatedPoints(backgroundInterpolationPointsTF.getText());
 	  thedata.setBackgroundInterpolationIterations(backgroundInterpolationIterationsTF.getText());
@@ -1599,7 +1606,17 @@ public class DataD extends myJFrame {
 		(new AddByAnglesFrame(this)).setVisible(true);
 	}
 
-	/**
+  /**
+   * Export selected datafiles in GSAS xye format.
+   */
+  public void exportGSASDatafiles() {
+    String filename = Utility.browseFilenametoSave(this, "Save GSAS datafiles to...");
+    if (filename != null)
+      thedata.exportGSASDatafiles(filename);
+  }
+
+
+  /**
 	 * Sum GSAS datafiles.
 	 */
 	public void sumGSASDatafiles() {

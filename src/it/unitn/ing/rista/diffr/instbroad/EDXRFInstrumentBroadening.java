@@ -102,69 +102,71 @@ public class EDXRFInstrumentBroadening extends InstrumentBroadening {
       return;
     initialized = true;
     // HWHM
-    int index = 0;
-    int number = 0;
-    addparameterloopField(index, new Parameter(this, getParameterString(index, number), 42.4,
-        ParameterPreferences.getDouble(getParameterString(index, number) + ".min", 0),
-        ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 100)));
-    number++;
-    addparameterloopField(index, new Parameter(this, getParameterString(0, number), 5330,
-        ParameterPreferences.getDouble(getParameterString(index, number) + ".min", 100),
-        ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 10000)));
-	  number++;
-	  addparameterloopField(index, new Parameter(this, getParameterString(0, number), 0,
-			  ParameterPreferences.getDouble(getParameterString(index, number) + ".min", 0),
-			  ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 10000)));
-    // Gaussian
-    index++;
-    number = 0;
-    addparameterloopField(index, new Parameter(this, getParameterString(index, number), 0.01,
-        ParameterPreferences.getDouble(getParameterString(index, number) + ".min", -1.0),
-        ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 2.0)));
-    number++;
-	  addparameterloopField(index, new Parameter(this, getParameterString(index, number), 0.0,
-			  ParameterPreferences.getDouble(getParameterString(index, number) + ".min", -1.0),
-			  ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 2.0)));
-	  // fS
-	  index++;
-	  number = 0;
-	  addparameterloopField(index, new Parameter(this, getParameterString(index, number), 0.0001,
-			  ParameterPreferences.getDouble(getParameterString(index, number) + ".min", -1.0),
-			  ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 2.0)));
-	  number++;
-	  addparameterloopField(index, new Parameter(this, getParameterString(index, number), 0.0,
-			  ParameterPreferences.getDouble(getParameterString(index, number) + ".min", -1.0),
-			  ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 2.0)));
-	  // beta
-	  index++;
-	  number = 0;
-	  addparameterloopField(index, new Parameter(this, getParameterString(index, number), 10,
-			  ParameterPreferences.getDouble(getParameterString(index, number) + ".min", -1.0),
-			  ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 2.0)));
-	  number++;
-	  addparameterloopField(index, new Parameter(this, getParameterString(index, number), 0.0,
-			  ParameterPreferences.getDouble(getParameterString(index, number) + ".min", -1.0),
-			  ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 2.0)));
-	  // fTKalpha
-	  index++;
-	  number = 0;
-	  addparameterloopField(index, new Parameter(this, getParameterString(index, number), 0.002,
-			  ParameterPreferences.getDouble(getParameterString(index, number) + ".min", -1.0),
-			  ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 2.0)));
-	  number++;
-	  addparameterloopField(index, new Parameter(this, getParameterString(index, number), 0.0,
-			  ParameterPreferences.getDouble(getParameterString(index, number) + ".min", -1.0),
-			  ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 2.0)));
-	  // fTKbeta
-	  index++;
-	  number = 0;
-	  addparameterloopField(index, new Parameter(this, getParameterString(index, number), 0.002,
-			  ParameterPreferences.getDouble(getParameterString(index, number) + ".min", -1.0),
-			  ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 2.0)));
-	  number++;
-	  addparameterloopField(index, new Parameter(this, getParameterString(index, number), 0.0,
-			  ParameterPreferences.getDouble(getParameterString(index, number) + ".min", -1.0),
-			  ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 2.0)));
+    if (parameterloopField[0].size() == 0) {
+      int index = 0;
+      int number = 0;
+      addparameterloopField(index, new Parameter(this, getParameterString(index, number), 42.4,
+          ParameterPreferences.getDouble(getParameterString(index, number) + ".min", 0),
+          ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 100)));
+      number++;
+      addparameterloopField(index, new Parameter(this, getParameterString(0, number), 5330,
+          ParameterPreferences.getDouble(getParameterString(index, number) + ".min", 100),
+          ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 10000)));
+      number++;
+      addparameterloopField(index, new Parameter(this, getParameterString(0, number), 0,
+          ParameterPreferences.getDouble(getParameterString(index, number) + ".min", 0),
+          ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 10000)));
+      // Gaussian
+      index++;
+      number = 0;
+      addparameterloopField(index, new Parameter(this, getParameterString(index, number), 0.01,
+          ParameterPreferences.getDouble(getParameterString(index, number) + ".min", -1.0),
+          ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 2.0)));
+      number++;
+      addparameterloopField(index, new Parameter(this, getParameterString(index, number), 0.0,
+          ParameterPreferences.getDouble(getParameterString(index, number) + ".min", -1.0),
+          ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 2.0)));
+      // fS
+      index++;
+      number = 0;
+      addparameterloopField(index, new Parameter(this, getParameterString(index, number), 0.0001,
+          ParameterPreferences.getDouble(getParameterString(index, number) + ".min", -1.0),
+          ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 2.0)));
+      number++;
+      addparameterloopField(index, new Parameter(this, getParameterString(index, number), 0.0,
+          ParameterPreferences.getDouble(getParameterString(index, number) + ".min", -1.0),
+          ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 2.0)));
+      // beta
+      index++;
+      number = 0;
+      addparameterloopField(index, new Parameter(this, getParameterString(index, number), 10,
+          ParameterPreferences.getDouble(getParameterString(index, number) + ".min", -1.0),
+          ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 2.0)));
+      number++;
+      addparameterloopField(index, new Parameter(this, getParameterString(index, number), 0.0,
+          ParameterPreferences.getDouble(getParameterString(index, number) + ".min", -1.0),
+          ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 2.0)));
+      // fTKalpha
+      index++;
+      number = 0;
+      addparameterloopField(index, new Parameter(this, getParameterString(index, number), 0.002,
+          ParameterPreferences.getDouble(getParameterString(index, number) + ".min", -1.0),
+          ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 2.0)));
+      number++;
+      addparameterloopField(index, new Parameter(this, getParameterString(index, number), 0.0,
+          ParameterPreferences.getDouble(getParameterString(index, number) + ".min", -1.0),
+          ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 2.0)));
+      // fTKbeta
+      index++;
+      number = 0;
+      addparameterloopField(index, new Parameter(this, getParameterString(index, number), 0.002,
+          ParameterPreferences.getDouble(getParameterString(index, number) + ".min", -1.0),
+          ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 2.0)));
+      number++;
+      addparameterloopField(index, new Parameter(this, getParameterString(index, number), 0.0,
+          ParameterPreferences.getDouble(getParameterString(index, number) + ".min", -1.0),
+          ParameterPreferences.getDouble(getParameterString(index, number) + ".max", 2.0)));
+    }
   }
 
   public void notifyParameterChanged(Parameter source) {

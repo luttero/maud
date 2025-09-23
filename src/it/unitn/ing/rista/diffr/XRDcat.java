@@ -21,7 +21,6 @@
 package it.unitn.ing.rista.diffr;
 
 import it.unitn.ing.rista.awt.*;
-import it.unitn.ing.rista.comp.OutputPanel;
 import it.unitn.ing.rista.interfaces.BaseFactoryObject;
 import it.unitn.ing.rista.interfaces.basicObj;
 import it.unitn.ing.rista.io.cif.CIFItem;

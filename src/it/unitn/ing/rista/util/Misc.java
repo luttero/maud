@@ -792,10 +792,13 @@ public class Misc {
   }
 
   public static boolean deleteFile(String fileToCheck) {
-    File f1 = new File(fileToCheck);
+    try {
+      File f1 = new File(fileToCheck);
 
-    if (f1 != null && f1.exists())
-      return f1.delete();
+      if (f1 != null && f1.exists())
+        return f1.delete();
+    } catch (Exception e) {
+    }
 
     return false;
   }
