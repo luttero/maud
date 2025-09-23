@@ -9,4 +9,4 @@ The Combined Analysis School is a great opportunity to learn MAUD and its analys
 
 Check out the [Flyer][caen-flyer] if you are interested.
 
-[caen-flyer]: http://www.chateigner.ensicaen.fr/formation/flyers/2026-Flyer-15th-workshop.pdf
+[caen-flyer]: http://chateigner.ensicaen.fr/formation/flyers/2026-Flyer-15th-workshop.pdf
