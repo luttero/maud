@@ -6,7 +6,7 @@
                 Documentation
                 <i class="fa fa-angle-double-right"></i>
                 {% include reference.html link="https://luttero.github.io/maud/tutorials" content="Tutorials" %}
-                | {% include reference.html link="https://luttero.github.io/maud/install" content="Installation" no_icon=true %}
+                | {% include reference.html link="https://luttero.github.io/maud/install" content="Installation" %}
                 | {% include reference.html link="https://luttero.github.io/maud/examples" content="Examples" %}
                 | {% include reference.html link="https://www.youtube.com/@MaudRietveldProgram" content="Videos" %}
                 | {% include reference.html link="https://github.com/luttero/maud/releases" content="Download" %}
