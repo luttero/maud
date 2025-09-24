@@ -10,6 +10,64 @@
 		<div align="center">
 			<p><b><font size="5">MAUD examples - Montmorillonite texture example</font></b></p>
 		</div>
+<p>Download and unzip this archive: <a href="Montmorillonite.zip">Montmorillonite.zip</a>, It contains all the files needed for this example. Unzip the archive.</p>
+Start MAUD and then:<br>
+- Choose New Analysis<br>
+- Save the analysis (xxx_starting.par)<br>
+- Edit dataset:<br>
+	- Import instrument from StructuresForCamo8.mdb, APS BESSRC 11-ID-C<br>
+	- Add 2 background parameters to common background<br>
+	- Either:<br>
+		- Browse and load the datafile Camo8.esg<br>
+		- We need to load the Image CaMo8_00009.raw using ImageJ and integrate. To do it:<br>
+			- import the RAW image as 32 signed little endian (this raw image was converted from the .mar345 one using the mar routines).<br>
+			- adjust brightness, properties: pixel size 0.1 in mm<br>
+			- Select round area (ROI)<br>
+			- Maud plugins, multispectra from reflection/transmission<br>
+				- center x: 172.4, center y: 171.3, use 2Theta 1.4<br>
+				- use Update to see the circle<br>
+				- 36 number of spectra, 0-360<br>
+				- press ok<br>
+				- save with your preferred name, but .esg<br>
+	- Select all patterns, press 3 times add bkg par button (this enables each pattern to have his own additional polynomial background with 3 parameters)<br>
+	- close dataset editing window<br>
+- Save the analysis (xxx_starting1.par)<br>
+- Go to phases tab panel and import Monmorillonite structure from StructuresForCamo8.mdb<br>
+- calculate the pattern, you may need to adjust the incident intensity to something like 0.4 and first value of the polynomial background to 500 (use the bottom panel with the list of parameters and change Tham live while watching the computed pattern changing)<br>
+- edit the Montmorillonite<br>
+	- under microstructure, for the Planar defects model select the Ufer single layer, press Options and verify the stacking direction is c and layers number is 10 or more (slower with more).<br>
+	- close the window<br>
+- calculate pattern and select the Plot 2D view<br>
+- intensity is changing for the texture and experimental lines are not straights as we will need to refine the image centre.<br>
+- edit again the Montmorillonite and under advanced models, Texture select Standard Functions model.<br>
+	- press Options for the texture Standard Functions models<br>
+	- add a Fiber component, for that fiber component:<br>
+		- set all angles equal to 0 except PhiY = 90<br>
+		- set FWHM = 150, leave Gaussian to 0.5<br>
+		- close all windows and come back to the main one.<br>
+- calculate the patterns, now you see the intensity changing and following the experimental ones, the model is correct.<br>
+- Save the analysis (xxx_starting2.par)<br>
+- Choose the wizard and choose to refine background and scale parameters.<br>
+- Refine 3 iterations<br>
+- Choose the wizard and select to refine previous + basic phase parameters, this will refine cell parameters, one B factor and the image center. Refine 3 iterations.<br>
+- Now open the Parameter list window, expand all, and put refined for the monmorillonite: crystallite sizes, microstrains, size and microstrain factors in the Ufer model, and finally refined the FWHM and Gaussianparameters for the texture Standard Function fiber component.<br>
+- refine again 3 iterations<br>
+- Save the analysis (xxx_starting3.par)<br>
+- Now to go further we need to load the missing phases<br>
+- Select the phases tab panel and import object from cif, use the StructuresForCamo8.mdb and load the Opal CT and Cristobalite phases. These are already set with some good parameters and we dont need to refine them (small percentage for each). You can check how the Opal CT was build using also the Ufer single layer model over an hexagonal structure.<br>
+- Edit the sample and change the volumetric percentage for the 3 phases, you can start with 0.9 for the Montmorillonite, 0.07 for the Opal CT and 0.03 for the Cristobalite. If you compute the patterns you can verify is a good starting point.<br>
+- Open again the Parameter list window and set refined all 3 volumetric fractions and set fixed the incident intensity (this will be every time renormalised when the total phases fraction exceed or is below 1. No need to refine it.<br>
+- Refine 3 iterations.<br>
+- Now the refinement start to be acceptable. You can check the fitting, plot the pole figures for the Monmorillonite etc.<br>
+- Save the analysis (xxx_starting4.par)<br>
+<br>
+What can you do next to improve?<br>
+Some suggestions:<br>
+- Use a Popa anisotropic model for the size-microstrain broadening of the Montmorillonite, this will improve a lot the fit.<br>
+- You can refine the total occupation factor for the Ca octahedral fragment. This is linked to the water content.<br>
+- Insert the Quartz as one very small peak of it is visible, the amount is very small.<br>
+<br>
+
   </body>
 
 </html>
