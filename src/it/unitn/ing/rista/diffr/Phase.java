@@ -2794,14 +2794,16 @@ public static final String getSpaceGroup(int index, int sgconv) {
     boolean oldRefresh = refreshCrystMicrostrain;
     computehklSizeStrain();
     refreshCrystMicrostrain = oldRefresh;
-    return getCrystalliteMicrostrain(getReflex(index))[0];
+    // todo: finish here
+    return getCrystalliteMicrostrain(getReflex(index), null)[0];
   }
 
   public double getMicrostrainD(int index) {
     boolean oldRefresh = refreshCrystMicrostrain;
     computehklSizeStrain();
     refreshCrystMicrostrain = oldRefresh;
-    return getCrystalliteMicrostrain(getReflex(index))[1];
+    // todo: finish here
+    return getCrystalliteMicrostrain(getReflex(index), null)[1];
   }
 
 /*  public double[] getCrystalliteDistribution(int index) {
@@ -4284,7 +4286,7 @@ public static final String getSpaceGroup(int index, int sgconv) {
 	}
 
 	// todo deprecated, to eliminate
-	public double[] getCrystalliteMicrostrain(Reflection refl) {
+/*	public double[] getCrystalliteMicrostrain(Reflection refl) {
 		double[] crystmic = getActiveSizeStrainSym().getCrystalliteMicrostrain(refl.d_space, refl.getH(), refl.getK(), refl.getL(), null);
 		double cryst1 = crystmic[0];
 		double cryst2 = getPlanarDefectBroadening(refl);
@@ -4296,9 +4298,10 @@ public static final String getSpaceGroup(int index, int sgconv) {
 		crystmic[0] *= getActivePlanarDefects().getCrystalliteFactor(refl.getH(), refl.getK(), refl.getL());
 		crystmic[1] *= getActivePlanarDefects().getMicrostrainFactor(refl.getL(), refl.getK(), refl.getL());
 		return crystmic;
-	}
+	}*/
 
 	public double[] getCrystalliteMicrostrain(Reflection refl, double[] texture_angles) {
+// todo: finish here    getActivePlanarDefects().getSuperCellFactor(index)
 		if (getNumberOfCustomPeaks() > 0) {
 			double[] crystmic = new double[2];
 			crystmic[0] = refl.crystallite;
@@ -4379,7 +4382,7 @@ public static final String getSpaceGroup(int index, int sgconv) {
     int total = 0;
     for (int row = 0; row < numberReflexes; row++) {
       int mult = getMultiplicity(row);
-	    double[] cryststrain = getCrystalliteMicrostrain(getReflex(row));
+	    double[] cryststrain = getCrystalliteMicrostrain(getReflex(row), null);
       double cryst = Math.abs(cryststrain[0]);
       double strain = Math.abs(cryststrain[1]);
       sizestrain[0] += cryst * mult;

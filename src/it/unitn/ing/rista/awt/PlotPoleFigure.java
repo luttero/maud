@@ -151,7 +151,7 @@ public class PlotPoleFigure extends myJFrame {
 		double min = 1.0E30;
 		double max = -1.0E30;
 		int izoom = (int) Math.pow(2, zoom);
-		int pixelsNumber = MaudPreferences.getInteger("plotPF.defaultPoleSize", 200);
+		int pixelsNumber = MaudPreferences.getInteger("plotPF.defaultPoleSize", 600);
 		if (editable) {
 			izoom = 1;
 			int tempGrid = numberofPoints;

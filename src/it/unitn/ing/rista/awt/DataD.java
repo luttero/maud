@@ -70,6 +70,7 @@ public class DataD extends myJFrame {
 	JTextField dateTF;
 	JTextField timeTF;
 	JTextField weightTF;
+  JLabel sumL;
   JParameterListPane polynomialP;
   JParameterListPane backgroundChiP;
   JParameterListPane backgroundEtaP;
@@ -799,7 +800,11 @@ public class DataD extends myJFrame {
 	  weightTF.setText("1.0");
 	  p3.add(weightTF);
 
-	  // Excluded region tabPanel
+    p3.add(new JLabel("Intensity sum:  "));
+    sumL = new JLabel("-");
+    p3.add(sumL);
+
+    // Excluded region tabPanel
 
     excludedregionP = new JSubordSListPane(this, false);
     tp1.addTab(tp1String[2], null, excludedregionP);
@@ -1187,6 +1192,7 @@ public class DataD extends myJFrame {
     fileselected = datafileL.getSelectedIndex();
     datafile = thedata.getSelectedDataFile();
     if (datafile != null) {
+      boolean normalised = MaudPreferences.getBoolean("plotHistograms.normaliseInt", false);
 	    for (int j = 0; j < DiffrDataFile.maxAngleNumber; j++)
 		    anglesTF[j].setText(Misc.getFormattedValue(Double.parseDouble(datafile.getString(j + 1))));
       computeCB.setSelected(datafile.getComputePermission());
@@ -1201,6 +1207,7 @@ public class DataD extends myJFrame {
 	    dateTF.setText(datafile.getMeasurementDate());
 	    timeTF.setText(datafile.getMeasurementTime());
 	    weightTF.setText(datafile.getDatafileWeightString());
+      sumL.setText(String.valueOf(datafile.getTotalIntensity(normalised)));
     }
   }
 

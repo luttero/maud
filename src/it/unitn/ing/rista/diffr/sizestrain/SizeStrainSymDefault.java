@@ -137,14 +137,14 @@ public class SizeStrainSymDefault extends SizeStrainSymModel {
 
   double cryststrain[] = new double[2];
 
-  public double[] getCrystalliteMicrostrain(double d_space, int h, int k, int l, double[] texture_angles) {
+  public double[] getCrystalliteMicrostrain(double d_space, double h, double k, double l, double[] texture_angles) {
 
-    int h2 = h * h;
-    int k2 = k * k;
-    int l2 = l * l;
-    int hk = h * k;
-    int hl = h * l;
-    int kl = l * k;
+    double h2 = h * h;
+    double k2 = k * k;
+    double l2 = l * l;
+    double hk = h * k;
+    double hl = h * l;
+    double kl = l * k;
     hk = 2 * Math.abs(hk);
     hl = 2 * Math.abs(hl);
     kl = 2 * Math.abs(kl);

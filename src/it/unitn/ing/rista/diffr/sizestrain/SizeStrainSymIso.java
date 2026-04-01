@@ -125,7 +125,7 @@ public class SizeStrainSymIso extends SizeStrainSymModel {
 
   double cryststrain[] = new double[2];
 
-  public double[] getCrystalliteMicrostrain(double d_space, int h, int k, int l, double[] texture_angles) {
+  public double[] getCrystalliteMicrostrain(double d_space, double h, double k, double l, double[] texture_angles) {
 
     cryststrain[0] = getParameterValue(0);
     cryststrain[1] = getParameterValue(1);

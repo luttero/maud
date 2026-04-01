@@ -173,10 +173,12 @@ public class PoleFigureMap extends JPanel {
 			  val = val + logDelta;
 		  }
 	  }
+    boolean contour_labels = MaudPreferences.getBoolean("plotPF.useContourLabels", false);
     if (clevels != null) {
       DefaultContourLineAttribute d_attr = clevels.getDefaultContourLineAttribute();
       d_attr.setLabelHeightP(0.35);
       d_attr.setSignificantDigits(MaudPreferences.getInteger("plotPF.significantDigits", 3));
+      d_attr.setLabelEnabled(contour_labels);
     }
     GridAttribute gridAttr_ = new GridAttribute(clevels);
     /*

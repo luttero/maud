@@ -1,0 +1,339 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2867
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\froman\fcharset0 Times-Roman;\f2\froman\fcharset0 Times-Bold;
+\f3\fmodern\fcharset0 Courier;\f4\fnil\fcharset0 AppleColorEmoji;\f5\fmodern\fcharset0 Courier-Bold;
+\f6\fnil\fcharset0 Menlo-Bold;\f7\froman\fcharset0 Times-Italic;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+{\*\expandedcolortbl;;\cssrgb\c0\c0\c0;}
+{\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{decimal\}}{\leveltext\leveltemplateid1\'01\'00;}{\levelnumbers\'01;}\fi-360\li720\lin720 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{circle\}}{\leveltext\leveltemplateid2\'01\uc0\u9702 ;}{\levelnumbers;}\fi-360\li1440\lin1440 }{\listname ;}\listid1}}
+{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}}
+\paperw11900\paperh16840\margl1440\margr1440\vieww18900\viewh24780\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 Optimised code:\
+\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f1 \cf0 \expnd0\expndtw0\kerning0
+This is an excellent request. The code I provided earlier was a 
+\f2\b literal translation
+\f1\b0  from Fortran. This is good for verifying the logic, but it's not "good" Java. It relies on massive 
+\f3\fs26 static
+\f1\fs24  "common" blocks, which is procedural, hard to maintain, and not object-oriented.\
+I have now refactored the entire program into a clean, 
+\f2\b Object-Oriented (OOP)
+\f1\b0  structure. This is the single most important optimization for Java code, as it dramatically improves readability, maintainability, and encapsulation.\
+\
+\pard\pardeftab720\sa280\partightenfactor0
+
+\f4\fs28 \cf0 \uc0\u55357 \u56541 
+\f2\b  Summary of Optimizations\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f1\b0\fs24 \cf0 \
+\pard\tx220\tx720\pardeftab720\li720\fi-720\sa240\partightenfactor0
+\ls1\ilvl0
+\f2\b \cf0 \kerning1\expnd0\expndtw0 {\listtext	1	}\expnd0\expndtw0\kerning0
+Object-Oriented Structure:
+\f1\b0  All 
+\f3\fs26 static
+\f1\fs24  global variables (like 
+\f3\fs26 CommonGlobals
+\f1\fs24 , 
+\f3\fs26 ModScNew
+\f1\fs24 , etc.) have been 
+\f2\b removed
+\f1\b0 . They are replaced by:\
+\pard\tx940\tx1440\pardeftab720\li1440\fi-1440\sa240\partightenfactor0
+\ls1\ilvl1
+\f5\b\fs26 \cf0 \kerning1\expnd0\expndtw0 {\listtext	
+\f6 \uc0\u9702 
+\f5 	}\expnd0\expndtw0\kerning0
+SimulationState.java
+\f1\b0\fs24 : A class that holds all the 
+\f7\i sample-level
+\f1\i0  data (e.g., 
+\f3\fs26 ass2
+\f1\fs24 , 
+\f3\fs26 stss
+\f1\fs24 , 
+\f3\fs26 etrss
+\f1\fs24 , 
+\f3\fs26 nsteps
+\f1\fs24 ).\
+\ls1\ilvl1
+\f5\b\fs26 \kerning1\expnd0\expndtw0 {\listtext	
+\f6 \uc0\u9702 
+\f5 	}\expnd0\expndtw0\kerning0
+Grain.java
+\f1\b0\fs24 : A class that holds all 
+\f7\i per-grain
+\f1\i0  data (e.g., 
+\f3\fs26 stcs
+\f1\fs24 , 
+\f3\fs26 r
+\f1\fs24 , 
+\f3\fs26 wgt
+\f1\fs24 , 
+\f3\fs26 nact
+\f1\fs24 ). The main program now holds a 
+\f3\fs26 List<Grain>
+\f1\fs24 .\
+\pard\tx220\tx720\pardeftab720\li720\fi-720\sa240\partightenfactor0
+\ls1\ilvl0
+\f2\b \cf0 \kerning1\expnd0\expndtw0 {\listtext	2	}\expnd0\expndtw0\kerning0
+Strategy Pattern for Hardening:
+\f1\b0  Instead of 
+\f3\fs26 if (kCL == 0)
+\f1\fs24 ... 
+\f3\fs26 if (kCL == 2)
+\f1\fs24 ... scattered everywhere, I've created a 
+\f3\fs26 HardeningModel
+\f1\fs24  interface with 
+\f3\fs26 VoceHardening
+\f1\fs24  and 
+\f3\fs26 DislocationHardening
+\f1\fs24  implementations. This is a clean, standard Java pattern.\
+\ls1\ilvl0
+\f2\b \kerning1\expnd0\expndtw0 {\listtext	3	}\expnd0\expndtw0\kerning0
+Encapsulation:
+\f1\b0  Subroutines are no longer static helpers. They are now 
+\f7\i methods
+\f1\i0  on the classes that own the data (e.S., 
+\f3\fs26 scNew
+\f1\fs24  is a method on 
+\f3\fs26 SimulationState
+\f1\fs24 ).\
+\ls1\ilvl0
+\f2\b \kerning1\expnd0\expndtw0 {\listtext	4	}\expnd0\expndtw0\kerning0
+Performance:
+\f1\b0  All instances of 
+\f3\fs26 Math.pow(x, 2.0)
+\f1\fs24  have been replaced with the much faster 
+\f3\fs26 (x * x)
+\f1\fs24  multiplication.\
+\ls1\ilvl0
+\f2\b \kerning1\expnd0\expndtw0 {\listtext	5	}\expnd0\expndtw0\kerning0
+Code Cleanup:
+\f1\b0  All the 
+\f3\fs26 Mod...
+\f1\fs24  files are gone, as their contents are now neatly organized into the new classes. The 
+\f3\fs26 CalculationRoutines.java
+\f1\fs24  file is also gone, as its methods have been moved into the classes they operate on.\
+\pard\tx220\tx720\pardeftab720\li720\fi-720\sa240\partightenfactor0
+\cf0 \
+\pard\pardeftab720\sa280\partightenfactor0
+
+\f2\b\fs28 \cf0 \
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f1\b0\fs24 \cf0 \
+Here is the complete, optimized Java program.\
+\
+\pard\pardeftab720\sa319\partightenfactor0
+
+\f2\b \cf0 1. Core Data Classes\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f1\b0 \cf0 \
+These classes replace all the 
+\f3\fs26 Mod...
+\f1\fs24  and 
+\f3\fs26 CommonGlobals
+\f1\fs24  files.\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f5\b\fs26 \cf0 SimulationState.java
+\f1\b0\fs24  (This class holds all the sample-level data)\
+\
+\pard\pardeftab720\partightenfactor0
+
+\f5\b\fs26 \cf0 Grain.java
+\f1\b0\fs24  (This new class holds all per-grain data)\
+\
+\pard\pardeftab720\sa319\partightenfactor0
+
+\f2\b \cf0 2. Hardening Model Interface\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f1\b0 \cf0 \
+This makes the hardening logic clean and extensible.\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f5\b\fs26 \cf0 HardeningModel.java
+\f1\b0\fs24 \
+\pard\pardeftab720\partightenfactor0
+\cf0 \
+VoceHardening.java\
+\
+
+\f5\b\fs26 DislocationDensityHardening.java
+\f1\b0\fs24  (This replaces 
+\f3\fs26 CRSS_disloc_dens
+\f1\fs24 )\
+\
+\pard\pardeftab720\sa319\partightenfactor0
+
+\f2\b \cf0 3. Helper/Utility Classes (Modified)\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f1\b0 \cf0 \
+These have been updated to remove 
+\f3\fs26 static
+\f1\fs24  state or fix the 
+\f3\fs26 ran2
+\f1\fs24  implementation.\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f5\b\fs26 \cf0 TensorUtils.java
+\f1\b0\fs24  (This class is now only for 
+\f7\i static
+\f1\i0  tensor math helpers.)\
+\pard\pardeftab720\partightenfactor0
+
+\f5\b\fs26 \cf0 IOUtils.java
+\f1\b0\fs24  (This is the final, corrected version for file handling)\
+\
+\
+\pard\pardeftab720\sa319\partightenfactor0
+
+\f2\b \cf0 4. Main Program\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f1\b0 \cf0 \
+This is the new 
+\f3\fs26 EPSC4.java
+\f1\fs24  file. It's much shorter, as all the logic is now in the other classes.\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f5\b\fs26 \cf0 EPSC4.java
+\f1\b0\fs24 \
+This is a 
+\f2\b major architectural rewrite
+\f1\b0 . The 
+\f3\fs26 EPSC4.java
+\f1\fs24  file is now just a "driver" program. All the data is held in 
+\f3\fs26 SimulationState
+\f1\fs24  and the 
+\f3\fs26 List<Grain>
+\f1\fs24 , and the calculations have been moved into methods on those classes (or into dedicated service classes like 
+\f3\fs26 HardeningModel
+\f1\fs24 ).\
+This is a significantly more robust, maintainable, and "Java-like" way to structure your program.\
+\
+\pard\pardeftab720\sa240\partightenfactor0
+\cf0 \outl0\strokewidth0 \strokec2 These classes contain all the subroutines, now organized as methods.\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f5\b\fs26 \cf0 InputReader.java
+\f1\b0\fs24  (Contains 
+\f3\fs26 dataCrystal
+\f1\fs24 , 
+\f3\fs26 dataSample
+\f1\fs24 , 
+\f3\fs26 dataProcess
+\f1\fs24 , 
+\f3\fs26 poleFig(iopt=0)
+\f1\fs24 , 
+\f3\fs26 difPlanes(iopt=0)
+\f1\fs24 )\
+\pard\pardeftab720\partightenfactor0
+\cf0 \
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f5\b\fs26 \cf0 Solver.java
+\f1\b0\fs24  (Contains 
+\f3\fs26 scNew
+\f1\fs24 , 
+\f3\fs26 gModulus
+\f1\fs24 , 
+\f3\fs26 gActsys
+\f1\fs24 , 
+\f3\fs26 sState
+\f1\fs24 , 
+\f3\fs26 gVerify
+\f1\fs24 , 
+\f3\fs26 loadConditions
+\f1\fs24 , 
+\f3\fs26 mEffective
+\f1\fs24 , 
+\f3\fs26 pileup
+\f1\fs24 )\
+\pard\pardeftab720\partightenfactor0
+\cf0 \
+\
+\pard\pardeftab720\partightenfactor0
+
+\f5\b\fs26 \cf0 \strokec2 OutputWriter.java
+\f1\b0\fs24 \strokec2  (Contains 
+\f3\fs26 \strokec2 gAverage
+\f1\fs24 \strokec2 , 
+\f3\fs26 \strokec2 effectiveMagnitudes
+\f1\fs24 \strokec2 , 
+\f3\fs26 \strokec2 plasticity
+\f1\fs24 \strokec2 , 
+\f3\fs26 \strokec2 gScysStat
+\f1\fs24 \strokec2 , 
+\f3\fs26 \strokec2 writeTexFile
+\f1\fs24 \strokec2 , 
+\f3\fs26 \strokec2 difPlanes(iopt=1)
+\f1\fs24 \strokec2 )\
+\
+\
+\pard\pardeftab720\sa280\partightenfactor0
+
+\f2\b\fs28 \cf0 \strokec2 3. Utility Classes (Final Versions)\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f1\b0\fs24 \cf0 \strokec2 \
+These are the complete helper classes, with all stubs filled.\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f5\b\fs26 \cf0 TensorUtils.java
+\f1\b0\fs24  (Contains all the math helpers: 
+\f3\fs26 invten
+\f1\fs24 , 
+\f3\fs26 ludcmpc
+\f1\fs24 , 
+\f3\fs26 lubksbc
+\f1\fs24 , 
+\f3\fs26 voigt
+\f1\fs24 , 
+\f3\fs26 euler
+\f1\fs24 , 
+\f3\fs26 det
+\f1\fs24 , 
+\f3\fs26 rodrigues
+\f1\fs24 , etc.)\
+\
+\pard\pardeftab720\partightenfactor0
+
+\f5\b\fs26 \cf0 \strokec2 NumericalRecipes.java
+\f1\b0\fs24 \strokec2  (Contains 
+\f3\fs26 \strokec2 jacobi
+\f1\fs24 \strokec2  and 
+\f3\fs26 \strokec2 eigsrt
+\f1\fs24 \strokec2 )\
+\
+
+\f5\b\fs26 \strokec2 EshelbyTensorCalculator.java
+\f1\b0\fs24 \strokec2  (The complete class, including 
+\f3\fs26 \strokec2 iopt=0
+\f1\fs24 \strokec2  data and 
+\f3\fs26 \strokec2 gauleg
+\f1\fs24 \strokec2 )\
+\
+
+\f5\b\fs26 \strokec2 RandomUtils.java
+\f1\b0\fs24 \strokec2  (Contains the full 
+\f3\fs26 \strokec2 ran2
+\f1\fs24 \strokec2  implementation)\
+\
+
+\f5\b\fs26 \strokec2 IntHolder.java
+\f1\b0\fs24 \strokec2  (Helper class for mutable integers)\
+\
+
+\f5\b\fs26 \strokec2 CommonConstants.java
+\f1\b0\fs24 \strokec2  (Simple constants class)\
+\
+}

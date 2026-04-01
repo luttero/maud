@@ -124,30 +124,32 @@ public class MicroAbsorptionBrindley extends MicroAbsorption {
 
     double mr = (aphase.getAbsorption(rad) * aphase.getDensity() -
             alayer.getAbsorption(rad) * alayer.getDensity()) * crystSize * 1.0E-4;
-//	System.out.println(aphase.getPhaseName() + " " + rad.energy + " " + aphase.getAbsorption(rad) + " " +
-//			aphase.getDensity() + " " + (alayer.getAbsorption(rad) * alayer.getDensity()) + " " +
-//			alayer.getDensity() + " " + crystSize + " " + mr);
 
-    switch (getModelNumber()) {
-      case 0:
-        muf = (1.0 - Math.exp(-mr)) / mr;
-        break;
-      case 1:
-        muf = (1.0 - Math.exp(-mr)) / mr;
-        muf *= muf;
-        break;
-      case 2:
-        double y0 = -0.00229;
-        double A1 = 2.0754;
-        double t1 = 0.69525;
-        double mr0 = -0.50356;
-        mr = mr / 2.0;
-        muf = (y0 + A1 * Math.exp(-(mr - mr0) / t1));
-        break;
-      default:
-        {
+    if (mr > 1.0E-9) {
+      switch (getModelNumber()) {
+        case 0:
+          muf = (1.0 - Math.exp(-mr)) / mr;
+          break;
+        case 1:
+          muf = (1.0 - Math.exp(-mr)) / mr;
+          muf *= muf;
+          break;
+        case 2:
+          double y0 = -0.00229;
+          double A1 = 2.0754;
+          double t1 = 0.69525;
+          double mr0 = -0.50356;
+          mr = mr / 2.0;
+          muf = (y0 + A1 * Math.exp(-(mr - mr0) / t1));
+          break;
+        default: {
         }
+      }
     }
+//    System.out.println(aphase.getPhaseName() + " " + rad.energy + " " + aphase.getAbsorption(rad) + " " +
+//        aphase.getDensity() + " " + (alayer.getAbsorption(rad) * alayer.getDensity()) + " " +
+//        alayer.getDensity() + " " + crystSize + " " + mr + " " + muf + " " + volFraction);
+
     return volFraction * muf;
   }
 

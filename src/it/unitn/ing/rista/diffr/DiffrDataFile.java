@@ -2201,7 +2201,7 @@ public class DiffrDataFile extends XRDcat {
 
   public void setYData(int index, double value) {
 
-    intensity[index] = (double) value;
+    intensity[index] = value;
 
 //    System.out.println(intensity[index]);
   }
@@ -6667,7 +6667,16 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 		return getParameterValue(scaleFactorDiffractionFluoID);
 	}
 
-	class JDataFileOptionsD extends JOptionsDialog {
+  public void divideIntensityBy(double value) {
+    for (int i = 0; i < datanumber; i++) {
+      intensity[i] /= value;
+      intensity[i] += MoreMath.getGaussianNoise(intensity[i]); //getIntensityRandomError(intens);
+      if (intensity[i] < 0)
+        intensity[i] = 0.0;
+    }
+  }
+
+  class JDataFileOptionsD extends JOptionsDialog {
 
     JParameterListPane[] polynomialP;
     JTextField displacementZTF = null;

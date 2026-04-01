@@ -2866,6 +2866,16 @@ public class DataFileSet extends XRDcat {
 //    if (numbercoefbackg() > 0) {
 //      getbackgcoef(0).setValue(1.0);
 //    }
+// temp only to disable after
+
+//    int datafilenumber = datafilesnumber();
+
+//    for (int i = 0; i < datafilenumber; i++) {
+//      DiffrDataFile adfile = getDataFile(i);
+//      adfile.divideIntensityBy(340000);
+//    }
+
+
   }
 
   public void resetCoefficients(int index) {

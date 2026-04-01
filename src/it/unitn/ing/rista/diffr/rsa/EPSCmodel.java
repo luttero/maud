@@ -1085,21 +1085,25 @@ public class EPSCmodel extends Strain {
 
     programName = MaudPreferences.getPref("epsc4.executable_name", programName);
 
-    MaudPreferences.getPref("epsc4.instr_filename", insName);
+    insName = MaudPreferences.getPref("epsc4.instr_filename", insName);
     initAll(asample, aphase, getFilePar().getDirectory() + insName);
 
-    // call superflip
+    // call epsc4
     String epscProgram = Constants.startingAppDirectory + "epsc4" + File.separator + programName;
     try {
-      System.out.println("Executing: " + Misc.checkForWindowsPath(epscProgram)); // + " " + Misc.checkForWindowsPath(insName));
-      Executable process = new Executable(Misc.checkForWindowsPath(epscProgram),
-          Misc.checkForWindowsPath(getFilePar().getDirectory()), null, false); //new String[] {Misc.checkForWindowsPath(insName)});
-      process.start();
-      while (!process.getStatus().equals(Executable.TERMINATED))
-        Thread.currentThread().sleep(100);
-      System.out.println("Execution of EPSC4 terminate with code: " + process.getTerminationResult());
-      process.cleanUp();
-//      Runtime.getRuntime().exec(superflipProgram + " " + filename);
+      if (programName.equalsIgnoreCase("internal"))
+        it.unitn.ing.rista.diffr.rsa.epsc.EPSC4.run(getFilePar().getDirectory(), insName);
+      else {
+        System.out.println("Executing: " + Misc.checkForWindowsPath(epscProgram)); // + " " + Misc.checkForWindowsPath(insName));
+        Executable process = new Executable(Misc.checkForWindowsPath(epscProgram),
+            Misc.checkForWindowsPath(getFilePar().getDirectory()), null, false); //new String[] {Misc.checkForWindowsPath(insName)});
+        process.start();
+        while (!process.getStatus().equals(Executable.TERMINATED))
+          Thread.currentThread().sleep(100);
+        System.out.println("Execution of EPSC4 terminate with code: " + process.getTerminationResult());
+        process.cleanUp();
+      }
+
       String hklFilename = getFilePar().getDirectory() + "epsc9.out";
       if (Constants.windoze) {
         hklFilename = Misc.getUserDir() + "\\" + "epsc9.out";

@@ -260,7 +260,7 @@ public class SizeStrainSymPopa extends SizeStrainSymModel implements Shape3D {
     return aphase.getPointGroup();
   }
 
-  public double getCrystallite(double dspace, int h, int k, int l) {
+  public double getCrystallite(double dspace, double h, double k, double l) {
     // Angles must be in radiants
 
     int index = 0;
@@ -332,7 +332,7 @@ public class SizeStrainSymPopa extends SizeStrainSymModel implements Shape3D {
     return index;
   }
 
-  public double getMicrostrain(double dspace, int h, int k, int l) {
+  public double getMicrostrain(double dspace, double h, double k, double l) {
     double ms = 0.0;
 
     double aH = acell[0] / dspace;
@@ -386,7 +386,7 @@ public class SizeStrainSymPopa extends SizeStrainSymModel implements Shape3D {
     return 0;
   }
 
-  public static double[] gethklproduct(int PGnumber, int numbercoeff, int h, int k, int l) {
+  public static double[] gethklproduct(int PGnumber, int numbercoeff, double h, double k, double l) {
 
     double hklproduct[] = new double[numbercoeff];
 
@@ -554,7 +554,7 @@ public class SizeStrainSymPopa extends SizeStrainSymModel implements Shape3D {
 
   double cryststrain[] = new double[2];
 
-  public double[] getCrystalliteMicrostrain(double d_space, int h, int k, int l, double[] texture_angles) {
+  public double[] getCrystalliteMicrostrain(double d_space, double h, double k, double l, double[] texture_angles) {
     cryststrain[0] = getCrystallite(d_space, h, k, l);
     cryststrain[1] = getMicrostrain(d_space, h, k, l);
     return cryststrain;

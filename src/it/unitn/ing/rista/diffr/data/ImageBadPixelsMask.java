@@ -227,7 +227,7 @@ public class ImageBadPixelsMask extends it.unitn.ing.rista.diffr.DataMask {
       int i = Integer.parseInt((String) stringloopField[0].elementAt(ij));
       int j = Integer.parseInt((String) stringloopField[1].elementAt(ij));
 
-      System.out.println("Disabling pixel by address: " + i + " " + j + " " + buffer[i][j]);
+//      System.out.println("Disabling pixel by address: " + i + " " + j + " " + buffer[i][j]);
       buffer[i][j] = -1;
     }
 

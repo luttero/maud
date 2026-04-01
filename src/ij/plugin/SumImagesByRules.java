@@ -63,7 +63,7 @@ public class SumImagesByRules implements PlugIn {
     }
   }
 
-  public String[] items = {"2Theta", "Omega", "Chi", "Phi", "Energy", "all"};
+  public String[] items = {"2Theta", "Omega", "Chi", "Phi", "All"};   // todo: removed "all" as not working, need to check
 
   public void sumImages(File[] files, int angleIndex) {
     Vector<File> filesV = new Vector<>(files.length, 10);
@@ -117,7 +117,7 @@ public class SumImagesByRules implements PlugIn {
           if (!sumAngle[sumAngle.length - 1]) {
             for (int j = 0; j < anglesNumber; j++) {
               toSum = toSum && (sumAngle[j] || MoreMath.areSimilar(anglesV.elementAt(i)[j], anglesFirst[j]));
-//            System.out.println(j + " " + toSum + " " + sumAngle[j] + " " + anglesV.elementAt(i)[j] + " == " + anglesFirst[j]);
+//              System.out.println(j + " " + toSum + " " + sumAngle[j] + " " + anglesV.elementAt(i)[j] + " == " + anglesFirst[j]);
             }
           }
           if (toSum) {
