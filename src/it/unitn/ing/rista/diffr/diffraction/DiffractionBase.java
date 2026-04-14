@@ -60,14 +60,16 @@ public class DiffractionBase extends Diffraction {
 		description = identifier;
 	}
 
-	public void computeDiffraction(Sample asample, DataFileSet adataset) {
-
-		int datafilenumber = adataset.activedatafilesnumber();
+	public void computeDiffraction(Sample asample) {
 
 		final Sample theSample = asample;
-		final DataFileSet theDataset = adataset;
+		final DataFileSet theDataset = getDataFileSet();
+    int datafilenumber = theDataset.activedatafilesnumber();
+    if (datafilenumber < 1)
+      return;
 
-		final int maxThreads = Math.min(Constants.maxNumberOfThreads, datafilenumber);
+//    final Instrument ainstrument = theDataset.getInstrument();
+    final int maxThreads = Math.min(Constants.maxNumberOfThreads, datafilenumber);
 		if (maxThreads > 1 && Constants.threadingGranularity >= Constants.MEDIUM_GRANULARITY) {
 			if (Constants.debugThreads)
 				out.println("Thread datafileset " + getLabel());
@@ -121,7 +123,7 @@ public class DiffractionBase extends Diffraction {
 	}
 
 	public void computeDiffraction(Sample asample, DiffrDataFile datafile) {
-		DataFileSet datafileset = datafile.getDataFileSet();
+//		DataFileSet datafileset = getDataFileSet();
 		if (getFilePar().isComputingDerivate()) {
 //      System.out.println("refreshing derivative: " + this.toXRDcatString());
 			for (int ij = 0; ij < getFilePar().getActiveSample().phasesNumber(); ij++) {
@@ -154,7 +156,8 @@ public class DiffractionBase extends Diffraction {
 	                                        int computeStrain, int computeFhkl, boolean leBailExtraction,
 	                                        Phase phase, DiffrDataFile datafile) {
 
-		Instrument ainstrument = datafile.getDataFileSet().getInstrument();
+		DataFileSet adatafileset = getDataFileSet();
+    Instrument ainstrument = adatafileset.getInstrument();
 		FilePar filepar = getFilePar();
 		OutputStream out = null;
 		boolean logOutput = false;
@@ -200,7 +203,7 @@ public class DiffractionBase extends Diffraction {
 		}
 
 //    Instrument ainstrument = getDataFileSet().getInstrument();
-		double cutoff = datafile.getDataFileSet().getPeakCutoffD() * rangefactor;
+		double cutoff = adatafileset.getPeakCutoffD() * rangefactor;
 		if (!datafile.increasingX()) {
 			cutoff = -cutoff;
 		}

@@ -67,6 +67,10 @@ public class InstrumentBroadening extends XRDcat {
     return new double[1][2];
   }
 
+  public double[][] getInstrumentalEnergyBroadeningAt(double x, DiffrDataFile diffrDataFile) {
+    return new double[1][2];
+  }
+
 /*  public double getConvolutedBroadening(double x, double[] tilting_angles, boolean dspacingbase) {
     return 0.0;
   }*/

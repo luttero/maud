@@ -53,7 +53,11 @@ public class Diffraction extends XRDcat {
 	public Diffraction() {
 	}
 
-	public void computeDiffraction(Sample asample, DataFileSet adataset) {
+  public DataFileSet getDataFileSet() {
+    return (DataFileSet) getParent();
+  }
+
+	public void computeDiffraction(Sample asample) {
 	}
 
 		/**

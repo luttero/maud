@@ -47,7 +47,11 @@ public class Fluorescence extends XRDcat {
   public Fluorescence() {
   }
 
-	public void computeFluorescence(Sample asample, DataFileSet adataset) {
+  public DataFileSet getDataFileSet() {
+    return (DataFileSet) getParent();
+  }
+
+  public void computeFluorescence(Sample asample) {
 	}
 
 	/**

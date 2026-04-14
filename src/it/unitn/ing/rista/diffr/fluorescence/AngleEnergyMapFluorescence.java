@@ -48,6 +48,7 @@ public class AngleEnergyMapFluorescence extends Fluorescence {
   
   public AngleEnergyMapFluorescence(XRDcat obj, String alabel) {
     super(obj, alabel);
+    initBaseObject();
     identifier = modelID;
     IDlabel = modelID;
     description = descriptionID;

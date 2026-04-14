@@ -80,14 +80,14 @@
             <exclude name="it/unitn/ing/rista/diffr/rsa/NoStress.java"/>
             <exclude name="it/unitn/ing/rista/diffr/rsa/VoigtReussStress.java"/>
             <exclude name="it/unitn/ing/rista/diffr/Stress.java"/>
-            <exclude name="it/unitn/ing/rista/diffr/detector/AngleEnergyMapDetector.java"/>
+            <!--exclude name="it/unitn/ing/rista/diffr/detector/AngleEnergyMapDetector.java"/>
             <exclude name="it/unitn/ing/rista/diffr/instrument/AngleEnergyMapInstrument.java"/>
             <exclude name="it/unitn/ing/rista/diffr/instbroad/AngleEnergyMapInstrumentBroadening.java"/>
             <exclude name="it/unitn/ing/rista/diffr/absorption/AngleEnergyMapAbsorption.java"/>
             <exclude name="it/unitn/ing/rista/diffr/absorption/StandardAbsorptionModel.java"/>
             <exclude name="it/unitn/ing/rista/diffr/cal/EnergyMultiStripAngularCalibration.java"/>
             <exclude name="it/unitn/ing/rista/diffr/diffraction/DiffractionAngleEnergyMap.java"/>
-            <exclude name="it/unitn/ing/rista/diffr/fluorescence/AngleEnergyMapFluorescence.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/fluorescence/AngleEnergyMapFluorescence.java"/-->
             <!--exclude name="it/unitn/ing/rista/diffr/cal/AngularInclinedFlatImageCalibration.java" />
      <exclude name="it/unitn/ing/rista/diffr/rsa/PopaBalzarHarmonicStrainModel.java" /-->
             <exclude name="it/unitn/ing/rista/diffr/sizestrain/DiffaXLayerModel.java"/>

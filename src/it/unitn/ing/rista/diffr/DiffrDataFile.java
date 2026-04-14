@@ -838,126 +838,128 @@ public class DiffrDataFile extends XRDcat {
       }
     } else if (ciffile.thestring.indexOf("texture_factors") > 0) {
 
-	  int tokentype;
+      if (getFilePar().getVersion() < 3.0) {
+        int tokentype;
 //		XRDcat theobj = null;
-	  boolean endofInput = false;
-	  int cifentry = 0, tmpVindex = 0;
-	  int[] cifindex = new int[6];
-	  Vector cifVector = new Vector(0, 1);
-	  Vector[] tmpVector = null;
-	  overallVector = new Vector(0, 1);
-	  boolean newLoop = false;
-	  boolean startLoop = false;
-	  int maxCIFentries = 7;
+        boolean endofInput = false;
+        int cifentry = 0, tmpVindex = 0;
+        int[] cifindex = new int[6];
+        Vector cifVector = new Vector(0, 1);
+        Vector[] tmpVector = null;
+        overallVector = new Vector(0, 1);
+        boolean newLoop = false;
+        boolean startLoop = false;
+        int maxCIFentries = 7;
 //	  radiationsNumber = 1;
 
-	  try {
-		  do {
-			  tokentype = ciffile.nextToken();
-			  switch (tokentype) {
-				  case CIFtoken.TT_DATA:
-				  case CIFtoken.TT_PHASE:
-					  if (tmpVector != null) {
-						  overallVector.addElement(tmpVector);
-					  }
+        try {
+          do {
+            tokentype = ciffile.nextToken();
+            switch (tokentype) {
+              case CIFtoken.TT_DATA:
+              case CIFtoken.TT_PHASE:
+                if (tmpVector != null) {
+                  overallVector.addElement(tmpVector);
+                }
 //					  System.out.println("Reading texture factors for phase: " + overallVector.size());
 //						phaseindex++;
-					  tmpVindex = 0;
-					  tmpVector = null;
-					  cifVector = new Vector(0, 1);
-					  cifentry = 0;
-					  newLoop = false;
-					  break;
-				  case CIFtoken.TT_CIFE:
-            int dummy;
-					  // CIF item
-					  String thecife = ciffile.thestring;
-					  if (thecife.equalsIgnoreCase(CIFdictionary.texture_points_number)) {
-						  int newtoken = ciffile.nextToken();
-						  if (newtoken == CIFtoken.TT_NUMBER)
-							  positionsPerPattern = Integer.parseInt(ciffile.thestring);
-					  } else if (thecife.equalsIgnoreCase(CIFdictionary.texture_radiations_number)) {
-					   int newtoken = ciffile.nextToken();
-					   if (newtoken == CIFtoken.TT_NUMBER)
-						  dummy = Integer.parseInt(ciffile.thestring); /* radiationsNumber */
-            } else
-						  cifVector.addElement(thecife);
-					  break;
-				  case CIFtoken.TT_LOOP:
-					  // start the loop for the values here
-					  newLoop = true;
-					  startLoop = true;
-					  break;
-				  case CIFtoken.TT_NUMBER:
-					  if (!newLoop)
-						  break;
-					  if (startLoop) {
-						  cifindex = new int[cifVector.size()];
-						  tmpVindex = 0;
-						  for (int i = 0; i < cifVector.size(); i++) {
-							  thecife = (String) cifVector.elementAt(i);
-							  if (thecife.equalsIgnoreCase(CIFdictionary.refln_h)) {
-								  cifindex[i] = 0;
-								  tmpVindex++;
-							  } else if (thecife.equalsIgnoreCase(CIFdictionary.refln_k)) {
-								  cifindex[i] = 1;
-								  tmpVindex++;
-							  } else if (thecife.equalsIgnoreCase(CIFdictionary.refln_l)) {
-								  cifindex[i] = 2;
-								  tmpVindex++;
-							  } else if (thecife.equalsIgnoreCase(CIFdictionary.texture_factor_meas)) {
-								  cifindex[i] = 3;
-								  tmpVindex++;
-							  } else if (thecife.equalsIgnoreCase(CIFdictionary.texture_factor_calc)) {
-								  cifindex[i] = 4;
-								  tmpVindex++;
-							  } else if (thecife.equalsIgnoreCase(CIFdictionary.texture_factor_point)) {
-								  cifindex[i] = 5;
-								  tmpVindex++;
-							  } else if (thecife.equalsIgnoreCase(CIFdictionary.texture_radiation_point)) {
-								  cifindex[i] = 6;
-								  tmpVindex++;
-							  } else
-								  cifindex[i] = -1;
-						  }
-						  startLoop = false;
-						  cifVector.removeAllElements();
-					  }
-					  if (tmpVector == null) {
-						  tmpVector = new Vector[maxCIFentries];
-						  for (int i = 0; i < maxCIFentries; i++)
-							  tmpVector[i] = new Vector(0, 10);
-					  }
-					  if (cifindex[cifentry] >= 0) {
-						  double[] value = new double[1];
-						  value[0] = ciffile.thevalue;
-						  tmpVector[cifindex[cifentry]].addElement(value);
-					  }
-					  cifentry++;
-					  if (cifentry == tmpVindex)
-						  cifentry = 0;
-					  break;
-				  case CIFtoken.TT_CUSTOM_END:
-					  if (tmpVector != null) {
-						  overallVector.addElement(tmpVector);
-					  }
-					  endofInput = true;
-					  break;
-				  default: {
-				  }
-			  }
-		  } while (tokentype != CIFtoken.TT_EOF && !endofInput);
+                tmpVindex = 0;
+                tmpVector = null;
+                cifVector = new Vector(0, 1);
+                cifentry = 0;
+                newLoop = false;
+                break;
+              case CIFtoken.TT_CIFE:
+                int dummy;
+                // CIF item
+                String thecife = ciffile.thestring;
+                if (thecife.equalsIgnoreCase(CIFdictionary.texture_points_number)) {
+                  int newtoken = ciffile.nextToken();
+                  if (newtoken == CIFtoken.TT_NUMBER)
+                    positionsPerPattern = Integer.parseInt(ciffile.thestring);
+                } else if (thecife.equalsIgnoreCase(CIFdictionary.texture_radiations_number)) {
+                  int newtoken = ciffile.nextToken();
+                  if (newtoken == CIFtoken.TT_NUMBER)
+                    dummy = Integer.parseInt(ciffile.thestring); /* radiationsNumber */
+                } else
+                  cifVector.addElement(thecife);
+                break;
+              case CIFtoken.TT_LOOP:
+                // start the loop for the values here
+                newLoop = true;
+                startLoop = true;
+                break;
+              case CIFtoken.TT_NUMBER:
+                if (!newLoop)
+                  break;
+                if (startLoop) {
+                  cifindex = new int[cifVector.size()];
+                  tmpVindex = 0;
+                  for (int i = 0; i < cifVector.size(); i++) {
+                    thecife = (String) cifVector.elementAt(i);
+                    if (thecife.equalsIgnoreCase(CIFdictionary.refln_h)) {
+                      cifindex[i] = 0;
+                      tmpVindex++;
+                    } else if (thecife.equalsIgnoreCase(CIFdictionary.refln_k)) {
+                      cifindex[i] = 1;
+                      tmpVindex++;
+                    } else if (thecife.equalsIgnoreCase(CIFdictionary.refln_l)) {
+                      cifindex[i] = 2;
+                      tmpVindex++;
+                    } else if (thecife.equalsIgnoreCase(CIFdictionary.texture_factor_meas)) {
+                      cifindex[i] = 3;
+                      tmpVindex++;
+                    } else if (thecife.equalsIgnoreCase(CIFdictionary.texture_factor_calc)) {
+                      cifindex[i] = 4;
+                      tmpVindex++;
+                    } else if (thecife.equalsIgnoreCase(CIFdictionary.texture_factor_point)) {
+                      cifindex[i] = 5;
+                      tmpVindex++;
+                    } else if (thecife.equalsIgnoreCase(CIFdictionary.texture_radiation_point)) {
+                      cifindex[i] = 6;
+                      tmpVindex++;
+                    } else
+                      cifindex[i] = -1;
+                  }
+                  startLoop = false;
+                  cifVector.removeAllElements();
+                }
+                if (tmpVector == null) {
+                  tmpVector = new Vector[maxCIFentries];
+                  for (int i = 0; i < maxCIFentries; i++)
+                    tmpVector[i] = new Vector(0, 10);
+                }
+                if (cifindex[cifentry] >= 0) {
+                  double[] value = new double[1];
+                  value[0] = ciffile.thevalue;
+                  tmpVector[cifindex[cifentry]].addElement(value);
+                }
+                cifentry++;
+                if (cifentry == tmpVindex)
+                  cifentry = 0;
+                break;
+              case CIFtoken.TT_CUSTOM_END:
+                if (tmpVector != null) {
+                  overallVector.addElement(tmpVector);
+                }
+                endofInput = true;
+                break;
+              default: {
+              }
+            }
+          } while (tokentype != CIFtoken.TT_EOF && !endofInput);
 //      System.out.println("Custom object loaded!");
-		  if (overallVector.size() > 0) {
-		    needRestore = new boolean[overallVector.size()];
-		    for (int i = 0; i < overallVector.size(); i++)
-			    needRestore[i] = true;
-	    } else
-			  needRestore = null;
+          if (overallVector.size() > 0) {
+            needRestore = new boolean[overallVector.size()];
+            for (int i = 0; i < overallVector.size(); i++)
+              needRestore[i] = true;
+          } else
+            needRestore = null;
 //			notLoaded = false;
-	  } catch (IOException ioe) {
-		  out.println("IO exception in custom object for " + toXRDcatString());
-	  }
+        } catch (IOException ioe) {
+          out.println("IO exception in custom object for " + toXRDcatString());
+        }
+      }
     }
 
   }

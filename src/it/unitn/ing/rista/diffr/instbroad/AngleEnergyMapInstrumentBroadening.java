@@ -94,7 +94,7 @@ public class AngleEnergyMapInstrumentBroadening extends InstrumentBroadening {
   
   public AngleEnergyMapInstrumentBroadening(XRDcat obj, String alabel) {
 		super(obj, alabel);
-		initXRD();
+    initBaseObject();
 		identifier = modelID;
 		IDlabel = modelID;
 		description = descriptionID;
@@ -246,7 +246,7 @@ public class AngleEnergyMapInstrumentBroadening extends InstrumentBroadening {
 				for (int j = 0; j < parameterloopField.length; j++)
 					for (int i = 0; i < parameterloopField[j].size(); i++)
 						if (source == parameterloopField[j].elementAt(i)) {
-							notifyParameterChanged(source, Constants.INSTRUMENT_BROADENING);
+							notifyParameterChanged(source, Constants.INSTRUMENT_BROADENING, -1);
 							return;
 						}
 			super.notifyParameterChanged(source);
@@ -348,16 +348,12 @@ public class AngleEnergyMapInstrumentBroadening extends InstrumentBroadening {
     return truncationAngle;
   }
   
-  public java.util.Vector<double[]> getInstrumentBroadeningAt(double x, DiffrDataFile diffrDataFile) {
-  
+  public double[][] getInstrumentalBroadeningAt(double x, DiffrDataFile diffrDataFile) {
+
 // Attention: x equal to 2theta
+
     double[] tilting_angles = diffrDataFile.getTiltingAngle();
-    double[] hwhm = {0.0};
-    double[] eta = {0.0};
-    java.util.Vector<double[]> broadV = new java.util.Vector<>(2);
-    broadV.add(hwhm);
-    broadV.add(eta);
-  
+    double broad[][] = new double[1][2];
     double domega = x - getMeasurement().getOmega(tilting_angles[0], x);
     double tanx = x;
     if (cagliotiTanDep) {
@@ -369,34 +365,30 @@ public class AngleEnergyMapInstrumentBroadening extends InstrumentBroadening {
       }
     }
 
-//    broadV.get(1)[0] = 0.0;
+    broad[0][0] = 0.0;
     for (int i = 0; i < gaussianN; i++)
-      broadV.get(1)[0] += gaussian[i] * MoreMath.pow(x, i);
-    if (broadV.get(1)[0] < 0.0)
-      broadV.get(1)[0] = 0.0;
-    if (broadV.get(1)[0] > 1.0)
-      broadV.get(1)[0] = 1.0;
-
-//    broadV.get(0)[0] = 0.0;
+      broad[0][0] += gaussian[i] * MoreMath.pow(x, i);
+    if (broad[0][0] < 0.0)
+      broad[0][0] = 0.0;
+    if (broad[0][0] > 1.0)
+      broad[0][0] = 1.0;
+    broad[0][1] = 0.0;
     for (int i = 0; i < cagliotiN; i++)
-      broadV.get(0)[0] += caglioti[i] * MoreMath.pow(tanx, i);
-    if (broadV.get(0)[0] <= 0)
-      broadV.get(0)[0] = minimumHWHMvalue;
-    else
-      broadV.get(0)[0] = Math.sqrt(broadV.get(0)[0]) / 2.0;
-  
+      broad[0][1] += caglioti[i] * MoreMath.pow(tanx, i);
+    broad[0][1] = Math.sqrt(broad[0][1]) / 2.0;
+
     if (broadeningOmegaN > 0) {
       for (int i = 0; i < Math.min(3, broadeningOmegaN); i++)
-        broadV.get(0)[0] += broadeningOmega[i] * MoreMath.pow(domega, i);
+        broad[0][1] += broadeningOmega[i] * MoreMath.pow(domega, i);
       for (int i = Math.min(3, broadeningOmegaN); i < broadeningOmegaN; i++)
-        broadV.get(0)[0] += broadeningOmega[i] * domega * MoreMath.pow(tanx, i - 1);
+        broad[0][1] += broadeningOmega[i] * domega * MoreMath.pow(tanx, i - 1);
     }
     if (broadeningChiN > 0) {
       double tano = MoreMath.sind(Math.abs(tilting_angles[1]));
       for (int i = 0; i < Math.min(2, broadeningChiN); i++)
-        broadV.get(0)[0] += broadeningChi[i] * MoreMath.pow(tano, i + 1);
+        broad[0][1] += broadeningChi[i] * MoreMath.pow(tano, i + 1);
       for (int i = Math.min(2, broadeningChiN); i < broadeningChiN; i++)
-        broadV.get(0)[0] += broadeningChi[i] * tano * MoreMath.pow(tanx, i - 1);
+        broad[0][1] += broadeningChi[i] * tano * MoreMath.pow(tanx, i - 1);
     }
     if (broadeningEtaN > 0) {
       if (!diffrDataFile.dspacingbase) {
@@ -408,9 +400,9 @@ public class AngleEnergyMapInstrumentBroadening extends InstrumentBroadening {
       }
       double tane = MoreMath.sind(Math.abs(tilting_angles[3]));
       for (int i = 0; i < Math.min(2, broadeningEtaN); i++)
-        broadV.get(0)[0] += broadeningEta[i] * MoreMath.pow(tane, i + 1);
+        broad[0][1] += broadeningEta[i] * MoreMath.pow(tane, i + 1);
       for (int i = Math.min(2, broadeningEtaN); i < broadeningEtaN; i++)
-        broadV.get(0)[0] += broadeningEta[i] * tane * MoreMath.pow(tanx, i - 1);
+        broad[0][1] += broadeningEta[i] * tane * MoreMath.pow(tanx, i - 1);
     }
     if (broadeningCosEtaN > 0) {
       double cosx = 1.0;
@@ -421,97 +413,94 @@ public class AngleEnergyMapInstrumentBroadening extends InstrumentBroadening {
         double delta = 0;
         if (MoreMath.odd(i))
           delta = Constants.PI / 2.0;
-        broadV.get(0)[0] += broadeningCosEta[i] * Math.cos((i + 1) * tane + delta) * cosx;
+        broad[0][1] += broadeningCosEta[i] * Math.cos((i + 1) * tane + delta) * cosx;
       }
-    
+
     }
-  
+
     if (broadeningThetaSinEtaN > 0) {
       double cosx = 1.0;
       if (!diffrDataFile.dspacingbase)
         cosx += Math.abs(Math.cos(x * Constants.DEGTOPI));
       double tane = 2.0 * tilting_angles[3] * Constants.DEGTOPI;
-      for (int i = 0; i < broadeningThetaSinEtaN; i++) {
-        broadV.get(0)[0] += broadeningThetaSinEta[i] * Math.cos((i + 1) * tane) * cosx;
+      for (int i = 0; i <broadeningThetaSinEtaN; i++) {
+        broad[0][1] += broadeningThetaSinEta[i] * Math.cos((i + 1) * tane) * cosx;
       }
-    
+
     }
-  
+
     if (broadeningSinThetaOmegaN > 2) {
       domega = Math.abs(domega + broadeningSinThetaOmega[0]) * Constants.DEGTOPI;
       double cosx = 1.0;
       if (!diffrDataFile.dspacingbase)
         cosx = 1.0 + broadeningSinThetaOmega[1] * Math.abs(Math.cos(x * Constants.DEGTOPI));
       for (int i = 2; i < broadeningSinThetaOmegaN; i++) {
-        broadV.get(0)[0] += broadeningSinThetaOmega[i] * Math.sin(i * domega) * cosx;
+        broad[0][1] += broadeningSinThetaOmega[i] * Math.sin(i * domega) * cosx;
       }
-    
+
     }
-  
-    if (broadV.get(0)[0] < minimumHWHMvalue || Double.isNaN(broadV.get(0)[0]))
-      broadV.get(0)[0] = minimumHWHMvalue;
-  
-    return broadV;
+
+    if (broad[0][1] < minimumHWHMvalue || Double.isNaN(broad[0][1]))
+      broad[0][1] = minimumHWHMvalue;
+
+    return broad;
   }
   
-  public java.util.Vector<double[]> getInstrumentEnergyBroadeningAt(double x) {
+  public double[][] getInstrumentalEnergyBroadeningAt(double x, DiffrDataFile diffrDataFile) {
     
     XRFDetector detector = (XRFDetector) getInstrument().getDetector();
   
     double mhuDet = detector.computeMACForLineWithEnergy(x);
     
-    java.util.Vector<double[]> broad = new java.util.Vector<>(parameterloopField.length - energyParametersIndex + 1);
-    
+//    java.util.Vector<double[]> broad = new java.util.Vector<>(parameterloopField.length - energyParametersIndex + 1);
+    double broad[][] = new double[1][parameterloopField.length - energyParametersIndex + 1];
+
     double[] par = getParameterLoopVector(energyParametersIndex);
-    double[] value = {0.0};
+    double value = 0.0;
     for (int i = 0; i < par.length; i++)
-      value[0] += par[i] * MoreMath.pow(x, i);
+      value += par[i] * MoreMath.pow(x, i);
     
-    if (value[0] <= 0)
-      value[0] = minimumHWHMvalue;
+    if (value <= 0)
+      value = minimumHWHMvalue;
     else
-      value[0] = Math.sqrt(value[0]);
-    broad.add(value);
+      value = Math.sqrt(value);
+    broad[0][0] = value;
     
     par = getParameterLoopVector(energyParametersIndex + 1);
-    value = new double[]{0.0};
-    value[0] = 0.0;
+    value = 0.0;
     for (int i = 0; i < par.length; i++)
-      value[0] += par[i] * MoreMath.pow(x, i);
-    if (value[0] < 0.0)
-      value[0] = -value[0];
-    if (value[0] > 1.0)
-      value[0] = 1.0;
-    broad.add(value);
+      value += par[i] * MoreMath.pow(x, i);
+    if (value < 0.0)
+      value = -value;
+    if (value > 1.0)
+      value = 1.0;
+    broad[0][1] = value;
   
     for (int i = energyParametersIndex + 2; i < energyParametersIndex + 4; i++) {
       par = getParameterLoopVector(i);
-      value = new double[]{0.0};
-      value[0] = 0.0;
+      value = 0.0;
       for (int j = 0; j < par.length; j++)
-        value[0] += par[j] * MoreMath.pow(x, j);
-      if (value[0] < 0.0)
-        value[0] = -value[0];
+        value += par[j] * MoreMath.pow(x, j);
+      if (value < 0.0)
+        value = -value;
       if (i == energyParametersIndex + 2) {
-        value[0] *= mhuDet;
+        value *= mhuDet;
       } else {
-        if (value[0] < minimumHWHMvalue)
-          value[0] = minimumHWHMvalue;
+        if (value < minimumHWHMvalue)
+          value = minimumHWHMvalue;
       }
-      broad.add(value);
+      broad[0][i - energyParametersIndex] = value;
     }
   
     for (int i = energyParametersIndex + 4; i < parameterloopField.length; i++) {
       par = getParameterLoopVector(i);
-      value = new double[]{0.0};
-      value[0] = 0.0;
+      value = 0.0;
       for (int j = 0; j < par.length; j++)
-        value[0] += par[j] * MoreMath.pow(x * mhuDet, j);
-      if (value[0] < 0.0)
-        value[0] = -value[0];
-      broad.add(value);
+        value += par[j] * MoreMath.pow(x * mhuDet, j);
+      if (value < 0.0)
+        value = -value;
+      broad[0][i - energyParametersIndex] = value;
     }
-    
     return broad;
   }
   

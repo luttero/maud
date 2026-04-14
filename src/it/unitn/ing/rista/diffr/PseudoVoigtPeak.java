@@ -124,10 +124,13 @@ public class PseudoVoigtPeak extends basicPeak {
 			Phase aphase = getPhase();
 			Reflection refl = getReflex();
 
-			String phase_name = aphase.toXRDcatString();
-			while (phase_name.length() < 20)
-				phase_name += " ";
-			phase_name = phase_name.substring(0, 20);
+    String phase_name = null;
+    if (logOutput && out != null) {
+      phase_name = aphase.toXRDcatString();
+      while (phase_name.length() < 20)
+        phase_name += " ";
+      phase_name = phase_name.substring(0, 20);
+    }
 //    int dataindex = diffrDataFile.getIndex();
 //    int datasetIndex = diffrDataFile.getDataFileSet().getIndex();
 

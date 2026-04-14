@@ -43,6 +43,7 @@ public class AngleEnergyMapInstrument extends Instrument {
 
 	public AngleEnergyMapInstrument(XRDcat obj, String alabel) {
 		super(obj, alabel);
+    initBaseObject();
 		identifier = modelID;
 		IDlabel = modelID;
 		description = modelID;
