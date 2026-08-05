@@ -99,10 +99,10 @@ class StreamDemultiplexor implements GlobalConstants
 	cleanup = new Object() {
 	    private final SocketTimeout timer = StreamDemultiplexor.TimerThread;
 
-	    protected void finalize()
+/*	    protected void finalize()
 	    {
 		timer.kill();
-	    }
+	    }*/
 	};
     }
 
@@ -129,7 +129,7 @@ class StreamDemultiplexor implements GlobalConstants
     /**
      * Initializes the demultiplexor with a new socket.
      *
-     * @param stream   the stream to demultiplex
+     * @param sock   the stream to demultiplex
      */
     private void init(Socket sock)  throws IOException
     {
@@ -638,7 +638,7 @@ class StreamDemultiplexor implements GlobalConstants
      * stream after this <var>resp</var>onse or all requests have been
      * processed, or close immediately if no requests are registered.
      *
-     * @param response the Response after which the connection should
+     * @param resp the Response after which the connection should
      *                 be closed.
      */
     synchronized void markForClose(Response resp)
@@ -758,12 +758,12 @@ class StreamDemultiplexor implements GlobalConstants
 
     /**
      * A safety net to close the connection.
-     */
+
     protected void finalize() throws Throwable
     {
 	close((IOException) null, false);
 	super.finalize();
-    }
+    }*/
 
 
     /**

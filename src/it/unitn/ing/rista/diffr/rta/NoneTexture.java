@@ -57,7 +57,7 @@ public class NoneTexture extends Texture {
   public void printOptionalOutput() {
   }
 
-  public void computeTextureFactor(final Phase aphase, final Sample asample) {
+	public void computeTextureFactor(final Phase aphase, final Sample asample) {
 
 		if (!refreshComputation)
 			return;

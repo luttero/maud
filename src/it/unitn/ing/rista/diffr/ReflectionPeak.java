@@ -11,11 +11,11 @@ public class ReflectionPeak {
 	public double calcTextureFactor = 1.0;
 	public double expStrainFactor = 0.0;
 	public double calcStrainFactor = 0.0;
-	public double[] sizestrain = null;
+//	public double[] sizestrain = null;
 	public java.util.Vector<double[]> instBroadFactor = null;
   public java.util.Vector<double[]> instBroadFactor_en = null;
-	public double[] broadFactorTotal = null;
-  public double[] broadFactorTotal_en = null;
+//	public double[] broadFactorTotal = null;
+//  public double[] broadFactorTotal_en = null;
   public double broadFactorHWHM = 0.0;
   public double broadFactorEta = 0.0;
   public double broadFactorHWHM_en = 0.0;

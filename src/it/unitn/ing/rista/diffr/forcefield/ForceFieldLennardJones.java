@@ -308,8 +308,8 @@ public class ForceFieldLennardJones extends ForceField {
 					LennardJonesParams ljp12 = getLennardJonesParams(nd);
 					data[nd][0] = ljp12.atm1;
 					data[nd][1] = ljp12.atm2;
-					data[nd][2] = new Double(ljp12.const1);
-					data[nd][3] = new Double(ljp12.const2);
+					data[nd][2] = ljp12.const1;
+					data[nd][3] = ljp12.const2;
 				}
 			}
 

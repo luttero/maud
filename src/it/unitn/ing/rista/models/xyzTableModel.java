@@ -107,13 +107,13 @@ public class xyzTableModel extends AbstractTableModel {
   public Object getValueAt(int row, int column) {
     switch (column) {
       case 0:
-        return new Integer(row + 1);
+        return row + 1;
       case 1:
-        return new Double(theatom.getx(row));
+        return theatom.getx(row);
       case 2:
-        return new Double(theatom.gety(row));
+        return theatom.gety(row);
       case 3:
-        return new Double(theatom.getz(row));
+        return theatom.getz(row);
       default:
         {
           return null;

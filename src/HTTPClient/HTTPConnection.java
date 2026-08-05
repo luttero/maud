@@ -1580,6 +1580,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
      *
      * @param raw if true removes all modules (except for the retry module)
      */
+    @Deprecated
     public void setRawMode(boolean raw)
     {
 	// Don't remove the retry module

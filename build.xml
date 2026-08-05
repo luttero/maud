@@ -16,7 +16,7 @@
     <property name="myself" value="myself"/>
     <property name="bundle.icon" value="maud.icns"/>
     <property name="icon" value="src/images/${bundle.icon}"/>
-    <property name="maud_version" value="2.99997"/>
+    <property name="maud_version" value="3.0"/>
     <property name="application_OSX.title" value="Maud.app"/>
     <property name="app_osx_295" location="${user.home}/Projects/maud/osx_295"/>
     <property name="app_osx_intel" location="${user.home}/Projects/maud/osx_intel"/>
@@ -81,14 +81,14 @@
             <exclude name="it/unitn/ing/rista/diffr/rsa/NoStress.java"/>
             <exclude name="it/unitn/ing/rista/diffr/rsa/VoigtReussStress.java"/>
             <exclude name="it/unitn/ing/rista/diffr/Stress.java"/>
-            <exclude name="it/unitn/ing/rista/diffr/detector/AngleEnergyMapDetector.java"/>
+            <!--exclude name="it/unitn/ing/rista/diffr/detector/AngleEnergyMapDetector.java"/>
             <exclude name="it/unitn/ing/rista/diffr/instrument/AngleEnergyMapInstrument.java"/>
             <exclude name="it/unitn/ing/rista/diffr/instbroad/AngleEnergyMapInstrumentBroadening.java"/>
             <exclude name="it/unitn/ing/rista/diffr/absorption/AngleEnergyMapAbsorption.java"/>
             <exclude name="it/unitn/ing/rista/diffr/absorption/StandardAbsorptionModel.java"/>
             <exclude name="it/unitn/ing/rista/diffr/cal/EnergyMultiStripAngularCalibration.java"/>
             <exclude name="it/unitn/ing/rista/diffr/diffraction/DiffractionAngleEnergyMap.java"/>
-            <exclude name="it/unitn/ing/rista/diffr/fluorescence/AngleEnergyMapFluorescence.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/fluorescence/AngleEnergyMapFluorescence.java"/-->
             <!--exclude name="it/unitn/ing/rista/diffr/cal/AngularInclinedFlatImageCalibration.java" />
      <exclude name="it/unitn/ing/rista/diffr/rsa/PopaBalzarHarmonicStrainModel.java" /-->
             <exclude name="it/unitn/ing/rista/diffr/sizestrain/DiffaXLayerModel.java"/>
@@ -108,8 +108,6 @@
             <!--exclude name="it/unitn/ing/rista/diffr/sfm/FullProfStructureModel.java" /-->
             <!--exclude name="it/unitn/ing/rista/diffr/sdpd/GiacovazzoSirIC.java" /-->
             <!--exclude name="it/unitn/ing/rista/diffr/forcefield/ABINITEnergyComputation.java" /-->
-            <exclude name="it/unitn/ing/rista/diffr/PseudoVoigt2DPeak.java"/>
-            <exclude name="it/unitn/ing/rista/diffr/ReflectionPeak.java"/>
             <exclude name="it/unitn/ing/rista/interfaces/myObj.java"/>
             <exclude name="it/unitn/ing/rista/io/ZIPNLextractor.java"/>
             <exclude name="jnt/**"/>
@@ -133,6 +131,7 @@
             <exclude name="it/unitn/ing/xgridclient/**"/>
             <exclude name="it/unitn/ing/xgridcontroller/**"/>
             <exclude name="com/deadmoo/xgridagent/**"/>
+            <exclude name="gov/noaa/pmel/sgt/demo/**"/>
             <exclude name="gov/lanl/epsc4/*.java"/>
             <classpath>
                 <pathelement location="libs/current/jogl.all.jar"/>
@@ -253,6 +252,7 @@
             <exclude name="it/unitn/ing/xgridclient/**"/>
             <exclude name="it/unitn/ing/xgridcontroller/**"/>
             <exclude name="com/deadmoo/xgridagent/**"/>
+            <exclude name="gov/noaa/pmel/sgt/demo/**"/>
             <classpath>
                 <pathelement location="libs/current/jogl.all.jar"/>
                 <pathelement location="libs/current/EsquiClient.jar"/>

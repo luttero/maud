@@ -140,15 +140,15 @@ public class StructureFactorPawleyMethod extends StructureFactorExtractor implem
       DataFileSet dataset = asample.getActiveDataSet(di);
       Vector<Peak> fullpeaklist = dataset.getPeakList();
       int numberofpeaks = dataset.getNumberofPeaks();
-		  double[][] structureFactors = dataset.getStructureFactors(phase);
+		  double[][][] structureFactors = dataset.getStructureFactors(phase);
       for (int np = 0; np < numberofpeaks; np++) {
         if (fullpeaklist.elementAt(np).getReflex().getParent() == phase) {
           Reflection reflex = fullpeaklist.elementAt(np).getReflex();
           double[] value = getIntensityForPeak(reflex.getH(), reflex.getK(), reflex.getL(),
-		          structureFactors[1][fullpeaklist.elementAt(np).getOrderPosition()]);
-          structureFactors[0][fullpeaklist.elementAt(np).getOrderPosition()] =  value[0];
-	        structureFactors[1][fullpeaklist.elementAt(np).getOrderPosition()] = value[0];
-	        structureFactors[2][fullpeaklist.elementAt(np).getOrderPosition()] = value[1];
+		          structureFactors[1][fullpeaklist.elementAt(np).getOrderPosition()][0]);
+          structureFactors[0][fullpeaklist.elementAt(np).getOrderPosition()][0] =  value[0];
+	        structureFactors[1][fullpeaklist.elementAt(np).getOrderPosition()][0] = value[0];
+	        structureFactors[2][fullpeaklist.elementAt(np).getOrderPosition()][0] = value[1];
         }
       }
     }
@@ -175,7 +175,7 @@ public class StructureFactorPawleyMethod extends StructureFactorExtractor implem
 				  int h = reflex.getH();
 				  int k = reflex.getK();
 				  int l = reflex.getL();
-				  addReflectionAt(h, k, l, i, Math.abs(dataset.getStructureFactors(aPhase)[1][i]));  // todo not from only the first dataset
+				  addReflectionAt(h, k, l, i, Math.abs(dataset.getStructureFactors(aPhase)[1][i][0]));  // todo not from only the first dataset
 			  }
 	  } else {
 		  for (int i = 0; i < hklNumber; i++) {

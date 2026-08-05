@@ -183,13 +183,13 @@ public class DiffractionAngleEnergyMap extends Diffraction {
   }
   
   public void computeDiffraction(Sample asample) {
-    
+
+    final Sample theSample = asample;
     final DataFileSet theDataset = getDataFileSet();
     int datafilenumber = theDataset.activedatafilesnumber();
     if (datafilenumber < 1)
       return;
-    final Sample theSample = asample;
-    
+
     final Instrument ainstrument = theDataset.getInstrument();
     final int maxThreads = Math.min(Constants.maxNumberOfThreads, datafilenumber);
     if (maxThreads > 1 && Constants.threadingGranularity >= Constants.MEDIUM_GRANULARITY) {
@@ -219,7 +219,8 @@ public class DiffractionAngleEnergyMap extends Diffraction {
             double[] absCorrection = new double[totalLines];
   
             java.util.Vector<java.util.Vector<double[]>> energyBroadeningVector = new java.util.Vector<>(totalLines);
-  
+
+            double[] shapeAbsorption = asample.getAbsorption(radType);
             for (int ir = 0; ir < totalLines; ir++) {
               energy[ir] = radType.getRadiationEnergy(ir);
               radiationWeight[ir] = radType.getRadiationWeigth(ir);
@@ -228,10 +229,10 @@ public class DiffractionAngleEnergyMap extends Diffraction {
               double energyInKeV = energy[ir] * 0.001;
               double detectorAbsorption = detector.computeAbsorptionForLineWithEnergy(energyInKeV);
               double detectorEfficiency = detector.computeDetectorEfficiency(energyInKeV);
-              double shapeAbsorption = asample.getAbsorptionForXray(energyInKeV);
-              absCorrection[ir] = detectorAbsorption * detectorEfficiency / shapeAbsorption * lambda;
+//              double shapeAbsorption = asample.getAbsorptionForXray(energyInKeV);
+              absCorrection[ir] = detectorAbsorption * detectorEfficiency / shapeAbsorption[ir] * lambda;
 //      System.out.println(energyInKeV + " " + detectorAbsorption + " " + detectorEfficiency + " " + shapeAbsorption);
-              java.util.Vector<double[]> instBroadFactor_en = ainstrument.getInstrumentEnergyBroadeningAt(energyInKeV);
+              java.util.Vector<double[]> instBroadFactor_en = ainstrument.getInstrumentalEnergyBroadeningAt(energyInKeV);
               energyBroadeningVector.add(instBroadFactor_en);
             }
   
@@ -239,6 +240,7 @@ public class DiffractionAngleEnergyMap extends Diffraction {
             final double[][] betaf = new double[peaklist.size()][2];
             for (int i = 0; i < peaklist.size(); i++) {
               PseudoVoigt2DPeak peak = (PseudoVoigt2DPeak) peaklist.elementAt(i);
+//              PseudoVoigtPeak peak = (PseudoVoigtPeak) peaklist.elementAt(i);
               Reflection refl = peak.getReflex();
               double[] sizestrain = peak.getPhase().getCrystalliteMicrostrain(refl, null);
               betaf[i][0] = peak.getPhase().getActiveSizeStrain().getBetaChauchy(refl.d_space, sizestrain[0], sizestrain[1]); // / 2.0;
@@ -301,19 +303,19 @@ public class DiffractionAngleEnergyMap extends Diffraction {
       double[] absCorrection = new double[totalLines];
   
       java.util.Vector<java.util.Vector<double[]>> energyBroadeningVector = new java.util.Vector<>(totalLines);
-  
+
+      double[] shapeAbsorption = asample.getAbsorption(radType);
       for (int ir = 0; ir < totalLines; ir++) {
-        energy[ir] = radType.getRadiationEnergy(ir);
+        energy[ir] = radType.getRadiationEnergy(ir) * 1000;
         radiationWeight[ir] = radType.getRadiationWeigth(ir);
         double E2corr = Constants.ENERGY_LAMBDA / energy[ir];
         E2corr *= E2corr;  // for deltaI/deltaE the correction is for 1/E^2 and not lambda^3, see International tables H, Stephens, p. 254
         double energyInKeV = energy[ir] * 0.001;
         double detectorAbsorption = detector.computeAbsorptionForLineWithEnergy(energyInKeV);
         double detectorEfficiency = detector.computeDetectorEfficiency(energyInKeV);
-        double shapeAbsorption = asample.getAbsorptionForXray(energyInKeV);
-        absCorrection[ir] = detectorAbsorption * detectorEfficiency / shapeAbsorption * E2corr;
+        absCorrection[ir] = detectorAbsorption * detectorEfficiency / shapeAbsorption[ir] * E2corr;
 //      System.out.println(energyInKeV + " " + detectorAbsorption + " " + detectorEfficiency + " " + shapeAbsorption);
-        java.util.Vector<double[]> instBroadFactor_en = ainstrument.getInstrumentEnergyBroadeningAt(energyInKeV);
+        java.util.Vector<double[]> instBroadFactor_en = ainstrument.getInstrumentalEnergyBroadeningAt(energyInKeV);
         energyBroadeningVector.add(instBroadFactor_en);
       }
       
@@ -321,6 +323,7 @@ public class DiffractionAngleEnergyMap extends Diffraction {
       final double[][] betaf = new double[peaklist.size()][2];
       for (int i = 0; i < peaklist.size(); i++) {
         PseudoVoigt2DPeak peak = (PseudoVoigt2DPeak) peaklist.elementAt(i);
+//        PseudoVoigtPeak peak = (PseudoVoigtPeak) peaklist.elementAt(i);
         Reflection refl = peak.getReflex();
         double[] sizestrain = peak.getPhase().getCrystalliteMicrostrain(refl, null);
         betaf[i][0] = peak.getPhase().getActiveSizeStrain().getBetaChauchy(refl.d_space, sizestrain[0], sizestrain[1]); // / 2.0;
@@ -344,7 +347,7 @@ public class DiffractionAngleEnergyMap extends Diffraction {
     }
     
   }
-  
+
   public void computeReflectionIntensity(final Sample asample, final DiffrDataFile diffrDataFile, final double[] energy,
                                          final double[] radiationWeight, final double[][] betaf, final double[] absCorrection,
                                          final int totalLines, final int characteristicLines,
@@ -353,7 +356,7 @@ public class DiffractionAngleEnergyMap extends Diffraction {
     
     
     boolean leBailExtraction = false;
-    double strainFactor = 0;
+    double strainFactor = 0; // todo , get the strainFactor
     double textureFactor = 1.0;
     
     double[] eta = new double[totalLines];
@@ -378,7 +381,7 @@ public class DiffractionAngleEnergyMap extends Diffraction {
         baos = new ByteArrayOutputStream();
         printStream = new PrintStream(baos);
         printStream.println("             Diffraction spectrum : " + diffrDataFile.toXRDcatString());
-        printStream.println("Peaks list : ");
+        printStream.println("Peaks list (Diffraction Angle Energy Maps) : ");
         printStream.print(" #,"
             + "rad#,"
             + "phase,"
@@ -413,7 +416,7 @@ public class DiffractionAngleEnergyMap extends Diffraction {
     double twotheta = diffrDataFile.get2ThetaValue();
     double theta = twotheta / 2.0;
     double sintheta = diffrDataFile.sintheta;
-    double expfit[] = new double[diffrDataFile.getTotalNumberOfData()];
+    double[] expfit = new double[diffrDataFile.getTotalNumberOfData()];
 
 //    double[] sizestrain = new double[2];
     int[] tmpminmax = new int[2];
@@ -430,7 +433,7 @@ public class DiffractionAngleEnergyMap extends Diffraction {
     double areaCorrection = detector.getAreaCorrection(sampleLinearArea);
     double lorentzPolarization = ainstrument.getGeometry().LorentzPolarization(diffrDataFile, asample, twotheta,
         false, false);
-    double texture_angles[] = diffrDataFile.getTextureAngles(diffrDataFile.get2ThetaValue());
+    double texture_angles[] = diffrDataFile.getTextureAngles(diffrDataFile.get2ThetaValue(), 0);
     double alpha = (texture_angles[0] * Constants.DEGTOPI);
     double beta = (texture_angles[1] * Constants.DEGTOPI);
     
@@ -451,6 +454,7 @@ public class DiffractionAngleEnergyMap extends Diffraction {
   
 //      boolean symModelRequireTextureAngles = aphase.getActiveSizeStrainSym().identifier == SizeStrainHarmonicTexture.modelIDstring;
       double[] betaff = new double[2];
+//    System.out.println("Peaklist : " + peaklist.size());
       for (int i = 0; i < peaklist.size(); i++) {
         PseudoVoigt2DPeak peak = (PseudoVoigt2DPeak) peaklist.elementAt(i);
         if (peak.getPhase() == aphase) {
@@ -482,10 +486,11 @@ public class DiffractionAngleEnergyMap extends Diffraction {
           
           int principalRad = 0;
           for (int ir = 0; ir < totalLines; ir++) {
-//            System.out.println(diffrDataFile.toXRDcatString() + ": " + " " + refl.getH() + " " + refl.getK() + " " + refl.getL() + " " + peakEnergy + " - " + energy_min + " < " + energy[ir] + " < " + energy_max);
+//            System.out.println(diffrDataFile.toXRDcatString() + ": " + " " + refl.getH() + " " + refl.getK() + " " + refl.getL() + " " + refl.d_space + " " + peakEnergy + " - " + energy_min + " < " + energy[ir] + " < " + energy_max);
             if (energy[ir] > energy_min && energy[ir] < energy_max && radiationWeight[ir] > 0.0) {
               double position = diffrDataFile.getPositionFromDspace(refl.d_space, ir);
-              position = diffrDataFile.computeFinalPosition(asample, position, energy[ir], strainFactor);
+//              System.out.println(position + " " + strainFactor);
+              position = diffrDataFile.computeFinalPosition(asample, refl, strainFactor, position, 0, ir);
               if (position != 0) {
                 intensity[0][ir] = intensitySingle * textureFactor * Fhkl[ir] * areaCorrection *
                     radiationWeight[ir] * aphase.getScaleFactor() * lorentzPolarization * absCorrection[ir];
@@ -611,7 +616,8 @@ public class DiffractionAngleEnergyMap extends Diffraction {
         for (int j = minmaxindex[0]; j < minmaxindex[1]; j++)
           diffrDataFile.addtoPhasesFit(j, expfit[j]);
       else
-        diffrDataFile.addtoPhasesFit(expfit, minmaxindex, ij);
+        for (int j = minmaxindex[0]; j < minmaxindex[1]; j++)
+          diffrDataFile.addtoPhasesFit(j, expfit[j], ij);
     }
     if (logOutput && baos != null) {
       try {

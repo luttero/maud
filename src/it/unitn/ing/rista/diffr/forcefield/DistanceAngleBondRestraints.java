@@ -668,8 +668,8 @@ public class DistanceAngleBondRestraints extends ForceField {
           data[nd][0] = r12.atm1;
           data[nd][1] = r12.atm2;
           data[nd][2] = getDistance(r12.atm1, r12.atm2);
-          data[nd][3] = new Double(r12.dist);
-          data[nd][4] = new Double(r12.kappa);
+          data[nd][3] = r12.dist;
+          data[nd][4] = r12.kappa;
         }
       }
 
@@ -718,8 +718,8 @@ public class DistanceAngleBondRestraints extends ForceField {
           angleData[nd][1] = r12.atm2;
           angleData[nd][2] = r12.atm3;
           angleData[nd][3] = getAngle(r12.atm1, r12.atm2, r12.atm3);
-          angleData[nd][4] = new Double(r12.angle);
-          angleData[nd][5] = new Double(r12.kappa);
+          angleData[nd][4] = r12.angle;
+          angleData[nd][5] = r12.kappa;
         }
       }
 

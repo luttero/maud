@@ -63,12 +63,34 @@ public class InstrumentBroadening extends XRDcat {
     return 0;
   }
 
+  
+  public java.util.Vector<double[]> getInstrumentBroadeningAt(double x, DiffrDataFile diffrDataFile) {
+    double[] hwhm = {0.0};
+    double[] eta = {0.0};
+    java.util.Vector<double[]> broadV = new java.util.Vector<>(2);
+    broadV.add(hwhm);
+    broadV.add(eta);
+    return broadV;
+  }
+  
+  public java.util.Vector<double[]> getInstrumentEnergyBroadeningAt(double x) {
+/*    double[] hwhm = {0.0};
+    double[] eta = {0.0};
+    java.util.Vector<double[]> broadV = new java.util.Vector<>(2);
+    broadV.add(hwhm);
+    broadV.add(eta);*/
+    return getInstrumentBroadeningAt(x, null);
+  }
+
   public double[][] getInstrumentalBroadeningAt(double x, DiffrDataFile diffrDataFile) {
     return new double[1][2];
   }
 
-  public double[][] getInstrumentalEnergyBroadeningAt(double x, DiffrDataFile diffrDataFile) {
-    return new double[1][2];
+  public java.util.Vector<double[]> getInstrumentalEnergyBroadeningAt(double x) {
+    /*java.util.Vector<double[]> vec = new java.util.Vector<>();
+    vec.add(new double[2]);
+    return vec;*/
+    return getInstrumentBroadeningAt(x, null);
   }
 
 /*  public double getConvolutedBroadening(double x, double[] tilting_angles, boolean dspacingbase) {

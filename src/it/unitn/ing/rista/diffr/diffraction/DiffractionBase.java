@@ -171,7 +171,7 @@ public class DiffractionBase extends Diffraction {
 				baos = new ByteArrayOutputStream();
 				printStream = new PrintStream(baos);
 				printStream.println("             Diffraction spectrum : " + datafile.toXRDcatString());
-				printStream.println("Peaks list : ");
+				printStream.println("Peaks list (diffraction) : ");
 				printStream.print(" peak n,"
 						+ " rad. n,"
 						+ "             phase, "

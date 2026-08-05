@@ -212,6 +212,18 @@ public class EDXRFInstrumentBroadening extends InstrumentBroadening {
     return getInstrument().getGeometry();
   }
 
+  public java.util.Vector<double[]> getInstrumentBroadeningAt(double x, DiffrDataFile diffrDataFile) {
+
+    java.util.Vector<double[]> broadv = new java.util.Vector<>(2);
+
+    for (int i = 0; i < parameterloopField.length; i++) {
+      double[] par = getParameterLoopVector(i);
+      broadv.add(par);
+    }
+
+    return broadv;
+  }
+
   public double[][] getInstrumentalBroadeningAt(double x, DiffrDataFile diffrDataFile) {
 
 	 int maxNumber = 0;

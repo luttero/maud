@@ -2092,6 +2092,8 @@ public static final String getSpaceGroup(int index, int sgconv) {
 
   private void updateReflectionsFromInternalList(Vector<Reflection> reflectionList) {
     int nop = getNumberOfCustomPeaks();
+    if (nop <= 0)
+      return;
     int actualNumber = reflectionList.size();
     if (nop > actualNumber) {
       int M = 2;
@@ -2118,8 +2120,9 @@ public static final String getSpaceGroup(int index, int sgconv) {
       Reflex reflx = (Reflex) subordinateloopField[1].elementAt(ir);
       refl.setDSpace(reflx.getDspacing().getValueD());
       refl.structureFactor = reflx.getIntensity().getValueD();
-	    refl.crystallite = reflx.getDomain().getValueD();
-	    refl.microstrain = reflx.getMicrostrain().getValueD();
+      refl.crystsize = new double[2];
+      refl.crystsize[0] = reflx.getDomain().getValueD();
+      refl.crystsize[1] = reflx.getMicrostrain().getValueD();
 //	    System.out.println(ir + " " + sf);
 /*      refl.setStructureFactor(sf * sf);
       refl.setCrystallite(reflx.getDomain().getValueD());
@@ -4303,10 +4306,7 @@ public static final String getSpaceGroup(int index, int sgconv) {
 	public double[] getCrystalliteMicrostrain(Reflection refl, double[] texture_angles) {
 // todo: finish here    getActivePlanarDefects().getSuperCellFactor(index)
 		if (getNumberOfCustomPeaks() > 0) {
-			double[] crystmic = new double[2];
-			crystmic[0] = refl.crystallite;
-			crystmic[1] = refl.microstrain;
-			return crystmic;
+			return refl.crystsize;
 		}
 		double[] crystmic = getActiveSizeStrainSym().getCrystalliteMicrostrain(refl.d_space, refl.getH(), refl.getK(), refl.getL(),
 				texture_angles);
@@ -4317,8 +4317,10 @@ public static final String getSpaceGroup(int index, int sgconv) {
 		else if (cryst2 != 0.0)
 			crystmic[0] = cryst2;
 
+//    System.out.print(refl.getH() + " " + refl.getK() + " " + refl.getL() + " " + crystmic[0]);
 		crystmic[0] *= getActivePlanarDefects().getCrystalliteFactor(refl.getH(), refl.getK(), refl.getL());
 		crystmic[1] *= getActivePlanarDefects().getMicrostrainFactor(refl.getH(), refl.getK(), refl.getL());
+//    System.out.println(" " + crystmic[0]);
 		return crystmic;
 	}
 

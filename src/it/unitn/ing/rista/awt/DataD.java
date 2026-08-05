@@ -1570,6 +1570,8 @@ public class DataD extends myJFrame {
   public void plotIntensityHystogram() {
 	  int coordinate = MaudPreferences.getInteger("plotIntensityHystogram.angleCoordinate", -1);
 	  (new PlotSimpleData(this, thedata.getCoordinateForSelectedSpectra(coordinate), thedata.getTotalIntensityForSelectedSpectra())).setVisible(true);
+    boolean plotFit = MaudPreferences.getBoolean("plotIntensityHystogram.plotFit", false);
+    (new PlotSimpleData(this, thedata.getCoordinateForSelectedSpectra(coordinate), thedata.getTotalFitIntensityForSelectedSpectra())).setVisible(true);
   }
 
   /**

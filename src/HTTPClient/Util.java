@@ -872,6 +872,7 @@ public class Util
      * @deprecated use URI.defaultPort() instead
      * @see HTTPClient.URI#defaultPort(java.lang.String)
      */
+    @Deprecated
     public final static int defaultPort(String protocol)
     {
 	return URI.defaultPort(protocol);

@@ -819,7 +819,7 @@ public class XRayDataSqLite {
 		return getFluorescenceLinesNoSensitivityFor(atomNumber, energyInKeV, Constants.linesMinimumEnergy);
 	}
 
-/*  public static Vector<FluorescenceLine> getFluorescenceLinesFor(int atomNumber,
+  public static Vector<FluorescenceLine> getFluorescenceLinesFor(int atomNumber,
                                                                  double minimumEnergyInKeV,
                                                                  double maximumEnergyInKeV,
                                                                  double[] energyInKeV,
@@ -843,7 +843,7 @@ public class XRayDataSqLite {
         aLine.setTransitionProbability(transitionEnergy[1]);
         for (int j = 0; j < energyInKeV.length; j++) {
           sensitivity[j] = getSensitivity(atomNumber, innerShell, aLine.xrl_line_number, energyInKeV[j],
-              fluorescenceYield * transitionEnergy[1]) * energy_intensity[j]; // * fluorescenceYield * transitionEnergy[1];
+              fluorescenceYield) * transitionEnergy[1] * energy_intensity[j]; // * fluorescenceYield * transitionEnergy[1];
 //				if (atomNumber == 39)
 //					System.out.println(energyInKeV + " " + transitionEnergy[0] + " " + sensitivity + " " +
 //							innerShell + " " + transitionEnergy[1] + " " + fluorescenceYield + " " + getAbsorptionEdge(atomNumber, innerShell));
@@ -855,7 +855,7 @@ public class XRayDataSqLite {
       }
     }
     return linesForAtom;
-  }*/
+  }
 
   public static Vector<FluorescenceLine> getFluorescenceLinesNoSensitivityFor(int atomNumber, double energyInKeV,
 	                                                               double minimumEnergyInKeV) {

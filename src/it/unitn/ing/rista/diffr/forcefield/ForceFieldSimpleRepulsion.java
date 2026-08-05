@@ -547,7 +547,7 @@ public class ForceFieldSimpleRepulsion extends ForceField {
           RepulsionDistance r12 = getRepulsionDistance(nd);
           data[nd][0] = r12.atm1;
           data[nd][1] = r12.atm2;
-          data[nd][2] = new Double(r12.dist);
+          data[nd][2] = r12.dist;
         }
       }
 
@@ -595,8 +595,8 @@ public class ForceFieldSimpleRepulsion extends ForceField {
           angleData[nd][1] = r12.atm2;
           angleData[nd][2] = r12.atm3;
           angleData[nd][3] = DistanceAngleBondRestraints.getAngle(r12.atm1, r12.atm2, r12.atm3);
-          angleData[nd][4] = new Double(r12.angle);
-          angleData[nd][5] = new Double(r12.kappa);
+          angleData[nd][4] = r12.angle;
+          angleData[nd][5] = r12.kappa;
         }
       }
 

@@ -75,20 +75,23 @@ public class PseudoVoigtPeak extends basicPeak {
 		super(pos, dspacingbase, energyDispersive, wave, weight, reflex, order);
 	}
 
-	public static double[] getHwhmEtaFromIntegralBeta(double[] betaf, double[] broadInst) {
+	public static double[] getHwhmEtaFromIntegralBeta(double[] betaf, java.util.Vector<double[]> broadInst) {
 		double betahc = 0.0;
-		for (int ij = 0; ij < numberbetacoeff; ij++)
-			betahc += coeffbetac[ij] * Math.pow(broadInst[0], (double) ij);
+
+    double v1 = broadInst.get(0)[0];
+    double v = broadInst.get(1)[0];
+    for (int ij = 0; ij < numberbetacoeff; ij++)
+			betahc += coeffbetac[ij] * Math.pow(v, ij);
 		double betahg = 1.0 - betahc;
 
 		double hwhmconv = 0.0;
 		for (int i = 0; i < numberhwhmcoeff; i++)
-			hwhmconv += coeffhwhm[i] * Math.pow(betahc, (double) i);
+			hwhmconv += coeffhwhm[i] * Math.pow(betahc, i);
 
 		if (hwhmconv == 0.0)
 			hwhmconv = 1.0E-9;
-		betahc *= ((broadInst[1] / hwhmconv) * hwhmtobetac);
-		betahg *= (broadInst[1] / (hwhmconv * hwhmtobetag));
+		betahc *= ((v1 / hwhmconv) * hwhmtobetac);
+		betahg *= (v1 / (hwhmconv * hwhmtobetag));
 
 		double betac = betahc + betaf[0];
 		double betag = Math.sqrt(betaf[1] * betaf[1] + betahg * betahg);
@@ -121,13 +124,17 @@ public class PseudoVoigtPeak extends basicPeak {
 
 		double[] hwhm_i, eta, const1, const2, wave;
 		int[] minindex, maxindex;
-			Phase aphase = getPhase();
-			Reflection refl = getReflex();
+		Phase aphase = getPhase();
+		Reflection refl = getReflex();
+		int reflexIndex = getOrderPosition();
 
-			String phase_name = aphase.toXRDcatString();
-			while (phase_name.length() < 20)
-				phase_name += " ";
-			phase_name = phase_name.substring(0, 20);
+    String phase_name = null;
+    if (logOutput && out != null) {
+      phase_name = aphase.toXRDcatString();
+      while (phase_name.length() < 20)
+        phase_name += " ";
+      phase_name = phase_name.substring(0, 20);
+    }
 //    int dataindex = diffrDataFile.getIndex();
 //    int datasetIndex = diffrDataFile.getDataFileSet().getIndex();
 
@@ -136,8 +143,8 @@ public class PseudoVoigtPeak extends basicPeak {
 //      addInstrumentalBroadening(refl.getInstBroadFactor(dataindex));
 
 			int nrad = ainstrument.getRadiationType().getLinesCount();
-      if (diffrDataFile.energyDispersive || diffrDataFile.dspacingbase)
-        nrad = 1;
+//      if (diffrDataFile.energyDispersive || diffrDataFile.dspacingbase)
+//        nrad = 1;
 			int totalLines = diffrDataFile.positionsPerPattern * nrad;
 			double[] finalposition = new double[totalLines];
 			double[][] intensity = new double[3][totalLines];
@@ -163,21 +170,25 @@ public class PseudoVoigtPeak extends basicPeak {
 					absDetectorCorrection[j][i] = ainstrument.getDetector().getAbsorptionCorrection(diffrDataFile, pointIndex, energy);
 					finalposition[ipv++] = localPosition;
 				}
+			const1[i] = 0.0;
+			const2[i] = 0.0;
 			}
 
-		double Fhkl;
+		double[] Fhkl = null;
 		switch (computeFhkl) {
 			case Constants.COMPUTED:
-				Fhkl = diffrDataFile.getDataFileSet().getStructureFactors(aphase)[1][getOrderPosition()];
-				break;
+//				Fhkl = diffrDataFile.getDataFileSet().getStructureFactors(aphase)[1][reflexIndex];
+    		Fhkl = diffrDataFile.getDataFileSet().getCalculatedStructureFactors(aphase, reflexIndex);
+						break;
 			case Constants.EXPERIMENTAL:
-				Fhkl = diffrDataFile.getDataFileSet().getStructureFactors(aphase)[0][getOrderPosition()];
-				break;
+//				Fhkl = diffrDataFile.getDataFileSet().getStructureFactors(aphase)[0][reflexIndex];
+		      Fhkl = diffrDataFile.getDataFileSet().getExperimentalStructureFactors(aphase, reflexIndex);
+						break;
 			case Constants.UNITARY:
-				Fhkl = 99.0;
+//				Fhkl = 99.0;
 				break;
 			default:
-				Fhkl = 88.0;
+//				Fhkl = 88.0;
 		}
 
 //    Fhklist = new double[totalLines];
@@ -193,26 +204,21 @@ public class PseudoVoigtPeak extends basicPeak {
 			}
 		}
 
-		double asyConst1 = aphase.getActivePlanarDefects().getPlanarDefectAsymmetryConstant1(getReflex());
-		double asyConst2 = aphase.getActivePlanarDefects().getPlanarDefectAsymmetryConstant2(getReflex());
-		double planar_asymmetry = aphase.getActivePlanarDefects().getPlanarDefectAsymmetry(getReflex());
+		double asyConst1 = aphase.getActivePlanarDefects().getPlanarDefectAsymmetryConstant1(refl);
+		double asyConst2 = aphase.getActivePlanarDefects().getPlanarDefectAsymmetryConstant2(refl);
+		double planar_asymmetry = aphase.getActivePlanarDefects().getPlanarDefectAsymmetry(refl);
 
-		double[][][][] hwhm_eta = diffrDataFile.getBroadFactors(aphase);
-		double[][][] deff = diffrDataFile.getCrystallitesMicrostrains(aphase)[0];
+		double[] deff = diffrDataFile.getCrystallitesMicrostrains(aphase, reflexIndex);
 
-//	  for (int j = 0; j < diffrDataFile.positionsPerPattern; j++) {
-			double[][] thwhm = hwhm_eta[0][getOrderPosition()];
-			double[][] teta = hwhm_eta[1][getOrderPosition()];
-//	  }
 			double intensitySingle = getScaleFactor();
 			double[][] textureFactor;
 
 			switch (computeTexture) {
 				case Constants.COMPUTED:
-					textureFactor = diffrDataFile.getTextureFactors(aphase)[1][getOrderPosition()];
+					textureFactor = diffrDataFile.getTextureFactors(aphase)[1][reflexIndex];
 					break;
 				case Constants.EXPERIMENTAL:
-					textureFactor = diffrDataFile.getTextureFactors(aphase)[0][getOrderPosition()];
+					textureFactor = diffrDataFile.getTextureFactors(aphase)[0][reflexIndex];
 					break;
 				case Constants.UNITARY:
 				default:
@@ -227,17 +233,27 @@ public class PseudoVoigtPeak extends basicPeak {
 						textureFactor[i][j] = 1.0;
 //		if (getOrderPosition() == 2)
 //	    System.out.println(diffrDataFile.getLabel() + ", texture factor: " + textureFactor[0]);
-			double[][] shapeAbs = diffrDataFile.getShapeAbsFactors(aphase, getOrderPosition());
+			double[][] shapeAbs = diffrDataFile.getShapeAbsFactors(aphase, reflexIndex);
 //	  System.out.println(" Total " + diffrDataFile.startingindex + " " + diffrDataFile.finalindex);
 //	  System.out.println(" Range " + diffrDataFile.getXData(diffrDataFile.startingindex) + " " +
 //			  diffrDataFile.getXData(diffrDataFile.finalindex));
 
-			double[][] lorentzPolarization = diffrDataFile.getLorentzPolarization(aphase, getOrderPosition());
+			double[][] lorentzPolarization = diffrDataFile.getLorentzPolarization(aphase, reflexIndex);
 			ipv = 0;
+
 			for (int i = 0; i < nrad; i++) {
+        double thwhm = 1;  // hwhm_eta[0][reflexIndex];
+        double teta = 0;
+        ReflectionPeak peak = diffrDataFile.getReflectionPeak(aphase, reflexIndex, i);
+        if (peak != null) {
+          thwhm = peak.broadFactorHWHM;  // hwhm_eta[0][reflexIndex];
+          teta = peak.broadFactorEta;  // todo, the radiation should not only be the first
+        }
 				for (int j = 0; j < diffrDataFile.positionsPerPattern; j++) {
 					if (radiationWeight[i] > 0.0) {
-						double tmpIntensity = (intensitySingle * textureFactor[j][i] * shapeAbs[j][i] * Fhkl *
+            double Fhkl_c = 99.0;
+            if (Fhkl != null) Fhkl_c = Fhkl[i];
+						double tmpIntensity = (intensitySingle * textureFactor[j][i] * shapeAbs[j][i] * Fhkl_c *
 								radiationWeight[i] * aphase.getScaleFactor() * lorentzPolarization[j][i] * absDetectorCorrection[j][i]);
 						if (const2[ipv] != 0.0) {
 							for (int index = 0; index < 3; index++)
@@ -245,11 +261,11 @@ public class PseudoVoigtPeak extends basicPeak {
 						} else {
 							intensity[0][ipv] = tmpIntensity;
 						}
-						hwhm_i[ipv] = 1.0 / thwhm[j][i];
-						eta[ipv] = teta[j][i];
+						hwhm_i[ipv] = 1.0 / thwhm;
+						eta[ipv] = teta;
 
-						minindex[ipv] = diffrDataFile.getOldNearestPoint(finalposition[ipv] - thwhm[j][i] * cutoff);
-						maxindex[ipv] = diffrDataFile.getOldNearestPoint(finalposition[ipv] + thwhm[j][i] * cutoff) + 1;
+						minindex[ipv] = diffrDataFile.getOldNearestPoint(finalposition[ipv] - thwhm * cutoff);
+						maxindex[ipv] = diffrDataFile.getOldNearestPoint(finalposition[ipv] + thwhm * cutoff) + 1;
 
 						if (!leBailExtraction || (leBailExtraction && i == principalRad)) {
 							if (minmaxindex[0] > minindex[ipv])
@@ -272,7 +288,7 @@ public class PseudoVoigtPeak extends basicPeak {
 						if (logOutput && out != null) {
 							try {
 							out.print(" ");
-								out.print(getOrderPosition());
+								out.print(reflexIndex);
 								out.print(" ");
 								out.print(i);
 								out.print(" " + phase_name);
@@ -284,9 +300,9 @@ public class PseudoVoigtPeak extends basicPeak {
 								out.print(" ");
 								out.print((float) refl.d_space);
 								out.print(" ");
-								out.print((float) diffrDataFile.getDataFileSet().getStructureFactors(aphase)[1][getOrderPosition()]);
+								out.print((float) diffrDataFile.getDataFileSet().getCalculatedStructureFactors(aphase, reflexIndex)[i]);
 								out.print(" ");
-								out.print((float) diffrDataFile.getDataFileSet().getStructureFactors(aphase)[0][getOrderPosition()]);
+								out.print((float) diffrDataFile.getDataFileSet().getExperimentalStructureFactors(aphase, reflexIndex)[i]);
 								out.print(" ");
 								out.print((float) actualPosition[0][j]);
 								out.print(" ");
@@ -296,11 +312,11 @@ public class PseudoVoigtPeak extends basicPeak {
 								out.print(" ");
 								out.print((float) intensity[0][ipv]);
 								out.print(" ");
-								out.print((float) thwhm[j][i]);
+								out.print((float) thwhm);
 								out.print(" ");
 								out.print((float) eta[ipv]);
 								out.print(" ");
-								out.print((float) Fhkl);
+								out.print((float) Fhkl_c);
 								out.print(" ");
 								out.print((float) intensitySingle);
 								out.print(" ");
@@ -342,7 +358,7 @@ public class PseudoVoigtPeak extends basicPeak {
 			computeFunctions(diffrDataFile.getXData(), expfit, minindex, maxindex,
 					intensity, eta, hwhm_i, actualPosition, const1, const2, wave,
 					diffrDataFile.dspacingbase, diffrDataFile.energyDispersive, diffrDataFile.increasingX(), planar_asymmetry,
-					deff[0][0][0]);
+					deff, diffrDataFile.sintheta);
 /*	  computeFunctions(expfit, thwhm, cutoff, minindex, maxindex,
         intensity, eta, hwhm_i, actualPosition, const1, const2, wave,
         reverseX, minmaxindex, getOrderPosition(), aphase, diffrDataFile);*/
@@ -353,9 +369,10 @@ public class PseudoVoigtPeak extends basicPeak {
 	                                    double[][] intensity, double[] eta, double[] hwhm_i, double[][] position,
 	                                    double[] const1, double[] const2, double[] wave, boolean dspacingBase,
 	                                    boolean energyDispersive, boolean increasingX, double planar_asymmetry,
-	                                    double deff) {
+	                                    double[] deff, double sintheta) {
 
 		int numberOfPV = minindex.length;
+		sintheta *= 2.0;
 		double differenceDspace;
 		for (int ipv = 0; ipv < numberOfPV; ipv++) {
 			int imin = minindex[ipv];
@@ -373,14 +390,14 @@ public class PseudoVoigtPeak extends basicPeak {
 							if (dspacingBase)
 								differenceDspace = 1.0 / x[i] - 1.0 / position[ipv][index];
 							else if (energyDispersive)
-								differenceDspace = x[i] / Constants.ENERGY_LAMBDA - position[index][ipv] / Constants.ENERGY_LAMBDA;
+								differenceDspace = (x[i] - position[index][ipv]) / Constants.ENERGY_LAMBDA * sintheta;
 							else {
 								differenceDspace = 2.0 * (MoreMath.sind(x[i] * 0.5) - MoreMath.sind(position[index][ipv] * 0.5)) / wave[ipv];
 //							System.out.println(differenceDspace / dx_pi);
 							}
 							double asy = 0.0;
 							if (Math.abs(dx) > 1.0E-6) {
-								double cxasy = const1[ipv] * deff * differenceDspace;
+								double cxasy = const1[ipv] * deff[0] * differenceDspace;
 								double rasy = 1.0 + 1.0 / (cxasy * cxasy);
 								asy = intensity[index][ipv] * const2[ipv] / (rasy * dx_pi);
 //							System.out.println("Peak: " + ipv + " " + x[i] + " " + position[ipv] + " " + cxasy + " " + const1[ipv] + " " + const2[ipv] + " " + i + " " + asy);

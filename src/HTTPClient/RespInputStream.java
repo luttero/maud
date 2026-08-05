@@ -240,13 +240,13 @@ final class RespInputStream extends InputStream implements GlobalConstants
     /**
      * A safety net to clean up.
      */
-    protected void finalize()  throws Throwable
+/*    protected void finalize()  throws Throwable
     {
 	try
 	    { close(); }
 	finally
 	    { super.finalize(); }
-    }
+    }*/
 
 
     // local Methods

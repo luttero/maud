@@ -179,16 +179,20 @@ public class AbsorptionWindow extends XRDcat {
 	public double computeMACForLineWithEnergy(double energyInKeV) {
 		double absorption = 0;
 		for (int i = 0; i < subordinateloopField[window_composition_id].size(); i++) {
-			String atomLabel = ((CompositionElement) subordinateloopField[window_composition_id].elementAt(i)).getString(0);
-			double atomFraction = ((CompositionElement) subordinateloopField[window_composition_id].elementAt(i)).getParameterValue(0) /
-					totalAtomFraction;
-			int atomNumber = AtomInfo.retrieveAtomNumber(atomLabel);
-			double absAtom = 0;
-			if (Constants.useXrayLib)
-				absAtom = Xraylib.CS_Total(atomNumber, energyInKeV);
-			else
-				absAtom = XRayDataSqLite.getTotalAbsorptionForAtomAndEnergy(atomNumber, energyInKeV);
-			absorption += atomFraction * absAtom;
+      try {
+        String atomLabel = ((CompositionElement) subordinateloopField[window_composition_id].elementAt(i)).getString(0);
+        double atomFraction = ((CompositionElement) subordinateloopField[window_composition_id].elementAt(i)).getParameterValue(0) /
+            totalAtomFraction;
+        int atomNumber = AtomInfo.retrieveAtomNumber(atomLabel);
+        double absAtom = 0;
+        if (Constants.useXrayLib)
+          absAtom = Xraylib.CS_Total(atomNumber, energyInKeV);
+        else
+          absAtom = XRayDataSqLite.getTotalAbsorptionForAtomAndEnergy(atomNumber, energyInKeV);
+        absorption += atomFraction * absAtom;
+      } catch (Exception e) {
+//        e.printStackTrace();
+      }
 //			System.out.println(absorption + " " + absAtom + " " + energyInKeV + " " + atomNumber + " " + atomLabel + " " + atomFraction);
 		}
 		if (MoreMath.isInvalidNumber(absorption))

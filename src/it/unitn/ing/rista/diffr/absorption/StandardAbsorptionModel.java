@@ -46,7 +46,7 @@ public class StandardAbsorptionModel extends Absorption {
   
   public StandardAbsorptionModel(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = modelID;
     IDlabel = modelID;
     description = descriptionID;

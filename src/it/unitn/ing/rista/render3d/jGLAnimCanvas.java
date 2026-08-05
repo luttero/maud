@@ -573,6 +573,7 @@ public class jGLAnimCanvas extends jGLCanvas implements Runnable {
    * @deprecated Now the frames per seconds are always calculated, no pre-sync needed.
    * @see #setAnimateFps(double)
    */
+  @Deprecated
   public void setAnimateFps(double fps, int synFrames) {
     setAnimateFps(fps);
   }

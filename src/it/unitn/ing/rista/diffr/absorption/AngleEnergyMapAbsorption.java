@@ -46,7 +46,7 @@ public class AngleEnergyMapAbsorption extends Absorption {
   
   public AngleEnergyMapAbsorption(XRDcat aobj, String alabel) {
     super(aobj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = modelID;
     IDlabel = modelID;
     description = descriptionID;
@@ -85,9 +85,9 @@ public class AngleEnergyMapAbsorption extends Absorption {
     super.initParameters();
   }
   
-  public double getAbsorptionCorrection(DiffrDataFile adatafile, Phase aphase, double positionOrEnergy) {
+/*  public double getAbsorptionCorrection(DiffrDataFile adatafile, Phase aphase, double positionOrEnergy) {
     Sample asample = adatafile.getDataFileSet().getSample();
     return asample.getAbsorptionForXray(positionOrEnergy); // todo: * computeShapeAbsorptionCorrection(asample, inst.getRadiationType(), rad_index, angles, positionOrEnergy, toLambda);
-  }
+  }*/
   
 }

@@ -215,6 +215,7 @@ public class DiffrDataFile extends XRDcat {
   public static String backgroundCIFstring = "_pd_calc_intensity_bkg";
   private double tilting_angles[] = new double[maxAngleNumber];
 	private double corrected_tilting_angles[] = new double[maxAngleNumber];
+  public double sintheta = 0.0;
   boolean increasingX = true;
 	int lastIndex = 0;
 	int oscillatorsNumber = 0;
@@ -278,9 +279,9 @@ public class DiffrDataFile extends XRDcat {
 	private Map<Phase, int[]> phaseReflectionIDs = new Hashtable<>();
 	private Map<Phase, double[][][][]> phaseTextureFactors = new Hashtable<>();
 	private Map<Phase, double[][][][]> phaseStrainFactors = new Hashtable<>();
-	private Map<Phase, double[][][][]> phaseCrystallitesMicrostrains = new Hashtable<>();
-	private Map<Phase, double[][][][]> phaseInstBroadFactors = new Hashtable<>();
-	private Map<Phase, double[][][][]> phaseBroadFactors = new Hashtable<>();
+//	private Map<Phase, double[][][][]> phaseCrystallitesMicrostrains = new Hashtable<>();
+//	private Map<Phase, double[][][][]> phaseInstBroadFactors = new Hashtable<>();
+//	private Map<Phase, double[][][][]> phaseBroadFactors = new Hashtable<>();
 	// phasePositions[radnumber][number of reflection][number of points per pattern]
 	private Map<Phase, double[][][]> phasePositions = new Hashtable<>();
 	private Map<Phase, int[][][][]> phaseMinMaxIndices = new Hashtable<>();
@@ -490,6 +491,19 @@ public class DiffrDataFile extends XRDcat {
     return newvector;
   }
 
+  
+  public static double[][] shrinkRange(double[][] oldvector, int min, int datanumber) {
+    if (oldvector == null)
+      return null;
+    
+    double[][] newvector = new double[oldvector.length][datanumber];
+    
+    for (int i = 0; i < oldvector.length; i++)
+      arraycopy(oldvector[i], min, newvector[i], 0, datanumber);
+    
+    return newvector;
+  }
+  
   public int retrieveNumberOfRadiations() {
     int radNumber = 1;
     if (/*MaudPreferences.getBoolean("texture.use_all_radiations", true) &&*/
@@ -838,127 +852,129 @@ public class DiffrDataFile extends XRDcat {
       }
     } else if (ciffile.thestring.indexOf("texture_factors") > 0) {
 
-	  int tokentype;
+//      if (getFilePar().getVersion() < 3.0) {
+        int tokentype;
 //		XRDcat theobj = null;
-	  boolean endofInput = false;
-	  int cifentry = 0, tmpVindex = 0;
-	  int[] cifindex = new int[6];
-	  Vector cifVector = new Vector(0, 1);
-	  Vector[] tmpVector = null;
-	  overallVector = new Vector(0, 1);
-	  boolean newLoop = false;
-	  boolean startLoop = false;
-	  int maxCIFentries = 7;
+        boolean endofInput = false;
+        int cifentry = 0, tmpVindex = 0;
+        int[] cifindex = new int[6];
+        Vector cifVector = new Vector(0, 1);
+        Vector[] tmpVector = null;
+        overallVector = new Vector(0, 1);
+        boolean newLoop = false;
+        boolean startLoop = false;
+        int maxCIFentries = 7;
 //	  radiationsNumber = 1;
 
-	  try {
-		  do {
-			  tokentype = ciffile.nextToken();
-			  switch (tokentype) {
-				  case CIFtoken.TT_DATA:
-				  case CIFtoken.TT_PHASE:
-					  if (tmpVector != null) {
-						  overallVector.addElement(tmpVector);
-					  }
+        try {
+          do {
+            tokentype = ciffile.nextToken();
+            switch (tokentype) {
+              case CIFtoken.TT_DATA:
+              case CIFtoken.TT_PHASE:
+                if (tmpVector != null) {
+                  overallVector.addElement(tmpVector);
+                }
 //					  System.out.println("Reading texture factors for phase: " + overallVector.size());
 //						phaseindex++;
-					  tmpVindex = 0;
-					  tmpVector = null;
-					  cifVector = new Vector(0, 1);
-					  cifentry = 0;
-					  newLoop = false;
-					  break;
-				  case CIFtoken.TT_CIFE:
-            int dummy;
-					  // CIF item
-					  String thecife = ciffile.thestring;
-					  if (thecife.equalsIgnoreCase(CIFdictionary.texture_points_number)) {
-						  int newtoken = ciffile.nextToken();
-						  if (newtoken == CIFtoken.TT_NUMBER)
-							  positionsPerPattern = Integer.parseInt(ciffile.thestring);
-					  } else if (thecife.equalsIgnoreCase(CIFdictionary.texture_radiations_number)) {
-					   int newtoken = ciffile.nextToken();
-					   if (newtoken == CIFtoken.TT_NUMBER)
-						  dummy = Integer.parseInt(ciffile.thestring); /* radiationsNumber */
-            } else
-						  cifVector.addElement(thecife);
-					  break;
-				  case CIFtoken.TT_LOOP:
-					  // start the loop for the values here
-					  newLoop = true;
-					  startLoop = true;
-					  break;
-				  case CIFtoken.TT_NUMBER:
-					  if (!newLoop)
-						  break;
-					  if (startLoop) {
-						  cifindex = new int[cifVector.size()];
-						  tmpVindex = 0;
-						  for (int i = 0; i < cifVector.size(); i++) {
-							  thecife = (String) cifVector.elementAt(i);
-							  if (thecife.equalsIgnoreCase(CIFdictionary.refln_h)) {
-								  cifindex[i] = 0;
-								  tmpVindex++;
-							  } else if (thecife.equalsIgnoreCase(CIFdictionary.refln_k)) {
-								  cifindex[i] = 1;
-								  tmpVindex++;
-							  } else if (thecife.equalsIgnoreCase(CIFdictionary.refln_l)) {
-								  cifindex[i] = 2;
-								  tmpVindex++;
-							  } else if (thecife.equalsIgnoreCase(CIFdictionary.texture_factor_meas)) {
-								  cifindex[i] = 3;
-								  tmpVindex++;
-							  } else if (thecife.equalsIgnoreCase(CIFdictionary.texture_factor_calc)) {
-								  cifindex[i] = 4;
-								  tmpVindex++;
-							  } else if (thecife.equalsIgnoreCase(CIFdictionary.texture_factor_point)) {
-								  cifindex[i] = 5;
-								  tmpVindex++;
-							  } else if (thecife.equalsIgnoreCase(CIFdictionary.texture_radiation_point)) {
-								  cifindex[i] = 6;
-								  tmpVindex++;
-							  } else
-								  cifindex[i] = -1;
-						  }
-						  startLoop = false;
-						  cifVector.removeAllElements();
-					  }
-					  if (tmpVector == null) {
-						  tmpVector = new Vector[maxCIFentries];
-						  for (int i = 0; i < maxCIFentries; i++)
-							  tmpVector[i] = new Vector(0, 10);
-					  }
-					  if (cifindex[cifentry] >= 0) {
-						  double[] value = new double[1];
-						  value[0] = ciffile.thevalue;
-						  tmpVector[cifindex[cifentry]].addElement(value);
-					  }
-					  cifentry++;
-					  if (cifentry == tmpVindex)
-						  cifentry = 0;
-					  break;
-				  case CIFtoken.TT_CUSTOM_END:
-					  if (tmpVector != null) {
-						  overallVector.addElement(tmpVector);
-					  }
-					  endofInput = true;
-					  break;
-				  default: {
-				  }
-			  }
-		  } while (tokentype != CIFtoken.TT_EOF && !endofInput);
+                tmpVindex = 0;
+                tmpVector = null;
+                cifVector = new Vector(0, 1);
+                cifentry = 0;
+                newLoop = false;
+                break;
+              case CIFtoken.TT_CIFE:
+                int dummy;
+                // CIF item
+                String thecife = ciffile.thestring;
+                if (thecife.equalsIgnoreCase(CIFdictionary.texture_points_number)) {
+                  int newtoken = ciffile.nextToken();
+                  if (newtoken == CIFtoken.TT_NUMBER)
+                    positionsPerPattern = Integer.parseInt(ciffile.thestring);
+                } else if (thecife.equalsIgnoreCase(CIFdictionary.texture_radiations_number)) {
+                  int newtoken = ciffile.nextToken();
+                  if (newtoken == CIFtoken.TT_NUMBER)
+                    dummy = Integer.parseInt(ciffile.thestring); /* radiationsNumber */
+                } else
+                  cifVector.addElement(thecife);
+                break;
+              case CIFtoken.TT_LOOP:
+                // start the loop for the values here
+                newLoop = true;
+                startLoop = true;
+                break;
+              case CIFtoken.TT_NUMBER:
+                if (!newLoop)
+                  break;
+                if (startLoop) {
+                  cifindex = new int[cifVector.size()];
+                  tmpVindex = 0;
+                  for (int i = 0; i < cifVector.size(); i++) {
+                    thecife = (String) cifVector.elementAt(i);
+                    if (thecife.equalsIgnoreCase(CIFdictionary.refln_h)) {
+                      cifindex[i] = 0;
+                      tmpVindex++;
+                    } else if (thecife.equalsIgnoreCase(CIFdictionary.refln_k)) {
+                      cifindex[i] = 1;
+                      tmpVindex++;
+                    } else if (thecife.equalsIgnoreCase(CIFdictionary.refln_l)) {
+                      cifindex[i] = 2;
+                      tmpVindex++;
+                    } else if (thecife.equalsIgnoreCase(CIFdictionary.texture_factor_meas)) {
+                      cifindex[i] = 3;
+                      tmpVindex++;
+                    } else if (thecife.equalsIgnoreCase(CIFdictionary.texture_factor_calc)) {
+                      cifindex[i] = 4;
+                      tmpVindex++;
+                    } else if (thecife.equalsIgnoreCase(CIFdictionary.texture_factor_point)) {
+                      cifindex[i] = 5;
+                      tmpVindex++;
+                    } else if (thecife.equalsIgnoreCase(CIFdictionary.texture_radiation_point)) {
+                      cifindex[i] = 6;
+                      tmpVindex++;
+                    } else
+                      cifindex[i] = -1;
+                  }
+                  startLoop = false;
+                  cifVector.removeAllElements();
+                }
+                if (tmpVector == null) {
+                  tmpVector = new Vector[maxCIFentries];
+                  for (int i = 0; i < maxCIFentries; i++)
+                    tmpVector[i] = new Vector(0, 10);
+                }
+                if (cifindex[cifentry] >= 0) {
+                  double[] value = new double[1];
+                  value[0] = ciffile.thevalue;
+                  tmpVector[cifindex[cifentry]].addElement(value);
+                }
+                cifentry++;
+                if (cifentry == tmpVindex)
+                  cifentry = 0;
+                break;
+              case CIFtoken.TT_CUSTOM_END:
+                if (tmpVector != null) {
+                  overallVector.addElement(tmpVector);
+                }
+                endofInput = true;
+                break;
+              default: {
+              }
+            }
+          } while (tokentype != CIFtoken.TT_EOF && !endofInput);
 //      System.out.println("Custom object loaded!");
-		  if (overallVector.size() > 0) {
-		    needRestore = new boolean[overallVector.size()];
-		    for (int i = 0; i < overallVector.size(); i++)
-			    needRestore[i] = true;
-	    } else
-			  needRestore = null;
+          if (overallVector.size() > 0) {
+            needRestore = new boolean[overallVector.size()];
+            for (int i = 0; i < overallVector.size(); i++)
+              needRestore[i] = true;
+          } else
+            needRestore = null;
 //			notLoaded = false;
-	  } catch (IOException ioe) {
-		  out.println("IO exception in custom object for " + toXRDcatString());
-	  }
-    }
+        } catch (IOException ioe) {
+          out.println("IO exception in custom object for " + toXRDcatString());
+        }
+      }
+//    }
 
   }
 
@@ -1053,6 +1069,7 @@ public class DiffrDataFile extends XRDcat {
 		  corrected_tilting_angles[i] = tilting_angles[i] + getDataFileSet().getDisalignementAngles()[i];
 	  for (int i = 4; i < maxAngleNumber; i++)
 		  corrected_tilting_angles[i] = tilting_angles[i];
+    sintheta = Math.sin(get2ThetaValue() * Constants.DEGTOPI * 0.5);
 
 //	  if (MaudPreferences.getBoolean("testing.invertEta", true) && !MaudPreferences.getBoolean("testing.useNewRotationMatrices", true))
 //		  corrected_tilting_angles[3] = -corrected_tilting_angles[3];
@@ -1119,8 +1136,8 @@ public class DiffrDataFile extends XRDcat {
     theta2thetaMeasurement = ainstrument.getMeasurement() instanceof Theta2ThetaMeasurement;
 	  datafileWeight = Double.parseDouble(getString(datafileWeightFieldID));
 
-	  if ((ainstrument.isTOF() || ainstrument.isEDX()) && corrected_tilting_angles[4] == 0) {
-		  corrected_tilting_angles[4] = ainstrument.getDetector().getThetaDetector(this, 0);
+	  if ((ainstrument.isTOF() || ainstrument.isEDX()) && get2ThetaValue() == 0) {
+		  corrected_tilting_angles[4] = ainstrument.getDetector().getThetaDetector(this, get2ThetaValue());
 	  }
 	  for (int i = 5; i < maxAngleNumber; i++)
 		  corrected_tilting_angles[i] = tilting_angles[i];
@@ -1210,7 +1227,20 @@ public class DiffrDataFile extends XRDcat {
     }
     return newArray;
   }
-
+  
+  private static double[][] getReducedArray(double[][] oldArray, int oldDataNumber, int groupControlNumber) {
+    int newDataNumber = oldDataNumber / groupControlNumber;
+    double[][] newArray = new double[oldArray.length][newDataNumber];
+    for (int l = 0; l < oldArray.length; l++) {
+      for (int i = 0, j = 0; i < newDataNumber; i++, j += groupControlNumber) {
+        for (int k = 0; k < groupControlNumber; k++)
+          newArray[l][i] += oldArray[l][j + k];
+        newArray[l][i] /= groupControlNumber;
+      }
+    }
+    return newArray;
+  }
+  
   @Override
   public void updateParametertoDoubleBuffering(boolean firstLoading) {
 
@@ -2194,6 +2224,22 @@ public class DiffrDataFile extends XRDcat {
     return total;
   }
 
+  public double getTotalFitIntensity(boolean normalised) {
+    double total = 0.0;
+    for (int i = startingindex; i < finalindex; i++)
+      total += getFit(i);
+//	  System.out.print("Total:" + total + " ");
+    if (useCountTimeToScale()) {
+      total /= getCountTimeValue();
+//		  System.out.print(getCountTimeValue() + " ");
+    }
+    if (normalised) {
+      total /= Math.abs(finalindex - 1 - startingindex); // Math.abs(getXData(finalindex - 1) - getXData(startingindex));
+    }
+//	  System.out.println(total);
+    return total;
+  }
+
   public double getYDataForStatistic(int index, double qExp) {
 	  return getIntensityForStatistic(index, getYData(index), qExp);
 
@@ -2616,6 +2662,11 @@ public class DiffrDataFile extends XRDcat {
     for (int j = 0; j < dtanumber; j++)
       q[j] = getXInEnergy(getXData(j + startingindex));
     return q;
+  }
+  
+  public double getMaxEnergy() {
+    int dtanumber = computeDataNumber();
+    return getXInEnergy(getXData(dtanumber + startingindex - 1));
   }
 
   public double[] getXrangeInQ() {
@@ -3259,7 +3310,23 @@ public class DiffrDataFile extends XRDcat {
   public double[] getdRange(double rangemin, double rangemax) {
     double range[] = new double[2];
     radiation = 0.0;
-    if (!dspacingbase) {
+    if (energyDispersive) {
+      double value = 2.0 * MoreMath.sind(get2ThetaValue() * 0.5);
+      if (rangemax > 0) {
+        rangemax = Constants.ENERGY_LAMBDA / (rangemax * value);
+      } else {
+        rangemax = 1.0E+10;
+      }
+      if (rangemin > 0) {
+        rangemin = Constants.ENERGY_LAMBDA / (rangemin * value);
+      } else {
+        rangemin = 1.0E+10;
+      }
+      if (rangemin <= 0.0)
+        rangemin = 1.0E-01;
+      if (rangemax <= 0.0)
+        rangemax = 1.0E-01;    
+    } else if (!dspacingbase) {
       if (energyDispersive) {
         if (rangemax > 0) {
           rangemax = Constants.ENERGY_LAMBDA / rangemax;
@@ -3385,7 +3452,23 @@ public class DiffrDataFile extends XRDcat {
     }
     return position;
   }
-
+  
+  public double getLargestCoordinate() {
+    double minCoord = getXData(startingindex);
+    double maxCoord = getXData(finalindex - 1);
+    if (minCoord > maxCoord)
+      maxCoord = minCoord;
+    return maxCoord;
+  }
+  
+  public double getSmallestCoordinate() {
+    double minCoord = getXData(startingindex);
+    double maxCoord = getXData(finalindex - 1);
+    if (minCoord > maxCoord)
+      minCoord = maxCoord;
+    return minCoord;
+  }
+  
 	public static final double TWO_DEGTOPI = 2.0 / Constants.DEGTOPI;
 
 	public static double computeposition(double dspace, double wavelength) {
@@ -3484,7 +3567,7 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 		return 1.0;
 	double toLambda = 0.0;
 	if (ainstrument.isTOF() || ainstrument.isEDX()) {
-		toLambda = (2.0 * x * MoreMath.sind(Math.abs(corrected_tilting_angles[4])));
+		toLambda = (2.0 * x * MoreMath.sind(Math.abs(get2ThetaValue())));
 	}
 	double arg1 = absorptionVelocityFactor * toLambda;
 	if (arg1 < 200.0)
@@ -3676,7 +3759,7 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
     }*/
   }
 
-  public void computeFluorescenceBroadening(Sample asample, double afit[], int min, int max) {
+  public void computeFluorescenceBroadeningCheck(Sample asample, double afit[], int min, int max) {
 
     DataFileSet adataset = getDataFileSet();
     Instrument ainstrument = adataset.getInstrument();
@@ -3692,6 +3775,43 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
     return (index >= startingindex && index < finalindex);
   }
 
+	public boolean isPeakInsideRange(Phase aphase, int reflIndex) {
+		double x;
+		Vector<Vector<ReflectionPeak>> peaks = getReflections(aphase);
+		boolean incrX = increasingX();
+//		System.out.println(peaks.size());
+		for (int i = 0; i < peaks.size(); i++) {
+			Vector<ReflectionPeak> refl_rad = peaks.elementAt(i);
+			int index = reflIndex - baseReflectionNumber[i];
+			if (index >= 0 && index < refl_rad.size()) {
+				if (energyDispersive)
+					x = refl_rad.elementAt(index).energy;
+				else
+					x = refl_rad.elementAt(index).position;
+				if ((incrX && (x >= startingX && x <= finalX)) ||
+						(!incrX && (x <= startingX && x >= finalX))) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public boolean isDspaceInsideRange(double dspace) {
+		RadiationType rad = getDataFileSet().getInstrument().getRadiationType();
+		int numberRad = rad.getLinesCount();
+    if (!energyDispersive) {
+      for (int i = 0; i < numberRad; i++) {
+        if (isInsideRangeWithMargin(getPositionOrEnergyFromDspace(dspace, i)))
+          return true;
+      }
+    } else {
+      if (isInsideRangeWithMargin(getPositionOrEnergyFromDspace(dspace, 0)))
+        return true;
+    }
+		return false;
+	}
+
 	public boolean isInsideRange(double x) {
 		boolean incrX = increasingX();
 //		System.out.println(incrX + " " + x + " " + startingX + " " + finalX);
@@ -3701,7 +3821,30 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 		}
 		return false;
 	}
-
+  
+  public boolean isInsideRangeWithMargin(double x) {
+    boolean incrX = increasingX();
+    double cutoff = getCutoffAngle();
+    if (energyDispersive)
+      cutoff *= 10.0;
+    else if (dspacingbase)
+      cutoff *= 0.01;
+    else
+      cutoff *= 0.1;
+    int sign = 1;
+    if (!incrX)
+      sign = -1;
+    
+    double startingX1 = startingX - cutoff * sign;
+    double finalX1 = finalX + cutoff * sign;
+//    System.out.println(cutoff + " " + x + " " + startingX + " " + finalX + " " + incrX + " " + startingX1 + " " + finalX1);
+    if ((incrX && (x >= startingX1 && x <= finalX1)) ||
+        (!incrX && (x <= startingX1 && x >= finalX1))) {
+      return true;
+    }
+    return false;
+  }
+  
   public void setStartingPointForTools(boolean setData) {
     if (!dspacingbase) {
       int dtanumber = computeDataNumber();
@@ -5248,12 +5391,52 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
     getMonitorCounts().setNotRefinableCheckBound();
   }
 
+	private Hashtable<Phase, Vector<Vector<ReflectionPeak>>> phaseReflections = new Hashtable<>();
+	public int[] baseReflectionNumber = null;
+//	public int baseRadiationNumber = 0;
+
+	public double getPositionFromDspace(double d_space, int radIndex) {
+		double position = 0;
+		if (dspacingbase && !energyDispersive) {
+			position = d_space;
+		} else if (energyDispersive) {
+//		  double sintheta = Math.sin(get2ThetaValue() * Constants.DEGTOPI * 0.5);
+      position = Constants.ENERGY_LAMBDA / (2.0 * d_space * sintheta);
+    } else {
+      double wavelength = getDataFileSet().getInstrument().getRadiationType().getRadiationWavelength(radIndex);
+      double ratioposition = wavelength / (2.0 * d_space);
+      position = 180.0;
+      if (ratioposition < 1.0)
+        position = Constants.PITODEG * 2 * Math.asin(ratioposition);
+      
+    }
+		return position;
+	}
+  
+  public double getPositionOrEnergyFromDspace(double d_space, int radIndex) {
+    double position = 0;
+    if (dspacingbase && !energyDispersive) {
+      position = d_space;
+		} else if (energyDispersive) {
+//		  double sintheta = Math.sin(get2ThetaValue() * Constants.DEGTOPI * 0.5);
+      position = Constants.ENERGY_LAMBDA / (2.0 * d_space * sintheta);
+    } else {
+      double wavelength = getDataFileSet().getInstrument().getRadiationType().getRadiationWavelength(radIndex);
+      double ratioposition = wavelength / (2.0 * d_space);
+      position = 180.0;
+      if (ratioposition < 1.0)
+        position = Constants.PITODEG * 2 * Math.asin(ratioposition);
+      
+    }
+    return position;
+  }
+  
 	public void refreshIndices(Phase phase) {
 		int numberOfReflections = phase.gethklNumber();
 		int radNumber = retrieveNumberOfRadiations();
 
     positionsPerPattern = getFilePar().getActiveSample().getSampleShapeModel().getDifferentPositionsNumber();
-//		System.out.println("Diffraction datafile: " + this.getLabel() + ", refresh indices: " + numberOfReflections);
+//l		System.out.println("Diffraction datafile: " + this.getLabel() + ", refresh indices: " + numberOfReflections);
 		int[] reflectionsIDs = getReflectionIDs(phase);
 		boolean reflectionsChanged = false;
 		boolean updatedIndices = false;
@@ -5274,13 +5457,91 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 			}
 		}
 
+		Vector<Vector<ReflectionPeak>> reflections = getReflections(phase);
+		if (reflections.size() != radNumber) {
+      reflections.setSize(radNumber);
+      phase.refreshCrystMicrostrain = true;
+//l      System.out.println("Datafile: " + getLabel() + ", resizing reflections for radiation: " + radNumber);
+    }
+		if (baseReflectionNumber == null || baseReflectionNumber.length != radNumber)
+			baseReflectionNumber = new int[radNumber];
+//l		System.out.println("Datafile: " + getLabel() + ", refresh indices: " + numberOfReflections + " - " + radNumber);
+
+		for (int i = 0; i < radNumber; i++) {
+			int minRefl = 0;
+			int maxRefl = 0;
+			Vector<ReflectionPeak> refl_vector = reflections.elementAt(i);
+			if (refl_vector == null) {
+				refl_vector = new Vector<>();
+				reflections.setElementAt(refl_vector, i);
+        phase.refreshCrystMicrostrain = true;
+//l        System.out.println("Datafile: " + getLabel() + ", initializing reflections for radiation: " + i);
+			}
+			for (int k = 0; k < numberOfReflections; k++) {
+				Reflection refl = phase.getReflex(k);
+				double position = getPositionFromDspace(refl.d_space, i);
+				refl.tmp_position = position;
+				boolean isInside = isInsideRangeWithMargin(position);
+//l        System.out.println("Checking: " + k + ", " + position + " " + isInside);
+				if (isInside)
+					maxRefl = k + 1;
+				else if (maxRefl == 0)
+					minRefl = k;
+			}
+
+      // Luca testing
+      minRefl = 0;
+      maxRefl = numberOfReflections;
+
+			if (maxRefl != 0) {
+				int peaksNumber = maxRefl - minRefl;
+				if (baseReflectionNumber[i] != minRefl || peaksNumber != refl_vector.size()) {
+//l          System.out.println("Datafile: " + getLabel() + ", setting new reflection peaks for radiation: " + i + " " + minRefl + " " + maxRefl);
+          int oldMin = baseReflectionNumber[i];
+					baseReflectionNumber[i] = minRefl;
+					int oldSize = refl_vector.size();
+					if (oldMin < minRefl) {
+            for (int k = 0; k < minRefl - oldMin; k++) {
+              if (refl_vector.size() > 0)
+                refl_vector.remove(0);
+            }
+          } else {
+            for (int k = 0; k < oldMin - minRefl; k++) {
+              ReflectionPeak peak = new ReflectionPeak();
+              Reflection refl = phase.getReflex(oldMin - k - 1);
+              peak.position = refl.tmp_position;
+              refl_vector.insertElementAt(peak,0);
+              phase.refreshCrystMicrostrain = true;
+            }
+          }
+					if (peaksNumber > refl_vector.size()) {
+					  while (peaksNumber > refl_vector.size()) {
+              ReflectionPeak peak = new ReflectionPeak();
+              Reflection refl = phase.getReflex(minRefl + refl_vector.size());
+              peak.position = refl.tmp_position;
+              refl_vector.add(peak);
+              phase.refreshCrystMicrostrain = true;
+            }
+          } else if (peaksNumber < refl_vector.size()) {
+					  refl_vector.setSize(peaksNumber);
+          }
+				}
+			} else {
+				baseReflectionNumber[i] = 0;
+				refl_vector.setSize(0);
+			}
+//l			System.out.println("Radiation " + i + ": " + baseReflectionNumber[i] + " - " + refl_vector.size());
+
+		}
+		
+		
 		double[][][][] textureFactors = phaseTextureFactors.get(phase);
-  //  if (textureFactors != null) {
-  //    System.out.println("refl " + reflectionsChanged);
-  //    System.out.println(" numberOfReflections " + textureFactors[0].length);
-  //    System.out.println(" positionsPerPattern " + textureFactors[0][0].length);
-  //    System.out.println(" radNumber " + textureFactors[0][0][0].length);
-  //  }
+/*l    if (textureFactors != null) {
+      System.out.println("refl " + reflectionsChanged);
+      System.out.println(" numberOfReflections " + textureFactors[0].length);
+      System.out.println(" positionsPerPattern " + textureFactors[0][0].length);
+      System.out.println(" radNumber " + textureFactors[0][0][0].length);
+    }*/
 		if (textureFactors == null) {
 			textureFactors = new double[2][numberOfReflections][positionsPerPattern][radNumber];
 			phaseTextureFactors.put(phase, textureFactors);
@@ -5403,7 +5664,7 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 
 		}
 
-		double[][][][] crystallitesMicrostrains = phaseCrystallitesMicrostrains.get(phase);
+/*		double[][][][] crystallitesMicrostrains = phaseCrystallitesMicrostrains.get(phase);
 		int numberCrystStrains = phase.getNumberOfSizeStrainCoefficients();
 		if (crystallitesMicrostrains == null) {
 			crystallitesMicrostrains = new double[numberCrystStrains][numberOfReflections][positionsPerPattern][radNumber];
@@ -5462,8 +5723,47 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 			phaseBroadFactors.put(phase, newPhaseBroadening);
 			resetBroadFactors(phase);
 			updateBroadFactors(phaseBroadening, newPhaseBroadening, indices);
-		}
+		}*/
 
+	}
+
+	protected Vector<Vector<ReflectionPeak>> getReflections(Phase phase) {
+		Vector<Vector<ReflectionPeak>> temp = phaseReflections.get(phase);
+		if (temp == null) {
+			int radNumber = getDataFileSet().getInstrument().getRadiationType().getLinesCount();
+			temp = new Vector<>(radNumber, 1);
+			phaseReflections.put(phase, temp);
+		}
+		return temp;
+	}
+
+	protected Vector<ReflectionPeak> getReflectionPeaks(Phase phase, int radNumber) {
+		int index = radNumber;
+		Vector<Vector<ReflectionPeak>> peaks = getReflections(phase);
+		if (index < 0 || index >= peaks.size()) {
+//			System.out.println("Datafile: " + getLabel() + ", peaks vector for radiation, index out of bounds: " + index + ", rad number: " + radNumber);
+			return null;
+		}
+		return peaks.elementAt(index);
+	}
+
+	public ReflectionPeak getReflectionPeak(Phase phase, int reflNumber, int radNumber) {
+		int index = reflNumber - baseReflectionNumber[radNumber];
+		Vector<ReflectionPeak> peaks = getReflectionPeaks(phase, radNumber);
+		if (peaks == null || index < 0 || index >= peaks.size()) {
+			return null;
+		}
+		return peaks.elementAt(index);
+	}
+
+	public double getPosition(Phase phase, int reflNumber, int radNumber) {
+		ReflectionPeak peak = getReflectionPeak(phase, reflNumber, radNumber);
+		if (peak != null)
+			return peak.position;
+		else {
+//      System.out.println("Position: " + getLabel() + ", reflection index out of bounds: " + reflNumber + ", rad number: " + radNumber + ", base: " + baseReflectionNumber[radNumber]);
+      return 0.0;
+    }
 	}
 
 	private void resetPositions(Phase phase) {
@@ -5549,7 +5849,7 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 		}
 	}
 
-	private void resetCrystallitesMicrostrains(Phase phase) {
+/*	private void resetCrystallitesMicrostrains(Phase phase) {
 		double[][][][] crystallitesMicrostrains = getCrystallitesMicrostrains(phase);
 		if (crystallitesMicrostrains != null) {
 			for (int i = 0; i < crystallitesMicrostrains.length; i++)
@@ -5613,7 +5913,7 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 						for (int l = 0; l < phaseBroadening[0][0][0].length && l < newPhaseBroadening[0][0][0].length; l++)
 							newPhaseBroadening[i][j][k][l] = phaseBroadening[i][indices[j]][k][l];
 		}
-	}
+	}*/
 
 	private void resetStrainFactors(Phase phase) {
 		double[][][][] strainsFactors = getStrainFactors(phase);
@@ -5869,7 +6169,7 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 		return temp;
 	}
 
-	public double[][][][] getBroadFactors(Phase phase) {
+/*	public double[][][][] getBroadFactors(Phase phase) {
 		double[][][][] temp = phaseBroadFactors.get(phase);
 		if (temp == null) {
       radiationsNumber = retrieveNumberOfRadiations();
@@ -5901,7 +6201,7 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 			resetCrystallitesMicrostrains(phase);
 		}
 		return temp;
-	}
+	}*/
 
 	public double[][][] getPositions(Phase phase) {
 		double[][][] temp = phasePositions.get(phase);
@@ -5971,6 +6271,7 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 //		Sample sample = aphase.getSample();
 
 		int reflNumber = aphase.gethklNumber();
+//    System.out.println("Compute positions " + energyDispersive + " " + dspacingbase);
 		if (dspacingbase) {
 			for (int i = 0; i < reflNumber &&  i < positions.length; i++) {
 				Reflection refl = aphase.getReflex(i);
@@ -5979,12 +6280,15 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 						positions[i][j][rad] = refl.d_space;
 			}
 		} else if (energyDispersive) {
-      double sintheta = Math.sin(get2ThetaValue() * Constants.DEGTOPI * 0.5);
+//      double sintheta = Math.sin(get2ThetaValue() * Constants.DEGTOPI * 0.5);
       for (int i = 0; i < reflNumber &&  i < positions.length; i++) {
         Reflection refl = aphase.getReflex(i);
+        double energy = Constants.ENERGY_LAMBDA / (2.0 * refl.d_space * sintheta);
+//        System.out.println("Pos: " + energy + " " + refl.d_space);
         for (int j = 0; j < positionsPerPattern && j < positions[0].length; j++)
-          for (int rad = 0; rad < radNumber && rad < positions[0][0].length; rad++)
-            positions[i][j][rad] = Constants.ENERGY_LAMBDA / (2.0 * refl.d_space * sintheta);
+          for (int rad = 0; rad < radNumber && rad < positions[0][0].length; rad++) {
+            positions[i][j][rad] = energy;
+          }
       }
     } else {
 			for (int i = 0; i < reflNumber && i < positions.length; i++) {
@@ -6038,8 +6342,8 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 		for (int i = 0; i < thetaDisplacementN; i++) {
 			position += thetaDisplacement[i] * MoreMath.pow(x, i);
 		}
-		if (theta2thetaMeasurement)
-			x /= 2;
+		if (theta2thetaMeasurement && !dspacingbase && !energyDispersive)
+      x /= 2;
 
     double yDisplacement = getParameterValue(sampleDisplacementYID);
     double zDisplacement = getParameterValue(sampleDisplacementZID);
@@ -6064,8 +6368,9 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
       else
         position += Constants.PITODEG * zDisplacement * MoreMath.cosd(x);
     }
-
-		return getDataFileSet().getCorrectedPosition(asample, position, getTiltingAngle(), this, ppp);
+    if (!energyDispersive)
+		  return getDataFileSet().getCorrectedPosition(asample, position, getTiltingAngle(), this, ppp);
+    return position;
 	}
 
 	public double getPositionForStrained(double position, double strain) {
@@ -6073,7 +6378,7 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 		strain = Math.exp(strain);
 		// approximate treatment
 //		strain = 1.0 + strain;
-		if (dspacingbase)
+		if (dspacingbase && !energyDispersive)
 				position *= strain;
 		else if (energyDispersive) {
 				position /= strain;
@@ -6090,12 +6395,13 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 
   public double computeFinalPosition(Sample asample, Reflection refl, double strain, double pos, int ppp, int radl) {
     // in deg if an angle
-
     if (strain != 0.0)
       pos = getPositionForStrained(pos, strain);
+//    System.out.println("S : " + pos);
 
 // position from d-space + sample positioning errors
     pos = getCorrectedPosition(asample, pos, ppp, radl);
+//    System.out.println("C : " + pos);
 
     return pos;
   }
@@ -6178,35 +6484,45 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 
 	public void computeInstBroadFactor(Phase aphase) {
 		double[][][] positions = phasePositions.get(aphase);
-		double[][][][] instrumentBroadening = phaseInstBroadFactors.get(aphase);
 		Instrument ainstrument = getDataFileSet().getInstrument();
+    Vector<Reflection> reflectionList = aphase.getReflectionVector();
 
-		for (int j = 0; j < positionsPerPattern; j++) {
-			int reflNumber = aphase.getReflectionVector().size();
-			for (int i = 0; i < reflNumber; i++) {
+    int reflNumber = reflectionList.size();
+    for (int i = 0; i < reflNumber; i++) {
+      Reflection refl = reflectionList.get(i);
 				for (int rad = 0; rad < positions[0][0].length; rad++) {
-					double[][] broad = ainstrument.getInstrumentalBroadeningAt(positions[i][j][rad], this);
-					for (int b = 0; b < broad[0].length; b++)
-						instrumentBroadening[b][i][j][rad] = broad[0][b];
-				}
+          ReflectionPeak peak = getReflectionPeak(aphase, i, rad);
+          if (peak != null) {
+//            System.out.println("Peak for refl " + i + " , rad number: " + rad + ", pos: " + positions[i][0][rad] +
+//                " " + refl.getH() + " " + refl.getK() + " " + refl.getL() + " " + refl.d_space);
+            peak.instBroadFactor = ainstrument.getInstrumentBroadeningAt(positions[i][0][rad], this);
+            if (energyDispersive) {
+              peak.instBroadFactor_en = ainstrument.getInstrumentalEnergyBroadeningAt(positions[i][0][rad]);
+            }
+          }
+//          else
+//            System.out.println("No peak for reflection " + i + " , rad number: " + rad);
+        }
 			}
-		}
 
 	}
 
 	public void computeSizeStrainBroadening(Phase aphase) {
 
-		double[][][][] sizeStrains = phaseCrystallitesMicrostrains.get(aphase);
+//		double[][][][] sizeStrains = phaseCrystallitesMicrostrains.get(aphase);
+
+    Vector<Reflection> reflectionList = aphase.getReflectionVector();
 
 		double[][][] positions = getPositions(aphase);
-		int reflNumber = aphase.getReflectionVector().size();
+		int reflNumber = reflectionList.size();
 		for (int i = 0; i < reflNumber; i++) {
-			double crst[] = aphase.getCrystalliteMicrostrain(aphase.getReflex(i), getTextureAngles(positions[i][0][0], 0));
-			for (int b = 0; b < crst.length; b++) {
-				for (int l = 0; l < sizeStrains[0][0].length; l++)
-					for (int k = 0; k < sizeStrains[0][0][0].length; k++)
-						sizeStrains[b][i][l][k] = crst[b];
-			}
+      Reflection refl = reflectionList.elementAt(i);
+			double[] crst = aphase.getCrystalliteMicrostrain(refl, getTextureAngles(positions[i][0][0], 0));
+      if (refl.crystsize == null || refl.crystsize.length != crst.length)
+        refl.crystsize = new double[crst.length];
+      for (int j = 0; j < refl.crystsize.length; j++)
+        refl.crystsize[j] = crst[j];
+//      System.out.println("Sample a: " + refl + " "  + refl.crystsize[0] + " " + refl.crystsize[1] + " " + positions[i][0][0] + " " + refl.getH() + " " + refl.getK() + " " + refl.getL()) ;
 		}
 
 	}
@@ -6227,7 +6543,50 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 		}
 	}
 
-	public void computeSampleBroadening(Phase aphase, double wave) {
+  public void computeSampleBroadening(Phase aphase, double wave) {
+    double[] betaf = new double[]{0,0};
+
+//		double[] broadInst = new double[instrumentBroadeningParNumber];
+    Vector<Vector<ReflectionPeak>> peaks = getReflections(aphase);
+    for (int i = 0; i < peaks.size(); i++) {
+      Vector<ReflectionPeak> peaksR = peaks.elementAt(i);
+      for (int j = 0; j < peaksR.size(); j++) {
+        Reflection refl = aphase.getReflex(j + baseReflectionNumber[i]);
+        ReflectionPeak peak = peaksR.elementAt(j);
+        betaf[0] = aphase.getActiveSizeStrain().getBetaChauchy(refl.d_space, refl.crystsize[0], refl.crystsize[1]); // / 2.0;
+        betaf[1] = aphase.getActiveSizeStrain().getBetaGauss(refl.d_space, refl.crystsize[0], refl.crystsize[1]); // / 2.0;
+        if (!dspacingbase && !energyDispersive) {
+          double position = peak.position / 2 * Constants.DEGTOPI;
+          double sintheta1 = Math.sin(position);
+          sintheta1 *= sintheta1;
+          double costheta = Math.cos(position);
+          double corr = 4.0 * sintheta1 / (wave * costheta) * Constants.PITODEG;
+          betaf[0] *= corr;
+          betaf[1] *= corr;
+        } else if (energyDispersive) {
+          double[] betafen = new double[]{0,0};
+          double corr = 2.0 * sintheta * Constants.ENERGY_LAMBDA / (wave * wave);
+          betafen[0] = betaf[0] * corr;
+          betafen[1] = betaf[1] * corr;
+          double[] broadFactorTotal_en = PseudoVoigtPeak.getHwhmEtaFromIntegralBeta(betafen, peak.instBroadFactor_en);
+          peak.broadFactorHWHM_en = broadFactorTotal_en[0];
+          peak.broadFactorEta_en = broadFactorTotal_en[1];
+          double sintheta1 = sintheta;
+          sintheta1 *= sintheta1;
+          double costheta = Math.sqrt(1.0 - sintheta1);
+          corr = 4.0 * sintheta1 / (wave * costheta) * Constants.PITODEG;
+          betaf[0] *= corr;
+          betaf[1] *= corr;
+        }
+//        System.out.println("Sample b: " + refl + " " + i + " " + j + " " + betaf[0] + " " + betaf[1] + " " + refl.crystsize[0] + " " + refl.crystsize[1] + " " + peak.position + " " + refl.getH() + " " + refl.getK() + " " + refl.getL() + ", " + peak.instBroadFactor.size()) ;
+        double[] broadFactorTotal = PseudoVoigtPeak.getHwhmEtaFromIntegralBeta(betaf, peak.instBroadFactor);
+        peak.broadFactorHWHM = broadFactorTotal[0];
+        peak.broadFactorEta = broadFactorTotal[1];
+      }
+    }
+  }
+
+/*  public void computeSampleBroadening_old(Phase aphase, double wave) {
  		double[] betaf = new double[]{0,0};
 		int numberofpeaks = aphase.gethklNumber();
 		double[][][][] sizeStrains = getCrystallitesMicrostrains(aphase);
@@ -6246,36 +6605,35 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 							sizeStrains[1][kj][i][k]); // / 2.0;
 					if (!dspacingbase && !energyDispersive) {
 						double position = positions[kj][i][k] / 2 * Constants.DEGTOPI;
-						double sintheta = Math.sin(position);
-						sintheta *= sintheta;
+						double sintheta2 = Math.sin(position);
+						sintheta2 *= sintheta2;
 						double costheta = Math.cos(position);
-						double corr = 4.0 * sintheta / (wave * costheta) * Constants.PITODEG;
+						double corr = 4.0 * sintheta2 / (wave * costheta) * Constants.PITODEG;
 						betaf[0] *= corr;
 						betaf[1] *= corr;
 					}
 					for (int j = 0; j < instrumentBroadeningParNumber; j++)
 						broadInst[j] = instBroadening[j][kj][i][k];
 					double[] hwhm_eta = PseudoVoigtPeak.getHwhmEtaFromIntegralBeta(betaf, broadInst);
-/*	            System.out.println("Refreshing " + hwhm_eta[0] + " " + hwhm_eta[1]
-			            + " " + broadInst[0] + " " + broadInst[1]
-			            + " " + betaf[0] + " " + betaf[1]);*/
+//	            System.out.println("Refreshing " + hwhm_eta[0] + " " + hwhm_eta[1]
+//			            + " " + broadInst[0] + " " + broadInst[1]
+//			            + " " + betaf[0] + " " + betaf[1]);
 					for (int j = 0; j < hwhm_eta.length; j++)
 						phaseBroadening[j][kj][i][k] = hwhm_eta[j];
 //				for (int j = hwhm_eta.length; j < broadInst.length; j++)
 //					phaseBroadening[j][kj][i] = broadInst[j];  // asymmetry
 				}
-//        System.out.println("Sample b: " + i + " " + 0 + " " + betaf[0] + " " + betaf[1] + " " + sizeStrains[0][kj][i][0] + " " + sizeStrains[1][kj][i][0] + " " + positions[kj][i][0] + " " + refl.getH() + " " + refl.getK() + " " + refl.getL()) ;
 			}
 		}
-	}
+	}*/
 
 	public void removingPhase(Phase phase) {
 		phaseLorentzPolarization.remove(phase);
-		phaseBroadFactors.remove(phase);
-		phaseInstBroadFactors.remove(phase);
+//		phaseBroadFactors.remove(phase);
+//		phaseInstBroadFactors.remove(phase);
 		phaseShapeAbsFactors.remove(phase);
 		phaseStrainFactors.remove(phase);
-		phaseCrystallitesMicrostrains.remove(phase);
+//		phaseCrystallitesMicrostrains.remove(phase);
 		phaseMinMaxIndices.remove(phase);
 		phasePositions.remove(phase);
 		phaseTextureFactors.remove(phase);
@@ -6357,7 +6715,7 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 		for (int i = 0; i < positionsPerPattern; i++) {
       for (int j = 0; j < radiationsNumber; j++) {
         double pos = getPositions(phase)[reflIndex][i][j];
-        double hwhm = Math.abs(getBroadFactors(phase)[0][reflIndex][i][0] * rangeFactor * getCutoffAngle());
+        double hwhm = Math.abs(getBroadFactorHWHM(phase, reflIndex, j) * rangeFactor * getCutoffAngle());
         if (xInsideRange(pos) || xInsideRange(pos + hwhm) || xInsideRange(pos - hwhm))
           isIn = true;
       }
@@ -6379,7 +6737,67 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 		return getLorentzPolarization(aphase)[j];
 	}
 
-	public double[][] getExperimentalTextureFactors(Phase aphase, int j) {
+  public double getBroadFactorHWHM(Phase phase, int reflNumber, int radNumber) {
+    ReflectionPeak peak = getReflectionPeak(phase, reflNumber, radNumber);
+    if (peak != null)
+      return peak.broadFactorHWHM;
+    else {
+//      System.out.println("BroadFactor hwhm: " + getLabel() + ", reflection index out of bounds: " + reflNumber + ", rad number: " + radNumber + ", base: " + baseReflectionNumber[radNumber]);
+      return 0.001;
+    }
+  }
+
+  public java.util.Vector<double[]> getEnergyBroadFactor(Phase phase, int reflNumber, int radNumber) {
+    ReflectionPeak peak = getReflectionPeak(phase, reflNumber, radNumber);
+    if (peak != null)
+      return peak.instBroadFactor_en;
+    else {
+//      System.out.println("BroadFactor hwhm: " + getLabel() + ", reflection index out of bounds: " + reflNumber + ", rad number: " + radNumber + ", base: " + baseReflectionNumber[radNumber]);
+      return null;
+    }
+  }
+
+  public double getBroadFactorHWHM_en(Phase phase, int reflNumber, int radNumber) {
+    ReflectionPeak peak = getReflectionPeak(phase, reflNumber, radNumber);
+    if (peak != null)
+      return peak.broadFactorHWHM_en;
+    else {
+//      System.out.println("BroadFactor hwhm: " + getLabel() + ", reflection index out of bounds: " + reflNumber + ", rad number: " + radNumber + ", base: " + baseReflectionNumber[radNumber]);
+      return 0.001;
+    }
+  }
+
+  public double getBroadFactorEta(Phase phase, int reflNumber, int radNumber) {
+    ReflectionPeak peak = getReflectionPeak(phase, reflNumber, radNumber);
+    if (peak != null)
+      return peak.broadFactorEta;
+    else {
+//      System.out.println("BroadFactor eta: " + getLabel() + ", reflection index out of bounds: " + reflNumber + ", rad number: " + radNumber + ", base: " + baseReflectionNumber[radNumber]);
+      return 0.0;
+    }
+  }
+
+  public double getBroadFactorEta_en(Phase phase, int reflNumber, int radNumber) {
+    ReflectionPeak peak = getReflectionPeak(phase, reflNumber, radNumber);
+    if (peak != null)
+      return peak.broadFactorEta_en;
+    else {
+//      System.out.println("BroadFactor eta: " + getLabel() + ", reflection index out of bounds: " + reflNumber + ", rad number: " + radNumber + ", base: " + baseReflectionNumber[radNumber]);
+      return 0.0;
+    }
+  }
+
+  public double[] getCrystallitesMicrostrains(Phase phase, int reflNumber) {
+    Reflection peak = phase.getReflectionVector().elementAt(reflNumber);
+    if (peak != null)
+      return peak.crystsize;
+    else {
+//      System.out.println("SizeStrain: " + getLabel() + ", reflection index out of bounds: " + reflNumber + ", rad number: " + radNumber + ", base: " + baseReflectionNumber[radNumber]);
+      return new double[2];
+    }
+  }
+
+  public double[][] getExperimentalTextureFactors(Phase aphase, int j) {
 		return getTextureFactors(aphase)[0][j];  //To change body of created methods use File | Settings | File Templates.
 	}
 

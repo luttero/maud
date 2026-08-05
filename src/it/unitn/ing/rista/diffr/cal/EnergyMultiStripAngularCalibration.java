@@ -39,7 +39,7 @@ public class EnergyMultiStripAngularCalibration extends AngularCalibration {
   
   public EnergyMultiStripAngularCalibration(XRDcat obj, String alabel) {
     super(obj, alabel);
-    initXRD();
+    initBaseObject();
     identifier = modelID;
     IDlabel = modelID;
     description = descriptionID;

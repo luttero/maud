@@ -1109,6 +1109,10 @@ public class Geometry extends XRDcat {
                                                boolean dspacingbase, boolean energyDispersive, double[][] intensity, double toLambda) {
   }
 
+  public double getBeamOutCorrection(DiffrDataFile adatafile, Sample asample) {
+    return 1.0;
+  }
+
   public double[] getLayerAbsorption_new(Sample asample, RadiationType rad, int layerIndex, double[][] incidentDiffractionAngles,
                                        DataFileSet adataset) {
 	  double[] radAbs = new double[rad.getLinesCount()];

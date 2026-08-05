@@ -199,7 +199,7 @@ public class LoskoDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
 				String linedata = reader.readLine();
 				boolean endoffile = false;
 
-				while (!linedata.startsWith("X\tY"))
+				while (!linedata.startsWith("X\tY") && !linedata.startsWith(" X\tY"))
 					linedata = reader.readLine();
 
 				double omega = 0.0, chi = 0.0, phi = 0.0, eta = 0.0;

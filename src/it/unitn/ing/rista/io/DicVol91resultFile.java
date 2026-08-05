@@ -157,7 +157,7 @@ public class DicVol91resultFile {
                         line.lastIndexOf('('))));
 //                    tmp.append(Misc.toStringDeleteBlankAndTab(line));
                     namelist.addElement(tmp.toString());
-                    fileindex.addElement(new Integer(index));
+                    fileindex.addElement(index);
                   }
                 } else
                   endoffile = true;

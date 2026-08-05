@@ -172,7 +172,7 @@ public class RadiationType extends XRDcat {
 		return getRadiationWavelength(index);
 	}
 
-  public double getRadiationEnergyForFluorescence(int index) {
+  public double getRadiationEnergyForFluorescence2(int index) {
     return Constants.ENERGY_LAMBDA / getRadiationWavelengthForFluorescence(index) * 0.001;
   }
 
@@ -190,13 +190,13 @@ public class RadiationType extends XRDcat {
     return lambdaToEnergy(getRadiationWavelength(index));
   }
   
-//  public double getRadiationEnergyForFluorescence(int index) {
+  public double getRadiationEnergyForFluorescence(int index) {
 //		checkRadiation();
-//    return getRadiationEnergy(index);
-//  }
+    return getRadiationEnergy(index);
+  }
   
   public double getRadiationEnergyKeV(int index) {
-    return getRadiationEnergy(index) * 0.001;
+    return getRadiationEnergy(index);
   }
   
   public double getRadiationEnergyForFluorescenceKeV(int index) {

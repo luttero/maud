@@ -266,17 +266,19 @@ The PF's of peaks of the same family are imposed equals for all the lines.
 		  int[] reflectionListIndices = new int[numberReflections];
 //      double[] esdfactors = new double[numberofpeaks];
 
-		  double[][] datasetSFactors = dataset.getStructureFactors(phase);
+		  double[][][] datasetSFactors = dataset.getStructureFactors(phase);
 
       if (!useLastFactors) {
         for (int np = 0; np < numberofpeaks && np < numberReflections; np++) {
-	        Phase actualPhase = fullpeaklist.elementAt(np).getPhase();
+          Peak peak = fullpeaklist.elementAt(np);
+          Phase actualPhase = peak.getPhase();
+          int nrefl = peak.getOrderPosition();
           if (actualPhase == phase) {
             lastfactors[np] = Constants.STARTING_STRUCTURE_FACTOR * Constants.STARTING_STRUCTURE_FACTOR;
             newfactors[np] = lastfactors[np];
-	          reflectionListIndices[fullpeaklist.elementAt(np).getOrderPosition()] = np;
+	          reflectionListIndices[nrefl] = np;
           } else {
-            lastfactors[np] = dataset.getStructureFactors(actualPhase)[1][fullpeaklist.elementAt(np).getOrderPosition()];
+            lastfactors[np] = dataset.getStructureFactors(actualPhase)[1][nrefl][0];  // todo: v3.0  at the moment we just use one structure factor for all radiation lines
             newfactors[np] = lastfactors[np];
           }
           weightfactors[np] = 0.0;
@@ -286,19 +288,20 @@ The PF's of peaks of the same family are imposed equals for all the lines.
 //		      System.out.println(np + " " + fullpeaklist.elementAt(np).getPhase().getPhaseName() + " " +
 //				      fullpeaklist.elementAt(np).getOrderPosition());
         for (int np = 0; np < numberofpeaks; np++) {
-	        Phase actualPhase = fullpeaklist.elementAt(np).getPhase();
+          Peak peak = fullpeaklist.elementAt(np);
+          Phase actualPhase = peak.getPhase();
+          int nrefl = peak.getOrderPosition();
           if (actualPhase == phase) {
-            lastfactors[np] = datasetSFactors[1][fullpeaklist.elementAt(np).getOrderPosition()];
+            lastfactors[np] = datasetSFactors[1][nrefl][0];
             if (lastfactors[np] <= 1.0E-9)
               lastfactors[np] = Constants.MINIMUM_STRUCTURE_FACTOR * Constants.MINIMUM_STRUCTURE_FACTOR; // just we don't want to start from 0.0 otherwise will remain 0.0
             newfactors[np] = lastfactors[np];
-            int pos = fullpeaklist.elementAt(np).getOrderPosition();
-            if (pos < reflectionListIndices.length)
-	            reflectionListIndices[pos] = np;
+            if (nrefl < reflectionListIndices.length)
+	            reflectionListIndices[nrefl] = np;
           } else {
             int pos = fullpeaklist.elementAt(np).getOrderPosition();
             if (pos < reflectionListIndices.length) {
-              lastfactors[np] = dataset.getStructureFactors(actualPhase)[1][pos];
+              lastfactors[np] = dataset.getStructureFactors(actualPhase)[1][pos][0];
               newfactors[np] = lastfactors[np];
             }
           }
@@ -306,12 +309,17 @@ The PF's of peaks of the same family are imposed equals for all the lines.
         }
       }
 		  int maxNumberHKL = 0;
-		  for (int np = 0; np < numberofpeaks; np++)
-			  if (fullpeaklist.elementAt(np).getPhase() == phase) {
-			    datasetSFactors[0][fullpeaklist.elementAt(np).getOrderPosition()] = lastfactors[np];
-				  if (fullpeaklist.elementAt(np).getOrderPosition() > maxNumberHKL)
-					  maxNumberHKL = fullpeaklist.elementAt(np).getOrderPosition();
-			  }
+		  for (int np = 0; np < numberofpeaks; np++) {
+        Peak peak = fullpeaklist.elementAt(np);
+        Phase actualPhase = peak.getPhase();
+        int nrefl = peak.getOrderPosition();
+        if (actualPhase == phase) {
+          for (int n = 0; n < radCount; n++)
+            datasetSFactors[0][nrefl][n] = lastfactors[np];
+          if (nrefl > maxNumberHKL)
+            maxNumberHKL = nrefl;
+        }
+      }
 		  numberReflections = maxNumberHKL;
       int[] numberpeaktouse = new int[numberofpeaks];
       double[] newlebailfactor = new double[numberofpeaks];
@@ -437,7 +445,7 @@ The PF's of peaks of the same family are imposed equals for all the lines.
         int i = 0;
         while (i < numberReflections) {
         for (int ij = 0; ij < numberpeaktouse[reflectionListIndices[i]]; ij++) {
-            double oldfactor = datasetSFactors[0][i + ij];
+            double oldfactor = datasetSFactors[0][i + ij][0];
             double newlebailf = oldfactor;
             if (newexpfitnorm[reflectionListIndices[i + ij]] > 0)
               newlebailf = newlebailfactor[reflectionListIndices[i + ij]] / newexpfitnorm[reflectionListIndices[i + ij]] * oldfactor;
@@ -448,8 +456,10 @@ The PF's of peaks of the same family are imposed equals for all the lines.
             if (diff > getErrorMax())
               convergence = false;
 //	          System.out.println("Phase " + phase.getPhaseName() + ", new factor(" + (i + ij) + "): " + newlebailf + ", old factor: " + oldfactor);
-	          datasetSFactors[0][i + ij] = newlebailf;
-	          datasetSFactors[2][i + ij] = diff * Math.abs(oldfactor);
+          for (int n = 0; n < radCount; n++) {
+            datasetSFactors[0][i + ij][n] = newlebailf;
+            datasetSFactors[2][i + ij][n] = diff * Math.abs(oldfactor);
+          }
         }
           i += numberpeaktouse[reflectionListIndices[i]];
         }

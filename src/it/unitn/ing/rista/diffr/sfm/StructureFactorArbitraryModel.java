@@ -64,20 +64,285 @@ public class StructureFactorArbitraryModel extends StructureFactorModel {
     description = "select this to use extracted or experimental structure factors";
   }
 
-	public void storeStructureFactors(Sample asample) {
-		for (int i = 0; i < asample.activeDatasetsNumber(); i++)
-			asample.getActiveDataSet(i).storeExperimentalOverComputedStructureFactors();
-	}
+  public void storeStructureFactors(Sample asample) {
+    for (int i = 0; i < asample.activeDatasetsNumber(); i++)
+      asample.getActiveDataSet(i).storeExperimentalOverComputedStructureFactors();
+  }
 
-	public boolean canSolveStructure() {
-		return true;
-	}
+  public boolean canSolveStructure() {
+    return true;
+  }
 
-	public boolean needStructureFactorExtractor() {
-		return true;
-	}
+  public boolean needStructureFactorExtractor() {
+    return true;
+  }
 
   public void loadStructureFactors(String filename) {
+
+    // todo: v3.0 fix this, input not for each dataset
+//    notLoaded = false;
+    FilePar aparFile = getFilePar();
+    Phase aphase = (Phase) getParent();
+    int hkln = aphase.gethklNumber();
+    Sample asample = aparFile.getActiveSample();
+    int realDataSetNumber = asample.datasetsNumber();
+//    initializeMatrices(hkln, realDataSetNumber);
+    if (filename == null)
+      filename = aparFile.getDirectory() + aphase.toXRDcatString() + ".sf";
+    int hasValidDataSet = checkForDataSet(filename, aparFile);
+    BufferedReader PFreader = Misc.getReader(filename);
+    boolean endoffile = false;
+    String datasetEntry = CIFdictionary.dataDecl + "dataset_";
+    int datasetLength = datasetEntry.length();
+    Vector<double[][]> allFhkl = new Vector<>();
+    int datasetindex = -1;
+    if (PFreader != null) {
+      try {
+        String line = PFreader.readLine();
+        while (!endoffile) {
+          if (hasValidDataSet != 0) {
+            while (line != null && !line.startsWith(datasetEntry)) {
+              line = PFreader.readLine();
+            }
+          }
+          if (line == null)
+            endoffile = true;
+          else {
+// dataset entry
+
+            if (hasValidDataSet > 0) {
+              String datasetName = line.substring(datasetLength);
+              DataFileSet adataset = asample.getDataSetByName(datasetName);
+//              if (adataset != null)
+//                datasetindex = adataset.getIndex();
+              datasetindex++;
+            } else {
+              datasetindex++;
+            }
+//                System.out.println("dataset " + adataset.toXRDcatString());
+            CIFloop aloop = new CIFloop(PFreader);
+            aloop.lookForAndReadLoop();
+            int cifEntriesNumber = aloop.getNumberOfCIFentries();
+
+            int maxEntries = 10;
+            int[] FhklCIFindex = new int[maxEntries];
+            for (int i = 0; i < maxEntries; i++)
+              FhklCIFindex[i] = -1;
+            String[] loopIDs = new String[maxEntries];
+            loopIDs[0] = CIFdictionary.refln_h;
+            loopIDs[1] = CIFdictionary.refln_k;
+            loopIDs[2] = CIFdictionary.refln_l;
+            loopIDs[3] = CIFdictionary.refln_multiplicity;
+            loopIDs[4] = CIFdictionary.refln_FsquaredMeas;
+            loopIDs[5] = CIFdictionary.refln_FsquaredCalc;
+            loopIDs[6] = CIFdictionary.refln_FsquaredEsd;
+//          loopIDs[6] = CIFdictionary.refln_dspacing;
+            loopIDs[7] = CIFdictionary.refln_wavelength;
+            loopIDs[8] = CIFdictionary.refln_FMeas;
+            loopIDs[9] = CIFdictionary.refln_FCalc;
+
+//              System.out.println(cifEntriesNumber);
+            for (int i = 0; i < cifEntriesNumber; i++) {
+              String CIFentry = aloop.getCIFentry(i);
+//              System.out.println(CIFentry);
+              for (int j = 0; j < maxEntries; j++)
+                if (CIFentry.equalsIgnoreCase(loopIDs[j])) {
+                  FhklCIFindex[j] = i;
+//                  System.out.println(j + " " + i);
+                }
+            }
+            boolean meas = (FhklCIFindex[4] != -1);
+            boolean calc = (FhklCIFindex[5] != -1);
+            boolean meas_notsquared = (FhklCIFindex[8] != -1);
+            boolean calc_notsquared = (FhklCIFindex[9] != -1);
+            if (datasetindex < realDataSetNumber &&
+                ((FhklCIFindex[0] != -1 && FhklCIFindex[1] != -1 && FhklCIFindex[2] != -1) &&
+                    (meas || calc || meas_notsquared || calc_notsquared))) { // sufficient information
+
+              int elementsNumber = aloop.getNumberOfCIFelements();
+
+/*              if (FhklCIFindex[7] != -1 && elementsNumber > 0) {
+                if (hasValidDataSet == 0)
+                  for (int ij = 0; ij < realDataSetNumber; ij++)
+                    wave[ij] = Double.valueOf(aloop.getCIFelement(FhklCIFindex[7], 0));
+                else
+                  wave[datasetindex] = Double.valueOf(aloop.getCIFelement(FhklCIFindex[7], 0));
+              } else {
+                if (hasValidDataSet == 0)
+                  for (int ij = 0; ij < realDataSetNumber; ij++)
+                    wave[ij] = asample.getDataSet(ij).getMeanRadiationWavelength();
+                else
+                  wave[datasetindex] = asample.getDataSet(datasetindex).getMeanRadiationWavelength();
+              }*/
+
+              int[][] hklm = new int[3][elementsNumber];
+              double[][] Fhkl = new double[3][elementsNumber];
+              allFhkl.add(Fhkl);
+
+// set structure factors
+              for (int i = 0; i < elementsNumber; i++) {
+                hklm[0][i] = Integer.valueOf(aloop.getCIFelement(FhklCIFindex[0], i));
+                hklm[1][i] = Integer.valueOf(aloop.getCIFelement(FhklCIFindex[1], i));
+                hklm[2][i] = Integer.valueOf(aloop.getCIFelement(FhklCIFindex[2], i));
+                if (meas) {
+//                  if (hasValidDataSet == 0)
+//                    for (int ij = 0; ij < realDataSetNumber; ij++)
+//                    Fhkl[0][i]/*[ij]*/ = Double.valueOf(aloop.getCIFelement(FhklCIFindex[4], i));
+//                  else
+                  Fhkl[0][i]/*[datasetindex]*/ = Double.valueOf(aloop.getCIFelement(FhklCIFindex[4], i));
+                  if (!calc) {
+                    if (hasValidDataSet == 0)
+//                      for (int ij = 0; ij < realDataSetNumber; ij++)
+//                        Fhkl[1][i][ij] = Double.valueOf(aloop.getCIFelement(FhklCIFindex[4], i));
+//                    else
+                      Fhkl[1][i]/*[datasetindex]*/ = Double.valueOf(aloop.getCIFelement(FhklCIFindex[4], i));
+                  }
+                }
+                if (calc) {
+//                  if (hasValidDataSet == 0)
+//                    for (int ij = 0; ij < realDataSetNumber; ij++)
+//                      Fhkl[1][i][ij] = Double.valueOf(aloop.getCIFelement(FhklCIFindex[5], i));
+//                  else
+                  Fhkl[1][i]/*[datasetindex]*/ = Double.valueOf(aloop.getCIFelement(FhklCIFindex[5], i));
+                  if (!meas) {
+//                    if (hasValidDataSet == 0)
+//                      for (int ij = 0; ij < realDataSetNumber; ij++)
+//                        Fhkl[0][i][ij] = Double.valueOf(aloop.getCIFelement(FhklCIFindex[5], i));
+//                    else
+                    Fhkl[0][i]/*[datasetindex]*/ = Double.valueOf(aloop.getCIFelement(FhklCIFindex[5], i));
+                  }
+                }
+                if (meas_notsquared) {
+/*                  if (hasValidDataSet == 0) {
+                    for (int ij = 0; ij < realDataSetNumber; ij++) {
+                      Fhkl[0][i][ij] = Double.valueOf(aloop.getCIFelement(FhklCIFindex[8], i));
+                      Fhkl[0][i][ij] *= Fhkl[0][i][ij];
+                    }
+                  } else {*/
+                  Fhkl[0][i]/*[datasetindex]*/ = Double.valueOf(aloop.getCIFelement(FhklCIFindex[8], i));
+                  Fhkl[0][i]/*[datasetindex]*/ *= Fhkl[0][i]/*[datasetindex]*/;
+//                  }
+                  if (!calc_notsquared) {
+/*                    if (hasValidDataSet == 0) {
+                      for (int ij = 0; ij < realDataSetNumber; ij++) {
+                        Fhkl[1][i][ij] = Double.valueOf(aloop.getCIFelement(FhklCIFindex[8], i));
+                        Fhkl[1][i][ij] *= Fhkl[1][i][ij];
+                      }
+                    } else {*/
+                    Fhkl[1][i]/*[datasetindex]*/ = Double.valueOf(aloop.getCIFelement(FhklCIFindex[8], i));
+                    Fhkl[1][i]/*[datasetindex]*/ *= Fhkl[1][i]/*[datasetindex]*/;
+//                    }
+                  }
+                }
+                if (calc_notsquared) {
+/*                  if (hasValidDataSet == 0) {
+                    for (int ij = 0; ij < realDataSetNumber; ij++) {
+                      Fhkl[1][i][ij] = Double.valueOf(aloop.getCIFelement(FhklCIFindex[9], i));
+                      Fhkl[1][i][ij] *= Fhkl[1][i][ij];
+                    }
+                  } else {*/
+                  Fhkl[1][i]/*[datasetindex]*/ = Double.valueOf(aloop.getCIFelement(FhklCIFindex[9], i));
+                  Fhkl[1][i]/*[datasetindex]*/ *= Fhkl[1][i]/*[datasetindex]*/;
+//                  }
+                  if (!meas_notsquared) {
+/*                    if (hasValidDataSet == 0) {
+                      for (int ij = 0; ij < realDataSetNumber; ij++) {
+                        Fhkl[0][i][ij] = Double.valueOf(aloop.getCIFelement(FhklCIFindex[9], i));
+                        Fhkl[0][i][ij] *= Fhkl[0][i][ij];
+                      }
+                    } else {*/
+                    Fhkl[0][i]/*[datasetindex]*/ = Double.valueOf(aloop.getCIFelement(FhklCIFindex[9], i));
+                    Fhkl[0][i]/*[datasetindex]*/ *= Fhkl[0][i]/*[datasetindex]*/;
+//                    }
+                  }
+                }
+//                System.out.println("Loaded " + hklm[0][i] + " " + hklm[1][i] + " " + hklm[2][i] + " " +
+//                    Fhkl[0][i][datasetindex] + " " + Fhkl[1][i][datasetindex]);
+                if (FhklCIFindex[6] != -1) {
+/*                  if (hasValidDataSet == 0)
+                    for (int ij = 0; ij < realDataSetNumber; ij++)
+                      Fhkl[2][i][ij] = Double.valueOf(aloop.getCIFelement(FhklCIFindex[6], i));
+                  else*/
+                  Fhkl[2][i]/*[datasetindex]*/ = Double.valueOf(aloop.getCIFelement(FhklCIFindex[6], i));
+                }
+              }
+
+            }
+            if (hasValidDataSet == 0)
+              datasetindex = asample.datasetsNumber();
+            line = aloop.getLastReadedLine();
+            aloop = null;
+          }
+        } //endoffile
+//        needRestore = true;
+        PFreader.close();
+      } catch (IOException io) {
+      }
+      try {
+        PFreader.close();
+      } catch (IOException io) {
+      }
+    }
+    if (allFhkl.size() > 0) {
+      for (int dataindex = 0; dataindex < asample.activeDatasetsNumber() && dataindex < allFhkl.size(); dataindex++) {
+        DataFileSet dataset = asample.getActiveDataSet(dataindex);
+        int datafilenumber = dataset.activedatafilesnumber();
+        int radCount = dataset.getInstrument().getRadiationType().getLinesCount();
+        Vector<Peak> fullpeaklist = dataset.getPeakList();
+        int numberofpeaks = dataset.getNumberofPeaks();
+//		  System.out.println("Number of peaks: " + numberofpeaks + " " + fullpeaklist.size());
+//llll		            int[] reflectionListIndices = new int[numberReflections];
+//      double[] esdfactors = new double[numberofpeaks];
+
+        double[][][] datasetSFactors = dataset.getStructureFactors((Phase) getParent());
+        double[][] Fhkl = allFhkl.elementAt(dataindex);
+
+        for (int np = 0; np < numberofpeaks; np++) {
+          int peakNumber = fullpeaklist.elementAt(np).getOrderPosition();
+          for (int n = 0; n < radCount; n++) {
+            datasetSFactors[0][peakNumber][n] = Fhkl[0][peakNumber];
+            datasetSFactors[1][peakNumber][n] = Fhkl[1][peakNumber];
+          }
+        }
+      }
+    }
+
+
+//    notLoaded = false;
+/*
+    BufferedReader PFreader = Misc.getReader(filename);
+    if (PFreader != null) {
+      try {
+        String line = PFreader.readLine();
+          if (line != null && line.contains("h  k  l   Fo   Fc   s")) {
+	            Vector<int[]> allValues = new Vector<int[]>(20000, 10000);
+	            line = PFreader.readLine();
+							while ((line = PFreader.readLine()) != null && Misc.toStringDeleteBlankTabAndEOF(line).length() > 5) {
+								StringTokenizer st = new StringTokenizer(line, " \t\r\n");
+								while (st.hasMoreTokens()) {
+									int[] values = new int[6];
+									for (int i = 0; i < 6; i++)
+										values[i] = Integer.parseInt(st.nextToken());
+									allValues.add(values);
+								}
+								line = PFreader.readLine();
+							}
+
+	            // now we need to save
+	            saveStructureFactors(filename + ".hkl", allValues);
+	          saveSquaredStructureFactors(filename + ".shkl", allValues);
+            }
+        PFreader.close();
+      } catch (IOException io) {
+      }
+      try {
+        PFreader.close();
+      } catch (IOException io) {
+      }
+    }*/
+}
+
+/*  public void loadStructureFactors_old(String filename) {
 
 	  // todo fix this
 //    notLoaded = false;
@@ -160,19 +425,6 @@ public class StructureFactorArbitraryModel extends StructureFactorModel {
 
               int elementsNumber = aloop.getNumberOfCIFelements();
 
-/*              if (FhklCIFindex[7] != -1 && elementsNumber > 0) {
-                if (hasValidDataSet == 0)
-                  for (int ij = 0; ij < realDataSetNumber; ij++)
-                    wave[ij] = Double.valueOf(aloop.getCIFelement(FhklCIFindex[7], 0));
-                else
-                  wave[datasetindex] = Double.valueOf(aloop.getCIFelement(FhklCIFindex[7], 0));
-              } else {
-                if (hasValidDataSet == 0)
-                  for (int ij = 0; ij < realDataSetNumber; ij++)
-                    wave[ij] = asample.getDataSet(ij).getMeanRadiationWavelength();
-                else
-                  wave[datasetindex] = asample.getDataSet(datasetindex).getMeanRadiationWavelength();
-              }*/
 
 	            int[][] hklm = new int[3][elementsNumber];
 	            double[][] Fhkl = new double[3][elementsNumber];
@@ -185,15 +437,15 @@ public class StructureFactorArbitraryModel extends StructureFactorModel {
                 if (meas) {
 //                  if (hasValidDataSet == 0)
 //                    for (int ij = 0; ij < realDataSetNumber; ij++)
-//                    Fhkl[0][i]/*[ij]*/ = Double.valueOf(aloop.getCIFelement(FhklCIFindex[4], i));
+//                    Fhkl[0][i] = Double.valueOf(aloop.getCIFelement(FhklCIFindex[4], i));
 //                  else
-                    Fhkl[0][i]/*[datasetindex]*/ = Double.valueOf(aloop.getCIFelement(FhklCIFindex[4], i));
+                    Fhkl[0][i] = Double.valueOf(aloop.getCIFelement(FhklCIFindex[4], i));
                   if (!calc) {
                     if (hasValidDataSet == 0)
 //                      for (int ij = 0; ij < realDataSetNumber; ij++)
 //                        Fhkl[1][i][ij] = Double.valueOf(aloop.getCIFelement(FhklCIFindex[4], i));
 //                    else
-                      Fhkl[1][i]/*[datasetindex]*/ = Double.valueOf(aloop.getCIFelement(FhklCIFindex[4], i));
+                      Fhkl[1][i] = Double.valueOf(aloop.getCIFelement(FhklCIFindex[4], i));
                   }
                 }
                 if (calc) {
@@ -201,72 +453,45 @@ public class StructureFactorArbitraryModel extends StructureFactorModel {
 //                    for (int ij = 0; ij < realDataSetNumber; ij++)
 //                      Fhkl[1][i][ij] = Double.valueOf(aloop.getCIFelement(FhklCIFindex[5], i));
 //                  else
-                    Fhkl[1][i]/*[datasetindex]*/ = Double.valueOf(aloop.getCIFelement(FhklCIFindex[5], i));
+                    Fhkl[1][i] = Double.valueOf(aloop.getCIFelement(FhklCIFindex[5], i));
                   if (!meas) {
 //                    if (hasValidDataSet == 0)
 //                      for (int ij = 0; ij < realDataSetNumber; ij++)
 //                        Fhkl[0][i][ij] = Double.valueOf(aloop.getCIFelement(FhklCIFindex[5], i));
 //                    else
-                      Fhkl[0][i]/*[datasetindex]*/ = Double.valueOf(aloop.getCIFelement(FhklCIFindex[5], i));
+                      Fhkl[0][i] = Double.valueOf(aloop.getCIFelement(FhklCIFindex[5], i));
                   }
                 }
                 if (meas_notsquared) {
-/*                  if (hasValidDataSet == 0) {
-                    for (int ij = 0; ij < realDataSetNumber; ij++) {
-                      Fhkl[0][i][ij] = Double.valueOf(aloop.getCIFelement(FhklCIFindex[8], i));
-                      Fhkl[0][i][ij] *= Fhkl[0][i][ij];
-                    }
-                  } else {*/
-                    Fhkl[0][i]/*[datasetindex]*/ = Double.valueOf(aloop.getCIFelement(FhklCIFindex[8], i));
-                    Fhkl[0][i]/*[datasetindex]*/ *= Fhkl[0][i]/*[datasetindex]*/;
+                    Fhkl[0][i]= Double.valueOf(aloop.getCIFelement(FhklCIFindex[8], i));
+                    Fhkl[0][i] *= Fhkl[0][i];
 //                  }
                   if (!calc_notsquared) {
-/*                    if (hasValidDataSet == 0) {
-                      for (int ij = 0; ij < realDataSetNumber; ij++) {
-                        Fhkl[1][i][ij] = Double.valueOf(aloop.getCIFelement(FhklCIFindex[8], i));
-                        Fhkl[1][i][ij] *= Fhkl[1][i][ij];
-                      }
-                    } else {*/
-                      Fhkl[1][i]/*[datasetindex]*/ = Double.valueOf(aloop.getCIFelement(FhklCIFindex[8], i));
-                      Fhkl[1][i]/*[datasetindex]*/ *= Fhkl[1][i]/*[datasetindex]*/;
+                      Fhkl[1][i] = Double.valueOf(aloop.getCIFelement(FhklCIFindex[8], i));
+                      Fhkl[1][i] *= Fhkl[1][i];
 //                    }
                   }
                 }
                 if (calc_notsquared) {
-/*                  if (hasValidDataSet == 0) {
-                    for (int ij = 0; ij < realDataSetNumber; ij++) {
-                      Fhkl[1][i][ij] = Double.valueOf(aloop.getCIFelement(FhklCIFindex[9], i));
-                      Fhkl[1][i][ij] *= Fhkl[1][i][ij];
-                    }
-                  } else {*/
-                    Fhkl[1][i]/*[datasetindex]*/ = Double.valueOf(aloop.getCIFelement(FhklCIFindex[9], i));
-                    Fhkl[1][i]/*[datasetindex]*/ *= Fhkl[1][i]/*[datasetindex]*/;
+                    Fhkl[1][i] = Double.valueOf(aloop.getCIFelement(FhklCIFindex[9], i));
+                    Fhkl[1][i] *= Fhkl[1][i];
 //                  }
                   if (!meas_notsquared) {
-/*                    if (hasValidDataSet == 0) {
-                      for (int ij = 0; ij < realDataSetNumber; ij++) {
-                        Fhkl[0][i][ij] = Double.valueOf(aloop.getCIFelement(FhklCIFindex[9], i));
-                        Fhkl[0][i][ij] *= Fhkl[0][i][ij];
-                      }
-                    } else {*/
-                      Fhkl[0][i]/*[datasetindex]*/ = Double.valueOf(aloop.getCIFelement(FhklCIFindex[9], i));
-                      Fhkl[0][i]/*[datasetindex]*/ *= Fhkl[0][i]/*[datasetindex]*/;
+                      Fhkl[0][i] = Double.valueOf(aloop.getCIFelement(FhklCIFindex[9], i));
+                      Fhkl[0][i] *= Fhkl[0][i];
 //                    }
                   }
                 }
 //                System.out.println("Loaded " + hklm[0][i] + " " + hklm[1][i] + " " + hklm[2][i] + " " +
 //                    Fhkl[0][i][datasetindex] + " " + Fhkl[1][i][datasetindex]);
                 if (FhklCIFindex[6] != -1) {
-/*                  if (hasValidDataSet == 0)
-                    for (int ij = 0; ij < realDataSetNumber; ij++)
-                      Fhkl[2][i][ij] = Double.valueOf(aloop.getCIFelement(FhklCIFindex[6], i));
-                  else*/
-                    Fhkl[2][i]/*[datasetindex]*/ = Double.valueOf(aloop.getCIFelement(FhklCIFindex[6], i));
+                    Fhkl[2][i] = Double.valueOf(aloop.getCIFelement(FhklCIFindex[6], i));
                 }
               }
 
 	            for (int dataindex = 0; dataindex < asample.activeDatasetsNumber(); dataindex++) {
 		            DataFileSet dataset = asample.getActiveDataSet(dataindex);
+                int radCount = dataset.getInstrument().getRadiationType().getLinesCount();
 		            int datafilenumber = dataset.activedatafilesnumber();
 		            Vector<Peak> fullpeaklist = dataset.getPeakList();
 		            int numberofpeaks = dataset.getNumberofPeaks();
@@ -274,12 +499,14 @@ public class StructureFactorArbitraryModel extends StructureFactorModel {
 //llll		            int[] reflectionListIndices = new int[numberReflections];
 //      double[] esdfactors = new double[numberofpeaks];
 
-		            double[][] datasetSFactors = dataset.getStructureFactors((Phase) getParent());
+                double[][][] datasetSFactors = dataset.getStructureFactors((Phase) getParent());
 
 		            for (int np = 0; np < numberofpeaks; np++) {
 			            int peakNumber = fullpeaklist.elementAt(np).getOrderPosition();
-				          datasetSFactors[0][peakNumber] = Fhkl[0][peakNumber];
-			            datasetSFactors[1][peakNumber] = Fhkl[1][peakNumber];
+                  for (int n = 0; n < radCount; n++) {
+                    datasetSFactors[0][peakNumber][n] = Fhkl[0][peakNumber];
+                    datasetSFactors[1][peakNumber][n] = Fhkl[1][peakNumber];
+                  }
 		            }
 	            }
 
@@ -300,6 +527,32 @@ public class StructureFactorArbitraryModel extends StructureFactorModel {
       } catch (IOException io) {
       }
     }
+
+    if (allFhkl.size() > 0) {
+      for (int dataindex = 0; dataindex < asample.activeDatasetsNumber() && dataindex < allFhkl.size(); dataindex++) {
+        DataFileSet dataset = asample.getActiveDataSet(dataindex);
+        int datafilenumber = dataset.activedatafilesnumber();
+        int radCount = dataset.getInstrument().getRadiationType().getLinesCount();
+        Vector<Peak> fullpeaklist = dataset.getPeakList();
+        int numberofpeaks = dataset.getNumberofPeaks();
+//		  System.out.println("Number of peaks: " + numberofpeaks + " " + fullpeaklist.size());
+//llll		            int[] reflectionListIndices = new int[numberReflections];
+//      double[] esdfactors = new double[numberofpeaks];
+
+        double[][][] datasetSFactors = dataset.getStructureFactors((Phase) getParent());
+        double[][] Fhkl = allFhkl.elementAt(dataindex);
+
+        for (int np = 0; np < numberofpeaks; np++) {
+          int peakNumber = fullpeaklist.elementAt(np).getOrderPosition();
+          for (int n = 0; n < radCount; n++) {
+            datasetSFactors[0][peakNumber][n] = Fhkl[0][peakNumber];
+            datasetSFactors[1][peakNumber][n] = Fhkl[1][peakNumber];
+          }
+        }
+      }
+    }
+    */
+
 //    notLoaded = false;
 /*
     BufferedReader PFreader = Misc.getReader(filename);
@@ -331,8 +584,8 @@ public class StructureFactorArbitraryModel extends StructureFactorModel {
         PFreader.close();
       } catch (IOException io) {
       }
-    }*/
-  }
+    }
+  }*/
 
 	public void saveStructureFactors(String filename, Vector<int[]> values) {
 		if (filename == null)

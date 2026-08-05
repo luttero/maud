@@ -252,7 +252,7 @@ abstract class ClientAnalysis {
 
   void addToAllMovementsVector(float[] tmpFloat) {
     for (int i = 0; i < tmpFloat.length; i++)
-      allMovementsVector.addElement(new Float(tmpFloat[i]));
+      allMovementsVector.addElement(tmpFloat[i]);
   }
 
   JTextField createJTextField(FieldListener tmpListener) {
@@ -287,12 +287,12 @@ abstract class ClientAnalysis {
     allOptionsVector.clear();
     allMovementsVector.clear();
 //	Create a vector containg alll the analysis parameters
-    allOptionsVector.addElement(new Float(kV));
-    allOptionsVector.addElement(new Float(mA));
+    allOptionsVector.addElement(kV);
+    allOptionsVector.addElement(mA);
     allOptionsVector.addElement(measuretype);
-    allOptionsVector.addElement(new Integer(movefilter));
-    allOptionsVector.addElement(new Integer(ct));
-    allOptionsVector.addElement(new Integer(channels));
+    allOptionsVector.addElement(movefilter);
+    allOptionsVector.addElement(ct);
+    allOptionsVector.addElement(channels);
     separator = allOptionsVector.size();
     addToAllMovementsVector(twotheta);
     addToAllMovementsVector(omega);

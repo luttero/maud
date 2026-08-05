@@ -409,7 +409,7 @@ public class DiscreteODFTexture extends Texture {
         intensity = 0.0;
         int number = 0;
         boolean doneOnce = false;
-	      double structureFactor = adataset.getStructureFactors(aphase)[1][j];
+	      double[] structureFactor = adataset.getStructureFactors(aphase)[1][j];
 	      for (int i1 = 0; i1 < datafilenumber; i1++) {
           DiffrDataFile adatafile = adataset.getActiveDataFile(i1);
 		      double[][] position = adatafile.getPositions(aphase)[j];
@@ -420,7 +420,7 @@ public class DiscreteODFTexture extends Texture {
 							      adatafile.computeAngularIntensityCorrection(asample, ainstrument, position[k][l]) * adatafile.getShapeAbsFactors(aphase, j)[k][l] *
 									      adatafile.getLorentzPolarization(aphase, j)[k][l];
 					      if (!Double.isNaN(correction)) {
-						      intensity += structureFactor * correction; //Fhkl[j] *
+						      intensity += structureFactor[l] * correction; //Fhkl[j] *
 						      number++;
 						      if (!doneOnce) {
 							      doneOnce = true;

@@ -54,44 +54,7 @@ public class GeometryXRFInstrument extends GeometryBraggBrentano {
 	}
 
 	public double LorentzPolarization(DiffrDataFile adatafile, Sample asample, double position, boolean dspacingbase, boolean energyDispersive) {
-
-		// first correction for absorption on asymmetric diffraction
-		double lp = 1.0;
-
-/*    double sintheta, sin2theta, cos2theta, Ph, width, beamsize;
-
-    sintheta = Math.sin(position * Constants.DEGTOPI / 2.0);
-
-    double sradius = asample.getRadiusDimensionD();
-    if (sradius > 0.0)
-      sradius = 2 * sradius * sintheta;
-    else
-      sradius = 10.0e6;
-    width = asample.getEquatorialDimensionD();
-    if (width <= 0.0)
-      width = 10.0e6;
-
-    width = Math.min(width, sradius);
-
-    if (width > 0.0 && (slitaperture > 0.0 && radius > 0.0)) {
-      beamsize = radius * MoreMath.sind(slitaperture) / sintheta;
-      if (beamsize > width)
-        lp *= width / beamsize;
-    }
-
-    double[] tilt_angles = adatafile.getTiltingAngle();
-
-    sintheta = Math.sin((90.0 - tilt_angles[1]) * Constants.DEGTOPI);
-
-    double height = asample.getAxialDimensionD();
-
-    if (height > 0.0 && (slitaperture > 0.0 && radius > 0.0)) {
-      beamsize = radius * MoreMath.sind(slitaperture) / sintheta;
-      if (beamsize > height)
-        lp *= height / beamsize;
-    }*/
-
-
+    double lp = super.LorentzPolarization(adatafile, asample, adatafile.getTiltingAngle()[4], dspacingbase, energyDispersive);
 		return lp;
 	}
 

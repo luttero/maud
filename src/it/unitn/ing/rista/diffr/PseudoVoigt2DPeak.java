@@ -134,48 +134,46 @@ public class PseudoVoigt2DPeak extends PseudoVoigtPeak {
     double asyConst2 = aphase.getActivePlanarDefects().getPlanarDefectAsymmetryConstant2(refl);
     double planar_asymmetry = aphase.getActivePlanarDefects().getPlanarDefectAsymmetry(refl);
     
-    double[] deff = diffrDataFile.getCrystallitesMicrostrains(aphase, reflexIndex, 0);
+    double[] deff = diffrDataFile.getCrystallitesMicrostrains(aphase, reflexIndex);
 
 //	  for (int j = 0; j < diffrDataFile.positionsPerPattern; j++) {
-    double[] thwhm = new double[nrad];
-    double[] teta = new double[nrad];
-    for (int i = 0; i < nrad; i++) {
-      thwhm[i] = diffrDataFile.getBroadFactorHWHM(aphase, reflexIndex, i);
-      teta[i] = diffrDataFile.getBroadFactorEta(aphase, reflexIndex, i);
-    }
+//    double[] thwhm = new double[nrad];
+//    double[] teta = new double[nrad];
+//    double[][][][] hwhm_eta = diffrDataFile.getBroadFactors(aphase);
+//	  for (int j = 0; j < diffrDataFile.positionsPerPattern; j++) {
+//    double[] thwhm = hwhm_eta[0][reflexIndex][0];
+//    double[] teta = hwhm_eta[1][reflexIndex][0];
 //	  }
     double intensitySingle = getScaleFactor();
-    double[] textureFactor = new double[nrad];
-    
+    double[][] textureFactor;
+
     switch (computeTexture) {
       case Constants.COMPUTED:
-        for (int i = 0; i < nrad; i++)
-          textureFactor[i] = diffrDataFile.getTextureFactor(aphase, reflexIndex, i);
+        textureFactor = diffrDataFile.getTextureFactors(aphase)[1][reflexIndex];
         break;
       case Constants.EXPERIMENTAL:
-        for (int i = 0; i < nrad; i++)
-          textureFactor[i] = diffrDataFile.getExperimentalTextureFactor(aphase, reflexIndex, i);
+        textureFactor = diffrDataFile.getTextureFactors(aphase)[0][reflexIndex];
         break;
       case Constants.UNITARY:
       default:
-        textureFactor = new double[nrad];
-        for (int j = 0; j < nrad; j++)
-          textureFactor[j] = 1.0;
+        textureFactor = new double[diffrDataFile.positionsPerPattern][nrad];
+        for (int i = 0; i < diffrDataFile.positionsPerPattern; i++)
+          for (int j = 0; j < nrad; j++)
+            textureFactor[i][j] = 1.0;
     }
-    for (int j = 0; j < nrad; j++)
-      if (Double.isNaN(textureFactor[j]))
-        textureFactor[j] = 1.0;
-    
-    double[] strainFactor = new double[nrad];
+    for (int i = 0; i < diffrDataFile.positionsPerPattern; i++)
+      for (int j = 0; j < nrad; j++)
+        if (Double.isNaN(textureFactor[i][j]))
+          textureFactor[i][j] = 1.0;
+
+    double[] strainFactor;
     
     switch (computeStrain) {
       case Constants.COMPUTED:
-        for (int i = 0; i < nrad; i++)
-          strainFactor[i] = diffrDataFile.getStrainFactor(aphase, reflexIndex, i);
+        strainFactor = diffrDataFile.getStrainFactors(aphase)[1][reflexIndex][0];
         break;
       case Constants.EXPERIMENTAL:
-        for (int i = 0; i < nrad; i++)
-          strainFactor[i] = diffrDataFile.getExperimentalStrainFactor(aphase, reflexIndex, i);
+          strainFactor = diffrDataFile.getStrainFactors(aphase)[1][reflexIndex][0];
         break;
       case Constants.UNITARY:
       default:
@@ -191,7 +189,7 @@ public class PseudoVoigt2DPeak extends PseudoVoigtPeak {
 //	    System.out.println(diffrDataFile.getLabel() + ", texture factor: " + textureFactor[0]);
     double[] shapeAbs = new double[nrad];
     for (int i = 0; i < nrad; i++)
-      shapeAbs[i] = diffrDataFile.getShapeAbsFactor(aphase, reflexIndex, i);
+      shapeAbs = diffrDataFile.getShapeAbsFactors(aphase)[reflexIndex][0];
 
 //	  System.out.println(" Total " + diffrDataFile.startingindex + " " + diffrDataFile.finalindex);
 //	  System.out.println(" Range " + diffrDataFile.getXData(diffrDataFile.startingindex) + " " +
@@ -203,7 +201,7 @@ public class PseudoVoigt2DPeak extends PseudoVoigtPeak {
     for (int i = 0; i < nrad; i++) {
       radiationWeight[i] = ainstrument.getRadiationType().getRadiationWeigth(i);
       if (radiationWeight[i] > 0.0 && finalposition[i] != 0) {
-        lorentzPolarization[i] = diffrDataFile.getLorentzPolarizationFactor(aphase, reflexIndex, i);
+        lorentzPolarization[i] = diffrDataFile.getLorentzPolarization(aphase)[reflexIndex][0][i];
 
         java.util.Vector<double[]> energyBroadening = diffrDataFile.getEnergyBroadFactor(aphase, reflexIndex, i);
         energyBroadeningVector.add(energyBroadening);
@@ -216,12 +214,19 @@ public class PseudoVoigt2DPeak extends PseudoVoigtPeak {
   
     for (int i = 0; i < nrad; i++) {
       if (radiationWeight[i] > 0.0 && finalposition[i] != 0) {
-        
+        double thwhm = 1;  // hwhm_eta[0][reflexIndex];
+        double teta = 0;
+        ReflectionPeak peak = diffrDataFile.getReflectionPeak(aphase, reflexIndex, i);
+        if (peak != null) {
+          thwhm = peak.broadFactorHWHM;  // hwhm_eta[0][reflexIndex];
+          teta = peak.broadFactorEta;  // todo, the radiation should not only be the first
+        }
+
         const1[i] = asyConst1;
         const2[i] = asyConst2;
-        hwhm_i[i] = 1.0 / thwhm[i];
-        eta[i] = teta[i];
-        double tmpIntensity = intensitySingle * textureFactor[i] * shapeAbs[i] * Fhkl[i] *
+        hwhm_i[i] = 1.0 / thwhm;
+        eta[i] = teta;
+        double tmpIntensity = intensitySingle * textureFactor[0][i] * shapeAbs[i] * Fhkl[i] *
             radiationWeight[i] * aphase.getScaleFactor() * lorentzPolarization[i] * absDetectorCorrection[i];
         if (const2[i] != 0.0) {
           for (int index = 0; index < 3; index++)
@@ -253,7 +258,7 @@ public class PseudoVoigt2DPeak extends PseudoVoigtPeak {
         if (logOutput && out != null) {
           try {
             out.print(" ");
-            out.print(getOrderPosition());
+            out.print(reflexIndex);
             out.print(" ");
             out.print(i);
             out.print(" " + phase_name);
@@ -276,7 +281,7 @@ public class PseudoVoigt2DPeak extends PseudoVoigtPeak {
             out.print(" ");
             out.print((float) intensity[0][i]);
             out.print(" ");
-            out.print((float) thwhm[i]);
+            out.print((float) thwhm);
             out.print(" ");
             out.print((float) eta[i]);
             out.print(" ");
@@ -284,7 +289,7 @@ public class PseudoVoigt2DPeak extends PseudoVoigtPeak {
             out.print(" ");
             out.print((float) lorentzPolarization[i]);
             out.print(" ");
-            out.print((float) textureFactor[i]);
+            out.print((float) textureFactor[0][i]);
             out.print(" ");
             out.print((float) shapeAbs[i]);
             out.print(" ");
@@ -326,7 +331,7 @@ public class PseudoVoigt2DPeak extends PseudoVoigtPeak {
       computeFunctions(diffrDataFile.getXData(), expfit, minindex, maxindex,
         intensity, eta, hwhm_i, actualPosition, const1, const2, energy,
         diffrDataFile.dspacingbase, diffrDataFile.energyDispersive, diffrDataFile.increasingX(), planar_asymmetry,
-        deff[0], diffrDataFile.sintheta, energyBroadeningVector, refl.d_space, radiationSubdivision, characteristicLines);
+        deff, diffrDataFile.sintheta, energyBroadeningVector, refl.d_space, radiationSubdivision, characteristicLines);
     else
       computeFunctionsQuick(diffrDataFile.getXData(), expfit, minindex, maxindex,
           intensity, eta, hwhm_i, energy, diffrDataFile.sintheta, energyBroadeningVector, refl.d_space);
@@ -336,7 +341,7 @@ public class PseudoVoigt2DPeak extends PseudoVoigtPeak {
                                double[][] intensity, double[] eta, double[] hwhm_i, double[][] position,
                                double[] const1, double[] const2, double[] energy, boolean dspacingBase,
                                boolean energyDispersive, boolean increasingX, double planar_asymmetry,
-                               double deff, double sintheta, java.util.Vector<java.util.Vector<double[]>> energyBroadeningVector,
+                               double[] deff, double sintheta, java.util.Vector<java.util.Vector<double[]>> energyBroadeningVector,
                                double d_space, int radiationSubdivision, int characteristicLines) {
   
     double theta2 = MoreMath.asind(sintheta) * 2.0;
@@ -495,7 +500,7 @@ public class PseudoVoigt2DPeak extends PseudoVoigtPeak {
                 differenceDspace = (x[i] - position[index][ipv]) / Constants.ENERGY_LAMBDA * sintheta;
                 double asy = 0.0;
                 if (Math.abs(dx) > 1.0E-6) {
-                  double cxasy = const1[ipv] * deff * differenceDspace;
+                  double cxasy = const1[ipv] * deff[0] * differenceDspace;
                   double rasy = 1.0 + 1.0 / (cxasy * cxasy);
                   asy = intensity[index][ipv] * const2[ipv] / (rasy * dx_pi);
 //							System.out.println("Peak: " + ipv + " " + x[i] + " " + position[ipv] + " " + cxasy + " " + const1[ipv] + " " + const2[ipv] + " " + i + " " + asy);

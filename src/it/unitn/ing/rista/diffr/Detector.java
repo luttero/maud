@@ -98,7 +98,11 @@ public class Detector extends XRDcat {
 		return beamOutCorrection;
 	}
 
-	public int getBankNumber(String bankID) {
+  public double getAreaCorrection(double linearArea) {
+    return 1.0;
+  }
+
+  public int getBankNumber(String bankID) {
     return -1;
   }
 

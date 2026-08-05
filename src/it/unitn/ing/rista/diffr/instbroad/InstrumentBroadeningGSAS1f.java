@@ -549,6 +549,32 @@ public class InstrumentBroadeningGSAS1f extends InstrumentBroadening {
     }
   }
 
+  public java.util.Vector<double[]> getInstrumentBroadeningAt(double x, DiffrDataFile diffrDataFile) {
+
+    java.util.Vector<double[]> broadv = new  java.util.Vector<>(2);
+
+    int bank = getBankNumber(diffrDataFile);
+    double d = diffrDataFile.getXDataDspace(x);
+//    double alpha = difc[bank][0] + difc[bank][1] / d;
+//    double alpha_2 = alpha * 0.5;
+    double d2 = d * d;
+    double d4 = d2 * d2;
+
+    double sigmaq2 = Math.abs(difc[bank][4] + difc[bank][5] * d2 + difc[bank][6] * d4);
+    double sigma = Math.sqrt(sigmaq2) * 0.5;
+    double xo = diffrDataFile.getXDataInvertCalibration(x);
+    Instrument ainstrument = (Instrument) getParent();
+    double x1 = ainstrument.getAngularCalibration().calibrateX(diffrDataFile, xo - sigma);
+    double x2 = ainstrument.getAngularCalibration().calibrateX(diffrDataFile, xo + sigma);
+//	  System.out.println(x + " " + sigma + " " + xo + " " + (xo - sigma) + " " + (xo + sigma));
+    sigma = x2 - x1;
+
+    double[] broad_hwhm = {Math.max(sigma, InstrumentBroadeningPVCaglioti.minimumHWHMvalue)};
+    double[] broad_eta = {0.0};
+    broadv.add(broad_hwhm);
+    broadv.add(broad_eta);
+    return broadv;
+  }
 
   public double[][] getInstrumentalBroadeningAt(double x, DiffrDataFile diffrDataFile) {
 

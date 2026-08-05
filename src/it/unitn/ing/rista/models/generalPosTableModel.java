@@ -103,7 +103,7 @@ public class generalPosTableModel extends AbstractTableModel {
   public Object getValueAt(int row, int column) {
     switch (column) {
       case 0:
-        return new Integer(row + 1);
+        return row + 1;
       case 1:
         return thephase.getPhaseInfo().getSitePosition(row).getx();
       case 2:

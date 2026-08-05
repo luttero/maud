@@ -44,8 +44,7 @@ public class Reflection {
 	public boolean superReflection = false;
   public double d_space = 0;
 	public double structureFactor = 0; // only for the custom peaks
-	public double crystallite = 0;
-	public double microstrain = 0;
+	public double[] crystsize = null;
 
   public double textureWeight = 1.0;
   public double textureOverlappedWeight = 0.0;

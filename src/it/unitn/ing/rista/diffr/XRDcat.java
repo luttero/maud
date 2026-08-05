@@ -1210,7 +1210,7 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
   public void printOptionalOutput() {
   }
 
-  public void refreshForNotificationUp(XRDcat source, int reason, int paramNumber) {
+	public void refreshForNotificationUp(XRDcat source, int reason, int paramNumber) {
     if (!getFilePar().isComputingDerivate() || source == this)
       refreshComputation = true;
   }

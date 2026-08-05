@@ -207,7 +207,7 @@ public class XRFInstrument extends Instrument {
 
 			InstrumentnameTF.setText(theinstrument.getInstrumentID());
 			intensityTF.setText(theinstrument.getIntensity().getValue());
-			intensityScaleTF.setText(theinstrument.getString(1));
+			intensityScaleTF.setText(theinstrument.getIntensityFluorescence().getValue());
 			addComponenttolist(intensityTF, theinstrument.getIntensity());
 
 //      ThetaPanel.setList(theinstrument, 0);
@@ -227,7 +227,7 @@ public class XRFInstrument extends Instrument {
 
 			theinstrument.setInstrumentID(InstrumentnameTF.getText());
 			theinstrument.getIntensity().setValue(intensityTF.getText());
-			theinstrument.setString(1, intensityScaleTF.getText());
+			theinstrument.setIntensityFluorescence(intensityScaleTF.getText());
 
 //      ThetaPanel.retrieveparlist();
 
