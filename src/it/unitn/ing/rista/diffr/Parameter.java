@@ -380,7 +380,7 @@ public class Parameter extends Object implements Cloneable, basicObj {
 
   public String getValueForCOD() {
     updateValue();
-    if (!getFree() || Double.parseDouble(error) == 0.0)
+    if (!getFree() || Double.parseDouble(error) <= 0.0 || error.equals("1"))
       return getValue();
     double valueV = Double.parseDouble(value);
     int index = getErrorExponent();
@@ -400,8 +400,8 @@ public class Parameter extends Object implements Cloneable, basicObj {
 
   public String getErrorForCOD() {
     double errorV = Double.parseDouble(error);
-    if (errorV == 0.0)
-      return "0";
+    if (errorV <= 0.0 || error.equals("1"))
+      return null;
     double previousComp = 0.95;
     double nextComp = 9.5;
     while (/*errorV >= nextComp &&*/ errorV < previousComp) {
@@ -417,7 +417,7 @@ public class Parameter extends Object implements Cloneable, basicObj {
 
   public int getErrorExponent() {
     double errorV = Double.parseDouble(error);
-    if (errorV == 0.0)
+    if (errorV <= 0.0 || error.equals("1"))
       return 0;
     int i = 0;
     double previousComp = 0.95;

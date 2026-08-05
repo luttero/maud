@@ -4538,10 +4538,10 @@ public static final String getSpaceGroup(int index, int sgconv) {
     String filename = Utility.browseFilenametoSave(frame, "Save the cif file before to send it");
     int extension = filename.lastIndexOf(".");
     if (extension > 0)
-      filename = filename.substring(0, extension) + Long.toString(System.currentTimeMillis()) +
+      filename = filename.substring(0, extension) + System.currentTimeMillis() +
           filename.substring(extension, filename.length());
     else
-      filename = filename + Long.toString(System.currentTimeMillis()) + ".cif";
+      filename = filename + System.currentTimeMillis() + ".cif";
     try {
       BufferedWriter out = Misc.getWriter(filename);
       if (out != null) {
@@ -4558,32 +4558,31 @@ public static final String getSpaceGroup(int index, int sgconv) {
   }
 
   public void writeForCOD(BufferedWriter out) {
-
     try {
       out.write("data_" + Misc.toStringDeleteBlankTabAndEOF(this.getLabel()));
       out.newLine();
       out.newLine();
-    } catch (IOException e) {
-      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-    }
-	  System.out.println("Write Data fields");
-    writeDataField(out);
-	  System.out.println("Write refinement");
-    writeGeneralRefinement(out);
-	  System.out.println("Write all fields");
-    writeAllFieldsCOD(out);
+      System.out.println("Write Data fields");
+      writeDataField(out);
+      System.out.println("Write refinement");
+      writeGeneralRefinement(out);
+      System.out.println("Write all fields");
+      writeAllFieldsCOD(out);
 //    writeAllLoopFields(out);
-	  System.out.println("Write all parameters");
-    writeAllParametersCOD(out);
-	  System.out.println("Write coordinates");
-	  writeGeneralCoordinateCOD(out);
+      System.out.println("Write all parameters");
+      writeAllParametersCOD(out);
+      System.out.println("Write coordinates");
+      writeGeneralCoordinateCOD(out);
 //    writeAllLoopParameters(out);
 //    writeAllSubordinates(out, "", "");
 //    writeCustomObject(out);
 //    writeBounds(out);
-	  System.out.println("Write atoms");
-    writeAllAtoms(out);
-	  System.out.println("End!");
+      System.out.println("Write atoms");
+      writeAllAtoms(out);
+      System.out.println("End!");
+    } catch (Exception e) {
+      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+    }
   }
 
   public void writeGeneralRefinement(BufferedWriter out) {
@@ -4646,15 +4645,15 @@ public static final String getSpaceGroup(int index, int sgconv) {
 	}
 
 	public void writeAllParametersCOD(BufferedWriter out) {
-    int i;
-
-    CellSymmetry();
-    for (i = 0; i < 6; i++)
-      writeParameterCOD(out, diclist[i + totstringloop], parameterField[i]);
     try {
+      CellSymmetry();
+      for (int i = 0; i < 6; i++) {
+//        System.out.println(i + " " + parameterField[i].thelabel);
+        writeParameterCOD(out, diclist[i + totstringloop], parameterField[i]);
+      }
       if (Nparameter > 0)
         out.newLine();
-    } catch (IOException ioe) {
+    } catch (Exception ioe) {
       System.out.println("Error in writing the loop parameter " + toXRDcatString());
     }
 
@@ -4719,10 +4718,13 @@ public static final String getSpaceGroup(int index, int sgconv) {
       out.write(dicterm);
       out.write(" ");
       out.write(par.getValueForCOD());
-      if (par.getFree())
-        out.write("(" + par.getErrorForCOD() + ")");
+      if (par.getFree()) {
+        String errorCOD = par.getErrorForCOD();
+        if (errorCOD != null)
+          out.write("(" + errorCOD +")");
+      }
       out.newLine();
-    } catch (IOException ioe) {
+    } catch (Exception ioe) {
       System.out.println("Error in writing the Parameter in object " + toXRDcatString());
     }
   }
@@ -4730,8 +4732,11 @@ public static final String getSpaceGroup(int index, int sgconv) {
   public void writeParameterCOD(BufferedWriter out, Parameter par) {
     try {
       out.write(par.getValueForCOD());
-      if (par.getFree())
-        out.write("(" + par.getErrorForCOD() + ")");
+      if (par.getFree()) {
+        String errorCOD = par.getErrorForCOD();
+        if (errorCOD != null)
+          out.write("(" + errorCOD +")");
+      }
     } catch (IOException ioe) {
       System.out.println("Error in writing the object " + toXRDcatString());
     }

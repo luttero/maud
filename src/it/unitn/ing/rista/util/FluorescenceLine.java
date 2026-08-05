@@ -33,11 +33,11 @@ import static org.apache.commons.math3.special.Erf.erfc;
  */
 public class FluorescenceLine {
 
-	double dgx = 1.0;
-	double dcx = 1.0;
+	public double dgx = 1.0;
+	public double dcx = 1.0;
 	double eta;
 	double hwhm;
-	double one_over_hwhm;
+	public double one_over_hwhm;
 	double one_over_sigma;
 	double one_over_beta;
 	double one_over_beta2;
@@ -115,6 +115,7 @@ public class FluorescenceLine {
 		  eta += broad[1][i] * MoreMath.pow(energy, i - 1);
 	  }
 	  hwhm = Math.sqrt(Math.abs(hwhm));
+//		System.out.println("Fluo: " + hwhm + " " + getEnergy());
 
 	  if (broad.length > 2) {
 		  fS = broad[2][0];

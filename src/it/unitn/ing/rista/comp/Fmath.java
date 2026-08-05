@@ -2178,7 +2178,7 @@ public class Fmath {
       x = -x;
     }
 
-    Double xx = new Double(x);
+    Double xx = x;
     String xString = xx.toString();
     String newXstring = stringRound(xString.trim(), prec, sign);
     return Double.parseDouble(newXstring);
@@ -2200,7 +2200,7 @@ public class Fmath {
       x = -x;
     }
 
-    Float xx = new Float(x);
+    Float xx = x;
     String xString = xx.toString();
     String newXstring = stringRound(xString.trim(), prec, sign);
     return Float.parseFloat(newXstring);
@@ -2454,8 +2454,8 @@ public class Fmath {
   // Returns 1 if x > y
   // x and y are double
   public static int compare(double x, double y) {
-    Double X = new Double(x);
-    Double Y = new Double(y);
+    Double X = x;
+    Double Y = y;
     return X.compareTo(Y);
   }
 
@@ -2464,8 +2464,8 @@ public class Fmath {
   // Returns 1 if x > y
   // x and y are int
   public static int compare(int x, int y) {
-    Integer X = new Integer(x);
-    Integer Y = new Integer(y);
+    Integer X = x;
+    Integer Y = y;
     return X.compareTo(Y);
   }
 
@@ -2474,8 +2474,8 @@ public class Fmath {
   // Returns 1 if x > y
   // x and y are long
   public static int compare(long x, long y) {
-    Long X = new Long(x);
-    Long Y = new Long(y);
+    Long X = x;
+    Long Y = y;
     return X.compareTo(Y);
   }
 
@@ -2484,8 +2484,8 @@ public class Fmath {
   // Returns 1 if x > y
   // x and y are float
   public static int compare(float x, float y) {
-    Float X = new Float(x);
-    Float Y = new Float(y);
+    Float X = x;
+    Float Y = y;
     return X.compareTo(Y);
   }
 
@@ -2494,8 +2494,8 @@ public class Fmath {
   // Returns 1 if x > y
   // x and y are short
   public static int compare(byte x, byte y) {
-    Byte X = new Byte(x);
-    Byte Y = new Byte(y);
+    Byte X = x;
+    Byte Y = y;
     return X.compareTo(Y);
   }
 
@@ -2504,8 +2504,8 @@ public class Fmath {
   // Returns 1 if x > y
   // x and y are short
   public static int compare(short x, short y) {
-    Short X = new Short(x);
-    Short Y = new Short(y);
+    Short X = x;
+    Short Y = y;
     return X.compareTo(Y);
   }
 

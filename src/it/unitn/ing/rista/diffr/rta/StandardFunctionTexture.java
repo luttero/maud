@@ -3,10 +3,10 @@
  *
  * Copyright (c) 1996-2003 Luca Lutterotti All Rights Reserved.
  *
- * This software is the research result of Luca Lutterotti and it is 
- * provided as it is as confidential and proprietary information.  
- * You shall not disclose such Confidential Information and shall use 
- * it only in accordance with the terms of the license agreement you 
+ * This software is the research result of Luca Lutterotti and it is
+ * provided as it is as confidential and proprietary information.
+ * You shall not disclose such Confidential Information and shall use
+ * it only in accordance with the terms of the license agreement you
  * entered into with the author.
  *
  * THE AUTHOR MAKES NO REPRESENTATIONS OR WARRANTIES ABOUT THE SUITABILITY OF THE
@@ -34,7 +34,7 @@ import java.awt.event.ActionEvent;
 
 /**
  * The StandardFunctionTexture is a class
- * 
+ *
  * @author Luca Lutterotti
  * @version $Revision: 1.8 $, $Date: 2006/12/04 14:30:05 $
  * @since JDK1.1
@@ -45,53 +45,53 @@ public class StandardFunctionTexture extends Texture {
   public static String[] diclistc = {"_rita_sample_symmetry", "_rita_odf_sharpness",
 //                                     "_rita_differentiate_by_energy",
 
-                                     "_rita_odf_background",
+      "_rita_odf_background",
 
-                                     "_texture_fiber_component_id",
-                                     "_texture_spherical_component_id"
+      "_texture_fiber_component_id",
+      "_texture_spherical_component_id"
   };
   public static String[] diclistcrm = {"_rita_sample_symmetry", "_rita_odf_sharpness",
 //                                     "_rita_differentiate_by_energy",
 
-                                     "_rita_odf_background",
+      "_rita_odf_background",
 
-                                     "_texture_fiber_component_id",
-                                     "_texture_spherical_component_id"
+      "_texture_fiber_component_id",
+      "_texture_spherical_component_id"
   };
 
   public static String[] classlistcs = {};
   public static String[] classlistc = {"it.unitn.ing.rista.diffr.rta.FiberTextureComponent",
-                                       "it.unitn.ing.rista.diffr.rta.SphericalTextureComponent"};
+      "it.unitn.ing.rista.diffr.rta.SphericalTextureComponent"};
   public static String[] symmetrychoice = {"triclinic",
-                                           "monoclinic",
-                                           "orthorhombic",
-                                           "planar"};
+      "monoclinic",
+      "orthorhombic",
+      "planar"};
 
   Sample actualsample = null;
   int sampleSymmetry = 0;
   boolean GSASmode = false;
   double background = 0.0;
   double totalIntensity = 1.0;
-	int gammaNumber = 1;
-	double[] sfVector;
-	double[] cfVector;
+  int gammaNumber = 1;
+  double[] sfVector;
+  double[] cfVector;
 
   public int IZGA, IZGB, IGA, IGB;
 
   public static final int[][] MGE =
       {{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, {0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1},
-       {0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1}, {0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1},
-       {0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1}, {0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1},
-       {0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 1}, {0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1},
-       {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1}, {0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1},
-       {0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1}, {0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1},
-       {0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0},
-       {0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0},
-       {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0},
-       {0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0},
-       {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0}, {0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0},
-       {0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0},
-       {1, 2, 4, 4, 8, 12, 24, 3, 6, 6, 12}};
+          {0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1}, {0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1},
+          {0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1}, {0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1},
+          {0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 1}, {0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1},
+          {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1}, {0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1},
+          {0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1}, {0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1},
+          {0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0},
+          {0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0},
+          {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0},
+          {0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0},
+          {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0}, {0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0},
+          {0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0},
+          {1, 2, 4, 4, 8, 12, 24, 3, 6, 6, 12}};
 
   int IJE = 0;
   public int[] MGB = new int[96];
@@ -150,35 +150,35 @@ public class StandardFunctionTexture extends Texture {
   }
 
   public void rotateODFBy(double alpha, double beta, double gamma, int multAlpha, int multBeta, int multGamma) {
-		int numberOfFiberComponent = fiberTextureComponentsNumber();
-		for (int i = 0; i < numberOfFiberComponent; i++) {
-			FiberTextureComponent fiberComp = getFiberTextureComponent(i);
-			fiberComp.rotateODFBy(alpha, beta, gamma, multAlpha, multBeta, multGamma);
-		}
-		int numberOfSphericalComponent = sphericalTextureComponentsNumber();
-		for (int i = 0; i < numberOfSphericalComponent; i++) {
-			SphericalTextureComponent sphericalComp = getSphericalTextureComponent(i);
-			sphericalComp.rotateODFBy(360 - alpha, beta, gamma, -multAlpha, multBeta, multGamma);
-		}
-	}
+    int numberOfFiberComponent = fiberTextureComponentsNumber();
+    for (int i = 0; i < numberOfFiberComponent; i++) {
+      FiberTextureComponent fiberComp = getFiberTextureComponent(i);
+      fiberComp.rotateODFBy(alpha, beta, gamma, multAlpha, multBeta, multGamma);
+    }
+    int numberOfSphericalComponent = sphericalTextureComponentsNumber();
+    for (int i = 0; i < numberOfSphericalComponent; i++) {
+      SphericalTextureComponent sphericalComp = getSphericalTextureComponent(i);
+      sphericalComp.rotateODFBy(360 - alpha, beta, gamma, -multAlpha, multBeta, multGamma);
+    }
+  }
 
-	public void notifyParameterChanged(Parameter source) {
+  public void notifyParameterChanged(Parameter source) {
     FilePar filepar = getFilePar();
     if ((filepar != null && !filepar.isLoadingFile()) && isAbilitatetoRefresh) {
       if (parameterField != null)
-      for (int i = 0; i < parameterField.length; i++) {
-        if (parameterField[i] == source) {
-          notifyParameterChanged(source, Constants.TEXTURE_CHANGED, -1);
-          return;
-        }
-      }
-      if (parameterloopField != null)
-      for (int j = 0; j < parameterloopField.length; j++)
-        for (int i = 0; i < parameterloopField[j].size(); i++)
-          if (source == parameterloopField[j].elementAt(i)) {
+        for (int i = 0; i < parameterField.length; i++) {
+          if (parameterField[i] == source) {
             notifyParameterChanged(source, Constants.TEXTURE_CHANGED, -1);
             return;
           }
+        }
+      if (parameterloopField != null)
+        for (int j = 0; j < parameterloopField.length; j++)
+          for (int i = 0; i < parameterloopField[j].size(); i++)
+            if (source == parameterloopField[j].elementAt(i)) {
+              notifyParameterChanged(source, Constants.TEXTURE_CHANGED, -1);
+              return;
+            }
 
       super.notifyParameterChanged(source);
     }
@@ -275,8 +275,8 @@ public class StandardFunctionTexture extends Texture {
 
   public void refreshForNotificationDown(XRDcat source, int reason) {
     if (!getFilePar().isComputingDerivate() || (source == this ||
-            (reason == Constants.SAMPLE_ORIENTATION_CHANGED || reason == Constants.TEXTURE_CHANGED
-		            || (source == getParent() &&
+        (reason == Constants.SAMPLE_ORIENTATION_CHANGED || reason == Constants.TEXTURE_CHANGED
+            || (source == getParent() &&
             (reason == Constants.STRAIN_CHANGED || reason == Constants.CELL_CHANGED))))) {
       refreshComputation = true;
 /*	    Object[] childrens = getObjectChildren();
@@ -299,23 +299,24 @@ public class StandardFunctionTexture extends Texture {
 //    LGIndex = SpaceGroups.getLGNumber(getPhase().getPointGroup());
     sampleSymmetry = getSampleSymmetryValue();
     IGA = sampleSymmetry + 1;
-	  if (sampleSymmetry > 2)
-		  IGA = 1;
-	  gammaNumber = 1;
-	  if (sampleSymmetry == 3)
-		  gammaNumber = MaudPreferences.getInteger("standardFunctionsTexture.numberOfIntegrationPointPlanarSymmetry", 72);
-	  sfVector = new double[gammaNumber];
-	  cfVector = new double[gammaNumber];
-	  if (sampleSymmetry == 3) {
-		  double stepPsi = Constants.PI2 / gammaNumber;
-		  for (int i = 0; i < gammaNumber; i++) {
-			  double psi = stepPsi * i;
-			  sfVector[i] = Math.sin(psi);
-			  cfVector[i] = Math.cos(psi);
-		  }
-	  }
-	  IGB = getLaueGroupNumber();
-     refreshCoefficients();
+    if (sampleSymmetry > 2)
+      IGA = 1;
+    gammaNumber = 1;
+    if (sampleSymmetry == 3)
+      gammaNumber = MaudPreferences.getInteger("standardFunctionsTexture.numberOfIntegrationPointPlanarSymmetry", 72);
+    sfVector = new double[gammaNumber];
+    cfVector = new double[gammaNumber];
+    if (sampleSymmetry == 3) {
+      double stepPsi = Constants.PI2 / gammaNumber;
+      for (int i = 0; i < gammaNumber; i++) {
+        double psi = stepPsi * i;
+        sfVector[i] = Math.sin(psi);
+        cfVector[i] = Math.cos(psi);
+      }
+    }
+    IGB = getLaueGroupNumber();
+//      System.out.println(IGB + " " + IGA);
+    refreshCoefficients();
   }
 
   public void initializeAll() {
@@ -362,18 +363,18 @@ public class StandardFunctionTexture extends Texture {
       SphericalTextureComponent sphericalComp = getSphericalTextureComponent(i);
       intensitySum += sphericalComp.intensity;
     }
-/*
- *    PREPARATION OF INPUT DATA FOR FIBRE COMPONENTS
- */
+    /*
+     *    PREPARATION OF INPUT DATA FOR FIBRE COMPONENTS
+     */
     for (int i = 0; i < numberOfFiberComponent; i++) {
       FiberTextureComponent fiberComp = getFiberTextureComponent(i);
 //      fiberComp.intensity *= (1.0 - background) / intensitySum;
       fiberComp.prepareComputation(IZE);
     }
 
-/*
- *    PREPARATION OF INPUT DATA FOR SPHERICAL COMPONENTS
- */
+    /*
+     *    PREPARATION OF INPUT DATA FOR SPHERICAL COMPONENTS
+     */
 
     for (int i = 0; i < numberOfSphericalComponent; i++) {
       SphericalTextureComponent sphericalComp = getSphericalTextureComponent(i);
@@ -385,6 +386,8 @@ public class StandardFunctionTexture extends Texture {
     if (totalIntensity == 0.0)
       totalIntensity = 1.0;
 
+//    System.out.println("Total SF intensity: " + totalIntensity);
+
   }
 
   public void computeTextureFactor(Phase aphase, Sample asample) {
@@ -393,79 +396,80 @@ public class StandardFunctionTexture extends Texture {
 
 //    System.out.println("Should compute texture: " + refreshComputation);
     if (refreshComputation) {
+      //       refreshCoefficients();
       applySymmetryRules();
       aphase.sghklcompute(false);
-	    int fnumber = fiberTextureComponentsNumber();
-	    int snumber = sphericalTextureComponentsNumber();
+      int fnumber = fiberTextureComponentsNumber();
+      int snumber = sphericalTextureComponentsNumber();
 //  	System.out.println("computing texture");
 //			setSharpness(computeAndGetSharpness());
       refreshComputation = false;
-	    int hkln = aphase.gethklNumber();
+      int hkln = aphase.gethklNumber();
 
       // here we differentiate for energy
-/*      boolean dffEnergy = differentiateTextureByEnergy();*/
+      /*      boolean dffEnergy = differentiateTextureByEnergy();*/
 
- //     if (dffEnergy) {
-        for (int i = 0; i < asample.activeDatasetsNumber(); i++) {
-          DataFileSet adataset = asample.getActiveDataSet(i);
+      //     if (dffEnergy) {
+      for (int i = 0; i < asample.activeDatasetsNumber(); i++) {
+        DataFileSet adataset = asample.getActiveDataSet(i);
 //					Instrument ainstrument = adataset.getInstrument();
 //					Radiation rad = ainstrument.getRadiationType().getRadiation(0);
-          double betaBroad = adataset.getInstrument().getInstrumentBroadening().getTextureBroadeningAt(0);
-          if (betaBroad >= 0.0) {
+        double betaBroad = adataset.getInstrument().getInstrumentBroadening().getTextureBroadeningAt(0);
+        if (betaBroad >= 0.0) {
 //		            System.out.println(snumber);
-            for (int ig = 0; ig < fnumber; ig++) {
-              FiberTextureComponent fiberComp = getFiberTextureComponent(ig);
+          for (int ig = 0; ig < fnumber; ig++) {
+            FiberTextureComponent fiberComp = getFiberTextureComponent(ig);
 //		              System.out.println(ig + " " + fiberComp.betag + betaBroad);
-              fiberComp.PARFP(fiberComp.betag + betaBroad);
-            }
-            for (int ig = 0; ig < snumber; ig++) {
-              SphericalTextureComponent sphericalComp = getSphericalTextureComponent(ig);
-//		              System.out.println(ig + " " + sphericalComp.betag + betaBroad);
-              sphericalComp.PARGLP(sphericalComp.betag + betaBroad);
-            }
+            fiberComp.PARFP(fiberComp.betag + betaBroad);
           }
-          int datafilenumber = adataset.activedatafilesnumber();
-          for (int i1 = 0; i1 < datafilenumber; i1++) {
-            DiffrDataFile adatafile = adataset.getActiveDataFile(i1);
-            double[][][] positions = adatafile.getPositions(aphase);
-//			    for (int ppp = 0; ppp < adatafile.positionsPerPattern; ppp++) {
-            int numberPositions = positions[0].length;
-            int numberEnergies = positions[0][0].length;
-
-            double[][][] textF = new double[hkln][numberPositions][numberEnergies];
-            for (int j = 0; j < hkln; j++) {
-              Reflection refl = aphase.getReflex(j);
-              for (int p = 0; p < numberPositions; p++) {
-                for (int e = 0; e < numberEnergies; e++) {
-                  double texture_angles[] = adatafile.getTextureAngles(positions[j][p][e], p);
-                  double newBetaBroad = adataset.getInstrument().getInstrumentBroadening().getTextureBroadeningAt(positions[j][p][e]);
-//	            System.out.println(snumber + " " + betaBroad);
-                  if (betaBroad != newBetaBroad) {
-//		            System.out.println(snumber);
-                    for (int ig = 0; ig < fnumber; ig++) {
-                      FiberTextureComponent fiberComp = getFiberTextureComponent(ig);
-//		              System.out.println(ig + " " + fiberComp.betag + betaBroad);
-                      fiberComp.PARFP(fiberComp.betag + betaBroad);
-                    }
-                    for (int ig = 0; ig < snumber; ig++) {
-                      SphericalTextureComponent sphericalComp = getSphericalTextureComponent(ig);
+          for (int ig = 0; ig < snumber; ig++) {
+            SphericalTextureComponent sphericalComp = getSphericalTextureComponent(ig);
 //		              System.out.println(ig + " " + sphericalComp.betag + betaBroad);
-                      sphericalComp.PARGLP(sphericalComp.betag + betaBroad);
-                    }
+            sphericalComp.PARGLP(sphericalComp.betag + betaBroad);
+          }
+        }
+        int datafilenumber = adataset.activedatafilesnumber();
+        for (int i1 = 0; i1 < datafilenumber; i1++) {
+          DiffrDataFile adatafile = adataset.getActiveDataFile(i1);
+          double[][][] positions = adatafile.getPositions(aphase);
+//			    for (int ppp = 0; ppp < adatafile.positionsPerPattern; ppp++) {
+          int numberPositions = positions[0].length;
+          int numberEnergies = positions[0][0].length;
+
+          double[][][] textF = new double[hkln][numberPositions][numberEnergies];
+          for (int j = 0; j < hkln; j++) {
+            Reflection refl = aphase.getReflex(j);
+            for (int p = 0; p < numberPositions; p++) {
+              for (int e = 0; e < numberEnergies; e++) {
+                double texture_angles[] = adatafile.getTextureAngles(positions[j][p][e], p);
+                double newBetaBroad = adataset.getInstrument().getInstrumentBroadening().getTextureBroadeningAt(positions[j][p][e]);
+//	            System.out.println(snumber + " " + betaBroad);
+                if (betaBroad != newBetaBroad) {
+//		            System.out.println(snumber);
+                  for (int ig = 0; ig < fnumber; ig++) {
+                    FiberTextureComponent fiberComp = getFiberTextureComponent(ig);
+//		              System.out.println(ig + " " + fiberComp.betag + betaBroad);
+                    fiberComp.PARFP(fiberComp.betag + betaBroad);
                   }
-                  textF[j][p][e] = computeTextureFactor(refl.phi[0], refl.beta[0],
-                      texture_angles[0] * Constants.DEGTOPI,
-                      texture_angles[1] * Constants.DEGTOPI);
+                  for (int ig = 0; ig < snumber; ig++) {
+                    SphericalTextureComponent sphericalComp = getSphericalTextureComponent(ig);
+//		              System.out.println(ig + " " + sphericalComp.betag + betaBroad);
+                    sphericalComp.PARGLP(sphericalComp.betag + betaBroad);
+                  }
+                }
+                textF[j][p][e] = computeTextureFactor(refl.phi[0], refl.beta[0],
+                    texture_angles[0] * Constants.DEGTOPI,
+                    texture_angles[1] * Constants.DEGTOPI);
 //		              System.out.println(positions[j][0][0] + " " + refl.getH() + " " + refl.getK() + " " + refl.getL() + " " +
 //				              refl.phi[0] * Constants.PITODEG + " " + refl.beta[0] * Constants.PITODEG + " " + texture_angles[0] + " " + texture_angles[1] + " " + textF[j]);
 //						refl.setExpTextureFactor(adatafile.getIndex(), textF);
-                }
               }
             }
-            adatafile.setTextureFactors(aphase, textF);
-//			    }
           }
+          adatafile.setTextureFactors(aphase, textF);
+//			    }
         }
+      }
 /*      } else {
         double[] textF = new double[hkln];
         for (int i = 0; i < asample.activeDatasetsNumber(); i++) {
@@ -531,7 +535,7 @@ public class StandardFunctionTexture extends Texture {
 
   public double computeTextureFactor(double phi, double beta, double psi, double gamma) {
 
-	  // for planar sample symmetry we homogenize around psi
+    // for planar sample symmetry we homogenize around psi
 
     double poleIntensity = 0;
     double ZH = Math.cos(phi);
@@ -539,126 +543,128 @@ public class StandardFunctionTexture extends Texture {
     double XH = STH * Math.cos(beta);
     double YH = STH * Math.sin(beta);
 
-/*
- *    CALCULATION OF (G(J,K))**-1*HI FOR ALL
- *    EQUIVALENT POSITIONS (IJ)
- */
-	  if (gammaNumber == 1) {
-		  sfVector[0] = Math.sin(gamma);
-		  cfVector[0] = Math.cos(gamma);
-	  }
-	  for (int i = 0; i < gammaNumber; i++)
-	    poleIntensity += computeTextureFactor(ZH, STH, XH, YH, psi, sfVector[i], cfVector[i]);
+    /*
+     *    CALCULATION OF (G(J,K))**-1*HI FOR ALL
+     *    EQUIVALENT POSITIONS (IJ)
+     */
+    if (gammaNumber == 1) {
+      sfVector[0] = Math.sin(gamma);
+      cfVector[0] = Math.cos(gamma);
+    }
+    for (int i = 0; i < gammaNumber; i++)
+      poleIntensity += computeTextureFactor(ZH, STH, XH, YH, psi, sfVector[i], cfVector[i]);
 
-    return poleIntensity / (totalIntensity * gammaNumber) + background;
+//      System.out.println("Texture intensity: " + poleIntensity + " " + totalIntensity + " " + gammaNumber + " " + background);
+
+    return (poleIntensity / gammaNumber + background) / totalIntensity;
   }
 
-	public double computeTextureFactor(double ZH, double STH, double XH, double YH, double psi, double SF, double CF) {
+  public double computeTextureFactor(double ZH, double STH, double XH, double YH, double psi, double SF, double CF) {
 
-		// for planar sample symmetry we homogenize around psi
+    // for planar sample symmetry we homogenize around psi
 
-		double poleIntensity = 0;
+    double poleIntensity = 0;
 
-/*
- *    CALCULATION OF (G(J,K))**-1*HI FOR ALL
- *    EQUIVALENT POSITIONS (IJ)
- */
+    /*
+     *    CALCULATION OF (G(J,K))**-1*HI FOR ALL
+     *    EQUIVALENT POSITIONS (IJ)
+     */
 //		double SF = Math.sin(gamma);
 //		double CF = Math.cos(gamma);
-		double ST = Math.sin(psi);
-		double CT = Math.cos(psi);
-		double STCF = ST * CF;
-		double STSF = ST * SF;
-		int numberOfSphericalComponent = sphericalTextureComponentsNumber();
-		for (int i = 0; i < numberOfSphericalComponent; i++) {
-			SphericalTextureComponent sphericalComp = getSphericalTextureComponent(i);
-			for (int IJ = 0; IJ < IJE; IJ++) {
-				if (MGB[IJ] != 0) {
-					double CA = -sphericalComp.HMCG[IJ];
-					double CB = sphericalComp.HMCB[IJ];
-					double CG = -sphericalComp.HMCA[IJ];
-					double SA = sphericalComp.HMSG[IJ];
-					double SB = sphericalComp.HMSB[IJ];
-					double SG = sphericalComp.HMSA[IJ];
-					HX[IJ] = (CA * CB * CG - SA * SG) * XH + (SA * CB * CG + CA * SG) * YH - SB * CG * ZH;
-					HY[IJ] = -(CA * CB * SG + SA * CG) * XH - (SA * CB * SG - CA * CG) * YH + SB * SG * ZH;
-					HZ[IJ] = CA * SB * XH + SA * SB * YH + CB * ZH;
-				}
-			}
-			double PSUMG = 0.;
-			double PSUML = 0.;
-			double Z1 = 0.;
-			for (int IJ = 0; IJ < IJE; IJ++) {
-				if (MGB[IJ] != 0) {
-					if (IRED == 2) {
-						Z1 = -HX[IJ] * STCF - HY[IJ] * STSF + HZ[IJ] * CT;
-					} else {
-						Z1 = HX[IJ] * STCF + HY[IJ] * STSF + HZ[IJ] * CT;
-					}
+    double ST = Math.sin(psi);
+    double CT = Math.cos(psi);
+    double STCF = ST * CF;
+    double STSF = ST * SF;
+    int numberOfSphericalComponent = sphericalTextureComponentsNumber();
+    for (int i = 0; i < numberOfSphericalComponent; i++) {
+      SphericalTextureComponent sphericalComp = getSphericalTextureComponent(i);
+      for (int IJ = 0; IJ < IJE; IJ++) {
+        if (MGB[IJ] != 0) {
+          double CA = -sphericalComp.HMCG[IJ];
+          double CB = sphericalComp.HMCB[IJ];
+          double CG = -sphericalComp.HMCA[IJ];
+          double SA = sphericalComp.HMSG[IJ];
+          double SB = sphericalComp.HMSB[IJ];
+          double SG = sphericalComp.HMSA[IJ];
+          HX[IJ] = (CA * CB * CG - SA * SG) * XH + (SA * CB * CG + CA * SG) * YH - SB * CG * ZH;
+          HY[IJ] = -(CA * CB * SG + SA * CG) * XH - (SA * CB * SG - CA * CG) * YH + SB * SG * ZH;
+          HZ[IJ] = CA * SB * XH + SA * SB * YH + CB * ZH;
+        }
+      }
+      double PSUMG = 0.;
+      double PSUML = 0.;
+      double Z1 = 0.;
+      for (int IJ = 0; IJ < IJE; IJ++) {
+        if (MGB[IJ] != 0) {
+          if (IRED == 2) {
+            Z1 = -HX[IJ] * STCF - HY[IJ] * STSF + HZ[IJ] * CT;
+          } else {
+            Z1 = HX[IJ] * STCF + HY[IJ] * STSF + HZ[IJ] * CT;
+          }
 //          System.out.println(IJ + " " + Z1 + " " + HX[IJ] + " " + HY[IJ] + " " +HZ[IJ]);
-					PSUMG += sphericalComp.PSHG(Z1);
-				}
-			}
-			for (int IJ = 0; IJ < IJE; IJ++) {
-				if (MGB[IJ] != 0) {
-					Z1 = sphericalComp.HL2 * (HX[IJ] * STCF + HY[IJ] * STSF + HZ[IJ] * CT);
-					PSUML += sphericalComp.PSHL(Z1);
-				}
-			}
-			poleIntensity += PSUML * sphericalComp.HNL + PSUMG * sphericalComp.HNG;
+          PSUMG += sphericalComp.PSHG(Z1);
+        }
+      }
+      for (int IJ = 0; IJ < IJE; IJ++) {
+        if (MGB[IJ] != 0) {
+          Z1 = sphericalComp.HL2 * (HX[IJ] * STCF + HY[IJ] * STSF + HZ[IJ] * CT);
+          PSUML += sphericalComp.PSHL(Z1);
+        }
+      }
+      poleIntensity += PSUML * sphericalComp.HNLM * 0.5 + PSUMG * sphericalComp.HNG * 0.25;
 
-		}
+    }
 
-		int numberOfFiberComponent = fiberTextureComponentsNumber();
-		double[] ZZ1 = new double[IZGB];
-		double[] WW1 = new double[IZGB];
-		for (int i = 0; i < numberOfFiberComponent; i++) {
-			FiberTextureComponent fiberComp = getFiberTextureComponent(i);
+    int numberOfFiberComponent = fiberTextureComponentsNumber();
+    double[] ZZ1 = new double[IZGB];
+    double[] WW1 = new double[IZGB];
+    for (int i = 0; i < numberOfFiberComponent; i++) {
+      FiberTextureComponent fiberComp = getFiberTextureComponent(i);
 
-			for (int JB = 0; JB < IZGB; JB++) {
-				ZZ1[JB] = fiberComp.HXHF[JB] * XH + fiberComp.HYHF[JB] * YH + fiberComp.HZHF[JB] * ZH;
-				WW1[JB] = 0.;
-				double ZZ = 1. - ZZ1[JB] * ZZ1[JB];
-				if (ZZ > 1.E-20)
-					WW1[JB] = Math.sqrt(ZZ);
-			}
+      for (int JB = 0; JB < IZGB; JB++) {
+        ZZ1[JB] = fiberComp.HXHF[JB] * XH + fiberComp.HYHF[JB] * YH + fiberComp.HZHF[JB] * ZH;
+        WW1[JB] = 0.;
+        double ZZ = 1. - ZZ1[JB] * ZZ1[JB];
+        if (ZZ > 1.E-20)
+          WW1[JB] = Math.sqrt(ZZ);
+      }
 
-			double[] ZZ2 = new double[IZGA];
-			double[] WW2 = new double[IZGA];
-			for (int KA = 0; KA < IZGA; KA++) {
-				ZZ2[KA] = fiberComp.HXYF[KA] * STCF + fiberComp.HYYF[KA] * STSF + fiberComp.HZYF[KA] * CT;
-				WW2[KA] = 0.;
-				double ZZ = 1. - ZZ2[KA] * ZZ2[KA];
-				if (ZZ > 1.E-20)
-					WW2[KA] = Math.sqrt(ZZ);
-			}
-			double PSUMG = 0.;
-			double PSUML = 0.;
+      double[] ZZ2 = new double[IZGA];
+      double[] WW2 = new double[IZGA];
+      for (int KA = 0; KA < IZGA; KA++) {
+        ZZ2[KA] = fiberComp.HXYF[KA] * STCF + fiberComp.HYYF[KA] * STSF + fiberComp.HZYF[KA] * CT;
+        WW2[KA] = 0.;
+        double ZZ = 1. - ZZ2[KA] * ZZ2[KA];
+        if (ZZ > 1.E-20)
+          WW2[KA] = Math.sqrt(ZZ);
+      }
+      double PSUMG = 0.;
+      double PSUML = 0.;
 
 //      IF (IGLF(IKF).EQ.2) GOTO 185
-			for (int JB = 0; JB < IZGB; JB++) {
-				for (int KA = 0; KA < IZGA; KA++) {
-					double ZZ = ZZ1[JB] * ZZ2[KA];
-					double WW = WW1[JB] * WW2[KA];
-					PSUMG += FiberTextureComponent.PSGF(ZZ, WW, fiberComp.FS);
-				}
-			}
-			//     GO TO 191
-			for (int JB = 0; JB < IZGB; JB++) {
-				for (int KA = 0; KA < IZGA; KA++) {
-					double ZZ = ZZ1[JB] * ZZ2[KA];
-					double WW = WW1[JB] * WW2[KA];
-					PSUML += FiberTextureComponent.PSLF(ZZ, WW, fiberComp.EPT2, fiberComp.ZT);
-				}
-			}
-//			System.out.println(IZGB + " " + IZGA + " " + PSUMG + " " + fiberComp.HNFUKG + " " + PSUML + " " + fiberComp.HNFUKL);
-			poleIntensity += PSUMG * fiberComp.HNFUKG + PSUML * fiberComp.HNFUKL;
+      for (int JB = 0; JB < IZGB; JB++) {
+        for (int KA = 0; KA < IZGA; KA++) {
+          double ZZ = ZZ1[JB] * ZZ2[KA];
+          double WW = WW1[JB] * WW2[KA];
+          PSUMG += FiberTextureComponent.PSGF(ZZ, WW, fiberComp.FS);
+        }
+      }
+      //     GO TO 191
+      for (int JB = 0; JB < IZGB; JB++) {
+        for (int KA = 0; KA < IZGA; KA++) {
+          double ZZ = ZZ1[JB] * ZZ2[KA];
+          double WW = WW1[JB] * WW2[KA];
+          PSUML += FiberTextureComponent.PSLF(ZZ, WW, fiberComp.EPT2, fiberComp.ZT);
+        }
+      }
+//			System.out.println(PSUMG + " " + fiberComp.HNFUKG + " " + PSUML + " " + fiberComp.HNFUKL);
+      poleIntensity += PSUMG * fiberComp.HNFUKG * 0.5 + PSUML * fiberComp.HNFUKL;
 
-		}
-		return poleIntensity;
-	}
+    }
+    return poleIntensity;
+  }
 
-	public double[] computeTextureFactor(double[][] alphabeta, Reflection reflex) {
+  public double[] computeTextureFactor(double[][] alphabeta, Reflection reflex) {
 
     int numberOfPoints = alphabeta[0].length;
 
@@ -673,73 +679,36 @@ public class StandardFunctionTexture extends Texture {
     return textureValues;
   }
 
+  public double getResolutionD() {
+    return Constants.ODFresolution / Constants.ODFresolution * 2.0;  // just 1.0
+  }
+
   public double getODF(double alpha, double beta, double gamma) {
 
-	  double odf = background;
+    double odf = background;
 
-	  double sg = Math.sin(gamma);
-	  double cg = Math.cos(gamma);
-	  double sb = Math.sin(beta);
-	  double cb = Math.cos(beta);
-	  double sa = Math.sin(alpha);
-	  double ca = Math.cos(alpha);
+    double sg = Math.sin(gamma);
+    double cg = Math.cos(gamma);
+    double sb = Math.sin(beta);
+    double cb = Math.cos(beta);
+    double sa = Math.sin(alpha);
+    double ca = Math.cos(alpha);
 
-	  int numberOfSphericalComponent = sphericalTextureComponentsNumber();
-	  for (int i = 0; i < numberOfSphericalComponent; i++) {
-		  SphericalTextureComponent sphericalComp = getSphericalTextureComponent(i);
-		  double[] sum = sphericalComp.ovf(IJE, MGB, IRED, ca,  sa, cb, sb, cg, sg);
-		  odf += sum[0];
-	  }
+    int numberOfSphericalComponent = sphericalTextureComponentsNumber();
+    for (int i = 0; i < numberOfSphericalComponent; i++) {
+      SphericalTextureComponent sphericalComp = getSphericalTextureComponent(i);
+      double[] sum = sphericalComp.ovf(IJE, MGB, IRED, ca, sa, cb, sb, cg, sg);
+      odf += sum[0];
+    }
 
-/*	  int numberOfSphericalComponent = sphericalTextureComponentsNumber();
-	  for (int i = 0; i < numberOfSphericalComponent; i++) {
-		  SphericalTextureComponent sphericalComp = getSphericalTextureComponent(i);
-		  for (int IJ = 0; IJ < IJE; IJ++) {
-			  if (MGB[IJ] != 0) {
-				  double CA = -sphericalComp.HMCG[IJ];
-				  double CB = sphericalComp.HMCB[IJ];
-				  double CG = -sphericalComp.HMCA[IJ];
-				  double SA = sphericalComp.HMSG[IJ];
-				  double SB = sphericalComp.HMSB[IJ];
-				  double SG = sphericalComp.HMSA[IJ];
-				  HX[IJ] = (CA * CB * CG - SA * SG) * XH + (SA * CB * CG + CA * SG) * YH - SB * CG * ZH;
-				  HY[IJ] = -(CA * CB * SG + SA * CG) * XH - (SA * CB * SG - CA * CG) * YH + SB * SG * ZH;
-				  HZ[IJ] = CA * SB * XH + SA * SB * YH + CB * ZH;
-			  }
-		  }
-		  double PSUMG = 0.;
-		  double PSUML = 0.;
-		  double Z1 = 0.;
-		  for (int IJ = 0; IJ < IJE; IJ++) {
-			  if (MGB[IJ] != 0) {
-				  if (IRED == 2) {
-					  Z1 = -HX[IJ] * STCF - HY[IJ] * STSF + HZ[IJ] * CT;
-				  } else {
-					  Z1 = HX[IJ] * STCF + HY[IJ] * STSF + HZ[IJ] * CT;
-				  }
-//          System.out.println(IJ + " " + Z1 + " " + HX[IJ] + " " + HY[IJ] + " " +HZ[IJ]);
-				  PSUMG += sphericalComp.PSHG(Z1);
-			  }
-		  }
-		  for (int IJ = 0; IJ < IJE; IJ++) {
-			  if (MGB[IJ] != 0) {
-				  Z1 = sphericalComp.HL2 * (HX[IJ] * STCF + HY[IJ] * STSF + HZ[IJ] * CT);
-				  PSUML += sphericalComp.PSHL(Z1);
-			  }
-		  }
-		  odf += PSUML * sphericalComp.HNL + PSUMG * sphericalComp.HNG;
+    int numberOfFiberComponent = fiberTextureComponentsNumber();
+    for (int i = 0; i < numberOfFiberComponent; i++) {
+      FiberTextureComponent fiberComp = getFiberTextureComponent(i);
+      double[] sum = fiberComp.ovfib(IZGA, IZGB, IRED, ca, sa, cb, sb, cg, sg);
+      odf += sum[0];
+    }
 
-	  }*/
-
-
-	  int numberOfFiberComponent = fiberTextureComponentsNumber();
-	  for (int i = 0; i < numberOfFiberComponent; i++) {
-		  FiberTextureComponent fiberComp = getFiberTextureComponent(i);
-			double[] sum = fiberComp.ovfib(IZGA, IZGB, IRED, ca,  sa, cb, sb, cg, sg);
-		  odf += sum[0];
-	  }
-
-	  return odf / totalIntensity;
+    return odf / totalIntensity;
   }
 
   public double[][] getExpPoleFigureGrid(Reflection refl, int numberofPoints, double maxAngle) {
@@ -747,26 +716,26 @@ public class StandardFunctionTexture extends Texture {
   }
 
   public void addTextureBroadening() {
-  	Sample asample = getFilePar().getActiveSample();
-	  int fnumber = fiberTextureComponentsNumber();
-	  int snumber = sphericalTextureComponentsNumber();
+    Sample asample = getFilePar().getActiveSample();
+    int fnumber = fiberTextureComponentsNumber();
+    int snumber = sphericalTextureComponentsNumber();
 
-	  double betaBroad = 0;
-	  for (int i = 0; i < asample.activeDatasetsNumber(); i++) {
-		  DataFileSet adataset = asample.getActiveDataSet(i);
-		  betaBroad += adataset.getInstrument().getInstrumentBroadening().getTextureBroadeningAt(0);
-	  }
-	  betaBroad /= asample.activeDatasetsNumber();
-	  if (betaBroad >= 0.0) {
-		  for (int ig = 0; ig < fnumber; ig++) {
-			  FiberTextureComponent fiberComp = getFiberTextureComponent(ig);
-			  fiberComp.PARFP(fiberComp.betag + betaBroad);
-		  }
-		  for (int ig = 0; ig < snumber; ig++) {
-			  SphericalTextureComponent sphericalComp = getSphericalTextureComponent(ig);
-			  sphericalComp.PARGLP(sphericalComp.betag + betaBroad);
-		  }
-	  }
+    double betaBroad = 0;
+    for (int i = 0; i < asample.activeDatasetsNumber(); i++) {
+      DataFileSet adataset = asample.getActiveDataSet(i);
+      betaBroad += adataset.getInstrument().getInstrumentBroadening().getTextureBroadeningAt(0);
+    }
+    betaBroad /= asample.activeDatasetsNumber();
+    if (betaBroad >= 0.0) {
+      for (int ig = 0; ig < fnumber; ig++) {
+        FiberTextureComponent fiberComp = getFiberTextureComponent(ig);
+        fiberComp.PARFP(fiberComp.betag + betaBroad);
+      }
+      for (int ig = 0; ig < snumber; ig++) {
+        SphericalTextureComponent sphericalComp = getSphericalTextureComponent(ig);
+        sphericalComp.PARGLP(sphericalComp.betag + betaBroad);
+      }
+    }
   }
 
   public double[][] getPoleFigureGrid(Reflection refl, int numberofPoints, double maxAngle) {
@@ -781,7 +750,7 @@ public class StandardFunctionTexture extends Texture {
 //		Phase aphase = (Phase) refl.getParent();
     applySymmetryRules();
 //		aphase.sghklcompute(false);
-	  addTextureBroadening();
+    addTextureBroadening();
 
     for (int i = 0; i < numberofPoints; i++)
       for (int j = 0; j < numberofPoints; j++) {
@@ -826,36 +795,36 @@ public class StandardFunctionTexture extends Texture {
 //		Phase aphase = (Phase) refl.getParent();
     applySymmetryRules();
 //		aphase.sghklcompute(false);
-	  addTextureBroadening();
+    addTextureBroadening();
 
     for (int i = 0; i < x.length; i++) {
-        r = Math.sqrt(x[i] * x[i] + y[i] * y[i]);
-        if (r == 0.0) {
-          texture_angles[0] = 0.0f;
-          texture_angles[1] = 0.0f;
-          y[i] = computeTextureFactor(refl.phi[0], refl.beta[0],
-              texture_angles[0],
-              texture_angles[1]);
-        } else if (r < Math.PI / 2.0) {
-          double phaseAng = Math.atan2(x[i], y[i]);
-          if (phaseAng < 0.0)
-            phaseAng += Constants.PI2;
-          texture_angles[0] = 2.0f * (double) Math.asin(r / Constants.sqrt2);
-          if (texture_angles[0] < 0.0) {
-            texture_angles[0] = -texture_angles[0];
-            phaseAng += Constants.PI;
-            while (phaseAng >= Constants.PI2)
-              phaseAng -= Constants.PI2;
-          }
-          texture_angles[1] = (double) phaseAng;
+      r = Math.sqrt(x[i] * x[i] + y[i] * y[i]);
+      if (r == 0.0) {
+        texture_angles[0] = 0.0f;
+        texture_angles[1] = 0.0f;
+        y[i] = computeTextureFactor(refl.phi[0], refl.beta[0],
+            texture_angles[0],
+            texture_angles[1]);
+      } else if (r < Math.PI / 2.0) {
+        double phaseAng = Math.atan2(x[i], y[i]);
+        if (phaseAng < 0.0)
+          phaseAng += Constants.PI2;
+        texture_angles[0] = 2.0f * (double) Math.asin(r / Constants.sqrt2);
+        if (texture_angles[0] < 0.0) {
+          texture_angles[0] = -texture_angles[0];
+          phaseAng += Constants.PI;
+          while (phaseAng >= Constants.PI2)
+            phaseAng -= Constants.PI2;
+        }
+        texture_angles[1] = (double) phaseAng;
 //					System.out.println(Double.toXRDcatString(texture_angles[0]) + " " + Double.toXRDcatString(texture_angles[1]));
 
-          y[i] = computeTextureFactor(refl.phi[0], refl.beta[0],
-              texture_angles[0],
-              texture_angles[1]);
-        } else
-          y[i] = 0;
-      }
+        y[i] = computeTextureFactor(refl.phi[0], refl.beta[0],
+            texture_angles[0],
+            texture_angles[1]);
+      } else
+        y[i] = 0;
+    }
     return y;
   }
 
@@ -872,7 +841,7 @@ public class StandardFunctionTexture extends Texture {
 //		Phase aphase = (Phase) refl.getParent();
     applySymmetryRules();
 //		aphase.sghklcompute(false);
-	  addTextureBroadening();
+    addTextureBroadening();
 
     for (int i = 0; i < phiPointNumber; i++)
       for (int j = 0; j < betaPointNumber; j++) {
@@ -893,7 +862,7 @@ public class StandardFunctionTexture extends Texture {
 //		Phase aphase = (Phase) refl.getParent();
     applySymmetryRules();
 //		aphase.sghklcompute(false);
-	  addTextureBroadening();
+    addTextureBroadening();
 
     for (int i = 0; i < pointNumber; i++)
       PFreconstructed[i] = computeTextureFactor(phibeta[0][i], phibeta[1][i],
@@ -914,7 +883,7 @@ public class StandardFunctionTexture extends Texture {
     JLabel sharpL = null;
     JSubordListPane sphericalP;
     JSubordListPane fiberP;
-//    JCheckBox energyCB;
+    //    JCheckBox energyCB;
     JTextField backGroundODFTF;
 
     public JSFTextureOptionsD(Frame parent, XRDcat obj) {
@@ -928,9 +897,9 @@ public class StandardFunctionTexture extends Texture {
       upperPanel.add(new JLabel("ODF background: "));
       backGroundODFTF = new JTextField(Constants.FLOAT_FIELD);
       upperPanel.add(backGroundODFTF);
-  //    energyCB = new JCheckBox("Differentiate texture by energy/wavelength");
-  //    energyCB.setToolTipText("Check the box only if you have a very sharp texture or large wavelength/energy differences");
-  //    upperPanel.add(energyCB);
+      //    energyCB = new JCheckBox("Differentiate texture by energy/wavelength");
+      //    energyCB.setToolTipText("Check the box only if you have a very sharp texture or large wavelength/energy differences");
+      //    upperPanel.add(energyCB);
 
 
       upperPanel = new JPanel();
@@ -968,7 +937,7 @@ public class StandardFunctionTexture extends Texture {
       });
       jb.setToolTipText("Press this to save the odf using the Beartex/Maud exchange format");*/
 
-      jPanel10 = new JPanel();
+          jPanel10 = new JPanel();
       jPanel10.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
       lowerPanel.add(jPanel10);
       jPanel10.add(new JLabel("Export PFs (.xpc) for "));
@@ -989,6 +958,7 @@ public class StandardFunctionTexture extends Texture {
       jb.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent event) {
           setCursor(new Cursor(Cursor.WAIT_CURSOR));
+//          refreshCoefficients();
           setSharpness(computeAndGetSharpness());
           sharpL.setText("Texture index (F2): " + getSharpness());
           setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -1010,7 +980,7 @@ public class StandardFunctionTexture extends Texture {
       labels[1] = "Alpha";
       labels[2] = "Beta";
       labels[3] = "Gamma";
-      labels[4] = "FWHM";
+      labels[4] = "HWHM";
       labels[5] = "Gaussian";
       sphericalP.setList(StandardFunctionTexture.this, 1, 6, labels);
       labels = new String[7];
@@ -1019,7 +989,7 @@ public class StandardFunctionTexture extends Texture {
       labels[2] = "PhiY";
       labels[3] = "ThetaH";
       labels[4] = "PhiH";
-      labels[5] = "FWHM";
+      labels[5] = "HWHM";
       labels[6] = "Gaussian";
       fiberP.setList(StandardFunctionTexture.this, 0, 7, labels);
       addComponenttolist(backGroundODFTF, parameterField[0]);

@@ -43,7 +43,7 @@ public class FiberTextureComponent extends XRDcat {
                                         "_texture_fiber_component_phiY",
                                         "_texture_fiber_component_thetaH",
                                         "_texture_fiber_component_phiH",
-                                        "_texture_fiber_component_fwhm", // only in degrees
+                                        "_texture_fiber_component_hwhm", // only in degrees
                                         "_texture_fiber_component_gauss_content"
   };
   protected static String[] diclistcrm = {"_texture_fiber_component_id",
@@ -98,9 +98,9 @@ public class FiberTextureComponent extends XRDcat {
 
   public void initParameters() {
     super.initParameters();
-    parameterField[0] = new Parameter(this, getParameterString(0), 0.5,
+    parameterField[0] = new Parameter(this, getParameterString(0), 1.0,
               ParameterPreferences.getDouble(getParameterString(0) + ".min", 0.0),
-              ParameterPreferences.getDouble(getParameterString(0) + ".max", 1.0));
+              ParameterPreferences.getDouble(getParameterString(0) + ".max", 2.0));
     parameterField[0].setPositiveOnly();
     parameterField[1] = new Parameter(this, getParameterString(1), 10.0,
               ParameterPreferences.getDouble(getParameterString(1) + ".min", 0.0),
@@ -153,7 +153,13 @@ public class FiberTextureComponent extends XRDcat {
 		parameterField[2].setValue(alpha);
 	}
 
-	public Parameter getIntensity() {
+  public void checkConsistencyForVersion(double version) {
+    if (version == 2.99996) {
+      parameterField[5].setValue(0.5 * parameterField[5].getValueD());
+    }
+  }
+
+  public Parameter getIntensity() {
     return parameterField[0];
   }
 
@@ -285,46 +291,44 @@ public class FiberTextureComponent extends XRDcat {
    *     FOR FIBRE COMPONENTS
    */
   public void PARFP(double betaGauss) {
-    double S, T;
+      double S, T = 8888.0;
 //    double HNFUKG, HNFUKL;
 
-	  StandardFunctionTexture sft = (StandardFunctionTexture) getParent();
-	  double betaGaussR = betaGauss * Constants.DEGTOPI;
+      StandardFunctionTexture sft = (StandardFunctionTexture) getParent();
+      double betaGaussR = betaGauss * Constants.DEGTOPI;   // HWHM
+//      System.out.println("Gauss: " + gauss);
 
-    int NAB = sft.IZGA * sft.IZGB;
-    // Gauss part
-    double BR4 = Math.sin(betaGaussR * 0.25);
-    S = SGRENZ / (BR4 * BR4);
-    HNFUKG = intensity / NAB * gauss;
-    if (S < 1.E-10)
-      HNFUKG = 0.5 * HNFUKG;
-    else {
-      HNFUKG = HNFUKG * S;
-      if (S < 20.)
-        HNFUKG = HNFUKG / (1. - Math.exp(-2. * S));
-      else
-        HNFUKG = 0.5 * HNFUKG;
-    }
-    // Lorentz part
-    double Z23 = Math.pow(4., 1. / 3.);
-    double RN = Z23 - 1.;
-    double BR2 = betaGaussR * 0.5;
-    double R = (Z23 - Math.cos(BR2)) / RN;
-    T = R - Math.sqrt(R * R - 1.);
+      int NAB = sft.IZGA * sft.IZGB;
+      // Gauss part
+      double BR4 = Math.sin(betaGaussR * 0.25);
+      S = SGRENZ / (BR4 * BR4);
+      HNFUKG = intensity / NAB * gauss;
+      if (S > 1.E-70) {
+          HNFUKG = 2.0 * HNFUKG * S;
+          if (S < 350.)
+              HNFUKG = HNFUKG / (1. - Math.exp(-2. * S));
+      }
+      // Lorentz part
+      double Z23 = Math.pow(4., 1. / 3.);
+      double RN = Z23 - 1.;
+      double BR2 = betaGaussR * 0.5;
+      double R = (Z23 - Math.cos(BR2)) / RN;
+      T = R - Math.sqrt(R * R - 1.);
 
-    double T2 = T * T; // 120
-	  HNFUKL_ODF = intensity / NAB * (1. - T2) * (1. - gauss);
-    HNFUKL = intensity / NAB * (1. - T2) / Constants.PI * (1. - gauss);
+      double T2 = T * T; // 120
+      HNFUKL_ODF = intensity / NAB * (1. - T2) * (1. - gauss);
+      HNFUKL = intensity / NAB * (1. - T2) / Constants.PI * (1. - gauss);
 
-    EPT2 = 1. + T2;
-    ZT = 2. * T;
+      EPT2 = 1. + T2;
+      ZT = 2. * T;
 //    HNF=(HNFUKG * gauss + HNFUKL * (1.0 - gauss));
-    FB = betaGauss;
-    FS = S;
+      FB = betaGauss;
+      FS = S;
+//      System.out.println("Fiber: " + S);
 //    FT = T;
 
-//    System.out.println("Fiber: " + HNFUKG + " " + HNFUKL + " " + intensity + " " + NAB + " " + EPT2 + " "
-//        + ZT + " " + FB + " " + FS);
+//      System.out.println("Fiber: " + HNFUKG + " " + HNFUKL + " " + HNFUKL_ODF + " " + intensity + " "
+//              + ZT + " " + FB + " " + FS);
   }
 
   /*

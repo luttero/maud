@@ -60,12 +60,12 @@ public class QuantitativeXRF extends Fluorescence {
     description = descriptionID;
   }
 
-	public void computeFluorescence(Sample asample, DataFileSet adataset) {
+	public void computeFluorescence(Sample asample) {
 
-		int datafilenumber = adataset.activedatafilesnumber();
+		int datafilenumber = getDataFileSet().activedatafilesnumber();
 
 		final Sample theSample = asample;
-		final DataFileSet theDataset = adataset;
+		final DataFileSet theDataset = getDataFileSet();
 
 		final int maxThreads = Math.min(Constants.maxNumberOfThreads, datafilenumber);
 		if (maxThreads > 1 && Constants.threadingGranularity >= Constants.MEDIUM_GRANULARITY) {
@@ -280,7 +280,7 @@ public class QuantitativeXRF extends Fluorescence {
 //								detectorEfficiency + " " + areaCorrection + " " + getIntensityCorrection(atomNumber));
 						line.multiplyIntensityBy(atomsQuantities * totalIntensity * detectorAbsorption *
 								detectorEfficiency * areaCorrection * getIntensityCorrection(atomNumber));
-//						System.out.println("Line: " + line.transitionID + " " + lineEnergyKeV + " " + line.getIntensity() + " " +
+//						System.out.println("Line 2: " + line.transitionID + " " + lineEnergyKeV + " " + line.getIntensity() + " " +
 //								(atomsQuantities * totalIntensity) + " " + detectorAbsorption + " " + detectorEfficiency);
 //						System.out.println(line.transitionID + " " + line.getIntensity() + " " + lineEnergyKeV);
 						boolean addLine = true;
@@ -432,6 +432,8 @@ public class QuantitativeXRF extends Fluorescence {
 			double[][] broad = ainstrument.getInstrumentalBroadeningAt(line.getEnergy(), adatafile);
 			line.setShape(broad);
 			line.setEnergy(line.getEnergy() * 1000.0); // in eV
+//			System.out.println("Line : " + line.transitionID + " " + line.getIntensity() + " " + line.getEnergy() +
+//					" " + line.one_over_hwhm + " " + line.dcx + " " + line.dgx);
 			for (int i = 0; i < numberOfPoints; i++/*, hi++*/) {
 				fluorescence[i] += line.getIntensity(xEnergy[i]);
 			}
@@ -480,6 +482,7 @@ public class QuantitativeXRF extends Fluorescence {
 			}
 		}
 
+//		System.out.println("Incident: " + incidentIntensity);
 		for (int i = 0; i < numberOfPoints; i++) {
 			fluorescence[i] *= incidentIntensity;
 			adatafile.addtoFit(i, fluorescence[i]);

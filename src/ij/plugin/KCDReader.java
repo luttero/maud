@@ -424,7 +424,7 @@ public class KCDReader implements PlugIn {
   }
 
   void setProperty(ImagePlus imp, String key, boolean value) {
-    imp.setProperty(key, new Boolean(value));
+    imp.setProperty(key, value);
   }
 
   void setCalibration(ImagePlus imp, FileInfo fi) {

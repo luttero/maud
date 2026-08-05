@@ -70,6 +70,7 @@ public class Reflection {
   public int broadened = 0;
   public double[] phi = null, beta = null;
 	public double idNumber = 0;
+  public double tmp_position; // do not use it, only for temp storage, it can change between datasets
 
 	private double structureModifier = 1.0;
 	private double[] dividers = {1.0, 1.0, 1.0};

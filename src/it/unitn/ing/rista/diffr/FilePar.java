@@ -2598,6 +2598,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 		}
 		*/
 
+    printOptionalOutputToConsole();
     if (hasoutput && outputframe != null) {
       double[] indexes = getRefinementIndexes(true);
       outputframe.appendnewline("Weighted Sum of Squares (fitting): " + String.valueOf(indexes[8]));

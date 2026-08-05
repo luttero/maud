@@ -124,6 +124,7 @@ import it.unitn.ing.rista.util.Misc;
  * @see Graph
  * @see java.awt.Graphics
 **/
+@Deprecated
 public class Pane extends Container implements AbstractPane {
   //
   private PaneProxy proxy_;

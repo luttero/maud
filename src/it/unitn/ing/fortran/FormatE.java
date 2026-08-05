@@ -75,7 +75,7 @@ class FormatE extends FormatIOElement {
     np.ReInit(new StringBufferInputStream(s));
     try {
       int start = np.Float();
-      Double d = new Double(s.substring(start));
+      Double d = Double.parseDouble(s.substring(start));
       return d;
     } catch (ParseException e) {
       throw new InvalidNumberOnReadException(s,

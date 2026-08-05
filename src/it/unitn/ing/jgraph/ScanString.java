@@ -132,7 +132,7 @@ public class ScanString extends Object {
     if (s == null) return;
 
     if (kwlength < s.length()) kwlength = s.length();
-    kwords.put(s.toLowerCase(), new Integer(i));
+    kwords.put(s.toLowerCase(), i);
 
     //System.out.println("addKeyWord: key="+s.toLowerCase()+" value="+i);
 

@@ -185,8 +185,26 @@ public class RadiationType extends XRDcat {
 		}
 		return shortestWave;
 	}
-
-	public double getRadiationWeightForFluorescence(int index) {
+  
+  public double getRadiationEnergy(int index) {
+    return lambdaToEnergy(getRadiationWavelength(index));
+  }
+  
+//  public double getRadiationEnergyForFluorescence(int index) {
+//		checkRadiation();
+//    return getRadiationEnergy(index);
+//  }
+  
+  public double getRadiationEnergyKeV(int index) {
+    return getRadiationEnergy(index) * 0.001;
+  }
+  
+  public double getRadiationEnergyForFluorescenceKeV(int index) {
+//		checkRadiation();
+    return getRadiationEnergyKeV(index);
+  }
+  
+  public double getRadiationWeightForFluorescence(int index) {
 		return getRadiationWeigth(index);
 	}
 
@@ -197,6 +215,10 @@ public class RadiationType extends XRDcat {
 
   public int getLinesCount() {
     return numberofelementSubL(0);
+  }
+  
+  public int getLinesCountForFluorescence() {
+    return getLinesCount();
   }
 
   public int getLinesCountForPlot() {
@@ -256,12 +278,12 @@ public class RadiationType extends XRDcat {
 
 	public double energyToLambda(double e)
 	{
-		return 12.398424 / e;
+		return Constants.ENERGY_LAMBDA_KEV / e;
 	}
 
 	public double lambdaToEnergy(double lambda)
 	{
-		return 12.398424 / lambda;
+		return Constants.ENERGY_LAMBDA_KEV / lambda;
 	}
 
   public double lambdaToEnergyInJ(double lambda)
@@ -274,7 +296,7 @@ public class RadiationType extends XRDcat {
 	}
 
   public double getRadiationEnergyInJ() {
-    System.out.println("Energy: " + energy + " " + energyJ);
+//    System.out.println("Energy: " + energy + " " + energyJ);
     return energyJ;
   }
 
@@ -307,7 +329,11 @@ public class RadiationType extends XRDcat {
   public int getSubdivision() {
     return 1;
   }
-
+  
+  public int getGroupingNumber() { // for XRF
+    return 1;
+  }
+  
 	public void exportToCif(BufferedWriter output) throws IOException {
 
 		output.write("loop_");

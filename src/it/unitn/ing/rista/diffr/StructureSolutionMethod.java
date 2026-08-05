@@ -72,11 +72,11 @@ public class StructureSolutionMethod extends StructureFactorModel {
 		computeStructureFactors(phase, asample, adataset);
 	}
 
-	public void computeStructureFactors(final Phase phase, Sample asample, DataFileSet adataset) {
-		double defaultFactor = Constants.STARTING_STRUCTURE_FACTOR * Constants.STARTING_STRUCTURE_FACTOR;
-		Instrument ainstrument = adataset.getInstrument();
-		RadiationType rad1 = ainstrument.getRadiationType();
-		phase.refreshFhklcompv();
+  public void computeStructureFactors(final Phase phase, Sample asample, DataFileSet adataset) {
+    double defaultFactor = Constants.STARTING_STRUCTURE_FACTOR * Constants.STARTING_STRUCTURE_FACTOR;
+    Instrument ainstrument = adataset.getInstrument();
+    RadiationType rad1 = ainstrument.getRadiationType();
+    phase.refreshFhklcompv();
 //		Vector<AtomSite> atomList = phase.getFullAtomList();
 		int hkln = phase.gethklNumber();
 		final double[] fhkl = new double[hkln];

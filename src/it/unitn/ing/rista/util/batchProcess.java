@@ -94,6 +94,7 @@ public class batchProcess {
     if (filename != null) {
       folderandname = Misc.getFolderandName(filename);
 	    System.out.println("Working in directory: " + folderandname[0]);
+      workingDirectory = folderandname[0];
 
       String thecife;
       int newtoken, tokentype;
@@ -203,7 +204,8 @@ public class batchProcess {
 	    analysis.setDirectory(newfolderandname[0]);
       processAnalysis(analysis, -1);
     } else if (index == -2) {
-	    workingDirectory = astring;
+      if (astring.length() > 0 && !astring.equalsIgnoreCase("."))
+	      workingDirectory = astring;
     }
 
     return index;

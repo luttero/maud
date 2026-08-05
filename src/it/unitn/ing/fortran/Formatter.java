@@ -40,22 +40,22 @@ public class Formatter {
 
   public void write(int i, PrintStream out)
           throws OutputFormatException {
-    write(new Integer(i), out);
+    write(i, out);
   }
 
   public void write(long l, PrintStream out)
           throws OutputFormatException {
-    write(new Long(l), out);
+    write(l, out);
   }
 
   public void write(float f, PrintStream out)
           throws OutputFormatException {
-    write(new Float(f), out);
+    write(f, out);
   }
 
   public void write(double d, PrintStream out)
           throws OutputFormatException {
-    write(new Double(d), out);
+    write(d, out);
   }
 
   public void write(Object o, PrintStream out)

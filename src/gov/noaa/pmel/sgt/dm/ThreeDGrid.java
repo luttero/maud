@@ -443,8 +443,8 @@ public class ThreeDGrid implements SGT3DGrid, Cartesian, Cloneable, Serializable
     xTime_ = false;
     xRange_ = computeSoTRange(xloc);
     changes_.firePropertyChange("dataModified",
-                                new Integer(0),
-                                new Integer(xloc.length));
+                                0,
+                                xloc.length);
   }
   /**
    * Set the y coordinate grid centers
@@ -455,8 +455,8 @@ public class ThreeDGrid implements SGT3DGrid, Cartesian, Cloneable, Serializable
     yTime_ = false;
     yRange_ = computeSoTRange(yloc);
     changes_.firePropertyChange("dataModified",
-                                new Integer(0),
-                                new Integer(yloc.length));
+                                0,
+                                yloc.length);
   }
   /**
    * Set the z coordinate grid centers
@@ -467,8 +467,8 @@ public class ThreeDGrid implements SGT3DGrid, Cartesian, Cloneable, Serializable
     zTime_ = false;
     zRange_ = computeSoTRange(zloc);
     changes_.firePropertyChange("dataModified",
-                                new Integer(0),
-                                new Integer(zloc.length));
+                                0,
+                                zloc.length);
   }
   /**
    * Set the z grid values.
@@ -478,8 +478,8 @@ public class ThreeDGrid implements SGT3DGrid, Cartesian, Cloneable, Serializable
     grid_ = grid;
     valRange_ = computeRange2D(grid);
     changes_.firePropertyChange("dataModified",
-                                new Integer(0),
-                                new Integer(grid.length));
+                                0,
+                                grid.length);
   }
   /**
    * set the temporal grid centers
@@ -497,8 +497,8 @@ public class ThreeDGrid implements SGT3DGrid, Cartesian, Cloneable, Serializable
       zRange_ = computeSoTRange(tloc);
     }
     changes_.firePropertyChange("dataModified",
-                                new Integer(0),
-                                new Integer(tloc.length));
+                                0,
+                                tloc.length);
   }
   public SoTRange getXRange() {
     return xRange_.copy();

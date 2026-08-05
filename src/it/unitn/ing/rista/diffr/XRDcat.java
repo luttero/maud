@@ -104,11 +104,11 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
     "_riet_Z_molecula_number", "_pd_phase_id", "_pd_proc_ls_prof_R_factor",
     "_pd_proc_ls_prof_wR_factor", "_pd_proc_ls_prof_wR_expected", "_maud_proc_ls_minimize_quantity",
     "_pd_proc_info_author_name", "_pd_proc_title", "_riet_par_distribution_strain_slope",
-    "_riet_par_background_peak_heigth", "_texture_spherical_component_hwhm", "_texture_fiber_component_hwhm",
+    "_riet_par_background_peak_heigth",
     "_riet_par_spec_displac_y_2R", "_instrument_detector_gas_fluorescence_intensity",
 		  "_pd_meas_orientation_omega", "_pd_meas_orientation_chi", "_pd_meas_orientation_phi", "_pd_meas_orientation_eta",
 		  "_pd_meas_orientation_2theta", "_space_group_name_H-M_alt", "_space_group_name_Hall", "_space_group_IT_number",
-  "_inst_incident_spectrum_plit_position"};
+  "_inst_incident_spectrum_plit_position", "_texture_spherical_component_fwhm", "_texture_fiber_component_fwhm"};
   private static final String[] replacingCIF = {"entropy", "_pd_meas_detector_id",
                                                    "_atom_site_B_iso_or_equiv",
 		"_atom_site_aniso_B_11", "_atom_site_aniso_B_22", "_atom_site_aniso_B_33",
@@ -116,11 +116,11 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
     "_cell_formula_units_Z", "_chemical_formula_sum", "_refine_ls_R_factor_all",
     "_refine_ls_wR_factor_all", "_refine_ls_goodness_of_fit_all", "_refine_ls_weighting_scheme",
     "_publ_contact_author_name", "_publ_section_title", "_riet_par_distribution_strain_decay",
-    "_riet_par_background_peak_height", "_texture_spherical_component_fwhm", "_texture_fiber_component_fwhm",
+    "_riet_par_background_peak_height",
       "_riet_par_spec_displac_y_2R", "_instrument_detector_air_fluorescence_intensity",
 		  "_pd_meas_angle_omega", "_pd_meas_angle_chi", "_pd_meas_angle_phi", "_pd_meas_angle_eta",
 		  "_pd_meas_angle_2theta", "_symmetry_space_group_name_H-M", "_symmetry_space_group_name_Hall", "_symmetry_Int_Tables_number",
-		  "_inst_incident_spectrum_split_position"};
+		  "_inst_incident_spectrum_split_position", "_texture_spherical_component_hwhm", "_texture_fiber_component_hwhm"};
   private static final String[] stringToReplace = {"Entrophy", "refl. Matrix method",
                                                    "Hippo specimen precession error",
                                                    "No specimen precession error",
@@ -1198,7 +1198,19 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
 	public void checkConsistencyForVersion(double version) {
 	}
 
-	public void refreshForNotificationUp(XRDcat source, int reason, int paramNumber) {
+  public void printOptionalOutputToConsole() {
+    printOptionalOutput();
+    Object[] childrens = getObjectChildren();
+    int numberOfChildrens = childrens.length;
+    for (int i = 0; i < numberOfChildrens; i++) {
+      ((XRDcat) childrens[i]).printOptionalOutputToConsole();
+    }
+  }
+
+  public void printOptionalOutput() {
+  }
+
+  public void refreshForNotificationUp(XRDcat source, int reason, int paramNumber) {
     if (!getFilePar().isComputingDerivate() || source == this)
       refreshComputation = true;
   }

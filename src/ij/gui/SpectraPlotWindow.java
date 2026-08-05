@@ -225,13 +225,13 @@ public class SpectraPlotWindow extends ImageWindow implements ActionListener, Cl
     Label coord = new Label(" Starting: ");
 //		coord.setFont(new Font("Monospaced", Font.PLAIN, 12));
     buttons.add(coord);
-    minT = new TextField((new Double(xValues[0] * MoreMath.InchesTomm -
-            MaudPreferences.getDouble("camera.startingPointX", -70.0))).toString());
+    minT = new TextField(Double.toString(xValues[0] * MoreMath.InchesTomm -
+            MaudPreferences.getDouble("camera.startingPointX", -70.0)));
     buttons.add(minT);
     coord = new Label(" Delta: ");
 //		coord.setFont(new Font("Monospaced", Font.PLAIN, 12));
     buttons.add(coord);
-    maxT = new TextField((new Double((xValues[nPoints - 1] - xValues[0]) * MoreMath.InchesTomm)).toString());
+    maxT = new TextField(Double.toString((xValues[nPoints - 1] - xValues[0]) * MoreMath.InchesTomm));
     buttons.add(maxT);
     coord = new Label(" Radius (mm, set 0 for deg coords): ");
 //		coord.setFont(new Font("Monospaced", Font.PLAIN, 12));

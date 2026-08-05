@@ -222,7 +222,9 @@ public class Constants {
   public static final double ENERGY_CONSTANT = 1.9569341E-6;
 	
   public static final double ENERGY_LAMBDA = 12398.424121;
+  public static final double ENERGY_LAMBDA_KEV = ENERGY_LAMBDA * 0.001;
   public static final double I_ENERGY_LAMBDA = 1.0 / 12398.424121;
+  public static final double I_ENERGY_LAMBDA_KEV = I_ENERGY_LAMBDA * 1000;
 
   public static final int FLOAT_FIELD = 12;
   public static final double TOOLERANCE_COORD = 1.0E-3;
@@ -267,13 +269,13 @@ public class Constants {
   public static String resultsFile = "results.txt";
   public static String userName = null;
   public static String startPath = "/";
-  public static String maudReleaseBuilt = "$Revision: 2.99995 $";
-  public static String maudDateBuilt = "$Date: 2026/03/31 12:00:00 $";
+  public static String maudReleaseBuilt = "$Revision: 2.99997 $";
+  public static String maudDateBuilt = "$Date: 2026/04/29 12:00:00 $";
 
   public static final double arg2PIover3 = PI2 / 3.;
   public static final double sinArg2PIover3 = Math.sin(arg2PIover3);
   public static final double cosArg2PIover3 = Math.cos(arg2PIover3);
-  public static double maud_version = 2.99995;
+  public static double maud_version = 2.99997;
   public static boolean useOpenCL = false;
   public static Vector<OpenCLDevice> openClDevices= null;
   public static OpenCLDevice openclDevice = null;

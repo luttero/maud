@@ -701,7 +701,7 @@ public class GridAttributeDialog extends JDialog {
     int index = conLevelTable_.getSelectedRow();
     if(index < 0) return;
     conLevelModel_.insert(index,
-                          new Double(0.0),
+                          0.0,
                           new ContourLineAttribute(ContourLineAttribute.SOLID));
   }
 
@@ -709,7 +709,7 @@ public class GridAttributeDialog extends JDialog {
     int index = conLevelTable_.getSelectedRow();
     if(index < 0) return;
     conLevelModel_.insert(index + 1,
-                          new Double(0.0),
+                          0.0,
                           new ContourLineAttribute(ContourLineAttribute.SOLID));
   }
 
@@ -757,7 +757,7 @@ public class GridAttributeDialog extends JDialog {
     int size = conLevels_.size();
     for(int i=0; i < size; i++) {
       try {
-        val = new Double(conLevels_.getLevel(i));
+        val = conLevels_.getLevel(i);
         attr = conLevels_.getContourLineAttribute(i);
         conLevelModel_.add(val, attr);
       } catch (ContourLevelNotFoundException e) {
@@ -858,7 +858,7 @@ public class GridAttributeDialog extends JDialog {
         if(obj instanceof Double) {
           values.setElementAt(obj, row);
         } else if(obj instanceof String) {
-          values.setElementAt(new Double((String)obj), row);
+          values.setElementAt(Double.parseDouble((String)obj), row);
         }
       } else {
         attr.setElementAt(obj, row);

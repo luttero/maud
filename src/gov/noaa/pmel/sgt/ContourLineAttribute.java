@@ -140,11 +140,11 @@ public class ContourLineAttribute extends LineAttribute {
   public void setLabelEnabled(boolean sle) {
     if(labelEnabled_ != sle) {
       labelEnabledOverridden_ = true;
-      Boolean tempOld = new Boolean(labelEnabled_);
+      Boolean tempOld = labelEnabled_;
       labelEnabled_ = sle;
       changes_.firePropertyChange("labelEnabled",
                                   tempOld,
-                                  new Boolean(labelEnabled_));
+                                  (Boolean) labelEnabled_);
     }
   }
   /**
@@ -180,11 +180,11 @@ public class ContourLineAttribute extends LineAttribute {
   public void setLabelHeightP(double height) {
     if(labelHeightP_ != height) {
       labelHeightPOverridden_ = true;
-      Double tempOld = new Double(labelHeightP_);
+      Double tempOld = labelHeightP_;
       labelHeightP_ = height;
       changes_.firePropertyChange("labelHeightP",
                                   tempOld,
-                                  new Double(labelHeightP_));
+                                  labelHeightP_);
     }
   }
   /**
@@ -241,11 +241,11 @@ public class ContourLineAttribute extends LineAttribute {
    */
   public void setAutoLabel(boolean auto) {
     if(autoLabel_ != auto) {
-      Boolean tempOld = new Boolean(autoLabel_);
+      Boolean tempOld = autoLabel_;
       autoLabel_ = auto;
       changes_.firePropertyChange("autoLabel",
                                   tempOld,
-                                  new Boolean(autoLabel_));
+                                  (Boolean) autoLabel_);
     }
   }
   /**
@@ -271,11 +271,11 @@ public class ContourLineAttribute extends LineAttribute {
    */
   public void setLabelEnabledOverridden(boolean override) {
     if(labelEnabledOverridden_ != override) {
-      Boolean tempOld = new Boolean(labelEnabledOverridden_);
+      Boolean tempOld = labelEnabledOverridden_;
       labelEnabledOverridden_ = override;
       changes_.firePropertyChange("labelEnabledOverridden",
                                   tempOld,
-                                  new Boolean(labelEnabledOverridden_));
+          (Boolean) labelEnabledOverridden_);
     }
   }
   /**
@@ -295,11 +295,11 @@ public class ContourLineAttribute extends LineAttribute {
    */
   public void setLabelColorOverridden(boolean override) {
     if(labelColorOverridden_ != override) {
-      Boolean tempOld = new Boolean(labelColorOverridden_);
+      Boolean tempOld = labelColorOverridden_;
       labelColorOverridden_ = override;
       changes_.firePropertyChange("labelColorOverridden",
                                   tempOld,
-                                  new Boolean(labelColorOverridden_));
+                                  (Boolean) labelColorOverridden_);
     }
   }
   /**
@@ -319,11 +319,11 @@ public class ContourLineAttribute extends LineAttribute {
    */
   public void setLabelHeightPOverridden(boolean override) {
     if(labelHeightPOverridden_ != override) {
-      Boolean tempOld = new Boolean(labelHeightPOverridden_);
+      Boolean tempOld = labelHeightPOverridden_;
       labelHeightPOverridden_ = override;
       changes_.firePropertyChange("labelHeightPOverridden",
                                   tempOld,
-                                  new Boolean(labelHeightPOverridden_));
+                                  (Boolean) labelHeightPOverridden_);
     }
   }
   /**
@@ -343,11 +343,11 @@ public class ContourLineAttribute extends LineAttribute {
    */
   public void setLabelFontOverridden(boolean override) {
     if(labelFontOverridden_ != override) {
-      Boolean tempOld = new Boolean(labelFontOverridden_);
+      Boolean tempOld = labelFontOverridden_;
       labelFontOverridden_ = override;
       changes_.firePropertyChange("labelFontOverridden",
                                   tempOld,
-                                  new Boolean(labelFontOverridden_));
+                                  (Boolean) labelFontOverridden_);
     }
   }
   /**
@@ -367,11 +367,11 @@ public class ContourLineAttribute extends LineAttribute {
    */
   public void setLabelFormatOverridden(boolean override) {
     if(labelFormatOverridden_ != override) {
-      Boolean tempOld = new Boolean(labelFormatOverridden_);
+      Boolean tempOld = labelFormatOverridden_;
       labelFormatOverridden_ = override;
       changes_.firePropertyChange("labelFormatOverridden",
                                   tempOld,
-                                  new Boolean(labelFormatOverridden_));
+                                  (Boolean) labelFormatOverridden_);
     }
   }
   public void setDashArray(float[] dashes) {
@@ -395,11 +395,11 @@ public class ContourLineAttribute extends LineAttribute {
    */
   public void setDashArrayOverridden(boolean override) {
     if(dashArrayOverridden_ != override) {
-      Boolean tempOld = new Boolean(dashArrayOverridden_);
+      Boolean tempOld = dashArrayOverridden_;
       dashArrayOverridden_ = override;
       changes_.firePropertyChange("dashArrayOverridden",
                                   tempOld,
-                                  new Boolean(dashArrayOverridden_));
+          (Boolean) dashArrayOverridden_);
     }
   }
   public void setDashPhase(float phase) {
@@ -423,11 +423,11 @@ public class ContourLineAttribute extends LineAttribute {
    */
   public void setDashPhaseOverridden(boolean override) {
     if(dashPhaseOverridden_ != override) {
-      Boolean tempOld = new Boolean(dashPhaseOverridden_);
+      Boolean tempOld = dashPhaseOverridden_;
       dashPhaseOverridden_ = override;
       changes_.firePropertyChange("dashPhaseOverridden",
                                   tempOld,
-                                  new Boolean(dashPhaseOverridden_));
+          (Boolean) dashPhaseOverridden_);
     }
   }
   public void setStyle(int st) {
@@ -452,11 +452,11 @@ public class ContourLineAttribute extends LineAttribute {
    */
   public void setStyleOverridden(boolean override) {
     if(styleOverridden_ != override) {
-      Boolean tempOld = new Boolean(styleOverridden_);
+      Boolean tempOld = styleOverridden_;
       styleOverridden_ = override;
       changes_.firePropertyChange("styleOverridden",
                                   tempOld,
-                                  new Boolean(styleOverridden_));
+          (Boolean) styleOverridden_);
     }
   }
   public void setColor(Color c) {
@@ -480,11 +480,11 @@ public class ContourLineAttribute extends LineAttribute {
    */
   public void setColorOverridden(boolean override) {
     if(colorOverridden_ != override) {
-      Boolean tempOld = new Boolean(colorOverridden_);
+      Boolean tempOld = colorOverridden_;
       colorOverridden_ = override;
       changes_.firePropertyChange("colorOverridden",
                                   tempOld,
-                                  new Boolean(colorOverridden_));
+          (Boolean) colorOverridden_);
     }
   }
   public void setWidth(float t) {
@@ -508,11 +508,11 @@ public class ContourLineAttribute extends LineAttribute {
    */
   public void setWidthOverridden(boolean override) {
     if(widthOverridden_ != override) {
-      Boolean tempOld = new Boolean(widthOverridden_);
+      Boolean tempOld = widthOverridden_;
       widthOverridden_ = override;
       changes_.firePropertyChange("widthOverridden",
                                   tempOld,
-                                  new Boolean(widthOverridden_));
+          (Boolean) widthOverridden_);
     }
   }
   public void setCapStyle(int style) {
@@ -536,11 +536,11 @@ public class ContourLineAttribute extends LineAttribute {
    */
   public void setCapStyleOverridden(boolean override) {
     if(capStyleOverridden_ != override) {
-      Boolean tempOld = new Boolean(capStyleOverridden_);
+      Boolean tempOld = capStyleOverridden_;
       capStyleOverridden_ = override;
       changes_.firePropertyChange("capStyleOverridden",
                                   tempOld,
-                                  new Boolean(capStyleOverridden_));
+          (Boolean) capStyleOverridden_);
     }
   }
   public void setMiterStyle(int style) {
@@ -564,11 +564,11 @@ public class ContourLineAttribute extends LineAttribute {
    */
   public void setMiterStyleOverridden(boolean override) {
     if(miterStyleOverridden_ != override) {
-      Boolean tempOld = new Boolean(miterStyleOverridden_);
+      Boolean tempOld = miterStyleOverridden_;
       miterStyleOverridden_ = override;
       changes_.firePropertyChange("miterStyleOverridden",
                                   tempOld,
-                                  new Boolean(miterStyleOverridden_));
+          (Boolean) miterStyleOverridden_);
     }
   }
   public void setMiterLimit(float t) {
@@ -592,11 +592,11 @@ public class ContourLineAttribute extends LineAttribute {
    */
   public void setMiterLimitOverridden(boolean override) {
     if(miterLimitOverridden_ != override) {
-      Boolean tempOld = new Boolean(miterLimitOverridden_);
+      Boolean tempOld = miterLimitOverridden_;
       miterLimitOverridden_ = override;
       changes_.firePropertyChange("miterLimitOverridden",
                                   tempOld,
-                                  new Boolean(miterLimitOverridden_));
+          (Boolean) miterLimitOverridden_);
     }
   }
   public String toString() {

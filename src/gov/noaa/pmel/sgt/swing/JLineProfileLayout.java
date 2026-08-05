@@ -67,6 +67,7 @@ import it.unitn.ing.rista.util.Misc;
  * @deprecated As of v2.0, replaced by {@link gov.noaa.pmel.sgt.swing.JPlotLayout}
 **/
 /*oodE***********************************************/
+@Deprecated
 public class JLineProfileLayout extends JGraphicLayout {
   //
   // save handles to unique components

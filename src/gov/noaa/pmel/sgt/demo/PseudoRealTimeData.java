@@ -227,8 +227,8 @@ public class PseudoRealTimeData implements SGTLine, ActionListener {
       changes_.firePropertyChange("rangeModified", oldRange, xRange_);
     } else {
       changes_.firePropertyChange("dataModified",
-                                  new Integer(count_),
-                                  new Integer(count_+1));
+                                  count_,
+                                  count_+1);
     }
     count_++;
   }

@@ -43,6 +43,24 @@ from the older one.
 
 Maud Version notes:
 
+(05/08/2025):   2.99997. The "End of life" release.
+                This will be the last version 2.x release
+                before version 3.0 that will follow shortly.
+                This is mainly a bugs correction release.
+                The standard function texture model has been
+                changed a bit. Now it is using HWHM for fiber and
+                spherical components. A bug concerning the
+                normalisation not always applied has been fixed.
+                ODF output from standard function has been fixed also.
+                Kearns factors are calculated with the sharpness
+                index computation in texture. Output to the
+                console. Fixed the refinement when using some
+                weights modifiers that were not properly applied.
+                Fixed the batch launch computation and added
+                some methods to generate AI training patterns.
+                Some exports from the plot window has been fixed
+                also.
+
 (28/08/2025):   2.99994. The "Smithsonite" release.
                 Beautiful crystals in the Socorro museum.
                 Added export to GSAS datafile for the LumaCAM data.

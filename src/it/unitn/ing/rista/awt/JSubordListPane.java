@@ -249,18 +249,20 @@ public class JSubordListPane extends JPanel {
   public void setparameterlist() {
     if (itsparent != null) {
       XRDcat obj = (XRDcat) itsparent.subordinateloopField[theindex].selectedElement();
-      if (obj != null && obj != selectedObject)
-	      selectedObject = obj;
+      if (obj != null) {
+        if (obj != selectedObject)
+          selectedObject = obj;
         for (int i = 0; i < fieldNumber; i++) {
           Parameter apar = obj.parameterField[i];
           if (apar != null) {
-	          ((myJFrame) getFrameParent()).removeComponentfromlist(valueTF[i]);
+            ((myJFrame) getFrameParent()).removeComponentfromlist(valueTF[i]);
             ((myJFrame) getFrameParent()).addComponenttolist(valueTF[i], apar);
-	          valueTF[i].setText(apar.getValue());
+            valueTF[i].setText(apar.getValue());
           } /*else {
             ((myJFrame) getFrameParent()).removeComponentfromlist(valueTF[i]);
           }*/
         }
+      }
     }
   }
 

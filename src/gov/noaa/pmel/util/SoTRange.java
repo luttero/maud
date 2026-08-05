@@ -35,6 +35,7 @@ public abstract class SoTRange implements java.io.Serializable, Cloneable {
    * @since sgt 2.0
    * @deprecated As of sgt 3.0, replaced by {@link gov.noaa.pmel.util.SoTRange.Time SoTRange.Time}
    */
+  @Deprecated
   public static class GeoDate extends SoTRange {
     /** The range's first time  */
     public gov.noaa.pmel.util.GeoDate start = null;
@@ -268,6 +269,7 @@ public abstract class SoTRange implements java.io.Serializable, Cloneable {
     /**
      * @deprecated use SoTRange
      */
+    @Deprecated
     public Time(TimeRange trange) {
       start = trange.start.getTime();
       end = trange.end.getTime();
@@ -280,6 +282,7 @@ public abstract class SoTRange implements java.io.Serializable, Cloneable {
     /**
      * @deprecated use SoTRange.Time
      */
+    @Deprecated
     public Time(SoTRange.GeoDate trange) {
       this(trange.start, trange.end, trange.delta);
     }

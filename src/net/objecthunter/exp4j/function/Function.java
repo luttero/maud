@@ -86,6 +86,7 @@ public abstract class Function {
      * @deprecated since 0.4.5 All unicode letters are allowed to be used in function names since 0.4.3. This API
      *             Function can be safely ignored. Checks for function name validity can be done using Character.isLetter() et al.
      */
+    @Deprecated
     public static char[] getAllowedFunctionCharacters() {
         char[] chars = new char[53];
         int count = 0;

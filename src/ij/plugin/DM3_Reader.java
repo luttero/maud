@@ -715,48 +715,32 @@ public class DM3_Reader extends ImagePlus implements PlugIn
 		// data type
 		Object val=null;
 
-		if(encodedType==SHORT){ //short
-			val = new Short(blreadShort());
-		}
-		else if(encodedType==LONG){ //long
-			val = new Integer(blreadInt());
-		}
-		else if(encodedType==USHORT){ //u short
-			val = new Short(blreadUShort());
-		}
-		else if(encodedType==ULONG){ //u long
-			val = new Integer(blreadInt());
-		}
-		else if(encodedType==FLOAT){ //float
-			val = new Float(blreadFloat());
-		}
-		else if(encodedType==DOUBLE){ //double
-			val = new Double(blreadDouble());
-		}
-		else if(encodedType==BOOLEAN){ //boolean
-			if (f.readByte()==0){
-				val = new Boolean(false);
-			} else {
-				val = new Boolean(true);
-			}
-		}
-		else if(encodedType==CHAR){ //char
-			val = new Character( (char) f.readByte() );
-		}
-		else if(encodedType==OCTET){ //octet
-			// what's the difference?
-			val = new Byte( f.readByte() );
-		} else {
-			// Not a known data type
-			throw new IOException("rND, 0x"+hexPosition()+": Unknown data type "+encodedType);
-		}
+    //short
+    if(encodedType==SHORT) val = blreadShort();
+		else //long
+      if(encodedType==LONG) val = blreadInt();
+		else //u short
+      if(encodedType==USHORT) val = blreadUShort();
+		else //u long
+        if(encodedType==ULONG) val = blreadInt();
+		else //float
+          if(encodedType==FLOAT) val = blreadFloat();
+		else //double
+            if(encodedType==DOUBLE) val = blreadDouble();
+		else //boolean
+              if(encodedType==BOOLEAN) if (f.readByte() == 0) val = false;
+              else val = true;
+		else //char
+                if(encodedType==CHAR) val = (char) f.readByte();
+		else //octet
+                  // what's the difference?
+                  // Not a known data type
+                  if(encodedType==OCTET) val = f.readByte();
+                  else throw new IOException("rND, 0x" + hexPosition() + ": Unknown data type " + encodedType);
 
 		// Print out the value if necessary
-		if(debugLevel>3){
-			IJ.write("rND, 0x"+hexPosition()+": "+val);
-		} else if(debugLevel>0) {
-			IJ.write(""+val);
-		}
+		if(debugLevel>3) IJ.write("rND, 0x" + hexPosition() + ": " + val);
+    else if(debugLevel>0) IJ.write("" + val);
 
 		return val;
 	}
@@ -785,7 +769,7 @@ public class DM3_Reader extends ImagePlus implements PlugIn
 				// Manual conversion of the string if the above fails
 				rString="";
 				for(int i=0;i<stringSize;i+=2) {
-					rString+=new Character((char)((temp[i+1]&0xFF) <<8 | (temp[i] & 0xFF)));
+					rString+=(char)((temp[i+1]&0xFF) <<8 | (temp[i] & 0xFF));
 				}
 			}
 			
@@ -798,7 +782,7 @@ public class DM3_Reader extends ImagePlus implements PlugIn
 				// Manual conversion of the string if the above fails
 				rString="";
 				for(int i=0;i<stringSize;i+=2) {
-					rString+=new Character((char)((temp[i]&0xFF) <<8 | (temp[i+1] & 0xFF)));
+					rString+=(char)((temp[i]&0xFF) <<8 | (temp[i+1] & 0xFF));
 				}
 			}
 			
@@ -832,7 +816,7 @@ public class DM3_Reader extends ImagePlus implements PlugIn
 		else {
 			// assume its an array of simple types
 			// add changed to addElement for Java 1.1.7 compatibility
-			itemTypes.addElement(new Integer(arrayType));
+			itemTypes.addElement(arrayType);
 		}
 
 		return itemTypes;
@@ -877,13 +861,13 @@ public class DM3_Reader extends ImagePlus implements PlugIn
 		}
 		else {  // treat as binary data
 			// Make up my own tags to indicate data size
-			storeTag(curTagName+".Size",new Long(bufSize));
+			storeTag(curTagName+".Size",bufSize);
 			// and current offset 
 			// nb for a while I had offset + 1but this was wrong!
 			// and gave a peculiar staircase histogram because what I had
 			// ended up doing was reading one byte each from a pair of pixels 
 			// rather than 2 bytes from a single pixel.  Ugh!
-			storeTag(curTagName+".Offset",new Long(f.getFilePointer()));
+			storeTag(curTagName+".Offset",f.getFilePointer());
 				
 			// then go ahead and skip bufSize bytes from current position
 			// without trying to read this data
@@ -912,7 +896,7 @@ public class DM3_Reader extends ImagePlus implements PlugIn
 			int fieldType=f.readInt();
 			
 			// add changed to addElement for Java 1.1.7 compatibility
-		    fieldTypes.addElement(new Integer(fieldType));
+		    fieldTypes.addElement(fieldType);
 		}
 		
 		return fieldTypes;

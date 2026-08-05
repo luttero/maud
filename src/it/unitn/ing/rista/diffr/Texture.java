@@ -52,18 +52,19 @@ import fr.ensicaen.odfplot.isometricVisualizer.IsometricFrame;*/
 
 public class Texture extends XRDcat {
 
-	public static double rotatePoleFigureDeg = getAngleFromPolarNotation(MaudPreferences.getPref("PlotPF.NWSE", "N"));
-	public static double rotateAlpha = MaudPreferences.getDouble("Texture.phiZero", 0.0);
+  public static double rotatePoleFigureDeg = getAngleFromPolarNotation(MaudPreferences.getPref("PlotPF.NWSE", "N"));
+  public static double rotateAlpha = MaudPreferences.getDouble("Texture.phiZero", 0.0);
+  public double[] fnorm = {0.0, 0.0, 10.0, 0.0, 0.0, 0.0, 0.0};
 
-	public static String[] prefs = {"texture.ODFdefaultResolution", "texture.PFintegrationStep",
-                                  "texture.fiberTextureGenStep", "texture.defaultTubeRadius",
-                                  "texture.defaultTubeProjectionStatus", "texture.minimumPFIntensity",
-                                  "texture.storeConversionInMemory", "texture.startingExponent"
+  public static String[] prefs = {"texture.ODFdefaultResolution", "texture.PFintegrationStep",
+      "texture.fiberTextureGenStep", "texture.defaultTubeRadius",
+      "texture.defaultTubeProjectionStatus", "texture.minimumPFIntensity",
+      "texture.storeConversionInMemory", "texture.startingExponent"
   };
   public static String[] prefVal = {"15.0", "0.0",
-                                    "5.0", "10",
-                                    "true", "0.02",
-                                    "true", "0.01"
+      "5.0", "10",
+      "true", "0.02",
+      "true", "0.01"
   };
 
   public int numberPoleFigures = 0;
@@ -77,8 +78,8 @@ public class Texture extends XRDcat {
   public static String ORTHOROMBIC = "orthorhombic";
   public static String FIBER = "fiber";
   public static String[] symmetrychoice = {NONE, TWO_FOLD, THREE_FOLD, FOUR_FOLD,
-                                           SIX_FOLD, MIRROR, ORTHOROMBIC,
-                                           FIBER};
+      SIX_FOLD, MIRROR, ORTHOROMBIC,
+      FIBER};
 
   public Texture(XRDcat aobj, String alabel) {
     super(aobj, alabel);
@@ -91,16 +92,16 @@ public class Texture extends XRDcat {
   public Texture() {
   }
 
-	public void checkConsistencyForVersion(double version) {
-  	   if (version < 2.995) {
-  	   	rotateODFBy(90, 0, 0, -1 , 1, 1);
-      }
-	}
+  public void checkConsistencyForVersion(double version) {
+    if (version < 2.995) {
+      rotateODFBy(90, 0, 0, -1, 1, 1);
+    }
+  }
 
-	public void rotateODFBy(double alpha, double beta, double gamma, int multAlpha, int multBeta, int multGamma) {
-	}
+  public void rotateODFBy(double alpha, double beta, double gamma, int multAlpha, int multBeta, int multGamma) {
+  }
 
-	public void saveTextureFactor(Phase aphase, Sample asample) {
+  public void saveTextureFactor(Phase aphase, Sample asample) {
     FilePar aparFile = getFilePar();
     if (!aparFile.isTextureComputationPermitted() || !Constants.textureOutput)
       return;
@@ -132,12 +133,12 @@ public class Texture extends XRDcat {
             int numberDatasets = asample.activeDatasetsNumber();
             int numberDataPoints = 0;
             for (int i = 0; i < numberDatasets; i++) {
-	            DataFileSet dataset = asample.getActiveDataSet(i);
+              DataFileSet dataset = asample.getActiveDataSet(i);
 //	            int radCount = dataset.getInstrument().getRadiationType().getLinesCount();
               for (int k = 0; k < dataset.activedatafilesnumber(); k++) {
-	              DiffrDataFile datafile = dataset.getActiveDataFile(k);
+                DiffrDataFile datafile = dataset.getActiveDataFile(k);
 //                numberDataPoints += datafile.positionsPerPattern * datafile.radiationsNumber;
-	              for (int ppp = 0; ppp < datafile.positionsPerPattern; ppp++) {
+                for (int ppp = 0; ppp < datafile.positionsPerPattern; ppp++) {
                   for (int l = 0; l < datafile.radiationsNumber; l++) {
                     if (datafile.isInsideRange(datafile.getPositions(aphase)[j][ppp][l])) {
                       double pf = datafile.getExperimentalTextureFactors(aphase, j)[ppp][l];
@@ -145,20 +146,20 @@ public class Texture extends XRDcat {
                         numberDataPoints++;
                     }
                   }
-	              }
+                }
               }
             }
             PFwriter.write(numberDataPoints + " <-  MEPSUM");
             PFwriter.write(Constants.lineSeparator);
             double wgt = Math.sqrt(refl.getWeight());
 
-	          numberDataPoints = 0;
-	          for (int i = 0; i < numberDatasets; i++) {
-		          DataFileSet dataset = asample.getActiveDataSet(i);
+            numberDataPoints = 0;
+            for (int i = 0; i < numberDatasets; i++) {
+              DataFileSet dataset = asample.getActiveDataSet(i);
 //		          int radCount = dataset.getInstrument().getRadiationType().getLinesCount();
-		          for (int k = 0; k < dataset.activedatafilesnumber(); k++) {
-			          DiffrDataFile datafile = dataset.getActiveDataFile(k);
-			          for (int ppp = 0; ppp < datafile.positionsPerPattern; ppp++) {
+              for (int k = 0; k < dataset.activedatafilesnumber(); k++) {
+                DiffrDataFile datafile = dataset.getActiveDataFile(k);
+                for (int ppp = 0; ppp < datafile.positionsPerPattern; ppp++) {
                   for (int l = 0; l < datafile.radiationsNumber; l++) {
                     double position = datafile.getPositions(aphase)[j][ppp][l];
                     if (datafile.isInsideRange(position)) {
@@ -178,7 +179,7 @@ public class Texture extends XRDcat {
                       }
                     }
                   }
-			          }
+                }
               }
             }
           }
@@ -229,9 +230,9 @@ public class Texture extends XRDcat {
   public void computeTextureFactor(Phase aphase, Sample asample) {
     if (!refreshComputation)
       return;
-	  for (int j = 0; j < asample.activeDatasetsNumber(); j++)
-		  for (int k = 0; k < asample.getActiveDataSet(j).activedatafilesnumber(); k++)
-			  asample.getActiveDataSet(j).getActiveDataFile(k).randomToTextureFactors(aphase);
+    for (int j = 0; j < asample.activeDatasetsNumber(); j++)
+      for (int k = 0; k < asample.getActiveDataSet(j).activedatafilesnumber(); k++)
+        asample.getActiveDataSet(j).getActiveDataFile(k).randomToTextureFactors(aphase);
     refreshComputation = false;
   }
 
@@ -243,6 +244,14 @@ public class Texture extends XRDcat {
     for (int i = 0; i < numberOfPoints; i++)
       random[i] = 1.0;
     return random;
+  }
+
+  public double computeTextureFactor(Reflection reflex, double alpha, double beta) {
+    double[][] alphabeta = new double[2][1];
+    alphabeta[0][0] = alpha;
+    alphabeta[0][0] = beta;
+    double[] textF = computeTextureFactor(alphabeta, reflex);
+    return textF[0];
   }
 
   public double getODF(double alpha, double beta, double gamma) {
@@ -257,41 +266,68 @@ public class Texture extends XRDcat {
     return Constants.ODFresolution;
   }
 
-  public double computeSharpness() {
+  public void printOptionalOutput() {
+    computeSharpness();
+  }
+
+  public void computeSharpness() {
 
     initializeAll();
 
-    double va = 0.0, b = 0.0, fn = 0.0;
-
-    double fnorm = 0.0;
-    double resolutionR = getResolutionD() * Constants.DEGTOPI;
+    double va, b, fn;
+    for (int i = 0; i < 7; i++)
+      fnorm[i] = 0.0;
+    fnorm[2] = 10.0;
+    double resolutionR = getResolutionD() * Constants.DEGTOPI * 0.5;
 
     b = resolutionR / 4.0;
-    double min = 10.0, max = 0.0;
 
-    for (double gamma = b; gamma <= Constants.PI2; gamma += resolutionR) {
+    for (double beta = b; beta <= Constants.PI; beta += resolutionR) {
+      double dvc = 2.0 * b;
+      if (beta == b || Constants.PI - beta < b * 3.0)
+        dvc *= 2.0;
+      va = resolutionR * resolutionR * (Math.cos(beta - dvc) - Math.cos(beta + dvc));
 
-      for (double beta = b; beta <= Constants.PI; beta += resolutionR) {
-        double dvc = 2.0 * b;
-        if (beta == b || Constants.PI - beta < b * 3.0)
-          dvc *= 2.0;
-        va = resolutionR * resolutionR * (Math.cos(beta - dvc) - Math.cos(beta + dvc));
+      double sinbeta = Math.sin(beta);
+      double sin2beta = sinbeta * sinbeta;
+      double cos2beta = 1.0 - sin2beta;
 
-        for (double alpha = b; alpha <= Constants.PI2; alpha += resolutionR) {
+      for (double alpha = b; alpha <= Constants.PI2; alpha += resolutionR) {
+        double sinalpha = Math.sin(alpha);
+        sinalpha *= sinalpha;
+        double cos2alpha = 1.0 - sinalpha;
+
+        double fn_p = 0.0;
+        for (double gamma = b; gamma <= Constants.PI2; gamma += resolutionR) {
           fn = getODF(alpha, beta, gamma);
-          min = Math.min(min, fn);
-          max = Math.max(max, fn);
-          fnorm += fn * fn * va;
+          fnorm[0] += fn * fn * va;
+          if (fn > 1.0E-80) {
+            fnorm[1] -= fn * Math.log(fn) * va;
+            fn_p += fn;
+          }
+          fnorm[2] = Math.min(fnorm[2], fn);
+          fnorm[3] = Math.max(fnorm[3], fn);
         }
+        fnorm[4] += fn_p * sinalpha * sin2beta * va;
+        fnorm[5] += fn_p * cos2alpha * sin2beta * va;
+        fnorm[6] += fn_p * cos2beta * va;
       }
     }
-    fnorm /= (8.0 * Constants.PI * Constants.PI);
-    System.out.println("F2 = " + fnorm + " , min = " + min + " , max = " + max);
-    return fnorm;
+
+    for (int i = 0; i < 2; i++)
+      fnorm[i] /= (8.0 * Constants.PI * Constants.PI);
+    System.out.println("F2 = " + fnorm[0] + " , S = " + fnorm[1] + " , min ODF = " + fnorm[2] + " , max ODF = " + fnorm[3]);
+    double sum = 0.0;
+    for (int i = 4; i < 7; i++) {
+      fnorm[i] /= (8.0 * Constants.PI * Constants.PI);
+      sum += fnorm[i];
+    }
+    System.out.println("FR = " + fnorm[4] + " , FT = " + fnorm[5] + " , FN = " + fnorm[6] + " , SUM = " + sum);
   }
 
   public String computeAndGetSharpness() {
-    return Double.toString(computeSharpness());
+    computeSharpness();
+    return Double.toString(fnorm[0]);
   }
 
   public double[][] getPoleFigureGrid(Reflection refl, int numberofPoints, double maxAngle) {
@@ -414,7 +450,8 @@ public class Texture extends XRDcat {
       case 4:
         Utilities3DRendering.show3DODF(new Frame(), map3ToPlot, alphaSlices, betaSlices, gammaSlices, 1, false, 256);
         break;
-      default: {}
+      default: {
+      }
     }
   }
 
@@ -435,84 +472,84 @@ public class Texture extends XRDcat {
 
 // End 3D plot
 
-	static String gridResString = "texturePlot.gridResolution";
-	static String zoomString = "texturePlot.zoomFactor";
-	static String maxAngleString = "texturePlot.maxAzimuthalAngle";
-	static String logTexturePlotString = "texturePlot.logScale";
-	static String numberofColors = "texturePlot.colorsNumber";
-	public static int lastResolution = MaudPreferences.getInteger(gridResString, 101);
-	public static double zoom = MaudPreferences.getDouble(zoomString, 1); // must be a power of 2
-	public static double filterWidth = MaudPreferences.getDouble("texturePlot.gaussFilterWidth", 0.0);
+  static String gridResString = "texturePlot.gridResolution";
+  static String zoomString = "texturePlot.zoomFactor";
+  static String maxAngleString = "texturePlot.maxAzimuthalAngle";
+  static String logTexturePlotString = "texturePlot.logScale";
+  static String numberofColors = "texturePlot.colorsNumber";
+  public static int lastResolution = MaudPreferences.getInteger(gridResString, 101);
+  public static double zoom = MaudPreferences.getDouble(zoomString, 1); // must be a power of 2
+  public static double filterWidth = MaudPreferences.getDouble("texturePlot.gaussFilterWidth", 0.0);
 
 
-	public void savePoleFiguresToFile(BufferedImage concatImage, String filename) {
-		try {
-			ImageIO.write(concatImage, "png", new File(filename));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+  public void savePoleFiguresToFile(BufferedImage concatImage, String filename) {
+    try {
+      ImageIO.write(concatImage, "png", new File(filename));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
 
-	public BufferedImage getPoleFigureBufferedImage(int w, int h, gov.noaa.pmel.sgt.ColorMap colorMap, Reflection pole,
-	                                                int mode, int resolutionPoints, double maxAngle, int zoom) {
-		BufferedImage bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+  public BufferedImage getPoleFigureBufferedImage(int w, int h, gov.noaa.pmel.sgt.ColorMap colorMap, Reflection pole,
+                                                  int mode, int resolutionPoints, double maxAngle, int zoom) {
+    BufferedImage bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
 
-		Graphics2D g = bi.createGraphics();
+    Graphics2D g = bi.createGraphics();
 
-		PlotPoleFigure.createGrid(getFilePar().getSample(0), pole, mode, resolutionPoints,
-			maxAngle, zoom, filterWidth);
+    PlotPoleFigure.createGrid(getFilePar().getSample(0), pole, mode, resolutionPoints,
+        maxAngle, zoom, filterWidth);
 
 
-		// drawing the circle around
-		Stroke stroke = g.getStroke();
-		g.setColor(Color.black);
-		g.setStroke(new BasicStroke(1));
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		g.drawOval(0, 0, w - 1, h - 1);
-		g.setStroke(stroke);
+    // drawing the circle around
+    Stroke stroke = g.getStroke();
+    g.setColor(Color.black);
+    g.setStroke(new BasicStroke(1));
+    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    g.drawOval(0, 0, w - 1, h - 1);
+    g.setStroke(stroke);
 
-		g.dispose();
+    g.dispose();
 
-		return bi;
-	}
+    return bi;
+  }
 
-	public BufferedImage concatenateAllPoleFiguresImages(BufferedImage[] pfImages) {
+  public BufferedImage concatenateAllPoleFiguresImages(BufferedImage[] pfImages) {
 
-		int imagesNumber = pfImages.length;
-		int rowsNumber = 1;
-		int colsNumber = imagesNumber;
-		if (imagesNumber > 4) { // put in more rows
-			rowsNumber = (int) Math.sqrt(imagesNumber);
-			colsNumber = (imagesNumber + rowsNumber - 1) / rowsNumber;
-		}
+    int imagesNumber = pfImages.length;
+    int rowsNumber = 1;
+    int colsNumber = imagesNumber;
+    if (imagesNumber > 4) { // put in more rows
+      rowsNumber = (int) Math.sqrt(imagesNumber);
+      colsNumber = (imagesNumber + rowsNumber - 1) / rowsNumber;
+    }
 
-		int heightTotal = 0;
-		for(int j = 0; j < imagesNumber; j += colsNumber) {
-			heightTotal += pfImages[j].getHeight();
-		}
-		int widthTotal = 0;
-		for(int j = 0; j < colsNumber; j++) {
-			widthTotal += pfImages[j].getWidth();
-		}
+    int heightTotal = 0;
+    for (int j = 0; j < imagesNumber; j += colsNumber) {
+      heightTotal += pfImages[j].getHeight();
+    }
+    int widthTotal = 0;
+    for (int j = 0; j < colsNumber; j++) {
+      widthTotal += pfImages[j].getWidth();
+    }
 
-		BufferedImage concatImage = new BufferedImage(widthTotal, heightTotal, BufferedImage.TYPE_INT_RGB);
-		Graphics2D g2d = concatImage.createGraphics();
-		int heightCurr = 0;
-		int widthCurr = 0;
-		int index = 0;
-		for(int j = 0; j < pfImages.length; j++) {
-			if (index >= colsNumber) {
-				index = 0;
-				widthCurr = 0;
-				heightCurr += pfImages[j - 1].getHeight();
-			}
-			g2d.drawImage(pfImages[j], widthCurr, heightCurr, null);
-			widthCurr += pfImages[j].getWidth();
-			index++;
-		}
-		g2d.dispose();
-		return concatImage;
-	}
+    BufferedImage concatImage = new BufferedImage(widthTotal, heightTotal, BufferedImage.TYPE_INT_RGB);
+    Graphics2D g2d = concatImage.createGraphics();
+    int heightCurr = 0;
+    int widthCurr = 0;
+    int index = 0;
+    for (int j = 0; j < pfImages.length; j++) {
+      if (index >= colsNumber) {
+        index = 0;
+        widthCurr = 0;
+        heightCurr += pfImages[j - 1].getHeight();
+      }
+      g2d.drawImage(pfImages[j], widthCurr, heightCurr, null);
+      widthCurr += pfImages[j].getWidth();
+      index++;
+    }
+    g2d.dispose();
+    return concatImage;
+  }
 
   public boolean needIntensityExtractor() {
     return false;
@@ -532,59 +569,59 @@ public class Texture extends XRDcat {
 
   public void refreshForNotificationUp(XRDcat source, int reason, int paramNumber) {
     if (!getFilePar().isComputingDerivate() || source == this || reason == Constants.TEXTURE_CHANGED) {
-	    update(false);
-	    refreshComputation = true;
+      update(false);
+      refreshComputation = true;
     }
   }
 
   public void refreshForNotificationDown(XRDcat source, int reason) {
     if (!getFilePar().isComputingDerivate() || source == this || reason == Constants.TEXTURE_CHANGED) {
-	    update(false);
-	    refreshComputation = true;
+      update(false);
+      refreshComputation = true;
     }
   }
 
   public static double getAngleFromPolarNotation(String orientation) {
-		if (orientation.toLowerCase().startsWith("e"))
-		  return 0.0;
-	  if (orientation.toLowerCase().startsWith("w"))
-		  return 180.0;
-	  if (orientation.toLowerCase().startsWith("s"))
-		  return 270.0;
-	  return 90.0;  // North
+    if (orientation.toLowerCase().startsWith("e"))
+      return 0.0;
+    if (orientation.toLowerCase().startsWith("w"))
+      return 180.0;
+    if (orientation.toLowerCase().startsWith("s"))
+      return 270.0;
+    return 90.0;  // North
   }
 
-	public static double[][] rotatePoleFigure(double[][] matrix) {
-		String orientation = MaudPreferences.getPref("PlotPF.NWSE", "N");
+  public static double[][] rotatePoleFigure(double[][] matrix) {
+    String orientation = MaudPreferences.getPref("PlotPF.NWSE", "N");
 
-		if (orientation.toLowerCase().startsWith("e"))
-			return matrix;
+    if (orientation.toLowerCase().startsWith("e"))
+      return matrix;
 
-		int elements = matrix.length;
-		double[][] rotMatrix = new double[elements][elements];
+    int elements = matrix.length;
+    double[][] rotMatrix = new double[elements][elements];
 
-		if (orientation.toLowerCase().startsWith("w")) {
-			for (int i = 0; i < elements; i++)
-				for (int j = 0; j < elements; j++)
-					rotMatrix[i][j] = matrix[i][elements - 1 - j];
-			return rotMatrix;
-		}
-		if (orientation.toLowerCase().startsWith("s")) {
-			for (int i = 0; i < elements; i++)
-				for (int j = 0; j < elements; j++)
-					rotMatrix[i][j] = matrix[elements - 1 - j][elements - 1 - i];
-			return rotMatrix;
-		}
+    if (orientation.toLowerCase().startsWith("w")) {
+      for (int i = 0; i < elements; i++)
+        for (int j = 0; j < elements; j++)
+          rotMatrix[i][j] = matrix[i][elements - 1 - j];
+      return rotMatrix;
+    }
+    if (orientation.toLowerCase().startsWith("s")) {
+      for (int i = 0; i < elements; i++)
+        for (int j = 0; j < elements; j++)
+          rotMatrix[i][j] = matrix[elements - 1 - j][elements - 1 - i];
+      return rotMatrix;
+    }
 
 // North
-		for (int i = 0; i < elements; i++)
-			for (int j = 0; j < elements; j++)
-				rotMatrix[i][j] = matrix[j][elements - 1 - i];
+    for (int i = 0; i < elements; i++)
+      for (int j = 0; j < elements; j++)
+        rotMatrix[i][j] = matrix[j][elements - 1 - i];
 
-		return rotMatrix;
-	}
+    return rotMatrix;
+  }
 
-	public JOptionsDialog getOptionsDialog(Frame parent) {
+  public JOptionsDialog getOptionsDialog(Frame parent) {
     JOptionsDialog adialog = new JTextureOptionsD(parent, this);
     return adialog;
   }

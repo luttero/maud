@@ -513,12 +513,12 @@ public class StructureSolutionGANew extends StructureSolutionMethod {
 			sliderPERatio = new JSlider(JSlider.HORIZONTAL, 0, 100, 0);
 
 			Hashtable labeltable = new Hashtable();
-			labeltable.put(new Integer(0), new JLabel("0.0"));
-			labeltable.put(new Integer(20), new JLabel("0.2"));
-			labeltable.put(new Integer(40), new JLabel("0.4"));
-			labeltable.put(new Integer(60), new JLabel("0.6"));
-			labeltable.put(new Integer(80), new JLabel("0.8"));
-			labeltable.put(new Integer(100), new JLabel("1.0"));
+			labeltable.put(0, new JLabel("0.0"));
+			labeltable.put(20, new JLabel("0.2"));
+			labeltable.put(40, new JLabel("0.4"));
+			labeltable.put(60, new JLabel("0.6"));
+			labeltable.put(80, new JLabel("0.8"));
+			labeltable.put(100, new JLabel("1.0"));
 			sliderPERatio.setLabelTable(labeltable);
 			sliderPERatio.setMajorTickSpacing(10);
 			sliderPERatio.setPaintTicks(true);

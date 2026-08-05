@@ -496,7 +496,7 @@ pixel h: 1.52941501976285
 	}
 
 	void setProperty(ImagePlus imp, String key, boolean value) {
-		imp.setProperty(key, new Boolean(value));
+		imp.setProperty(key, value);
 	}
 
 	void setCalibration(ImagePlus imp, FileInfo fi) {

@@ -776,7 +776,7 @@ class RotateTextFilter extends ImageFilter {
 
   public void setProperties(Hashtable props) {
     props = (Hashtable) props.clone();
-    props.put("rotAngle", new Integer(angle));
+    props.put("rotAngle", angle);
     super.setProperties(props);
   }
 

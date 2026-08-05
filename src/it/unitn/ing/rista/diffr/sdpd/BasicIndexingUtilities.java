@@ -312,7 +312,7 @@ public class BasicIndexingUtilities {
                   StringTokenizer st = new StringTokenizer(line, "=, \t\r\n");
                   if (st.hasMoreTokens()) {
                     position = Double.parseDouble(st.nextToken());
-                    list.addElement(new Double(position));
+                    list.addElement(position);
                   } else
                     endoffile = true;
                 } else
@@ -328,7 +328,7 @@ public class BasicIndexingUtilities {
           reader.close();
         } catch (IOException e) {
         }
-        list.addElement(new Double(wave));
+        list.addElement(wave);
         return list;
       }
     }

@@ -109,7 +109,7 @@ public class ScanWord extends StreamTokenizer {
 
     if (s == null) return;
 
-    kwords.put(s.toLowerCase(), new Integer(i));
+    kwords.put(s.toLowerCase(), i);
 
   }
 

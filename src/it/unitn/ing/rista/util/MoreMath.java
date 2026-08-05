@@ -488,6 +488,16 @@ public class MoreMath {
 
     return Math.sqrt(distance);
   }
+  
+  public static double getLinearInterpolatedValue(double x, double[][] stepFunction) {
+    int upper = 1;
+    int maxIndex = stepFunction[0].length - 1;
+    while (upper < maxIndex && stepFunction[0][upper] < x) {
+      upper++;
+    }
+    int lower = upper - 1;
+    return getLinearInterpolation(x, stepFunction[0][lower], stepFunction[0][upper], stepFunction[1][lower], stepFunction[1][upper]);
+  }
 
   public static double getLinearInterpolation(double x, double x1, double x2,
                                               double y1, double y2) {
@@ -871,14 +881,14 @@ end;
     Vector result = new Vector(10, 10);
     for (long i = 2; i <= N / i; i++) {
       while (N % i == 0) {
-        result.add(new Long(i));
+        result.add(i);
         N = N / i;
       }
     }
 
     // if biggest factor occurs only once, N > 1
     if (N > 1)
-      result.add(new Long(N));
+      result.add(N);
     long[] res = new long[result.size()];
     for (int i = 0; i < result.size(); i++)
       res[i] = ((Long) result.elementAt(i)).longValue();
@@ -890,12 +900,12 @@ end;
     Vector result = new Vector(10, 10);
     for (int i = 2; i * i <= N; i++) {
       while (N % i == 0) {
-        result.add(new Integer(i));
+        result.add(i);
         N = N / i;
       }
     }
     if (N > 1)
-      result.add(new Integer(N));
+      result.add(N);
     int[] res = new int[result.size()];
     for (int i = 0; i < result.size(); i++)
       res[i] = ((Integer) result.elementAt(i)).intValue();
@@ -907,7 +917,7 @@ end;
     Vector result = new Vector(10, 10);
     for (int i = 1; i <= N; i++) {
       if (N % i == 0) {
-        result.add(new Integer(i));
+        result.add(i);
       }
     }
     int[] res = new int[result.size()];

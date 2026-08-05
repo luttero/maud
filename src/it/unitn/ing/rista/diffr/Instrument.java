@@ -45,21 +45,21 @@ import it.unitn.ing.rista.io.cif.CIFItem;
  */
 
 public class Instrument extends XRDcat {
-  protected static final String[] diclistc = new String[] {
-      "_diffrn_measurement_device_type",
-      "_pd_proc_intensity_incident",
-      "_maud_optional_intensity_factor",
-
-      "_riet_par_2-theta_offset",
-
-      "_inst_intensity_calibration", "_inst_angular_calibration", "_pd_instr_geometry",
-      "_diffrn_measurement_method", "_diffrn_radiation_type",
-      "_diffrn_radiation_detector", "_diffrn_inst_broadening", "_exptl_absorpt_correction_type"
-  };
-  protected static final String[] diclistcrm = new String[] {
+  protected static final String[] diclistc = {
     "_diffrn_measurement_device_type",
-      "Intensity primary (scale factor)",
-		  "Intensity secondary (fluorescence)",
+		"_maud_optional_intensity_factor",
+    "_pd_proc_intensity_incident",
+      
+    "_riet_par_2-theta_offset",
+
+    "_inst_intensity_calibration", "_inst_angular_calibration", "_pd_instr_geometry",
+    "_diffrn_measurement_method", "_diffrn_radiation_type",
+    "_diffrn_radiation_detector", "_diffrn_inst_broadening", "_exptl_absorpt_correction_type"
+    };
+  protected static final String[] diclistcrm = {
+    "_diffrn_measurement_device_type",
+		  "_maud_optional_intensity_factor",
+      "Intensity (scale factor)",
     "2-theta or d-spacing offset (don't used), replaced by Angular Calibration",
 
     "_inst_intensity_calibration", "_inst_angular_calibration", "_pd_instr_geometry",
@@ -97,9 +97,9 @@ public class Instrument extends XRDcat {
   }
 
   public void initConstant() {
-    Nstring = 1;
+    Nstring = 2;
     Nstringloop = 0;
-    Nparameter = 2;
+    Nparameter = 1;
     Nparameterloop = 1;
     Nsubordinate = 8;
     Nsubordinateloop = 0;
@@ -116,8 +116,8 @@ public class Instrument extends XRDcat {
     super.initParameters();
 
     stringField[0] = toXRDcatString(); // to avoid the notifyInstrumentLabelChanged
-	  setIntensity("1.0");
-    setIntensityFluorescence("1.0");
+	  stringField[1] = "1.0";
+    setIntensity("1.0");
     setGeometry("Bragg-Brentano");
     setMeasurement("Theta-2Theta");
     setRadiationType("X-ray tube");
@@ -127,7 +127,7 @@ public class Instrument extends XRDcat {
     setIntensityCalibration("none cal");
     setAngularCalibration("Instrument disalignment");
     setInstrumentBroadening("Caglioti PV");
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 1; i++) {
       parameterField[i].setValueMin(ParameterPreferences.getDouble(parameterField[i].getLabel() + ".min",
                          0.0));
       parameterField[i].setValueMax(ParameterPreferences.getDouble(parameterField[i].getLabel() + ".max",
@@ -204,31 +204,11 @@ public class Instrument extends XRDcat {
   }
 
 	public double getIntensityValue() {
-		return getIntensity().getValueD()/*  * intensityScaleFactor*/;
+		return getIntensity().getValueD()  * intensityScaleFactor;
 	}
-
-  public Parameter getIntensityFluorescence() {
-    return parameterField[1];
-  }
-
-  public double getIntensityFluorescenceValue() {
-    return getIntensityFluorescence().getValueD();
-  }
-
-  public double getIntensityForDiffraction() {
-    return getIntensityValue();
-  }
-
-  public double getIntensityForFluorescence() {
-    return getIntensityFluorescenceValue();
-  }
 
   public void setIntensity(String value) {
     parameterField[0].setValue(value);
-  }
-
-  public void setIntensityFluorescence(String value) {
-    parameterField[1].setValue(value);
   }
 
   public double[] getTextureAngles(DiffrDataFile datafile, double[] tilting_angles,
@@ -267,11 +247,11 @@ public class Instrument extends XRDcat {
         -0.1, 0.1));
   }
 
-//	double intensityScaleFactor = 1.0;
+	double intensityScaleFactor = 1.0;
 
-//	public void updateStringtoDoubleBuffering(boolean firstLoading) {
-//		intensityScaleFactor = Double.parseDouble(stringField[1]);
-//	}
+	public void updateStringtoDoubleBuffering(boolean firstLoading) {
+		intensityScaleFactor = Double.parseDouble(stringField[1]);
+	}
 
 	public void updateParametertoDoubleBuffering(boolean firstLoading) {
     // to be implemented by subclasses
@@ -281,7 +261,6 @@ public class Instrument extends XRDcat {
     super.updateParametertoDoubleBuffering(false);
 
     parameterField[0].setPositiveOnly();
-    parameterField[1].setPositiveOnly();
     thetaDisplacement = getParameterLoopVector(thetaDisplacementID);
     thetaDisplacementN = numberOfLoopParameters[thetaDisplacementID];
     for (int i = 0; i < thetaDisplacementN; i++)
@@ -291,7 +270,7 @@ public class Instrument extends XRDcat {
   public void notifyParameterChanged(Parameter source) {
     FilePar filepar = getFilePar();
     if ((filepar != null && !filepar.isLoadingFile()) && isAbilitatetoRefresh) {
-        if (source == parameterField[0] || source == parameterField[1]) {
+        if (source == parameterField[0]) {
           notifyParameterChanged(source, Constants.BEAM_INTENSITY_CHANGED, -1);
           return;
         }
@@ -313,26 +292,11 @@ public class Instrument extends XRDcat {
     }
   }*/
 
-  // todo: check which one to use
-
   public double[][] getInstrumentalBroadeningAt(double x, DiffrDataFile diffrDataFile) {
 
 // Attention: x equal to 2theta
     return getInstrumentBroadening().getInstrumentalBroadeningAt(x, diffrDataFile);
   }
-
-/*  public java.util.Vector<double[]> getInstrumentBroadeningAt(double x, DiffrDataFile diffrDataFile) {
-
-// Attention: x equal to 2theta
-    return getInstrumentBroadening().getInstrumentalBroadeningAt(x, diffrDataFile);
-  }*/
-
-  public double[][] getInstrumentalEnergyBroadeningAt(double x, DiffrDataFile diffrDataFile) {
-
-// Attention: x equal to 2theta
-    return getInstrumentBroadening().getInstrumentalEnergyBroadeningAt(x, diffrDataFile);
-  }
-
 
 /*  public double getConvolutedBroadening(double x, double[] tilting_angles, boolean dspacingbase) {
 
@@ -617,11 +581,6 @@ public class Instrument extends XRDcat {
     return getInstrumentBroadening().identifier;
   }
 
-/*  public double getAbsorptionCorrection(DiffrDataFile adatafile, Phase aphase, double position, int rad_index) {
-    return getGeometry().computeAbsorptionCorrection(adatafile, aphase, position, rad_index,
-        getLambdaForTOF(adatafile, position));
-  }*/
-
   public double[] PhaseAndLayerAbsorption(DiffrDataFile adatafile, Sample asample,
                                         Phase aphase, double[] x) {
 
@@ -800,7 +759,6 @@ public class Instrument extends XRDcat {
 
   public void multiplyScaleFactorBy(double totalquantity) {
     setIntensity(Double.toString(getIntensity().getValueD() * totalquantity));
-    setIntensityFluorescence(Double.toString(getIntensityFluorescence().getValueD() * totalquantity));
   }
 
   public void forceAllBankIntRefinable() {

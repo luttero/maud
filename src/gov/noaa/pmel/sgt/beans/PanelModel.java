@@ -243,7 +243,7 @@ public class PanelModel implements Serializable, ChangeListener, ComponentListen
   public void setDpi(float dpi) {
     float saved = this.dpi;
     this.dpi = dpi;
-    if(saved != this.dpi) firePropertyChange("dpi", new Float(saved), new Float(this.dpi));
+    if(saved != this.dpi) firePropertyChange("dpi", saved, this.dpi);
   }
   /**
    * <code>ChangeListner</code> callback.
@@ -449,8 +449,8 @@ public class PanelModel implements Serializable, ChangeListener, ComponentListen
     boolean saved = this.printBorders;
     this.printBorders = printBorders;
     if(saved != this.printBorders)
-      firePropertyChange("printBorders", new Boolean(saved),
-                         new Boolean(this.printBorders));
+      firePropertyChange("printBorders", saved,
+                         this.printBorders);
   }
   /**
    * Set the print  on white background property.  Default = true.
@@ -460,8 +460,8 @@ public class PanelModel implements Serializable, ChangeListener, ComponentListen
     boolean saved = this.printWhitePage;
     this.printWhitePage = printWhitePage;
     if(saved != this.printWhitePage)
-      firePropertyChange("printWhitePage", new Boolean(saved),
-                         new Boolean(this.printWhitePage));
+      firePropertyChange("printWhitePage", saved,
+                         this.printWhitePage);
   }
   public void propertyChange(PropertyChangeEvent evt) {
     if(Page.DEBUG) System.out.println("PanelModel.propertyChange("+evt.getPropertyName()+")");
@@ -525,7 +525,7 @@ public class PanelModel implements Serializable, ChangeListener, ComponentListen
    * Set horizontal alignment for printing.  Legal values are AbstractPane.LEFT,
    * AbstractPane.CENTER, AbstractPane.RIGHT, and AbstractPane.SPECIFIED_LOCATION.
    * Default = AbstractPane.CENTER.
-   * @param pageHAlign horizontal alignment
+   * @param printHAlign horizontal alignment
    * @see gov.noaa.pmel.sgt.AbstractPane#LEFT AbstractPane.LEFT
    * @see gov.noaa.pmel.sgt.AbstractPane#CENTER AbstractPane.CENTER
    * @see gov.noaa.pmel.sgt.AbstractPane#RIGHT AbstractPane.RIGHT
@@ -540,7 +540,7 @@ public class PanelModel implements Serializable, ChangeListener, ComponentListen
   /**
    * Set page origin for printing.  Will be used if the horizontal or vertical alignment is
    * AbstractPane.SPECIFIED_LOCATION.  Default = (0,0).
-   * @param pageOrigin page origin
+   * @param printOrigin page origin
    * @see gov.noaa.pmel.sgt.AbstractPane AbstractPane
    */
   public void setPrintOrigin(Point printOrigin) {
@@ -567,7 +567,7 @@ public class PanelModel implements Serializable, ChangeListener, ComponentListen
    * Set vertical  alignment for printing.  Legal values are AbstractPane.TOP,
    * AbstractPane.MIDDLE, AbstractPane.BOTTOM, and AbstractPane.SPECIFIED_LOCATION.
    * Default = AbstractPane.TOP;
-   * @param pageVAlign vertical alignment
+   * @param printVAlign vertical alignment
    * @see gov.noaa.pmel.sgt.AbstractPane#TOP AbstractPane.TOP
    * @see gov.noaa.pmel.sgt.AbstractPane#MIDDLE AbstractPane.MIDDLE
    * @see gov.noaa.pmel.sgt.AbstractPane#BOTTOM AbstractPane.BOTTOM

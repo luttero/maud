@@ -4,7 +4,7 @@
 <project name="Maud" default="copy_full" basedir=".">
 
     <property file="${user.home}/.ant_maud_v2.properties"/>
-    <property name="dropbox" location="${user.home}/Dropbox/Maud"/>
+    <property name="dropbox" location="${user.home}/GoogleDrive/Maud"/>
     <property name="src" location="src"/>
     <property name="web" location="src/web"/>
     <property name="inst" location="${installerDir}"/>
@@ -16,9 +16,10 @@
     <property name="myself" value="myself"/>
     <property name="bundle.icon" value="maud.icns"/>
     <property name="icon" value="src/images/${bundle.icon}"/>
-    <property name="maud_version" value="2.99994"/>
+    <property name="maud_version" value="2.99997"/>
     <property name="application_OSX.title" value="Maud.app"/>
     <property name="app_osx_295" location="${user.home}/Projects/maud/osx_295"/>
+    <property name="app_osx_intel" location="${user.home}/Projects/maud/osx_intel"/>
     <property name="app_osx_arm" location="${user.home}/Projects/maud/osx_arm"/>
     <property name="app_osx_10.6" location="${user.home}/Projects/maud/osx_10.6"/>
     <!--property name="java_version" value="1.8"/-->
@@ -80,14 +81,14 @@
             <exclude name="it/unitn/ing/rista/diffr/rsa/NoStress.java"/>
             <exclude name="it/unitn/ing/rista/diffr/rsa/VoigtReussStress.java"/>
             <exclude name="it/unitn/ing/rista/diffr/Stress.java"/>
-            <!--exclude name="it/unitn/ing/rista/diffr/detector/AngleEnergyMapDetector.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/detector/AngleEnergyMapDetector.java"/>
             <exclude name="it/unitn/ing/rista/diffr/instrument/AngleEnergyMapInstrument.java"/>
             <exclude name="it/unitn/ing/rista/diffr/instbroad/AngleEnergyMapInstrumentBroadening.java"/>
             <exclude name="it/unitn/ing/rista/diffr/absorption/AngleEnergyMapAbsorption.java"/>
             <exclude name="it/unitn/ing/rista/diffr/absorption/StandardAbsorptionModel.java"/>
             <exclude name="it/unitn/ing/rista/diffr/cal/EnergyMultiStripAngularCalibration.java"/>
             <exclude name="it/unitn/ing/rista/diffr/diffraction/DiffractionAngleEnergyMap.java"/>
-            <exclude name="it/unitn/ing/rista/diffr/fluorescence/AngleEnergyMapFluorescence.java"/-->
+            <exclude name="it/unitn/ing/rista/diffr/fluorescence/AngleEnergyMapFluorescence.java"/>
             <!--exclude name="it/unitn/ing/rista/diffr/cal/AngularInclinedFlatImageCalibration.java" />
      <exclude name="it/unitn/ing/rista/diffr/rsa/PopaBalzarHarmonicStrainModel.java" /-->
             <exclude name="it/unitn/ing/rista/diffr/sizestrain/DiffaXLayerModel.java"/>
@@ -107,6 +108,8 @@
             <!--exclude name="it/unitn/ing/rista/diffr/sfm/FullProfStructureModel.java" /-->
             <!--exclude name="it/unitn/ing/rista/diffr/sdpd/GiacovazzoSirIC.java" /-->
             <!--exclude name="it/unitn/ing/rista/diffr/forcefield/ABINITEnergyComputation.java" /-->
+            <exclude name="it/unitn/ing/rista/diffr/PseudoVoigt2DPeak.java"/>
+            <exclude name="it/unitn/ing/rista/diffr/ReflectionPeak.java"/>
             <exclude name="it/unitn/ing/rista/interfaces/myObj.java"/>
             <exclude name="it/unitn/ing/rista/io/ZIPNLextractor.java"/>
             <exclude name="jnt/**"/>
@@ -2279,6 +2282,48 @@
         </exec>
     </target>
 
+    <target name="bundle_intel">
+        <copy file="${build}/Maud.jar" todir="${app_osx_intel}/Maud.app/Contents/Java"/>
+        <copy file="libs/current/Files.jar" todir="${app_osx_intel}/Maud.app/Contents/Java"/>
+        <copy file="libs/current/Examples.jar" todir="${app_osx_intel}/Maud.app/Contents/Java"/>
+        <copy file="libs/current/jmol.jar" todir="${app_osx_intel}/Maud.app/Contents/Java"/>
+        <copy file="libs/current/Help.jar" todir="${app_osx_intel}/Maud.app/Contents/Java"/>
+        <copy file="libs/current/Images.jar" todir="${app_osx_intel}/Maud.app/Contents/Java"/>
+        <copy file="libs/current/miscLib.jar" todir="${app_osx_intel}/Maud.app/Contents/Java"/>
+        <copy file="libs/current/HTTPClient.jar" todir="${app_osx_intel}/Maud.app/Contents/Java"/>
+        <copy file="libs/current/jdom.jar" todir="${app_osx_intel}/Maud.app/Contents/Java"/>
+        <copy file="libs/current/jnlp.jar" todir="${app_osx_intel}/Maud.app/Contents/Java"/>
+        <copy file="libs/current/jgl.jar" todir="${app_osx_intel}/Maud.app/Contents/Java"/>
+        <copy file="libs/current/ij.jar" todir="${app_osx_intel}/Maud.app/Contents/Java"/>
+        <copy file="libs/current/colt.jar" todir="${app_osx_intel}/Maud.app/Contents/Java"/>
+        <copy file="libs/current/JSci.jar" todir="${app_osx_intel}/Maud.app/Contents/Java"/>
+        <copy file="libs/current/jgap.jar" todir="${app_osx_intel}/Maud.app/Contents/Java"/>
+        <copy file="libs/current/jogl.all.jar" todir="${app_osx_intel}/Maud.app/Contents/Java"/>
+        <copy file="libs/current/joone-engine.jar" todir="${app_osx_intel}/Maud.app/Contents/Java"/>
+        <copy file="libs/current/jgaec.jar" todir="${app_osx_intel}/Maud.app/Contents/Java"/>
+        <copy file="libs/current/jspline.jar" todir="${app_osx_intel}/Maud.app/Contents/Java"/>
+        <copy file="libs/current/MySQL-ConnectorJ.jar" todir="${app_osx_intel}/Maud.app/Contents/Java"/>
+        <copy file="libs/current/swingx.jar" todir="${app_osx_intel}/Maud.app/Contents/Java"/>
+        <copy file="libs/current/sqlite-jdbc.jar" todir="${app_osx_intel}/Maud.app/Contents/Java"/>
+        <copy file="libs/current/newt.all.jar" todir="${app_osx_intel}/Maud.app/Contents/Java"/>
+        <copy file="libs/current/nativewindow.all.jar" todir="${app_osx_intel}/Maud.app/Contents/Java"/>
+        <copy file="libs/current/xraylib.jar" todir="${app_osx_intel}/Maud.app/Contents/Java"/>
+        <copy file="libs/current/commons-math.jar" todir="${app_osx_intel}/Maud.app/Contents/Java"/>
+        <copy file="libs/current/JTransforms-3.1-with-dependencies.jar" todir="${app_osx_intel}/Maud.app/Contents/Java"/>
+
+        <copy todir="${app_osx_intel}/Maud.app/Contents/MacOS/mtex" >
+            <fileset dir="${src}/com/jtex/external/bin/mac64" includes="**"/>
+        </copy>
+        <exec executable="chmod">
+            <arg line=" -R a+x ${app_osx_intel}/Maud.app/Contents/MacOS/mtex"/>
+        </exec>
+        <copy file="${src}/com/radiographema/fpsm/mac64/libfpsm_shared.dylib"
+              tofile="${app_osx_intel}/Maud.app/Contents/PlugIns/Home/lib/libfpsm_shared.dylib"/>
+        <exec executable="chmod">
+            <arg line=" -R a+x ${app_osx_intel}/Maud.app/Contents/PlugIns/Home/lib/libfpsm_shared.dylib"/>
+        </exec>
+    </target>
+
     <target name="bundle_arm64" depends="copy_full,copy_Help,copy_Files,copy_ImageJ,copy_Examples,copy_miscLib">
         <!-- Import the AppBundlerTaks from ant lib directory -->
         <taskdef name="bundleapp"
@@ -2321,14 +2366,11 @@
             <classpath file="libs/current/joone-engine.jar"/>
             <classpath file="libs/current/jgaec.jar"/>
             <classpath file="libs/current/jspline.jar"/>
-            <classpath file="libs/current/jnlp.jar"/>
-            <classpath file="libs/current/jgl.jar"/>
             <classpath file="libs/current/MySQL-ConnectorJ.jar"/>
             <classpath file="libs/current/swingx.jar"/>
             <classpath file="libs/current/sqlite-jdbc.jar"/>
             <classpath file="libs/current/newt.all.jar"/>
             <classpath file="libs/current/nativewindow.all.jar"/>
-            <classpath file="libs/current/sqlite-jdbc.jar"/>
             <!--classpath file="libs/current/xgridagent.jar"/>
             <classpath file="libs/current/xgridlib.jar"/-->
             <classpath file="libs/current/xraylib.jar"/>
@@ -2510,7 +2552,6 @@
             <classpath file="libs/current/joone-engine.jar"/>
             <classpath file="libs/current/jgaec.jar"/>
             <classpath file="libs/current/jspline.jar"/>
-            <classpath file="libs/current/jnlp.jar"/>
             <classpath file="libs/current/MySQL-ConnectorJ.jar"/>
             <classpath file="libs/current/swingx.jar"/>
             <classpath file="libs/current/sqlite-jdbc.jar"/>
@@ -2727,6 +2768,123 @@
         </exec>
         <!-- verify gatekeeper -->
         <exec executable="spctl" dir="${app_osx}" failonerror="true">
+            <arg line="-vv --assess --type execute Maud.app"/>
+        </exec>
+    </target>
+
+    <target name="resign_bundle" description="Re-sign a macOS application">
+        <exec dir="${app_osx}/Maud.app/Contents/PlugIns/Home" executable="rm" os="Mac OS X">
+            <arg line="-r legal"/>
+        </exec>
+        <exec dir="${app_osx}/Maud.app/Contents/PlugIns/Home/lib/server" executable="chmod" os="Mac OS X">
+            <arg line="u+w classes.jsa"/>
+        </exec>
+        <exec dir="${app_osx}/Maud.app/Contents/PlugIns/Home/lib/server" executable="chmod" os="Mac OS X">
+            <arg line="u+w classes_nocoops.jsa"/>
+        </exec>
+        <apply dir="${app_osx}" executable="codesign">
+            <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; "/>
+            <fileset dir="${app_osx}/Maud.app/Contents/PlugIns" />
+        </apply>
+        <apply dir="${app_osx}" executable="codesign">
+            <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; "/>
+            <fileset dir="${app_osx}/Maud.app/Contents/Java" />
+        </apply>
+        <apply dir="${app_osx}" executable="codesign">
+            <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; "/>
+            <fileset dir="${app_osx}/Maud.app/Contents/MacOS/mtex" />
+        </apply>
+        <exec dir="${app_osx}" executable="codesign" os="Mac OS X">
+            <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; ${app_osx}/Maud.app/Contents/PlugIns/Home/release"/>
+        </exec>
+        <exec dir="${app_osx}" executable="codesign" os="Mac OS X">
+            <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; ${app_osx}/Maud.app"/>
+        </exec>
+        <exec dir="${app_osx}" executable="codesign" os="Mac OS X">
+            <arg line="-d ${app_osx}/Maud.app"/>
+        </exec>
+        <!-- verify codesign -->
+        <exec executable="codesign" dir="${app_osx}" failonerror="true">
+            <arg line="-vv Maud.app"/>
+        </exec>
+        <!-- verify gatekeeper -->
+        <exec executable="spctl" dir="${app_osx}" failonerror="true">
+            <arg line="-vv --assess --type execute Maud.app"/>
+        </exec>
+    </target>
+
+    <target name="resign_bundle_intel" depends="bundle_intel" description="Re-sign a macOS application">
+        <exec dir="${app_osx_intel}/Maud.app/Contents/PlugIns/Home/lib/server" executable="chmod" os="Mac OS X">
+            <arg line="u+w classes.jsa"/>
+        </exec>
+        <exec dir="${app_osx_intel}/Maud.app/Contents/PlugIns/Home/lib/server" executable="chmod" os="Mac OS X">
+            <arg line="u+w classes_nocoops.jsa"/>
+        </exec>
+        <apply dir="${app_osx_intel}" executable="codesign">
+            <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; "/>
+            <fileset dir="${app_osx_intel}/Maud.app/Contents/PlugIns" />
+        </apply>
+        <apply dir="${app_osx_intel}" executable="codesign">
+            <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; "/>
+            <fileset dir="${app_osx_intel}/Maud.app/Contents/Java" />
+        </apply>
+        <apply dir="${app_osx_intel}" executable="codesign">
+            <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; "/>
+            <fileset dir="${app_osx_intel}/Maud.app/Contents/MacOS/mtex" />
+        </apply>
+        <exec dir="${app_osx_intel}" executable="codesign" os="Mac OS X">
+            <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; ${app_osx_intel}/Maud.app/Contents/PlugIns/Home/release"/>
+        </exec>
+        <exec dir="${app_osx_intel}" executable="codesign" os="Mac OS X">
+            <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; ${app_osx_intel}/Maud.app"/>
+        </exec>
+        <exec dir="${app_osx_intel}" executable="codesign" os="Mac OS X">
+            <arg line="-d ${app_osx_intel}/Maud.app"/>
+        </exec>
+        <!-- verify codesign -->
+        <exec executable="codesign" dir="${app_osx_intel}" failonerror="true">
+            <arg line="-vv Maud.app"/>
+        </exec>
+        <!-- verify gatekeeper -->
+        <exec executable="spctl" dir="${app_osx_intel}" failonerror="true">
+            <arg line="-vv --assess --type execute Maud.app"/>
+        </exec>
+    </target>
+
+    <target name="resign_bundle_arm" description="Re-sign a macOS application">
+        <exec dir="${app_osx_arm}/Maud.app/Contents/PlugIns/Home/lib/server" executable="chmod" os="Mac OS X">
+            <arg line="u+w classes.jsa"/>
+        </exec>
+        <exec dir="${app_osx_arm}/Maud.app/Contents/PlugIns/Home/lib/server" executable="chmod" os="Mac OS X">
+            <arg line="u+w classes_nocoops.jsa"/>
+        </exec>
+        <apply dir="${app_osx_arm}" executable="codesign">
+            <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; "/>
+            <fileset dir="${app_osx_arm}/Maud.app/Contents/PlugIns" />
+        </apply>
+        <apply dir="${app_osx_arm}" executable="codesign">
+            <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; "/>
+            <fileset dir="${app_osx_arm}/Maud.app/Contents/Java" />
+        </apply>
+        <apply dir="${app_osx_arm}" executable="codesign">
+            <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; "/>
+            <fileset dir="${app_osx_arm}/Maud.app/Contents/MacOS/mtex" />
+        </apply>
+        <exec dir="${app_osx_arm}" executable="codesign" os="Mac OS X">
+            <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; ${app_osx_arm}/Maud.app/Contents/PlugIns/Home/release"/>
+        </exec>
+        <exec dir="${app_osx_arm}" executable="codesign" os="Mac OS X">
+            <arg line="-v -f -s &quot;Developer ID Application: Luca Lutterotti (U2NJNG54F3)&quot; ${app_osx_arm}/Maud.app"/>
+        </exec>
+        <exec dir="${app_osx_arm}" executable="codesign" os="Mac OS X">
+            <arg line="-d ${app_osx_arm}/Maud.app"/>
+        </exec>
+        <!-- verify codesign -->
+        <exec executable="codesign" dir="${app_osx_arm}" failonerror="true">
+            <arg line="-vv Maud.app"/>
+        </exec>
+        <!-- verify gatekeeper -->
+        <exec executable="spctl" dir="${app_osx_arm}" failonerror="true">
             <arg line="-vv --assess --type execute Maud.app"/>
         </exec>
     </target>
@@ -2965,16 +3123,17 @@
     </target-->
 
 
-    <target name="build_installers" depends="sign_bundle_arm64"
+    <target name="build_installers" depends="sign_bundle_arm64, resign_bundle_intel"
             description="Deploy the full build files to the web server.">
         <!--		<ftp server="${ftpfullserver}" userid="${ftpuserfull}" password="${passwdfull}" remotedir="${deployfulldir}">
   		<fileset file="${mirrorfulldir}/Maud.jar"/>
 		</ftp> -->
-        <!--delete file="${inst}/Maud_MacOSX/Maud.dmg.gz"/>
-        <exec dir="${inst}/Maud_MacOSX/" executable="/Users/luca/bin/mkdmg.pl" os="Mac OS X">
-            <arg line="Maud.dmg.gz Maud"/>
-        </exec-->
-        <!--delete dir="${inst}/Maud_MacOSX64/Maud/Maud.app"/-->
+        <delete file="${dropbox}/macosx64/Maud_intel64.dmg.gz"/>
+        <copy file="${app_osx_intel}/.DS_Store_default" tofile="${app_osx_intel}/.DS_Store"/>
+        <exec dir="${app_osx_intel}/" executable="/Users/luca/bin/mkdmg.pl" os="Mac OS X">
+            <arg line="Maud_intel64.dmg.gz Maud.app"/>
+        </exec>
+        <copy file="${app_osx_intel}/Maud_intel64.dmg.gz" tofile="${dropbox}/macosx64/Maud_intel64.dmg.gz"/>
         <delete file="${dropbox}/macosx64/Maud_arm64.dmg.gz"/>
         <copy file="${app_osx_arm}/.DS_Store_default" tofile="${app_osx_arm}/.DS_Store"/>
         <exec dir="${app_osx_arm}/" executable="/Users/luca/bin/mkdmg.pl" os="Mac OS X">

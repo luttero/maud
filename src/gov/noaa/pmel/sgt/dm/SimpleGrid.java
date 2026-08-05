@@ -355,8 +355,8 @@ public class SimpleGrid implements SGTGrid, Cartesian, Cloneable, Serializable {
     xTime_ = false;
     xRange_ = computeSoTRange(xloc);
     changes_.firePropertyChange("dataModified",
-                                new Integer(0),
-                                new Integer(xloc.length));
+                                0,
+                                xloc.length);
   }
   /**
    * Set the y coordinate grid centers
@@ -367,8 +367,8 @@ public class SimpleGrid implements SGTGrid, Cartesian, Cloneable, Serializable {
     yTime_ = false;
     yRange_ = computeSoTRange(yloc);
     changes_.firePropertyChange("dataModified",
-                                new Integer(0),
-                                new Integer(yloc.length));
+                                0,
+                                yloc.length);
   }
   /**
    * Set the z grid values.
@@ -378,8 +378,8 @@ public class SimpleGrid implements SGTGrid, Cartesian, Cloneable, Serializable {
     grid_ = grid;
     zRange_ = computeRange2D(grid);
     changes_.firePropertyChange("dataModified",
-                                new Integer(0),
-                                new Integer(grid.length));
+                                0,
+                                grid.length);
   }
   /**
    * set the temporal grid centers
@@ -399,8 +399,8 @@ public class SimpleGrid implements SGTGrid, Cartesian, Cloneable, Serializable {
       yRange_ = computeSoTRange(tarray);
     }
     changes_.firePropertyChange("dataModified",
-                                new Integer(0),
-                                new Integer(tarray.getLength()));
+                                0,
+                                tarray.getLength());
   }
   public SoTRange getXRange() {
     return xRange_.copy();

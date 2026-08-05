@@ -287,13 +287,13 @@ public class NewLevelsDialog extends JDialog {
     double min;
     double max;
     if(rangeComputed_) {
-      min = (new Double(minCompTextField.getText())).doubleValue();
-      max = (new Double(maxCompTextField.getText())).doubleValue();
+      min = Double.parseDouble(minCompTextField.getText());
+      max = Double.parseDouble(maxCompTextField.getText());
     } else {
-      min = (new Double(minTextField.getText())).doubleValue();
-      max = (new Double(maxTextField.getText())).doubleValue();
+      min = Double.parseDouble(minTextField.getText());
+      max = Double.parseDouble(maxTextField.getText());
     }
-    double delta = (new Double(spacingTextField.getText())).doubleValue();
+    double delta = Double.parseDouble(spacingTextField.getText());
     Range2D range = new Range2D(min, max, delta);
     return range;
   }
@@ -326,14 +326,14 @@ public class NewLevelsDialog extends JDialog {
 
   private void updateLevSpac() {
     int levels;
-    double delta = (new Double(maxTextField.getText())).doubleValue() -
-      (new Double(minTextField.getText())).doubleValue();
+    double delta = Double.parseDouble(maxTextField.getText()) -
+        Double.parseDouble(minTextField.getText());
     double spacing;
     if(useSpacing_) {
-      levels = (int)(delta/(new Double(spacingTextField.getText())).doubleValue());
+      levels = (int)(delta/ Double.parseDouble(spacingTextField.getText()));
       nlevelsTextField.setText(Integer.toString(levels));
     } else {
-      spacing = delta/(new Integer(nlevelsTextField.getText())).intValue();
+      spacing = delta/ Integer.parseInt(nlevelsTextField.getText());
       spacingTextField.setText(Double.toString(spacing));
     }
   }
@@ -365,8 +365,8 @@ public class NewLevelsDialog extends JDialog {
     rangeComputed_ = true;
     minCompTextField.setEnabled(true);
     maxCompTextField.setEnabled(true);
-    double min = (new Double(minTextField.getText())).doubleValue();
-    double max = (new Double(maxTextField.getText())).doubleValue();
+    double min = Double.parseDouble(minTextField.getText());
+    double max = Double.parseDouble(maxTextField.getText());
     Range2D range = new Range2D(min,max);
     int levels = Integer.parseInt(nlevelsTextField.getText());
     Range2D newRange = Graph.computeRange(range, levels);

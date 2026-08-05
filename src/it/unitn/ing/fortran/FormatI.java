@@ -66,7 +66,7 @@ class FormatI extends FormatIOElement {
     np.ReInit(new StringBufferInputStream(s));
     try {
       int start = np.Integer();
-      Long l = new Long(s.substring(start));
+      Long l = Long.parseLong(s.substring(start));
       return l;
     } catch (ParseException e) {
       throw new InvalidNumberOnReadException(s,

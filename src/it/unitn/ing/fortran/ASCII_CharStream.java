@@ -167,7 +167,7 @@ public final class ASCII_CharStream {
    * @deprecated
    * @see #getEndColumn
    */
-
+@Deprecated
   public final int getColumn() {
     return bufcolumn[bufpos];
   }
@@ -177,6 +177,7 @@ public final class ASCII_CharStream {
    * @see #getEndLine
    */
 
+  @Deprecated
   public final int getLine() {
     return bufline[bufpos];
   }

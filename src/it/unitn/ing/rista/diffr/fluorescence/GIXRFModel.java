@@ -144,12 +144,12 @@ public class GIXRFModel extends Fluorescence {
 	double phiDelta = 0.0;
 	double phiStep = 0; // phiDelta / (phiIntegrationNumber - 1);
 
-	public void computeFluorescence(Sample asample, DataFileSet adataset) {
+	public void computeFluorescence(Sample asample) {
 
-		int datafilenumber = adataset.activedatafilesnumber();
+		int datafilenumber = getDataFileSet().activedatafilesnumber();
 
 		final Sample theSample = asample;
-		final DataFileSet theDataset = adataset;
+		final DataFileSet theDataset = getDataFileSet();
 
 		final int maxThreads = Math.min(Constants.maxNumberOfThreads, datafilenumber);
 		if (maxThreads > 1 && Constants.threadingGranularity >= Constants.MEDIUM_GRANULARITY) {

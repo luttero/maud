@@ -290,8 +290,8 @@ public class SimpleLine implements SGTLine, Cartesian,
     xTime_ = false;
     xRange_ = computeSoTRange(xloc);
     changes_.firePropertyChange("dataModified",
-                                new Integer(0),
-                                new Integer(xloc.length));
+                                0,
+                                xloc.length);
   }
   /**
    * Set the Y coordinate array
@@ -302,8 +302,8 @@ public class SimpleLine implements SGTLine, Cartesian,
     yTime_ = false;
     yRange_ = computeSoTRange(yloc);
     changes_.firePropertyChange("dataModified",
-                                new Integer(0),
-                                new Integer(yloc.length));
+                                0,
+                                yloc.length);
   }
   /**
    * Set the Time coordinate array
@@ -323,8 +323,8 @@ public class SimpleLine implements SGTLine, Cartesian,
       yRange_ = computeSoTRange(tarray);
     }
     changes_.firePropertyChange("dataModified",
-                                new Integer(0),
-                                new Integer(tarray.getLength()));
+                                0,
+                                tarray.getLength());
   }
   public SoTRange getXRange() {
     return xRange_.copy();

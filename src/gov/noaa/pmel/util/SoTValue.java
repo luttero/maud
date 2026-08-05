@@ -30,6 +30,7 @@ public abstract class SoTValue implements Serializable {
    * @since sgt 2.0
    * @deprecated As of sgt 3.0, replaced by {@link gov.noaa.pmel.util.SoTValue.Time SoTValue.Time}
    */
+  @Deprecated
   public static class GeoDate extends SoTValue {
     gov.noaa.pmel.util.GeoDate date_;
     /**

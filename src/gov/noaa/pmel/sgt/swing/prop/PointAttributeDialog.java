@@ -398,7 +398,7 @@ public class PointAttributeDialog extends JDialog {
     //
     // mark height
     //
-    attr_.setMarkHeightP(new Double(markHeightTextField.getText()).doubleValue());
+    attr_.setMarkHeightP(Double.parseDouble(markHeightTextField.getText()));
     //
     // label attributes
     //
@@ -416,7 +416,7 @@ public class PointAttributeDialog extends JDialog {
     //
     // height
     //
-    attr_.setLabelHeightP(new Double(labelHeightTextField.getText()).doubleValue());
+    attr_.setLabelHeightP(Double.parseDouble(labelHeightTextField.getText()));
     //
     // draw label?
     //

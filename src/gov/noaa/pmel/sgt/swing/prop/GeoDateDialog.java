@@ -646,7 +646,7 @@ public class GeoDateDialog extends JDialog
     cal.setTime( newDate );
     computeFields( cal );
     int m = cal.get( MONTH );
-    Integer yr = new Integer( cal.get( YEAR));
+    Integer yr =  cal.get( YEAR);
 
     monthList.setVisible(false );
     monthList.setSelectedIndex( m);
@@ -800,13 +800,13 @@ public class GeoDateDialog extends JDialog
       int prevHr = cal.get(HOUR_OF_DAY);   // hang on to old value
       int hr = Integer.parseInt( hourText.getText().trim());
       hr = validateHours( hr );
-      hourText.setText( (new Integer(hr)).toString() );
+      hourText.setText( (String.valueOf(hr)));
       cal.set( HOUR_OF_DAY, hr );
       liquidDate = new GeoDate(cal.getTime());
       if (!liquidDateWithinBounds()) {  // restore old value
         cal.set( HOUR_OF_DAY, prevHr );
         liquidDate = new GeoDate(cal.getTime());
-        hourText.setText( (new Integer(prevHr)).toString() );
+        hourText.setText(String.valueOf(prevHr));
       }
       updateDateLabel();
     } catch (NumberFormatException e) {
@@ -822,14 +822,14 @@ public class GeoDateDialog extends JDialog
       int prevYr = cal.get(YEAR);   // hang on to old value
       int yr = Integer.parseInt( yearText.getText().trim());
       //yr = validateYear( yr );
-      yearText.setText( (new Integer(yr)).toString() );
+      yearText.setText(String.valueOf(yr));
       cal.set( YEAR, yr );
       liquidDate = new GeoDate(cal.getTime());
       if (!liquidDateWithinBounds()) {  // restore old value
         //boundsMsg();
         cal.set( YEAR, prevYr );
         liquidDate = new GeoDate(cal.getTime());
-        yearText.setText( (new Integer(prevYr)).toString() );
+        yearText.setText(String.valueOf(prevYr));
       }
       else {
         updateGUIAfterLiquidDateChange();
@@ -1083,7 +1083,7 @@ public class GeoDateDialog extends JDialog
         if (hr == -1) {
           hr = 23;
         }
-        hourText.setText( (new Integer(hr)).toString() );
+        hourText.setText(String.valueOf(hr));
         handleHourChange();
       } catch (NumberFormatException e) {
       }
@@ -1099,7 +1099,7 @@ public class GeoDateDialog extends JDialog
         if (hr == 24) {
           hr = 0;
         }
-        hourText.setText( (new Integer(hr)).toString() );
+        hourText.setText(String.valueOf(hr));
         handleHourChange();
       } catch (NumberFormatException e) {
       }

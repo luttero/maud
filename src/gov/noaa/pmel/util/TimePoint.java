@@ -21,6 +21,7 @@ package  gov.noaa.pmel.util;
  *
  * @deprecated As of sgt 3.0, replaced by {@link gov.noaa.pmel.util.SoTPoint SoTPoint}.
  */
+@Deprecated
 public class TimePoint {
   /** Space coordinate  */
   public double x;

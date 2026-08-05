@@ -548,14 +548,14 @@ public class VectorAttributeDialog extends JDialog {
     //
     // mark height
     //
-    attr_.setMarkHeightP(new Double(markHeightTextField.getText()).doubleValue());
+    attr_.setMarkHeightP(Double.parseDouble(markHeightTextField.getText()));
     //
     // stroke attributes
     //
     //
     // width
     //
-    attr_.setWidth(new Float(widthTextField.getText()).floatValue());
+    attr_.setWidth(Float.parseFloat(widthTextField.getText()));
     //
     // cap style
     //
@@ -567,7 +567,7 @@ public class VectorAttributeDialog extends JDialog {
     //
     // miter limit
     //
-    attr_.setMiterLimit(new Float(miterLimitTextField.getText()).floatValue());
+    attr_.setMiterLimit(Float.parseFloat(miterLimitTextField.getText()));
 
     attr_.setBatch(false);
     //

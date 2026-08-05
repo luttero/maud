@@ -624,19 +624,19 @@ public class NelderMeadSimplex {
   public void addConstraint(int paramIndex, int conDir, double constraint) {
     this.penalty = true;
     // First element reserved for method number if other methods than 'cliff' are added later
-    if (this.penalties.isEmpty()) this.penalties.addElement(new Integer(this.constraintMethod));
+    if (this.penalties.isEmpty()) this.penalties.addElement(this.constraintMethod);
 
     // add constraint
     if (penalties.size() == 1) {
-      this.penalties.addElement(new Integer(1));
+      this.penalties.addElement(1);
     } else {
       int nPC = ((Integer) this.penalties.elementAt(1)).intValue();
       nPC++;
-      this.penalties.setElementAt(new Integer(nPC), 1);
+      this.penalties.setElementAt(nPC, 1);
     }
-    this.penalties.addElement(new Integer(paramIndex));
-    this.penalties.addElement(new Integer(conDir));
-    this.penalties.addElement(new Double(constraint));
+    this.penalties.addElement(paramIndex);
+    this.penalties.addElement(conDir);
+    this.penalties.addElement(constraint);
   }
 
   // add a multiple parameter constraint boundary for the minimisation
@@ -647,27 +647,27 @@ public class NelderMeadSimplex {
       throw new IllegalArgumentException("num of parameters, " + nCon + ", does not equal number of parameter signs, " + nPorM);
     this.sumPenalty = true;
     // First element reserved for method number if other methods than 'cliff' are added later
-    if (this.sumPenalties.isEmpty()) this.sumPenalties.addElement(new Integer(this.constraintMethod));
+    if (this.sumPenalties.isEmpty()) this.sumPenalties.addElement(this.constraintMethod);
 
     // add constraint
     if (sumPenalties.size() == 1) {
-      this.sumPenalties.addElement(new Integer(1));
+      this.sumPenalties.addElement(1);
     } else {
       int nPC = ((Integer) this.sumPenalties.elementAt(1)).intValue();
       nPC++;
-      this.sumPenalties.setElementAt(new Integer(nPC), 1);
+      this.sumPenalties.setElementAt(nPC, 1);
     }
-    this.sumPenalties.addElement(new Integer(nCon));
+    this.sumPenalties.addElement(nCon);
     this.sumPenalties.addElement(paramIndices);
     this.sumPenalties.addElement(plusOrMinus);
-    this.sumPenalties.addElement(new Integer(conDir));
-    this.sumPenalties.addElement(new Double(constraint));
+    this.sumPenalties.addElement(conDir);
+    this.sumPenalties.addElement(constraint);
   }
 
   // Set constraint method
   public void setConstraintMethod(int conMeth) {
     this.constraintMethod = conMeth;
-    if (!this.penalties.isEmpty()) this.penalties.setElementAt(new Integer(this.constraintMethod), 0);
+    if (!this.penalties.isEmpty()) this.penalties.setElementAt(this.constraintMethod, 0);
   }
 
   // remove all constraint boundaries for the minimisation

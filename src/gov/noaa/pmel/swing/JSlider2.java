@@ -25,7 +25,6 @@ import gov.noaa.pmel.swing.beans.SliderHandle;
  * @author Donald Denbo
  * @version $Revision: 1.1 $, $Date: 2004/12/27 16:15:22 $
  * @see JSlider2Double
- * @see JSlider2Date
 **/
 public class JSlider2 extends JComponent 
   implements java.io.Serializable {
@@ -52,7 +51,6 @@ public class JSlider2 extends JComponent
    * Class for the Date and Double JSlider2 classes. This class creates
    * the slider portion of the JSlider2Date and JSlider2Double classes.
    *
-   * @see JSlider2Date
    * @see JSlider2Double
    **/
   public JSlider2() {
@@ -65,7 +63,6 @@ public class JSlider2 extends JComponent
    * the slider portion of the JSlider2Date and JSlider2Double classes.
    *
    * @param twoHandles if true create two handles
-   * @see JSlider2Date
    * @see JSlider2Double
    **/
   public JSlider2(boolean twoHandles) {
@@ -108,9 +105,9 @@ public class JSlider2 extends JComponent
   public void setMinValue(double min) {
     minValue_ = Math.max(min, 0.0);
     if(minOld_ != minValue_) {
-      Double tempOld = new Double(minOld_);
+      Double tempOld = minOld_;
       minOld_ = minValue_;
-      changes.firePropertyChange("minValue", tempOld, new Double(minValue_));  
+      changes.firePropertyChange("minValue", tempOld, minValue_);
     }
     repaint();
   }
@@ -130,9 +127,9 @@ public class JSlider2 extends JComponent
   public void setMaxValue(double max) {
     maxValue_ = Math.min(max, 1.0);
     if(maxOld_ != maxValue_) {
-      Double tempOld = new Double(maxOld_);
+      Double tempOld = maxOld_;
       maxOld_ = maxValue_;
-      changes.firePropertyChange("maxValue", tempOld, new Double(maxValue_));  
+      changes.firePropertyChange("maxValue", tempOld, maxValue_);
     }
     repaint();
   }
@@ -473,14 +470,14 @@ public class JSlider2 extends JComponent
       
     if(forcePost || alwaysPost_) {
       if(minOld_ != minValue_) {
-        Double tempOld = new Double(minOld_);
+        Double tempOld = minOld_;
         minOld_ = minValue_;
-        changes.firePropertyChange("minValue", tempOld, new Double(minValue_));
+        changes.firePropertyChange("minValue", tempOld, minValue_);
       }
       if(maxOld_ != maxValue_) {
-        Double tempOld = new Double(maxOld_);
+        Double tempOld = maxOld_;
         maxOld_ = maxValue_;
-        changes.firePropertyChange("maxValue", tempOld, new Double(maxValue_));
+        changes.firePropertyChange("maxValue", tempOld, maxValue_);
       }
     }
     paint(getGraphics());

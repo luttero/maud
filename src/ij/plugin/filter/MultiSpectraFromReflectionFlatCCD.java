@@ -195,8 +195,8 @@ public class MultiSpectraFromReflectionFlatCCD extends OvalSpectraSelection {
 //			hotspots = param.getNextBoolean();
       param.resetIndices();
       double radius = param.getNextNumber();
-      AreaImage.getData().getInstrument().
-        getAngularCalibration().setRadius(Double.toString(radius));
+//      AreaImage.getData().getInstrument().
+//        getAngularCalibration().setRadius(Double.toString(radius));
       double x = param.getNextNumber();
       double y = param.getNextNumber();
       double diameter = param.getNextNumber();
@@ -236,7 +236,7 @@ public class MultiSpectraFromReflectionFlatCCD extends OvalSpectraSelection {
       MaudPreferences.setPref("sample.defaultOmegaAngle", omega);
       MaudPreferences.setPref("sample.defaultChiAngle", chi);
       MaudPreferences.setPref("sample.defaultPhiAngle", phi);
-	    ((AngularInclinedFlatImageCalibration) AreaImage.getData().getInstrument().
+/*	    ((AngularInclinedFlatImageCalibration) AreaImage.getData().getInstrument().
 			    getAngularCalibration()).setDetectorDistance(radius);
 	    ((AngularInclinedFlatImageCalibration) AreaImage.getData().getInstrument().
 			    getAngularCalibration()).setDetectorCenterX(0);
@@ -249,7 +249,7 @@ public class MultiSpectraFromReflectionFlatCCD extends OvalSpectraSelection {
       ((AngularInclinedFlatImageCalibration) AreaImage.getData().getInstrument().
         getAngularCalibration()).setDetectorOmegaDN(omegaDN);
       ((AngularInclinedFlatImageCalibration) AreaImage.getData().getInstrument().
-        getAngularCalibration()).setDetectorEtaDA(etaDA);
+        getAngularCalibration()).setDetectorEtaDA(etaDA);*/
 	    MaudPreferences.setPref("pixelDetector.defaultDetectorDistance", radius);
 	    MaudPreferences.setPref("pixelDetector.default2ThetaAngle", sigmaDA);
 	    MaudPreferences.setPref("pixelDetector.defaultPhiDAangle", phiDA);
@@ -351,14 +351,14 @@ public class MultiSpectraFromReflectionFlatCCD extends OvalSpectraSelection {
         MaudPreferences.setPref("sample.defaultOmegaAngle", omega);
         MaudPreferences.setPref("sample.defaultChiAngle", chi);
         MaudPreferences.setPref("sample.defaultPhiAngle", phi);
-        ((AngularInclinedFlatImageCalibration) AreaImage.getData().getInstrument().
+/*        ((AngularInclinedFlatImageCalibration) AreaImage.getData().getInstrument().
           getAngularCalibration()).setDetector2Theta(sigmaDA);
         ((AngularInclinedFlatImageCalibration) AreaImage.getData().getInstrument().
           getAngularCalibration()).setDetectorPhiDA(phiDA);
         ((AngularInclinedFlatImageCalibration) AreaImage.getData().getInstrument().
           getAngularCalibration()).setDetectorOmegaDN(omegaDN);
         ((AngularInclinedFlatImageCalibration) AreaImage.getData().getInstrument().
-          getAngularCalibration()).setDetectorEtaDA(etaDA);
+          getAngularCalibration()).setDetectorEtaDA(etaDA);*/
         roi.setRadius(radius);
         roi.setStartingPoint(x, y);
         roi.setCircle(diameter);
