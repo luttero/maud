@@ -71,9 +71,6 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
 
   protected static final String[] classlistcs = {};
 
-  public static double minimumHWHMvalue = MaudPreferences.getDouble(
-      "instrBroadening.minimumHWHMvalue", 0.0000001);
-
 	public static double minimumAsymmetryValue = MaudPreferences.getDouble(
 			"instrBroadening.minimumAsymmetryValue", 1);
 
@@ -451,9 +448,6 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
     broadeningConvoluted = isBroadeningConvoluted();
 	  asymmetryReciprocal = isAsymmetryReciprocal();
 //    System.out.println("Asymmetry: " + getAsymmetryTanDependent());
-    minimumHWHMvalue = MaudPreferences.getDouble(
-		    "instrBroadening.minimumHWHMvalue", 0.0000001);
-    minimumHWHMvalue *= 4.0 * minimumHWHMvalue;
     truncationAngle = Double.parseDouble(getTruncationAngleString());
   }
 
@@ -748,8 +742,8 @@ public class InstrumentBroadeningPVCaglioti extends InstrumentBroadening {
 
 		}
 
-		if (broad[0][1] < minimumHWHMvalue || Double.isNaN(broad[0][1]))
-      broad[0][1] = minimumHWHMvalue;
+		if (broad[0][1] < minimumHWHM || Double.isNaN(broad[0][1]))
+      broad[0][1] = minimumHWHM;
 
     return broad;
   }

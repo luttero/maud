@@ -149,6 +149,7 @@ public class Console extends myJFrame {
 				} catch (Exception e) {
 					textArea.append("\nConsole reports an internal error.");
 					textArea.append("The error is: " + e + "\n");
+          e.printStackTrace();
 				}
 				}
 			});

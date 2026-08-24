@@ -281,6 +281,7 @@ public class DiffractionAngleEnergyMap extends Diffraction {
         try {
           Thread.sleep(Constants.timeToWaitThreadsEnding);
         } catch (InterruptedException r) {
+          r.printStackTrace();
         }
         for (int h = 0; h < maxThreads; h++) {
           if (!threads[h].isEnded())
@@ -485,19 +486,21 @@ public class DiffractionAngleEnergyMap extends Diffraction {
           textureFactor = aphase.getActiveTexture().computeTextureFactor(refl, alpha, beta);
           
           int principalRad = 0;
+          double[] finalPosition = new double[totalLines];
           for (int ir = 0; ir < totalLines; ir++) {
+            finalPosition[ir] = 0;
 //            System.out.println(diffrDataFile.toXRDcatString() + ": " + " " + refl.getH() + " " + refl.getK() + " " + refl.getL() + " " + refl.d_space + " " + peakEnergy + " - " + energy_min + " < " + energy[ir] + " < " + energy_max);
             if (energy[ir] > energy_min && energy[ir] < energy_max && radiationWeight[ir] > 0.0) {
-              double position = diffrDataFile.getPositionFromDspace(refl.d_space, ir);
+              finalPosition[ir] = diffrDataFile.getPositionFromDspace(refl.d_space, ir);
 //              System.out.println(position + " " + strainFactor);
-              position = diffrDataFile.computeFinalPosition(asample, refl, strainFactor, position, 0, ir);
-              if (position != 0) {
+              finalPosition[ir] = diffrDataFile.computeFinalPosition(asample, refl, strainFactor, finalPosition[ir], 0, ir);
+              if (finalPosition[ir] != 0) {
                 intensity[0][ir] = intensitySingle * textureFactor * Fhkl[ir] * areaCorrection *
                     radiationWeight[ir] * aphase.getScaleFactor() * lorentzPolarization * absCorrection[ir];
   
-                double sintheta1 = Math.sin(position * Constants.DEGTOPI * 0.5);
+                double sintheta1 = Math.sin(finalPosition[ir] * Constants.DEGTOPI * 0.5);
                 sintheta1 *= sintheta1;
-                double costheta = Math.cos(position * Constants.DEGTOPI * 0.5);
+                double costheta = Math.cos(finalPosition[ir] * Constants.DEGTOPI * 0.5);
                 double corr = 4.0 * sintheta1 / costheta * Constants.PITODEG * energy[ir] / Constants.ENERGY_LAMBDA;
                 betaff[0] = betaf[i][0] * corr;
                 betaff[1] = betaf[i][1] * corr;
@@ -508,7 +511,7 @@ public class DiffractionAngleEnergyMap extends Diffraction {
                 betaf[1] = aphase.getActiveSizeStrain().getBetaGauss(refl.d_space, sizestrain[0], sizestrain[1]); // / 2.0;
               }*/
   
-                java.util.Vector<double[]> instBroadFactor = ainstrument.getInstrumentBroadeningAt(position, diffrDataFile);
+                java.util.Vector<double[]> instBroadFactor = ainstrument.getInstrumentBroadeningAt(finalPosition[ir], diffrDataFile);
                 double[] broadFactorTotal = PseudoVoigtPeak.getHwhmEtaFromIntegralBeta(betaff, instBroadFactor);
                 hwhm_i[ir] = 1.0 / broadFactorTotal[0];
                 eta[ir] = broadFactorTotal[1];
@@ -544,7 +547,7 @@ public class DiffractionAngleEnergyMap extends Diffraction {
                     printStream.print(" ");
                     printStream.print((float) Fhkl[ir]); // diffrDataFile.getDataFileSet().getStructureFactors(aphase)[1][reflexIndex][i]);
                     printStream.print(" ");
-                    printStream.print((float) position);
+                    printStream.print((float) finalPosition[ir]);
                     printStream.print(" ");
                     printStream.print((float) intensity[0][ir]);
                     printStream.print(" ");
@@ -600,7 +603,8 @@ public class DiffractionAngleEnergyMap extends Diffraction {
                 0, diffrDataFile.sintheta, energyBroadeningVector, refl.d_space, radiationSubdivision, characteristicLines);
           else*/
             peak.computeFunctionsQuick(diffrDataFile.getXData(), expfit, minindex, maxindex,
-                intensity, eta, hwhm_i, energy, diffrDataFile.sintheta, energyBroadeningVector, refl.d_space);
+                intensity, eta, hwhm_i, energy, diffrDataFile.sintheta, energyBroadeningVector, refl.d_space,
+                finalPosition);
           
           
         }

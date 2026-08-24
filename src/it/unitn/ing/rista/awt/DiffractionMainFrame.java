@@ -902,6 +902,7 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
         try {
           sleep(500);
         } catch (InterruptedException ie) {
+          ie.printStackTrace();
         }
         if (files != null && files.length > 0) {
           DataFileSet thedata = parameterfile.getActiveSample().getSelectedDataSet();
@@ -1272,6 +1273,7 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
             }
           }
         } catch (InterruptedException ie) {
+          ie.printStackTrace();
         }
       }
     }).start();

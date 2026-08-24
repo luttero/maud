@@ -76,17 +76,20 @@ public class BerkeleyDataFile extends it.unitn.ing.rista.diffr.DiffrDataFile {
             token1 = st.nextToken();
           if (st.hasMoreTokens())
             token2 = st.nextToken();
-          if (st.hasMoreTokens()) {
+          if (st.hasMoreTokens())
             token = st.nextToken();
+//            System.out.println(token1 + " " + token2 + " " + token);
 
             if (token.equals("H") || token.equals("@")) {
               datanumber++;
               x.addElement(token1);
               y.addElement(token2);
+            } else { // produced by DIFFaX
+              datanumber++;
+              x.addElement(token1);
+              y.addElement(token);
             }
-          }
-
-          linedata = reader.readLine();
+            linedata = reader.readLine();
         }
 
         initData(datanumber);
@@ -114,6 +117,7 @@ public class BerkeleyDataFile extends it.unitn.ing.rista.diffr.DiffrDataFile {
       try {
         reader.close();
       } catch (IOException e) {
+        e.printStackTrace();
       }
     }
     isAbilitatetoRefresh = tmpB;

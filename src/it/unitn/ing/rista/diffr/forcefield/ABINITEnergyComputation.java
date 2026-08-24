@@ -309,11 +309,13 @@ public class ABINITEnergyComputation extends ForceField {
             output.newLine();
           }
         } catch (IOException io) {
+          io.printStackTrace();
         }
         try {
           output.flush();
           output.close();
         } catch (IOException io) {
+          io.printStackTrace();
         }
     }
     String inFile = getFilePar().getDirectory() + prefix + ".in";
@@ -388,11 +390,13 @@ public class ABINITEnergyComputation extends ForceField {
           output.newLine();
 
         } catch (IOException io) {
+          io.printStackTrace();
         }
         try {
           output.flush();
           output.close();
         } catch (IOException io) {
+          io.printStackTrace();
         }
     }
   }
@@ -441,10 +445,12 @@ public class ABINITEnergyComputation extends ForceField {
         }
       } catch (IOException e) {
         System.out.println("Error in loading the ABINIT results file!");
+        e.printStackTrace();
       }
       try {
         reader.close();
       } catch (IOException e) {
+        e.printStackTrace();
       }
     }
     double energyBaseLevel = Double.parseDouble(getString(0));

@@ -590,6 +590,7 @@ public class CIFParser {
       in.close();
     } catch (IOException ioe) {
       System.out.println("IO exception in closing the file");
+      ioe.printStackTrace();
     }
   }
 
@@ -655,6 +656,7 @@ public class CIFParser {
 			in.close();
 		} catch (IOException ioe) {
 			System.out.println("IO exception in closing the file");
+      ioe.printStackTrace();
 		}
 		return "Diffraction instrument";
 	}

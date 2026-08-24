@@ -20,8 +20,10 @@
 package it.unitn.ing.rista.diffr.cal;
 
 //import com.sun.tools.javac.code.Attribute;
+import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.FlatCCDReflectionSquareRoi;
+import ij.macro.Interpreter;
 import ij.process.ImageProcessor;
 import it.unitn.ing.rista.awt.*;
 import it.unitn.ing.rista.diffr.*;
@@ -29,9 +31,11 @@ import it.unitn.ing.rista.io.StringNumber;
 import it.unitn.ing.rista.util.*;
 
 import javax.swing.*;
+import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 
 /**
  * The AngularInclinedFlatImageCalibration is a class to
@@ -46,6 +50,7 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 		                                 "_image_original_detc_2theta", "_image_original_detc_phiDA",
 		                                 "_image_original_detc_omegaDN", "_image_original_detc_etaDA",
 		                                 "_image_original_rotation_inversion",
+                                     "_image_original_apply_macro",
 
                                      "_pd_instr_dist_spec/detc",
                                      "_inst_ang_calibration_center_x", "_inst_ang_calibration_center_y",
@@ -57,7 +62,8 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 		                                   "image original center x (arb)", "image original center y (arb)",
 		                                   "original 2theta (deg)", "original phiDA (deg)",
 		                                   "original rotation (deg)", "original etaDA (deg)",
-		                                 "transform image with roto inversion",
+		                                   "transform image with roto inversion (loading tiff)",
+                                       "apply a ImaageJ macro (loading tiff)",
 
 		                                   "sample detector distance (arb)",
                                        "image center x (arb)", "image center y (arb)",
@@ -102,7 +108,7 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 
   @Override
   public void initConstant() {
-    Nstring = 8;
+    Nstring = 9;
     Nstringloop = 0;
     Nparameter = 7;
     Nparameterloop = 0;
@@ -135,6 +141,8 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 	  stringField[5] = MaudPreferences.getPref("pixelDetector.defaultOmegaDNangle", "0.0");
 	  stringField[6] = MaudPreferences.getPref("pixelDetector.defaultEtaDAangle", "0.0");
 	  stringField[7] = MaudPreferences.getPref("pixelDetector.defaultRotoInversion", "0");
+    stringField[8] = MaudPreferences.getPref("pixelDetector.runImageJMacro", "");
+
     parameterField[0] = new Parameter(this, getParameterString(0), 85.0,
             ParameterPreferences.getDouble(getParameterString(0) + ".min", 10),
             ParameterPreferences.getDouble(getParameterString(0) + ".max", 1000));
@@ -160,6 +168,7 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 		return 0;
 	}
 
+
 	public DataMask getDataMask() {
 		if (subordinateField[getDataMaskID()] == null)
 			setDataMask(0);
@@ -180,7 +189,7 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 		return getDataMask().identifier;
 	}
 
-	public void setDetectorDistance(double value) {
+  public void setDetectorDistance(double value) {
     parameterField[0].setValue(value);
   }
 
@@ -434,11 +443,22 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 	}
 
 	@Override
-	public boolean loadAndUnrollImage(ImagePlus imp, MultDiffrDataFile mdatafile, double[] gonioAngles) {
+	public boolean loadAndUnrollImage(ImagePlus impImage, MultDiffrDataFile mdatafile, double[] gonioAngles) {
+    double pixelWidth = MaudPreferences.getDouble("pixelDetector.pixelWidth", 0.075);
+    double pixelHeight = MaudPreferences.getDouble("pixelDetector.pixelHeight", 0.075);
 		boolean loadSuccessfull = false;
 //		AngularCalibration angcal = this;
 		String directory = mdatafile.getFolder(); //od.getDirectory();
 		String name = mdatafile.getLabel(); //od.getFileName();
+
+    ImagePlus imp = null;
+        String macro = getIJMacro();
+    if (macro != null && macro.length() > 0) {
+      Interpreter interp = new Interpreter();
+      imp = interp.runBatchMacro(macro, impImage);
+    } else
+      imp = impImage;
+
 		ij.measure.Calibration cal = imp.getCalibration();
 
 //		System.out.println("Opening tiff: "+ imp.getBitDepth());
@@ -456,8 +476,8 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 		}
 		if (cal.pixelWidth == 0.0 || cal.pixelWidth == 1 || cal.getUnit().compareToIgnoreCase("mm") != 0) {
 			cal.setUnit("mm");
-			cal.pixelWidth = MaudPreferences.getDouble("pixelDetector.pixelWidth", 0.075);
-			cal.pixelHeight = MaudPreferences.getDouble("pixelDetector.pixelHeight", 0.075);
+			cal.pixelWidth = pixelWidth;
+			cal.pixelHeight = pixelHeight;
 		}
 
 		ImageProcessor ip = imp.getChannelProcessor();
@@ -533,8 +553,8 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 		double centerY = getOriginalCenterY();
 		double coneInterval = MaudPreferences.getDouble("pixelDetector.defaultDiffractionConeInterval", 5.0);
 		double theta2Step = MaudPreferences.getDouble("pixelDetector.defaultDiffractionStepAngle", 0.02);
-		double omega = MaudPreferences.getDouble("sample.defaultOmegaAngle", 55.0);
-		double chi = MaudPreferences.getDouble("sample.defaultChiAngle", 17.0);
+		double omega = MaudPreferences.getDouble("sample.defaultOmegaAngle", 0.0);
+		double chi = MaudPreferences.getDouble("sample.defaultChiAngle", 0.0);
 		double phi = MaudPreferences.getDouble("sample.defaultPhiAngle", 0.0);
 		if (gonioAngles[0] != StringNumber.dummyAngle)
 			detector2Theta += gonioAngles[0];
@@ -635,7 +655,7 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 			datafile.setAngleValue(1, chi);
 			datafile.setAngleValue(2, phi);
 			datafile.setAngleValue(3, etaStart + spectrumIndex * coneInterval);
-			datafile.setAngleValue(4, detector2Theta);
+			datafile.setAngleValue(4, 0);
 
 /*            datafile.setField("_riet_meas_datafile_calibrated", "true", "0", "0", "0", false, null, null, null, null,
                 false);
@@ -662,7 +682,7 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 					datafile.setXImage(indexPoint, profile[0][spectrumIndex][i]);
 					datafile.setYImage(indexPoint, profile[1][spectrumIndex][i]);
 					datafile.setYData(indexPoint, intensityValue);
-					double tmpweight = Math.sqrt(datafile.getYData(indexPoint));
+					double tmpweight = Math.sqrt(intensityValue);
 					if (tmpweight != 0.0)
 						datafile.setWeight(indexPoint, 1.0 / tmpweight);
 					else
@@ -678,7 +698,15 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 		return loadSuccessfull;
 	}
 
-	@Override
+  public String getIJMacro() {
+    return stringField[8];
+  }
+
+  public void setIJMacro(String macro) {
+    stringField[8] = macro;
+  }
+
+  @Override
   public double notCalibrated(DiffrDataFile datafile, double x) {
     return x;
   }
@@ -719,7 +747,7 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 		  JPanel secondPanelTop = new JPanel(new GridLayout(0, 4, 3, 3));
 		  secondPanel.add(secondPanelTop, BorderLayout.CENTER);
 
-		  textfield = new JTextField[stringField.length];
+		  textfield = new JTextField[stringField.length - 1];
 
 		  textStrings[1] = "Center x:   ";
 		  textStrings[2] = "Center y:   ";
@@ -733,8 +761,41 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 				  "Rotation of the detector around its perpendicular axis passing by the center during image integration; pref keyword: pixelDetector.defaultOmegaDNangle",
 				  "Position of the detector in eta (along diffraction circles) during image integration; pref keyword: pixelDetector.defaultEtaDAangle",
 				  "Pre processing of the image: pixelDetector.defaultRotoInversion (0 = no action, 1 = rotation 90 clockwise, 2 = rotation 180 clockwise, 3 = rotation 90 anticlockwise, 4 = rotation 180 anticlockwise, 5 = flip horizontal, 6 = flip vertical, 7 = center inversion)"};
-		  for (int i = 0; i < stringField.length; i++)
+		  for (int i = 0; i < textfield.length; i++)
 		    addStringField(secondPanelTop, textStrings[i], tooltipStrings[i], i);
+      secondPanelTop.add(new JLabel("Run ImageJ macro: "));
+      JPanel thirdPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 3, 3));
+      secondPanelTop.add(thirdPanel);
+
+      JButton loadMacroButton = new JButton("Load...");
+      loadMacroButton.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          try {
+            String filename = Utility.browseFilename(JPolAngOptionsD.this, "Load ImageJ macro");
+            if (filename != null) {
+              TextViewer tv = new TextViewer(JPolAngOptionsD.this, true, false, AngularInclinedFlatImageCalibration.this, 8);
+              tv.DisplayText(Misc.getReader(Misc.filterFileName(filename)));
+              tv.setVisible(true);
+            }
+          } catch (Exception exc) {
+            exc.printStackTrace();
+          }
+        }
+      });
+      thirdPanel.add(loadMacroButton);
+      JButton editMacroButton = new JButton("Edit");
+      editMacroButton.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          try {
+            TextViewer tv = new TextViewer(JPolAngOptionsD.this, true, false, AngularInclinedFlatImageCalibration.this, 8);
+            tv.setText(AngularInclinedFlatImageCalibration.this.stringField[8]);
+            tv.setVisible(true);
+          } catch (Exception exc) {
+            exc.printStackTrace();
+          }
+        }
+      });
+      thirdPanel.add(editMacroButton);
 
 		  JPanel jPanel12 = new JPanel();
 		  jPanel12.setLayout(new BorderLayout(2, 2));
@@ -799,7 +860,7 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
   }
 
 	  public void retrieveParameters() {
-		  for (int i = 0; i < stringField.length; i++)
+		  for (int i = 0; i < textfield.length; i++)
 			  stringField[i] = textfield[i].getText();
 
 		  for (int i = 0; i < Nsubordinate; i++) { //absorption removed here
@@ -833,11 +894,13 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
       setOriginalDistance(getRadius());
       setOriginalCenterX(getOriginalCenterX() + getDetectorCenterX());
       setOriginalCenterY(getOriginalCenterY() + getDetectorCenterY());
-      setOriginal2Theta(getOriginal2Theta() + getDetector2Theta());
-//      setOriginalPhiDA(getOriginalPhiDA());
-//      setOriginalOmegaDN(getOriginalOmegaDN());
-//      setOriginalEtaDA(getOriginalEtaDA());
-      for (int i = 0; i < stringField.length - 4; i++)
+      setOriginal2Theta(getDetector2Theta());
+      setOriginalPhiDA(getDetectorPhiDA());
+      setOriginalOmegaDN(getDetectorOmegaDN());
+      setOriginalEtaDA(getDetectorEtaDA());
+      setDetectorCenterX(0);
+      setDetectorCenterY(0);
+      for (int i = 0; i < stringField.length - 1; i++)
         textfield[i].setText(stringField[i]);
     }
 

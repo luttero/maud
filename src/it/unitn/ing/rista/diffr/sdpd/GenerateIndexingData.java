@@ -138,6 +138,7 @@ public class GenerateIndexingData {
               prF.setTitle("Generating indexing data");
             } catch (NullPointerException npe) {
               System.out.println("Not able to create frame, MacOSX display sleep bug?");
+              npe.printStackTrace();
             }
 
           for (int i = 0; i < number; i++) {

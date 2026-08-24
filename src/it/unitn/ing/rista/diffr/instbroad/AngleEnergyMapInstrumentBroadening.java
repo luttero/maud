@@ -74,9 +74,6 @@ public class AngleEnergyMapInstrumentBroadening extends InstrumentBroadening {
 
 	protected static final String[] classlistcs = {};
 	
-	public static double minimumHWHMvalue = MaudPreferences.getDouble(
-			"instrBroadening.minimumHWHMvalue", 0.0000001);
-  
   public static final int asymmetryTruncationID = 0;
   public static final int asymmetryID = 0;
   public static final int cagliotiID = 1;
@@ -299,9 +296,6 @@ public class AngleEnergyMapInstrumentBroadening extends InstrumentBroadening {
     broadeningConvoluted = false;
     asymmetryReciprocal = true;
 //    System.out.println("Asymmetry: " + getAsymmetryTanDependent());
-    minimumHWHMvalue = MaudPreferences.getDouble(
-        "instrBroadening.minimumHWHMvalue", 0.0000001);
-    minimumHWHMvalue *= 4.0 * minimumHWHMvalue;
     truncationAngle = Double.parseDouble(getTruncationAngleString());
   }
   

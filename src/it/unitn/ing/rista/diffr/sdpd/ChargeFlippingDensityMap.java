@@ -267,6 +267,7 @@ public class ChargeFlippingDensityMap extends StructureSolutionMethod {
             prF = new ProgressFrame(numberOfData);
         } catch (NullPointerException npe) {
           System.out.println("Not able to create frame, MacOSX display sleep bug?");
+          npe.printStackTrace();
         }
       printf("Preparing Fourier Map computation...            ", prF);
       int indexsf = 0;
@@ -1257,6 +1258,7 @@ public class ChargeFlippingDensityMap extends StructureSolutionMethod {
       out.newLine();
     } catch (IOException ioe) {
       System.out.println("Error in writing the atom Map for " + toXRDcatString());
+      ioe.printStackTrace();
     }
 
   }
@@ -1327,6 +1329,7 @@ public class ChargeFlippingDensityMap extends StructureSolutionMethod {
       } while (tokentype != CIFtoken.TT_EOF && !endofInput);
     } catch (IOException ioe) {
       System.out.println("IO exception in custom object for " + toXRDcatString());
+      ioe.printStackTrace();
     }
 
     /*		if (theobj != null)
@@ -1362,10 +1365,12 @@ public class ChargeFlippingDensityMap extends StructureSolutionMethod {
         PFwriter.flush();
         PFwriter.close();
       } catch (IOException io) {
+        io.printStackTrace();
         try {
           PFwriter.flush();
           PFwriter.close();
         } catch (IOException ieo) {
+          ieo.printStackTrace();
         }
       }
     }
@@ -1421,7 +1426,7 @@ public class ChargeFlippingDensityMap extends StructureSolutionMethod {
         }
         PFreader.close();
       } catch (IOException io) {
-
+        io.printStackTrace();
         int index = 0;
         for (int na = 0; na < aSlices1; na++)
           for (int nb = 0; nb < bSlices1; nb++)

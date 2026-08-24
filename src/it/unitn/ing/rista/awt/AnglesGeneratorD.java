@@ -60,6 +60,7 @@ public class AnglesGeneratorD extends JFrame {
         try {
           createFile(filenameField.getText());
         } catch (Exception exc) {
+          exc.printStackTrace();
           AttentionD.showAlertDialog(AnglesGeneratorD.this, "One or more bad values!");
           return;
         }
@@ -164,6 +165,7 @@ public class AnglesGeneratorD extends JFrame {
       outputBuffer.flush();
       outputBuffer.close();
     } catch (IOException ioExcep) {
+      ioExcep.printStackTrace();
     }
 
   }

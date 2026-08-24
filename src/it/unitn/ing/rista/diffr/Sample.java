@@ -499,6 +499,7 @@ public class Sample extends Maincat {
 
 				} catch (IOException e) {
 					System.out.println("Error loading cif file!");
+          e.printStackTrace();
 				}
 				try {
 					reader.close();
@@ -1128,7 +1129,7 @@ public class Sample extends Maincat {
       normalizePhaseQuantity();
   }   */
 
-  public double[][][] phaseQuantity = null;
+  public double[][][][] phaseQuantity = null;
   public int numberOfPhases = 0;
   public int numberOfLayers = 0;
   boolean[] firstComputationSpectra = null;
@@ -1149,7 +1150,7 @@ public class Sample extends Maincat {
 
 	  // compute spectra
 //    System.out.println(numberOfLayers + " " + numberOfPhases + " " + activeDatasetsNumber());
-    phaseQuantity = new double[numberOfLayers][numberOfPhases][activeDatasetsNumber()];
+    phaseQuantity = new double[2][numberOfLayers][numberOfPhases][activeDatasetsNumber()];
     for (int j = 0; j < numberOfLayers; j++) {
       Layer alayer = getlayer(j);
 
@@ -1164,7 +1165,8 @@ public class Sample extends Maincat {
         for (int nd = 0; nd < activeDatasetsNumber(); nd++) {
           quantity = aphase.getApparentQuantity(quantity,
 		          getActiveDataSet(nd).getInstrument().getRadiationType(), alayer);
-          phaseQuantity[j][ph][nd] = quantity / (cellVol * cellVol);
+          phaseQuantity[0][j][ph][nd] = quantity / (cellVol * cellVol);
+          phaseQuantity[1][j][ph][nd] = quantity;
         }
       }
     }
@@ -1193,7 +1195,7 @@ public class Sample extends Maincat {
             double totQuantity = 0.0;
             for (int j = 0; j < numberOfLayers; j++) {
 //              System.out.println("Check " + j + " " + phaseIndex + " " + index);
-              totQuantity += phaseQuantity[j][phaseIndex][index];
+              totQuantity += phaseQuantity[1][j][phaseIndex][index];
             }
             if (totQuantity != 0.0) {
               Phase aphase = getPhase(phaseIndex);
@@ -1233,7 +1235,7 @@ public class Sample extends Maincat {
 		  double totQuantity = 0.0;
 		  for (int j = 0; j < numberOfLayers; j++)
 			  for (int nd = 0; nd < activeDatasetsNumber(); nd++)
-				  totQuantity += phaseQuantity[j][ip][nd];
+				  totQuantity += phaseQuantity[1][j][ip][nd];
 		  if (totQuantity != 0.0) {
 			  Phase aphase = getPhase(ip);
 //			  aphase.computeTextureFactor(Sample.this);
@@ -1251,7 +1253,7 @@ public class Sample extends Maincat {
 		  double totQuantity = 0.0;
 		  for (int j = 0; j < numberOfLayers; j++) {
 			  for (int nd = 0; nd < activeDatasetsNumber(); nd++)
-				  totQuantity += phaseQuantity[j][ip][nd];
+				  totQuantity += phaseQuantity[1][j][ip][nd];
 			  getlayer(j).getChemicalComposition(); // we refresh the chemical composition for fluorescence
 		  }
 		  if (totQuantity != 0.0) {
@@ -1324,7 +1326,7 @@ public class Sample extends Maincat {
         double totQuantity = 0.0;
         for (int j = 0; j < numberOfLayers; j++)
           for (int nd = 0; nd < activeDatasetsNumber(); nd++)
-            totQuantity += phaseQuantity[j][ip][nd];
+            totQuantity += phaseQuantity[1][j][ip][nd];
         if (totQuantity != 0.0) {
           Phase aphase = getPhase(ip);
           aphase.computeTextureFactor(this);
@@ -1364,7 +1366,7 @@ public class Sample extends Maincat {
 			  double totQuantity = 0.0;
 			  for (int j = 0; j < numberOfLayers; j++)
 				  for (int nd = 0; nd < activeDatasetsNumber(); nd++)
-					  totQuantity += phaseQuantity[j][i][nd];
+					  totQuantity += phaseQuantity[1][j][i][nd];
 			  if (totQuantity != 0.0 && aphase.extractStructureFactors()) {
 				  aphase.extractStructureFactors(this);
 				  if (aphase.solveCrystalStructure())
@@ -2367,14 +2369,16 @@ public class Sample extends Maincat {
             }
           }
         } while (tokentype != CIFtoken.TT_EOF);
-      } catch (IOException ioe) {
+      } catch (Exception ioe) {
         System.out.println("IO exception");
+        ioe.printStackTrace();
       }
 
       try {
         in.close();
       } catch (IOException ioe) {
         System.out.println("IO exception in closing the file");
+        ioe.printStackTrace();
       }
     }
     // Reading instruments now
@@ -2481,14 +2485,16 @@ public class Sample extends Maincat {
             }
           }
         } while (tokentype != CIFtoken.TT_EOF);
-      } catch (IOException ioe) {
+      } catch (Exception ioe) {
         System.out.println("IO exception");
+        ioe.printStackTrace();
       }
 
       try {
         in.close();
       } catch (IOException ioe) {
         System.out.println("IO exception in closing the file");
+        ioe.printStackTrace();
       }
 
     }

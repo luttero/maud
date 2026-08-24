@@ -144,6 +144,7 @@ public class EsquiGoDataFile extends it.unitn.ing.rista.diffr.data.ItalStructure
       try {
         reader.close();
       } catch (IOException e) {
+        e.printStackTrace();
       }
     }
     isAbilitatetoRefresh = tmpB;

@@ -303,6 +303,7 @@ public class principalJFrame extends myJFrame {
       try {
         aWizard[i] = BaseWizard.factory(this, "", (String) actionClassesList.elementAt(i * 3));
       } catch (Exception pnf) {
+        pnf.printStackTrace();
       }
     }
 
@@ -343,6 +344,7 @@ public class principalJFrame extends myJFrame {
         try {
           Thread.sleep(100);
         } catch (InterruptedException ie) {
+          ie.printStackTrace();
         }
       }
 
@@ -370,7 +372,7 @@ public class principalJFrame extends myJFrame {
       }
     String filename = ((Phase) aobject).exportForCOD(this);
 
-    TextViewer tv = new TextViewer(this, true, true);
+    TextViewer tv = new TextViewer(this, true, true, null, 0);
     tv.setVisible(true);
     tv.DisplayText(filename);
 
@@ -419,6 +421,7 @@ public class principalJFrame extends myJFrame {
         try {
           sleep(10000);
         } catch (InterruptedException ie) {
+          ie.printStackTrace();
         }
         if (cfd.isVisible())
           quitFile_Action();  // force the quit while the dialog has not been handled
@@ -501,6 +504,7 @@ public class principalJFrame extends myJFrame {
             rb.setEnabled(false);
             System.err.println("Unsupported LookAndFeel: " + rb.getText());
             newLookAndFeel = null;
+            exc.printStackTrace();
           }
           if (newLookAndFeel != null)
             MaudPreferences.setPref(swingLF, newLookAndFeel);

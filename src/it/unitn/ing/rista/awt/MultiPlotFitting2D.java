@@ -339,26 +339,6 @@ public class MultiPlotFitting2D extends myJFrame {
 	          }
           }
         }
-/*
-        for (int sn = 0; sn < ylength; sn++) {
-          if (i == 0)
-            yaxis[ylength + 1 + sn] = ylength + 1 + sn;
-          if (startingIndex + i < datafile[sn].startingindex ||
-              startingIndex + i >= datafile[sn].finalindex)
-            values[j++] = it.unitn.ing.jgraph.ColorMap.DUMMY_VALUE;
-          else {
-            values[j++] = datafile[sn].getFitSqrtData(i + startingIndex);
-            if (values[j - 1] < IntensityMin && computeMinMax)
-              IntensityMin = (double) values[j - 1];
-            else if (values[j - 1] < IntensityMin && !computeMinMax)
-              values[j - 1] = IntensityMin;
-            if (values[j - 1] > IntensityMax && computeMinMax)
-              IntensityMax = (double) values[j - 1];
-            else if (values[j - 1] > IntensityMax && !computeMinMax)
-              values[j - 1] = IntensityMax;
-          }
-        }
-*/
       }
     }
 

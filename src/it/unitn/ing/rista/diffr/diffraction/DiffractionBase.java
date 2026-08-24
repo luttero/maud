@@ -68,6 +68,15 @@ public class DiffractionBase extends Diffraction {
     if (datafilenumber < 1)
       return;
 
+    for (int i = 0; i < asample.phasesNumber(); i++) {
+      Phase aphase = asample.getPhase(i);
+//      boolean hasTexture = !aphase.getActiveTexture().isRandomTexture();
+      double[][][] powderPattern = aphase.getActivePlanarDefects().getPowderPattern(theDataset);
+      if (powderPattern != null) {
+        theDataset.setPhasePatterns(aphase, powderPattern);
+//        System.out.println(aphase.thelabel + " " + powderPattern.length);
+      }
+    }
 //    final Instrument ainstrument = theDataset.getInstrument();
     final int maxThreads = Math.min(Constants.maxNumberOfThreads, datafilenumber);
 		if (maxThreads > 1 && Constants.threadingGranularity >= Constants.MEDIUM_GRANULARITY) {
@@ -107,6 +116,7 @@ public class DiffractionBase extends Diffraction {
 				try {
 					Thread.sleep(Constants.timeToWaitThreadsEnding);
 				} catch (InterruptedException r) {
+          r.printStackTrace();
 				}
 				for (int h = 0; h < maxThreads; h++) {
 					if (!threads[h].isEnded())
@@ -123,30 +133,64 @@ public class DiffractionBase extends Diffraction {
 	}
 
 	public void computeDiffraction(Sample asample, DiffrDataFile datafile) {
-//		DataFileSet datafileset = getDataFileSet();
+		DataFileSet datafileset = getDataFileSet();
 		if (getFilePar().isComputingDerivate()) {
 //      System.out.println("refreshing derivative: " + this.toXRDcatString());
 			for (int ij = 0; ij < getFilePar().getActiveSample().phasesNumber(); ij++) {
 				double expfit[] = new double[datafile.getTotalNumberOfData()];
-				int minmaxindex[] = computeReflectionIntensity(asample, datafile.getDataFileSet().getPeakList(), true,
-						expfit, Constants.ENTIRE_RANGE, Constants.COMPUTED,
-						Constants.COMPUTED, Constants.COMPUTED, false,
-						getFilePar().getActiveSample().getPhase(ij), datafile);
-				for (int j = minmaxindex[0]; j < minmaxindex[1]; j++)
-					datafile.addtoPhasesFit(j, expfit[j]);
+        Phase aphase = getFilePar().getActiveSample().getPhase(ij);
+        double[][][] patterns = datafileset.getPatternsForPhase(aphase);
+        if (patterns == null) {
+          int minmaxindex[] = computeReflectionIntensity(asample, datafile.getDataFileSet().getPeakList(), true,
+              expfit, Constants.ENTIRE_RANGE, Constants.COMPUTED,
+              Constants.COMPUTED, Constants.COMPUTED, false,
+              aphase, datafile);
+          for (int j = minmaxindex[0]; j < minmaxindex[1]; j++)
+            datafile.addtoPhasesFit(j, expfit[j]);
+        } else {
+          double[][] patt = null;
+          if (patterns.length > 1)
+            patt = patterns[datafile.getIndex()];
+          else
+            patt = patterns[0];
+          int minmaxindex[] = computeReflectionIntensityFromPattern(asample, patt,
+              expfit, getFilePar().getActiveSample().getPhase(ij), datafile);
+//        System.out.println("indices: " + minmaxindex[0] + " " + minmaxindex[1] + " " + expfit[1000]);
+          for (int j = minmaxindex[0]; j < minmaxindex[1]; j++)
+            datafile.addtoPhasesFit(j, expfit[j], ij);
+        }
 			}
 		} else {
 //      System.out.println("refreshing: " + this.toXRDcatString());
 			for (int ij = 0; ij < getFilePar().getActiveSample().phasesNumber(); ij++) {
 //        System.out.println("Phase: " + getFilePar().getActiveSample().getPhase(ij).toXRDcatString());
 				double expfit[] = new double[datafile.getTotalNumberOfData()];
-				int minmaxindex[] = computeReflectionIntensity(asample, datafile.getDataFileSet().getPeakList(), true,
-						expfit, Constants.ENTIRE_RANGE, Constants.COMPUTED,
-						Constants.COMPUTED, Constants.COMPUTED, false,
-						getFilePar().getActiveSample().getPhase(ij), datafile);
+        Phase aphase = getFilePar().getActiveSample().getPhase(ij);
+//        System.out.println("Retrieving: " + aphase.thelabel);
+        double[][][] patterns = datafileset.getPatternsForPhase(aphase);
+//        System.out.println("Retrieving: " + aphase.thelabel + " " + patterns);
+        if (patterns == null) {
+          int minmaxindex[] = computeReflectionIntensity(asample, datafile.getDataFileSet().getPeakList(), true,
+              expfit, Constants.ENTIRE_RANGE, Constants.COMPUTED,
+              Constants.COMPUTED, Constants.COMPUTED, false,
+              getFilePar().getActiveSample().getPhase(ij), datafile);
 //        System.out.println("indices: " + minmaxindex[0] + " " + minmaxindex[1] + " " + expfit[1000]);
-				for (int j = minmaxindex[0]; j < minmaxindex[1]; j++)
-					datafile.addtoPhasesFit(j, expfit[j], ij);
+          for (int j = minmaxindex[0]; j < minmaxindex[1]; j++)
+            datafile.addtoPhasesFit(j, expfit[j], ij);
+        } else {
+          double[][] patt = null;
+          if (patterns.length > 1) {
+//            System.out.println("Pattern :" + datafile.getIndex() + " " + patterns.length);
+            patt = patterns[datafile.getIndex()];
+//            System.out.println("Pattern :" + datafile.getIndex() + " " + patt[1][100]);
+          } else
+            patt = patterns[0];
+          int minmaxindex[] = computeReflectionIntensityFromPattern(asample, patt,
+              expfit, getFilePar().getActiveSample().getPhase(ij), datafile);
+//        System.out.println("indices: " + minmaxindex[0] + " " + minmaxindex[1] + " " + expfit[1000]);
+          for (int j = minmaxindex[0]; j < minmaxindex[1]; j++)
+            datafile.addtoPhasesFit(j, expfit[j], ij);
+        }
 			}
 		}
 	}
@@ -246,6 +290,42 @@ public class DiffractionBase extends Diffraction {
 
 	}
 
+  public int[] computeReflectionIntensityFromPattern(Sample asample, double[][] pattern,
+                                          double[] expfit, Phase phase, DiffrDataFile datafile) {
+
+    DataFileSet adatafileset = getDataFileSet();
+    Instrument ainstrument = adatafileset.getInstrument();
+    FilePar filepar = getFilePar();
+    int[] tmpminmax = new int[2];
+    int[] minmaxindex = new int[2];
+    minmaxindex[0] = datafile.startingindex;
+    minmaxindex[1] = datafile.finalindex;
+
+    double phaseScale = phase.getScaleFactor();
+    double intensity = ainstrument.getIntensityValue();
+    double[] layer_abs = null;
+    if (asample.layersnumber() > 1)
+      layer_abs = ainstrument.phaseAndLayerAbsorptionForPattern(datafile, asample, phase);
+    else {
+      int phaseindex = asample.getPhase(phase);
+      int datasetIndex = adatafileset.getDataFileSetIndex();
+      double quantity = asample.phaseQuantity[1][0][phaseindex][datasetIndex];
+      layer_abs = new double[expfit.length];
+//      System.out.println(quantity);
+      for (int i = datafile.startingindex; i < datafile.finalindex; i++) {
+        layer_abs[i] = quantity;
+      }
+    }
+
+
+    double[] intensityInterpolated = getInterpolatedIntensityFor(datafile.getXData(), datafile.startingindex, datafile.finalindex, pattern);
+    for (int i = datafile.startingindex; i < datafile.finalindex; i++) {
+      expfit[i] = layer_abs[i] * intensity * phaseScale * intensityInterpolated[i];
+    }
+    return minmaxindex;
+
+  }
+
 	public void computeasymmetry(Sample asample, DiffrDataFile datafile) {
 		computeasymmetry(asample, datafile, datafile.phasesfit, datafile.startingindex, datafile.finalindex);
 		if (!getFilePar().isComputingDerivate()) {
@@ -267,5 +347,21 @@ public class DiffractionBase extends Diffraction {
 //      System.out.println(", after: " + afit[j]);
 		}
 	}
+
+  public static double[] getInterpolatedIntensityFor(double[] xdata, int min, int max, double[][] pattern) {
+    double[] data = new double[xdata.length];
+    int actualIndex = 1;
+    for (int i = min; i < max; i++) {
+      double x = xdata[i];
+      while (actualIndex < pattern[0].length && x > pattern[0][actualIndex]) {
+        actualIndex++;
+      }
+      if (actualIndex < pattern[0].length) {
+        data[i] = pattern[1][actualIndex - 1] + (pattern[1][actualIndex] - pattern[1][actualIndex - 1]) / (pattern[0][actualIndex] - pattern[0][actualIndex - 1]) *
+            (x - pattern[0][actualIndex - 1]);
+      }
+    }
+    return data;
+  }
 
 }

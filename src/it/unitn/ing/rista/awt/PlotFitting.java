@@ -1327,6 +1327,7 @@ public class PlotFitting extends PlotDataFile {
           }
         }
       } catch (Exception e) {
+        e.printStackTrace();
       }
 
       if (thePlotPanel.yaxisp != null) {
@@ -1367,6 +1368,7 @@ public class PlotFitting extends PlotDataFile {
       thePlotPanel.datap[0].append(datapeak, numberofRefl);
 
     } catch (Exception e) {
+      e.printStackTrace();
     }
 
     thePlotPanel.positions.updateDataAndPaint(trange);

@@ -191,7 +191,7 @@ public class AbsorptionWindow extends XRDcat {
           absAtom = XRayDataSqLite.getTotalAbsorptionForAtomAndEnergy(atomNumber, energyInKeV);
         absorption += atomFraction * absAtom;
       } catch (Exception e) {
-//        e.printStackTrace();
+        e.printStackTrace();
       }
 //			System.out.println(absorption + " " + absAtom + " " + energyInKeV + " " + atomNumber + " " + atomLabel + " " + atomFraction);
 		}

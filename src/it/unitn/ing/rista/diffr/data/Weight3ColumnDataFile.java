@@ -112,6 +112,7 @@ public class Weight3ColumnDataFile extends it.unitn.ing.rista.diffr.DiffrDataFil
       try {
         reader.close();
       } catch (IOException e) {
+        e.printStackTrace();
       }
     }
     isAbilitatetoRefresh = tmpB;

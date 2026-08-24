@@ -200,6 +200,7 @@ public class TOFMultiDetector extends Detector {
       try {
         reader.close();
       } catch (IOException e) {
+        e.printStackTrace();
       }
     }
   }

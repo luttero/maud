@@ -188,11 +188,13 @@ public class SimpleGraph extends JPanel {
         output.newLine();
       }
     } catch (IOException io) {
+      io.printStackTrace();
     }
     try {
       output.flush();
       output.close();
     } catch (IOException io) {
+      io.printStackTrace();
     }
   }
 
@@ -219,6 +221,7 @@ public class SimpleGraph extends JPanel {
         out = new BufferedWriter(new FileWriter(new File(filename)));
       } catch (IOException ie) {
         Graph2D.out.println("Unable to open file: " + filename);
+        ie.printStackTrace();
       }
 //	  }
     return out;

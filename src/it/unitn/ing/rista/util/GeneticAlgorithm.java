@@ -72,6 +72,7 @@ public class GeneticAlgorithm extends Problem implements SimpleProblemForm {
                 "An IO Exception was generated upon" +
                 "starting up, probably in setting up a log" +
                 "\nHere it is:\n" + e);
+        e.printStackTrace();
       }
     }
     return;

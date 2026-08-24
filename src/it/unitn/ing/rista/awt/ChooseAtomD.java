@@ -166,6 +166,7 @@ public class ChooseAtomD extends myJDialog {
       try {
         Thread.currentThread().sleep(100);
       } catch (InterruptedException e) {
+        e.printStackTrace();
       }
     }
 	 anatom.setAtomSymbol(chooseAtomD.getSelectedAtomLabel());
@@ -180,6 +181,7 @@ public class ChooseAtomD extends myJDialog {
 			try {
 				Thread.currentThread().sleep(100);
 			} catch (InterruptedException e) {
+        e.printStackTrace();
 			}
 		}
 		anatom = chooseAtomD.getSelectedAtomLabel();

@@ -190,7 +190,11 @@ public class HarmonicTexture extends Texture implements Function {
 			refreshComputation = true;
 	}
 
-	public void initializeReflexes(Sample asample) {
+  public boolean isRandomTexture() {
+    return false;
+  }
+
+  public void initializeReflexes(Sample asample) {
   }
 
   public String getSampleSymmetry() {
@@ -457,6 +461,59 @@ public class HarmonicTexture extends Texture implements Function {
 
     return poleIntensity;
   }
+
+  int[] ml2 = new int[1];
+  int[][] nl2 = new int[1][1];
+  double[] intensityCorrection = new double[1];
+
+  public void initQuickComputation() {
+    intensityCorrection = new double[expansionDegree];
+    ml2 = new int[expansionDegree];
+    nl2 = new int[expansionDegree][expansionDegree];
+    for (int l = 2; l <= expansionDegree; l += 2) {
+      ml2[l-2] = SphericalHarmonics.getN(LGIndex, l);
+      for (int m = 1; m <= ml2[l-2]; m++) {
+        nl2[l-2][m - 1] = SphericalHarmonics.getN(sampleSymmetry, l);
+      }
+      intensityCorrection[l-2] = (4.0 * Constants.PI) / (2 * l + 1);
+    }
+
+  }
+
+  public double computeTextureFactorQuick(double phi, double beta, double psi, double gamma) {
+    // it requires to call first the initQuickCalculation method once
+
+    // Angles must be in radiants
+    // phi and beta are the polar and azimuthal angles for the crystal setting
+    // psi and gamma for the sample
+    // see Popa, J. Appl. Cryst. 25, 611, 1992.
+
+//    System.out.println(phi + " "+beta+" "+psi+" "+gamma);
+    double poleIntensity = 1.0;
+    int k = 0;
+
+    for (int l = 2; l <= expansionDegree; l += 2) {
+      double tmpIntensity = 0.0;
+      int ml2t = ml2[l-2];
+      for (int m = 1; m <= ml2t; m++) {
+        double tmpPole = 0.0;
+        int nl2t = nl2[l-2][m - 1];
+        for (int n = 1; n <= nl2t; n++) {
+          tmpPole += coefficient[k] * SphericalHarmonics.getSphericalHarmonic(sampleSymmetry, l, n, gamma, psi);
+          k++;
+        }
+        tmpIntensity += tmpPole * SphericalHarmonics.getSphericalHarmonic(LGIndex, l, m, beta, phi);
+      }
+      tmpIntensity *= intensityCorrection[l-2];
+      poleIntensity += tmpIntensity;
+    }
+    if (cutNegative && poleIntensity < 0.0)
+      poleIntensity = 0.0;
+
+    return poleIntensity;
+  }
+
+
 
   public double[] computeTextureFactor(double[][] alphabeta, Reflection reflex) {
 
@@ -2452,12 +2509,14 @@ public class HarmonicTexture extends Texture implements Function {
           }
         }
       } catch (IOException io) {
+        io.printStackTrace();
       }
 
       try {
         PFwriter.flush();
         PFwriter.close();
       } catch (IOException io) {
+        io.printStackTrace();
       }
     }
 
@@ -2497,6 +2556,7 @@ public class HarmonicTexture extends Texture implements Function {
             try {
               PFreader.close();
             } catch (IOException ion) {
+              ion.printStackTrace();
             }
           }
         }
@@ -2591,6 +2651,7 @@ public class HarmonicTexture extends Texture implements Function {
               try {
                 PFreader.close();
               } catch (IOException ion) {
+                ion.printStackTrace();
               }
             }
           }

@@ -1238,6 +1238,7 @@ public class Graph2D extends GraphInterface {
           try {
             sleep(visible);
           } catch (Exception e) {
+            e.printStackTrace();
           }
         } else {
           if (lg != null) {
@@ -1250,6 +1251,7 @@ public class Graph2D extends GraphInterface {
           try {
             sleep(invisible);
           } catch (Exception e) {
+            e.printStackTrace();
           }
 
         }

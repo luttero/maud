@@ -143,8 +143,9 @@ public class LCLS2ConfigData {
 						}
 					} while (tokentype != CIFtoken.TT_EOF);
 
-				} catch (IOException e) {
+				} catch (Exception e) {
 					System.out.println("Error loading cif file!");
+          e.printStackTrace();
 				}
 				try {
 					reader.close();

@@ -144,6 +144,10 @@ public class PlanarDefects extends XRDcat {
     }
   }
 
+  public double[][][] getPowderPattern(DataFileSet adaset) {
+    return null;
+  }
+
   public JOptionsDialog getOptionsDialog(Frame parent) {
     JOptionsDialog adialog = new JPlanarDefectsOptionsD(parent, this);
     return adialog;

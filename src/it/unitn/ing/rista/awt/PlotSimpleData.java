@@ -351,11 +351,13 @@ public class PlotSimpleData extends GraphFrame {
 				output.newLine();
 			}
 		} catch (IOException io) {
+      io.printStackTrace();
 		}
 		try {
 			output.flush();
 			output.close();
 		} catch (IOException io) {
+      io.printStackTrace();
 		}
 	}
 

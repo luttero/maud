@@ -328,11 +328,14 @@ public class MarqardLeastSquares {
           am[k2] /= f;
         }
         choleskyFlag[j] = 1;
+        if (flg == -1)
+          flg = 1;
       } else {
-        flg = 1;
+        if (flg == 0)
+          flg = -1;
         choleskyFlag[j] = -1;
         if (outputEnabled)
-          System.out.println("cholesky negative diag j,l,a(l) : " + j + " " + l1 + " " + am[l1]);
+          System.out.println("Cholesky negative diag j,l,a(l) : " + j + " " + l1 + " " + am[l1]);
       }
     }
     return flg;

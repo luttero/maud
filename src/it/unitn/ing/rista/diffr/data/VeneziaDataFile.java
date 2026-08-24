@@ -304,6 +304,7 @@ public class VeneziaDataFile extends DiffrDataFile {
       try {
         reader.close();
       } catch (IOException e) {
+        e.printStackTrace();
       }
     }
     isAbilitatetoRefresh = tmpB;

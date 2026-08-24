@@ -97,6 +97,7 @@ public class AscFluorescenceDatafile extends it.unitn.ing.rista.diffr.DiffrDataF
 							y.addElement(n2);
 						}
 					} catch (Exception ge) {
+            ge.printStackTrace();
 // not numbers, we don't store them
 //              System.out.println("not a number: " + linedata);
 					}
@@ -127,6 +128,7 @@ public class AscFluorescenceDatafile extends it.unitn.ing.rista.diffr.DiffrDataF
 			try {
 				reader.close();
 			} catch (IOException e) {
+        e.printStackTrace();
 			}
 		}
 		isAbilitatetoRefresh = tmpB;

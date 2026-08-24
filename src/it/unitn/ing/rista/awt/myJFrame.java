@@ -959,7 +959,9 @@ public class myJFrame extends iconJFrame implements ParentFrame, ClipboardOwner,
  //       System.out.println("JMenuBar workaround....");
       }
     }*/
-    } catch(Exception e) {}
+    } catch(Exception e) {
+      e.printStackTrace();
+    }
     super.setVisible(show);
   }
 

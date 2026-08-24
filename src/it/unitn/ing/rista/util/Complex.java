@@ -77,6 +77,7 @@ public class Complex {
       return c.re == re && c.im == im;
     }
     catch (Exception e) {
+      e.printStackTrace();
       return false;
     }
   }

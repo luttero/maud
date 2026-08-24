@@ -217,7 +217,7 @@ public class SphericalHarmonics {
     alegr = Math.sqrt(alegr);
     alegr /= (MoreMath.pow(2, l) * MoreMath.factorial(l));
 
-    if (MoreMath.odd(m))
+    if ((m & 1) != 0)
       return -alegr;
     else
       return alegr;
@@ -291,34 +291,35 @@ public class SphericalHarmonics {
     initialize();
 //		checkAlegrendeCoefficients(l);
 //		checkCoefficients(l);
+//    if ( (l & 1) != 0 ) { odd... } else { even... }
     switch (LGnumber) {
       case 0: // C1
         return 2 * l + 1;
       case 1: // C2
         return l + 1;
       case 2: // D2
-        if (MoreMath.odd(l))
+        if ((l & 1) != 0)
           return l / 2;
         else
           return l / 2 + 1;
       case 5: // C3
         return (l / 3) * 2 + 1;
       case 6: // D3
-        if (MoreMath.odd(l))
+        if ((l & 1) != 0)
           return l / 3;
         else
           return l / 3 + 1;
       case 3: // C4
         return (l / 4) * 2 + 1;
       case 4: // D4
-        if (MoreMath.odd(l))
+        if ((l & 1) != 0)
           return l / 4;
         else
           return l / 4 + 1;
       case 7: // C6
         return (l / 6) * 2 + 1;
       case 8: // D6
-        if (MoreMath.odd(l))
+        if ((l & 1) != 0)
           return l / 6;
         else
           return l / 6 + 1;
@@ -400,8 +401,8 @@ public class SphericalHarmonics {
   public static final double getDTesseralFunction(int l, int m, int n,
                                                   double alpha, double beta, double gamma) {
 
-    double i1 = (MoreMath.odd(m + n)) ? -1.0 : 1.0;
-    double i2 = (MoreMath.odd(l)) ? -1.0 : 1.0;
+    double i1 = (((m + n) & 1) != 0) ? -1.0 : 1.0;
+    double i2 = ((l & 1) != 0) ? -1.0 : 1.0;
     int mabs = m > 0 ? m : -m ;
 	  int nabs = n > 0 ? n : -n ;
 
@@ -491,7 +492,7 @@ public class SphericalHarmonics {
     double delta = 0.0;
 
     double i3, i1 = 1.0;
-    if (MoreMath.odd(m + n))
+    if (((m + n) & 1) != 0)
       i1 = -1.0;
     double i2 = 1.0 / MoreMath.pow(2, l);
 
@@ -499,7 +500,7 @@ public class SphericalHarmonics {
             (MoreMath.factorial(l + n) * MoreMath.factorial(l - n)));
     for (int i = 0; i <= l; i++) {
       i3 = 1.0;
-      if (MoreMath.odd(i))
+      if ((i & 1) != 0)
         i3 = -1.0;
       delta += i3 * MoreMath.binomial(l + n, i) * MoreMath.binomial(l - n, i + m - n);
     }
@@ -586,7 +587,7 @@ public class SphericalHarmonics {
 
   public static final int getMpForC(int n, int mu) {
     int m = (mu / 2) * n;
-    if (MoreMath.odd(mu))
+    if ((mu & 1) != 0)
       return m;
     else
       return -m;
@@ -599,7 +600,7 @@ public class SphericalHarmonics {
 
   public static final int getMpForD(int l, int n, int mu) {
     int k = 1;
-    if (MoreMath.odd(l))
+    if ((l & 1) != 0)
       k = -k;
     return k * (mu - (1 + k) / 2) * n;
   }
@@ -613,10 +614,10 @@ public class SphericalHarmonics {
 
   public static final int getMpForD3(int l, int mu) {
     int k = 1;
-    if (MoreMath.odd(l + mu + 1))
+    if (((l + mu + 1) & 1) != 0)
       k = -k;
     int k1 = 1;
-    if (MoreMath.odd(l))
+    if ((l & 1) != 0)
       k1 = -k1;
     return k * (mu - (1 + k1) / 2) * 3;
   }

@@ -118,6 +118,7 @@ public class JQuestionDialog extends myJDialog {
       try {
         Thread.currentThread().sleep(300);
       } catch (InterruptedException ie) {
+        ie.printStackTrace();
       }
     } while (cfd.isVisible());
     finalResponse = cfd.response;
@@ -138,6 +139,7 @@ public class JQuestionDialog extends myJDialog {
       try {
         Thread.currentThread().sleep(300);
       } catch (InterruptedException ie) {
+        ie.printStackTrace();
       }
     } while (cfd.isVisible());
     finalResponse = cfd.responseString;

@@ -950,6 +950,7 @@ public class Parameter extends Object implements Cloneable, basicObj {
       out.newLine();
     } catch (IOException ioe) {
       System.out.println("Error in writing the parameter " + this);
+      ioe.printStackTrace();
     }
   }
 

@@ -233,6 +233,7 @@ public class ScanString extends Object {
         position += count;
         return NUMBER;
       } catch (Exception e) {
+        e.printStackTrace();
         return ERROR;
       }
 

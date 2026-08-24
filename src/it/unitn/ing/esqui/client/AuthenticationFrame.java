@@ -99,6 +99,7 @@ class AuthenticationFrame extends JFrame {
           Connection authentication = new AuthenticationConnection(getTopFrame());
         } catch (Exception exc) {
           System.out.println("Error on authentication procedure!");
+          exc.printStackTrace();
         }
         setVisible(false);
         dispose();

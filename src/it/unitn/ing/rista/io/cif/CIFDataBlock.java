@@ -76,6 +76,7 @@ public class CIFDataBlock {
       out.newLine();
     } catch (IOException ioe) {
       System.out.println("Error writing data decl for object " + sender.toString());
+      ioe.printStackTrace();
     }
   }
 

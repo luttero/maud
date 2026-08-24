@@ -127,6 +127,7 @@ public class DoubleColumnQPLDataFile extends DoubleColumnQDataFile {
       try {
         reader.close();
       } catch (IOException e) {
+        e.printStackTrace();
       }
     }
     isAbilitatetoRefresh = tmpB;

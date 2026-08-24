@@ -218,11 +218,13 @@ public class ShelxsSolution extends StructureSolutionMethod {
           output.write("endf");
           output.newLine();
         } catch (IOException io) {
+          io.printStackTrace();
         }
         try {
           output.flush();
           output.close();
         } catch (IOException io) {
+          io.printStackTrace();
         }
     }
   }
@@ -425,6 +427,7 @@ public class ShelxsSolution extends StructureSolutionMethod {
       try {
         reader.close();
       } catch (IOException e) {
+        e.printStackTrace();
       }
     }
   }
@@ -455,10 +458,12 @@ public class ShelxsSolution extends StructureSolutionMethod {
 
       } catch (IOException e) {
         System.out.println("Error in loading the xplor map file!");
+        e.printStackTrace();
       }
       try {
         reader.close();
       } catch (IOException e) {
+        e.printStackTrace();
       }
     }
   }
@@ -646,6 +651,7 @@ public class ShelxsSolution extends StructureSolutionMethod {
       out.newLine();
     } catch (IOException ioe) {
       System.out.println("Error in writing the atom Map for " + toXRDcatString());
+      ioe.printStackTrace();
     }
 
   }
@@ -716,6 +722,7 @@ public class ShelxsSolution extends StructureSolutionMethod {
       } while (tokentype != CIFtoken.TT_EOF && !endofInput);
     } catch (IOException ioe) {
       System.out.println("IO exception in custom object for " + toXRDcatString());
+      ioe.printStackTrace();
     }
 
     /*		if (theobj != null)
@@ -751,10 +758,12 @@ public class ShelxsSolution extends StructureSolutionMethod {
         PFwriter.flush();
         PFwriter.close();
       } catch (IOException io) {
+        io.printStackTrace();
         try {
           PFwriter.flush();
           PFwriter.close();
         } catch (IOException ieo) {
+          ieo.printStackTrace();
         }
       }
     }
@@ -809,7 +818,7 @@ public class ShelxsSolution extends StructureSolutionMethod {
         }
         PFreader.close();
       } catch (IOException io) {
-
+        io.printStackTrace();
         int index = 0;
         for (int na = 0; na < cSlices1; na++)
           for (int nb = 0; nb < bSlices1; nb++)

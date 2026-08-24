@@ -63,9 +63,11 @@ public class Sla33Constants {
         }
         in.close();
       } catch (IOException ie) {
+        ie.printStackTrace();
         try {
           in.close();
         } catch (IOException iex) {
+          iex.printStackTrace();
         }
       }
     }
@@ -85,9 +87,11 @@ public class Sla33Constants {
         }
         in.close();
       } catch (IOException ie) {
+        ie.printStackTrace();
         try {
           in.close();
         } catch (IOException iex) {
+          iex.printStackTrace();
         }
       }
     }

@@ -481,10 +481,12 @@ public class SpectraPlotWindow extends ImageWindow implements ActionListener, Cl
           output.newLine();
         }
       } catch (IOException io) {
+        io.printStackTrace();
       }
       try {
         output.close();
       } catch (IOException io) {
+        io.printStackTrace();
       }
     }
     if (autoClose) {
@@ -501,6 +503,7 @@ public class SpectraPlotWindow extends ImageWindow implements ActionListener, Cl
     try {
       systemClipboard = getToolkit().getSystemClipboard();
     } catch (Exception e) {
+      e.printStackTrace();
       systemClipboard = null;
     }
     if (systemClipboard == null) {

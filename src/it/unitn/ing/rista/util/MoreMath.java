@@ -55,7 +55,7 @@ public class MoreMath {
       return false;
     else
       return true;*/
-	  return (Math.abs(value) & 1) != 0;
+	  return (value & 1) != 0;
   }
 
   public static final int is3Neven(int value) {

@@ -374,10 +374,12 @@ public class StructureFactorModel extends XRDcat {
         } //endoffile
         PFreader.close();
       } catch (IOException io) {
+        io.printStackTrace();
       }
       try {
         PFreader.close();
       } catch (IOException io) {
+        io.printStackTrace();
       }
     }
 

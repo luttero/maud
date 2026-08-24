@@ -332,7 +332,7 @@ public class AtomSite extends XRDcat {
 
     parameterField[0].setPositiveOnly();
 
-	 getTotalOccupancy();
+	  getTotalOccupancy();
   }
 
 

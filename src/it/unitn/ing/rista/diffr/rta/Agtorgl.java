@@ -274,6 +274,7 @@ public class Agtorgl {
           prF = new ProgressFrame(cpol_izpol);
       } catch (NullPointerException npe) {
         System.out.println("Not able to create frame, MacOSX display sleep bug?");
+        npe.printStackTrace();
       }
     printf("Pole figure interpolation for phase: " + thephase.toXRDcatString() + "       ", prF);
     for (cpol_npol = 1; cpol_npol <= cpol_izpol; ++cpol_npol) {
@@ -310,6 +311,7 @@ public class Agtorgl {
       PFwriter.flush();
       PFwriter.close();
     } catch (IOException io) {
+      io.printStackTrace();
     }
     return poleIntensity;
   } /* agtorgl */
@@ -861,6 +863,7 @@ The last case is excluded in order always to guarantee positive PF values*/
       PFwriter.write(firstline);
       PFwriter.write(Constants.lineSeparator);
     } catch (IOException io) {
+      io.printStackTrace();
     }
 
 /*     CONSTRUCTION OF THE PLOTFILE (BERKELEY-FORMAT) */
@@ -890,6 +893,7 @@ The last case is excluded in order always to guarantee positive PF values*/
             PFwriter.write(Constants.lineSeparator);
           }
         } catch (IOException io) {
+          io.printStackTrace();
         }
       }
     }
@@ -897,10 +901,12 @@ The last case is excluded in order always to guarantee positive PF values*/
       try {
         PFwriter.write(Constants.lineSeparator);
       } catch (IOException io) {
+        io.printStackTrace();
       }
     try {
       PFwriter.write(Constants.lineSeparator);
     } catch (IOException io) {
+      io.printStackTrace();
     }
   } /* priucirc_ */
 

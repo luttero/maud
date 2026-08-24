@@ -1185,6 +1185,7 @@ public class BuildGraph extends ScanWord {
               built.addElement(data);
               return true;
             } catch (Exception e) {
+              e.printStackTrace();
               return false;
             }
           } else if (load == null) {
@@ -1223,6 +1224,7 @@ public class BuildGraph extends ScanWord {
         array[count++] = x;
         array[count++] = y;
       } catch (Exception e) {
+        e.printStackTrace();
       }
     }
 
@@ -1250,6 +1252,7 @@ public class BuildGraph extends ScanWord {
         try {
           array[count++] = f.getResult(x, y);
         } catch (Exception e) {
+          e.printStackTrace();
           array[count++] = 0.0;
         }
       }

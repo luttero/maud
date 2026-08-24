@@ -277,10 +277,12 @@ public class StructureFactorArbitraryModel extends StructureFactorModel {
 //        needRestore = true;
         PFreader.close();
       } catch (IOException io) {
+        io.printStackTrace();
       }
       try {
         PFreader.close();
       } catch (IOException io) {
+        io.printStackTrace();
       }
     }
     if (allFhkl.size() > 0) {

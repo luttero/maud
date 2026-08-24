@@ -144,6 +144,10 @@ public class MarchDollaseTexture extends Texture {
     parameterField[0].setPositiveOnly();
   }
 
+//  public boolean isRandomTexture() {
+//    return false;
+//  }
+
   public Parameter getTextureBackground() {
     return parameterField[0];
   }

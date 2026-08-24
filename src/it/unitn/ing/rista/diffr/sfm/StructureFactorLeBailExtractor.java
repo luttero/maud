@@ -245,6 +245,7 @@ The PF's of peaks of the same family are imposed equals for all the lines.
         printf("Extracting structure factors from datafiles using " + toXRDcatString(), prF);
       } catch (NullPointerException npe) {
         System.out.println("Not able to create frame, MacOSX display sleep bug?");
+        npe.printStackTrace();
       }
     }
 

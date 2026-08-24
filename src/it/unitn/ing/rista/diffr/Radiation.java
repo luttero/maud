@@ -171,7 +171,7 @@ public class Radiation extends XRDcat {
   }
 
   public void refreshForNotificationUp(XRDcat source, int reason, int paramNumber) {
-    if (!getFilePar().isComputingDerivate() && reason == Constants.RADIATION_WAVELENGTH_CHANGED) {
+    if (!getFilePar().isComputingDerivate() || reason == Constants.RADIATION_WAVELENGTH_CHANGED) {
       refreshComputation = true;
     }
   }

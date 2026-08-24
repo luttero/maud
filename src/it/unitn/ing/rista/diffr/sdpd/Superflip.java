@@ -242,6 +242,7 @@ public class Superflip extends StructureFactorSolveCrystalStructure {
             try {
               reader.close();
             } catch (IOException e) {
+              e.printStackTrace();
             }
           }
         } else {
@@ -342,11 +343,13 @@ public class Superflip extends StructureFactorSolveCrystalStructure {
         output.write("endf");
         output.newLine();
       } catch (IOException io) {
+        io.printStackTrace();
       }
       try {
         output.flush();
         output.close();
       } catch (IOException io) {
+        io.printStackTrace();
       }
     }
   }
@@ -591,10 +594,12 @@ public class Superflip extends StructureFactorSolveCrystalStructure {
 
       } catch (IOException e) {
         System.out.println("Error in loading the xplor map file!");
+        e.printStackTrace();
       }
       try {
         reader.close();
       } catch (IOException e) {
+        e.printStackTrace();
       }
     }
   }
@@ -713,6 +718,7 @@ public class Superflip extends StructureFactorSolveCrystalStructure {
       try {
         reader.close();
       } catch (IOException e) {
+        e.printStackTrace();
       }
     }
   }
@@ -901,6 +907,7 @@ public class Superflip extends StructureFactorSolveCrystalStructure {
       out.newLine();
     } catch (IOException ioe) {
       System.out.println("Error in writing the atom Map for " + toXRDcatString());
+      ioe.printStackTrace();
     }
 
   }
@@ -969,8 +976,9 @@ public class Superflip extends StructureFactorSolveCrystalStructure {
           }
         }
       } while (tokentype != CIFtoken.TT_EOF && !endofInput);
-    } catch (IOException ioe) {
+    } catch (Exception ioe) {
       System.out.println("IO exception in custom object for " + toXRDcatString());
+      ioe.printStackTrace();
     }
 
     /*		if (theobj != null)
@@ -1006,10 +1014,12 @@ public class Superflip extends StructureFactorSolveCrystalStructure {
         PFwriter.flush();
         PFwriter.close();
       } catch (IOException io) {
+        io.printStackTrace();
         try {
           PFwriter.flush();
           PFwriter.close();
         } catch (IOException ieo) {
+          ieo.printStackTrace();
         }
       }
     }
@@ -1064,7 +1074,7 @@ public class Superflip extends StructureFactorSolveCrystalStructure {
         }
         PFreader.close();
       } catch (IOException io) {
-
+        io.printStackTrace();
         int index = 0;
         for (int nc = 0; nc < cSlices1; nc++)
           for (int nb = 0; nb < bSlices1; nb++)

@@ -220,6 +220,7 @@ public class StructureFactorStandardModel extends StructureFactorModel {
 			  try {
 				  Thread.sleep(Constants.timeToWaitThreadsEnding);
 			  } catch (InterruptedException r) {
+          r.printStackTrace();
 			  }
 			  for (int h = 0; h < maxThreads; h++) {
 				  if (!threads[h].isEnded())
@@ -282,6 +283,7 @@ public class StructureFactorStandardModel extends StructureFactorModel {
     phase.refreshFhklcompv();
     int hkln = phase.gethklNumber();
     final int nlines = adataset.getInstrument().getRadiationType().getLinesCount();
+//    System.out.println("HKL number: " + hkln + " " + phase.getCellValue(0) + " " + phase.getCellValue(2));
     final double[][] fhkl = new double[hkln][nlines];
     final boolean useAnisotropicCrystallites =
         adataset.getInstrument().getRadiationType().useCrystallitesForDynamicalCorrection();
@@ -353,6 +355,7 @@ public class StructureFactorStandardModel extends StructureFactorModel {
             try {
               Thread.sleep(Constants.timeToWaitThreadsEnding);
             } catch (InterruptedException r) {
+              r.printStackTrace();
             }
             for (int h = 0; h < maxThreads; h++) {
               if (!threads[h].isEnded())
@@ -485,6 +488,7 @@ public class StructureFactorStandardModel extends StructureFactorModel {
             try {
               Thread.sleep(Constants.timeToWaitThreadsEnding);
             } catch (InterruptedException r) {
+              r.printStackTrace();
             }
             for (int h = 0; h < maxThreads; h++) {
               if (!threads[h].isEnded())

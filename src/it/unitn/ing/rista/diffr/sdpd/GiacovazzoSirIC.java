@@ -247,11 +247,13 @@ VLD
         output.newLine();
 
       } catch (IOException io) {
+        io.printStackTrace();
       }
       try {
         output.flush();
         output.close();
       } catch (IOException io) {
+        io.printStackTrace();
       }
       try {
         output = Misc.getWriter(filename + ".hkl");
@@ -282,6 +284,7 @@ VLD
         output.flush();
         output.close();
       } catch (IOException io) {
+        io.printStackTrace();
       }
     }
   }
@@ -384,6 +387,7 @@ VLD
       try {
         reader.close();
       } catch (IOException e) {
+        e.printStackTrace();
       }
     }
     return sites;

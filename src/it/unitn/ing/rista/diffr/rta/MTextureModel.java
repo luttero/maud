@@ -145,7 +145,7 @@ public class MTextureModel extends DiscreteODFTexture {
 		try {
 			res = Double.parseDouble(stringField[1]);
 		} catch (Exception e) {
-//			e.printStackTrace();
+			e.printStackTrace();
 		}
 		if (value != null && Double.parseDouble(value) != res) {
 			stringField[1] = value;
@@ -167,7 +167,7 @@ public class MTextureModel extends DiscreteODFTexture {
 		try {
 			res = Double.parseDouble(stringField[kernelResID]);
 		} catch (Exception e) {
-//			e.printStackTrace();
+			e.printStackTrace();
 		}
 		if (value != null && Double.parseDouble(value) != res) {
 			stringField[kernelResID] = value;

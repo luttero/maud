@@ -179,6 +179,7 @@ public class GSASDataFile extends MultDiffrDataFile {
             try {
 	            bankNumber = cal.getBankNumber(bankID);
             } catch (Exception e) {
+              e.printStackTrace();
             }
 
 //        	DataCalibration gsascal = getCalibration("bank", 6);
@@ -408,6 +409,7 @@ public class GSASDataFile extends MultDiffrDataFile {
       try {
         reader.close();
       } catch (IOException e) {
+        e.printStackTrace();
       }
     }
     isAbilitatetoRefresh = tmpB;
@@ -480,9 +482,9 @@ public class GSASDataFile extends MultDiffrDataFile {
       for (int i = 0; i < number * repeat; i++)
         data[i] = (String) ht.get(keys[i]);
     } catch (InvalidFormatException e) {
-      System.out.println(e);
+      e.printStackTrace();
     } catch (InputFormatException e) {
-      System.out.println(e);
+      e.printStackTrace();
     }
 
     return data;
@@ -568,6 +570,7 @@ public class GSASDataFile extends MultDiffrDataFile {
 			finalName = folderAndName[0] + filenameOnly + "_sum.gda";
 			output = Misc.getWriter(folderAndName[0], filenameOnly + "_sum.gda");
 		} catch(Exception e) {
+      e.printStackTrace();
 			return "";
 		}
 
@@ -907,6 +910,7 @@ public class GSASDataFile extends MultDiffrDataFile {
 			for (int i = filesNumber - 1; i >= 0; i--)
 				readers[i].close();
 		} catch (IOException e) {
+      e.printStackTrace();
 		}
 		try {
 			output.flush();
@@ -962,10 +966,12 @@ public class GSASDataFile extends MultDiffrDataFile {
         gwriter.flush();
         gwriter.close();
       } catch (IOException io) {
+        io.printStackTrace();
         try {
           gwriter.flush();
           gwriter.close();
         } catch (IOException ieo) {
+          ieo.printStackTrace();
         }
       }
     }

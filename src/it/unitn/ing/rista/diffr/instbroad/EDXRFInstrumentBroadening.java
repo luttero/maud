@@ -56,9 +56,6 @@ public class EDXRFInstrumentBroadening extends InstrumentBroadening {
 
   protected static final String[] classlistcs = {};
 
-  public static double minimumHWHMvalue = MaudPreferences.getDouble(
-      "instrBroadening.minimumHWHMvalue", 0.0000001);
-
 	public EDXRFInstrumentBroadening(XRDcat obj, String alabel) {
     super(obj, alabel);
     initBaseObject();
@@ -187,8 +184,6 @@ public class EDXRFInstrumentBroadening extends InstrumentBroadening {
   public void updateStringtoDoubleBuffering(boolean firstLoading) {
     super.updateStringtoDoubleBuffering(false);
 
-    minimumHWHMvalue = MaudPreferences.getDouble(
-        "instrBroadening.minimumHWHMvalue", 0.0000001);
   }
 
   public void updateParametertoDoubleBuffering(boolean firstLoading) {

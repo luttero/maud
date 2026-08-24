@@ -203,6 +203,7 @@ public class AngleEnergyMapFluorescence extends Fluorescence {
         try {
           Thread.sleep(Constants.timeToWaitThreadsEnding);
         } catch (InterruptedException r) {
+          r.printStackTrace();
         }
         for (int h = 0; h < maxThreads; h++) {
           if (!threads[h].isEnded())
@@ -723,6 +724,7 @@ public class AngleEnergyMapFluorescence extends Fluorescence {
         try {
           Thread.sleep(Constants.timeToWaitThreadsEnding);
         } catch (InterruptedException r) {
+          r.printStackTrace();
         }
         for (int h = 0; h < maxThreads; h++) {
           if (!threads[h].isEnded())

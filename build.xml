@@ -90,8 +90,8 @@
             <exclude name="it/unitn/ing/rista/diffr/diffraction/DiffractionAngleEnergyMap.java"/>
             <exclude name="it/unitn/ing/rista/diffr/fluorescence/AngleEnergyMapFluorescence.java"/-->
             <!--exclude name="it/unitn/ing/rista/diffr/cal/AngularInclinedFlatImageCalibration.java" />
-     <exclude name="it/unitn/ing/rista/diffr/rsa/PopaBalzarHarmonicStrainModel.java" /-->
-            <exclude name="it/unitn/ing/rista/diffr/sizestrain/DiffaXLayerModel.java"/>
+     <exclude name="it/unitn/ing/rista/diffr/rsa/PopaBalzarHarmonicStrainModel.java" />
+            <exclude name="it/unitn/ing/rista/diffr/sizestrain/DiffaXLayerModel.java"/-->
             <!--exclude name="it/unitn/ing/rista/diffr/geometry/GeometryInclinedImage.java" /-->
             <!--exclude name="it/unitn/ing/rista/diffr/sdpd/Superflip.java" /-->
             <exclude name="it/unitn/ing/rista/diffr/sdpd/ArtificialNetworkIndexing.java"/>
@@ -133,6 +133,8 @@
             <exclude name="com/deadmoo/xgridagent/**"/>
             <exclude name="gov/noaa/pmel/sgt/demo/**"/>
             <exclude name="gov/lanl/epsc4/*.java"/>
+            <exclude name="org/diffax/ExampleBetaCeRefinement.java"/>
+            <exclude name="org/diffax/Diffax.java"/>
             <classpath>
                 <pathelement location="libs/current/jogl.all.jar"/>
                 <pathelement location="libs/current/EsquiClient.jar"/>
@@ -214,8 +216,8 @@
             <exclude name="it/unitn/ing/rista/diffr/rsa/VoigtReussStress.java"/>
             <exclude name="it/unitn/ing/rista/diffr/Stress.java"/>
             <!--exclude name="it/unitn/ing/rista/diffr/cal/AngularInclinedFlatImageCalibration.java" /-->
-            <!--exclude name="it/unitn/ing/rista/diffr/rsa/PopaBalzarHarmonicStrainModel.java" /-->
-            <exclude name="it/unitn/ing/rista/diffr/sizestrain/DiffaXLayerModel.java"/>
+            <!--exclude name="it/unitn/ing/rista/diffr/rsa/PopaBalzarHarmonicStrainModel.java" />
+            <exclude name="it/unitn/ing/rista/diffr/sizestrain/DiffaXLayerModel.java"/-->
             <!--exclude name="it/unitn/ing/rista/diffr/geometry/GeometryInclinedImage.java" /-->
             <exclude name="it/unitn/ing/rista/diffr/sdpd/Superflip.java"/>
             <exclude name="it/unitn/ing/rista/diffr/sdpd/ArtificialNetworkIndexing.java"/>
@@ -253,6 +255,8 @@
             <exclude name="it/unitn/ing/xgridcontroller/**"/>
             <exclude name="com/deadmoo/xgridagent/**"/>
             <exclude name="gov/noaa/pmel/sgt/demo/**"/>
+            <exclude name="org/diffax/ExampleBetaCeRefinement.java"/>
+            <exclude name="org/diffax/Diffax.java"/>
             <classpath>
                 <pathelement location="libs/current/jogl.all.jar"/>
                 <pathelement location="libs/current/EsquiClient.jar"/>
@@ -317,6 +321,7 @@
         <copy file="${src}/files/CWWARRAY.DAT" todir="${build_ant}/files"/>
         <copy file="${src}/files/IADARRAY.DAT" todir="${build_ant}/files"/>
         <copy file="${src}/files/xraydata.db" todir="${build_ant}/files" />
+        <copy file="${src}/files/data.sfc" todir="${build_ant}/files" />
         <mkdir dir="${build_ant}/com/jtex/data"/>
         <copy todir="${build_ant}/com/jtex/data" >
             <fileset dir="${src}/com/jtex/data" includes="**"/>
@@ -636,6 +641,8 @@
             <exclude name="it/unitn/ing/xgridclient/**"/>
             <exclude name="it/unitn/ing/xgridcontroller/**"/>
             <exclude name="com/deadmoo/xgridagent/**"/>
+            <exclude name="org/diffax/Diffax.java"/>
+            <exclude name="org/diffax/ExampleBetaCeRefinement.java"/>
             <classpath>
                 <pathelement location="libs/current/jogl.all.jar"/>
                 <pathelement location="libs/current/EsquiClient.jar"/>

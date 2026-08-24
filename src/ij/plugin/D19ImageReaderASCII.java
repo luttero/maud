@@ -589,8 +589,8 @@ pixel h: 1.52941501976285
 		try {
 			props.load(is);
 			is.close();
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
+      e.printStackTrace();
 			return null;
 		}
 		fi.unit = props.getProperty("unit", "");
@@ -631,6 +631,7 @@ pixel h: 1.52941501976285
 			try {
 				return Double.valueOf(s);
 			} catch (NumberFormatException e) {
+        e.printStackTrace();
 			}
 		}
 		return null;

@@ -141,6 +141,7 @@ public class PlotPoleFigure extends myJFrame {
 				prF = new ProgressFrame(numberPoles);
 		} catch (NullPointerException npe) {
 			System.out.println("Not able to create frame, MacOSX display sleep bug?");
+      npe.printStackTrace();
 		}
 		if (prF != null) {
 			prF.setProgressText("Pole figure computation....");
@@ -335,6 +336,7 @@ public class PlotPoleFigure extends myJFrame {
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException ie) {
+        ie.printStackTrace();
 			}
 		}
 		limits[0] = intensityMin;

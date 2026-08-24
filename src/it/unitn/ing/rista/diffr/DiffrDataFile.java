@@ -566,6 +566,7 @@ public class DiffrDataFile extends XRDcat {
         out.newLine();
       } catch (IOException ioe) {
         System.out.println("Error in writing the interpolated background points for " + toXRDcatString());
+        ioe.printStackTrace();
       }
 
     }
@@ -676,8 +677,8 @@ public class DiffrDataFile extends XRDcat {
 			  out.newLine();
 			  out.newLine();
 		  } catch (Exception ioe) {
+        ioe.printStackTrace();
 			  try {
-				  ioe.printStackTrace();
 				  out.newLine();
 				  System.out.println("Error in writing the texture factors for " + toXRDcatString());
 				  out.write("#end_custom_object_" + "texture_factors");
@@ -788,9 +789,9 @@ public class DiffrDataFile extends XRDcat {
           }
         } while (tokentype != CIFtoken.TT_EOF && !endofInput);
         dataLoaded = true;
-      } catch (IOException ioe) {
+      } catch (Exception ioe) {
         ioe.printStackTrace();
-        out.println("IO exception in custom object for " + toXRDcatString());
+        System.out.println("IO exception in custom object for " + toXRDcatString());
       }
     } else if (ciffile.thestring.indexOf("background_interpolated_points") > 0) {
       int tokentype;
@@ -846,9 +847,9 @@ public class DiffrDataFile extends XRDcat {
           setManualBkgInterpolation(true);
 //          System.out.println("Manual interpolated points loaded for " + this.getLabel() + ", number = " + number);
         }
-      } catch (IOException ioe) {
+      } catch (Exception ioe) {
         ioe.printStackTrace();
-        out.println("IO exception in custom object for " + toXRDcatString());
+        System.out.println("IO exception in custom object for " + toXRDcatString());
       }
     } else if (ciffile.thestring.indexOf("texture_factors") > 0) {
 
@@ -970,8 +971,9 @@ public class DiffrDataFile extends XRDcat {
           } else
             needRestore = null;
 //			notLoaded = false;
-        } catch (IOException ioe) {
-          out.println("IO exception in custom object for " + toXRDcatString());
+        } catch (Exception ioe) {
+          System.out.println("IO exception in custom object for " + toXRDcatString());
+          ioe.printStackTrace();
         }
       }
 //    }
@@ -3420,6 +3422,14 @@ public class DiffrDataFile extends XRDcat {
 //    double[] ta = getTiltingAngle();
 //	System.out.println(this+" "+twothetaang+" "+ta[0]+" "+ta[1]+" "+ta[2]+" " +ta[3]);
     return getDataFileSet().getTextureAngles(this, getTiltingAngle(), twothetaang, ppp);
+  }
+
+  public double[] getTextureAngles(double dspace, double wavelength) {  // todo this do not differentiate for different positions
+//    double[] ta = getTiltingAngle();
+//	System.out.println(this+" "+twothetaang+" "+ta[0]+" "+ta[1]+" "+ta[2]+" " +ta[3]);
+
+    double twothetaang = computeposition(dspace, wavelength);
+    return getDataFileSet().getTextureAngles(this, getTiltingAngle(), twothetaang, 0);
   }
 
   public double[] getAlternateTextureAngles(double twothetaang) {
@@ -6447,8 +6457,8 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 				ainstrument.computeShapeAbsorptionCorrection(this, asample, positions[i],
 						dspacingbase, energyDispersive, intensity);
 				for (int j = 0; j < positionsPerPattern; j++) {
+          double[] layer_abs = ainstrument.PhaseAndLayerAbsorption(this, asample, aphase, positions[i][j]);
           for (int k = 0; k < radNumber; k++) {
-            double[] layer_abs = ainstrument.PhaseAndLayerAbsorption(this, asample, aphase, positions[i][j]);
             // computeAbsorptionAndPhaseQuantity(ainstrument, aphase.getSample(), aphase, positions[0][i][j]);
 //					System.out.println(i + " " + intensity[j][0] + " " + layer_abs[0]);
             double linearCorrection = 1.0;
@@ -6579,9 +6589,11 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
           betaf[1] *= corr;
         }
 //        System.out.println("Sample b: " + refl + " " + i + " " + j + " " + betaf[0] + " " + betaf[1] + " " + refl.crystsize[0] + " " + refl.crystsize[1] + " " + peak.position + " " + refl.getH() + " " + refl.getK() + " " + refl.getL() + ", " + peak.instBroadFactor.size()) ;
-        double[] broadFactorTotal = PseudoVoigtPeak.getHwhmEtaFromIntegralBeta(betaf, peak.instBroadFactor);
-        peak.broadFactorHWHM = broadFactorTotal[0];
-        peak.broadFactorEta = broadFactorTotal[1];
+        if (peak.instBroadFactor != null) {
+          double[] broadFactorTotal = PseudoVoigtPeak.getHwhmEtaFromIntegralBeta(betaf, peak.instBroadFactor);
+          peak.broadFactorHWHM = broadFactorTotal[0];
+          peak.broadFactorEta = broadFactorTotal[1];
+        }
       }
     }
   }
@@ -6991,6 +7003,7 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 			return t.getTime();
 		} catch (ParseException e) {
 			out.println(dateTime + " is an unparseable date using " + ft);
+      e.printStackTrace();
 		}
 		return 0l;
 	}
@@ -7280,11 +7293,13 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
           output.newLine();
         }
       } catch (IOException io) {
+        io.printStackTrace();
       }
 	  if (closeFile) {
         try {
           output.close();
         } catch (IOException io) {
+          io.printStackTrace();
         }
       }
     }

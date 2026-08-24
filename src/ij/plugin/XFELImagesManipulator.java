@@ -130,6 +130,7 @@ public class XFELImagesManipulator implements PlugIn {
 					dis.close();
 					open(true, buffer, fileinfo);
 				} catch (Exception e) {
+          e.printStackTrace();
 					try {
 						pixelSize *= 2;
 						width = height = width / 2;
@@ -289,6 +290,7 @@ public class XFELImagesManipulator implements PlugIn {
 			is.close();
 		}
 		catch (IOException e) {
+      e.printStackTrace();
 			return null;
 		}
 		fi.unit = props.getProperty("unit", "");
@@ -329,6 +331,7 @@ public class XFELImagesManipulator implements PlugIn {
 			try {
 				return Double.valueOf(s);
 			} catch (NumberFormatException e) {
+        e.printStackTrace();
 			}
 		}
 		return null;

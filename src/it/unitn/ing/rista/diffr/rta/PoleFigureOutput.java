@@ -105,6 +105,7 @@ public class PoleFigureOutput {
       PFwriter.write(firstline);
       PFwriter.write(Constants.lineSeparator);
     } catch (IOException io) {
+      io.printStackTrace();
     }
 
     int until18 = 0;
@@ -125,6 +126,7 @@ public class PoleFigureOutput {
             PFwriter.write(Constants.lineSeparator);
           }
         } catch (IOException io) {
+          io.printStackTrace();
         }
       } else
         skip73 = 0;
@@ -133,10 +135,12 @@ public class PoleFigureOutput {
       try {
         PFwriter.write(Constants.lineSeparator);
       } catch (IOException io) {
+        io.printStackTrace();
       }
     try {
       PFwriter.write(Constants.lineSeparator);
     } catch (IOException io) {
+      io.printStackTrace();
     }
 
   }
@@ -147,6 +151,7 @@ public class PoleFigureOutput {
       PFwriter.flush();
       PFwriter.close();
     } catch (IOException io) {
+      io.printStackTrace();
     }
   }
 
@@ -180,6 +185,7 @@ public class PoleFigureOutput {
           prF = new ProgressFrame(hklnumber);
       } catch (NullPointerException npe) {
         System.out.println("Not able to create frame, MacOSX display sleep bug?");
+        npe.printStackTrace();
       }
     printf("Saving pole figures...            ", prF);
     for (int i = 0; i < hklnumber; i++) {

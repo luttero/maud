@@ -134,10 +134,12 @@ public class InelAngularCalibration extends D20AngularCalibration {
 
       } catch (IOException e) {
         System.out.println("Error in loading the data file! Try to remove this data file");
+        e.printStackTrace();
       }
       try {
         reader.close();
       } catch (IOException e) {
+        e.printStackTrace();
       }
     }
     isAbilitatetoRefresh = isAbilitate;

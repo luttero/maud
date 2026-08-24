@@ -70,6 +70,7 @@ public class StringNumber {
       } else
         return false;
     } catch (Exception nfe) {
+//      nfe.printStackTrace();
       return false;
     }
   }
@@ -87,6 +88,7 @@ public class StringNumber {
       } else
         return false;
     } catch (Exception nfe) {
+      nfe.printStackTrace();
       return false;
     }
   }

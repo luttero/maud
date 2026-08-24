@@ -5,92 +5,126 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="61caab25-241f-4ab1-85f0-b423f2950da9" name="Changes" comment="Fix to post on the website">
-      <change beforePath="$PROJECT_DIR$/Maud.ipr" beforeDir="false" afterPath="$PROJECT_DIR$/Maud.ipr" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Maud.iws" beforeDir="false" afterPath="$PROJECT_DIR$/Maud.iws" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build.xml" beforeDir="false" afterPath="$PROJECT_DIR$/build.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HTTPClient/HTTPConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/HTTPClient/HTTPConnection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HTTPClient/HTTPResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/HTTPClient/HTTPResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HTTPClient/RespInputStream.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/HTTPClient/RespInputStream.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HTTPClient/Response.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/HTTPClient/Response.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HTTPClient/StreamDemultiplexor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/HTTPClient/StreamDemultiplexor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HTTPClient/URI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/HTTPClient/URI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HTTPClient/Util.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/HTTPClient/Util.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/ContourLineAttribute.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/ContourLineAttribute.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/GridAttribute.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/GridAttribute.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/Pane.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/Pane.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/VectorAttribute.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/VectorAttribute.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/beans/PanelModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/beans/PanelModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/demo/PseudoRealTimeData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/demo/PseudoRealTimeData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/dm/SimpleGrid.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/dm/SimpleGrid.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/dm/SimpleLine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/dm/SimpleLine.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/dm/SimplePoint.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/dm/SimplePoint.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/dm/SimpleTuple.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/dm/SimpleTuple.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/dm/ThreeDGrid.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/dm/ThreeDGrid.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/swing/JLineProfileLayout.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/swing/JLineProfileLayout.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/swing/prop/ArrayEditDialog.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/swing/prop/ArrayEditDialog.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/swing/prop/ContourLevelsDialog.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/swing/prop/ContourLevelsDialog.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/swing/prop/ContourLineAttributeDialog.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/swing/prop/ContourLineAttributeDialog.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/swing/prop/DefaultContourLineAttributeDialog.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/swing/prop/DefaultContourLineAttributeDialog.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/swing/prop/GeoDateDialog.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/swing/prop/GeoDateDialog.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/swing/prop/GridAttributeDialog.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/swing/prop/GridAttributeDialog.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/swing/prop/LineAttributeDialog.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/swing/prop/LineAttributeDialog.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/swing/prop/NewLevelsDialog.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/swing/prop/NewLevelsDialog.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/swing/prop/PointAttributeDialog.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/swing/prop/PointAttributeDialog.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/swing/prop/VectorAttributeDialog.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/gov/noaa/pmel/sgt/swing/prop/VectorAttributeDialog.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gov/noaa/pmel/swing/JSlider2.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/gov/noaa/pmel/swing/JSlider2.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gov/noaa/pmel/swing/JSlider2Double.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/gov/noaa/pmel/swing/JSlider2Double.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gov/noaa/pmel/util/GeoDate.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/gov/noaa/pmel/util/GeoDate.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gov/noaa/pmel/util/GeographicValue.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/gov/noaa/pmel/util/GeographicValue.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gov/noaa/pmel/util/SoTRange.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/gov/noaa/pmel/util/SoTRange.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gov/noaa/pmel/util/SoTValue.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/gov/noaa/pmel/util/SoTValue.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gov/noaa/pmel/util/TimePoint.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/gov/noaa/pmel/util/TimePoint.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/current/Examples.jar" beforeDir="false" afterPath="$PROJECT_DIR$/libs/current/Examples.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/current/Files.jar" beforeDir="false" afterPath="$PROJECT_DIR$/libs/current/Files.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/current/Help.jar" beforeDir="false" afterPath="$PROJECT_DIR$/libs/current/Help.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/current/ij.jar" beforeDir="false" afterPath="$PROJECT_DIR$/libs/current/ij.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/current/miscLib.jar" beforeDir="false" afterPath="$PROJECT_DIR$/libs/current/miscLib.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/help/readme.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/help/readme.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ij/gui/LaueOvalRoi.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ij/gui/LaueOvalRoi.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ij/gui/LaueOvalStepRoi.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ij/gui/LaueOvalStepRoi.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ij/gui/MaudGenericDialog.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ij/gui/MaudGenericDialog.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ij/gui/PlotWindow.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ij/gui/PlotWindow.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ij/gui/SpectraPlotWindow.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ij/gui/SpectraPlotWindow.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ij/plugin/BrukerImageReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ij/plugin/BrukerImageReader.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ij/plugin/D19ImageReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ij/plugin/D19ImageReader.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ij/plugin/D19ImageReaderASCII.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ij/plugin/D19ImageReaderASCII.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ij/plugin/DM3_Reader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ij/plugin/DM3_Reader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ij/plugin/KCDReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ij/plugin/KCDReader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ij/plugin/filter/MultiSpectraFromReflectionFlatCCD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ij/plugin/filter/MultiSpectraFromReflectionFlatCCD.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/esqui/client/ClientAnalysis.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/esqui/client/ClientAnalysis.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/fortran/ASCII_CharStream.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/fortran/ASCII_CharStream.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/fortran/FormatE.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/fortran/FormatE.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/fortran/FormatF.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/fortran/FormatF.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/fortran/FormatI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/fortran/FormatI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/fortran/Formatter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/fortran/Formatter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/jgraph/RTextLine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/jgraph/RTextLine.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ij/plugin/SISReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ij/plugin/SISReader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ij/plugin/XFELImagesManipulator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ij/plugin/XFELImagesManipulator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/esqui/client/AuthenticationFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/esqui/client/AuthenticationFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/jgraph/BuildGraph.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/jgraph/BuildGraph.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/jgraph/Graph2D.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/jgraph/Graph2D.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/jgraph/LoadData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/jgraph/LoadData.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/jgraph/ScanString.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/jgraph/ScanString.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/jgraph/ScanWord.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/jgraph/ScanWord.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/DataD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/DataD.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/JSubordListPane.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/JSubordListPane.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/jgraph/SimpleGraph.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/jgraph/SimpleGraph.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/jsginfo/Sgio.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/jsginfo/Sgio.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/AnglesGeneratorD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/AnglesGeneratorD.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/BatchFileDialog.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/BatchFileDialog.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/ChooseAtomD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/ChooseAtomD.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/DiffractionMainFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/DiffractionMainFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/JQuestionDialog.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/JQuestionDialog.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/MultiPlotFitting2D.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/MultiPlotFitting2D.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/PlotFitting.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/PlotFitting.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/PlotPoleFigure.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/PlotPoleFigure.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/PlotSimpleData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/PlotSimpleData.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/SpectrumPlotPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/SpectrumPlotPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/TextViewer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/TextViewer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/mainFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/mainFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/myJFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/myJFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/principalJFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/principalJFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/chemistry/AtomInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/chemistry/AtomInfo.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/chemistry/XRayDataSqLite.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/chemistry/XRayDataSqLite.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/comp/Fmath.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/comp/Fmath.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/comp/NelderMeadSimplex.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/comp/NelderMeadSimplex.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/comp/LeastSquareFit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/comp/LeastSquareFit.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/comp/MarqardLeastSquares.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/comp/MarqardLeastSquares.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/comp/MetaDynamicsSearch.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/comp/MetaDynamicsSearch.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/comp/OptimizationAlgorithm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/comp/OptimizationAlgorithm.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/comp/launchRefine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/comp/launchRefine.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/AbsorptionWindow.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/AbsorptionWindow.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/AtomScatterer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/AtomScatterer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/AtomSite.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/AtomSite.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/DataFileSet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/DataFileSet.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Detector.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Detector.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/DiffrDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/DiffrDataFile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Diffraction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Diffraction.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/FourierTransformPeak.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/FourierTransformPeak.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Geometry.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Geometry.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/FilePar.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/FilePar.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Instrument.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Instrument.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/InstrumentBroadening.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/InstrumentBroadening.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/MultDiffrDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/MultDiffrDataFile.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Parameter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Parameter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Phase.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Phase.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/PlanarDefects.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/PlanarDefects.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/PseudoVoigt2DPeak.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/PseudoVoigt2DPeak.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/PseudoVoigtPeak.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/PseudoVoigtPeak.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/RadiationType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/RadiationType.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Reflection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Reflection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Radiation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Radiation.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Reflectivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Reflectivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Sample.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Sample.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Strain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Strain.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/StructureFactorModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/StructureFactorModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/StructureSolutionMethod.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/StructureSolutionMethod.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Texture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Texture.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/XRDcat.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/XRDcat.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/absorption/AngleEnergyMapAbsorption.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/absorption/AngleEnergyMapAbsorption.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/absorption/StandardAbsorptionModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/absorption/StandardAbsorptionModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/EnergyMultiStripAngularCalibration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/EnergyMultiStripAngularCalibration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/AngularFileCalibration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/AngularFileCalibration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/AngularInclinedFlatImageCalibration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/AngularInclinedFlatImageCalibration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/D20AngularCalibration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/D20AngularCalibration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/D20IntensityCalibration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/D20IntensityCalibration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/DubnaSkatIntCalibration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/DubnaSkatIntCalibration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/GSASbankCalibration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/GSASbankCalibration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/GSASbankIntCalibration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/GSASbankIntCalibration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/InelAngularCalibration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/InelAngularCalibration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/IntensityFileCalibration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/IntensityFileCalibration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/AscFluorescenceDatafile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/AscFluorescenceDatafile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/AwavDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/AwavDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/BerkeleyDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/BerkeleyDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/CIFDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/CIFDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/D1BILLDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/D1BILLDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/D20ILLDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/D20ILLDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/DBWSDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/DBWSDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/DoubleColumnDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/DoubleColumnDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/DoubleColumnQDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/DoubleColumnQDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/DoubleColumnQLDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/DoubleColumnQLDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/DoubleColumnQPLDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/DoubleColumnQPLDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/DubnaDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/DubnaDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/ETHThreeColumnDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/ETHThreeColumnDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/EdaxCSVDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/EdaxCSVDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/EnixeDatafile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/EnixeDatafile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/EsquiGoDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/EsquiGoDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/FdtDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/FdtDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/FdtTransformToMBin.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/FdtTransformToMBin.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/FluorescenceDataFileSpe.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/FluorescenceDataFileSpe.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/FluorescenceDataFileSpm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/FluorescenceDataFileSpm.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/FreeFormatDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/FreeFormatDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/FullProfDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/FullProfDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/GSASDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/GSASDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/GSASNewDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/GSASNewDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/ILLDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/ILLDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/ISISGemRotaxDatafile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/ISISGemRotaxDatafile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/InelDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/InelDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/ItalStructureDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/ItalStructureDataFile.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/LoskoDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/LoskoDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/Lpec1DataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/Lpec1DataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/MBinDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/MBinDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/MCADatafile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/MCADatafile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/MDIDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/MDIDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/PhilipsDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/PhilipsDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/RigakuDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/RigakuDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/SiemensDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/SiemensDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/SietronicCPIDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/SietronicCPIDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/StressX3000DataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/StressX3000DataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/TableDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/TableDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/TitledDoubleColumnDatafile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/TitledDoubleColumnDatafile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/VeneziaDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/VeneziaDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/Weight3ColumnDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/Weight3ColumnDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/xyDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/xyDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/detector/TOFMultiDetector.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/detector/TOFMultiDetector.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/diffraction/DiffractionAngleEnergyMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/diffraction/DiffractionAngleEnergyMap.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/diffraction/DiffractionBase.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/diffraction/DiffractionBase.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/fluorescence/AngleEnergyMapFluorescence.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/fluorescence/AngleEnergyMapFluorescence.java" afterDir="false" />
@@ -98,40 +132,69 @@
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/fluorescence/QuantitativeEDXRF.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/fluorescence/QuantitativeEDXRF.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/fluorescence/QuantitativeXRF.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/fluorescence/QuantitativeXRF.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/fluorescence/TubeSpectrumTransmission.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/fluorescence/TubeSpectrumTransmission.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/forcefield/DistanceAngleBondRestraints.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/forcefield/DistanceAngleBondRestraints.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/forcefield/ForceFieldLennardJones.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/forcefield/ForceFieldLennardJones.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/forcefield/ForceFieldSimpleRepulsion.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/forcefield/ForceFieldSimpleRepulsion.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/geometry/GeometryXRFInstrument.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/geometry/GeometryXRFInstrument.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/forcefield/ABINITEnergyComputation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/forcefield/ABINITEnergyComputation.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/instbroad/AngleEnergyMapInstrumentBroadening.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/instbroad/AngleEnergyMapInstrumentBroadening.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/instbroad/EDXRFInstrumentBroadening.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/instbroad/EDXRFInstrumentBroadening.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/instbroad/InstrumentBroadeningGSAS1f.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/instbroad/InstrumentBroadeningGSAS1f.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/instbroad/InstrumentBroadeningPVCaglioti.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/instbroad/InstrumentBroadeningPVCaglioti.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/instrument/XRFInstrument.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/instrument/XRFInstrument.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/reflectivity/ReflectivityRecursiveParrat.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/reflectivity/ReflectivityRecursiveParrat.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/reflectivity/SingleLayerDWBARefl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/reflectivity/SingleLayerDWBARefl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rsa/EPSCmodel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rsa/EPSCmodel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rsa/Sla33Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rsa/Sla33Constants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rsa/TensorHomogenization.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rsa/TensorHomogenization.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/Agtorgl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/Agtorgl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/ArbitraryTexture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/ArbitraryTexture.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/DiscreteODFTexture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/DiscreteODFTexture.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/FiberTextureComponent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/FiberTextureComponent.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/SphericalTextureComponent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/SphericalTextureComponent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/FEMRodriguezTexture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/FEMRodriguezTexture.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/HarmonicTexture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/HarmonicTexture.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/LinearInterpolation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/LinearInterpolation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/MEMLTexture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/MEMLTexture.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/MTextureModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/MTextureModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/MarchDollaseTexture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/MarchDollaseTexture.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/PoleFigureOutput.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/PoleFigureOutput.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/StandardFunctionTexture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/StandardFunctionTexture.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/Uwimvuo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/Uwimvuo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/WIMVTexture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/WIMVTexture.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sdpd/ArtificialNeuralNetworkIndexing.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sdpd/ArtificialNeuralNetworkIndexing.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sdpd/BasicIndexingUtilities.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sdpd/BasicIndexingUtilities.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sdpd/StructureFactorSolveCrystalStructure.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sdpd/StructureFactorSolveCrystalStructure.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sdpd/StructureSolutionGANew.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sdpd/StructureSolutionGANew.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sdpd/ChargeFlippingDensityMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sdpd/ChargeFlippingDensityMap.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sdpd/GenerateIndexingData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sdpd/GenerateIndexingData.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sdpd/GiacovazzoSirIC.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sdpd/GiacovazzoSirIC.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sdpd/SDPDFourierMapsMEM.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sdpd/SDPDFourierMapsMEM.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sdpd/ShelxsSolution.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sdpd/ShelxsSolution.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sdpd/Superflip.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sdpd/Superflip.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sfm/FullProfStructureModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sfm/FullProfStructureModel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sfm/StructureFactorArbitraryModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sfm/StructureFactorArbitraryModel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sfm/StructureFactorLeBailExtractor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sfm/StructureFactorLeBailExtractor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sfm/StructureFactorPawleyMethod.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sfm/StructureFactorPawleyMethod.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sfm/StructureFactorStandardModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sfm/StructureFactorStandardModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/shape/SampleShapeIntegral.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/shape/SampleShapeIntegral.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/shape/SampleShapeRectangularInReflection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/shape/SampleShapeRectangularInReflection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sizestrain/DiffaXLayerModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sizestrain/DiffaXLayerModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/io/BasicInput.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/io/BasicInput.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/io/DicVol91resultFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/io/DicVol91resultFile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/models/generalPosTableModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/models/generalPosTableModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/models/xyzTableModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/models/xyzTableModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/render3d/jGLAnimCanvas.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/render3d/jGLAnimCanvas.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/io/StringNumber.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/io/StringNumber.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/io/cif/CIFDataBlock.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/io/cif/CIFDataBlock.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/io/cif/CIFParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/io/cif/CIFParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/io/cif/CIFReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/io/cif/CIFReader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/io/cif/CIFUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/io/cif/CIFUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/io/cif/CIFloop.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/io/cif/CIFloop.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/mdyn/Atom.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/mdyn/Atom.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/mdyn/MDSimulation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/mdyn/MDSimulation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/mdyn/Settings.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/mdyn/Settings.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/models/simplehklTableModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/models/simplehklTableModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/Angles.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/Angles.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/Complex.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/Complex.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/Console.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/Console.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/Constants.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/FileDrop.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/FileDrop.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/FluorescenceLine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/FluorescenceLine.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/GeneticAlgorithm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/GeneticAlgorithm.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/Misc.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/Misc.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/MoreMath.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/MoreMath.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/SphericalHarmonics.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/SphericalHarmonics.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/batchProcess.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/batchProcess.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/objecthunter/exp4j/function/Function.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/net/objecthunter/exp4j/function/Function.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/org/json/simple/JSONValue.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/json/simple/JSONValue.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/org/json/simple/parser/JSONParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/json/simple/parser/JSONParser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/org/json/simple/parser/Yylex.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/json/simple/parser/Yylex.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/wizard/LCLS2Wizard/LCLS2ConfigData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/wizard/LCLS2Wizard/LCLS2ConfigData.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/wizard/LoskoWizard/LoskoConfigData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/wizard/LoskoWizard/LoskoConfigData.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/xgridclient/XGridClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/xgridclient/XGridClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/xgridclient/XGridClientPreferences.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/xgridclient/XGridClientPreferences.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -169,61 +232,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.717555313048201E-301" />
-      <entry key="MS500" value="7.030434176390995E-61" />
-      <entry key="S2" value="9.15683959040498E-16" />
-      <entry key="S5" value="9.68136047034855E-7" />
-      <entry key="S10" value="0.0010565752790667807" />
-      <entry key="S30" value="0.1660285071605105" />
-      <entry key="S60" value="0.6802761483356263" />
-      <entry key="M2" value="1.4159359611852391" />
-      <entry key="M5" value="2.259234905513327" />
-      <entry key="M10" value="3.0186977380505717" />
-      <entry key="M15" value="3.7944994744287657" />
-      <entry key="M30" value="5.8013722699002965" />
-      <entry key="H1" value="8.005550855481562" />
-      <entry key="H2" value="9.720312121418635" />
-      <entry key="H4" value="11.752295211242458" />
-      <entry key="D1" value="50.18576111842713" />
-      <entry key="W1" value="183.69328309140943" />
-    </decayedCancelled>
-    <decayedSelected>
       <entry key="MS100" value="1.0" />
       <entry key="MS500" value="1.0" />
       <entry key="S2" value="1.0" />
-      <entry key="S5" value="1.000000288345154" />
-      <entry key="S10" value="1.0006974727193516" />
-      <entry key="S30" value="1.137651755359364" />
-      <entry key="S60" value="1.523159827067098" />
-      <entry key="M2" value="2.022145413010639" />
-      <entry key="M5" value="2.5294739924263716" />
-      <entry key="M10" value="2.7938616176464306" />
-      <entry key="M15" value="3.011821980605468" />
-      <entry key="M30" value="3.653460514054723" />
-      <entry key="H1" value="4.446614633091224" />
-      <entry key="H2" value="5.098319170610378" />
-      <entry key="H4" value="5.793792837643615" />
-      <entry key="D1" value="18.861497295970207" />
-      <entry key="W1" value="60.51411797895059" />
+      <entry key="S5" value="1.0000003712402585" />
+      <entry key="S10" value="1.0008399347966723" />
+      <entry key="S30" value="1.1535288732526983" />
+      <entry key="S60" value="1.6134808242707268" />
+      <entry key="M2" value="2.305284021643315" />
+      <entry key="M5" value="3.12798857780647" />
+      <entry key="M10" value="3.558744038620101" />
+      <entry key="M15" value="3.783603872987957" />
+      <entry key="M30" value="4.334272450031011" />
+      <entry key="H1" value="9.246588911679384" />
+      <entry key="H2" value="34.19199671799666" />
+      <entry key="H4" value="84.16959974640902" />
+      <entry key="D1" value="317.21260891501635" />
+      <entry key="W1" value="1502.0207174178656" />
+    </decayedCancelled>
+    <decayedSelected>
+      <entry key="MS100" value="3.77318103167682E-309" />
+      <entry key="MS500" value="2.0670050063455707E-62" />
+      <entry key="S2" value="3.7917467433415865E-16" />
+      <entry key="S5" value="6.850012859177419E-7" />
+      <entry key="S10" value="9.046810393738596E-4" />
+      <entry key="S30" value="0.14912075771549824" />
+      <entry key="S60" value="0.7240692706933528" />
+      <entry key="M2" value="1.9118098350003476" />
+      <entry key="M5" value="3.715591232011643" />
+      <entry key="M10" value="4.704629227220484" />
+      <entry key="M15" value="5.097888751192203" />
+      <entry key="M30" value="5.542522128883099" />
+      <entry key="H1" value="6.2715381592439305" />
+      <entry key="H2" value="9.319293050118274" />
+      <entry key="H4" value="15.541726355431921" />
+      <entry key="D1" value="67.0622593179473" />
+      <entry key="W1" value="485.7570664225056" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="1.2637511277360555E-4" />
-      <entry key="MS500" value="0.16608572676206396" />
-      <entry key="S2" value="0.6383855936668005" />
-      <entry key="S5" value="0.8356677904491525" />
-      <entry key="S10" value="0.9155052642649054" />
-      <entry key="S30" value="1.2448934858043883" />
-      <entry key="S60" value="2.128475018662012" />
-      <entry key="M2" value="3.369185643826391" />
-      <entry key="M5" value="4.747594772325568" />
-      <entry key="M10" value="5.787772946797449" />
-      <entry key="M15" value="6.787701263193953" />
-      <entry key="M30" value="9.443166543012868" />
-      <entry key="H1" value="12.44511565689781" />
-      <entry key="H2" value="14.814640787100599" />
-      <entry key="H4" value="17.543770831094466" />
-      <entry key="D1" value="69.04561159014308" />
-      <entry key="W1" value="244.20660299406816" />
+      <entry key="MS100" value="4.427934259303112E-19" />
+      <entry key="MS500" value="2.1342251474862602E-4" />
+      <entry key="S2" value="0.12086764440852871" />
+      <entry key="S5" value="0.42946206240156065" />
+      <entry key="S10" value="0.6567493681719624" />
+      <entry key="S30" value="1.1433063710483715" />
+      <entry key="S60" value="2.1820940610989434" />
+      <entry key="M2" value="4.041114430920252" />
+      <entry key="M5" value="6.704335764698216" />
+      <entry key="M10" value="8.1735940410458" />
+      <entry key="M15" value="8.816155530650205" />
+      <entry key="M30" value="9.840938185808605" />
+      <entry key="H1" value="15.497562915620149" />
+      <entry key="H2" value="43.495881480500614" />
+      <entry key="H4" value="99.69859100502396" />
+      <entry key="D1" value="384.26843954245265" />
+      <entry key="W1" value="1987.7731663768386" />
     </decayedShown>
   </component>
   <component name="ProblemsViewState">
@@ -233,6 +296,9 @@
   &quot;associatedIndex&quot;: 7
 }</component>
   <component name="ProjectId" id="2A7cAOKYVpTWOnuOc7jZLaPwgaJ" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -249,7 +315,7 @@
     &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
     &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultAutoModeForALLUsers.v1&quot;: &quot;true&quot;,
     &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;version2&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;version3&quot;,
     &quot;ignore.preview.features.used&quot;: &quot;true&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
@@ -258,7 +324,7 @@
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Problems&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.291954&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;preferences.sourceCode.JAVA&quot;,
@@ -284,8 +350,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-30f59d01ecdd-63390994e64e-intellij.indexing.shared.core-IU-262.8665.337" />
-        <option value="bundled-js-predefined-d6986cc7102b-4abd2a77f808-JavaScript-IU-262.8665.337" />
+        <option value="bundled-jdk-30f59d01ecdd-34e2839f716b-intellij.indexing.shared.core-IU-262.9437.185" />
+        <option value="bundled-js-predefined-d6986cc7102b-4abd2a77f808-JavaScript-IU-262.9437.185" />
       </set>
     </attachedChunks>
   </component>
@@ -317,6 +383,28 @@
       <workItem from="1784728551114" duration="2725000" />
       <workItem from="1784808905582" duration="6419000" />
       <workItem from="1784885873660" duration="152086000" />
+      <workItem from="1785963519012" duration="57000" />
+      <workItem from="1785964250390" duration="11737000" />
+      <workItem from="1786033166611" duration="3051000" />
+      <workItem from="1786036717531" duration="1389000" />
+      <workItem from="1786038206625" duration="2008000" />
+      <workItem from="1786040822915" duration="4015000" />
+      <workItem from="1786049580248" duration="7511000" />
+      <workItem from="1786114523844" duration="4302000" />
+      <workItem from="1786123117985" duration="1009000" />
+      <workItem from="1786124794461" duration="483000" />
+      <workItem from="1786125291492" duration="202000" />
+      <workItem from="1786125639083" duration="673000" />
+      <workItem from="1786134515163" duration="3083000" />
+      <workItem from="1786147356930" duration="23000" />
+      <workItem from="1786147480112" duration="6503000" />
+      <workItem from="1786405016866" duration="8218000" />
+      <workItem from="1786452950683" duration="8000" />
+      <workItem from="1786453060839" duration="108846000" />
+      <workItem from="1786808244061" duration="21541000" />
+      <workItem from="1787018948534" duration="1509000" />
+      <workItem from="1787060540888" duration="89967000" />
+      <workItem from="1787358371481" duration="14969000" />
     </task>
     <task id="LOCAL-00001" summary="New version 5/2023&#10;Some modifications on GSASDataFile and more options for plotting types.">
       <created>1684773902547</created>

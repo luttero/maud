@@ -60,6 +60,7 @@ public class CIFReader {
     try {
       fileToRead.close();
     } catch (IOException io) {
+      io.printStackTrace();
     }
   }
 

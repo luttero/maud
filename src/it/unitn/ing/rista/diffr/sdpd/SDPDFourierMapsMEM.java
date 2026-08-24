@@ -269,6 +269,7 @@ public class SDPDFourierMapsMEM extends StructureFactorSolveCrystalStructure imp
           prF = new ProgressFrame(numberOfData);
         } catch (NullPointerException npe) {
           System.out.println("Not able to create frame, MacOSX display sleep bug?");
+          npe.printStackTrace();
         }
       printf("Preparing Fourier Map computation...            ", prF);
       int indexsf = 0;
@@ -1287,10 +1288,12 @@ public class SDPDFourierMapsMEM extends StructureFactorSolveCrystalStructure imp
         System.out.println("Xplor map loaded!");
       } catch (IOException e) {
         System.out.println("Error in loading the xplor map file!");
+        e.printStackTrace();
       }
       try {
         reader.close();
       } catch (IOException e) {
+        e.printStackTrace();
       }
     }
     fitNotInitialized = false;
@@ -1378,6 +1381,7 @@ public class SDPDFourierMapsMEM extends StructureFactorSolveCrystalStructure imp
       out.newLine();
     } catch (IOException ioe) {
       System.out.println("Error in writing the atom Map for " + toXRDcatString());
+      ioe.printStackTrace();
     }
 
   }
@@ -1446,8 +1450,9 @@ public class SDPDFourierMapsMEM extends StructureFactorSolveCrystalStructure imp
           }
         }
       } while (tokentype != CIFtoken.TT_EOF && !endofInput);
-    } catch (IOException ioe) {
+    } catch (Exception ioe) {
       System.out.println("IO exception in custom object for " + toXRDcatString());
+      ioe.printStackTrace();
     }
 
     /*		if (theobj != null)
@@ -1483,10 +1488,12 @@ public class SDPDFourierMapsMEM extends StructureFactorSolveCrystalStructure imp
         PFwriter.flush();
         PFwriter.close();
       } catch (IOException io) {
+        io.printStackTrace();
         try {
           PFwriter.flush();
           PFwriter.close();
         } catch (IOException ieo) {
+          ieo.printStackTrace();
         }
       }
     }
@@ -1543,7 +1550,7 @@ public class SDPDFourierMapsMEM extends StructureFactorSolveCrystalStructure imp
         }
         PFreader.close();
       } catch (IOException io) {
-
+        io.printStackTrace();
         int index = 0;
         for (int na = 0; na < aSlices1; na++)
           for (int nb = 0; nb < bSlices1; nb++)

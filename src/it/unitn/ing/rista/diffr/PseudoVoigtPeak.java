@@ -105,9 +105,9 @@ public class PseudoVoigtPeak extends basicPeak {
 		double x = hwhmc / totalhwhm;
 
 		for (int i = 0; i < numberetacoeff; i++)
-			hwhm_eta[1] += coeffeta[i] * Math.pow(x, (double) i);
+			hwhm_eta[1] += coeffeta[i] * Math.pow(x, i);
 		for (int i = 0; i < numberhwhmcoeff; i++)
-			hwhm_eta[0] += coeffhwhm[i] * Math.pow(x, (double) i);
+			hwhm_eta[0] += coeffhwhm[i] * Math.pow(x, i);
 
 		hwhm_eta[0] *= totalhwhm;
 

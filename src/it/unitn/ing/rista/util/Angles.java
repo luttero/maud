@@ -114,7 +114,7 @@ public class Angles {
       return sctf;
     }
     sctf[0] = Math.acos(z);
-    ;
+
     arg = x / Math.sin(sctf[0]);
     if (Math.abs(arg) >= 1.) {
       sctf[1] = Math.acos(arg / Math.abs(arg));

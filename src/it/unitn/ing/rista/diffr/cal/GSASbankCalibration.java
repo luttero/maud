@@ -647,10 +647,12 @@ public class GSASbankCalibration extends AngularCalibration {
 
       } catch (IOException e) {
         System.out.println("Error in loading the data file! Try to remove this data file");
+        e.printStackTrace();
       }
       try {
         reader.close();
       } catch (IOException e) {
+        e.printStackTrace();
       }
 //      System.out.println("Number of banks loaded: " + banknumbers());
     }

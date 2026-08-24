@@ -232,6 +232,7 @@ public class MCADatafile extends DiffrDataFile {
       try {
         reader.close();
       } catch (IOException e) {
+        e.printStackTrace();
       }
     }
     isAbilitatetoRefresh = tmpB;

@@ -96,6 +96,7 @@ public class CIFloop {
         }
       } catch (IOException e) {
         System.out.println("Error looking for loop_ entry");
+        e.printStackTrace();
       }
     }
     return found;
@@ -147,6 +148,7 @@ public class CIFloop {
 
       } catch (IOException e) {
         System.out.println("Error reading loop items!");
+        e.printStackTrace();
       }
     }
     return readed;

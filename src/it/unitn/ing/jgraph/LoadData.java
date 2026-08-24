@@ -277,6 +277,7 @@ public class LoadData extends Thread {
       if (is != null) is.close();
     } catch (Exception e) {
       printmessage("Error loading data!");
+      e.printStackTrace();
       return;
     }
 
@@ -351,6 +352,7 @@ public class LoadData extends Thread {
         ds.append(data, size / 2);
       } catch (Exception e) {
         printmessage("Failed to append data to DataSet!");
+        e.printStackTrace();
       }
     } else if (array != null) {
       double tmp[] = new double[array.length + size];

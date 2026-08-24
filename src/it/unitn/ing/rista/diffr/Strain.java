@@ -208,10 +208,12 @@ public class Strain extends XRDcat {
 				PFwriter.flush();
 				PFwriter.close();
 			} catch (IOException io) {
+        io.printStackTrace();
 				try {
 					PFwriter.flush();
 					PFwriter.close();
 				} catch (IOException ieo) {
+          ieo.printStackTrace();
 				}
 			}
 		}
@@ -315,10 +317,12 @@ public class Strain extends XRDcat {
 				PFwriter.flush();
 				PFwriter.close();
 			} catch (IOException io) {
+        io.printStackTrace();
 				try {
 					PFwriter.flush();
 					PFwriter.close();
 				} catch (IOException ieo) {
+          ieo.printStackTrace();
 				}
 			}
 		}

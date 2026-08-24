@@ -334,7 +334,7 @@ public class PseudoVoigt2DPeak extends PseudoVoigtPeak {
         deff, diffrDataFile.sintheta, energyBroadeningVector, refl.d_space, radiationSubdivision, characteristicLines);
     else
       computeFunctionsQuick(diffrDataFile.getXData(), expfit, minindex, maxindex,
-          intensity, eta, hwhm_i, energy, diffrDataFile.sintheta, energyBroadeningVector, refl.d_space);
+          intensity, eta, hwhm_i, energy, diffrDataFile.sintheta, energyBroadeningVector, refl.d_space, actualPosition[0]);
   }
   
   public void computeFunctions(double[] x, double[] f, int[] minindex, int[] maxindex,
@@ -640,7 +640,7 @@ public class PseudoVoigt2DPeak extends PseudoVoigtPeak {
   public void computeFunctionsQuick(double[] x, double[] f, int[] minindex, int[] maxindex, double[][] intensity,
                                     double[] eta, double[] hwhm_i, double[] energy, double sintheta,
                                     java.util.Vector<java.util.Vector<double[]>> energyBroadeningVector,
-                                    double d_space) {
+                                    double d_space, double[] actualPosition) {
     
     double theta2 = MoreMath.asind(sintheta) * 2.0;
     double constEnergy = Constants.ENERGY_LAMBDA / (2.0 * d_space);
@@ -657,7 +657,7 @@ public class PseudoVoigt2DPeak extends PseudoVoigtPeak {
         // angular broadening
         double dgx = (1.0 - eta[ipv]) * Constants.sqrtln2pi * hwhm_i[ipv];
         double dcx = eta[ipv] * hwhm_i[ipv] / Math.PI;
-        double theta2_i = constEnergy / energy[ipv];
+        double theta2_i = constEnergy / actualPosition[ipv]; // energy[ipv]; //
         theta2_i = MoreMath.asind(theta2_i) * 2.0;
         double dx = theta2_i - theta2;
         dx *= hwhm_i[ipv];
@@ -701,7 +701,7 @@ public class PseudoVoigt2DPeak extends PseudoVoigtPeak {
             double one_over_2energy = 1.0 / (2.0 * energy[ipv]);
   
             for (int i = imin1; i < imax1; i++) {
-              double dx_e1 = x[i] - energy[ipv]; //position[0][ipv];
+              double dx_e1 = x[i] - actualPosition[ipv]; //energy[ipv]; //position[0][ipv];
               double dx_e = dx_e1 * hwhm_i_e;
               dx_e *= dx_e;
               if (dx_e > 30.0)

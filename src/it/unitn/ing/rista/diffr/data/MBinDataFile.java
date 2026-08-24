@@ -103,11 +103,13 @@ public class MBinDataFile extends MultDiffrDataFile {
         }
 
       } catch (Exception e) {
+        e.printStackTrace();
 //        System.out.println("Error in loading the data file! Try to remove this data file");
       }
       try {
         reader.close();
       } catch (IOException e) {
+        e.printStackTrace();
       }
     }
     isAbilitatetoRefresh = tmpB;

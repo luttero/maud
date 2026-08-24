@@ -88,6 +88,7 @@ public class BasicInput extends StreamTokenizer {
       }
     } catch (IOException ioe) {
       System.out.println("IO error");
+      ioe.printStackTrace();
       return 0;
     }
   }
@@ -108,6 +109,7 @@ public class BasicInput extends StreamTokenizer {
       }
     } catch (IOException ioe) {
       System.out.println("IO error");
+      ioe.printStackTrace();
       return new String("");
     }
   }
@@ -131,6 +133,7 @@ public class BasicInput extends StreamTokenizer {
     } catch (IOException ioe) {
       setDefaultSintax();
       System.out.println("IO error");
+      ioe.printStackTrace();
       return new String("");
     }
   }
@@ -139,6 +142,7 @@ public class BasicInput extends StreamTokenizer {
     try {
       infile.close();
     } catch (IOException e) {
+      e.printStackTrace();
     }
   }
 }

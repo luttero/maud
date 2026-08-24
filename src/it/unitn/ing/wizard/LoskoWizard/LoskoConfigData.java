@@ -144,7 +144,7 @@ public class LoskoConfigData {
 						}
 					} while (tokentype != CIFtoken.TT_EOF);
 
-				} catch (IOException e) {
+				} catch (Exception e) {
 					System.out.println("Error loading LumaCam file!");
 				}
 				try {

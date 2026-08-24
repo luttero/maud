@@ -187,6 +187,7 @@ public class LinearInterpolation extends Interpolation {
           prF = new ProgressFrame(numberPoleFigures);
       } catch (NullPointerException npe) {
         System.out.println("Not able to create frame, MacOSX display sleep bug?");
+        npe.printStackTrace();
       }
     printf("Pole figure interpolation for phase: " + thephase.toXRDcatString() + "       ", prF);
 
@@ -230,6 +231,7 @@ public class LinearInterpolation extends Interpolation {
       PFwriter.flush();
       PFwriter.close();
     } catch (IOException io) {
+      io.printStackTrace();
     }
 
     return poleIntensity;
@@ -320,6 +322,7 @@ public class LinearInterpolation extends Interpolation {
                           plane[2];
                   finish = true;
                 } catch (Exception e) {
+                  e.printStackTrace();
                 }
               }
             }
@@ -423,6 +426,7 @@ public class LinearInterpolation extends Interpolation {
       PFwriter.write(firstline);
       PFwriter.write(Constants.lineSeparator);
     } catch (IOException io) {
+      io.printStackTrace();
     }
 
     int until18 = 0;
@@ -440,6 +444,7 @@ public class LinearInterpolation extends Interpolation {
             PFwriter.write(Constants.lineSeparator);
           }
         } catch (IOException io) {
+          io.printStackTrace();
         }
       }
     }
@@ -447,10 +452,12 @@ public class LinearInterpolation extends Interpolation {
       try {
         PFwriter.write(Constants.lineSeparator);
       } catch (IOException io) {
+        io.printStackTrace();
       }
     try {
       PFwriter.write(Constants.lineSeparator);
     } catch (IOException io) {
+      io.printStackTrace();
     }
   }
 

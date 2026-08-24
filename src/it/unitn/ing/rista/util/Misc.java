@@ -52,6 +52,7 @@ public class Misc {
       Class sub = Constants.maudClassLoader.loadClass(subclass);
       return sup.isAssignableFrom(sub);
     } catch (ClassNotFoundException e) {
+      e.printStackTrace();
     }
     return false;
   }
@@ -62,6 +63,7 @@ public class Misc {
       Class sup = Constants.maudClassLoader.loadClass(superclass);
       return sup.isAssignableFrom(subclass);
     } catch (ClassNotFoundException e) {
+      e.printStackTrace();
     }
     return false;
   }
@@ -798,6 +800,7 @@ public class Misc {
       if (f1 != null && f1.exists())
         return f1.delete();
     } catch (Exception e) {
+      e.printStackTrace();
     }
 
     return false;

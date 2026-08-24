@@ -252,6 +252,7 @@ public class WIMVTexture extends DiscreteODFTexture {
     try {
       res = Double.parseDouble(stringField[12]);
     } catch (Exception e) {
+      e.printStackTrace();
     }
     if (value != null && Double.parseDouble(value) != res) {
       stringField[12] = new String(value);
@@ -1149,6 +1150,7 @@ public class WIMVTexture extends DiscreteODFTexture {
       PFwriter.write(firstline);
       PFwriter.write(Constants.lineSeparator);
     } catch (IOException io) {
+      io.printStackTrace();
     }
 
     int until18 = 0;
@@ -1173,6 +1175,7 @@ public class WIMVTexture extends DiscreteODFTexture {
             PFwriter.write(Constants.lineSeparator);
           }
         } catch (IOException io) {
+          io.printStackTrace();
         }
       }
     }
@@ -1180,16 +1183,19 @@ public class WIMVTexture extends DiscreteODFTexture {
       try {
         PFwriter.write(Constants.lineSeparator);
       } catch (IOException io) {
+        io.printStackTrace();
       }
     try {
       PFwriter.write(Constants.lineSeparator);
     } catch (IOException io) {
+      io.printStackTrace();
     }
 
     try {
       PFwriter.flush();
       PFwriter.close();
     } catch (IOException io) {
+      io.printStackTrace();
     }
   }
 
@@ -1237,10 +1243,12 @@ public class WIMVTexture extends DiscreteODFTexture {
         PFwriter.flush();
         PFwriter.close();
       } catch (IOException io) {
+        io.printStackTrace();
         try {
           PFwriter.flush();
           PFwriter.close();
         } catch (IOException ieo) {
+          ieo.printStackTrace();
         }
       }
     }
@@ -1424,6 +1432,7 @@ public class WIMVTexture extends DiscreteODFTexture {
         PFwriter.flush();
         PFwriter.close();
       } catch (IOException io) {
+        io.printStackTrace();
       }
     }
 

@@ -410,6 +410,7 @@ public class MDSimulation
     try {
       wait();
     } catch (InterruptedException e) {
+      e.printStackTrace();
     }
 
   } // end waitStart

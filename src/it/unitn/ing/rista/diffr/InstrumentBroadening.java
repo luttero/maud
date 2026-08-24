@@ -21,6 +21,7 @@
 package it.unitn.ing.rista.diffr;
 
 import it.unitn.ing.rista.awt.*;
+import it.unitn.ing.rista.util.MaudPreferences;
 import it.unitn.ing.rista.util.Misc;
 
 import java.io.BufferedWriter;
@@ -40,6 +41,12 @@ import javax.swing.*;
  */
 
 public class InstrumentBroadening extends XRDcat {
+
+  public static double minimumHWHMvalue = MaudPreferences.getDouble(
+      "instrBroadening.minimumHWHMvalue", 0.0000001);
+  public static double minimumHWHM = MaudPreferences.getDouble(
+      "instrBroadening.minimumHWHM", 0.0001);
+
 
   public InstrumentBroadening(XRDcat afile, String alabel) {
     super(afile, alabel);

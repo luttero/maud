@@ -123,6 +123,7 @@ public class XGridClient {
         if (client.channel != null)
           return client.getResults(jobIdentifier);
       } catch (Exception e) {
+        e.printStackTrace();
       }
       try {
         Thread.sleep(100000);

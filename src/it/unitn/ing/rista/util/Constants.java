@@ -660,9 +660,11 @@ public class Constants {
         }
         buildNumbreader.close();
       } catch (IOException io) {
+        io.printStackTrace();
         try {
           buildNumbreader.close();
         } catch (Exception ioe) {
+          ioe.printStackTrace();
         }
       }
     }
@@ -790,6 +792,8 @@ public class Constants {
         STARTING_STRUCTURE_FACTOR);
     MINIMUM_STRUCTURE_FACTOR = MaudPreferences.getDouble("structure_factors.minimum_value_for_extraction", 
         MINIMUM_STRUCTURE_FACTOR);
+    batchProcess.setMinMaxFromPref();
+    batchProcess.setMinMax2DFromPref();
 
     if (!textonly) {
 	    System.out.println("Loading Interface preferences");
@@ -1225,10 +1229,11 @@ public class Constants {
 		  }
         in.close();
       } catch (IOException ie) {
+        ie.printStackTrace();
         try {
-			  ie.printStackTrace();
           in.close();
         } catch (IOException iex) {
+          iex.printStackTrace();
         }
       }
     }

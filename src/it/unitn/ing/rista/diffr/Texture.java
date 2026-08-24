@@ -187,10 +187,12 @@ public class Texture extends XRDcat {
         PFwriter.flush();
         PFwriter.close();
       } catch (IOException io) {
+        io.printStackTrace();
         try {
           PFwriter.flush();
           PFwriter.close();
         } catch (IOException ieo) {
+          ieo.printStackTrace();
         }
       }
     }
@@ -254,6 +256,28 @@ public class Texture extends XRDcat {
     return textF[0];
   }
 
+  public double computeTextureFactor(double phi, double beta, double psi, double gamma) {
+    // angles in radiant
+    // phi, beta: crystallographic angles
+    // psi, gamma: pole figure angles
+
+    return 1.0;
+  }
+
+  public void initQuickComputation() {
+
+  }
+
+  public double computeTextureFactorQuick(double phi, double beta, double psi, double gamma) {
+    // angles in radiant
+    // phi, beta: crystallographic angles
+    // psi, gamma: pole figure angles
+
+    // it requires to call first the initQuickCalculation method once
+
+    return computeTextureFactor(phi, beta, psi, gamma);
+  }
+
   public double getODF(double alpha, double beta, double gamma) {
     // in radiant
     return 1.0;
@@ -271,58 +295,59 @@ public class Texture extends XRDcat {
   }
 
   public void computeSharpness() {
+    if (!getFilePar().isComputingDerivate()) {
+      initializeAll();
 
-    initializeAll();
+      double va, b, fn;
+      for (int i = 0; i < 7; i++)
+        fnorm[i] = 0.0;
+      fnorm[2] = 10.0;
+      double resolutionR = getResolutionD() * Constants.DEGTOPI * 0.5;
 
-    double va, b, fn;
-    for (int i = 0; i < 7; i++)
-      fnorm[i] = 0.0;
-    fnorm[2] = 10.0;
-    double resolutionR = getResolutionD() * Constants.DEGTOPI * 0.5;
+      b = resolutionR / 4.0;
 
-    b = resolutionR / 4.0;
+      for (double beta = b; beta <= Constants.PI; beta += resolutionR) {
+        double dvc = 2.0 * b;
+        if (beta == b || Constants.PI - beta < b * 3.0)
+          dvc *= 2.0;
+        va = resolutionR * resolutionR * (Math.cos(beta - dvc) - Math.cos(beta + dvc));
 
-    for (double beta = b; beta <= Constants.PI; beta += resolutionR) {
-      double dvc = 2.0 * b;
-      if (beta == b || Constants.PI - beta < b * 3.0)
-        dvc *= 2.0;
-      va = resolutionR * resolutionR * (Math.cos(beta - dvc) - Math.cos(beta + dvc));
+        double sinbeta = Math.sin(beta);
+        double sin2beta = sinbeta * sinbeta;
+        double cos2beta = 1.0 - sin2beta;
 
-      double sinbeta = Math.sin(beta);
-      double sin2beta = sinbeta * sinbeta;
-      double cos2beta = 1.0 - sin2beta;
+        for (double alpha = b; alpha <= Constants.PI2; alpha += resolutionR) {
+          double sinalpha = Math.sin(alpha);
+          sinalpha *= sinalpha;
+          double cos2alpha = 1.0 - sinalpha;
 
-      for (double alpha = b; alpha <= Constants.PI2; alpha += resolutionR) {
-        double sinalpha = Math.sin(alpha);
-        sinalpha *= sinalpha;
-        double cos2alpha = 1.0 - sinalpha;
-
-        double fn_p = 0.0;
-        for (double gamma = b; gamma <= Constants.PI2; gamma += resolutionR) {
-          fn = getODF(alpha, beta, gamma);
-          fnorm[0] += fn * fn * va;
-          if (fn > 1.0E-80) {
-            fnorm[1] -= fn * Math.log(fn) * va;
-            fn_p += fn;
+          double fn_p = 0.0;
+          for (double gamma = b; gamma <= Constants.PI2; gamma += resolutionR) {
+            fn = getODF(alpha, beta, gamma);
+            fnorm[0] += fn * fn * va;
+            if (fn > 1.0E-80) {
+              fnorm[1] -= fn * Math.log(fn) * va;
+              fn_p += fn;
+            }
+            fnorm[2] = Math.min(fnorm[2], fn);
+            fnorm[3] = Math.max(fnorm[3], fn);
           }
-          fnorm[2] = Math.min(fnorm[2], fn);
-          fnorm[3] = Math.max(fnorm[3], fn);
+          fnorm[4] += fn_p * sinalpha * sin2beta * va;
+          fnorm[5] += fn_p * cos2alpha * sin2beta * va;
+          fnorm[6] += fn_p * cos2beta * va;
         }
-        fnorm[4] += fn_p * sinalpha * sin2beta * va;
-        fnorm[5] += fn_p * cos2alpha * sin2beta * va;
-        fnorm[6] += fn_p * cos2beta * va;
       }
-    }
 
-    for (int i = 0; i < 2; i++)
-      fnorm[i] /= (8.0 * Constants.PI * Constants.PI);
-    System.out.println("F2 = " + fnorm[0] + " , S = " + fnorm[1] + " , min ODF = " + fnorm[2] + " , max ODF = " + fnorm[3]);
-    double sum = 0.0;
-    for (int i = 4; i < 7; i++) {
-      fnorm[i] /= (8.0 * Constants.PI * Constants.PI);
-      sum += fnorm[i];
+      for (int i = 0; i < 2; i++)
+        fnorm[i] /= (8.0 * Constants.PI * Constants.PI);
+      System.out.println("F2 = " + fnorm[0] + " , S = " + fnorm[1] + " , min ODF = " + fnorm[2] + " , max ODF = " + fnorm[3]);
+      double sum = 0.0;
+      for (int i = 4; i < 7; i++) {
+        fnorm[i] /= (8.0 * Constants.PI * Constants.PI);
+        sum += fnorm[i];
+      }
+      System.out.println("FR = " + fnorm[4] + " , FT = " + fnorm[5] + " , FN = " + fnorm[6] + " , SUM = " + sum);
     }
-    System.out.println("FR = " + fnorm[4] + " , FT = " + fnorm[5] + " , FN = " + fnorm[6] + " , SUM = " + sum);
   }
 
   public String computeAndGetSharpness() {
@@ -624,6 +649,10 @@ public class Texture extends XRDcat {
   public JOptionsDialog getOptionsDialog(Frame parent) {
     JOptionsDialog adialog = new JTextureOptionsD(parent, this);
     return adialog;
+  }
+
+  public boolean isRandomTexture() {
+    return true;
   }
 
   public class JTextureOptionsD extends JOptionsDialog {

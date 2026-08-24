@@ -186,6 +186,7 @@ public class StressX3000DataFile extends MultDiffrDataFile {
       try {
         reader.close();
       } catch (IOException e) {
+        e.printStackTrace();
       }
     }
     isAbilitatetoRefresh = tmpB;

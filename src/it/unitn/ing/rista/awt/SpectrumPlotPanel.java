@@ -417,6 +417,13 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
     add(graphPanel, BorderLayout.CENTER);
   }
 
+  public void setMinMax(double xmin, double xmax, double min, double max) {
+    IntensityMin = min;
+    IntensityMax = max;
+    xMin = xmin;
+    xMax = xmax;
+  }
+
   public Frame getFrameParent() {
     Container parent = getParent();
     while (parent.getParent() != null && !(parent instanceof Frame)) {
@@ -1638,12 +1645,19 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 			    if (marker != null)
 				    residuals.setMarkers(marker);
 
-			    if (peaksLocated)
-				    for (i = j = 0; i < np; i++, j += 2) {
-					    data[j + 1] = MoreMath.sign(derivative2[i]) *
-							    Math.sqrt(Math.sqrt(Math.abs(derivative2[i])));
-				    }
-			    else
+			    if (peaksLocated) {
+            try {
+              for (i = j = 0; i < np; i++, j += 2) {
+                data[j + 1] = MoreMath.sign(derivative2[i]) *
+                    Math.sqrt(Math.sqrt(Math.abs(derivative2[i])));
+              }
+            } catch (Exception e) {
+              if (datafit != null && datafit.length >= np * 2)
+                for (i = j = 0; i < np; i++, j += 2) {
+                  data[j + 1] = datafit[j + 1] - data[j + 1];
+                }
+            }
+          } else
 				    for (i = j = 0; i < np; i++, j += 2) {
 					    data[j + 1] = datafit[j + 1] - data[j + 1];
 				    }
@@ -2475,6 +2489,7 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
       datap[0].append(datapeak, numberofRefl);
 
     } catch (Exception e) {
+      e.printStackTrace();
     }
 
     positions.updateDataAndPaint(trange);

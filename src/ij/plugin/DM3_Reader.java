@@ -246,6 +246,7 @@ public class DM3_Reader extends ImagePlus implements PlugIn
 		catch (Exception e) {
 			IJ.showStatus("parseDM3() error");
 			IJ.showMessage("DM3_Reader", ""+e);
+      e.printStackTrace();
 			return null;
 		}
 		

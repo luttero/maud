@@ -526,6 +526,7 @@ public class LeastSquareFit extends OptimizationAlgorithm {
 				      try {
 					      Thread.sleep(Constants.timeToWaitThreadsEnding);
 				      } catch (InterruptedException r) {
+                r.printStackTrace();
 				      }
 				      for (int h = 0; h < maxThreads; h++) {
 					      if (!threads[h].isEnded())
@@ -622,6 +623,7 @@ public class LeastSquareFit extends OptimizationAlgorithm {
 				      try {
 					      Thread.sleep(Constants.timeToWaitThreadsEnding);
 				      } catch (InterruptedException r) {
+                r.printStackTrace();
 				      }
 				      for (int h = 0; h < maxThreads; h++) {
 					      if (!threads[h].isEnded())
@@ -702,8 +704,7 @@ public class LeastSquareFit extends OptimizationAlgorithm {
               ++n0;
             parmn[i] = b[i];
           }
-	       if (MaudPreferences.getBoolean("leastSquares.printParametersPerIteration", false))
-            printout(parmn, norm, nprm);
+          printout(parmn, norm, nprm, MaudPreferences.getBoolean("leastSquares.printParametersPerIteration", false));
         }
         if (n0 == nprm)
           conver = 1;
@@ -720,7 +721,9 @@ public class LeastSquareFit extends OptimizationAlgorithm {
           } else {
             if (fittingFunction.singleFunctionComputing())
               fittingFunction.setDerivate(false);
-            fittingFunction.setFreeParameters(getParametersFrom(parmn, norm));
+            if (flg != -1)
+              fittingFunction.setFreeParameters(getParametersFrom(parmn, norm));
+//            printout(parmn, norm, nprm, false);
             if (!newModel) {
               for (int i = 0; i < dataNumber; i++)
                 fit[i] = fittingFunction.getFit(i);
@@ -1051,6 +1054,7 @@ public class LeastSquareFit extends OptimizationAlgorithm {
                   cov1[i][j] = cov2[i][j] / Math.sqrt(Math.abs(cov2[i][i] * cov2[j][j]));
             } catch (Exception eio) {
               printLine(out, "Warning: error computing correlation matrix, no correlation matrix in output!");
+              eio.printStackTrace();
             }
             printLine(out, "Correlation matrix:");
             printString(out, "#", 4);
@@ -1232,11 +1236,15 @@ public class LeastSquareFit extends OptimizationAlgorithm {
           am[k2] /= f;
         }
         choleskyFlag[j] = 1;
+        if (flg == -1)
+          flg = 1;
       } else {
-        flg = 1;
+        if (flg == 0)
+          flg = -1;
         choleskyFlag[j] = -1;
         if (outputEnabled)
           printf("cholesky negative diag j,l,a(l) : ", j, l1, am[l1]);
+        System.out.println("cholesky negative diag j,l,a(l) : " + j + " " + l1 + " " + am[l1]);
       }
     }
     return flg;

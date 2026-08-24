@@ -157,6 +157,7 @@ public class TitledDoubleColumnDatafile extends it.unitn.ing.rista.diffr.DiffrDa
       try {
         reader.close();
       } catch (IOException e) {
+        e.printStackTrace();
       }
     }
     isAbilitatetoRefresh = tmpB;

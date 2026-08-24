@@ -365,6 +365,7 @@ public class MaudGenericDialog extends Dialog implements ActionListener,
     try {
       d = Double.parseDouble(theText);
     } catch (NumberFormatException e) {
+      e.printStackTrace();
       d = null;
     }
     return d;

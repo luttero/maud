@@ -105,8 +105,12 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 
 	//  boolean useAllhklForCubic = false;
 	boolean cubic = false;
+  String[] resolutions = {"15", "10", "7.5", "6", "5", "3.75", "3", "2.5", "2", "1.5", "1.25", "1",
+      "0.75", "0.5", "0.25", "0.125", "0.1"};
+  double[] possibleResolutions = {15, 10, 7.5, 6, 5, 3.75, 3, 2.5, 2, 1.5, 1.25, 1,
+      0.75, 0.5, 0.25, 0.125, 0.1};
 
-	public MEMLTexture(XRDcat aobj, String alabel) {
+  public MEMLTexture(XRDcat aobj, String alabel) {
 		super(aobj, alabel);
 		initBaseObject();
 		identifier = "E-WIMV";
@@ -257,17 +261,33 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 	}
 
 	public void setResolution(String value) {
-		double res = 0.0;
-		try {
-			res = Double.parseDouble(stringField[5]);
-		} catch (Exception e) {
-//			e.printStackTrace();
-		}
-		if (value != null && Double.parseDouble(value) != res) {
-			stringField[5] = value;
-			resetODF();
-		}
-	}
+    double res = 0.0;
+    if (!stringField[5].isEmpty()) {
+      try {
+        res = Double.parseDouble(stringField[5]);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+    if (value != null && Double.parseDouble(value) != res) {
+      double realRes = getPossibleResolution(Double.parseDouble(value));
+      stringField[5] = Double.toString(realRes);
+      resetODF();
+    }
+  }
+
+  public double getPossibleResolution(double resolution) {
+    double diff = Math.abs(resolution - possibleResolutions[0]);
+    int choice = 0;
+    for (int i = 1; i < possibleResolutions.length; i++) {
+      double adiff = Math.abs(resolution - possibleResolutions[i]);
+      if (diff > adiff) {
+        choice = i;
+        diff = adiff;
+      }
+    }
+    return possibleResolutions[choice];
+  }
 
 	public String getResolution() {
 		return stringField[5];
@@ -898,6 +918,7 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 				try {
 					Thread.sleep(Constants.timeToWaitThreadsEnding);
 				} catch (InterruptedException r) {
+          r.printStackTrace();
 				}
 				for (int h = 0; h < maxThreads; h++) {
 					if (!threads[h].isEnded())
@@ -1176,6 +1197,7 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 					prF = new ProgressFrame(getNumberOfData());
 				} catch (NullPointerException npe) {
 					System.out.println("Not able to create frame, MacOSX display sleep bug?");
+          npe.printStackTrace();
 				}
 			printf("Preparing for odf cells angles conversion...            ", prF);
 
@@ -1236,6 +1258,7 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 					try {
 						Thread.sleep(Constants.timeToWaitThreadsEnding);
 					} catch (InterruptedException r) {
+            r.printStackTrace();
 					}
 					for (int h = 0; h < maxThreads; h++) {
 						if (!threads[h].isEnded())
@@ -1347,6 +1370,7 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 					prF = new ProgressFrame(getNumberOfData());
 				} catch (NullPointerException npe) {
 					System.out.println("Not able to create frame, MacOSX display sleep bug?");
+          npe.printStackTrace();
 				}
 			printf("Preparing for odf cells angles conversion...            ", prF);
 			for (int j = 0; j < getNumberOfData(); j++) {
@@ -3587,8 +3611,6 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 		JLabel sharpL = null;
 		JTextField thresholdTF;
 		JTextField thresholdODFValueTF;
-		String[] resolutions = {"15", "10", "7.5", "6", "5", "3.75", "3", "2.5", "2", "1.5", "1.25", "1",
-				"0.75", "0.5", "0.25", "0.125", "0.1"};
 
 		public JMEMTextureOptionsD(Frame parent, XRDcat obj) {
 

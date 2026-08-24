@@ -234,6 +234,7 @@ public class Settings
       inf.importModel(is, mol, chain);
       is.close();
     } catch (Exception e) {
+      e.printStackTrace();
     }
 
     return (mol);
@@ -254,6 +255,7 @@ public class Settings
       inf.importParameter(is, this);
       is.close();
     } catch (Exception e) {
+      e.printStackTrace();
     }
 
   } // end readParameter

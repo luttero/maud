@@ -240,11 +240,13 @@ public class FullProfStructureModel extends StructureFactorModel {
           output = Misc.getWriter(datafilename);
           output.write(dummyPowderData);
         } catch (IOException io) {
+          io.printStackTrace();
         }
         try {
           output.flush();
           output.close();
         } catch (IOException io) {
+          io.printStackTrace();
         }
     }
 
@@ -429,11 +431,13 @@ public class FullProfStructureModel extends StructureFactorModel {
           output.write("     0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00");
           output.newLine();
         } catch (IOException io) {
+          io.printStackTrace();
         }
         try {
           output.flush();
           output.close();
         } catch (IOException io) {
+          io.printStackTrace();
         }
     }
   }
@@ -494,6 +498,7 @@ public class FullProfStructureModel extends StructureFactorModel {
       try {
         reader.close();
       } catch (IOException e) {
+        e.printStackTrace();
       }
     }
     return hklList;

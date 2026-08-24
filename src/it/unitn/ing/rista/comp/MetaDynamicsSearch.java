@@ -997,6 +997,7 @@ public class MetaDynamicsSearch extends OptimizationAlgorithm {
                   cov1[i][j] = cov2[i][j] / Math.sqrt(Math.abs(cov2[i][i] * cov2[j][j]));
             } catch (Exception eio) {
               printLine(out, "Warning: error computing correlation matrix, no correlation matrix in output!");
+              eio.printStackTrace();
             }
             printLine(out, "Correlation matrix:");
             printString(out, "#", 4);

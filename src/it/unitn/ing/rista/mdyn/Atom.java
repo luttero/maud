@@ -228,6 +228,7 @@ public class Atom {
       } // end switch
 
     } catch (StringIndexOutOfBoundsException e) {
+      e.printStackTrace();
     }
 
     return Atom.NUMC; // return C12 as resonable default

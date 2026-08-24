@@ -164,6 +164,7 @@ public class ILLDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
       try {
         reader.close();
       } catch (IOException e) {
+        e.printStackTrace();
       }
     }
     isAbilitatetoRefresh = tmpB;

@@ -139,6 +139,7 @@ public class SietronicCPIDataFile extends it.unitn.ing.rista.diffr.DiffrDataFile
       try {
         reader.close();
       } catch (IOException e) {
+        e.printStackTrace();
       }
     }
     isAbilitatetoRefresh = tmpB;

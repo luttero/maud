@@ -1,6 +1,6 @@
 --------------------------The MAUD program readme-------------------------------
 
-Please reports bugs to maud@ing.unitn.it
+Please reports bugs to luca.lutterotti@unitn.it
 
 If you think that you got an error in Maud and the program refuse to do
 something or stop a computation; have a look in the  console window. 
@@ -42,6 +42,11 @@ how to work with it. The advice is to read them in the reverse order starting
 from the older one.
 
 Maud Version notes:
+
+(xx/08/2025):   3.0. The "Angle-Energy Map" release.
+                Version 3.0 is the version including the
+                Angle-Energy maps fitting.
+
 
 (05/08/2025):   2.99997. The "End of life" release.
                 This will be the last version 2.x release

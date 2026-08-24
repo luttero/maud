@@ -406,9 +406,9 @@ public class Instrument extends XRDcat {
   }
 
   public AngularCalibration getAngularCalibration() {
-    if (subordinateField[getAngularCalibrationID()] == null)
+    if (subordinateField[1] == null)
       setAngularCalibration(0);
-    return (AngularCalibration) subordinateField[getAngularCalibrationID()];
+    return (AngularCalibration) subordinateField[1]; // getAngularCalibrationID()];
   }
 
   public void setAngularCalibration(String value) {
@@ -656,13 +656,45 @@ public class Instrument extends XRDcat {
     DataFileSet adataset = adatafile.getDataFileSet();
     int datasetIndex = adataset.getDataFileSetIndex();
     for (int i = 0; i < asample.numberOfLayers; i++) {
-      double quantity = asample.phaseQuantity[i][phaseindex][datasetIndex];
+      double quantity = asample.phaseQuantity[0][i][phaseindex][datasetIndex];
       if (quantity >= 0.0) {
       	double[] absCorrection = getGeometry().getLayerAbsorption_new(asample, rad, i, incidentDiffractionangles, adataset);
       	for (int a = 0; a < radNumber; a++)
 	         correction[a] += quantity * absCorrection[a];
       }
      }
+    return correction;
+  }
+
+  public double[] phaseAndLayerAbsorptionForPattern(DiffrDataFile adatafile, Sample asample,
+                                          Phase aphase) {
+
+    double[] x = adatafile.getXData();
+    RadiationType rad = getRadiationType();
+    int phaseindex = asample.getPhase(aphase);
+    int pointNumber = x.length;
+    double[][] incidentDiffractionangles = new double[pointNumber][4];
+    double[] correction = new double[pointNumber]; //, sintheta = 1.0;
+    double[] tiltingAngles = adatafile.getTiltingAngle();
+    double omega = tiltingAngles[0];
+    for (int i = adatafile.startingindex; i < adatafile.finalindex; i++) {
+      tiltingAngles[0] = getMeasurement().getOmega(omega, x[i]);
+//	    System.out.println(tiltingAngles[0]);
+      double[] incidentDiffr = getGeometry().getIncidentAndDiffractionAngles(adatafile, tiltingAngles,
+          asample.getSampleAngles(), x[i]);
+      for (int j = 0; j < 4; j++)
+        incidentDiffractionangles[i][j] = incidentDiffr[j];
+    }
+    DataFileSet adataset = adatafile.getDataFileSet();
+    int datasetIndex = adataset.getDataFileSetIndex();
+    for (int i = 0; i < asample.numberOfLayers; i++) {
+      double quantity = asample.phaseQuantity[1][i][phaseindex][datasetIndex];
+      if (quantity >= 0.0) {
+        double[] absCorrection = getGeometry().getLayerAbsorption_new(asample, rad, i, incidentDiffractionangles, adataset);
+        for (int a = adatafile.startingindex; a < adatafile.finalindex; a++)
+          correction[a] += quantity * absCorrection[a];
+      }
+    }
     return correction;
   }
 

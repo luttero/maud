@@ -103,6 +103,10 @@ public class DiscreteODFTexture extends Texture {
     return ODFisRefinable();
   }
 
+  public boolean isRandomTexture() {
+    return false;
+  }
+
   public boolean ODFisRefinable() {
     // to implement in subclasses
     return true;
@@ -233,6 +237,7 @@ public class DiscreteODFTexture extends Texture {
       out.newLine();
     } catch (IOException ioe) {
       System.out.println("Error in writing the odf for " + toXRDcatString());
+      ioe.printStackTrace();
     }
 
   }
@@ -293,8 +298,9 @@ public class DiscreteODFTexture extends Texture {
             }
         }
       } while (tokentype != CIFtoken.TT_EOF && !endofInput);
-    } catch (IOException ioe) {
+    } catch (Exception ioe) {
       System.out.println("IO exception in custom object for " + toXRDcatString());
+      ioe.printStackTrace();
     }
 
     fiottu();
@@ -1691,10 +1697,12 @@ public class DiscreteODFTexture extends Texture {
         PFwriter.flush();
         PFwriter.close();
       } catch (IOException io) {
+        io.printStackTrace();
         try {
           PFwriter.flush();
           PFwriter.close();
         } catch (IOException ieo) {
+          ieo.printStackTrace();
         }
       }
     }
@@ -1742,6 +1750,7 @@ public class DiscreteODFTexture extends Texture {
 			      else
 				      format[0] = ODF_FORMAT_STANDARD;
 		      } catch (Exception e) {
+            e.printStackTrace();
 			      // not a number
 			      while (line != null) {
 				      line = PFreader.readLine();
@@ -2739,6 +2748,7 @@ public class DiscreteODFTexture extends Texture {
 			  try {
 				  Thread.sleep(Constants.timeToWaitThreadsEnding);
 			  } catch (InterruptedException r) {
+          r.printStackTrace();
 			  }
 			  for (int h = 0; h < maxThreads; h++) {
 				  if (!threads[h].isEnded())

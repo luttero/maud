@@ -86,6 +86,10 @@ public class FEMRodriguezTexture extends Texture {
     super.initParameters();
   }
 
+  public boolean isRandomTexture() {
+    return false;
+  }
+
   public void computeTextureFactor(Phase aphase, Sample asample) {
 //    FilePar aparFile = getFilePar();
     if (!refreshComputation)

@@ -261,7 +261,9 @@ public class SampleShapeRectangularInReflection extends SampleShape {
           setDivisionsY(div);
           divisionsY = div;
         }
-      } catch (Exception e) {}
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
       super.retrieveParameters();
     }
 

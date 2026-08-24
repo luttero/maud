@@ -706,8 +706,8 @@ public class BrukerImageReader implements PlugIn {
     try {
       props.load(is);
       is.close();
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
+      e.printStackTrace();
       return null;
     }
     fi.unit = props.getProperty("unit", "");
@@ -748,6 +748,7 @@ public class BrukerImageReader implements PlugIn {
       try {
         return Double.valueOf(s);
       } catch (NumberFormatException e) {
+        e.printStackTrace();
       }
     }
     return null;

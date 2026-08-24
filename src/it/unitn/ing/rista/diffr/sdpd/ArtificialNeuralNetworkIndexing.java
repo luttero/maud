@@ -59,6 +59,7 @@ public class ArtificialNeuralNetworkIndexing {
           try {
             Thread.sleep(500);
           } catch (InterruptedException e) {
+            e.printStackTrace();
           }
         }
         Vector allData = dataui.getData();

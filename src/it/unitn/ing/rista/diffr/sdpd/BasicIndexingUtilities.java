@@ -174,11 +174,13 @@ public class BasicIndexingUtilities {
             output.newLine();
           }
         } catch (IOException io) {
+          io.printStackTrace();
         }
         try {
           output.flush();
           output.close();
         } catch (IOException io) {
+          io.printStackTrace();
         }
       } else {
         try {
@@ -198,11 +200,13 @@ public class BasicIndexingUtilities {
             output.newLine();
           }
         } catch (IOException io) {
+          io.printStackTrace();
         }
         try {
           output.flush();
           output.close();
         } catch (IOException io) {
+          io.printStackTrace();
         }
       }
     }
@@ -243,11 +247,13 @@ public class BasicIndexingUtilities {
             output.newLine();
           }
         } catch (IOException io) {
+          io.printStackTrace();
         }
         try {
           output.flush();
           output.close();
         } catch (IOException io) {
+          io.printStackTrace();
         }
       } else {
         try {
@@ -271,11 +277,13 @@ public class BasicIndexingUtilities {
             output.newLine();
           }
         } catch (IOException io) {
+          io.printStackTrace();
         }
         try {
           output.flush();
           output.close();
         } catch (IOException io) {
+          io.printStackTrace();
         }
       }
     }
@@ -323,10 +331,12 @@ public class BasicIndexingUtilities {
           } while (!endoffile);
         } catch (IOException e) {
           System.out.println("Error in loading the data file! Try to remove this data file");
+          e.printStackTrace();
         }
         try {
           reader.close();
         } catch (IOException e) {
+          e.printStackTrace();
         }
         list.addElement(wave);
         return list;
@@ -360,11 +370,13 @@ public class BasicIndexingUtilities {
             output.newLine();
           }
         } catch (IOException io) {
+          io.printStackTrace();
         }
         try {
           output.flush();
           output.close();
         } catch (IOException io) {
+          io.printStackTrace();
         }
       }
   }

@@ -199,6 +199,7 @@ public class FdtTransformToMBin extends Object {
           try {
             calreader.close();
           } catch (IOException ioe) {
+            ioe.printStackTrace();
           }
         } else
           System.out.println("Not able to find the calibration file: " + calName);
@@ -292,11 +293,13 @@ public class FdtTransformToMBin extends Object {
       try {
         reader.close();
       } catch (IOException e) {
+        e.printStackTrace();
       }
       try {
         writer.flush();
         writer.close();
       } catch (IOException e) {
+        e.printStackTrace();
       }
     }
   }

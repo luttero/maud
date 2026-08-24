@@ -483,6 +483,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 		   try {
 			   Thread.currentThread().sleep(1000);
 		   } catch (InterruptedException ie) {
+         ie.printStackTrace();
 		   }
 	   }
    }
@@ -993,9 +994,9 @@ public class FilePar extends XRDcat implements lFilePar, Function {
               }
           }
         } while (tokentype != CIFtoken.TT_EOF);
-      } catch (IOException ioe) {
-        System.out.println("IO exception in reading analysis file!");
-        ioe.printStackTrace();
+      } catch (Exception ioe) {
+//        System.out.println("IO exception in reading analysis file!");
+//        ioe.printStackTrace();
       }
 
       try {
@@ -1232,6 +1233,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
       try {
         Thread.sleep(100);
       } catch (InterruptedException ie) {
+        ie.printStackTrace();
       }
 
     }
@@ -1411,6 +1413,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
         out.close();
       }
     } catch (IOException ioe) {
+      ioe.printStackTrace();
     }
   }
 
@@ -2613,7 +2616,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
 	    outputframe.appendnewline("Rnb1(%): " + indexes[6] * 100);
 	    outputframe.appendnewline("Rnb2(%): " + indexes[7] * 100);
       if (themainframe instanceof DiffractionMainFrame)
-        themainframe.updateDataFilePlot(true);
+        themainframe.updateDataFilePlot(false);
     }
 //		else if (Constants.testing)
 //			System.out.println("Weighted Sum of Squares: " + String.valueOf(wss));
@@ -3491,6 +3494,7 @@ public class FilePar extends XRDcat implements lFilePar, Function {
         System.out.println("Not able to open the file for append");
       }
     } catch (IOException ioe) {
+      ioe.printStackTrace();
       System.out.println("Unable to save the object " + toXRDcatString());
     }
   }

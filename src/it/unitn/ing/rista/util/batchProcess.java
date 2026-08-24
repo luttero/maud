@@ -49,6 +49,7 @@ import it.unitn.ing.wizard.LCLS2Wizard.LCLS2data;
 public class batchProcess {
 
 	String workingDirectory = "";
+  boolean workingDirectorySet = false;
   String filename = null;
   String[] folderandname = null;
   String filenameToSave = null;
@@ -66,8 +67,11 @@ public class batchProcess {
   String stressFilename = null;
   String sin2psiOptions = null;
   String diffOutputDataFilename = null;
+  String sumOutputDataFilename = null;
   String GSASDataFilename = null;
   int actualDatasetNumber = 0;
+  static double xmin, xmax, ymin, ymax;
+  static double /*xmin2D, xmax2D,*/ ymin2D, ymax2D;
 
   public String[] diclist = {"_riet_analysis_file",
                              "_riet_analysis_iteration_number", "_riet_analysis_wizard_index",
@@ -83,7 +87,8 @@ public class batchProcess {
 		                       "_maud_output_stress_filename", "_maud_output_stress_options",
 		                       "_riet_meas_datains_name", "_riet_meas_datafile_fitting",
 		                       "_maud_output_diff_data_filename", "_maud_export_lumaCAM_to_GSAS_datafile",
-                           "_pd_meas_dataset_number"
+                           "_pd_meas_dataset_number", "_maud_output_sum_data_filename",
+                           "_maud_output_plot_keep_scale", "_maud_output_plot2D_keep_scale"
   };
 
   public batchProcess(String insFileName) {
@@ -176,8 +181,9 @@ public class batchProcess {
             }
           } while (tokentype != CIFtoken.TT_EOF);
 
-        } catch (IOException e) {
+        } catch (Exception e) {
           System.out.println("Error loading cif file!");
+          e.printStackTrace();
         }
         try {
           reader.close();
@@ -204,8 +210,10 @@ public class batchProcess {
 	    analysis.setDirectory(newfolderandname[0]);
       processAnalysis(analysis, -1);
     } else if (index == -2) {
-      if (astring.length() > 0 && !astring.equalsIgnoreCase("."))
-	      workingDirectory = astring;
+      if (astring.length() > 0 && !astring.equalsIgnoreCase(".")) {
+        workingDirectory = astring;
+        workingDirectorySet = true;
+      }
     }
 
     return index;
@@ -222,9 +230,40 @@ public class batchProcess {
     return number;
   }
 
+  public void resetMinMax() {
+    xmin = 0;
+    xmax = 0;
+    ymin = 0;
+    ymax = 0;
+  }
+
+  public static void setMinMaxFromPref() {
+    xmin = MaudPreferences.getDouble("plot_batch.xmin", 0);
+    xmax = MaudPreferences.getDouble("plot_batch.xmax", 0);
+    ymin = MaudPreferences.getDouble("plot_batch.intensity_min", 0);
+    ymax = MaudPreferences.getDouble("plot_batch.intensity_max", 0);
+  }
+
+  public void reset2DMinMax() {
+//    xmin2D = 0;
+//    xmax2D = 0;
+    ymin2D = 0;
+    ymax2D = 0;
+  }
+
+  public static void setMinMax2DFromPref() {
+//    xmin2D = MaudPreferences.getDouble("plot2D_batch.xmin", 0);
+//    xmax2D = MaudPreferences.getDouble("plot2D_batch.xmax", 0);
+    ymin2D = MaudPreferences.getDouble("plot2D_batch.intensity_min", 0);
+    ymax2D = MaudPreferences.getDouble("plot2D_batch.intensity_max", 0);
+  }
+
   public void setLoop(Vector avector, int element) {
 
     XRDcat.validateCIF(avector);
+
+    resetMinMax();
+    reset2DMinMax();
 
     int loopitem = avector.size();
     FilePar analysis = null;
@@ -260,12 +299,21 @@ public class batchProcess {
           }
           wizardindex = -2;
 
-          token = workingDirectory + item.thestring;
+          token = item.thestring;
           String[] newfolderandname = Misc.getFolderandName(/*folderandname[0] + */token);
           analysis = new FilePar(newfolderandname[1]);
 	        analysis.setFileNamePreserveExtension(newfolderandname[1], true);
-          analysis.setDirectory(newfolderandname[0]);
-	        workingDirectory = newfolderandname[0];
+          if (!workingDirectorySet) {
+            if (newfolderandname[0].length() > 0) {
+              if (newfolderandname[0].startsWith("/"))
+                workingDirectory = newfolderandname[0];
+              else
+                workingDirectory += newfolderandname[0];
+            }
+            analysis.setDirectory(workingDirectory);
+          } else {
+            analysis.setDirectory(workingDirectory + newfolderandname[0]);
+          }
           filenameToSave = null;
           simpleResultFileName = null;
           resultFileName = null;
@@ -425,10 +473,22 @@ public class batchProcess {
 	        loopitem--;
         } else if (index == 26) { //"_maud_export_lumaCAM_to_GSAS_datafile"
           GSASDataFilename = workingDirectory + item.thestring;
-          avector.removeElementAt(i);
-          loopitem--;
+         avector.removeElementAt(i);
+           loopitem--;
         } else if (index == 27) { //"_pd_meas_dataset_number"
           actualDatasetNumber = Integer.parseInt(item.thestring);
+          avector.removeElementAt(i);
+          loopitem--;
+        } else if (index == 28) { //"_maud_output_sum_data_filename"
+          sumOutputDataFilename = workingDirectory + item.thestring;
+          avector.removeElementAt(i);
+          loopitem--;
+        } else if (index == 29) { // "_maud_output_plot_keep_scale"
+          setMinMaxFromPref();
+          avector.removeElementAt(i);
+          loopitem--;
+        } else if (index == 30) { // "_maud_output_plot2D_keep_scale"
+          setMinMax2DFromPref();
           avector.removeElementAt(i);
           loopitem--;
         } else
@@ -475,9 +535,12 @@ public class batchProcess {
        filenameToSave = analysis.getDirectory() + analysis.getFileName();
 //	  else
 //	   filenameToSave = folderandname[0] + filenameToSave;
+    System.out.println("Using wizard number: " + wizardindex);
 	  if (analysis != null) {
       long time = System.currentTimeMillis();
-      if (wizardindex == 999) {
+      if (wizardindex == -999) { // in the batch file need to be -998
+//        do nothing
+      } else if (wizardindex == 999) {
 //        System.out.println("Starting function computation for analysis file: " + analysis.toXRDcatString());
         analysis.launchrefine(null);
         System.out.println(analysis.getWSS());
@@ -574,7 +637,7 @@ public class batchProcess {
 
 	      for (int i = 0; i < asample.activeDatasetsNumber(); i++) {
 		      DataFileSet dataset = asample.getActiveDataSet(i);
-		      dataset.plotAndExportPng(plotOutputFileName);
+		      dataset.plotAndExportPng(plotOutputFileName, xmin, xmax, ymin, ymax);
 	      }
       }
 		  if (plotOutput2DFileName != null) {
@@ -583,7 +646,7 @@ public class batchProcess {
 			  for (int i = 0; i < asample.activeDatasetsNumber(); i++) {
 
 				  DataFileSet dataset = asample.getActiveDataSet(i);
-				  dataset.plot2DandExportPng(plotOutput2DFileName);
+				  dataset.plot2DandExportPng(plotOutput2DFileName, ymin, ymax);
 
 			  }
 		  }
@@ -616,6 +679,7 @@ public class batchProcess {
 				      }
 			      } catch (Exception ge) {
 //              System.out.println("Something happen reading: " + xpcAll);
+              ge.printStackTrace();
 			      }
 			      if (phaseNumber >= 0 && reflList.size() > 0) {
 			      	Phase phase = analysis.getSample(0).getPhase(phaseNumber);
@@ -658,6 +722,7 @@ public class batchProcess {
 							  }
 						  }
 					  } catch (Exception ge) {
+              ge.printStackTrace();
 					  }
 					  if (phaseNumber >= 0 && reflList.size() > 0) {
 						  Phase phase = analysis.getSample(0).getPhase(phaseNumber);
@@ -670,11 +735,16 @@ public class batchProcess {
 				  }
 			  }
 		  }
-		if (diffOutputDataFilename != null && !diffOutputDataFilename.isEmpty()){
-			Sample asample = analysis.getSample(0);
-			exportExperimentalComputedData(analysis, "", diffOutputDataFilename);
+      if (diffOutputDataFilename != null && !diffOutputDataFilename.isEmpty()){
+        Sample asample = analysis.getSample(0);
+        exportExperimentalComputedData(analysis, "", diffOutputDataFilename);
 
-		}
+      }
+      if (sumOutputDataFilename != null && !sumOutputDataFilename.isEmpty()){
+        Sample asample = analysis.getSample(0);
+        exportSummedExperimentalData(analysis, "", sumOutputDataFilename);
+
+      }
       if (GSASDataFilename != null && !GSASDataFilename.isEmpty()){
         analysis.exportGSASdataFromLumaCAM(GSASDataFilename);
       }
@@ -694,6 +764,7 @@ public class batchProcess {
 					allPhases.addElement(token1);
 			}
 		} catch (Exception ge) {
+      ge.printStackTrace();
 //              System.out.println("Something happen reading: " + xpcAll);
 		}
 
@@ -717,6 +788,39 @@ public class batchProcess {
         output.newLine();
         analysis.exportExperimentalComputedData(output);
         output.close();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+  }
+
+  public void exportSummedExperimentalData(FilePar analysis, String folder, String afilename) {
+
+     String[] folderAndName = Misc.getFolderandName(filename);
+
+    if (afilename.endsWith(".xye"))
+      afilename = afilename.substring(0, afilename.length() - 4);
+
+    if (afilename != null) {
+
+      try {
+        Sample asample = analysis.getActiveSample();
+        int datasetnumber = asample.activeDatasetsNumber();
+
+        for (int i = 0; i < datasetnumber; i++) {
+          BufferedWriter output = Misc.getWriter(folder, afilename + Integer.toString(i) + ".xye");
+          DataFileSet tmpDatafileset = asample.getActiveDataSet(i);
+          if (tmpDatafileset != null) {
+            DiffrDataFile[] datafiles = tmpDatafileset.getActiveDataFiles();
+            double[][] dataToExport = tmpDatafileset.getSummedExperimentalComputedData(datafiles, 0, true);
+            for (int j = 0; j < dataToExport[0].length; j++) {
+              output.write(" " + Fmt.format(dataToExport[0][j]) + " " + Fmt.format(dataToExport[1][j]) + " "
+                  + Fmt.format(dataToExport[3][j]));
+              output.newLine();
+            }
+          }
+          output.close();
+        }
       } catch (IOException e) {
         e.printStackTrace();
       }

@@ -601,6 +601,7 @@ public class mainFrame extends principalJFrame {
             }
           }
         } catch (InterruptedException ie) {
+          ie.printStackTrace();
         }
       }
     }).start();

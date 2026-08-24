@@ -1058,6 +1058,7 @@ public class EPSCmodel extends Strain {
       try {
         reader.close();
       } catch (IOException e) {
+        e.printStackTrace();
       }
     }
     if (theGoodLine != null) {

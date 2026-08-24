@@ -729,6 +729,7 @@ public class XRayDataSqLite {
 				sensitivity = Xraylib.CS_FluorLine_Kissel_Cascade(atomNumber, xrl_line_number, energyInKeV);
 	//			System.out.println("Sensitivity difference for: " + atomNumber + " " + xrl_line_number + " " + energyInKeV + " " + (sensitivity - sensitivity_nocs));
 			} catch (Exception xe) {
+        xe.printStackTrace();
 				return getSensitivityNoXrl(atomNumber, shellID, energyInKeV, fluorescenceYield);
 			}
 		}
@@ -754,6 +755,7 @@ public class XRayDataSqLite {
 //				sensitivity = Xraylib.CS_FluorLine_Kissel(atomNumber, xrl_line_number, energyInKeV);
 				//			System.out.println("Sensitivity difference for: " + atomNumber + " " + xrl_line_number + " " + energyInKeV + " " + (sensitivity - sensitivity_nocs));
 			} catch (Exception xe) {
+        xe.printStackTrace();
 				return getSensitivityNoXrl(atomNumber, shellID, energyInKeV, fluorescenceYield);
 			}
 		}

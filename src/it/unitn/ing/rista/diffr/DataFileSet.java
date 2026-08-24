@@ -22,6 +22,7 @@ package it.unitn.ing.rista.diffr;
 
 import java.util.*;
 
+import static it.unitn.ing.rista.chemistry.XRayDataSqLite.atomsNumber;
 import static java.lang.System.*;
 import static java.util.Collections.max;
 import static java.util.Collections.sort;
@@ -206,6 +207,7 @@ public class DataFileSet extends XRDcat {
 	private Map<Phase, int[]> phaseStructureFactorsID = new Hashtable<>();
 	public static final int numberStructureFactors = 3;   // experimental, calculated, errors
 	private Map<Phase, double[][][][]> phaseScatFactors = new Hashtable<>();
+  private Map<Phase, double[][][]> phasePatterns = new Hashtable<>();
 
 	public DataFileSet(XRDcat afile, String alabel) {
     super(afile, alabel);
@@ -393,6 +395,33 @@ public class DataFileSet extends XRDcat {
 		return dataphaseForPlot;
 	}
 
+  public double[] getMaximumRangeAndMinimumStep() {
+    double[] data = new double[3];
+    double stepX = 1.0E10;
+    double xmin = 1.0E10, xmax = -1.0E10;
+    for (int i = 0; i < activedatafilesnumber(); i++) {
+      DiffrDataFile bdatafile = getActiveDataFile(i);
+      int xlength = bdatafile.finalindex - bdatafile.startingindex - 1;
+      double x1 = bdatafile.getXDataForPlot(bdatafile.startingindex, 0);
+      double x2 = bdatafile.getXDataForPlot(bdatafile.finalindex - 1, 0);
+      double lstepX = Math.abs((x2 - x1) / xlength);
+      if (lstepX < stepX)
+        stepX = lstepX;
+      if (xmin > x1)
+        xmin = x1;
+      if (xmax < x2)
+        xmax = x2;
+      if (xmin > x2)
+        xmin = x2;
+      if (xmax < x1)
+        xmax = x1;
+    }
+    data[0] = xmin;
+    data[1] = xmax;
+    data[2] = stepX;
+    return data;
+  }
+
 	static public double[][] getSummedExperimentalComputedData(DiffrDataFile[] datafile, int mode,
                                                              boolean meanIntensity) {
 
@@ -423,7 +452,7 @@ public class DataFileSet extends XRDcat {
 				xmax = x1;
 		}
 		int np = (int) Math.abs((xmax - xmin) / stepX) + 1;
-		double[][] dataToExport = new double[3][np];
+		double[][] dataToExport = new double[4][np];
 
 		if (np > 0) {
 			for (int is1 = 0; is1 < np; is1++) {
@@ -441,8 +470,10 @@ public class DataFileSet extends XRDcat {
 					if (dataToExport[0][is1] >= xstartmin && dataToExport[0][is1] <= xendmax) {
             double value = datafile[sn].getInterpolatedYSqrtIntensity(dataToExport[0][is1], 2, mode);
             double valuec = datafile[sn].getInterpolatedFitSqrtIntensity(dataToExport[0][is1], 2, mode);
+            double dev = Math.sqrt(value * value);
 						if (!Double.isNaN(value)) {
 							dataToExport[1][is1] += value * value;
+              dataToExport[3][is1] += Math.sqrt(value * value);;
 							total++;
 						}
 						if (!Double.isNaN(valuec)) {
@@ -451,8 +482,10 @@ public class DataFileSet extends XRDcat {
 						}
 					}
 				}
-				if (total > 0 && meanIntensity)
-					dataToExport[1][is1] /= total;
+				if (total > 0 && meanIntensity) {
+          dataToExport[1][is1] /= total;
+          dataToExport[3][is1] /= total;
+        }
 				if (totalFit > 0 && meanIntensity)
 					dataToExport[2][is1] /= totalFit;
 			}
@@ -903,6 +936,7 @@ public class DataFileSet extends XRDcat {
 
 				} catch (IOException e) {
 					System.out.println("Error loading cif file!");
+          e.printStackTrace();
 				}
 				try {
 					reader.close();
@@ -1397,6 +1431,7 @@ public class DataFileSet extends XRDcat {
 		//  Angle-energy map speedup
 		for (int i = 0; i < activedatafilesnumber(); i++) {
 			getActiveDataFile(i).refreshIndices(phase);
+      getActiveDataFile(i).setIndex(i);
 		}
 	}
 
@@ -1554,7 +1589,7 @@ public class DataFileSet extends XRDcat {
 
 	public void storeComputedStructureFactors(Phase phase, double[][] fhkl) {
 		double[][][] structureFactors = phaseStructureFactors.get(phase);
-//		System.out.println("Store: " + structureFactors[0].length + " " + structureFactors[0][0].length);
+//		System.out.println("Store: " + structureFactors[0].length + " " + structureFactors[0][0].length + " " + fhkl.length + " " + fhkl[0].length);
     if (structureFactors != null) {
       for (int i1 = 0; i1 < structureFactors[0].length; i1++)
         for (int n = 0; n < structureFactors[0][i1].length; n++) {
@@ -1687,9 +1722,22 @@ public class DataFileSet extends XRDcat {
 		return phaseScatFactors.get(phase);
 	}
 
+  public void setPhasePatterns(Phase phase, double[][][] patterns) {
+    if (phase != null && patterns != null) {
+      phasePatterns.remove(phase);
+      phasePatterns.put(phase, patterns);
+    }
+
+  }
+
+  public double[][][] getPatternsForPhase(Phase phase) {
+    return phasePatterns.get(phase);
+  }
+
 	public void removingPhase(Phase phase) {
 		phaseScatFactors.remove(phase);
 		phaseStructureFactors.remove(phase);
+    phasePatterns.remove(phase);
 		for (int i = 0; i < datafilesnumber(); i++)
 			getDataFile(i).removingPhase(phase);
 	}
@@ -1857,8 +1905,9 @@ public class DataFileSet extends XRDcat {
 			} else
 				needRestore = null;
 //			notLoaded = false;
-		} catch (IOException ioe) {
+		} catch (Exception ioe) {
 			out.println("IO exception in custom object for " + toXRDcatString());
+      ioe.printStackTrace();
 		}
 
 /*		if (theobj != null)
@@ -2106,6 +2155,7 @@ public class DataFileSet extends XRDcat {
 					output.newLine();
 				}
 			} catch (IOException ignored) {
+        ignored.printStackTrace();
 			}
 //			datalist.removeAllElements();
 //      datalist = null;
@@ -2114,6 +2164,7 @@ public class DataFileSet extends XRDcat {
 			output.flush();
 			output.close();
 		} catch (IOException ignored) {
+      ignored.printStackTrace();
 		}
 		datafileTable.removeAllElements();
 		datafileOrdered.removeAllElements();
@@ -2186,6 +2237,7 @@ public class DataFileSet extends XRDcat {
       groupoutput.write(diclistc[totsubordinate + 2]);
       groupoutput.newLine();
     } catch (IOException ignored) {
+      ignored.printStackTrace();
     }
 
     boolean meanIntensity = MaudPreferences.getBoolean("sumSpectra.meanIntensity", true);
@@ -2294,11 +2346,13 @@ public class DataFileSet extends XRDcat {
           output.newLine();
         }
       } catch (IOException ignored) {
+        ignored.printStackTrace();
       }
       try {
         output.flush();
         output.close();
       } catch (IOException ignored) {
+        ignored.printStackTrace();
       }
       datalist.removeAllElements();
 //      datalist = null;
@@ -2307,6 +2361,7 @@ public class DataFileSet extends XRDcat {
       groupoutput.flush();
       groupoutput.close();
     } catch (IOException ignored) {
+      ignored.printStackTrace();
     }
     datafileTable.removeAllElements();
 //    datafileTable = null;
@@ -2500,11 +2555,13 @@ public class DataFileSet extends XRDcat {
         output.newLine();
       }
     } catch (IOException ignored) {
+      ignored.printStackTrace();
     }
     try {
       output.flush();
       output.close();
     } catch (IOException ignored) {
+      ignored.printStackTrace();
     }
   }
 
@@ -3164,7 +3221,7 @@ public class DataFileSet extends XRDcat {
     }).start();
   }
 
-	public void plot2DandExportPng(String plotOutput2DFileName) {
+	public void plot2DandExportPng(String plotOutput2DFileName, double ymin, double ymax) {
 		int datafilenumber = activedatafilesnumber();
 
     yTitle = null;
@@ -3182,8 +3239,8 @@ public class DataFileSet extends XRDcat {
 		final String label = DataFileSet.this.toXRDcatString();
 //    System.out.println("Creating 2D plot... ");
     try {
-      MultiPlotFitting2D plot = new MultiPlotFitting2D(null, adfile, label, yTitle, yUnit);
-//      System.out.println("Saving 2D plot... ");
+      MultiPlotFitting2D plot = new MultiPlotFitting2D(null, adfile, label, ymin, ymax, yTitle, yUnit);
+      System.out.println("Saving 2D plot... ");
     (new PersistentThread() {
 			@Override
 			public void executeJob() {
@@ -3254,7 +3311,7 @@ public class DataFileSet extends XRDcat {
     }
 	}
 
-	public void plotAndExportPng(String plotOutputFileName) {
+	public void plotAndExportPng(String plotOutputFileName, double xmin, double xmax, double ymin, double ymax) {
 		int datafilenumber = activedatafilesnumber();
 
 		final DiffrDataFile[] adfile = new DiffrDataFile[datafilenumber];
@@ -3265,6 +3322,22 @@ public class DataFileSet extends XRDcat {
 		PlotFitting plot = new PlotFitting(null, adfile, false);
 		plot.setSize(plot.defaultFrameW, plot.defaultFrameH);
 		plot.setVisible(true);
+    try {
+      TimeUnit.MILLISECONDS.sleep(500);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    if (xmin != 0 || xmax != 0 || ymin != 0 || ymax != 0) {
+      plot.thePlotPanel.setMinMax(xmin, xmax, ymin, ymax);
+      plot.thePlotPanel.replot(true);
+    }
+
+    try {
+      TimeUnit.MILLISECONDS.sleep(500);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+
 		(new PersistentThread() {
 			@Override
 			public void executeJob() {
@@ -3274,10 +3347,10 @@ public class DataFileSet extends XRDcat {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-
 				Component comp = plot.thePlotPanel.getComponentToPrint();
 				if (comp != null) {
 					Rectangle rect = comp.getBounds();
+//          System.out.println(rect.width + " " + rect.height);
 					Image fileImage =
 							plot.createImage(rect.width, rect.height);
 					Graphics g = fileImage.getGraphics();
@@ -3317,6 +3390,7 @@ public class DataFileSet extends XRDcat {
 				}
 			}
 		}).start();
+
 	}
 
 	public void polarPlot2D(Frame aframe) {
@@ -4014,6 +4088,7 @@ public class DataFileSet extends XRDcat {
           try {
             Thread.sleep(Constants.timeToWaitThreadsEnding);
           } catch (InterruptedException r) {
+            r.printStackTrace();
           }
           for (int h = 0; h < maxThreads; h++) {
             if (!threads[h].isEnded())
@@ -4354,6 +4429,7 @@ public class DataFileSet extends XRDcat {
         try {
           Thread.sleep(Constants.timeToWaitThreadsEnding);
         } catch (InterruptedException r) {
+          r.printStackTrace();
         }
         for (int h = 0; h < maxThreads; h++) {
           if (!threads[h].isEnded())
@@ -4480,8 +4556,7 @@ public class DataFileSet extends XRDcat {
   }
 
   public double[] getTextureAngles(DiffrDataFile datafile, double[] tilting_angles, double twotheta, int ppp) {
-    return getInstrument().getTextureAngles(datafile, tilting_angles,
-		    getSample(), twotheta, ppp);
+    return getInstrument().getTextureAngles(datafile, tilting_angles, getSample(), twotheta, ppp);
   }
 
   public double[][] getTextureAngles(DiffrDataFile datafile, double[] tilting_angles, double[] twotheta) {
@@ -4560,6 +4635,7 @@ public class DataFileSet extends XRDcat {
         try {
           Thread.sleep(Constants.timeToWaitThreadsEnding);
         } catch (InterruptedException ie) {
+          ie.printStackTrace();
         }
       }
       int actualIndex1 = index;
@@ -4579,6 +4655,7 @@ public class DataFileSet extends XRDcat {
         try {
           Thread.sleep(Constants.timeToWaitThreadsStarting);
         } catch (InterruptedException ie) {
+          ie.printStackTrace();
         }
       }
     }
@@ -4586,6 +4663,7 @@ public class DataFileSet extends XRDcat {
       try {
         Thread.sleep(Constants.timeToWaitThreadsEnding);
       } catch (InterruptedException ie) {
+        ie.printStackTrace();
       }
     }
 
@@ -4612,6 +4690,7 @@ public class DataFileSet extends XRDcat {
           prF = new ProgressFrame(datafilenumber);
       } catch (NullPointerException npe) {
         out.println("Not able to create frame, MacOSX display sleep bug?");
+        npe.printStackTrace();
       }
     printf("Extracting positions for dataset: " + toXRDcatString(), prF);
     boolean computed1 = false;
@@ -4920,6 +4999,7 @@ public class DataFileSet extends XRDcat {
       }
     } catch (IOException ioe) {
       System.out.println("Error in writing the subordinate object " + toXRDcatString());
+      ioe.printStackTrace();
     }
 
   }

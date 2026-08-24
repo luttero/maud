@@ -186,17 +186,29 @@ public class OptimizationAlgorithm extends XRDcat implements OptimizationAlgorit
       else
         printf(parmn[j]);
     }
+    for (int j = 0; j < nprm; j ++) {
+      System.out.print(parmn[j] + " ");
+      if (j != 0 && j % 6 == 0)
+        System.out.println();
+    }
+    System.out.println();
   }
 
-  public void printout(double[] parmn, double[] norm, int nprm) {
-    for (int j = 0; j < nprm; j += 3) {
-      if (j + 2 < nprm)
-        printf(parmn[j] * norm[j], parmn[j + 1] * norm[j + 1], parmn[j + 2] * norm[j + 2]);
-      else if (j + 1 < nprm)
-        printf(parmn[j] * norm[j], parmn[j + 1] * norm[j + 1]);
-      else
-        printf(parmn[j] * norm[j]);
+  public void printout(double[] parmn, double[] norm, int nprm, boolean printToOutputFrame) {
+
+    if (printToOutputFrame)
+      for (int j = 0; j < nprm; j += 3) {
+        if (j + 2 < nprm) printf(parmn[j] * norm[j], parmn[j + 1] * norm[j + 1], parmn[j + 2] * norm[j + 2]);
+        else if (j + 1 < nprm) printf(parmn[j] * norm[j], parmn[j + 1] * norm[j + 1]);
+        else  printf(parmn[j] * norm[j]);
+      }
+    System.out.println("New tentative parameter values: ");
+    for (int j = 0; j < nprm; j ++) {
+      System.out.print(parmn[j] * norm[j] + " ");
+      if (j != 0 && j % 6 == 0)
+        System.out.println();
     }
+    System.out.println();
   }
 
 /*  public void printout(double[] parmn, int nprm) {

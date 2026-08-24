@@ -208,11 +208,13 @@ public class LaueOvalRoi extends LaueOvalStepRoi {
         }
         output.newLine();
     } catch (IOException io) {
+      io.printStackTrace();
     }
 
     try {
       output.close();
     } catch (IOException io) {
+      io.printStackTrace();
     }
   }
 

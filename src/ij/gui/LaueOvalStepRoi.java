@@ -541,11 +541,13 @@ public class LaueOvalStepRoi extends OpenRoi {
         output.newLine();
       }
     } catch (IOException io) {
+      io.printStackTrace();
     }
 
     try {
       output.close();
     } catch (IOException io) {
+      io.printStackTrace();
     }
     IJ.wait(250);  // give system time to save the file
     if (filename != null && data != null)

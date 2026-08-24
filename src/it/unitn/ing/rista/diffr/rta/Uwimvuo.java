@@ -2487,6 +2487,7 @@ public class Uwimvuo {
         PFreader.close();
         Uwimvuo.fiottu(odfl, igbl, alphama);
       } catch (IOException io) {
+        io.printStackTrace();
 
         for (int ng = 0; ng < alphama; ng++)
           for (int nb = 0; nb < betama; nb++)
@@ -2608,6 +2609,7 @@ public class Uwimvuo {
         PFreader.close();
         Uwimvuo.fiottu(odfl, igbl, alphama);
       } catch (IOException io) {
+        io.printStackTrace();
 
         for (int ng = 0; ng < alphama; ng++)
           for (int nb = 0; nb < betama; nb++)
@@ -4184,6 +4186,7 @@ public class Uwimvuo {
         PFwriter.write(firstline);
         PFwriter.write(Constants.lineSeparator);
       } catch (IOException io) {
+        io.printStackTrace();
       }
 
       int until18 = 0;
@@ -4201,6 +4204,7 @@ public class Uwimvuo {
               PFwriter.write(Constants.lineSeparator);
             }
           } catch (IOException io) {
+            io.printStackTrace();
           }
         } else
           skip73 = 0;
@@ -4209,10 +4213,12 @@ public class Uwimvuo {
         try {
           PFwriter.write(Constants.lineSeparator);
         } catch (IOException io) {
+          io.printStackTrace();
         }
       try {
         PFwriter.write(Constants.lineSeparator);
       } catch (IOException io) {
+        io.printStackTrace();
       }
 
       tmp = new StringBuffer(title2);
@@ -4243,6 +4249,7 @@ public class Uwimvuo {
         PFwriter.write(firstline);
         PFwriter.write(Constants.lineSeparator);
       } catch (IOException io) {
+        io.printStackTrace();
       }
 
       for (nover = 1; nover <= izoveri; ++nover) {
@@ -4283,6 +4290,7 @@ public class Uwimvuo {
               PFwriter.write(Constants.lineSeparator);
             }
           } catch (IOException io) {
+            io.printStackTrace();
           }
         } else
           skip73 = 0;
@@ -4291,10 +4299,12 @@ public class Uwimvuo {
         try {
           PFwriter.write(Constants.lineSeparator);
         } catch (IOException io) {
+          io.printStackTrace();
         }
       try {
         PFwriter.write(Constants.lineSeparator);
       } catch (IOException io) {
+        io.printStackTrace();
       }
     }
 
@@ -4303,6 +4313,7 @@ public class Uwimvuo {
       PFwriter.flush();
       PFwriter.close();
     } catch (IOException io) {
+      io.printStackTrace();
     }
   } /* pfouto_ */
 

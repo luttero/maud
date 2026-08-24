@@ -104,6 +104,7 @@ public class SISReader implements PlugIn {
           dis.close();
           open(true, buffer, fileinfo);
         } catch (Exception e) {
+          e.printStackTrace();
           try {
             pixelSize *= 2;
             width = height = width / 2;
@@ -261,8 +262,8 @@ public class SISReader implements PlugIn {
     try {
       props.load(is);
       is.close();
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
+      e.printStackTrace();
       return null;
     }
     fi.unit = props.getProperty("unit", "");
@@ -303,6 +304,7 @@ public class SISReader implements PlugIn {
       try {
         return Double.valueOf(s);
       } catch (NumberFormatException e) {
+        e.printStackTrace();
       }
     }
     return null;

@@ -530,6 +530,7 @@ public class D19ImageReader implements PlugIn {
       is.close();
     }
     catch (IOException e) {
+      e.printStackTrace();
       return null;
     }
     fi.unit = props.getProperty("unit", "");
@@ -570,6 +571,7 @@ public class D19ImageReader implements PlugIn {
       try {
         return Double.valueOf(s);
       } catch (NumberFormatException e) {
+        e.printStackTrace();
       }
     }
     return null;

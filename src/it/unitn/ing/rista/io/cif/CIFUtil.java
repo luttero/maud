@@ -56,6 +56,7 @@ public class CIFUtil {
         line = fileToRead.readLine();
       }
     } catch (IOException io) {
+      io.printStackTrace();
     }
     return false;
   }
@@ -91,6 +92,7 @@ public class CIFUtil {
         line = fileToRead.readLine();
       }
     } catch (IOException io) {
+      io.printStackTrace();
     }
     return false;
   }
@@ -123,6 +125,7 @@ public class CIFUtil {
       }
     } catch (IOException ioe) {
       System.out.println("Error writing loop decl for object " + sender.toString());
+      ioe.printStackTrace();
     }
   }
 

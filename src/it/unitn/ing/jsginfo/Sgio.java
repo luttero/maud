@@ -423,6 +423,7 @@ public class Sgio {
         try {
           WtdSgNumber = Integer.valueOf(token).intValue();
         } catch (Exception e) {
+          e.printStackTrace();
         }
       }
       if (token == null || WtdSgNumber < 1 || WtdSgNumber > 230)

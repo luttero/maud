@@ -2661,6 +2661,7 @@ c     set at 0.001% difference between estimates of two steps.
       } catch (Exception e) {
         System.out.println("Error: file not found, use random odf instead");
         odf = null;
+        e.printStackTrace();
       }
     }
     TensorHomogenization work = new TensorHomogenization(tensorToHomogenize, odf);
@@ -2826,6 +2827,7 @@ c     set at 0.001% difference between estimates of two steps.
       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
     } catch (Exception exc1) {
       System.out.println("Error loading L&F: " + exc1);
+      exc1.printStackTrace();
     }
     JPopupMenu.setDefaultLightWeightPopupEnabled(false);
 

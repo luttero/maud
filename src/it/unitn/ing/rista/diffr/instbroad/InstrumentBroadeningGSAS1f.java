@@ -186,8 +186,6 @@ public class InstrumentBroadeningGSAS1f extends InstrumentBroadening {
       typeNumber[bank] = getTypeNumber(bank);
 
     convolutionStep = MaudPreferences.getInteger("asymmetry.convolutionStep", 1);
-    InstrumentBroadeningPVCaglioti.minimumHWHMvalue = MaudPreferences.getDouble(
-        "instrBroadening.minimumHWHMvalue", 0.0000001);
   }
 
   String getTruncationField() {
@@ -520,6 +518,7 @@ public class InstrumentBroadeningGSAS1f extends InstrumentBroadening {
 
       } catch (IOException e) {
         System.out.println("Error in loading the data file! Try to remove this data file");
+        e.printStackTrace();
       }
       try {
         reader.close();
@@ -569,7 +568,7 @@ public class InstrumentBroadeningGSAS1f extends InstrumentBroadening {
 //	  System.out.println(x + " " + sigma + " " + xo + " " + (xo - sigma) + " " + (xo + sigma));
     sigma = x2 - x1;
 
-    double[] broad_hwhm = {Math.max(sigma, InstrumentBroadeningPVCaglioti.minimumHWHMvalue)};
+    double[] broad_hwhm = {Math.max(sigma, InstrumentBroadening.minimumHWHMvalue)};
     double[] broad_eta = {0.0};
     broadv.add(broad_hwhm);
     broadv.add(broad_eta);
@@ -593,7 +592,7 @@ public class InstrumentBroadeningGSAS1f extends InstrumentBroadening {
     double x2 = ainstrument.getAngularCalibration().calibrateX(diffrDataFile, xo + sigma);
 //	  System.out.println(x + " " + sigma + " " + xo + " " + (xo - sigma) + " " + (xo + sigma));
     sigma = x2 - x1;
-    return new double[][]{{0.0, Math.max(sigma, InstrumentBroadeningPVCaglioti.minimumHWHMvalue)}};
+    return new double[][]{{0.0, Math.max(sigma, InstrumentBroadening.minimumHWHMvalue)}};
   }
 
 /*  public double getConvolutedBroadening(double x, double[] tilting_angles, boolean dspacingbase) {

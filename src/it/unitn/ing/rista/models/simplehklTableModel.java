@@ -147,7 +147,11 @@ public class simplehklTableModel extends hklTableModel {
     switch (column) {
       case 3:
         boolean status = ((Boolean) aValue).booleanValue();
-        thephase.setTextureActive(row, status);
+        if (row < numRows)
+          thephase.setTextureActive(row, status);
+//        else
+//          unitHKL[row - numRows][0];
+
         break;
       default:
         {

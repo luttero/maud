@@ -739,6 +739,7 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 			              System.out.println("Problem loading incident intensity file for bank number: " + banknumber + "!");
 			              System.out.println("You cannot use incident intensity function type 10");
 			              setFunctionType(banknumber, "0");
+                    e.printStackTrace();
 		              }
 	              }
               }
@@ -748,10 +749,12 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 
       } catch (IOException e) {
         System.out.println("Error in loading the data file! Try to remove this data file");
+        e.printStackTrace();
       }
       try {
         reader.close();
       } catch (IOException e) {
+        e.printStackTrace();
       }
     }
     isAbilitatetoRefresh = isAbilitate;
@@ -791,6 +794,7 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 			out.newLine();
 		} catch (Exception ioe) {
 			System.out.println("Error in writing the incident spectrum for " + toXRDcatString());
+      ioe.printStackTrace();
 		}
 
 	}
@@ -862,7 +866,7 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 				if (numberOfBanks != incidentSpectrum.size()) {
 					System.out.println("Warning: number of banks does not correspond in loading incident spectra for " + toXRDcatString());
 				}
-			} catch (IOException ioe) {
+			} catch (Exception ioe) {
 				ioe.printStackTrace();
 				System.out.println("IO exception in custom object for " + toXRDcatString());
 			}

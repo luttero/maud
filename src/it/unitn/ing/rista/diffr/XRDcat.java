@@ -564,6 +564,7 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
       return xrdcatclone;
 
     } catch (CloneNotSupportedException e) {
+      e.printStackTrace();
       return null;
     }
   }
@@ -1178,6 +1179,7 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
     FilePar filepar = getFilePar();
 //    System.out.println("Notify: " + this + " for " + source + " reason: " + reason + " ; will do: " + isAbilitatetoRefresh);
     if (filepar != null && !filepar.isLoadingFile() && isAbilitatetoRefresh) {
+//      System.out.println("Notify: " + this + " for " + source + " reason: " + reason);
       refreshForNotificationDown(source, reason);
       Object[] childrens = getObjectChildren();
       int numberOfChildrens = childrens.length;
@@ -2150,6 +2152,7 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
       }
     } catch (IOException ioe) {
       System.out.println("Unable to save the object " + toXRDcatString());
+      ioe.printStackTrace();
     }
   }
 
@@ -2205,6 +2208,7 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
 
     } catch (IOException ioe) {
       System.out.println("Error in writing the loop field " + toXRDcatString());
+      ioe.printStackTrace();
     }
 
   }
@@ -2237,6 +2241,7 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
 
     } catch (IOException ioe) {
       System.out.println("Error in writing the loop parameter " + toXRDcatString());
+      ioe.printStackTrace();
     }
 
   }
@@ -2278,6 +2283,7 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
       }
     } catch (IOException ioe) {
       System.out.println("Error in writing the subordinate object " + toXRDcatString());
+      ioe.printStackTrace();
     }
 
   }
@@ -2292,6 +2298,7 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
       }
     } catch (IOException ioe) {
       System.out.println("Error in writing the subordinate object " + toXRDcatString());
+      ioe.printStackTrace();
     }
   }
 
@@ -2306,6 +2313,7 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
 
     } catch (IOException ioe) {
       System.out.println("Error in writing the object " + toXRDcatString());
+      ioe.printStackTrace();
     }
   }
 
@@ -2322,6 +2330,7 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
       out.newLine();
     } catch (IOException ioe) {
       System.out.println("Error in writing the object " + toXRDcatString());
+      ioe.printStackTrace();
     }
   }
 
@@ -2336,6 +2345,7 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
         out.write(field);
     } catch (IOException ioe) {
       System.out.println("Error in writing the object " + toXRDcatString());
+      ioe.printStackTrace();
     }
   }
 
@@ -2400,8 +2410,9 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
             }
         }
       } while (tokentype != CIFtoken.TT_EOF && !endofInput);
-    } catch (IOException ioe) {
+    } catch (Exception ioe) {
       System.out.println("IO exception in custom object for " + toXRDcatString());
+      ioe.printStackTrace();
     }
 
 /*		if (theobj != null)
@@ -2444,7 +2455,7 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
             }
         }
       } while (tokentype != CIFtoken.TT_EOF && !endofInput);
-    } catch (IOException ioe) {
+    } catch (Exception ioe) {
       ioe.printStackTrace();
       System.out.println("IO exception in object " + toXRDcatString());
     }
@@ -2552,8 +2563,8 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
         }
       } while (tokentype != CIFtoken.TT_EOF && !endofInput);
     } catch (Exception ioe) {
-      ioe.printStackTrace();
       System.out.println("IO exception in object " + toXRDcatString());
+      ioe.printStackTrace();
     }
     endOfReadingReached();
     isAbilitatetoRefresh = oldAbilitation;

@@ -58,6 +58,9 @@ public class ArbitraryTexture extends Texture {
     description = "select this for arbitrary correction of intensities";
   }
 
+  public void printOptionalOutput() {
+  }
+
   public void computeTextureFactor(Phase aphase, Sample asample) {
 //    if (notLoaded)
 //      loadTextureFactors(aphase, asample);

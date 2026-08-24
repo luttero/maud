@@ -51,7 +51,7 @@ public class XGridClientPreferences {
 //          prefs.list(System.out);
       } catch (Exception e) {
         System.out.println("Last input file not found (first run?), a new one will be created on exit");
-//				e.printStackTrace();
+				e.printStackTrace();
       }
     }
   }

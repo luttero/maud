@@ -29,6 +29,7 @@ import java.io.*;
 import java.util.Properties;
 import javax.swing.*;
 
+import it.unitn.ing.rista.diffr.XRDcat;
 import it.unitn.ing.rista.util.*;
 import it.unitn.ing.rista.io.COD.CODCIFsubmitter;
 
@@ -85,7 +86,7 @@ public class TextViewer extends myJFrame {
     this(null);
   }
 
-  public TextViewer(Frame parent, boolean editable, boolean forCOD) {
+  public TextViewer(Frame parent, boolean editable, boolean forCOD, XRDcat object, int index) {
     this(parent, editable);
     if (forCOD) {
       setTitle("CIF submission to COD");
@@ -110,6 +111,27 @@ public class TextViewer extends myJFrame {
             System.out.println("Submitting file: " + getHelpFilename() + " to COD.....");
             CODCIFsubmitter.submit(getHelpFilename());
           }
+          setVisible(false);
+          dispose();
+        }
+      });
+      jp1.add(abutton);
+    } else {
+      setTitle("Edit text");
+      JPanel jp1 = new JPanel(new FlowLayout(FlowLayout.RIGHT, 6, 6));
+      getContentPane().add(BorderLayout.SOUTH, jp1);
+      JButton abutton = new JButton("Cancel");
+      abutton.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          setVisible(false);
+          dispose();
+        }
+      });
+      jp1.add(abutton);
+      abutton = new JButton("Done");
+      abutton.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          object.setString(index, getText());
           setVisible(false);
           dispose();
         }
@@ -166,6 +188,27 @@ public class TextViewer extends myJFrame {
     }
   }
 
+  public void DisplayText(BufferedReader data) {
+//    setTitle("Help");
+    ;
+    String Line; // file data
+    StringBuffer Buf = new StringBuffer();
+
+    try {
+      while ((Line = data.readLine()) != null)
+        Buf.append(Line + "\n");
+      data.close();
+
+      setText(Buf.toString());
+    } catch (IOException e) {
+      setVisible(false);
+    }
+  }
+
+  public void setText(String text) {
+    textArea.setText(text);
+  }
+
   public void DisplayText(URL acodeBase, String filename) {
     setTitle(filename);
     BufferedReader data;
@@ -187,6 +230,10 @@ public class TextViewer extends myJFrame {
     } catch (IOException e) {
       setVisible(false);
     }
+  }
+
+  public String getText() {
+    return textArea.getText();
   }
 
   public void saveFile() {

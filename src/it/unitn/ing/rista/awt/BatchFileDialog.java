@@ -56,12 +56,18 @@ public class BatchFileDialog extends JFrame {
   JTable datatable;
   JCheckBox saveOutCB;
   JCheckBox savePlotCB;
-  String[] outText = {"datafile", "_out", ".cif"};
+  JCheckBox savePlot2DCB;
+  JCheckBox keepScalePlotCB;
+  JCheckBox keepScale2DPlotCB;
+  String[] outText = {"datafile", "_out", ".xye"};
   boolean[] outEdit = {true, true, true};
   JTextField[] outTF = new JTextField[outText.length];
   String[] plotText = {"analysis", "_plot", ".png"};
   boolean[] plotEdit = {true, true, false};
   JTextField[] plotTF = new JTextField[plotText.length];
+  String[] plot2DText = {"analysis", "_plot2D", ".png"};
+  boolean[] plot2DEdit = {true, true, false};
+  JTextField[] plot2DTF = new JTextField[plot2DText.length];
   String[] analysisText = {"prefix", "001", ".par"};
   boolean[] analysisEdit = {true, true, true};
   JTextField[] analysisTF = new JTextField[analysisText.length];
@@ -75,7 +81,9 @@ public class BatchFileDialog extends JFrame {
   boolean[] titleEdit = {true, true, true};
   JTextField[] titleTF = new JTextField[titleText.length];
 
+
   JTabbedPane tabPanel;
+  JTextField generateNumberTF;
   JTextField iterationsTF;
   JComboBox wizardCB;
   JTextField resultsTF;
@@ -85,16 +93,21 @@ public class BatchFileDialog extends JFrame {
   public Vector<String> dataFiles = new Vector<>(0, 10);
   public Vector<String> saveFiles = new Vector<>(0, 10);
   public Vector<String> titles = new Vector<>(0, 10);
+  public int generateNumber = 1;
   public int iterations = 5;
   public int wizard = 3;
   public String results = "results.txt";
   public String simpleResults = "simple_results.txt";
   public Vector<String> outputDataV = new Vector<>(0, 10);
   public Vector<String> plotFileV = new Vector<>(0, 10);
+  public Vector<String> plot2DFileV = new Vector<>(0, 10);
 
   public String outputData = "_out.txt";
   public String plotFile = "_plot.png";
+  public String plot2DFile = "_plot2D.png";
 
+  public boolean setMaxima = false;
+  public boolean set2DMaxima = false;
 
   public BatchFileDialog(String title) {
     super(title);
@@ -165,7 +178,7 @@ public class BatchFileDialog extends JFrame {
     return dataPanel;
   }
 
-  String[] rb1String = {"Use the list (or just one)", "Use from previous analysis", "Generate: "};
+  String[] rb1String = {"Uses the list (or just one)", "Use from previous analysis for next", "Generate: "};
   JRadioButton[] analysisInRB = new JRadioButton[rb1String.length];
 
   String[] rb2String = {"Use the list", "No datafiles (included in analysis)", "Generate: "};
@@ -186,8 +199,29 @@ public class BatchFileDialog extends JFrame {
     JPanel jp1 = new JPanel(new BorderLayout(3, 3));
     tabPanel.addTab(tpString[0], null, jp1);
     JPanel l1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    JLabel label1 = new JLabel("Drop analyses here to add to list");
+    JLabel label1 = new JLabel("Drop analyses here to add to list or ");
     l1.add(label1);
+    JButton browseAnalysesB = new JButton("Browse");
+    browseAnalysesB.addActionListener((ActionEvent e) -> {
+      try {
+         String[] filenames = Utility.browseFilenames(BatchFileDialog.this, "Select the analysis files");
+        for (String file: filenames)
+          analysisFiles.add(Misc.getFolderandName(file)[1]);
+        ((AbstractTableModel) datatable.getModel()).fireTableDataChanged();
+      } catch (Exception exc) {
+        AttentionD.showAlertDialog(BatchFileDialog.this, "Something went wrong");
+        exc.printStackTrace();
+      }
+    });
+    l1.add(browseAnalysesB);
+    label1 = new JLabel("      , number of analyses to generate (1: uses the list): ");
+    l1.add(label1);
+    generateNumberTF = new JTextField(5);
+    generateNumberTF.setText("" + generateNumber);
+    generateNumberTF.setEditable(true);
+    l1.add(generateNumberTF);
+
+
     jp1.add(l1, BorderLayout.NORTH);
     l1 = new JPanel(new GridLayout(0, 1));
     jp1.add(l1, BorderLayout.CENTER);
@@ -211,7 +245,20 @@ public class BatchFileDialog extends JFrame {
     JPanel jp2 = new JPanel(new BorderLayout(3, 3));
     tabPanel.addTab(tpString[1], null, jp2);
     JPanel l2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    l2.add(new JLabel("Drop datafiles here to add to list"));
+    l2.add(new JLabel("Drop datafiles here to add to list or "));
+    JButton browsedataB = new JButton("Browse");
+    browsedataB.addActionListener((ActionEvent e) -> {
+      try {
+        String[] filenames = Utility.browseFilenames(BatchFileDialog.this, "Select the datafiles");
+        for (String file: filenames)
+          dataFiles.add(Misc.getFolderandName(file)[1]);
+        ((AbstractTableModel) datatable.getModel()).fireTableDataChanged();
+      } catch (Exception exc) {
+        AttentionD.showAlertDialog(BatchFileDialog.this, "Something went wrong");
+        exc.printStackTrace();
+      }
+    });
+    l2.add(browsedataB);
     jp2.add(l2, BorderLayout.NORTH);
     l2 = new JPanel(new GridLayout(0, 1));
     jp2.add(l2, BorderLayout.CENTER);
@@ -271,12 +318,13 @@ public class BatchFileDialog extends JFrame {
     jp5.add(p1);
     p1.add(new JLabel("Iterations: "));
     p1.add(iterationsTF = new JTextField(6));
-    iterationsTF.setText(Integer.toString(iterations));
+    iterationsTF.setText("" + iterations);
 //    p1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
 //    jp5.add(p1);
     p1.add(new JLabel("  Wizard number: "));
     wizardCB = new JComboBox();
     wizardCB.addItem("No wizard refinement");
+    wizardCB.addItem("No computation");
     for (int i = 0; i < refinementWizardD.wizardAnalysisTitle.length; i++)
       wizardCB.addItem(refinementWizardD.wizardAnalysisTitle[i]);
     wizardCB.setSelectedIndex(wizard);
@@ -301,6 +349,12 @@ public class BatchFileDialog extends JFrame {
     jp5.add(p1 = new JPanel(new FlowLayout(FlowLayout.LEFT)));
     p1.add(savePlotCB = new JCheckBox("Plot output"));
     createPrePostFields(p1, plotTF, plotText, plotEdit);
+    p1.add(keepScalePlotCB = new JCheckBox("Fixed scale"));
+
+    jp5.add(p1 = new JPanel(new FlowLayout(FlowLayout.LEFT)));
+    p1.add(savePlot2DCB = new JCheckBox("Plot 2D output"));
+    createPrePostFields(p1, plot2DTF, plot2DText, plot2DEdit);
+    p1.add(keepScale2DPlotCB = new JCheckBox("Fixed scale"));
 
     return optionsP;
   }
@@ -334,7 +388,8 @@ public class BatchFileDialog extends JFrame {
   }
 
   public void processData() {
-    int maxRows = datatable.getModel().getRowCount();
+    generateNumber = Integer.parseInt(generateNumberTF.getText());
+    int maxRows = Math.max(generateNumber, datatable.getModel().getRowCount());
     int selAnalysisLoad = getRadioButtonSelection(analysisInRB);
     int selDatafiles = getRadioButtonSelection(datafileRB);
     int selAnalysisSave = getRadioButtonSelection(analysisSaveRB);
@@ -416,7 +471,7 @@ public class BatchFileDialog extends JFrame {
     workingDir = filenameField.getText();
 
     iterations = Integer.parseInt(iterationsTF.getText());
-    wizard = wizardCB.getSelectedIndex() - 1;
+    wizard = wizardCB.getSelectedIndex() - 2;
     results = resultsTF.getText();
     simpleResults = simpleResultsTF.getText();
     outputDataV.removeAllElements();
@@ -425,6 +480,13 @@ public class BatchFileDialog extends JFrame {
     plotFileV.removeAllElements();
     if (savePlotCB.isSelected())
       plotFileV = generateList(plotTF[0].getText(), plotTF[1].getText(), plotTF[2].getText());
+    if (keepScalePlotCB.isSelected())
+      setMaxima = true;
+    plot2DFileV.removeAllElements();
+    if (savePlot2DCB.isSelected())
+      plot2DFileV = generateList(plot2DTF[0].getText(), plot2DTF[1].getText(), plot2DTF[2].getText());
+    if (keepScale2DPlotCB.isSelected())
+      set2DMaxima = true;
 
   }
 
@@ -454,7 +516,7 @@ public class BatchFileDialog extends JFrame {
     if (prefix.equalsIgnoreCase("datafile")) {
       result = Misc.getFilenameNoExtension(dataFiles.elementAt(i));
     } else if (prefix.equalsIgnoreCase("analysis")) {
-      result = Misc.getFilenameNoExtension(analysisFiles.elementAt(i));
+      result = Misc.getFilenameNoExtension(saveFiles.elementAt(i));
     } else if (isInteger(prefix)) {
       int index = Integer.parseInt(prefix) + i;
       int numberDigits = prefix.length();
@@ -510,7 +572,7 @@ public class BatchFileDialog extends JFrame {
         }
         outputBuffer.write("_riet_analysis_iteration_number");
         outputBuffer.newLine();
-        if (wizard >= 0) {
+        if (wizard >= -1) {
           outputBuffer.write("_riet_analysis_wizard_index");
           outputBuffer.newLine();
         }
@@ -527,11 +589,23 @@ public class BatchFileDialog extends JFrame {
           outputBuffer.newLine();
         }
         if (outputDataV.size() > 0) {
-          outputBuffer.write("_maud_output_diff_data_filename");
+          outputBuffer.write("_maud_output_sum_data_filename");
           outputBuffer.newLine();
         }
         if (plotFileV.size() > 0) {
           outputBuffer.write("_maud_output_plot_filename");
+          outputBuffer.newLine();
+        }
+        if (setMaxima) {
+          outputBuffer.write("_maud_output_plot_keep_scale");
+          outputBuffer.newLine();
+        }
+        if (plot2DFileV.size() > 0) {
+          outputBuffer.write("_maud_output_plot2D_filename");
+          outputBuffer.newLine();
+        }
+        if (set2DMaxima) {
+          outputBuffer.write("_maud_output_plot2D_keep_scale");
           outputBuffer.newLine();
         }
         for (int i = 0; i < analysisFiles.size(); i++) {
@@ -543,6 +617,8 @@ public class BatchFileDialog extends JFrame {
           outputBuffer.write(iterations + " ");
           if (wizard >= 0)
             outputBuffer.write(wizard + " ");
+          else if (wizard == -1)
+            outputBuffer.write(-998 + " ");
           if (titles.size() > 0)
             outputBuffer.write(Misc.addQuotesToStringWithBlank(titles.elementAt(i)) + " ");
           if (simpleResults.length() > 0)
@@ -553,6 +629,12 @@ public class BatchFileDialog extends JFrame {
             outputBuffer.write(Misc.addQuotesToStringWithBlank(outputDataV.elementAt(i)) + " ");
           if (plotFileV.size() > 0)
             outputBuffer.write(Misc.addQuotesToStringWithBlank(plotFileV.elementAt(i)) + " ");
+          if (setMaxima)
+            outputBuffer.write(Misc.addQuotesToStringWithBlank("true" + " "));
+          if (plot2DFileV.size() > 0)
+            outputBuffer.write(Misc.addQuotesToStringWithBlank(plot2DFileV.elementAt(i)) + " ");
+          if (set2DMaxima)
+            outputBuffer.write(Misc.addQuotesToStringWithBlank( "true" + " "));
           outputBuffer.newLine();
         }
         outputBuffer.flush();

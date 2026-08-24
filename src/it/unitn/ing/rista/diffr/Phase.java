@@ -603,6 +603,7 @@ public class Phase extends XRDcat {
       updateAll();
     }
     if (reason == Constants.CELL_CHANGED) {
+//      System.out.println("Up: " + source.thelabel + " "  + this.thelabel + " " + paramNumber);
       refreshCellSymmetry = true;
       refreshCellVolume = true;
       refreshReflectionv = true;
@@ -657,6 +658,7 @@ public class Phase extends XRDcat {
       updateAll();
     }
     if (reason == Constants.CELL_CHANGED) {
+//      System.out.println("Down: " + source.thelabel + " "  + this.thelabel);
       refreshCellSymmetry = true;
       refreshCellVolume = true;
       refreshReflectionv = true;
@@ -789,6 +791,7 @@ public class Phase extends XRDcat {
         out.newLine();
     } catch (IOException ioe) {
       System.out.println("Error in writing the loop parameter " + toXRDcatString());
+      ioe.printStackTrace();
     }
 
   }
@@ -1109,6 +1112,7 @@ public class Phase extends XRDcat {
 				  try {
 					  newsg = SpaceGroups.sglookup(sg, getSGconv());
 				  } catch (NullPointerException e) {
+            e.printStackTrace();
 //    if (Constants.testing)
 //		  System.out.println("Non standard space group:" + sg);
 					  newsg = checkNotStandardGroup(sg);
@@ -1854,7 +1858,53 @@ public static final String getSpaceGroup(int index, int sgconv) {
     return false;
   }
 
+  public final double[] tfhkl(double h, double k, double l) {
+
+    // you need to call lattice at least once before
+
+    // cdsc[7], cdsc[5], cdsc[3], cdsc[6], cdsc[0], cdsc[1]
+    // c31, c23, c12, s31, cda, cdb
+
+    /* Local variables */
+    double r, x, y, z, fr, tr, arg;
+
+    /*     Theta,Phi calculation for given (H,K,L) and Lattice parameters
+     *     Output : Theta,Phi */
+
+    double[] sctf = new double[2];
+
+    x = cdsc[0] * h - cdsc[7] * l;
+    y = (cdsc[7] * cdsc[5] - cdsc[3]) * x;
+    y += cdsc[6] * cdsc[6] * (cdsc[1] * k - cdsc[5] * l);
+    y *= one_over_swrtQ;
+    z = cdsc[6] * l;
+    r = x * x + y * y + z * z;
+    r = Math.sqrt(r);
+    x /= r;
+    z /= r;
+    sctf[0] = 0.;
+    sctf[1] = 0.;
+    if (Math.abs(z) >= 1.) {
+      if (z < 0.)
+        sctf[0] = Constants.PI;
+      return sctf;
+    }
+    sctf[0] = Math.acos(z);
+
+    arg = x / Math.sin(sctf[0]);
+    if (Math.abs(arg) >= 1.) {
+      sctf[1] = Math.acos(arg / Math.abs(arg));
+      return sctf;
+    }
+    fr = Math.acos(arg);
+    if (y < 0.)
+      fr = Constants.PI2 - fr;
+    sctf[1] = fr;
+    return sctf;
+  } /* tfhkl_ */
+
   double cdsc[] = new double[8];
+  double one_over_swrtQ = 1.0;
 
   public final double[] lattice() {
 /* Local variables */
@@ -1940,6 +1990,10 @@ public static final String getSpaceGroup(int index, int sgconv) {
       default: {
       }
     }
+    // cdsc[7], cdsc[5], cdsc[3], cdsc[6], cdsc[0], cdsc[1]
+    // c31, c23, c12, s31, cda, cdb
+    double q = cdsc[3] * 2. * cdsc[7] * cdsc[5] + 1. - cdsc[3] * cdsc[3] - cdsc[5] * cdsc[5] - cdsc[7] * cdsc[7];
+    one_over_swrtQ = Math.sqrt(q);
     return cdsc;
   } /* lattice */
 
@@ -2649,6 +2703,7 @@ public static final String getSpaceGroup(int index, int sgconv) {
     try {
       return (reflectionv.elementAt(index)).poleFigurePlot;
     } catch (Exception e) {
+      e.printStackTrace();
       return false;
     }
   }
@@ -2658,6 +2713,7 @@ public static final String getSpaceGroup(int index, int sgconv) {
     try {
       (reflectionv.elementAt(index)).poleFigurePlot = status;
     } catch (Exception e) {
+      e.printStackTrace();
 //      return;
     }
   }
@@ -4555,6 +4611,7 @@ public static final String getSpaceGroup(int index, int sgconv) {
       }
     } catch (IOException ioe) {
       System.out.println("Unable to save the object " + toXRDcatString());
+      ioe.printStackTrace();
     }
     return filename;
   }
@@ -4594,6 +4651,7 @@ public static final String getSpaceGroup(int index, int sgconv) {
       out.newLine();
     } catch (IOException ioe) {
       System.out.println("Error in writing the object " + toXRDcatString());
+      ioe.printStackTrace();
     }
   }
 
@@ -4642,6 +4700,7 @@ public static final String getSpaceGroup(int index, int sgconv) {
 			out.newLine();
 		} catch (IOException ioe) {
 			System.out.println("Error in writing the object " + toXRDcatString());
+      ioe.printStackTrace();
 		}
 
 	}
@@ -4657,6 +4716,7 @@ public static final String getSpaceGroup(int index, int sgconv) {
         out.newLine();
     } catch (Exception ioe) {
       System.out.println("Error in writing the loop parameter " + toXRDcatString());
+      ioe.printStackTrace();
     }
 
   }
@@ -4712,6 +4772,7 @@ public static final String getSpaceGroup(int index, int sgconv) {
       out.newLine();
     } catch (IOException ioe) {
       System.out.println("Error in writing the object " + toXRDcatString());
+      ioe.printStackTrace();
     }
   }
 
@@ -4728,6 +4789,7 @@ public static final String getSpaceGroup(int index, int sgconv) {
       out.newLine();
     } catch (Exception ioe) {
       System.out.println("Error in writing the Parameter in object " + toXRDcatString());
+      ioe.printStackTrace();
     }
   }
 
@@ -4741,6 +4803,7 @@ public static final String getSpaceGroup(int index, int sgconv) {
       }
     } catch (IOException ioe) {
       System.out.println("Error in writing the object " + toXRDcatString());
+      ioe.printStackTrace();
     }
   }
 

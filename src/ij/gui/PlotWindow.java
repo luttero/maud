@@ -299,10 +299,12 @@ public class PlotWindow extends ImageWindow implements ActionListener, Clipboard
           output.newLine();
         }
       } catch (IOException io) {
+        io.printStackTrace();
       }
       try {
         output.close();
       } catch (IOException io) {
+        io.printStackTrace();
       }
     }
 
@@ -315,6 +317,7 @@ public class PlotWindow extends ImageWindow implements ActionListener, Clipboard
     try {
       systemClipboard = getToolkit().getSystemClipboard();
     } catch (Exception e) {
+      e.printStackTrace();
       systemClipboard = null;
     }
     if (systemClipboard == null) {

@@ -852,10 +852,12 @@ public class AtomInfo {
 
       } catch (IOException e) {
         System.out.println("Error loading atom info properties: atominfo.cif missing!");
+        e.printStackTrace();
       }
       try {
         reader.close();
       } catch (IOException e) {
+        e.printStackTrace();
       }
     }
 //    loadAtomCrossSections();

@@ -1135,7 +1135,9 @@ public class SampleShapeIntegral extends SampleShape implements Shape3D, SimpleF
         int div = Integer.parseInt(divisionTF.getText());
         if (div > 0 && div < 16)
           stringField[3] = Integer.toString(div);
-      } catch (Exception e) {}
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
       shapeP.retrieveparlist();
       super.retrieveParameters();
 

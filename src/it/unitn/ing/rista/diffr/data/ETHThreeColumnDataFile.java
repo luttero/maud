@@ -115,6 +115,7 @@ public class ETHThreeColumnDataFile extends it.unitn.ing.rista.diffr.DiffrDataFi
       try {
         reader.close();
       } catch (IOException e) {
+        e.printStackTrace();
       }
     }
     isAbilitatetoRefresh = tmpB;

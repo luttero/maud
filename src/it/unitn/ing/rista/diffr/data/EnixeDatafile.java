@@ -106,6 +106,7 @@ public class EnixeDatafile extends it.unitn.ing.rista.diffr.DiffrDataFile {
 							y.addElement(n1);
 						}
 					} catch (Exception ge) {
+            ge.printStackTrace();
 // not numbers, we don't store them
 //              System.out.println("not a number: " + linedata);
 					}
@@ -136,6 +137,7 @@ public class EnixeDatafile extends it.unitn.ing.rista.diffr.DiffrDataFile {
 			try {
 				reader.close();
 			} catch (IOException e) {
+        e.printStackTrace();
 			}
 		}
 		isAbilitatetoRefresh = tmpB;

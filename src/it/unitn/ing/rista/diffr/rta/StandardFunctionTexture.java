@@ -199,6 +199,10 @@ public class StandardFunctionTexture extends Texture {
     return stringField[DIFF_ENERGY_ID].equalsIgnoreCase("true");
   }*/
 
+  public boolean isRandomTexture() {
+    return false;
+  }
+
   public void initializeReflexes(Sample asample) {
   }
 
@@ -460,8 +464,9 @@ public class StandardFunctionTexture extends Texture {
                 textF[j][p][e] = computeTextureFactor(refl.phi[0], refl.beta[0],
                     texture_angles[0] * Constants.DEGTOPI,
                     texture_angles[1] * Constants.DEGTOPI);
-//		              System.out.println(positions[j][0][0] + " " + refl.getH() + " " + refl.getK() + " " + refl.getL() + " " +
-//				              refl.phi[0] * Constants.PITODEG + " " + refl.beta[0] * Constants.PITODEG + " " + texture_angles[0] + " " + texture_angles[1] + " " + textF[j]);
+                //if (refl.getH() == 0 && refl.getH() == 0 && refl.getL() == 4)
+		          //    System.out.println(/*positions[j][p][e] + " " + */refl.getH() + " " + refl.getK() + " " + refl.getL() + " " +
+				      //        refl.phi[0] * Constants.PITODEG + " " + refl.beta[0] * Constants.PITODEG + " " + texture_angles[0] + " " + texture_angles[1] + " " + textF[j][p][e]);
 //						refl.setExpTextureFactor(adatafile.getIndex(), textF);
               }
             }
@@ -532,6 +537,10 @@ public class StandardFunctionTexture extends Texture {
   }
 
   double[] HX = new double[96], HY = new double[96], HZ = new double[96];
+
+  public void initQuickComputation() {
+    applySymmetryRules();
+  }
 
   public double computeTextureFactor(double phi, double beta, double psi, double gamma) {
 
