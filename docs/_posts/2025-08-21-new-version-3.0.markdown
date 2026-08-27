@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "New Version 3.0"
-date:   2026-08-27 12:45:00 -0600
+date:   2026-08-27 13:10:00 -0600
 categories: Maud release
 ---
 
@@ -23,7 +23,7 @@ Older versions of the Maud program can be downloaded from Github.
 Download links:
 
 Download from [Goggle drive][gdrive]
-The versions in the directories with "..._x86..." are for Intel/amd cpus, while "..._aarch86..." are for arm type of cpus (Mx processors for Apple Macs).
+The versions in the directories with "..._x64..." are for Intel/amd cpus, while "..._aarch64..." are for arm type of cpus (Mx processors for Apple Macs).
 
 To download here on github the program and source check on [MAUD download][maud-download]. 
 Older versions are available only on github.
