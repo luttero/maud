@@ -125,5 +125,6 @@ public interface Function extends SimpleFunction {
   public double getUpperBound(int index);
 
   double getParameterMinSignificantValue(int i);
+
 }
 

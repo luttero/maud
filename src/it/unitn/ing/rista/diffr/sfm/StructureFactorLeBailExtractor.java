@@ -24,6 +24,7 @@ import java.lang.*;
 
 import it.unitn.ing.rista.diffr.*;
 import it.unitn.ing.rista.awt.*;
+import it.unitn.ing.rista.diffr.diffraction.DiffractionBase;
 import it.unitn.ing.rista.util.*;
 import it.unitn.ing.rista.interfaces.Peak;
 
@@ -365,6 +366,25 @@ The PF's of peaks of the same family are imposed equals for all the lines.
           minmaxindex[1] = finalindex;
           boolean computeBroadening = true;
           int datafileIndex = datafile.getIndex();
+          double[] phasesOtherfit = new double[datanumber];
+
+          for (int ij = 0; ij < getFilePar().getActiveSample().phasesNumber(); ij++) {
+            Phase aphase = getFilePar().getActiveSample().getPhase(ij);
+            double[][][] patterns = datafileset.getPatternsForPhase(aphase);
+            if (patterns != null) {
+              double expfitp[] = new double[datafile.getTotalNumberOfData()];
+              double[][] patt = null;
+              if (patterns.length > 1)
+                patt = patterns[datafileIndex];
+              else
+                patt = patterns[0];
+              int minmaxind[] = DiffractionBase.computeReflectionIntensityFromPattern(asample, patt,
+                  expfitp, getFilePar().getActiveSample().getPhase(ij), datafile);
+//        System.out.println("indices: " + minmaxindex[0] + " " + minmaxindex[1] + " " + expfit[1000]);
+              for (int j = minmaxind[0]; j < minmaxind[1]; j++)
+                phasesOtherfit[j] += expfitp[j];
+            }
+          }
 
           for (int j = startingindex; j < finalindex; j++)
             if (datafile.getBkgFit(j) < 0.0 && minBkg > datafile.getBkgFit(j))
@@ -372,7 +392,7 @@ The PF's of peaks of the same family are imposed equals for all the lines.
           minBkg = -minBkg;
 // System.out.println("minBkg " + minBkg);
           for (int j = startingindex; j < finalindex; j++)
-            fit[j] = 0.0f;
+            fit[j] = phasesOtherfit[j];
 	        diffraction.computeReflectionIntensity(asample, fullpeaklist, computeBroadening, fit,
               Constants.ENTIRE_RANGE, Constants.COMPUTED, Constants.COMPUTED,
               Constants.EXPERIMENTAL, false, null, datafile);
@@ -392,7 +412,7 @@ The PF's of peaks of the same family are imposed equals for all the lines.
               tpeaklist.add(fullpeaklist.elementAt(reflectionListIndices[i + j]));
             if (datafile.checkPeakInsideRange(phase, tpeaklist.elementAt(0).getOrderPosition(), rangefactor)) {
               for (int j = startingindex; j < finalindex; j++)
-                expfit[j] = 0.0f;
+                expfit[j] = phasesOtherfit[j];
               minmaxindex = diffraction.computeReflectionIntensity(asample, tpeaklist, computeBroadening,
                   expfit, rangefactor,
                   Constants.COMPUTED, Constants.COMPUTED,

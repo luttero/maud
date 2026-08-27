@@ -1572,6 +1572,11 @@ public class DataD extends myJFrame {
 	  (new PlotSimpleData(this, thedata.getCoordinateForSelectedSpectra(coordinate), thedata.getTotalIntensityForSelectedSpectra())).setVisible(true);
     boolean plotFit = MaudPreferences.getBoolean("plotIntensityHystogram.plotFit", false);
     (new PlotSimpleData(this, thedata.getCoordinateForSelectedSpectra(coordinate), thedata.getTotalFitIntensityForSelectedSpectra())).setVisible(true);
+    double[] intens = getData().getTotalIntensityForSelectedSpectra();
+    double totalIntes = 0;
+    for (int i = 0; i < intens.length; i++)
+      totalIntes += intens[i];
+    System.out.println("Total intensity for selected spectra: " + totalIntes +", for " + intens.length + " points");
   }
 
   /**

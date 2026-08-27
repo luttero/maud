@@ -360,18 +360,18 @@ public class StructureAtomic extends StructureModel implements AtomsStructureI {
 				    oldatom.subordinateloopField[AtomSite.scattererLoopID].elementAt(j)).getCopy(this));
 	    }
       newatom.getLocalCoordX().setValue(oldatom.getLocalCoordX().getValueD() + traslx);
-      newatom.getLocalCoordX().setEqualTo(oldatom.getLocalCoordX(), 1.0, traslx);
+      newatom.getLocalCoordX().addBound(oldatom.getLocalCoordX(), 1.0, traslx);
       newatom.getLocalCoordY().setValue(oldatom.getLocalCoordY().getValueD() + trasly);
-      newatom.getLocalCoordY().setEqualTo(oldatom.getLocalCoordY(), 1.0, trasly);
+      newatom.getLocalCoordY().addBound(oldatom.getLocalCoordY(), 1.0, trasly);
       newatom.getLocalCoordZ().setValue(oldatom.getLocalCoordZ().getValueD() + traslz);
-      newatom.getLocalCoordZ().setEqualTo(oldatom.getLocalCoordZ(), 1.0, traslz);
+      newatom.getLocalCoordZ().addBound(oldatom.getLocalCoordZ(), 1.0, traslz);
       newatom.getOccupancy().setValue(oldatom.getOccupancy().getValueD());
-      newatom.getOccupancy().setEqualTo(oldatom.getOccupancy(), 1.0, 0.0);
+      newatom.getOccupancy().addBound(oldatom.getOccupancy(), 1.0, 0.0);
       newatom.getBfactor().setValue(oldatom.getBfactor().getValueD());
-      newatom.getBfactor().setEqualTo(oldatom.getBfactor(), 1.0, 0.0);
+      newatom.getBfactor().addBound(oldatom.getBfactor(), 1.0, 0.0);
       for (int j = 0; j < 6; j++) {
         newatom.getAnisoBfactor(j).setValue(oldatom.getAnisoBfactor(j).getValueD());
-        newatom.getAnisoBfactor(j).setEqualTo(oldatom.getAnisoBfactor(j), 1.0, 0.0);
+        newatom.getAnisoBfactor(j).addBound(oldatom.getAnisoBfactor(j), 1.0, 0.0);
       }
       newatom.setDummy(oldatom.isDummyAtom());
       addAtom(newatom);

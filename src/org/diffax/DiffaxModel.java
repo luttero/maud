@@ -27,7 +27,7 @@ import javax.imageio.ImageIO;
 
 public final class DiffaxModel {
 
-  static double intensityCorrection = 0.414619964316147;
+  static double intensityCorrection = 0.414619964316147 / 2.0;
 
   private int stepFactor = MaudPreferences.getInteger("diffax.dividePatternStepBy", 4);;
 
@@ -2398,6 +2398,7 @@ public final class DiffaxModel {
         DiffrDataFile adatafile = dataFiles[activeDatafileNumber];
         double cryst = phase.getMeanCrystallite();
         double micros = phase.getMeanMicrostrain();
+//        System.out.println("Size - strain: " + cryst + " - " + micros);
 
         for (int i = nLow; i <= nHigh; i++) {
           double v = 0;
@@ -2410,12 +2411,26 @@ public final class DiffaxModel {
             double[] betaf = new double[2];
             betaf[0] = phase.getActiveSizeStrain().getBetaChauchy(d_space, cryst, micros);
             betaf[1] = phase.getActiveSizeStrain().getBetaGauss(d_space, cryst, micros);
+            //double position = peak.position / 2 * Constants.DEGTOPI;
+            double sintheta1 = Math.sin(x);
+            sintheta1 *= sintheta1;
+            double costheta = Math.cos(x);
+            double corr = 4.0 * sintheta1 / (lambda * costheta) * Constants.PITODEG;
+            betaf[0] *= corr;
+            betaf[1] *= corr;
             double broadFactorHWHM = InstrumentBroadening.minimumHWHM;
             double broadFactorEta = 0;
             if (instBroadFactor != null) {
+/*              if (i % 100 == 0) {
+                System.out.println("Delft: " + d_space + " " + betaf[0] + " - " + betaf[1]);
+                System.out.println("Inst Broad: " + instBroadFactor.get(0)[0] + " " + instBroadFactor.get(1)[0]);
+              }*/
               double[] broadFactorTotal = PseudoVoigtPeak.getHwhmEtaFromIntegralBeta(betaf, instBroadFactor);
               broadFactorHWHM = broadFactorTotal[0];
               broadFactorEta = broadFactorTotal[1];
+/*              if (i % 100 == 0)
+                System.out.println("Fwhm: " + broadFactorHWHM + " - " + broadFactorEta);*/
+
             }
             v = broadFactorHWHM * 2.0;
             pvG = broadFactorEta;

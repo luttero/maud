@@ -133,7 +133,10 @@ public class simplehklTableModel extends hklTableModel {
         else
           return unitHKL[row - numRows][2];
       case 3:
-        return thephase.isTextureActive(row);
+        if (row < thephase.gethklNumber())
+          return thephase.isTextureActive(row);
+        else
+          return false; // to be updated for the standard hkl
       default:
         {
           return null;

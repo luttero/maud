@@ -21,6 +21,11 @@
 package it.unitn.ing.rista.diffr.rta;
 
 import it.unitn.ing.rista.diffr.*;
+import it.unitn.ing.rista.util.Misc;
+
+import java.io.BufferedReader;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 /**
  *  The ArbitraryTexture is a class that implements an arbitrary correction of the
@@ -102,7 +107,7 @@ public class ArbitraryTexture extends Texture {
           int numberPoleFiguresPF = Integer.valueOf(st.nextToken());
           boolean mistake = false;
           for (int i = 0; i < numberPoleFiguresPF; i++) {
-            Reflection refl = aphase.reflectionv.elementAt(i);
+            Reflection refl = aphase.getReflectionVector().elementAt(i);
             if (refl.isGoodforTexture()) {
               if (!mistake)
                 line = PFreader.readLine();
@@ -136,9 +141,8 @@ public class ArbitraryTexture extends Texture {
             }
           }
         }
-      }catch(Exception ex) {}
+      } catch(Exception ex) {}
     }
-
   }*/
 
   public void refreshForNotificationDown(XRDcat source, int reason) {

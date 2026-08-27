@@ -222,7 +222,7 @@ public class GSASbankCalibration extends AngularCalibration {
 		  for (int bank = 1; bank < banks; bank++) {
 			  Parameter apar1 = (Parameter) parameterloopField[i].elementAt(bank);
 			  if (apar.getValueD() == apar1.getValueD())
-				  apar1.setEqualTo(apar, 1.0, 0.0);
+				  apar1.addBound(apar, 1.0, 0.0);
 		  }
 	  }
   }
@@ -241,10 +241,10 @@ public class GSASbankCalibration extends AngularCalibration {
 //        if (bank != selBankNumber) {
           for (int i = 0; i < Nparameterloop; i++) {
             if (i < 3)
-              ((Parameter) parameterloopField[i].elementAt(bank)).setEqualTo(apar[i], 1.0, 0.0);
+              ((Parameter) parameterloopField[i].elementAt(bank)).addBound(apar[i], 1.0, 0.0);
             else {
               if (((Parameter) parameterloopField[i].elementAt(bank)).getValueD() == apar[i].getValueD())
-                ((Parameter) parameterloopField[i].elementAt(bank)).setEqualTo(apar[i], 1.0, 0.0);
+                ((Parameter) parameterloopField[i].elementAt(bank)).addBound(apar[i], 1.0, 0.0);
             }
           }
 //        }

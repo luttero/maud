@@ -46,9 +46,9 @@ public class CIFItem {
   public String theminValue = null;
   public String themaxValue = null;
   public String refName = null;
-  public String refBound = null;
+  public Vector<String> refBound = null;
   public String constant = null;
-  public String ratio = null;
+  public Vector<String> ratio = null;
 	public String expression = null;
   public boolean autoTrace = false, positive = false;
 

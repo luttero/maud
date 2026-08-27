@@ -290,12 +290,12 @@ public class DiffractionBase extends Diffraction {
 
 	}
 
-  public int[] computeReflectionIntensityFromPattern(Sample asample, double[][] pattern,
+  public static int[] computeReflectionIntensityFromPattern(Sample asample, double[][] pattern,
                                           double[] expfit, Phase phase, DiffrDataFile datafile) {
 
-    DataFileSet adatafileset = getDataFileSet();
+    DataFileSet adatafileset = datafile.getDataFileSet();
     Instrument ainstrument = adatafileset.getInstrument();
-    FilePar filepar = getFilePar();
+    FilePar filepar = asample.getFilePar();
     int[] tmpminmax = new int[2];
     int[] minmaxindex = new int[2];
     minmaxindex[0] = datafile.startingindex;

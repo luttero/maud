@@ -608,6 +608,14 @@ public class myJFrame extends iconJFrame implements ParentFrame, ClipboardOwner,
       }
     });
     popup.add(mi);
+    mi = new JCheckBoxMenuItem("Print info to console");
+    mi.setState(false);
+    mi.addItemListener(new java.awt.event.ItemListener() {
+      public void itemStateChanged(java.awt.event.ItemEvent event) {
+        apar.printInformations(System.out, apar.getParent());
+      }
+    });
+    popup.add(mi);
 
     getContentPane().add(popup);
     return popup;

@@ -166,7 +166,11 @@ public class PlanarDefects extends XRDcat {
 		return false;
 	}
 
-	public class JPlanarDefectsOptionsD extends JOptionsDialog {
+  public double getDensityCorrection() {
+    return 1.0;
+  }
+
+  public class JPlanarDefectsOptionsD extends JOptionsDialog {
 
     public JPlanarDefectsOptionsD(Frame parent, XRDcat obj) {
 

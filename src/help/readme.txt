@@ -43,9 +43,29 @@ from the older one.
 
 Maud Version notes:
 
-(xx/08/2025):   3.0. The "Angle-Energy Map" release.
+(27/08/2025):   3.0. The "Hippo scattering" release.
+                If you haven't seen you have to look for the
+                glorious Hippo scattering.
                 Version 3.0 is the version including the
-                Angle-Energy maps fitting.
+                second version of Angle-Energy maps fitting.
+                But it is still not fully debug.
+                Instead it include the DiffaX layer model.
+                In this version there is only the Prasad-Lele
+                stacking faults theory for dhcp structures
+                using the DiffaX model. More will follow.
+                Several bugs corrected. Now the program loads
+                the extracted texture factors back when
+                you load the analysis file.
+                There are new options in the batch file
+                preparation and computation.
+                It is possible to bound a parameter with
+                the equalTo to a series of more parameters.
+                In the Inclined flat image angular calibration
+                you can now specify a imageJ macro to be applied
+                to the tiff images you are loading directly
+                (means not using the ImageJ plugin, but loading
+                them as a normal datafile; you can load them
+                with a script or in the batch processing).
 
 
 (05/08/2025):   2.99997. The "End of life" release.

@@ -640,7 +640,7 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
       for (int j = 0; j < parList.size(); j++) {
         Parameter par1 = (Parameter) parList.elementAt(j);
         Parameter par2 = (Parameter) masterList.elementAt(j);
-        par1.setEqualTo(par2, 1.0, 0.0);
+        par1.addBound(par2, 1.0, 0.0);
       }
     }
 
@@ -652,7 +652,7 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
       for (int j = 0; j < parList.size(); j++) {
         Parameter par1 = (Parameter) parList.elementAt(j);
         Parameter par2 = (Parameter) masterList.elementAt(j);
-        par1.setEqualTo(par2, 1.0, 0.0);
+        par1.addBound(par2, 1.0, 0.0);
       }
     }
   }
@@ -1653,7 +1653,7 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
   }
 
   public int setField(String cif, String astring, String astringerror, String min, String max, boolean free,
-                      String refName, String refBound, String constant, String ratio, String expression,
+                      String refName, Vector<String> refBound, String constant, Vector<String> ratio, String expression,
                       boolean autoTrace, boolean positive) {
 
 //    System.out.println("Super " + this.toXRDcatString() + " " + cif + " " + astring);
@@ -1975,7 +1975,7 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
   }
 
   protected int trySubordinate(String cif, String astring, String astringerror, String min, String max, boolean free,
-                               String refName, String refBound, String constant, String ratio, String expression,
+                               String refName, Vector<String> refBound, String constant, Vector<String> ratio, String expression,
                                boolean autoTrace, boolean positive) {
     Object[] childrens = getObjectChildren();
     int numberOfChildrens = childrens.length;
@@ -2608,8 +2608,9 @@ public class XRDcat extends BaseFactoryObject implements basicObj, Cloneable {
       allItsOk = false;
       if (Constants.textonly)
         System.out.println("Warning: " + result);
-      else
+      else {
         (new AttentionD(toXRDcatString(), result)).setVisible(true);
+      }
     }
 
     for (int i = 0; i < Nsubordinate; i++) {

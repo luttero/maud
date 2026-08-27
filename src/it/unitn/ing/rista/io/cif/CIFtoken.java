@@ -22,6 +22,7 @@ package it.unitn.ing.rista.io.cif;
 
 import java.io.*;
 import java.lang.*;
+import java.util.Vector;
 
 import it.unitn.ing.rista.io.*;
 import it.unitn.ing.rista.util.*;
@@ -53,7 +54,8 @@ public class CIFtoken extends StreamTokenizer {
   public static final int TT_CUSTOM = -18;
   public static final int TT_CUSTOM_END = -19;
 
-  public String thestring,thestringerror, minValue, maxValue, refName, refBound, constant, ratio, expression;
+  public String thestring,thestringerror, minValue, maxValue, refName, expression, constant;
+  Vector<String> refBound = new Vector<>(), ratio = new Vector<>();
   public double thevalue, theerror;
   public boolean free = false, autoTrace = false, positive = false;
 
@@ -293,15 +295,22 @@ public class CIFtoken extends StreamTokenizer {
 		            while (sval.endsWith("}"))
 			            expression += " " + sval;
 	            } else {
-		            newtoken = super.nextToken();
-		            constant = sval;
-		            newtoken = super.nextToken();
-		            newtoken = super.nextToken();
-		            ratio = sval;
-		            newtoken = super.nextToken();
-		            newtoken = super.nextToken();
-		            refBound = sval;
-//              System.out.println("Reading bound: " + refBound + " " + constant + " " + ratio);
+                newtoken = super.nextToken();
+                constant = sval;
+                newtoken = super.nextToken();
+                while (newtoken != TT_EOF && sval.equalsIgnoreCase("+")) {
+                  newtoken = super.nextToken();
+                  ratio.add(sval);
+                  newtoken = super.nextToken();
+                  newtoken = super.nextToken();
+                  refBound.add(sval);
+                  newtoken = super.nextToken();
+                }
+                pushBack();
+ /*               System.out.print("Reading bound: " + constant + " + " + ratio.elementAt(0) + " * " + refBound.elementAt(0));
+                for (int ik = 1; ik < refBound.size(); ik++)
+                  System.out.print(" + " + ratio.elementAt(ik) + " * " + refBound.elementAt(ik));
+                System.out.println();*/
 	            }
             } else
               pushBack();
@@ -326,9 +335,9 @@ public class CIFtoken extends StreamTokenizer {
     minValue = "0";
     maxValue = "0";
     refName = null;
-    refBound = null;
-    constant = null;
-    ratio = null;
+    refBound = new Vector<>();
+    constant = "0";
+    ratio = new Vector<>();
 	  expression = null;
     autoTrace = false;
     positive = false;

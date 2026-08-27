@@ -297,7 +297,7 @@ public class MultDiffrDataFile extends DiffrDataFile {
   }
 
   public int setField(String cif, String astring, String astringerror, String min, String max, boolean free,
-                      String refName, String refBound, String constant, String ratio, String expression,
+                      String refName, Vector<String> refBound, String constant, Vector<String> ratio, String expression,
                       boolean autoTrace, boolean positive) {
 //    	System.out.println(this.toXRDcatString() + " " + theDiffrDataFile + " " + cif);
     if (theDiffrDataFile != null) {

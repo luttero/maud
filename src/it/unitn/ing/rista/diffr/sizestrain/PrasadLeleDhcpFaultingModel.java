@@ -23,26 +23,21 @@ package it.unitn.ing.rista.diffr.sizestrain;
 import it.unitn.ing.rista.awt.JOptionsDialog;
 import it.unitn.ing.rista.awt.Utility;
 import it.unitn.ing.rista.diffr.*;
-import it.unitn.ing.rista.diffr.instbroad.InstrumentBroadeningPVCaglioti;
-import it.unitn.ing.rista.diffr.rsa.MomentPoleStress;
-import it.unitn.ing.rista.diffr.rta.PoleFigureOutput;
 import it.unitn.ing.rista.util.*;
 import org.diffax.*;
 
 import javax.swing.*;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Vector;
 
 /**
- * The PrasadLeleDhcpFaultingModel is a class to
+ * The PrasadLeleDhcpFaultingModel is a class using DiffaX
+ * to calculate the pattern
  *
  * @author Luca Lutterotti
  * @version $Revision: 1.00 $, $Date: Aug 10, 2026 19:03:00 AM $
@@ -50,7 +45,7 @@ import java.util.Vector;
  */
 
 
-public class PrasadLeleDhcpFaultingModel extends DiffaXLayerModel {
+public class PrasadLeleDhcpFaultingModel extends PlanarDefects {
 
   public static String[] diclistc = {
       "_diffax_number_divisions_c",
@@ -74,7 +69,8 @@ public class PrasadLeleDhcpFaultingModel extends DiffaXLayerModel {
       "_riet_par_caglioti_v",
       "_riet_par_caglioti_w",
       "_riet_par_gaussian_value",
-      "_riet_par_gaussian_slope"
+      "_riet_par_gaussian_slope",
+      "_diffax_density_correction"
   };
   public static String[] diclistcrm = {
       "_diffax_number_divisions_c",
@@ -98,7 +94,8 @@ public class PrasadLeleDhcpFaultingModel extends DiffaXLayerModel {
       "_riet_par_caglioti_v",
       "_riet_par_caglioti_w",
       "_riet_par_gaussian_value",
-      "_riet_par_gaussian_slope"
+      "_riet_par_gaussian_slope",
+      "_diffax_density_correction"
   };
 
   public static String[] classlistc = {};
@@ -125,7 +122,7 @@ public class PrasadLeleDhcpFaultingModel extends DiffaXLayerModel {
   public void initConstant() {
     Nstring = 2;
     Nstringloop = 0;
-    Nparameter = 20;
+    Nparameter = 21;
     Nparameterloop = 0;
     Nsubordinate = 0;
     Nsubordinateloop = 0;
@@ -168,6 +165,15 @@ public class PrasadLeleDhcpFaultingModel extends DiffaXLayerModel {
           ParameterPreferences.getDouble(getParameterString(i) + ".min", 0.0),
           ParameterPreferences.getDouble(getParameterString(i) + ".max", 1.0));
     }
+    parameterField[20] = new Parameter(this, getParameterString(20), 2.0,
+        ParameterPreferences.getDouble(getParameterString(20) + ".min", 0.2),
+        ParameterPreferences.getDouble(getParameterString(20) + ".max", 20.0));
+    parameterField[20].setPositiveOnly();
+    parameterField[20].setMinimumSignificantValue(0.0001);
+  }
+
+  public double getDensityCorrection() {
+    return getParameterValue(20);
   }
 
   public boolean useCrystallite() {

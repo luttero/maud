@@ -24,6 +24,7 @@ import java.lang.*;
 import java.util.Vector;
 
 import it.unitn.ing.rista.diffr.*;
+import it.unitn.ing.rista.diffr.diffraction.DiffractionBase;
 import it.unitn.ing.rista.diffr.sfm.StructureFactorLeBailExtractor;
 import it.unitn.ing.rista.util.*;
 import it.unitn.ing.rista.interfaces.Peak;
@@ -53,7 +54,7 @@ public class IntensityExtLeBailWt extends IntensityExtLeBail {
   }
 
   public IntensityExtLeBailWt() {
-    identifier = "Disabled LeBail wt";
+    identifier = "LeBail wt";
     IDlabel = "LeBail wt";
     description = "select this to apply a weighted Le Bail method for intensity extraction";
   }
@@ -79,6 +80,7 @@ public class IntensityExtLeBailWt extends IntensityExtLeBail {
     double[] expfit = new double[datanumber];
     double[] fit = new double[datanumber];
     double qExp = getFilePar().getQexpForWeightingScheme();
+    double[] phasesOtherfit = new double[datanumber];
 
 
 	  boolean useHKL = getUseHklB();
@@ -124,12 +126,30 @@ public class IntensityExtLeBailWt extends IntensityExtLeBail {
             superOrder[n] = j;
     }
 
+    for (int ij = 0; ij < getFilePar().getActiveSample().phasesNumber(); ij++) {
+      Phase aphase = getFilePar().getActiveSample().getPhase(ij);
+      double[][][] patterns = datafileset.getPatternsForPhase(aphase);
+      if (patterns != null) {
+        double expfitp[] = new double[datafile.getTotalNumberOfData()];
+        double[][] patt = null;
+        if (patterns.length > 1)
+          patt = patterns[datafile.getIndex()];
+        else
+          patt = patterns[0];
+        int minmaxind[] = DiffractionBase.computeReflectionIntensityFromPattern(asample, patt,
+            expfitp, getFilePar().getActiveSample().getPhase(ij), datafile);
+//        System.out.println("indices: " + minmaxindex[0] + " " + minmaxindex[1] + " " + expfit[1000]);
+        for (int j = minmaxind[0]; j < minmaxind[1]; j++)
+          phasesOtherfit[j] += expfitp[j];
+      }
+    }
+
     int maxiter = getIterationMax();
     int iteration = 0;
 
     while (!convergence && iteration++ < maxiter) {
       for (int j = startingindex; j < finalindex; j++)
-        fit[j] = 0.0f;
+        fit[j] = phasesOtherfit[j];
 	    diffraction.computeReflectionIntensity(asample, fullpeaklist, true, fit, Constants.ENTIRE_RANGE,
               Constants.EXPERIMENTAL, Constants.COMPUTED, Constants.COMPUTED, false, null, datafile);
 	    diffraction.computeasymmetry(asample, datafile, fit, startingindex, finalindex);
@@ -158,7 +178,7 @@ public class IntensityExtLeBailWt extends IntensityExtLeBail {
           double lebailfactor = 0.0;
           if (superOrder[n] < 0) {
             for (int j = minmaxindex[0]; j < minmaxindex[1]; j++)
-              expfit[j] = 0.0f;
+              expfit[j] = phasesOtherfit[j];
             minmaxindex = diffraction.computeReflectionIntensity(asample, tpeaklist, false,
                     expfit, rangefactor, Constants.UNITARY,
                     Constants.COMPUTED, Constants.COMPUTED, true, null, datafile);

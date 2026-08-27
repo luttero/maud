@@ -158,7 +158,7 @@ public class Instrument extends XRDcat {
   } // end of setLoop method
 
   public int setField(String cif, String astring, String astringerror, String min, String max, boolean free,
-                      String refName, String refBound, String constant, String ratio, String expression,
+                      String refName, Vector<String> refBound, String constant, Vector<String> ratio, String expression,
                       boolean autoTrace, boolean positive) {
     int index = super.setField(cif, astring, astringerror, min, max, free,
         refName, refBound, constant, ratio, expression, autoTrace, positive);

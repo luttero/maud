@@ -399,22 +399,44 @@ public class DataFileSet extends XRDcat {
     double[] data = new double[3];
     double stepX = 1.0E10;
     double xmin = 1.0E10, xmax = -1.0E10;
-    for (int i = 0; i < activedatafilesnumber(); i++) {
-      DiffrDataFile bdatafile = getActiveDataFile(i);
-      int xlength = bdatafile.finalindex - bdatafile.startingindex - 1;
-      double x1 = bdatafile.getXDataForPlot(bdatafile.startingindex, 0);
-      double x2 = bdatafile.getXDataForPlot(bdatafile.finalindex - 1, 0);
-      double lstepX = Math.abs((x2 - x1) / xlength);
-      if (lstepX < stepX)
-        stepX = lstepX;
-      if (xmin > x1)
-        xmin = x1;
-      if (xmax < x2)
-        xmax = x2;
-      if (xmin > x2)
-        xmin = x2;
-      if (xmax < x1)
-        xmax = x1;
+    if (getInstrument().isTOF()) {
+      for (int i = 0; i < activedatafilesnumber(); i++) {
+        DiffrDataFile bdatafile = getActiveDataFile(i);
+        int xlength = bdatafile.finalindex - bdatafile.startingindex - 1;
+        double x1 = bdatafile.getXDataForPlot(bdatafile.startingindex, 0);
+        double x2 = bdatafile.getXDataForPlot(bdatafile.finalindex - 1, 0);
+        x1 = bdatafile.get2ThetaFromDSpace(x1);
+        x2 = bdatafile.get2ThetaFromDSpace(x2);
+        double lstepX = Math.abs((x2 - x1) / xlength);
+        if (lstepX < stepX)
+          stepX = lstepX;
+        if (xmin > x1)
+          xmin = x1;
+        if (xmax < x2)
+          xmax = x2;
+        if (xmin > x2)
+          xmin = x2;
+        if (xmax < x1)
+          xmax = x1;
+      }
+    } else {
+      for (int i = 0; i < activedatafilesnumber(); i++) {
+        DiffrDataFile bdatafile = getActiveDataFile(i);
+        int xlength = bdatafile.finalindex - bdatafile.startingindex - 1;
+        double x1 = bdatafile.getXDataForPlot(bdatafile.startingindex, 0);
+        double x2 = bdatafile.getXDataForPlot(bdatafile.finalindex - 1, 0);
+        double lstepX = Math.abs((x2 - x1) / xlength);
+        if (lstepX < stepX)
+          stepX = lstepX;
+        if (xmin > x1)
+          xmin = x1;
+        if (xmax < x2)
+          xmax = x2;
+        if (xmin > x2)
+          xmin = x2;
+        if (xmax < x1)
+          xmax = x1;
+      }
     }
     data[0] = xmin;
     data[1] = xmax;
@@ -796,7 +818,7 @@ public class DataFileSet extends XRDcat {
 
   @Override
   public int setField(String cif, String astring, String astringerror, String min, String max, boolean free,
-                      String refName, String refBound, String constant, String ratio, String expression,
+                      String refName, Vector<String> refBound, String constant, Vector<String> ratio, String expression,
                       boolean autoTrace, boolean positive) {
     int index1 = super.setField(cif, astring, astringerror, min, max, free,
                    refName, refBound, constant, ratio, expression, autoTrace, positive);

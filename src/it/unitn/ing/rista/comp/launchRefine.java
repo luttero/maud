@@ -84,15 +84,14 @@ public class launchRefine extends launchBasic {
       e.printStackTrace();
     }
 
-
     reset();
 
-	  Constants.totalTime = System.currentTimeMillis();
+    Constants.totalTime = System.currentTimeMillis();
     print("Start rita/rista refinement");
 
     if (parameterfile != null) {
       try {
-	      sol.solveGeneral(this, parameterfile);
+        sol.solveGeneral(this, parameterfile);
       } catch (Exception e) {
 
         print("Error in the refinement, check the java console window for more details.");

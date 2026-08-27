@@ -84,7 +84,7 @@ public class SetEqualtoD extends myJFrame {
     constantTF.setText("0");
     jPanel2.add(constantTF);
 
-    refpar = theparameter.getRefparameter();
+    refpar = theparameter.getRefparameter(0);
 
     basicObj filepar = theparameter.getParent().getFilePar();
     startLeaf = new DefaultMutableTreeNode(filepar);
@@ -161,7 +161,7 @@ public class SetEqualtoD extends myJFrame {
 
   public void setParameter(Parameter par) {
     theparameter = par;
-    refpar = theparameter.getRefparameter();
+    refpar = theparameter.getRefparameter(0);
     if (refpar != null) {
       actualrow = -1;
       rowtoselect = actualrow;
@@ -171,7 +171,7 @@ public class SetEqualtoD extends myJFrame {
 
     if (rowtoselect != -1)
       setSelectedRow();
-    ratioTF.setText(theparameter.getRatio());
+    ratioTF.setText(theparameter.getRatio(0));
     constantTF.setText(theparameter.getConstant());
   }
 
@@ -179,7 +179,7 @@ public class SetEqualtoD extends myJFrame {
     expandAllRows();
     if (rowtoselect != -1)
       setSelectedRow();
-    ratioTF.setText(theparameter.getRatio());
+    ratioTF.setText(theparameter.getRatio(0));
     constantTF.setText(theparameter.getConstant());
   }
 
@@ -210,7 +210,7 @@ public class SetEqualtoD extends myJFrame {
     if (par != null && par instanceof DefaultMutableTreeNode) {
       par = ((DefaultMutableTreeNode) par).getUserObject();
       if (par != null && par instanceof Parameter)
-        theparameter.setEqualTo((Parameter) par, ratioTF.getText(), constantTF.getText());
+        theparameter.addBound((Parameter) par, ratioTF.getText(), constantTF.getText());
     }
   }
 

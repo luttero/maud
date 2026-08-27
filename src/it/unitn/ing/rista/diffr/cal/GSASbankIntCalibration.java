@@ -249,7 +249,7 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 		  for (int bank = 1; bank < banks; bank++) {
 			  Parameter apar1 = (Parameter) parameterloopField[i].elementAt(bank);
 			  if (apar.getValueD() == apar1.getValueD())
-				  apar1.setEqualTo(apar, 1.0, 0.0);
+				  apar1.addBound(apar, 1.0, 0.0);
 		  }
 	  }
   }
@@ -267,7 +267,7 @@ public class GSASbankIntCalibration extends IntensityCalibration {
       for (int bank = 1; bank < banks; bank++) {
 //        if (bank != selBankNumber) {
           for (int i = 0; i < Nparameterloop; i++) {
-            ((Parameter) parameterloopField[i].elementAt(bank)).setEqualTo(apar[i], 1.0, 0.0);
+            ((Parameter) parameterloopField[i].elementAt(bank)).addBound(apar[i], 1.0, 0.0);
           }
           setFunctionType(bank, getFunctionType(0));
 			 setSplitFunctionType(bank, getSplitFunctionType(0));

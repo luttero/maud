@@ -5359,7 +5359,7 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 		for (int i = 0; i < getthetaoffsetnumber(); i++) {
 			Parameter apar1 = datafileToBoundTo.getThetaDisplacement(i);
 			if (apar1 != null)
-				getThetaDisplacement(i).setEqualTo(apar1, 1.0, 0.0);
+				getThetaDisplacement(i).addBound(apar1, 1.0, 0.0);
 		}
 	}
 
@@ -6015,7 +6015,7 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 			int phaseIndex = getDataFileSet().getSample().getPhaseIndex(phase);
 //			System.out.println("Need restore: " + needRestore[phaseIndex]);
 // temporarly, to fix
-		needRestore = null;
+      // needRestore = null;
 			if (needRestore != null && needRestore.length > phaseIndex && needRestore[phaseIndex]) {
 				for (int i1 = 0; i1 < textureFactors[0].length; i1++) {
 					for (int j = 0; j < textureFactors[0][0].length; j++) {
@@ -6590,9 +6590,12 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
         }
 //        System.out.println("Sample b: " + refl + " " + i + " " + j + " " + betaf[0] + " " + betaf[1] + " " + refl.crystsize[0] + " " + refl.crystsize[1] + " " + peak.position + " " + refl.getH() + " " + refl.getK() + " " + refl.getL() + ", " + peak.instBroadFactor.size()) ;
         if (peak.instBroadFactor != null) {
+//          System.out.println("Delft(n): " + refl.d_space + " " + betaf[0] + " - " + betaf[1]);
+//          System.out.println("Inst Broad(n): " + peak.instBroadFactor.get(0)[0] + " " + peak.instBroadFactor.get(1)[0]);
           double[] broadFactorTotal = PseudoVoigtPeak.getHwhmEtaFromIntegralBeta(betaf, peak.instBroadFactor);
           peak.broadFactorHWHM = broadFactorTotal[0];
           peak.broadFactorEta = broadFactorTotal[1];
+//          System.out.println("Fwhm(n): " + peak.broadFactorHWHM + " - " + peak.broadFactorEta);
         }
       }
     }

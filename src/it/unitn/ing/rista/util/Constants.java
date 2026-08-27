@@ -270,7 +270,7 @@ public class Constants {
   public static String userName = null;
   public static String startPath = "/";
   public static String maudReleaseBuilt = "$Revision: 3.0 $";
-  public static String maudDateBuilt = "$Date: 2026/05/31 12:00:00 $";
+  public static String maudDateBuilt = "$Date: 2026/08/27 12:00:00 $";
 
   public static final double arg2PIover3 = PI2 / 3.;
   public static final double sinArg2PIover3 = Math.sin(arg2PIover3);
@@ -766,7 +766,8 @@ public class Constants {
 		}
 		MaudPreferences.setPref("maud.version", maud_version);
 
-		if (!Misc.checkForFile(documentsDirectory + "default.par") || version < 2.65)
+		if (!Misc.checkForFile(documentsDirectory + "default.par") ||
+        !Misc.checkForFile(documentsDirectory + "data.sfc") || version < 2.65)
 			initializeMaud(pathToMaudJar, documentsDirectory);
 
     stdoutput = MaudPreferences.getInteger("console.output", stdoutput);
@@ -1311,7 +1312,9 @@ public class Constants {
             entryName1.indexOf("Files") == -1 &&
 		        entryName1.indexOf("files") == -1 &&
             entryName1.indexOf(".DS_Store") == -1) {
-          if (forceOverwrite || !Misc.checkForFile(folder + entryName)) {
+          System.out.println("Checking for unzip : " + ("/" + entryName) + " " + (folder + entryName1));
+          if (forceOverwrite || !Misc.checkForFile(folder + entryName1)) {
+            System.out.println("Unzipping : " + ("/" + entryName));
 	          it.unitn.ing.rista.util.FFT obj = new it.unitn.ing.rista.util.FFT();
 	          BufferedInputStream in = new BufferedInputStream((obj.getClass().getResource("/" + entryName)).openStream());
 	          FileOutputStream out = new FileOutputStream(folder + entryName1);

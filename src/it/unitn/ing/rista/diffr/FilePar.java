@@ -1492,8 +1492,9 @@ public class FilePar extends XRDcat implements lFilePar, Function {
     refreshparametersV();
     for (int i = 0; i < parametersV.size(); i++) {
       Parameter par = (Parameter) parametersV.elementAt(i);
-      if (par.getRefparameter() != null)
-        boundList.addReferenceParameter(par.getRefparameter());
+      if (par.getRefparameterVector() != null)
+        for (int j = 0; j < par.getRefparameterVector().size(); j++)
+          boundList.addReferenceParameter(par.getRefparameter(j));
     }
   }
 
@@ -1899,7 +1900,8 @@ public class FilePar extends XRDcat implements lFilePar, Function {
         if (boundToIndex < listParametersForBound.size()) {
           Parameter parto = (Parameter) listParametersForBound.elementAt(boundToIndex);
           if (par != null && parto != null) {
-            par.setEqualTo(parto, parbound.getRatio(), parbound.getConstant());
+            par.setConstant(parbound.getConstant());
+            par.addBound(parto, parbound.getRatio());
 /*if (Constants.testing) {
 	System.out.println("Parameter: " + par.toXRDcatString() + " bound to :" + parto.toXRDcatString());
 }*/
@@ -1981,28 +1983,29 @@ public class FilePar extends XRDcat implements lFilePar, Function {
    */
   public String checkIntegrity() {
     StringBuffer tmp = new StringBuffer("");
-    if (samplesNumber() < 1) {
-      tmp.append("(4) Sample missing");
-    }
+//    if (samplesNumber() < 1)
+//      tmp.append("(4) Sample missing");
 
 /*    boolean firstTime = false;
     if (!MaudPreferences.isPresent("forcePhaseVolumeFraction.asScaleFactors"))
       firstTime = true;*/
     if (isOptimizing()) {
       if (getTextureFactorsExtractionStatusI() == 2)
-        setTextureFactorsExtractionStatus(1);
-//        tmp.append("Attention: structure factor extraction set to always! Refinement stopped!\n");
+//        setTextureFactorsExtractionStatus(1);
+        tmp.append("Attention: texture factors extraction set to always! Check refinement options!\n");
       if (getTextureComputationStatusI() == 2)
-        setTextureComputationStatus(1);
-//        tmp.append("Attention: texture weigths extraction set to always! Refinement stopped!\n");
+//        setTextureComputationStatus(1);
+        tmp.append("Attention: texture factors computation set to always! Check refinement options!\n");
       if (getPositionExtractionStatusI() == 2)
-        setPositionExtractionStatus(1);
-//        tmp.append("Attention: positions extraction set to always! Refinement stopped!\n");
+//        setPositionExtractionStatus(1);
+        tmp.append("Attention: positions extraction set to always! Check refinement options!\n");
       if (getBackgroundInterpolationStatusI() == 2)
-        setBackgroundInterpolationStatus(1);
+//        setBackgroundInterpolationStatus(1);
+        tmp.append("Attention: background interpolation set to always! Check refinement options!\n");
       if (getStructureFactorComputationStatusI() == 2)
-        setStructureFactorComputationStatus(1);
-    }
+//        setStructureFactorComputationStatus(1);
+        tmp.append("Attention: structure factor extraction/computation set to always! Check refinement options!\n");
+   }
     String result = tmp.toString();
     if (result.equals(""))
       return null;

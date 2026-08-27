@@ -26,6 +26,8 @@ import it.unitn.ing.rista.chemistry.XRayDataSqLite;
 import it.unitn.ing.rista.util.AtomQuantity;
 import it.unitn.ing.rista.util.Constants;
 
+import java.util.Vector;
+
 /**
  * The AtomScatterer is a class ....
  *
@@ -165,8 +167,8 @@ public class AtomScatterer extends Scatterer {
 	 * @see XRDcat#setField
 	 */
 	public int setField(String cif, String astring, String astringerror, String min, String max, boolean free,
-	                    String refName, String refBound, String constant, String ratio, String expression,
-	                    boolean autoTrace, boolean positive) {
+                      String refName, Vector<String> refBound, String constant, Vector<String> ratio, String expression,
+                      boolean autoTrace, boolean positive) {
 		int index = super.setField(cif, astring, astringerror, min, max, free, refName, refBound, constant, ratio, expression,
 				autoTrace, positive);
 		if (index == 0) {

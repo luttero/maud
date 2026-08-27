@@ -42,7 +42,7 @@ public class Parameter extends Object implements Cloneable, basicObj {
   private String value = "0";
   private String valueMin = "0";
   private String valueMax = "0";
-  private String tempBound = null;
+  private Vector<String> tempBound = null;
   private double minimumSignificantValue = 0.0;
   private boolean positiveDefinite = false;
   private static boolean checkPositive = false;
@@ -52,10 +52,10 @@ public class Parameter extends Object implements Cloneable, basicObj {
 	public String refName = null;
   protected boolean free;
   protected boolean rangeActive;
-  protected String ratio;
+  protected Vector<String> ratio = new Vector<>();
   protected String constant;
   protected String error;
-  protected Parameter refParameter1;
+  protected Vector<Parameter> refParameter_v = new Vector<>();
   protected Vector<Parameter> registeredParameters;
   XRDcat theparent;
   protected boolean automaticGenerated = false;
@@ -100,7 +100,7 @@ public class Parameter extends Object implements Cloneable, basicObj {
   }
 
   public Parameter(XRDcat parent, String alabel, double avalue, double aerror, double minv, double maxv, boolean isfree,
-                   String arefName, String refBound, String constant, String ratio, String expression,
+                   String arefName, Vector<String> refBound, String constant, Vector<String> ratio, String expression,
                    boolean autoTrace, boolean positive) {
     this(parent, alabel, Fmt.format(avalue), Fmt.format(aerror), Fmt.format(minv), Fmt.format(maxv), isfree,
         arefName, refBound, constant, ratio, expression, autoTrace, positive);
@@ -154,7 +154,7 @@ public class Parameter extends Object implements Cloneable, basicObj {
   }
 
   public Parameter(XRDcat parent, String alabel, String avalue, String aerror, String minv, String maxv, boolean isfree,
-                   String arefName, String refBound, String constant, String ratio, String expression,
+                   String arefName, Vector<String> refBound, String constant, Vector<String> ratio, String expression,
                    boolean autoTrace, boolean positive) {
     this(parent, alabel, avalue, aerror);
     setValueMin(minv);
@@ -167,7 +167,7 @@ public class Parameter extends Object implements Cloneable, basicObj {
         boundList.addReferenceParameter(arefName, this);
 //        System.out.println("Add ref: " + refName);
       }
-      if (refBound != null) {
+      if (refBound != null && !refBound.isEmpty()) {
         setConstant(constant);
         setRatio(ratio);
         setTempBound(refBound);
@@ -182,7 +182,7 @@ public class Parameter extends Object implements Cloneable, basicObj {
   }
 
   public Parameter(XRDcat parent, String alabel, String avalue, String aerror, String minv, String maxv, boolean isfree,
-                   String arefName, String refBound, String constant, String ratio, String expression,
+                   String arefName, Vector<String> refBound, String constant, Vector<String> ratio, String expression,
                    boolean autoTrace, boolean positive, double minimumValue) {
     this(parent, alabel, avalue, aerror, minv, maxv, isfree,
                    arefName, refBound, constant, ratio, expression, autoTrace, positive);
@@ -200,10 +200,12 @@ public class Parameter extends Object implements Cloneable, basicObj {
     setValueMax("0");
     setLabel("unknown");
     setFree(false);
-    setRatio("1");
-    setConstant("0");
+    ratio = new Vector<>();
+    constant = "0";
+//    setRatio("1");
+//    setConstant("0");
     setError("0");
-    refParameter1 = null;
+    refParameter_v = new Vector<>();
 //    referenceParameters = new Vector(0, 1);
     registeredParameters = new Vector(0, 1);
   }
@@ -291,7 +293,6 @@ public class Parameter extends Object implements Cloneable, basicObj {
 //	System.out.println("cloning: " + this);
     try {
       Parameter theclone = (Parameter) super.clone();
-      theclone.setRefparameter(theclone.getRefparameter());
       return theclone;
     } catch (CloneNotSupportedException e) {
       return null;
@@ -307,11 +308,14 @@ public class Parameter extends Object implements Cloneable, basicObj {
     thecopy.thelabel = thelabel.toString();
     thecopy.free = free;
     thecopy.rangeActive = rangeActive;
-    thecopy.ratio = ratio.toString();
-    thecopy.constant = constant.toString();
+    if (refParameter_v != null && refParameter_v.size() > 0) {
+      thecopy.ratio = new Vector<>(ratio.size());
+      for (int i = 0; i < ratio.size(); i++) thecopy.ratio.add(ratio.get(i));
+      thecopy.constant = constant;
+      thecopy.refParameter_v = new Vector<>(refParameter_v.size());
+      for (int i = 0; i < refParameter_v.size(); i++) thecopy.addRefparameter(refParameter_v.get(i));
+    }
     thecopy.error = error.toString();
-    if (refParameter1 != null)
-      thecopy.setRefparameter(refParameter1);
     thecopy.automaticGenerated = automaticGenerated;
     thecopy.refreshMinMax = refreshMinMax;
     thecopy.changeMinMax = changeMinMax;
@@ -356,7 +360,7 @@ public class Parameter extends Object implements Cloneable, basicObj {
   }
 
   public void updateValue() {
-    if (getRefparameter() != null)
+    if (getRefparameterVector() != null && !getRefparameterVector().isEmpty())
       notifyChangedValue();
   }
 
@@ -496,7 +500,7 @@ public class Parameter extends Object implements Cloneable, basicObj {
 
 	// Equal to section
 
-	protected void setTempBound(String refBound) {
+	protected void setTempBound(Vector<String> refBound) {
 		tempBound = refBound;
 //    System.out.println("Set temp bound: " + refBound + " " + constant + " " + ratio);
 	}
@@ -505,78 +509,145 @@ public class Parameter extends Object implements Cloneable, basicObj {
 		if (tempBound == null)
 			return;
 //    System.out.println("Check bound: " + tempBound + " " + constant + " " + ratio);
-		Parameter refPar = boundList.getReferenceParameter(tempBound);
-		setEqualTo(refPar, ratio, constant);
+/*    System.out.print("Check bound: " + constant + " + " + ratio.elementAt(0) + " * " + tempBound.elementAt(0));
+    for (int ik = 1; ik < tempBound.size(); ik++)
+      System.out.print(" + " + ratio.elementAt(ik) + " * " + tempBound.elementAt(ik));
+    System.out.println();*/
+    setConstant(constant);
+    for (int i = 0; i < tempBound.size(); i++) {
+      Parameter refPar = boundList.getReferenceParameter(tempBound.elementAt(i));
+      addBound(refPar, ratio.elementAt(i));
+    }
 		tempBound = null;
 	}
 
-	public void setRatio(String avalue) {
-		ratio = avalue;
+	public void addRatio(String avalue) {
+    getRatios().add(avalue);
 	}
 
-	public String getRatio() {
-		return ratio;
+	public String getRatio(int index) {
+    if (index >= 0 && index < getRatios().size())
+		  return getRatios().elementAt(index);
+    return null;
 	}
 
-	public void setConstant(String avalue) {
-		constant = avalue;
-	}
+  public Vector<String> getRatios() {
+    return ratio;
+  }
+
+  public void setRatio(Vector<String> ratio) {
+    this.ratio = ratio;
+  }
 
 	public String getConstant() {
-		return constant;
+    return constant;
 	}
+
+  public void setConstant(String constant) {
+    this.constant = constant;
+  }
 
 	private void notifyChangedValue() {
-		double newvalue = Double.parseDouble(getRefparameter().getValue()); // we need to avoid the update method
-		double aratio = Double.parseDouble(getRatio());
-		double aconstant = Double.parseDouble(getConstant());
-		double newvalued = newvalue * aratio + aconstant;
-		if (!(positiveDefinite && newvalued < 0.0))
-			setValue(newvalue * aratio + aconstant);
+/*    System.out.print(" Notify: " + getConstant());
+    for (int i = 0; i < getRefparameterVector().size(); i++)
+      System.out.print(" + " + getRatios().elementAt(i) + " * " + getRefparameterVector().elementAt(i));
+    System.out.println();*/
+
+    if (getRefparameterVector() == null || getRefparameterVector().size() == 0)
+      return;
+    double newvalued = Double.parseDouble(getConstant());;
+    for (int i = 0; i < getRefparameterVector().size(); i++) {
+      double newvalue = Double.parseDouble(getRefparameterVector().elementAt(i).getValue()); // we need to avoid the update method
+      double aratio = Double.parseDouble(getRatio(i));
+      newvalued += newvalue * aratio;
+    }
+    if (!(positiveDefinite && newvalued < 0.0))
+      setValue(newvalued);
 	}
 
-	public void setEqualTo(Parameter par, String ratiopar, String constantpar) {
-    setRatio(ratiopar);
-    setConstant(constantpar);
-    setRefparameter(par);
+  public void addBound(Parameter par, String ratiopar) {
+    addRatio(ratiopar);
+    addRefparameter(par);
     updateValue();
   }
 
-  public void setEqualTo(Parameter par, double ratiopar, double constantpar) {
-    setRatio(new String(Fmt.format(ratiopar)));
-    setConstant(new String(Fmt.format(constantpar)));
-    setRefparameter(par);
+  public void addBound(Parameter par, String ratiopar, String constant) {
+/*    System.out.println("From dlg: " + par.thelabel + " " + ratiopar + " " + constant);
+    System.out.print(" addBound prev: " + getConstant());
+    for (int i = 0; i < getRatios().size(); i++)
+      System.out.print(" r " + getRatios().elementAt(i));
+    for (int i = 0; i < getRefparameterVector().size(); i++)
+      System.out.print(" p " + getRefparameterVector().elementAt(i));
+    System.out.println();*/
+    setConstant(constant);
+    addRatio(ratiopar);
+    addRefparameter(par);
+/*    System.out.print(" addBound after: " + getConstant());
+    for (int i = 0; i < getRatios().size(); i++)
+      System.out.print(" r " + getRatios().elementAt(i));
+    for (int i = 0; i < getRefparameterVector().size(); i++)
+      System.out.print(" p " + getRefparameterVector().elementAt(i));
+    System.out.println();*/
     updateValue();
   }
 
-  public Parameter getRefparameter() {
-    return refParameter1;
+  public void addBound(Parameter par, double ratiopar) {
+    addRatio(Fmt.format(ratiopar));
+    addRefparameter(par);
+    updateValue();
   }
 
-  private void setRefparameter(Parameter apar) {
-    if (getRefparameter() != null)
-	  getRefparameter().unregister(this);
-    refParameter1 = apar;
-    if (getRefparameter() != null) {
-      getRefparameter().register(this);
+  public void addBound(Parameter par, double ratiopar, double constant) {
+    setConstant(Double.toString(constant));
+    addRatio(Fmt.format(ratiopar));
+    addRefparameter(par);
+    updateValue();
+  }
+
+  public Vector<Parameter> getRefparameterVector() {
+    return refParameter_v;
+  }
+
+  public Parameter getRefparameter(int index) {
+    if (index >= 0 && index < refParameter_v.size())
+      return getRefparameterVector().elementAt(index);
+    return null;
+  }
+
+  private void resetRefparameterVector() {
+    if (getRefparameterVector() != null && !getRefparameterVector().isEmpty()) {
+      for (int i = 0; i < refParameter_v.size(); i++)
+        getRefparameter(i).unregister(this);
+    }
+    getRefparameterVector().removeAllElements();
+    getRatios().removeAllElements();
+    setConstant("0");
+  }
+
+  private void addRefparameter(Parameter apar) {
+    if (getRefparameterVector() != null) {
+      getRefparameterVector().addElement(apar);
+      apar.register(this);
       setFree(false);
     }
   }
 
   public void setRefparameterAutomatic(Parameter apar) {
     if (apar != null && getStatusIndex() != MANUAL_BOUND) {
-	    setRatio("1");
+      resetParameterBound();
+	    addRatio("1");
       setConstant("0");
-      setRefparameter(apar);
+      addRefparameter(apar);
 	    automaticGenerated = true;
     }
   }
 
   public void setEqualToAutomatic(Parameter apar, String ratiopar, String constantpar) {
     if (getStatusIndex() != MANUAL_BOUND) {
-      setRatio(ratiopar);
+      resetParameterBound();
+      addRatio(ratiopar);
       setConstant(constantpar);
-      setRefparameter(apar);
+      addRefparameter(apar);
       if (apar != null)
         automaticGenerated = true;
       updateValue();
@@ -585,16 +656,16 @@ public class Parameter extends Object implements Cloneable, basicObj {
 
   public void resetAutomaticBound() {
     if (automaticGenerated)
-      resetParameterBound();
+      resetRefparameterVector();
   }
 
   public void resetParameterBound() {
-    setRefparameter(null);
+    resetRefparameterVector();
     automaticGenerated = false;
   }
 
   public int getStatusIndex() {
-    if (getRefparameter() != null)
+    if (getRefparameterVector() != null && !getRefparameterVector().isEmpty())
       if (automaticGenerated)
         return AUTOMATIC_BOUND;
       else
@@ -605,7 +676,7 @@ public class Parameter extends Object implements Cloneable, basicObj {
   }
 
   public int getReducedStatusIndex() {
-    if (getRefparameter() != null)
+    if (getRefparameterVector() != null && !getRefparameterVector().isEmpty())
       return MANUAL_BOUND;
     else if (getFree())
       return MANUAL_FREE;
@@ -894,8 +965,14 @@ public class Parameter extends Object implements Cloneable, basicObj {
 	        obj.printString(out, " Status: refinable, " + "error: +-" + error);
         else
 	        obj.printString(out, " Status: refinable, " + "Cholesky negative diagonal on this parameter, must be fixed");
-      } else if (getRefparameter() != null) {
-	      obj.printString(out, " Status: equal to " + constant + " + " + ratio + " * " + getRefparameter().toIDString());
+      } else if (getRefparameterVector() != null ) {
+        obj.printString(out, " Status: equal to ");
+        for (int i = 0; i < getRefparameterVector().size(); i++) {
+          if (i == 0)
+            obj.printString(out, " " + getConstant() + " + " + getRatios().elementAt(i) + " * " + getRefparameter(i).toIDString());
+          else
+            obj.printString(out, " + " + getRatios().elementAt(i) + " * " + getRefparameter(i).toIDString());
+        }
       } else {
 	      obj.printString(out, " Status: not refinable");
       }
@@ -940,10 +1017,15 @@ public class Parameter extends Object implements Cloneable, basicObj {
         if (isReference()) {
           out.write(" " + boundList.getReferenceName(this));
         }
-        if (getRefparameter() != null) {
+        if (getRefparameterVector() != null && getRefparameterVector().size() > 0) {
           // is bounded
-          out.write(" " + "#equalTo " + getConstant() + " + " + getRatio() + " * " +
-              boundList.getReferenceName(getRefparameter()));
+          out.write(" " + "#equalTo");
+          for (int i = 0; i < getRefparameterVector().size(); i++) {
+            if (i == 0)
+              out.write(" " + getConstant());
+            out.write( " + " + getRatio(i) + " * " +
+              boundList.getReferenceName(getRefparameter(i)));
+          }
         } else if (boundEquation != null)
 		      boundEquation.writeExpression(out);
       }
