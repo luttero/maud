@@ -1117,6 +1117,7 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 
 		Phase phase = getPhase();
 
+    int symNumber = getSampleSymmetryMultiplicity();
 		numberOfData = 0;
 		baseDataIndex = new int[getPoleFigureNumber()];
 		for (int i = 0; i < getPoleFigureNumber(); i++) {
@@ -1126,32 +1127,32 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
 		}
 
 		System.out.println("Number of PFs: " + getPoleFigureNumber() + ", and data number: " + getNumberOfData());
+    try {
+      dta_fix = new double[getNumberOfData()];
+      wgt = new double[getNumberOfData()];
+      fit = new double[getNumberOfData()];
+      poleindex = new int[getNumberOfData()];
+      pointindex = new int[getNumberOfData()];
+      datasetindex = new int[getNumberOfData()];
+      datafileindex = new int[getNumberOfData()];
 
-		dta_fix = new double[getNumberOfData()];
-		wgt = new double[getNumberOfData()];
-		fit = new double[getNumberOfData()];
-		poleindex = new int[getNumberOfData()];
-		pointindex = new int[getNumberOfData()];
-		datasetindex = new int[getNumberOfData()];
-		datafileindex = new int[getNumberOfData()];
-
-    int symNumber = getSampleSymmetryMultiplicity();
-		int index = 0;
-    poleFactor = new double[getPoleFigureNumber()];
-		for (int i = 0; i < getPoleFigureNumber(); i++) {
-      poleFactor[i] = 1.0f;
-      int point = 0;
-				for (int d = 0; d < asample.activeDatasetsNumber(); d++) {
-					DataFileSet dataset = asample.getActiveDataSet(d);
-					for (int dd = 0; dd < dataset.activedatafilesnumber(); dd++) {
+      int index = 0;
+      poleFactor = new double[getPoleFigureNumber()];
+      for (int i = 0; i < getPoleFigureNumber(); i++) {
+        poleFactor[i] = 1.0f;
+        int point = 0;
+        for (int d = 0; d < asample.activeDatasetsNumber(); d++) {
+          DataFileSet dataset = asample.getActiveDataSet(d);
+          for (int dd = 0; dd < dataset.activedatafilesnumber(); dd++) {
             DiffrDataFile datafile = dataset.getActiveDataFile(dd);
+            double[][][] positions = datafile.getPositions(getPhase());
             for (int ppp = 0; ppp < datafile.positionsPerPattern; ppp++) {
               for (int r = 0; r < Math.min(datafile.radiationsNumber, maxRadiations); r++) {
-                if (datafile.isInsideRange(datafile.getPositions(phase)[poleFigureIndex[i]][ppp][r])) {
+                if (datafile.isInsideRange(positions[i][ppp][r])) {
                   double dta = getPoleIntensity(i, datafile, ppp, r);
                   double radl = dataset.getInstrument().getRadiationType().getRadiationWeigth(r);
                   double weight = getReflectionWeight(i, radl);
-                  for (int sy =  0; sy < symNumber; sy++) {
+                  for (int sy = 0; sy < symNumber; sy++) {
                     datasetindex[index] = d;
                     datafileindex[index] = dd;
                     dta_fix[index] = dta;
@@ -1163,9 +1164,12 @@ public class MEMLTexture extends DiscreteODFTexture implements MEMFunction {
                 point++;
               }
             }
-					}
-				}
-		}
+          }
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
 //	  symmetryindex = new int[getNumberOfData()];
 
 		for (int i = 0; i < totalWeight.length; i++) {

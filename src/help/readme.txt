@@ -43,7 +43,7 @@ from the older one.
 
 Maud Version notes:
 
-(27/08/2025):   3.0. The "Hippo scattering" release.
+(27-28/08/2025):3.01. The "Hippo scattering" release.
                 If you haven't seen you have to look for the
                 glorious Hippo scattering.
                 Version 3.0 is the version including the
@@ -66,6 +66,7 @@ Maud Version notes:
                 (means not using the ImageJ plugin, but loading
                 them as a normal datafile; you can load them
                 with a script or in the batch processing).
+                3.01: small bug correction in EWIMV.
 
 
 (05/08/2025):   2.99997. The "End of life" release.
