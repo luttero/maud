@@ -141,7 +141,8 @@ public class PrasadLeleDhcpFaultingModel extends PlanarDefects {
   public void initParameters() {
     super.initParameters();
 
-    setString(0, "4");
+    int multiplyStepN = MaudPreferences.getInteger("diffax.dividePatternStepBy", 4);
+    setString(0, String.valueOf(multiplyStepN));
     setString(1, "false");
     for (int i = 0; i < 9; i++) {
       parameterField[i] = new Parameter(this, getParameterString(i), 0.0,
@@ -220,6 +221,8 @@ public class PrasadLeleDhcpFaultingModel extends PlanarDefects {
     if (!refreshComputation)
       return datap;
 
+    int multiplyStepN = Integer.parseInt(getString(0));
+
 //    boolean fromFile = MaudPreferences.getBoolean("diffax.loadInputFromFile", false);
     Phase aphase = (Phase) getParent();
     aphase.lattice(); // for the angles computation
@@ -248,7 +251,7 @@ public class PrasadLeleDhcpFaultingModel extends PlanarDefects {
     }
 
     double[] rangeStep = adataset.getMaximumRangeAndMinimumStep();
-    int multiplyStepN = MaudPreferences.getInteger("diffax.dividePatternStepBy", 4);
+//    int multiplyStepN = MaudPreferences.getInteger("diffax.dividePatternStepBy", 4);
     rangeStep[2] /= multiplyStepN;
     int np = (int) Math.abs((rangeStep[1] - rangeStep[0]) / rangeStep[2]) + 1;
 
@@ -672,7 +675,7 @@ public class PrasadLeleDhcpFaultingModel extends PlanarDefects {
       }
     }
 
-    int multiplyStepN = MaudPreferences.getInteger("diffax.dividePatternStepBy", 4);
+//    int multiplyStepN = MaudPreferences.getInteger("diffax.dividePatternStepBy", 4);
 
     DiffaxModel amodel = new DiffaxModel(aphase, null, BetaCePrasadLeleRefinement.STATE_COUNT,
         datomList.size(), list.size(), 100, 100, 16);
@@ -911,7 +914,7 @@ public class PrasadLeleDhcpFaultingModel extends PlanarDefects {
     try {
         amodel.loadModel(cellDivisions, v, pointGroupKey, rest,
             layerWidth, layers, recursiveMode, numberStacking,
-            transitions, fatsWaller, multiplyStepN);
+            transitions, fatsWaller, 1);
 
       BetaCePrasadLeleRefinement ce = new BetaCePrasadLeleRefinement(amodel);
 

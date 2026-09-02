@@ -146,7 +146,7 @@ public class HIPPOWizard extends Wizard {
             adataset.initializeAsNew();
             adataset.setLabel(((HIPPOBank) data.mbank.elementAt(i)).name + " omega " + ((float) omega));
             adataset.setInstrument(DefaultInstrument.modelID);
-				adataset.useChebyshevPolynomials(useCebyshev);
+				    adataset.useChebyshevPolynomials(useCebyshev);
             Instrument inst = adataset.getInstrument();
             inst.setDetector(TOFDetector.modelID);
             inst.setGeometry(GeometryIPNS_LANSCE.modelID);
@@ -154,7 +154,7 @@ public class HIPPOWizard extends Wizard {
             inst.setMeasurement(TOFMeasurement.modelID);
             inst.setRadiationType(TOFNeutronRadiation.modelID);
 
-	        int maxBanksNumber = 0;
+	          int maxBanksNumber = 0;
 
             inst.setAngularCalibration(MultiBankCalibration.modelID);
             MultiBankCalibration instAngCal = (MultiBankCalibration) inst.getAngularCalibration();
@@ -216,6 +216,19 @@ public class HIPPOWizard extends Wizard {
               instIntCal.removeBank(j);
               instAngCal.removeBank(j);
             }*/
+            for (int j = instAngCal.banknumbers() - 1; j >= 0; j--) {
+              String bankID = instAngCal.getBankID(j);
+              boolean present = false;
+              for (int k1 = 0; k1 < adataset.datafilesnumber(); k1++) {
+                if (adataset.getDataFile(k1).getBankID().equalsIgnoreCase(bankID))
+                  present = true;
+              }
+              if (!present) {
+                instAngCal.removeBank(bankID);
+                instBroad.removeBank(bankID);
+                instIntCal.removeBank(bankID);
+              }
+            }
           }
         }
       }

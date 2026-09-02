@@ -287,10 +287,13 @@ public class GSASNewDataFile extends MultDiffrDataFile {
                 datafile.setYData(i, Double.valueOf(token).doubleValue() * nctr);
                 double tmpweight = 0.0;
                 if (form.equalsIgnoreCase("ESD")) {
-                  tmpweight = esd;
+                  if (esd > 0.05)
+                    tmpweight = 1.0 / esd;
+                  else
+                    tmpweight = 1.0;
                 } else {
                   tmpweight = Math.sqrt(datafile.getYData(i));
-                  if (tmpweight != 0.0)
+                  if (tmpweight > 0.05)
                     tmpweight = 1.0 / tmpweight;
                   else
                     tmpweight = 1.0;

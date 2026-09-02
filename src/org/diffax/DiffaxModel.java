@@ -29,7 +29,7 @@ public final class DiffaxModel {
 
   static double intensityCorrection = 0.414619964316147 / 2.0;
 
-  private int stepFactor = MaudPreferences.getInteger("diffax.dividePatternStepBy", 4);;
+  private int stepFactor = MaudPreferences.getInteger("diffax.dividePatternStepBy", 4);
 
   public void setStepFactor(int stepFactor) {
     this.stepFactor = stepFactor;

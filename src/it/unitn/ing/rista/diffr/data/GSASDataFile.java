@@ -179,7 +179,7 @@ public class GSASDataFile extends MultDiffrDataFile {
             try {
 	            bankNumber = cal.getBankNumber(bankID);
             } catch (Exception e) {
-              e.printStackTrace();
+//              e.printStackTrace();
             }
 
 //        	DataCalibration gsascal = getCalibration("bank", 6);
@@ -374,13 +374,13 @@ public class GSASDataFile extends MultDiffrDataFile {
 		              datafile.setYData(i, Double.parseDouble(token) /* nctr */ / scale_factor / width);
 		              double tmpweight = 0.0;
 		              if (form == TYPE.ESD) {
-			              if (esd != 0.0)
+			              if (esd > 0.05)
 				              tmpweight = 1.0 / esd;
 			              else
 				              tmpweight = 1.0;
 		              } else {
 			              tmpweight = Math.sqrt(datafile.getYData(i));
-			              if (tmpweight != 0.0)
+			              if (tmpweight > 0.05)
 				              tmpweight = 1.0 / tmpweight;
 			              else
 				              tmpweight = 1.0;

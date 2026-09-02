@@ -671,7 +671,7 @@ public class DiffaXLayerModel extends PlanarDefects {
       }
     }
 
-    int multiplyStepN = MaudPreferences.getInteger("diffax.dividePatternStepBy", 4);
+//    int multiplyStepN = MaudPreferences.getInteger("diffax.dividePatternStepBy", 4);
 
     DiffaxModel amodel = new DiffaxModel(aphase, null, BetaCePrasadLeleRefinement.STATE_COUNT,
         datomList.size(), list.size(), 100, 100, 16);
@@ -910,7 +910,7 @@ public class DiffaXLayerModel extends PlanarDefects {
     try {
       amodel.loadModel(cellDivisions, v, pointGroupKey, rest,
           layerWidth, layers, recursiveMode, numberStacking,
-          transitions, fatsWaller, multiplyStepN);
+          transitions, fatsWaller, 4);
 
       BetaCePrasadLeleRefinement ce = new BetaCePrasadLeleRefinement(amodel);
 

@@ -205,12 +205,13 @@ public class SetEqualtoD extends myJFrame {
   }
 
   public void retrieveParameters() {
-
     Object par = parameterTree.getLastSelectedPathComponent();
     if (par != null && par instanceof DefaultMutableTreeNode) {
       par = ((DefaultMutableTreeNode) par).getUserObject();
-      if (par != null && par instanceof Parameter)
+      if (par != null && par instanceof Parameter) {
+        theparameter.resetParameterBound();
         theparameter.addBound((Parameter) par, ratioTF.getText(), constantTF.getText());
+      }
     }
   }
 

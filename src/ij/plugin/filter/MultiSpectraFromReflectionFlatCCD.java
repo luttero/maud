@@ -174,10 +174,13 @@ public class MultiSpectraFromReflectionFlatCCD extends OvalSpectraSelection {
 	  String prefix = "pixelDetector";
     if (prop != null && prop.containsKey(BrukerImageReader.brukerImage))
 	    prefix = "brukerImage";
-	  param.addNumericField("Eta step for spectra (deg)", MaudPreferences.getDouble(
-			  prefix + ".defaultDiffractionConeInterval", 5.0), 2);
-	  param.addNumericField("2theta step (deg, >= " + idealStepf + ")", MaudPreferences.getDouble(
-			  prefix + ".defaultDiffractionStepAngle", idealStepf), 4);
+
+    double etaStep = ((AngularInclinedFlatImageCalibration) AreaImage.getData().getInstrument().
+        getAngularCalibration()).getEtaStep();
+    double theta2Step = ((AngularInclinedFlatImageCalibration) AreaImage.getData().getInstrument().
+        getAngularCalibration()).get2ThetaStep();
+	  param.addNumericField("Eta step for spectra (deg)", etaStep, 2);
+	  param.addNumericField("2theta step (deg, >= " + idealStepf + ")", theta2Step, 4);
     param.addNumericField("Sample omega angle (deg)", omega, 2);
     param.addNumericField("Sample chi angle (deg)", chi, 2);
     param.addNumericField("Sample phi angle (deg)", phi, 2);
@@ -224,6 +227,10 @@ public class MultiSpectraFromReflectionFlatCCD extends OvalSpectraSelection {
 			    getAngularCalibration()).setOriginalOmegaDN(omegaDN);
 	    ((AngularInclinedFlatImageCalibration) AreaImage.getData().getInstrument().
 			    getAngularCalibration()).setOriginalEtaDA(etaDA);
+      ((AngularInclinedFlatImageCalibration) AreaImage.getData().getInstrument().
+          getAngularCalibration()).setEtaStep(coneAngleStep);
+      ((AngularInclinedFlatImageCalibration) AreaImage.getData().getInstrument().
+          getAngularCalibration()).set2ThetaStep(theta2AngleStep);
       MaudPreferences.setPref("pixelDetector.trackerRadius", diameter);
 //      MaudPreferences.setPref("camera.defaultHeight", cameraHeight);
       if (prop != null && prop.containsKey(BrukerImageReader.brukerImage)) {
@@ -338,15 +345,19 @@ public class MultiSpectraFromReflectionFlatCCD extends OvalSpectraSelection {
           getAngularCalibration()).setOriginalCenterX(x);
         ((AngularInclinedFlatImageCalibration) AreaImage.getData().getInstrument().
           getAngularCalibration()).setOriginalCenterY(y);
+        ((AngularInclinedFlatImageCalibration) AreaImage.getData().getInstrument().
+            getAngularCalibration()).setEtaStep(coneAngleStep);
+        ((AngularInclinedFlatImageCalibration) AreaImage.getData().getInstrument().
+            getAngularCalibration()).set2ThetaStep(theta2AngleStep);
         MaudPreferences.setPref("pixelDetector.trackerRadius", diameter);
 //      MaudPreferences.setPref("camera.defaultHeight", cameraHeight);
         Properties prop = imp.getProperties();
         if (prop != null && prop.containsKey(BrukerImageReader.brukerImage)) {
-        MaudPreferences.setPref("brukerImage.defaultDiffractionConeInterval", coneAngleStep);
-        MaudPreferences.setPref("brukerImage.defaultDiffractionStepAngle", theta2AngleStep);
+          MaudPreferences.setPref("brukerImage.defaultDiffractionConeInterval", coneAngleStep);
+          MaudPreferences.setPref("brukerImage.defaultDiffractionStepAngle", theta2AngleStep);
         } else {
-        MaudPreferences.setPref("pixelDetector.defaultDiffractionConeInterval", coneAngleStep);
-        MaudPreferences.setPref("pixelDetector.defaultDiffractionStepAngle", theta2AngleStep);
+          MaudPreferences.setPref("pixelDetector.defaultDiffractionConeInterval", coneAngleStep);
+          MaudPreferences.setPref("pixelDetector.defaultDiffractionStepAngle", theta2AngleStep);
         }
         MaudPreferences.setPref("sample.defaultOmegaAngle", omega);
         MaudPreferences.setPref("sample.defaultChiAngle", chi);

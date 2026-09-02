@@ -598,6 +598,7 @@ public class Parameter extends Object implements Cloneable, basicObj {
   }
 
   public void addBound(Parameter par, double ratiopar, double constant) {
+    resetParameterBound();
     setConstant(Double.toString(constant));
     addRatio(Fmt.format(ratiopar));
     addRefparameter(par);

@@ -243,13 +243,16 @@ public class InstrumentBroadeningGSAS1f extends InstrumentBroadening {
   }
 
   public void boundAllBankCoefficients() {
+//    System.out.println(getParent().toString());
     int banks = banknumbers();
-	  for (int i = 0; i < maxNumberFunctionCoefficients; i++) {
-		  Parameter apar = (Parameter) parameterloopField[i].elementAt(0);
-      for (int bank = 1; bank < banks; bank++) {
-	      Parameter apar1 = (Parameter) parameterloopField[i].elementAt(bank);
-	      if (apar.getValueD() == apar1.getValueD())
-		      apar1.addBound(apar, 1.0, 0.0);
+	  for (int i = 0; i < parameterloopField.length; i++) {
+      if (parameterloopField[i].size() > 0) {
+        Parameter apar = (Parameter) parameterloopField[i].elementAt(0);
+        for (int bank = 1; bank < banks && bank < parameterloopField[i].size(); bank++) {
+          Parameter apar1 = (Parameter) parameterloopField[i].elementAt(bank);
+          if (apar.getValueD() == apar1.getValueD())
+            apar1.addBound(apar, 1.0, 0.0);
+        }
       }
 	  }
   }
@@ -259,7 +262,7 @@ public class InstrumentBroadeningGSAS1f extends InstrumentBroadening {
 	  int nparameter = maxNumberFunctionCoefficients;
 	  Parameter[] apar = new Parameter[nparameter];
       int index = 0;
-      for (int i = 0; i < maxNumberFunctionCoefficients; i++)
+      for (int i = 0; i < nparameter && i < parameterloopField.length; i++)
         apar[index++] = (Parameter) parameterloopField[i].elementAt(0);
 
       for (int bank = 1; bank < banks; bank++) {

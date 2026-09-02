@@ -34,6 +34,7 @@ import com.radiographema.MaudText;
 import it.unitn.ing.rista.diffr.cal.*;
 import it.unitn.ing.rista.diffr.data.GSASDataFile;
 import it.unitn.ing.rista.diffr.detector.XRFDetector;
+import it.unitn.ing.rista.diffr.instbroad.InstrumentBroadeningGSAS1f;
 import it.unitn.ing.rista.diffr.instrument.AngleEnergyMapInstrument;
 import it.unitn.ing.rista.diffr.instrument.DefaultInstrument;
 import it.unitn.ing.rista.diffr.radiation.XrayEbelTubeRadiation;
@@ -2833,7 +2834,55 @@ public class DataFileSet extends XRDcat {
 		}
 	}
 
-	public void useChebyshevPolynomials(boolean value)
+  public void removeUnusedBanks() {
+    Instrument inst = getInstrument();
+    if (inst == null)
+      return;
+    AngularCalibration angCal = inst.getAngularCalibration();
+    if (angCal instanceof MultiBankCalibration) {
+      MultiBankCalibration instAngCal = (MultiBankCalibration) angCal;
+      for (int j = instAngCal.banknumbers() - 1; j >= 0; j--) {
+        String bankID = instAngCal.getBankID(j);
+        boolean present = false;
+        for (int k1 = 0; k1 < datafilesnumber(); k1++) {
+          if (getDataFile(k1).getBankID().equalsIgnoreCase(bankID))
+            present = true;
+        }
+        if (!present)
+          instAngCal.removeBank(bankID);
+      }
+    }
+    InstrumentBroadening broad = inst.getInstrumentBroadening();
+    if (broad instanceof InstrumentBroadeningGSAS1f) {
+      InstrumentBroadeningGSAS1f instBroad = (InstrumentBroadeningGSAS1f) broad;
+      for (int j = instBroad.banknumbers() - 1; j >= 0; j--) {
+        String bankID = instBroad.getBankID(j);
+        boolean present = false;
+        for (int k1 = 0; k1 < datafilesnumber(); k1++) {
+          if (getDataFile(k1).getBankID().equalsIgnoreCase(bankID))
+            present = true;
+        }
+        if (!present)
+          instBroad.removeBank(bankID);
+      }
+    }
+    IntensityCalibration intCal = inst.getIntensityCalibration();
+    if (intCal instanceof HippoMultBankIntCalibration) {
+      HippoMultBankIntCalibration instIntCal = (HippoMultBankIntCalibration) intCal;
+      for (int j = instIntCal.banknumbers() - 1; j >= 0; j--) {
+        String bankID = instIntCal.getBankID(j);
+        boolean present = false;
+        for (int k1 = 0; k1 < datafilesnumber(); k1++) {
+          if (getDataFile(k1).getBankID().equalsIgnoreCase(bankID))
+            present = true;
+        }
+        if (!present)
+          instIntCal.removeBank(bankID);
+      }
+    }
+  }
+
+  public void useChebyshevPolynomials(boolean value)
 	{
 		if (value)
 			setString(useChebyshevPolynomialsID, "true");

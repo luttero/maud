@@ -99,6 +99,7 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
   static final String DATA_REMOVE_IND_BKG_PAR = "Remove individual background";
   static final String DATA_USE_CHEBYSHEV_BKG = "Use Chebyshev bkg";
   static final String DATA_USE_POLYNOMIAL_BKG = "Use Polynomial bkg";
+  static final String DATA_REMOVE_BANKS = "Remove unused banks";
   static final String DATA_ENABLE_DATASETS = "Enable datasets";
   static final String DATA_DISABLE_DATASETS = "Disable datasets";
   static final String OPEN_ANALYSIS = "Open analysis...";
@@ -145,7 +146,7 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
         "Edit object",
         "-",
         "Duplicate object",
-        "Selected objects:10",
+        "Selected objects:11",
           DATA_REMOVE_PATTERN,
           DATA_RESET_BACKGROUND,
           DATA_ENABLE_DATASETS,
@@ -156,6 +157,7 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
           DATA_REMOVE_IND_BKG_PAR,
           DATA_USE_CHEBYSHEV_BKG,
           DATA_USE_POLYNOMIAL_BKG,
+          DATA_REMOVE_BANKS,
 
       "Analysis:8",
         "Options",
@@ -251,6 +253,7 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
         nullKeyEvent,
         nullKeyEvent,
         nullKeyEvent,
+      nullKeyEvent,
 
       nullKeyEvent,
       nullKeyEvent,
@@ -319,6 +322,7 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
       true,
       true,
       true,
+        true,
         true,
         true,
         true,
@@ -1562,6 +1566,28 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
     }
   }
 
+  public void removeUnusedBanks() {
+    int index = getVisibleTabPanelIndex();
+    switch (index) {
+      case 0: // datasets
+        ListVector list = getFocusedList();
+        if (list != null) {
+          Vector slist = list.selectedElements();
+          if (slist != null && slist.size() > 0) {
+            for (Object ocat: slist) {
+              ((DataFileSet) ocat).removeUnusedBanks();
+            }
+            break;
+          }
+        }
+      case 1: // phases
+      case 2: // samples
+      default: {
+        WarningNothingSelected();
+      }
+    }
+  }
+
   boolean result = false;
 
   myJFrame parListFrame = null;
@@ -1873,6 +1899,9 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
         return;
       } else if (command.equals(DATA_USE_POLYNOMIAL_BKG)) {
         usePolynomialBackground();
+        return;
+      } else if (command.equals(DATA_REMOVE_BANKS)) {
+        removeUnusedBanks();
         return;
       } else if (command.equals(DATA_ENABLE_DATASETS)) {
         enableSelectedDatasets();

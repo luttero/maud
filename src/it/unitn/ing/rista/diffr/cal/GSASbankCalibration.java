@@ -549,7 +549,8 @@ public class GSASbankCalibration extends AngularCalibration {
       }
     }*/
 //    printBank();
-    throw new Exception(bankID + ": The bank ID is not corresponding, reload the instrument parameter file for angular calibration!");
+    throw new Exception(bankID + ": The bank ID is not corresponding, reload the instrument parameter file for angular calibration!" +
+        " Dataset: " + getInstrument().getParent().thelabel);
   }
 
   public void printBank() {
