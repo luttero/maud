@@ -462,7 +462,7 @@ public class principalJFrame extends myJFrame {
   public JMenu addOptionsMenu(JMenuBar menuBar, ActionListener actionMenuListener) {
     // Options Menu
     JMenu options = menuBar.add(new JMenu("Interface"));
-    options.setMnemonic('p');
+    options.setMnemonic(KeyEvent.VK_I);
 
     ButtonGroup group = new ButtonGroup();
 

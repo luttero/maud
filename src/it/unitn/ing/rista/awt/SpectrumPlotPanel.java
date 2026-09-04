@@ -1072,7 +1072,7 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 		    if (datafile[0].hasfit() || peaksLocated) {
 			    datafit = new double[2 * np];
 		    }
-		    mode = PlotDataFile.checkScaleModeX();
+//		    mode = PlotDataFile.checkScaleModeX();
 		    for (int is1 = 0; is1 < np; is1++) {
 			    int is2 = is1 * 2;
 			    data[is2] = xmin + is1 * stepX;

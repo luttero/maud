@@ -727,3 +727,164 @@ public class PseudoVoigt2DPeak extends PseudoVoigtPeak {
   }
   
 }
+
+
+/*
+
+
+public final class PseudoVoigt2D {
+
+    private static final double FOUR_LN_2 = 4.0 * Math.log(2.0);
+
+    //
+    // If L(x) is proportional to:
+    //     [1 + (x / scale)^2]^(-3/2)
+    // this factor relates its scale to its FWHM.
+    //
+private static final double CAUCHY_HALF_MAX_FACTOR =
+    Math.sqrt(Math.pow(2.0, 2.0 / 3.0) - 1.0);
+
+private final double centerX;
+private final double centerY;
+private final double fwhmX;
+private final double fwhmY;
+private final double eta;
+
+// Precomputed Gaussian parameters
+private final double gaussianNormalization;
+private final double gaussianFactorX;
+private final double gaussianFactorY;
+
+// Precomputed Cauchy parameters
+private final double cauchyScaleX;
+private final double cauchyScaleY;
+private final double cauchyNormalization;
+
+//
+// Creates a normalized, axis-aligned 2D pseudo-Voigt function.
+//
+// @param centerX center along x
+// @param centerY center along y
+// @param fwhmX   FWHM along x
+// @param fwhmY   FWHM along y
+// @param eta     Lorentzian fraction, from 0 to 1
+//
+public PseudoVoigt2D(
+    double centerX,
+    double centerY,
+    double fwhmX,
+    double fwhmY,
+    double eta) {
+
+  if (!Double.isFinite(centerX) || !Double.isFinite(centerY)) {
+    throw new IllegalArgumentException(
+        "The center coordinates must be finite.");
+  }
+
+  if (!Double.isFinite(fwhmX) || fwhmX <= 0.0 ||
+      !Double.isFinite(fwhmY) || fwhmY <= 0.0) {
+    throw new IllegalArgumentException(
+        "FWHM values must be finite and greater than zero.");
+  }
+
+  if (!Double.isFinite(eta) || eta < 0.0 || eta > 1.0) {
+    throw new IllegalArgumentException(
+        "eta must be between 0 and 1.");
+  }
+
+  this.centerX = centerX;
+  this.centerY = centerY;
+  this.fwhmX = fwhmX;
+  this.fwhmY = fwhmY;
+  this.eta = eta;
+
+  // Gaussian component
+  gaussianNormalization =
+      FOUR_LN_2 / (Math.PI * fwhmX * fwhmY);
+
+  gaussianFactorX = FOUR_LN_2 / (fwhmX * fwhmX);
+  gaussianFactorY = FOUR_LN_2 / (fwhmY * fwhmY);
+
+  // Bivariate Cauchy component
+  cauchyScaleX =
+      fwhmX / (2.0 * CAUCHY_HALF_MAX_FACTOR);
+
+  cauchyScaleY =
+      fwhmY / (2.0 * CAUCHY_HALF_MAX_FACTOR);
+
+  cauchyNormalization =
+      1.0 / (2.0 * Math.PI *
+          cauchyScaleX * cauchyScaleY);
+}
+
+//
+// Evaluates the normalized 2D pseudo-Voigt function.
+//
+public double value(double x, double y) {
+  double gaussian = gaussianValue(x, y);
+  double cauchy = cauchyValue(x, y);
+
+  return (1.0 - eta) * gaussian + eta * cauchy;
+}
+
+//
+// Evaluates only the normalized Gaussian component.
+//
+public double gaussianValue(double x, double y) {
+  double dx = x - centerX;
+  double dy = y - centerY;
+
+  double exponent =
+      -(gaussianFactorX * dx * dx
+          + gaussianFactorY * dy * dy);
+
+  return gaussianNormalization * Math.exp(exponent);
+}
+
+//
+// Evaluates only the normalized bivariate Cauchy component.
+//
+public double cauchyValue(double x, double y) {
+  double ux = (x - centerX) / cauchyScaleX;
+  double uy = (y - centerY) / cauchyScaleY;
+
+  double radialTerm = 1.0 + ux * ux + uy * uy;
+
+  return cauchyNormalization /
+      Math.pow(radialTerm, 1.5);
+}
+
+public double getEta() {
+  return eta;
+}
+
+public double getFwhmX() {
+  return fwhmX;
+}
+
+public double getFwhmY() {
+  return fwhmY;
+}
+
+public static void main(String[] args) {
+  PseudoVoigt2D profile = new PseudoVoigt2D(
+      0.0,  // center x
+      0.0,  // center y
+      2.0,  // FWHM along x
+      5.0,  // FWHM along y
+      0.4   // 40% Cauchy, 60% Gaussian
+  );
+
+  double peak = profile.value(0.0, 0.0);
+  double halfX = profile.value(1.0, 0.0);
+  double halfY = profile.value(0.0, 2.5);
+
+  System.out.println("Peak       = " + peak);
+  System.out.println("At FWHM_X/2 = " + halfX);
+  System.out.println("At FWHM_Y/2 = " + halfY);
+  System.out.println("Peak / 2   = " + peak / 2.0);
+}
+}
+
+
+ */

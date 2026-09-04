@@ -1031,6 +1031,8 @@ public class DataFileSet extends XRDcat {
     }
 
     GSASDataFile.GSASfileData gdata = new GSASDataFile.GSASfileData();
+
+    /*
     double minD = 1.0E10;
     double maxD = 0.0;
     double stepD = 1.0e10;
@@ -1085,7 +1087,13 @@ public class DataFileSet extends XRDcat {
         if (data[1][i] > 0)
           data[2][i] = Math.sqrt(data[1][i]);
       }
-    }
+    }*/
+
+    MultiTOFPanelCalibration calib = (MultiTOFPanelCalibration) getInstrument().getAngularCalibration();
+    int bank = diffrDatafiles.elementAt(0).getBankNumber();
+    double[] dist_difc_theta = calib.getCenterTotalPathDifcAndTheta(bank);
+
+    double[][] data = getSummedData(diffrDatafiles);
 
     gdata.setData(data);
     gdata.setBank(bank + 1);
@@ -1106,6 +1114,130 @@ public class DataFileSet extends XRDcat {
     gdata.setComments(comments);
 
     return gdata;
+  }
+
+  public double[][] getSummedData(DiffrDataFile[] dataFiles) {
+    int i;
+    int j;
+
+    int ylength = dataFiles.length;
+
+    double stepX = 1.0E10;
+    double xmin = 1.0E10, xmax = -1.0E10;
+
+    // minimum maximum range
+
+    for (int is1 = 0; is1 < ylength; is1++) {
+      int xlength = dataFiles[is1].finalindex - dataFiles[is1].startingindex - 1;
+      double x1 = dataFiles[is1].getXDataForPlot(dataFiles[is1].startingindex, 0);
+      double x2 = dataFiles[is1].getXDataForPlot(dataFiles[is1].finalindex - 1, 0);
+      double lstepX = Math.abs((x2 - x1) / xlength);
+      if (lstepX < stepX)
+        stepX = lstepX;
+      if (xmin > x1)
+        xmin = x1;
+      if (xmax < x2)
+        xmax = x2;
+      if (xmin > x2)
+        xmin = x2;
+      if (xmax < x1)
+        xmax = x1;
+    }
+    int np = (int) Math.abs((xmax - xmin) / stepX) + 1;
+
+    double[][] data = null;
+    if (np > 0) {
+      data = new double[3][np];
+      for (int is1 = 0; is1 < np; is1++) {
+        data[0][is1] = xmin + is1 * stepX;
+        int total = 0;
+        for (int sn = 0; sn < ylength; sn++) {
+          double xstartmin = dataFiles[sn].getXDataForPlot(dataFiles[sn].startingindex, 0);
+          double xendmax = dataFiles[sn].getXDataForPlot(dataFiles[sn].finalindex - 1, 0);
+          if (xendmax < dataFiles[sn].getXDataForPlot(dataFiles[sn].startingindex, 0))
+            xendmax = dataFiles[sn].getXDataForPlot(dataFiles[sn].startingindex, 0);
+          if (xstartmin > dataFiles[sn].getXDataForPlot(dataFiles[sn].finalindex - 1, 0))
+            xstartmin = dataFiles[sn].getXDataForPlot(dataFiles[sn].finalindex - 1, 0);
+          if (data[0][is1] >= xstartmin && data[0][is1] <= xendmax) {
+            double value = dataFiles[sn].getInterpolatedYForSummation(data[0][is1]);
+            if (!Double.isNaN(value)) {
+              data[1][is1] += value;
+              total++;
+            }
+          }
+        }
+        if (total > 0) {
+          data[1][is1] *= ylength / total;
+          data[2][is1] = Math.sqrt(data[1][is1]);
+        } else {
+          data[1][is1] = 0.0;
+          data[2][is1] = 0.0;
+        }
+      }
+    }
+    return data;
+  }
+
+  public double[][] getSummedData(Vector<DiffrDataFile> dataFiles) {
+    int i;
+    int j;
+
+    int ylength = dataFiles.size();
+
+    double stepX = 1.0E10;
+    double xmin = 1.0E10, xmax = -1.0E10;
+
+    // minimum maximum range
+
+    for (int is1 = 0; is1 < ylength; is1++) {
+      int xlength = dataFiles.elementAt(is1).finalindex - dataFiles.elementAt(is1).startingindex - 1;
+      double x1 = dataFiles.elementAt(is1).getXDataForPlot(dataFiles.elementAt(is1).startingindex, 0);
+      double x2 = dataFiles.elementAt(is1).getXDataForPlot(dataFiles.elementAt(is1).finalindex - 1, 0);
+      double lstepX = Math.abs((x2 - x1) / xlength);
+      if (lstepX < stepX)
+        stepX = lstepX;
+      if (xmin > x1)
+        xmin = x1;
+      if (xmax < x2)
+        xmax = x2;
+      if (xmin > x2)
+        xmin = x2;
+      if (xmax < x1)
+        xmax = x1;
+    }
+    int np = (int) Math.abs((xmax - xmin) / stepX) + 1;
+
+    double[][] data = null;
+    if (np > 0) {
+      data = new double[3][np];
+      for (int is1 = 0; is1 < np; is1++) {
+        data[0][is1] = xmin + is1 * stepX;
+        int total = 0;
+        for (int sn = 0; sn < ylength; sn++) {
+          double xstartmin = dataFiles.elementAt(sn).getXDataForPlot(dataFiles.elementAt(sn).startingindex, 0);
+          double xendmax = dataFiles.elementAt(sn).getXDataForPlot(dataFiles.elementAt(sn).finalindex - 1, 0);
+          if (xendmax < dataFiles.elementAt(sn).getXDataForPlot(dataFiles.elementAt(sn).startingindex, 0))
+            xendmax = dataFiles.elementAt(sn).getXDataForPlot(dataFiles.elementAt(sn).startingindex, 0);
+          if (xstartmin > dataFiles.elementAt(sn).getXDataForPlot(dataFiles.elementAt(sn).finalindex - 1, 0))
+            xstartmin = dataFiles.elementAt(sn).getXDataForPlot(dataFiles.elementAt(sn).finalindex - 1, 0);
+          if (data[0][is1] >= xstartmin && data[0][is1] <= xendmax) {
+            double value = dataFiles.elementAt(sn).getInterpolatedYForSummation(data[0][is1]);
+            if (!Double.isNaN(value)) {
+              data[1][is1] += value;
+              total++;
+            }
+          }
+        }
+        if (total > 0) {
+          data[1][is1] *= ylength / total;
+          data[2][is1] = Math.sqrt(data[1][is1]);
+        } else {
+          data[1][is1] = 0.0;
+          data[2][is1] = 0.0;
+        }
+      }
+    }
+    return data;
   }
 
   public void disableByAngles(int angleNumber, double startingAngle, double finalAngle) {

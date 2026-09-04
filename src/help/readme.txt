@@ -43,7 +43,15 @@ from the older one.
 
 Maud Version notes:
 
-(27-31/08/2025):3.02. The "Hippo scattering" release.
+(04/09/2026):   3.03. It's still "Hippo scattering".
+                Fixed some problems with the menu mnemonics,
+                they all use the first letter of the menu item
+                name now.
+                Some keyboard shortcuts may have changed, check
+                them out.
+                Fixed a problem with the lumacam->gda export.
+
+(27-31/08/2026):3.02. The "Hippo scattering" release.
                 If you haven't seen you have to look for the
                 glorious Hippo scattering.
                 Version 3.0 is the version including the
@@ -75,7 +83,7 @@ Maud Version notes:
                 model are stored in the model.
 
 
-(05/08/2025):   2.99997. The "End of life" release.
+(05/08/2026):   2.99997. The "End of life" release.
                 This will be the last version 2.x release
                 before version 3.0 that will follow shortly.
                 This is mainly a bugs correction release.

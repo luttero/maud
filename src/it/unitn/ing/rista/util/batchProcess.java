@@ -473,8 +473,8 @@ public class batchProcess {
 	        loopitem--;
         } else if (index == 26) { //"_maud_export_lumaCAM_to_GSAS_datafile"
           GSASDataFilename = workingDirectory + item.thestring;
-         avector.removeElementAt(i);
-           loopitem--;
+          avector.removeElementAt(i);
+          loopitem--;
         } else if (index == 27) { //"_pd_meas_dataset_number"
           actualDatasetNumber = Integer.parseInt(item.thestring);
           avector.removeElementAt(i);
