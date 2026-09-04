@@ -952,10 +952,10 @@ public class GSASDataFile extends MultDiffrDataFile {
           int totNumber = datafile.data[0].length;
           double minTOF = datafile.data[0][0];
           double maxTOF = datafile.data[0][totNumber - 1];
-          double firstStep = (datafile.data[0][1] - minTOF) / minTOF;
+          double firstStep = (datafile.data[0][totNumber - 1] - minTOF) / (totNumber - 1);
           gwriter.write("BANK " + datafile.bank + " " + totNumber + " " + totNumber +
-              " SLOG " + Misc.getFormattedValue(minTOF) + " " + Misc.getFormattedValue(maxTOF) + " "
-              + Misc.getFormattedValue(firstStep) + " 0 FXYE");
+              " CONS " + Misc.getFormattedValue(minTOF) + " " + Misc.getFormattedValue(firstStep) + " "
+              /*+ Misc.getFormattedValue(firstStep)*/ + " 0 0 FXYE");
           gwriter.write(Constants.lineSeparator);
           for (int j = 0; j < totNumber; j++) {
             for (int k = 0; k < datafile.data.length; k++)

@@ -6,6 +6,13 @@
   <component name="ChangeListManager">
     <list default="true" id="61caab25-241f-4ab1-85f0-b423f2950da9" name="Changes" comment="Fix to post on the website">
       <change beforePath="$PROJECT_DIR$/.github/workflows/jekyll-gh-pages.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Maud.iws" beforeDir="false" afterPath="$PROJECT_DIR$/Maud.iws" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/current/Examples.jar" beforeDir="false" afterPath="$PROJECT_DIR$/libs/current/Examples.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/current/Files.jar" beforeDir="false" afterPath="$PROJECT_DIR$/libs/current/Files.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/current/Help.jar" beforeDir="false" afterPath="$PROJECT_DIR$/libs/current/Help.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/current/ij.jar" beforeDir="false" afterPath="$PROJECT_DIR$/libs/current/ij.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/current/miscLib.jar" beforeDir="false" afterPath="$PROJECT_DIR$/libs/current/miscLib.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/GSASDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/GSASDataFile.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,60 +51,60 @@
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
       <entry key="MS100" value="1.0" />
-      <entry key="MS500" value="1.0000059619333383" />
-      <entry key="S2" value="1.0994761951024283" />
-      <entry key="S5" value="2.062249426295967" />
-      <entry key="S10" value="3.9210461095986893" />
-      <entry key="S30" value="7.455613148663579" />
-      <entry key="S60" value="9.006617644383098" />
-      <entry key="M2" value="9.940172676254033" />
-      <entry key="M5" value="10.62646651956268" />
-      <entry key="M10" value="12.018288527320617" />
-      <entry key="M15" value="14.258583272829894" />
-      <entry key="M30" value="20.440972225997562" />
-      <entry key="H1" value="26.960532682445404" />
-      <entry key="H2" value="31.76562534819133" />
-      <entry key="H4" value="35.62257530447596" />
-      <entry key="D1" value="131.1992156293834" />
-      <entry key="W1" value="1355.7642118493407" />
+      <entry key="MS500" value="1.0" />
+      <entry key="S2" value="1.0" />
+      <entry key="S5" value="1.0" />
+      <entry key="S10" value="1.0" />
+      <entry key="S30" value="1.0" />
+      <entry key="S60" value="1.0" />
+      <entry key="M2" value="1.000000000001436" />
+      <entry key="M5" value="1.000077678420131" />
+      <entry key="M10" value="1.032493641077265" />
+      <entry key="M15" value="1.276724032854859" />
+      <entry key="M30" value="3.847651241107512" />
+      <entry key="H1" value="11.062852204773979" />
+      <entry key="H2" value="20.406790703900587" />
+      <entry key="H4" value="28.84347713007908" />
+      <entry key="D1" value="126.92083590733057" />
+      <entry key="W1" value="1348.8342953229971" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
       <entry key="MS500" value="0.0" />
       <entry key="S2" value="0.0" />
-      <entry key="S5" value="1.756905531554672E-133" />
-      <entry key="S10" value="4.191545695271225E-67" />
-      <entry key="S30" value="7.483844173432261E-23" />
-      <entry key="S60" value="8.651544376787254E-12" />
-      <entry key="M2" value="2.976536776712903E-6" />
-      <entry key="M5" value="0.007713019422009832" />
-      <entry key="M10" value="0.1345692494898621" />
-      <entry key="M15" value="0.3680381069853959" />
-      <entry key="M30" value="1.0361195260938214" />
-      <entry key="H1" value="1.757078426004961" />
-      <entry key="H2" value="2.2941618230165233" />
-      <entry key="H4" value="2.638281298432774" />
-      <entry key="D1" value="11.150902405737325" />
-      <entry key="W1" value="326.815606581535" />
+      <entry key="S5" value="0.0" />
+      <entry key="S10" value="3.465128779078167E-221" />
+      <entry key="S30" value="3.260166603597161E-74" />
+      <entry key="S60" value="1.8057231622681186E-37" />
+      <entry key="M2" value="4.3002134913428917E-19" />
+      <entry key="M5" value="5.638140976017135E-8" />
+      <entry key="M10" value="3.6383257757711176E-4" />
+      <entry key="M15" value="0.00714271448015001" />
+      <entry key="M30" value="0.1443427945498716" />
+      <entry key="H1" value="0.6558186635754955" />
+      <entry key="H2" value="1.4015879697673161" />
+      <entry key="H4" value="2.06214526512344" />
+      <entry key="D1" value="10.702281605234216" />
+      <entry key="W1" value="324.90404964777974" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.9265880618903709" />
-      <entry key="MS500" value="0.9848723210112352" />
-      <entry key="S2" value="1.0953026347240664" />
-      <entry key="S5" value="2.059141703242009" />
-      <entry key="S10" value="3.918064379571991" />
-      <entry key="S30" value="7.453677005228642" />
-      <entry key="S60" value="9.00543769559315" />
-      <entry key="M2" value="9.939521111147869" />
-      <entry key="M5" value="10.63368847518954" />
-      <entry key="M10" value="12.15093186791043" />
-      <entry key="M15" value="14.623343272169388" />
-      <entry key="M30" value="21.47268336824239" />
-      <entry key="H1" value="28.71394639518886" />
-      <entry key="H2" value="34.05741661978948" />
-      <entry key="H4" value="38.25945642035466" />
-      <entry key="D1" value="142.34869333203065" />
-      <entry key="W1" value="1682.576404684748" />
+      <entry key="MS100" value="2.674521773581006E-10" />
+      <entry key="MS500" value="0.012174446557195306" />
+      <entry key="S2" value="0.33217145352412786" />
+      <entry key="S5" value="0.6434946236506354" />
+      <entry key="S10" value="0.8021811663524863" />
+      <entry key="S30" value="0.9291606742509133" />
+      <entry key="S60" value="0.9639298077406432" />
+      <entry key="M2" value="0.9817992705963184" />
+      <entry key="M5" value="0.9927572969632664" />
+      <entry key="M10" value="1.0291853262578092" />
+      <entry key="M15" value="1.2813570039376085" />
+      <entry key="M30" value="3.9901560889681083" />
+      <entry key="H1" value="11.716690944168594" />
+      <entry key="H2" value="21.80662432333162" />
+      <entry key="H4" value="30.904374919944928" />
+      <entry key="D1" value="137.62172461649328" />
+      <entry key="W1" value="1673.7349475472631" />
     </decayedShown>
   </component>
   <component name="ProblemsViewState">
@@ -219,7 +226,7 @@
       <workItem from="1787587110486" duration="9840000" />
       <workItem from="1787625724314" duration="41354000" />
       <workItem from="1787844841063" duration="41343000" />
-      <workItem from="1788252031965" duration="29430000" />
+      <workItem from="1788252031965" duration="32392000" />
     </task>
     <task id="LOCAL-00001" summary="New version 5/2023&#10;Some modifications on GSASDataFile and more options for plotting types.">
       <created>1684773902547</created>
