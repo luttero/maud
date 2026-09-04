@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "New Version 3.03"
-date:   2026-09-04 11:10:00 -0600
+date:   2026-09-04 15:10:00 +0200
 categories: Maud release
 ---
 
