@@ -20,6 +20,7 @@
 
 package it.unitn.ing.rista.diffr;
 
+import it.unitn.ing.rista.awt.TexturePlot;
 import it.unitn.ing.rista.util.*;
 import it.unitn.ing.rista.io.cif.*;
 import it.unitn.ing.jgraph.ColorMap;
@@ -508,7 +509,7 @@ public class Reflection {
     return value;
   }
 
-  public double[][] getPoleFigureGrid(int numberofPoints, double maxAngle) {
+/*  public double[][] getPoleFigureGrid(int numberofPoints, double maxAngle) {
     double[][] value = null;
     Phase aphase = getParent();
     Texture texturemodel = aphase.getActiveTexture();
@@ -517,7 +518,7 @@ public class Reflection {
     if (value == null)
       return new double[numberofPoints][numberofPoints];
 
-    return Texture.rotatePoleFigure(value);
+    return value;
   }
 
   public double[] getPoleFigureGrid(double[] x, double[] y) {
@@ -526,7 +527,7 @@ public class Reflection {
     if (texturemodel != null)
       y = texturemodel.getPoleFigureGrid(this, x, y);
     return y;  // todo rotate 90.0 for phi
-  }
+  }*/
 
   public double[][] getExpPoleFigureGrid() {
     Phase aphase = getParent();
@@ -584,7 +585,7 @@ public class Reflection {
       value = strainmodel.getPoleFigureGrid(this, numberofPoints, maxAngle);
     if (value == null)
       return new double[numberofPoints][numberofPoints];
-	  return Texture.rotatePoleFigure(value);
+	  return value;
 	}
 
   public double[][] getExpPoleFigureGridStrain(int numberofPoints, double maxAngle) {
@@ -595,7 +596,7 @@ public class Reflection {
       value = strainmodel.getExpPoleFigureGrid(this, numberofPoints, maxAngle);
     if (value == null)
       return new double[numberofPoints][numberofPoints];
-	  return Texture.rotatePoleFigure(value);
+	  return value;
   }
 
   public double[][] getShapeAbsorptionPoleFigureGrid(int numberofPoints, double maxAngle, Sample asample) {
@@ -604,7 +605,7 @@ public class Reflection {
       value = asample.getShapeAbsorptionPoleFigureGrid(this, numberofPoints, maxAngle);
     if (value == null)
       return new double[numberofPoints][numberofPoints];
-	  return Texture.rotatePoleFigure(value);
+	  return value;
   }
 
 /*  public double getShapeAbsorptionCorrection(DiffrDataFile adatafile, Sample asample) {

@@ -1511,5 +1511,211 @@ C
     return spectra;
   }
 
+  /**
+   * Rotates a pole-figure point.
+   *
+   * @param pointPolarDeg       input polar angle, normally [0, 90] degrees
+   * @param pointAzimuthDeg     input azimuth angle, [0, 360) degrees
+   * @param tiltPolarDeg        signed tilt angle, [-90, 90] degrees
+   * @param tiltAzimuthDeg      azimuth toward which the figure is tilted
+   *        foldToUpperHemisphere
+   *                            true for ordinary pole figures, where n and -n
+   *                            represent the same crystallographic pole
+   *
+   * @return {polarDeg, azimuthDeg}
+   */
+  public static double[] rotatePFangles(
+      double pointPolarDeg,
+      double pointAzimuthDeg,
+      double tiltPolarDeg,
+      double tiltAzimuthDeg) {
+
+    boolean foldToUpperHemisphere = true;
+    double alpha = -tiltPolarDeg;
+    double ca = Math.cos(alpha);
+    double sa = Math.sin(alpha);
+    double beta = tiltAzimuthDeg;
+    double cb = Math.cos(beta);
+    double sb = Math.sin(beta);
+
+    double theta = pointPolarDeg;
+    double phi = pointAzimuthDeg;
+
+    // Convert the point from spherical to Cartesian coordinates.
+    double x = Math.sin(theta) * Math.cos(phi);
+    double y = Math.sin(theta) * Math.sin(phi);
+    double z = Math.cos(theta);
+
+    /*
+     * Rotation:
+     *
+     * R = Rz(beta) * Ry(alpha) * Rz(-beta)
+     *
+     * A positive alpha tilts the north pole toward azimuth beta.
+     */
+
+    // Rz(-beta)
+
+    double x1 = cb * x + sb * y;
+    double y1 = -sb * x + cb * y;
+    double z1 = z;
+
+    // Ry(alpha)
+
+    double x2 = ca * x1 + sa * z1;
+    double y2 = y1;
+    double z2 = -sa * x1 + ca * z1;
+
+    // Rz(beta)
+    double xr = cb * x2 - sb * y2;
+    double yr = sb * x2 + cb * y2;
+    double zr = z2;
+
+    /*
+     * In a crystallographic pole figure, the directions n and -n are
+     * normally equivalent. Fold a lower-hemisphere result back into
+     * the upper hemisphere.
+     */
+    if (foldToUpperHemisphere && zr < 0.0) {
+      xr = -xr;
+      yr = -yr;
+      zr = -zr;
+    }
+
+    // Protect acos against small floating-point errors.
+    zr = Math.max(-1.0, Math.min(1.0, zr));
+
+    double resultPolar = Math.acos(zr);
+    double resultAzimuth = Math.atan2(yr, xr);
+
+    // Normalize the azimuth to [0, 360).
+    resultAzimuth = normalizeAzimuth(resultAzimuth);
+
+    // At the center, azimuth is mathematically undefined.
+    if (Math.hypot(xr, yr) < 1.0e-12) {
+      resultAzimuth = 0.0;
+    }
+
+    return new double[] {resultPolar, resultAzimuth};
+  }
+
+  /**
+   * Rotates a pole-figure point.
+   *
+   * @param pointPolarDeg       input polar angle, normally [0, 90] degrees
+   * @param pointAzimuthDeg     input azimuth angle, [0, 360) degrees
+   * @param tiltPolarDeg        signed tilt angle, [-90, 90] degrees
+   * @param tiltAzimuthDeg      azimuth toward which the figure is tilted
+   *        foldToUpperHemisphere
+   *                            true for ordinary pole figures, where n and -n
+   *                            represent the same crystallographic pole
+   *
+   * @return {polarDeg, azimuthDeg}
+   */
+  public static double[][] rotatePFangles(
+      double pointPolarDeg[],
+      double pointAzimuthDeg[],
+      double tiltPolarDeg,
+      double tiltAzimuthDeg) {
+
+    boolean foldToUpperHemisphere = true;
+    double alpha = tiltPolarDeg;
+    double ca = Math.cos(alpha);
+    double sa = Math.sin(alpha);
+    double beta = tiltAzimuthDeg;
+    double cb = Math.cos(beta);
+    double sb = Math.sin(beta);
+
+    int number = pointPolarDeg.length;
+
+    double[][] resultPolarAzimuth = new double[2][number];
+
+    for (int i = 0; i < number; i++) {
+      double theta = pointPolarDeg[i];
+      double phi = pointAzimuthDeg[i];
+
+      // Convert the point from spherical to Cartesian coordinates.
+      double x = Math.sin(theta) * Math.cos(phi);
+      double y = Math.sin(theta) * Math.sin(phi);
+      double z = Math.cos(theta);
+
+      /*
+       * Rotation:
+       *
+       * R = Rz(beta) * Ry(alpha) * Rz(-beta)
+       *
+       * A positive alpha tilts the north pole toward azimuth beta.
+       */
+
+      // Rz(-beta)
+
+      double x1 = cb * x + sb * y;
+      double y1 = -sb * x + cb * y;
+      double z1 = z;
+
+      // Ry(alpha)
+
+      double x2 = ca * x1 + sa * z1;
+      double y2 = y1;
+      double z2 = -sa * x1 + ca * z1;
+
+      // Rz(beta)
+      double xr = cb * x2 - sb * y2;
+      double yr = sb * x2 + cb * y2;
+      double zr = z2;
+
+      /*
+       * In a crystallographic pole figure, the directions n and -n are
+       * normally equivalent. Fold a lower-hemisphere result back into
+       * the upper hemisphere.
+       */
+      if (foldToUpperHemisphere && zr < 0.0) {
+        xr = -xr;
+        yr = -yr;
+        zr = -zr;
+      }
+
+      // Protect acos against small floating-point errors.
+      zr = Math.max(-1.0, Math.min(1.0, zr));
+
+      resultPolarAzimuth[0][i] = Math.acos(zr);
+      resultPolarAzimuth[1][i] = Math.atan2(yr, xr);
+
+      // Normalize the azimuth to [0, 360).
+      resultPolarAzimuth[1][i] = normalizeAzimuth(resultPolarAzimuth[1][i]);
+
+      // At the center, azimuth is mathematically undefined.
+      if (Math.hypot(xr, yr) < 1.0e-12) {
+        resultPolarAzimuth[1][i] = 0.0;
+      }
+
+    }
+
+    return resultPolarAzimuth;
+  }
+
+  private static double normalizeAzimuth(double angle) {
+    while (angle > Constants.PI2)
+      angle -= Constants.PI2;
+    while (angle < 0.0)
+      angle += Constants.PI2;
+    return angle;
+  }
 
 }
+
+/*
+  public static void main(String[] args) {
+    double[] result = rotate(
+        30.0,  // point polar angle
+        45.0,  // point azimuth
+        20.0,  // signed transformation angle
+        90.0,  // tilt direction
+        true   // fold into upper hemisphere
+    );
+
+    System.out.printf(
+        "Polar = %.6f°, azimuth = %.6f°%n",
+        result[0], result[1]);
+  }
+*/

@@ -108,9 +108,8 @@ public class PlotPFCoverage extends GraphFrame {
 
     if (reflex != null && asample != null) {
       c1.add("Center", lgraph);
-      setTitle("Pole figure coverage: " + Integer.toString(reflex.getH()) + " " +
-          Integer.toString(reflex.getK()) + " " +
-          Integer.toString(reflex.getL()) + " ");
+      setTitle("Pole figure coverage: " + reflex.getH() + " " +
+          reflex.getK() + " " + reflex.getL());
 //          System.out.println("Loading data....");
 
       asample.prepareComputation();
@@ -122,7 +121,7 @@ public class PlotPFCoverage extends GraphFrame {
       boolean plotIncidentAndDiffraction = MaudPreferences.getBoolean("plotCoverage.plotIncidentAndDiffraction", false);
       double plotScaleFactorsBWZoom = MaudPreferences.getDouble("plotCoverage.useScaleFactorsBWZoom", 3.0);
       boolean forceNameDataset = MaudPreferences.getBoolean("plotCoverage.useAlwaysDatasetNames", false);
-	   Texture.rotatePoleFigureDeg = Texture.getAngleFromPolarNotation(MaudPreferences.getPref("PlotPF.NWSE", "N"));
+	    TexturePlot.rotatePoleFigureDeg = TexturePlot.getAngleFromPolarNotation(MaudPreferences.getPref("PlotPF.NWSE", "N"));
       boolean plotAlternateCoverage = false;
       if (Constants.testing) {
         plotAlternateCoverage = MaudPreferences.getBoolean("plotCoverage.plotAlternateCoverage", false);
@@ -149,7 +148,8 @@ public class PlotPFCoverage extends GraphFrame {
 				    double min = 1.0E150;
 				    double max = -1.0E150;
 				    j = 0;
-				    for (i = 0; i < adataset.activedatafilesnumber(); i++) {
+            Geometry geometry = adataset.getInstrument().getGeometry();
+            for (i = 0; i < adataset.activedatafilesnumber(); i++) {
 					    DiffrDataFile adatafile = adataset.getActiveDataFile(i);
 					    for (int ppp = 0; ppp < adatafile.positionsPerPattern; ppp++) {
                 for (int l = 0; l < adatafile.radiationsNumber; l++) {
@@ -173,14 +173,16 @@ public class PlotPFCoverage extends GraphFrame {
                       angles = adatafile.getAlternateTextureAngles(position);
                     else
                       angles = adatafile.getTextureAngles(position, ppp);
-                    double[] iangles = adatafile.getIncidentAndDiffractionAngles(position);
+                    double[] iangles = geometry.getIncidentAndDiffractionAngles(adatafile,
+                        adatafile.getTiltingAngle(),
+                        adataset.getSample().getSampleAngles(), position);
 
                     double projection = Constants.sqrt2 * Math.sin(angles[0] * Constants.DEGTOPI / 2.0);
 //            System.out.println(angles[0] + " " + angles[1]);
                     if (angles[0] > 90.) {
                       projection = Constants.sqrt2 * Math.sin((180. - angles[0]) * Constants.DEGTOPI / 2.0);
                     }
-                    angles[1] += Texture.rotatePoleFigureDeg;    // test ODF beta angle problem
+                    angles[1] += TexturePlot.rotatePoleFigureDeg;    // test ODF beta angle problem
                     data[0] = projection * Math.cos(angles[1] * Constants.DEGTOPI);
                     data[1] = projection * Math.sin(angles[1] * Constants.DEGTOPI);
 
@@ -276,6 +278,7 @@ public class PlotPFCoverage extends GraphFrame {
 			    for (int n = 0; n < nd; n++) {
 				    int totalPlotting = 0;
 				    DataFileSet adataset = asample.getActiveDataSet(n);
+            Geometry geometry = adataset.getInstrument().getGeometry();
 				    np = adataset.getNumberOfTexturePoints(aphase, hklnumbersel);
 				    double[] angles = null;
 				    double data[] = new double[2 * np * multi];
@@ -302,14 +305,16 @@ public class PlotPFCoverage extends GraphFrame {
                       max = color_data[i];
                     double position = adatafile.getPositions(aphase)[hklnumbersel][ppp][l];
                     angles = adatafile.getTextureAngles(position, ppp);
-                    double[] iangles = adatafile.getIncidentAndDiffractionAngles(position);
+                    double[] iangles = geometry.getIncidentAndDiffractionAngles(adatafile,
+                        adatafile.getTiltingAngle(),
+                        adataset.getSample().getSampleAngles(), position);
 
                     double projection = Constants.sqrt2 * Math.sin(angles[0] * Constants.DEGTOPI / 2.0);
 //            System.out.println(angles[0] + " " + angles[1]);
                     if (angles[0] > 90.) {
                       projection = Constants.sqrt2 * Math.sin((180. - angles[0]) * Constants.DEGTOPI / 2.0);
                     }
-                    angles[1] += Texture.rotatePoleFigureDeg;    // test ODF beta angle problem
+                    angles[1] += TexturePlot.rotatePoleFigureDeg;    // test ODF beta angle problem
                     data[j] = projection * Math.cos(angles[1] * Constants.DEGTOPI);
                     data[j + 1] = projection * Math.sin(angles[1] * Constants.DEGTOPI);
 

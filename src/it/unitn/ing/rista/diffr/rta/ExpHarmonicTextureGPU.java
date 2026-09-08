@@ -426,7 +426,7 @@ public class ExpHarmonicTextureGPU extends HarmonicTexture {
     return PFreconstructed;
   }
 
-  public double[][] getPoleFigureGrid(Reflection refl, int numberofPoints, double maxAngle) {
+  public double[][] getPoleFigureGrid(Reflection refl, int numberofPoints, double maxAngle, double polar, double azimuth) {
 
     int h = refl.getH();
     int k = refl.getK();
@@ -450,6 +450,9 @@ public class ExpHarmonicTextureGPU extends HarmonicTexture {
 
     double[][] texture_angles = new double[2][numberofPoints * numberofPoints];
     boolean[] included = new boolean[numberofPoints * numberofPoints];
+    polar *= Constants.DEGTOPI;
+    azimuth *= Constants.DEGTOPI;
+
 
     double x, y, r;
     double dxy = 2.0 * maxAngle / numberofPoints;
@@ -462,24 +465,25 @@ public class ExpHarmonicTextureGPU extends HarmonicTexture {
         x = (j + 0.5) * dxy - maxAngle;
         y = (i + 0.5) * dxy - maxAngle;
         r = Math.sqrt(x * x + y * y);
-        if (r == 0.0) {
-          texture_angles[0][countIncluded] = 0.0f;
-          texture_angles[1][countIncluded++] = 0.0f;
-          included[count++] = true;
-        } else if (r < maxAngle) {
-          double phaseAng = Math.atan2(x, y);
-          if (phaseAng < 0.0)
-            phaseAng += Constants.PI2;
-          texture_angles[0][countIncluded] = 2.0f * Math.asin(r / Constants.sqrt2);
-          if (texture_angles[0][countIncluded] < 0.0) {
-            texture_angles[0][countIncluded] = -texture_angles[0][countIncluded];
-            phaseAng += Constants.PI;
-            while (phaseAng >= Constants.PI2)
-              phaseAng -= Constants.PI2;
+        if (r < maxAngle) {
+          if (r == 0.0) {
+            texture_angles[0][countIncluded] = 0.0f;
+            texture_angles[1][countIncluded++] = 0.0f;
+          } else {
+            double phaseAng = Math.atan2(x, y);
+            if (phaseAng < 0.0)
+              phaseAng += Constants.PI2;
+            texture_angles[0][countIncluded] = 2.0f * Math.asin(r / Constants.sqrt2);
+            if (texture_angles[0][countIncluded] < 0.0) {
+              texture_angles[0][countIncluded] = -texture_angles[0][countIncluded];
+              phaseAng += Constants.PI;
+              while (phaseAng >= Constants.PI2)
+                phaseAng -= Constants.PI2;
+            }
+            texture_angles[1][countIncluded++] = phaseAng;
           }
-          texture_angles[1][countIncluded++] = phaseAng;
           included[count++] = true;
-//          System.out.println(texture_angles[0] + " " + texture_angles[1]);
+//          Misc.println(texture_angles[0] + " " + texture_angles[1]);
 
         } else {
           PFreconstructed[i][j] = Double.NaN;
@@ -489,9 +493,13 @@ public class ExpHarmonicTextureGPU extends HarmonicTexture {
 
     double[][] new_texture_angles = new double[2][countIncluded];
 
-    for (int i = 0; i < countIncluded; i++)
+    for (int i = 0; i < countIncluded; i++) {
+      double[] newTextureAngles = Angles.rotatePFangles(
+          texture_angles[0][i], texture_angles[1][i],
+          polar, azimuth);
       for (int j = 0; j < 2; j++)
-        new_texture_angles[j][i] = texture_angles[j][i];
+        new_texture_angles[j][i] = newTextureAngles[j];
+    }
 
     double[] textureFactors = computeTextureFactor(new_texture_angles, sctf, fhir, inv);
 

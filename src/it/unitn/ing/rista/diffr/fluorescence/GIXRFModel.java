@@ -257,7 +257,9 @@ public class GIXRFModel extends Fluorescence {
 
 		double[][] complexPermittivity = new double[layersNumber][2];
 
-		double[] incidentDiffracted = adatafile.getIncidentAndDiffractionAngles(0);
+		double[] incidentDiffracted = geometry.getIncidentAndDiffractionAngles(adatafile,
+        adatafile.getTiltingAngle(),
+        asample.getSampleAngles(), 0);
 //		System.out.println(incidentDiffracted[1]);
 //	  incidentDiffracted[0] *= Constants.DEGTOPI;
 

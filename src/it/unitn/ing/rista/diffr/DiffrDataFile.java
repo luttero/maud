@@ -2901,14 +2901,14 @@ public class DiffrDataFile extends XRDcat {
     xvalue = revertXDataForPlot(xvalue, 0);
     if (isInsideHoles(xvalue))
     	return Double.NaN;
-    return getInterpolatedIntensityAt(xvalue, 1);
+    return getInterpolatedIntensityAt(xvalue, 2);
   }
 
 	public double getInterpolatedFitForSummation(double xvalue) {
 		xvalue = revertXDataForPlot(xvalue, 0);
 		if (isInsideHoles(xvalue))
 			return Double.NaN;
-		return getInterpolatedFitAt(xvalue, 1);
+		return getInterpolatedFitAt(xvalue, 2);
 	}
 
 	public double getInterpolatedFitSqrtIntensity(double xvalue, int exponent, int mode) {
@@ -3436,13 +3436,13 @@ public class DiffrDataFile extends XRDcat {
     return getDataFileSet().getAlternateTextureAngles(this, getTiltingAngle(), twothetaang);
   }
 
-	public double[] getIncidentAndDiffractionAngles(double twothetaang) {
+/*	public double[] getIncidentAndDiffractionAngles(double twothetaang) {
 		DataFileSet adataset = getDataFileSet();
 		Geometry ageometry = adataset.getInstrument().getGeometry();
 		double[] angles = ageometry.getIncidentAndDiffractionAngles(this, getTiltingAngle(),
 				adataset.getSample().getSampleAngles(), twothetaang);
 		return angles;
-	}
+	}*/
 
   public double[] getCoordinatesForDspacing(double d) {
     double[] position;

@@ -551,11 +551,11 @@ public class HarmonicTexture extends Texture implements Function {
     return odf;
   }
 
-  public double[][] getExpPoleFigureGrid(Reflection refl, int numberofPoints, double maxAngle) {
-    return getPoleFigureGrid(refl, numberofPoints, maxAngle);
+  public double[][] getExpPoleFigureGrid(Reflection refl, int numberofPoints, double maxAngle, double polar, double azimuth) {
+    return getPoleFigureGrid(refl, numberofPoints, maxAngle, polar, azimuth);
   }
 
-  public double[][] getPoleFigureGrid(Reflection refl, int numberofPoints, double maxAngle) {
+  public double[][] getPoleFigureGrid(Reflection refl, int numberofPoints, double maxAngle, double polar, double azimuth) {
 
     double[][] PFreconstructed = new double[numberofPoints][numberofPoints];
 
@@ -567,35 +567,38 @@ public class HarmonicTexture extends Texture implements Function {
 //		Phase aphase = (Phase) refl.getParent();
     applySymmetryRules();
 //		aphase.sghklcompute(false);
+    polar *= Constants.DEGTOPI;
+    azimuth *= Constants.DEGTOPI;
 
     for (int i = 0; i < numberofPoints; i++)
       for (int j = 0; j < numberofPoints; j++) {
         x = (j + 0.5) * dxy - maxAngle;
         y = (i + 0.5) * dxy - maxAngle;
         r = Math.sqrt(x * x + y * y);
-        if (r == 0.0) {
-          texture_angles[0] = 0.0f;
-          texture_angles[1] = 0.0f;
-          PFreconstructed[i][j] = computeTextureFactor(refl.phi[0], refl.beta[0],
-              texture_angles[0],
-              texture_angles[1]);
-        } else if (r < maxAngle) {
-          double phaseAng = Math.atan2(x, y);
-          if (phaseAng < 0.0)
-            phaseAng += Constants.PI2;
-          texture_angles[0] = 2.0f * (double) Math.asin(r / Constants.sqrt2);
-          if (texture_angles[0] < 0.0) {
-            texture_angles[0] = -texture_angles[0];
-            phaseAng += Constants.PI;
-            while (phaseAng >= Constants.PI2)
-              phaseAng -= Constants.PI2;
-          }
-          texture_angles[1] = (double) phaseAng;
+        if (r < maxAngle) {
+          if (r == 0.0) {
+            texture_angles[0] = 0.0f;
+            texture_angles[1] = 0.0f;
+          } else {
+            double phaseAng = Math.atan2(x, y);
+            if (phaseAng < 0.0)
+              phaseAng += Constants.PI2;
+            texture_angles[0] = 2.0f * Math.asin(r / Constants.sqrt2);
+            if (texture_angles[0] < 0.0) {
+              texture_angles[0] = -texture_angles[0];
+              phaseAng += Constants.PI;
+              while (phaseAng >= Constants.PI2)
+                phaseAng -= Constants.PI2;
+            }
+            texture_angles[1] = phaseAng;
 //					System.out.println(Double.toXRDcatString(texture_angles[0]) + " " + Double.toXRDcatString(texture_angles[1]));
-
+          }
+          double[] newTextureAngles = Angles.rotatePFangles(
+              texture_angles[0], texture_angles[1],
+              polar, azimuth);
           PFreconstructed[i][j] = computeTextureFactor(refl.phi[0], refl.beta[0],
-              texture_angles[0],
-              texture_angles[1]);
+              newTextureAngles[0],
+              newTextureAngles[1]);
         } else
           PFreconstructed[i][j] = Double.NaN;
       }
@@ -2316,11 +2319,11 @@ public class HarmonicTexture extends Texture implements Function {
       JPanel jPanel8 = new JPanel();
       jPanel8.setLayout(new FlowLayout(FlowLayout.LEFT, 6, 6));
       principalPanel.add(BorderLayout.NORTH, jPanel8);
-      jPanel8.add(new JLabel("Sample symmetry: "));
+      jPanel8.add(new JLabel("Texture symmetry: "));
       symmetryCB = new JComboBox();
       for (int i = 0; i < symmetrychoice.length; i++)
         symmetryCB.addItem(symmetrychoice[i]);
-      symmetryCB.setToolTipText("Set up expected sample symmetry");
+      symmetryCB.setToolTipText("Set up expected sample texture symmetry");
       jPanel8.add(symmetryCB);
 
       harmonicCoefficientP = new HarmonicPane(parent, false);

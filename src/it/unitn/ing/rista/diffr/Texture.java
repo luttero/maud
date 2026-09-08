@@ -52,8 +52,6 @@ import fr.ensicaen.odfplot.isometricVisualizer.IsometricFrame;*/
 
 public class Texture extends XRDcat {
 
-  public static double rotatePoleFigureDeg = getAngleFromPolarNotation(MaudPreferences.getPref("PlotPF.NWSE", "N"));
-  public static double rotateAlpha = MaudPreferences.getDouble("Texture.phiZero", 0.0);
   public double[] fnorm = {0.0, 0.0, 10.0, 0.0, 0.0, 0.0, 0.0};
 
   public static String[] prefs = {"texture.ODFdefaultResolution", "texture.PFintegrationStep",
@@ -355,7 +353,7 @@ public class Texture extends XRDcat {
     return Double.toString(fnorm[0]);
   }
 
-  public double[][] getPoleFigureGrid(Reflection refl, int numberofPoints, double maxAngle) {
+  public double[][] getPoleFigureGrid(Reflection refl, int numberofPoints, double maxAngle, double polar, double azimuth) {
 
     return new double[numberofPoints][numberofPoints];
   }
@@ -516,13 +514,14 @@ public class Texture extends XRDcat {
   }
 
   public BufferedImage getPoleFigureBufferedImage(int w, int h, gov.noaa.pmel.sgt.ColorMap colorMap, Reflection pole,
-                                                  int mode, int resolutionPoints, double maxAngle, int zoom) {
+                                                  int mode, int resolutionPoints, double maxAngle, int zoom,
+                                                  double polar, double azimuth) {
     BufferedImage bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
 
     Graphics2D g = bi.createGraphics();
 
     PlotPoleFigure.createGrid(getFilePar().getSample(0), pole, mode, resolutionPoints,
-        maxAngle, zoom, filterWidth);
+        maxAngle, zoom, filterWidth, polar, azimuth);
 
 
     // drawing the circle around
@@ -604,46 +603,6 @@ public class Texture extends XRDcat {
       update(false);
       refreshComputation = true;
     }
-  }
-
-  public static double getAngleFromPolarNotation(String orientation) {
-    if (orientation.toLowerCase().startsWith("e"))
-      return 0.0;
-    if (orientation.toLowerCase().startsWith("w"))
-      return 180.0;
-    if (orientation.toLowerCase().startsWith("s"))
-      return 270.0;
-    return 90.0;  // North
-  }
-
-  public static double[][] rotatePoleFigure(double[][] matrix) {
-    String orientation = MaudPreferences.getPref("PlotPF.NWSE", "N");
-
-    if (orientation.toLowerCase().startsWith("e"))
-      return matrix;
-
-    int elements = matrix.length;
-    double[][] rotMatrix = new double[elements][elements];
-
-    if (orientation.toLowerCase().startsWith("w")) {
-      for (int i = 0; i < elements; i++)
-        for (int j = 0; j < elements; j++)
-          rotMatrix[i][j] = matrix[i][elements - 1 - j];
-      return rotMatrix;
-    }
-    if (orientation.toLowerCase().startsWith("s")) {
-      for (int i = 0; i < elements; i++)
-        for (int j = 0; j < elements; j++)
-          rotMatrix[i][j] = matrix[elements - 1 - j][elements - 1 - i];
-      return rotMatrix;
-    }
-
-// North
-    for (int i = 0; i < elements; i++)
-      for (int j = 0; j < elements; j++)
-        rotMatrix[i][j] = matrix[j][elements - 1 - i];
-
-    return rotMatrix;
   }
 
   public JOptionsDialog getOptionsDialog(Frame parent) {

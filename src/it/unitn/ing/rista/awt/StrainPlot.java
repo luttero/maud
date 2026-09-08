@@ -23,17 +23,9 @@ package it.unitn.ing.rista.awt;
 import java.awt.*;
 
 import it.unitn.ing.rista.diffr.*;
-import it.unitn.ing.rista.models.*;
 import it.unitn.ing.rista.util.*;
 
 import java.util.*;
-import javax.swing.*;
-import java.awt.event.*;
-import javax.swing.event.*;
-import javax.swing.border.*;
-import javax.swing.table.*;
-
-import it.unitn.ing.rista.render3d.*;
 
 /**
  * Display a StrainPlot window to manage pole figure and coverage plotting.
@@ -74,6 +66,9 @@ public class StrainPlot extends TexturePlot {
     maxAngle = Constants.sqrt2 * Math.sin(maxAngle * Constants.DEGTOPI / 2.0);
     MaudPreferences.setPref(maxAngleString, maxAngleS);
 
+    double polarTrasform = 0.0;
+    double azimuthTrasform = 0.0;
+
     int colrsNumber = expansionJS.getValue();
     MaudPreferences.setPref(numberofColors, colrsNumber);
 
@@ -109,12 +104,12 @@ public class StrainPlot extends TexturePlot {
       (new PlotPFCoverage(this, thesample, thephase, hklnumbersel)).setVisible(true);
     else if ((coverage && reconstructed) && twoDmap)
       (new PlotPoleFigure(this, thesample, poleList, 4, lastResolution, zoom, 
-              filterWidth, grayShadedCB.isSelected(), maxAngle, false, colrsNumber)).setVisible(true);
+              filterWidth, grayShadedCB.isSelected(), maxAngle, false, colrsNumber, polarTrasform, azimuthTrasform)).setVisible(true);
     else if (reconstructed && !twoDmap)
       show3DPole(this, poleList[0], -1, lastResolution, maxAngle, false, colrsNumber);
     else if (reconstructed)
       (new PlotPoleFigure(this, thesample, poleList, 5, lastResolution, zoom, 
-              filterWidth, grayShadedCB.isSelected(), maxAngle, false, colrsNumber)).setVisible(true);
+              filterWidth, grayShadedCB.isSelected(), maxAngle, false, colrsNumber, polarTrasform, azimuthTrasform)).setVisible(true);
     return;
   }
 

@@ -21,7 +21,8 @@
 package it.unitn.ing.rista.render3d;
 
 import it.unitn.ing.jgraph.ThermalColorMap;
-import it.unitn.ing.rista.diffr.Reflection;
+import it.unitn.ing.rista.awt.TexturePlot;
+import it.unitn.ing.rista.diffr.*;
 import it.unitn.ing.rista.util.MoreMath;
 import jgl.GL;
 
@@ -84,12 +85,20 @@ public class PoleRendering3Djgl extends AnimatedRendering3Djgl {
     drho = (float) (2.0 * maxAngle / slices);
 
     Reflection poleFigure = (Reflection) objectToRender;
+    Phase aphase = poleFigure.getParent();
 
     double PF[][] = null;
-    if (mode > 0)
-      PF = poleFigure.getPoleFigureGrid(slices + 1, maxAngle);
-    else {
+    if (mode > 0) {
+      Texture texturemodel = aphase.getActiveTexture();
+      if (texturemodel != null)
+        PF = texturemodel.getPoleFigureGrid(poleFigure, slices + 1, maxAngle, 0, 0);
+      if (PF != null)
+        PF = TexturePlot.rotatePoleFigure(PF);
+      else
+        return;
+    } else {
       PF = poleFigure.getPoleFigureGridStrain(slices + 1, maxAngle);
+      PF = TexturePlot.rotatePoleFigure(PF);
       mode = -mode;
       random = 1.0f;
       scaleStrain = 100;

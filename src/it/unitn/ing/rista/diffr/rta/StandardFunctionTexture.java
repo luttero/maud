@@ -720,8 +720,8 @@ public class StandardFunctionTexture extends Texture {
     return odf / totalIntensity;
   }
 
-  public double[][] getExpPoleFigureGrid(Reflection refl, int numberofPoints, double maxAngle) {
-    return getPoleFigureGrid(refl, numberofPoints, maxAngle);
+  public double[][] getExpPoleFigureGrid(Reflection refl, int numberofPoints, double maxAngle, double polar, double azimuth) {
+    return getPoleFigureGrid(refl, numberofPoints, maxAngle, polar, azimuth);
   }
 
   public void addTextureBroadening() {
@@ -747,7 +747,7 @@ public class StandardFunctionTexture extends Texture {
     }
   }
 
-  public double[][] getPoleFigureGrid(Reflection refl, int numberofPoints, double maxAngle) {
+  public double[][] getPoleFigureGrid(Reflection refl, int numberofPoints, double maxAngle, double polar, double azimuth) {
 
     double[][] PFreconstructed = new double[numberofPoints][numberofPoints];
 
@@ -755,6 +755,9 @@ public class StandardFunctionTexture extends Texture {
 
     double x, y, r;
     double dxy = 2.0 * maxAngle / numberofPoints;
+
+    polar *= Constants.DEGTOPI;
+    azimuth *= Constants.DEGTOPI;
 
 //		Phase aphase = (Phase) refl.getParent();
     applySymmetryRules();
@@ -766,29 +769,29 @@ public class StandardFunctionTexture extends Texture {
         x = (j + 0.5) * dxy - maxAngle;
         y = (i + 0.5) * dxy - maxAngle;
         r = Math.sqrt(x * x + y * y);
-        if (r == 0.0) {
-          texture_angles[0] = 0.0f;
-          texture_angles[1] = 0.0f;
-          PFreconstructed[i][j] = computeTextureFactor(refl.phi[0], refl.beta[0],
-              texture_angles[0],
-              texture_angles[1]);
-        } else if (r < maxAngle) {
-          double phaseAng = Math.atan2(x, y);
-          if (phaseAng < 0.0)
-            phaseAng += Constants.PI2;
-          texture_angles[0] = 2.0f * (double) Math.asin(r / Constants.sqrt2);
-          if (texture_angles[0] < 0.0) {
-            texture_angles[0] = -texture_angles[0];
-            phaseAng += Constants.PI;
-            while (phaseAng >= Constants.PI2)
-              phaseAng -= Constants.PI2;
+        if (r < maxAngle) {
+          if (r == 0.0) {
+            texture_angles[0] = 0.0f;
+            texture_angles[1] = 0.0f;
+          } else {
+            double phaseAng = Math.atan2(x, y);
+            if (phaseAng < 0.0)
+              phaseAng += Constants.PI2;
+            texture_angles[0] = 2.0f * Math.asin(r / Constants.sqrt2);
+            if (texture_angles[0] < 0.0) {
+              texture_angles[0] = -texture_angles[0];
+              phaseAng += Constants.PI;
+              while (phaseAng >= Constants.PI2)
+                phaseAng -= Constants.PI2;
+            }
+            texture_angles[1] = phaseAng;
           }
-          texture_angles[1] = (double) phaseAng;
-//					System.out.println(Double.toXRDcatString(texture_angles[0]) + " " + Double.toXRDcatString(texture_angles[1]));
-
+          double[] newTextureAngles = Angles.rotatePFangles(
+              texture_angles[0], texture_angles[1],
+              polar, azimuth);
           PFreconstructed[i][j] = computeTextureFactor(refl.phi[0], refl.beta[0],
-              texture_angles[0],
-              texture_angles[1]);
+              newTextureAngles[0],
+              newTextureAngles[1]);
         } else
           PFreconstructed[i][j] = Double.NaN;
       }
@@ -818,14 +821,14 @@ public class StandardFunctionTexture extends Texture {
         double phaseAng = Math.atan2(x[i], y[i]);
         if (phaseAng < 0.0)
           phaseAng += Constants.PI2;
-        texture_angles[0] = 2.0f * (double) Math.asin(r / Constants.sqrt2);
+        texture_angles[0] = 2.0f * Math.asin(r / Constants.sqrt2);
         if (texture_angles[0] < 0.0) {
           texture_angles[0] = -texture_angles[0];
           phaseAng += Constants.PI;
           while (phaseAng >= Constants.PI2)
             phaseAng -= Constants.PI2;
         }
-        texture_angles[1] = (double) phaseAng;
+        texture_angles[1] = phaseAng;
 //					System.out.println(Double.toXRDcatString(texture_angles[0]) + " " + Double.toXRDcatString(texture_angles[1]));
 
         y[i] = computeTextureFactor(refl.phi[0], refl.beta[0],
@@ -926,11 +929,11 @@ public class StandardFunctionTexture extends Texture {
       JPanel jPanel8 = new JPanel();
       jPanel8.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
       lowerPanel.add(jPanel8);
-      jPanel8.add(new JLabel("Sample symmetry: "));
+      jPanel8.add(new JLabel("Texture symmetry: "));
       symmetryCB = new JComboBox();
       for (int i = 0; i < symmetrychoice.length; i++)
         symmetryCB.addItem(symmetrychoice[i]);
-      symmetryCB.setToolTipText("Set up unmeasured sample symmetries");
+      symmetryCB.setToolTipText("Set up unmeasured sample texture symmetries");
       jPanel8.add(symmetryCB);
 
       JPanel /* jPanel10 = new JPanel();

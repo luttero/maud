@@ -7,12 +7,36 @@
     <list default="true" id="61caab25-241f-4ab1-85f0-b423f2950da9" name="Changes" comment="Fix to post on the website">
       <change beforePath="$PROJECT_DIR$/.github/workflows/jekyll-gh-pages.yml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Maud.iws" beforeDir="false" afterPath="$PROJECT_DIR$/Maud.iws" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libs/current/Examples.jar" beforeDir="false" afterPath="$PROJECT_DIR$/libs/current/Examples.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libs/current/Files.jar" beforeDir="false" afterPath="$PROJECT_DIR$/libs/current/Files.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libs/current/Help.jar" beforeDir="false" afterPath="$PROJECT_DIR$/libs/current/Help.jar" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/libs/current/ij.jar" beforeDir="false" afterPath="$PROJECT_DIR$/libs/current/ij.jar" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/libs/current/miscLib.jar" beforeDir="false" afterPath="$PROJECT_DIR$/libs/current/miscLib.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/GSASDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/data/GSASDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/help/readme.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/help/readme.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/PlotPFCoverage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/PlotPFCoverage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/PlotPoleFigure.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/PlotPoleFigure.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/PlotRadialPoleFigure.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/PlotRadialPoleFigure.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/StrainPlot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/StrainPlot.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/TexturePlot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/TexturePlot.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/DataFileSet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/DataFileSet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/DiffrDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/DiffrDataFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Geometry.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Geometry.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Reflection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Reflection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Sample.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Sample.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Texture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/Texture.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/fluorescence/AngleEnergyMapFluorescence.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/fluorescence/AngleEnergyMapFluorescence.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/fluorescence/GIXRFModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/fluorescence/GIXRFModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/fluorescence/QuantitativeXRF.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/fluorescence/QuantitativeXRF.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/geometry/GeometryXRFInstrument.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/geometry/GeometryXRFInstrument.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rsa/HarmonicStrainRT.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rsa/HarmonicStrainRT.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/DiscreteODFTexture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/DiscreteODFTexture.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/ExpHarmonicTexture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/ExpHarmonicTexture.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/ExpHarmonicTextureGPU.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/ExpHarmonicTextureGPU.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/HarmonicTexture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/HarmonicTexture.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/StandardFunctionTexture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/StandardFunctionTexture.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/WIMVTexture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/rta/WIMVTexture.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sizestrain/SizeStrainHarmonicTexture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/sizestrain/SizeStrainHarmonicTexture.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/render3d/PoleRendering3Dgl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/render3d/PoleRendering3Dgl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/render3d/PoleRendering3Djgl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/render3d/PoleRendering3Djgl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/Angles.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/Angles.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/Constants.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,61 +74,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0" />
-      <entry key="MS500" value="1.0" />
-      <entry key="S2" value="1.0" />
-      <entry key="S5" value="1.0" />
-      <entry key="S10" value="1.0" />
-      <entry key="S30" value="1.0" />
-      <entry key="S60" value="1.0" />
-      <entry key="M2" value="1.000000000001436" />
-      <entry key="M5" value="1.000077678420131" />
-      <entry key="M10" value="1.032493641077265" />
-      <entry key="M15" value="1.276724032854859" />
-      <entry key="M30" value="3.847651241107512" />
-      <entry key="H1" value="11.062852204773979" />
-      <entry key="H2" value="20.406790703900587" />
-      <entry key="H4" value="28.84347713007908" />
-      <entry key="D1" value="126.92083590733057" />
-      <entry key="W1" value="1348.8342953229971" />
+      <entry key="MS100" value="1.6877709090698718" />
+      <entry key="MS500" value="1.928140638019442" />
+      <entry key="S2" value="2.1093069311968895" />
+      <entry key="S5" value="2.4317571948003716" />
+      <entry key="S10" value="2.658997156032641" />
+      <entry key="S30" value="2.870612067900746" />
+      <entry key="S60" value="2.9331102400233156" />
+      <entry key="M2" value="2.9659902639598084" />
+      <entry key="M5" value="3.0221809199981964" />
+      <entry key="M10" value="4.142861778389715" />
+      <entry key="M15" value="7.056308728872215" />
+      <entry key="M30" value="19.654837072983774" />
+      <entry key="H1" value="43.60402982653394" />
+      <entry key="H2" value="79.81280142441292" />
+      <entry key="H4" value="126.6624250846443" />
+      <entry key="D1" value="290.8732436858312" />
+      <entry key="W1" value="1512.0630797392782" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
       <entry key="MS500" value="0.0" />
       <entry key="S2" value="0.0" />
-      <entry key="S5" value="0.0" />
-      <entry key="S10" value="3.465128779078167E-221" />
-      <entry key="S30" value="3.260166603597161E-74" />
-      <entry key="S60" value="1.8057231622681186E-37" />
-      <entry key="M2" value="4.3002134913428917E-19" />
-      <entry key="M5" value="5.638140976017135E-8" />
-      <entry key="M10" value="3.6383257757711176E-4" />
-      <entry key="M15" value="0.00714271448015001" />
-      <entry key="M30" value="0.1443427945498716" />
-      <entry key="H1" value="0.6558186635754955" />
-      <entry key="H2" value="1.4015879697673161" />
-      <entry key="H4" value="2.06214526512344" />
-      <entry key="D1" value="10.702281605234216" />
-      <entry key="W1" value="324.90404964777974" />
+      <entry key="S5" value="1.4508376989223348E-149" />
+      <entry key="S10" value="3.8090044060522145E-75" />
+      <entry key="S30" value="1.5898002316054947E-25" />
+      <entry key="S60" value="4.604012912989866E-13" />
+      <entry key="M2" value="1.0186368149763457E-6" />
+      <entry key="M5" value="0.011087544720412467" />
+      <entry key="M10" value="0.3339586333609702" />
+      <entry key="M15" value="1.1107763753566529" />
+      <entry key="M30" value="4.025552971219507" />
+      <entry key="H1" value="8.586441441127445" />
+      <entry key="H2" value="13.938653379069658" />
+      <entry key="H4" value="19.433326056596737" />
+      <entry key="D1" value="35.025619224462396" />
+      <entry key="W1" value="341.9175100592559" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="2.674521773581006E-10" />
-      <entry key="MS500" value="0.012174446557195306" />
-      <entry key="S2" value="0.33217145352412786" />
-      <entry key="S5" value="0.6434946236506354" />
-      <entry key="S10" value="0.8021811663524863" />
-      <entry key="S30" value="0.9291606742509133" />
-      <entry key="S60" value="0.9639298077406432" />
-      <entry key="M2" value="0.9817992705963184" />
-      <entry key="M5" value="0.9927572969632664" />
-      <entry key="M10" value="1.0291853262578092" />
-      <entry key="M15" value="1.2813570039376085" />
-      <entry key="M30" value="3.9901560889681083" />
-      <entry key="H1" value="11.716690944168594" />
-      <entry key="H2" value="21.80662432333162" />
-      <entry key="H4" value="30.904374919944928" />
-      <entry key="D1" value="137.62172461649328" />
-      <entry key="W1" value="1673.7349475472631" />
+      <entry key="MS100" value="0.7595674571521475" />
+      <entry key="MS500" value="1.3148651249626968" />
+      <entry key="S2" value="1.8278483717280607" />
+      <entry key="S5" value="2.228496503810572" />
+      <entry key="S10" value="2.522072760276371" />
+      <entry key="S30" value="2.8134004827137638" />
+      <entry key="S60" value="2.9027473036490763" />
+      <entry key="M2" value="2.9503435119795336" />
+      <entry key="M5" value="3.026727497672391" />
+      <entry key="M10" value="4.470776382337592" />
+      <entry key="M15" value="8.15812351044526" />
+      <entry key="M30" value="23.66490497598837" />
+      <entry key="H1" value="52.171986975669235" />
+      <entry key="H2" value="93.73486266590562" />
+      <entry key="H4" value="146.08346844539028" />
+      <entry key="D1" value="325.8948084426976" />
+      <entry key="W1" value="1853.9768542906074" />
     </decayedShown>
   </component>
   <component name="ProblemsViewState">
@@ -168,8 +192,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-30f59d01ecdd-34e2839f716b-intellij.indexing.shared.core-IU-262.9437.185" />
-        <option value="bundled-js-predefined-d6986cc7102b-4abd2a77f808-JavaScript-IU-262.9437.185" />
+        <option value="bundled-jdk-30f59d01ecdd-a203e0a19954-intellij.indexing.shared.core-IU-262.10315.125" />
+        <option value="bundled-js-predefined-d6986cc7102b-4abd2a77f808-JavaScript-IU-262.10315.125" />
       </set>
     </attachedChunks>
   </component>
@@ -226,7 +250,11 @@
       <workItem from="1787587110486" duration="9840000" />
       <workItem from="1787625724314" duration="41354000" />
       <workItem from="1787844841063" duration="41343000" />
-      <workItem from="1788252031965" duration="32392000" />
+      <workItem from="1788252031965" duration="34258000" />
+      <workItem from="1788770407585" duration="635000" />
+      <workItem from="1788771068875" duration="22767000" />
+      <workItem from="1788852103427" duration="17000" />
+      <workItem from="1788852128131" duration="5117000" />
     </task>
     <task id="LOCAL-00001" summary="New version 5/2023&#10;Some modifications on GSASDataFile and more options for plotting types.">
       <created>1684773902547</created>

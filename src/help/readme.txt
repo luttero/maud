@@ -43,6 +43,10 @@ from the older one.
 
 Maud Version notes:
 
+(08/09/2026):   3.04. It's still "Hippo scattering".
+                Pole figures can be rotated now in the plotting
+                window.
+
 (04/09/2026):   3.03. It's still "Hippo scattering".
                 Fixed some problems with the menu mnemonics,
                 they all use the first letter of the menu item

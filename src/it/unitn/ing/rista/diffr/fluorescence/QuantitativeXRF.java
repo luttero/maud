@@ -166,7 +166,9 @@ public class QuantitativeXRF extends Fluorescence {
 		double[] fluorescence = new double[numberOfPoints];
 
 		double twothetadetector = detector.getThetaDetector(adatafile, 0);
-		double[] incidentDiffracted = adatafile.getIncidentAndDiffractionAngles(adatafile.get2ThetaValue());
+		double[] incidentDiffracted = geometry.getIncidentAndDiffractionAngles(adatafile,
+        adatafile.getTiltingAngle(),
+        asample.getSampleAngles(), adatafile.get2ThetaValue());
 //		System.out.println(adatafile.getLabel() + ", incident beam angle: " + incidentDiffracted[0] * Constants.PITODEG + ", exiting beam angle: " + incidentDiffracted[2] * Constants.PITODEG + " " + adatafile.getTiltingAngle()[4]);
 //	  incidentDiffracted[0] *= Constants.DEGTOPI;
 

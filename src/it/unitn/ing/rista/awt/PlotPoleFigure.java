@@ -50,8 +50,8 @@ public class PlotPoleFigure extends myJFrame {
 	PoleFigureMap[] ccolorMap = null;
 
 	public PlotPoleFigure(Frame parent, Sample asample, Reflection[] pole, int mode,
-	                      int numberofPoints, double zoom, double filterWidth,
-	                      boolean grayScale, double maxAngle, boolean logScale, int colrsNumber) {
+                        int numberofPoints, double zoom, double filterWidth,
+                        boolean grayScale, double maxAngle, boolean logScale, int colrsNumber, double polar, double azimuth) {
 
 		super(parent);
 
@@ -183,17 +183,15 @@ public class PlotPoleFigure extends myJFrame {
 			double[][] grid = null;
 			if (inverse) {
 				mode = -i - 1;
-				grid = createGrid(asample, pole[0], mode, numberofPoints, maxAngle, izoom, filterWidth);
+				grid = createGrid(asample, pole[0], mode, numberofPoints, maxAngle, izoom, filterWidth, polar, azimuth);
 			} else
-				grid = createGrid(asample, pole[i], mode, numberofPoints, maxAngle, izoom, filterWidth);
+				grid = createGrid(asample, pole[i], mode, numberofPoints, maxAngle, izoom, filterWidth, polar, azimuth);
 			if (prF != null)
 				prF.increaseProgressBarValue();
 			if (inverse)
 				label[i] = rollingString[i];
 			else
-				label[i] = Integer.toString(pole[i].getH()) + " " +
-						Integer.toString(pole[i].getK()) + " " +
-						Integer.toString(pole[i].getL());
+				label[i] = pole[i].getH() + " " + pole[i].getK() + " " + pole[i].getL();
 
 			listGrid[i] = grid;
 			for (int j = 0; j < gridNumber; j++)
@@ -345,19 +343,29 @@ public class PlotPoleFigure extends myJFrame {
 	}
 
 	public static double[][] createGrid(Sample asample, Reflection pole, int mode, int numberofPoints,
-	                                    double maxAngle, int zoom, double filterWidth) {
+                                      double maxAngle, int zoom, double filterWidth, double polar,
+                                      double azimuth) {
 		double PF[][] = null;
 		double[] texture_angles = null;
+    Phase aphase = pole.getParent();
 
 		switch (mode) {
 			case 0:
-				PF = pole.getPoleFigureGrid(numberofPoints, maxAngle);
+        Texture texturemodel = aphase.getActiveTexture();
+        if (texturemodel != null)
+          PF = texturemodel.getPoleFigureGrid(pole, numberofPoints, maxAngle, polar, azimuth);
+        if (PF != null)
+          PF = TexturePlot.rotatePoleFigure(PF);
+        else
+          return null;
 				break;
 			case 1:
 				PF = getExpPoleFigureGrid(pole.getExpPoleFigureGrid(), numberofPoints, maxAngle);
+        PF = TexturePlot.rotatePoleFigure(PF);
 				break;
 			case 2:
 				PF = pole.getShapeAbsorptionPoleFigureGrid(numberofPoints, maxAngle, asample);
+        PF = TexturePlot.rotatePoleFigure(PF);
 				break;
 			case -1:
 				texture_angles = new double[2];
@@ -379,17 +387,11 @@ public class PlotPoleFigure extends myJFrame {
 				break;
 			case 4:
 				PF = pole.getPoleFigureGridStrain(numberofPoints, maxAngle);
-/*            for (int i = 0; i < numberofPoints; i++)
-              for (int j = 0; j < numberofPoints; j++) {
-                PF[i][j] *= 1000;
-              }*/
+        PF = TexturePlot.rotatePoleFigure(PF);
 				break;
 			case 5:
 				PF = pole.getExpPoleFigureGridStrain(numberofPoints, maxAngle);
-/*            for (int i = 0; i < numberofPoints; i++)
-              for (int j = 0; j < numberofPoints; j++) {
-                PF[i][j] *= 1000;
-              }*/
+        PF = TexturePlot.rotatePoleFigure(PF);
 				break;
 			case 6:
 

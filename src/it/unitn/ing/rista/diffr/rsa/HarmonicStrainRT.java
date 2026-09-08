@@ -543,7 +543,7 @@ public class HarmonicStrainRT extends Strain {
       symmetryCB = new JComboBox();
       for (int i = 0; i < symmetrychoice.length; i++)
         symmetryCB.addItem(symmetrychoice[i]);
-      symmetryCB.setToolTipText("Set up expected sample symmetry");
+      symmetryCB.setToolTipText("Set up expected sample strain symmetry");
       jPanel8.add(symmetryCB);
 
       harmonicCoefficientP = new HarmonicPane(parent, false);

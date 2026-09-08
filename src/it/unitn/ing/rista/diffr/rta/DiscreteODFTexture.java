@@ -1503,7 +1503,7 @@ public class DiscreteODFTexture extends Texture {
       loadOdfFromFile();
   }
 
-  public double[][] getPoleFigureGrid(Reflection refl, int numberofPoints, double maxAngle) {
+  public double[][] getPoleFigureGrid(Reflection refl, int numberofPoints, double maxAngle, double polar, double azimuth) {
 
     int h = refl.getH();
     int k = refl.getK();
@@ -1533,6 +1533,9 @@ public class DiscreteODFTexture extends Texture {
     double[][] texture_angles = new double[2][numberofPoints * numberofPoints];
     boolean[] included = new boolean[numberofPoints * numberofPoints];
 
+    polar *= Constants.DEGTOPI;
+    azimuth *= Constants.DEGTOPI;
+
     double x, y, r;
     double dxy = 2.0 * maxAngle / numberofPoints;
 
@@ -1544,25 +1547,25 @@ public class DiscreteODFTexture extends Texture {
         x = (0.5 + j) * dxy - maxAngle;
         y = (0.5 + i) * dxy - maxAngle;
         r = Math.sqrt(x * x + y * y);
-        if (r == 0.0) {
-          texture_angles[0][countIncluded] = 0.0f;
-          texture_angles[1][countIncluded++] = 0.0f;
-          included[count++] = true;
-        } else if (r < maxAngle) {
-          double phaseAng = Math.atan2(x, y);
-          if (phaseAng < 0.0)
-            phaseAng += Constants.PI2;
-          texture_angles[0][countIncluded] = 2.0 * Math.asin(r / Constants.sqrt2);
-          if (texture_angles[0][countIncluded] < 0.0) {
-            texture_angles[0][countIncluded] = -texture_angles[0][countIncluded];
-            phaseAng += Constants.PI;
-            while (phaseAng >= Constants.PI2)
-              phaseAng -= Constants.PI2;
-          }
-          texture_angles[1][countIncluded++] = phaseAng;
-          included[count++] = true;
+        if (r < maxAngle) {
+          if (r == 0.0) {
+            texture_angles[0][countIncluded] = 0.0f;
+            texture_angles[1][countIncluded++] = 0.0f;
+          } else {
+            double phaseAng = Math.atan2(x, y);
+            if (phaseAng < 0.0)
+              phaseAng += Constants.PI2;
+            texture_angles[0][countIncluded] = 2.0 * Math.asin(r / Constants.sqrt2);
+            if (texture_angles[0][countIncluded] < 0.0) {
+              texture_angles[0][countIncluded] = -texture_angles[0][countIncluded];
+              phaseAng += Constants.PI;
+              while (phaseAng >= Constants.PI2)
+                phaseAng -= Constants.PI2;
+            }
+            texture_angles[1][countIncluded++] = phaseAng;
 //          System.out.println(texture_angles[0] + " " + texture_angles[1]);
-
+          }
+          included[count++] = true;
         } else {
           PFreconstructed[i][j] = Double.NaN;
           included[count++] = false;
@@ -1571,9 +1574,13 @@ public class DiscreteODFTexture extends Texture {
 
     double[][] new_texture_angles = new double[2][countIncluded];
 
-    for (int i = 0; i < countIncluded; i++)
+    for (int i = 0; i < countIncluded; i++) {
+      double[] newTextureAngles = Angles.rotatePFangles(
+          texture_angles[0][i], texture_angles[1][i],
+          polar, azimuth);
       for (int j = 0; j < 2; j++)
-        new_texture_angles[j][i] = texture_angles[j][i];
+        new_texture_angles[j][i] = newTextureAngles[j];
+    }
 
     double[] textureFactors = computeTextureFactor(new_texture_angles, sctf, fhir, inv, h, k, l, countIncluded);
 

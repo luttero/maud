@@ -732,7 +732,7 @@ public class WIMVTexture extends DiscreteODFTexture {
     return odf[nal][nb][nga];
   }
 
-  public double[][] getPoleFigureGrid(Reflection refl, int numberofPoints, double maxAngle) {
+  public double[][] getPoleFigureGrid(Reflection refl, int numberofPoints, double maxAngle, double polar, double azimuth) {
 
     int h = refl.getH();
     int k = refl.getK();
@@ -758,6 +758,8 @@ public class WIMVTexture extends DiscreteODFTexture {
     int inv = Uwimvuo.equiv(getLaueGroupNumber(), sctf);
 
     double texture_angles[] = new double[2];
+    polar *= Constants.DEGTOPI;
+    azimuth *= Constants.DEGTOPI;
 
     double x , y, r;
     double dxy = 2.0 * maxAngle / numberofPoints;
@@ -767,26 +769,29 @@ public class WIMVTexture extends DiscreteODFTexture {
         x = (j + 0.5) * dxy - maxAngle;
         y = (i + 0.5) * dxy - maxAngle;
         r = Math.sqrt(x * x + y * y);
-        if (r == 0.0) {
-          texture_angles[0] = 0.0f;
-          texture_angles[1] = 0.0f;
-          PFreconstructed[i][j] = computeTextureFactor(odf, cdsc, texture_angles, sctf, fhir,
-                  inv, phoninp, getResolutionD());
-        } else if (r < maxAngle) {
-          double phaseAng = Math.atan2(x, y);
-          if (phaseAng < 0.0)
-            phaseAng += Constants.PI2;
-          texture_angles[0] = 2.0f * (double) Math.asin(r / Constants.sqrt2);
-          if (texture_angles[0] < 0.0) {
-            texture_angles[0] = -texture_angles[0];
-            phaseAng += Constants.PI;
-            while (phaseAng >= Constants.PI2)
-              phaseAng -= Constants.PI2;
-          }
-          texture_angles[1] = (double) phaseAng;
+        if (r < maxAngle) {
+          if (r == 0.0) {
+            texture_angles[0] = 0.0f;
+            texture_angles[1] = 0.0f;
+          } else {
+            double phaseAng = Math.atan2(x, y);
+            if (phaseAng < 0.0)
+              phaseAng += Constants.PI2;
+            texture_angles[0] = 2.0f * Math.asin(r / Constants.sqrt2);
+            if (texture_angles[0] < 0.0) {
+              texture_angles[0] = -texture_angles[0];
+              phaseAng += Constants.PI;
+              while (phaseAng >= Constants.PI2)
+                phaseAng -= Constants.PI2;
+            }
+            texture_angles[1] = phaseAng;
 
-          PFreconstructed[i][j] = computeTextureFactor(odf, cdsc, texture_angles, sctf, fhir,
-                  inv, phoninp, getResolutionD());
+          }
+          double[] newTextureAngles = Angles.rotatePFangles(
+              texture_angles[0], texture_angles[1],
+              polar, azimuth);
+          PFreconstructed[i][j] = computeTextureFactor(odf, cdsc, newTextureAngles, sctf, fhir,
+                inv, phoninp, getResolutionD());
         } else
           PFreconstructed[i][j] = Double.NaN;
       }

@@ -491,16 +491,16 @@ public class DataFileSet extends XRDcat {
 					if (xstartmin > datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode))
 						xstartmin = datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode);
 					if (dataToExport[0][is1] >= xstartmin && dataToExport[0][is1] <= xendmax) {
-            double value = datafile[sn].getInterpolatedYSqrtIntensity(dataToExport[0][is1], 2, mode);
-            double valuec = datafile[sn].getInterpolatedFitSqrtIntensity(dataToExport[0][is1], 2, mode);
-            double dev = Math.sqrt(value * value);
+            double value = datafile[sn].getInterpolatedYForSummation(dataToExport[0][is1]);
+            double valuec = datafile[sn].getInterpolatedFitForSummation(dataToExport[0][is1]);
+            double dev = Math.sqrt(value);
 						if (!Double.isNaN(value)) {
-							dataToExport[1][is1] += value * value;
-              dataToExport[3][is1] += Math.sqrt(value * value);;
+							dataToExport[1][is1] += value;
+              dataToExport[3][is1] += Math.sqrt(value);
 							total++;
 						}
 						if (!Double.isNaN(valuec)) {
-							dataToExport[2][is1] += valuec * valuec;
+							dataToExport[2][is1] += valuec;
 							totalFit++;
 						}
 					}

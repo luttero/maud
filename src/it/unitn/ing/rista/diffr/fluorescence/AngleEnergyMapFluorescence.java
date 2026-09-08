@@ -356,7 +356,9 @@ public class AngleEnergyMapFluorescence extends Fluorescence {
     }
   
     double twothetadetector = adatafile.get2ThetaValue();
-    double[] incidentDiffracted = adatafile.getIncidentAndDiffractionAngles(twothetadetector);
+    double[] incidentDiffracted = geometry.getIncidentAndDiffractionAngles(adatafile,
+        adatafile.getTiltingAngle(),
+        asample.getSampleAngles(), twothetadetector);
 //		System.out.println(adatafile.getLabel() + ", incident beam angle: " + incidentDiffracted[0] * Constants.PITODEG + ", exiting beam angle: " + incidentDiffracted[2] * Constants.PITODEG + " " + adatafile.getTiltingAngle()[4]);
 //	  incidentDiffracted[0] *= Constants.DEGTOPI;
 
@@ -803,7 +805,9 @@ public class AngleEnergyMapFluorescence extends Fluorescence {
     }
     
     double twothetadetector = adatafile.get2ThetaValue();
-    double[] incidentDiffracted = adatafile.getIncidentAndDiffractionAngles(twothetadetector);
+    double[] incidentDiffracted = geometry.getIncidentAndDiffractionAngles(adatafile,
+        adatafile.getTiltingAngle(),
+        asample.getSampleAngles(), twothetadetector);
 //		System.out.println(adatafile.getLabel() + ", incident beam angle: " + incidentDiffracted[0] * Constants.PITODEG + ", exiting beam angle: " + incidentDiffracted[2] * Constants.PITODEG + " " + adatafile.getTiltingAngle()[4]);
 //	  incidentDiffracted[0] *= Constants.DEGTOPI;
 

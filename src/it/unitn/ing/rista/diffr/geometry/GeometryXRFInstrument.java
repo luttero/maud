@@ -97,8 +97,9 @@ public class GeometryXRFInstrument extends GeometryBraggBrentano {
 		// first correction for absorption on asymmetric diffraction
 
 		double lp = 1.0, beamsize = 0;
-
-		double[] incidentDiffracted = adatafile.getIncidentAndDiffractionAngles(0);
+		double[] incidentDiffracted = getIncidentAndDiffractionAngles(adatafile,
+        adatafile.getTiltingAngle(),
+        asample.getSampleAngles(), 0);
 //		System.out.println(incidentDiffracted[0]);
 //	  incidentDiffracted[0] *= Constants.DEGTOPI;
 		double slitApertureRad = slitaperture * Constants.DEGTOPI / 2;

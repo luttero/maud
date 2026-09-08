@@ -32,8 +32,6 @@ import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.TableModel;
-import javax.media.opengl.*;
-import javax.media.opengl.awt.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -53,6 +51,9 @@ import java.util.StringTokenizer;
 
 public class TexturePlot extends myJFrame {
 
+  public static double rotatePoleFigureDeg = getAngleFromPolarNotation(MaudPreferences.getPref("PlotPF.NWSE", "N"));
+  //  public static double rotateAlpha = MaudPreferences.getDouble("Texture.phiZero", 0.0);
+
   JRadioButton[] plotTypeRB;
   JRadioButton[] plotWhatRB;
   JCheckBox grayShadedCB;
@@ -62,14 +63,19 @@ public class TexturePlot extends myJFrame {
   Sample thesample = null;
   JComboBox phaseC = null;
   JComboBox sampleC = null;
+  JComboBox pfConventionC = null;
   JTextField maxAngleTF = null;
   JTextField pointsTF = null;
   JTextField zoomTF = null;
   JTextField smoothTF = null;
+  JTextField polarTF = null;
+  JTextField azimuthTF = null;
   JSlider expansionJS = null;
   JTextField alphaStartTF, alphaEndTF, alphaStepTF;
   JTextField betaStartTF, betaEndTF, betaStepTF;
   JComboBox odf3DplotCB;
+
+  public String[] pfConventionS = {"North", "West", "South", "East"};
 
   FilePar parameterfile = null;
 
@@ -171,14 +177,24 @@ public class TexturePlot extends myJFrame {
     grayShadedCB = new JCheckBox("Gray shaded");
     specialPanel.add(grayShadedCB);
 
+    jp1 = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 3));
+    jp1.add(new JLabel("PF azimuth zero: "));
+    pfConventionC = new JComboBox();
+    pfConventionC.setEditable(false);
+    pfConventionC.setMaximumRowCount(4);
+    jp1.add(pfConventionC);
+    specialPanel.add(jp1);
+
+
     specialPanel = new JPanel();
-    specialPanel.setLayout(new GridLayout(0, 1, 3, 3));
+    specialPanel.setLayout(new GridLayout(0, 2, 3, 3));
     optionsPanel.add(BorderLayout.CENTER, specialPanel);
+
 
     JPanel jp2 = new JPanel();
     specialPanel.add(jp2);
     jp2.setLayout(new FlowLayout(FlowLayout.RIGHT, 3, 3));
-    jp2.add(new JLabel("Max azimuthal angle: "));
+    jp2.add(new JLabel("Max polar angle: "));
     maxAngleTF = new JTextField(6);
     jp2.add(maxAngleTF);
     jp2 = new JPanel();
@@ -202,6 +218,23 @@ public class TexturePlot extends myJFrame {
     smoothTF = new JTextField(6);
     smoothTF.setToolTipText("Smooth factor for Gauss filtering (0 = no smooth; in pixels; 1.2 as a good value)");
     jp2.add(smoothTF);
+
+    jp2 = new JPanel();
+    specialPanel.add(jp2);
+    jp2.setLayout(new FlowLayout(FlowLayout.RIGHT, 3, 3));
+    jp2.add(new JLabel("Polar PF rotation:  "));
+    polarTF = new JTextField(6);
+    polarTF.setToolTipText("Rotate pole figures by polar angle (-90 to 90)");
+    jp2.add(polarTF);
+    jp2 = new JPanel();
+    specialPanel.add(jp2);
+    jp2.setLayout(new FlowLayout(FlowLayout.RIGHT, 3, 3));
+    jp2.add(new JLabel("Azimuth PF rotation: "));
+    azimuthTF = new JTextField(6);
+    azimuthTF.setToolTipText("Rotate pole figures by azimuth angle (0 to 360)");
+    jp2.add(azimuthTF);
+
+
 
     specialPanel = new JPanel();
     specialPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
@@ -1191,6 +1224,46 @@ public class TexturePlot extends myJFrame {
     return expPF;
   }
 
+  public static double getAngleFromPolarNotation(String orientation) {
+    if (orientation.toLowerCase().startsWith("e"))
+      return 0.0;
+    if (orientation.toLowerCase().startsWith("w"))
+      return 180.0;
+    if (orientation.toLowerCase().startsWith("s"))
+      return 270.0;
+    return 90.0;  // North
+  }
+
+  public static double[][] rotatePoleFigure(double[][] matrix) {
+    rotatePoleFigureDeg = getAngleFromPolarNotation(MaudPreferences.getPref("PlotPF.NWSE", "N"));
+
+    if (Math.abs(rotatePoleFigureDeg) < 0.001)
+      return matrix;
+
+    int elements = matrix.length;
+    double[][] rotMatrix = new double[elements][elements];
+
+    if (Math.abs(rotatePoleFigureDeg - 180.0) < 0.001) {
+      for (int i = 0; i < elements; i++)
+        for (int j = 0; j < elements; j++)
+          rotMatrix[i][j] = matrix[i][elements - 1 - j];
+      return rotMatrix;
+    }
+    if (Math.abs(rotatePoleFigureDeg - 270.0) < 0.001) {
+      for (int i = 0; i < elements; i++)
+        for (int j = 0; j < elements; j++)
+          rotMatrix[i][j] = matrix[elements - 1 - j][elements - 1 - i];
+      return rotMatrix;
+    }
+
+// North
+    for (int i = 0; i < elements; i++)
+      for (int j = 0; j < elements; j++)
+        rotMatrix[i][j] = matrix[j][elements - 1 - i];
+
+    return rotMatrix;
+  }
+
   public void initParameters() {
     plotTypeRB[0].setSelected(true);
     plotWhatRB[0].setSelected(false);
@@ -1222,10 +1295,19 @@ public class TexturePlot extends myJFrame {
       hkltable.invalidate();
 //      hkltable.setDefaultEditor(Boolean.class, new DefaultTableCellEditor());
     }
+    for (int i = 0; i < pfConventionS.length; i++)
+      pfConventionC.addItem(pfConventionS[i]);
+    rotatePoleFigureDeg = getAngleFromPolarNotation(MaudPreferences.getPref("PlotPF.NWSE", "N"));
+    int selConv = (int) (rotatePoleFigureDeg / 90.0) - 1;
+    if (selConv < 0) selConv = 3;
+    pfConventionC.setSelectedIndex(selConv);
+
     maxAngleTF.setText(MaudPreferences.getPref(maxAngleString, "90"));
     pointsTF.setText(Integer.toString(lastResolution));
     zoomTF.setText(Double.toString(zoom));
     smoothTF.setText(Double.toString(filterWidth));
+    polarTF.setText(Double.toString(polarTransform));
+    azimuthTF.setText(Double.toString(azimuthTransform));
     setExpansionSlider();
   }
 
@@ -1245,24 +1327,29 @@ public class TexturePlot extends myJFrame {
   }
 
   public void initListener() {
-    sampleC.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent event) {
-        int index = sampleC.getSelectedIndex();
-        thesample = parameterfile.getSample(index);
+    sampleC.addActionListener(event -> {
+      int index = sampleC.getSelectedIndex();
+      thesample = parameterfile.getSample(index);
+    });
+    phaseC.addActionListener(event -> {
+      Phase oldphase = thephase;
+      int index = phaseC.getSelectedIndex();
+      thephase = parameterfile.getActiveSample().getPhase(index);
+      if (thephase != oldphase) {
+        TableModel hklModel = new simplehklTableModel(thephase);
+        hkltable.setModel(hklModel);
+        hkltable.invalidate();
       }
     });
-    phaseC.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent event) {
-        Phase oldphase = thephase;
-        int index = phaseC.getSelectedIndex();
-        thephase = parameterfile.getActiveSample().getPhase(index);
-        if (thephase != oldphase) {
-          TableModel hklModel = new simplehklTableModel(thephase);
-          hkltable.setModel(hklModel);
-          hkltable.invalidate();
-        }
-      }
+
+    pfConventionC.addActionListener(event -> {
+      int index = pfConventionC.getSelectedIndex();
+      MaudPreferences.setPref("PlotPF.NWSE", pfConventionS[index].substring(0, 1));
+      rotatePoleFigureDeg = 90.0 * (index + 1);
+      if (rotatePoleFigureDeg == 360.0)
+        rotatePoleFigureDeg = 0.0;
     });
+
   }
 
   public void wizard_action() {
@@ -1279,6 +1366,8 @@ public class TexturePlot extends myJFrame {
   static String maxAngleString = "texturePlot.maxAzimuthalAngle";
   static String logTexturePlotString = "texturePlot.logScale";
   static String numberofColors = "texturePlot.colorsNumber";
+  static String polarTransformS = "texturePlot.polarTransform";
+  static String azimuthTransformS = "texturePlot.azimuthTransform";
   public static int lastResolution = MaudPreferences.getInteger(gridResString, 101);
   public static double zoom = MaudPreferences.getDouble(zoomString, 1); // must be a power of 2
   public static double filterWidth = MaudPreferences.getDouble("texturePlot.gaussFilterWidth", 0.0);
@@ -1289,6 +1378,8 @@ public class TexturePlot extends myJFrame {
   public static String minBetaAngle = MaudPreferences.getPref("texturePlot.minODFBetaAngle", "0.0");
   public static String maxBetaAngle = MaudPreferences.getPref("texturePlot.maxODFBetaAngle", "180.0");
   public static String stepBetaAngle = MaudPreferences.getPref("texturePlot.stepODFBetaAngle", "5.0");
+  public double polarTransform = MaudPreferences.getDouble(polarTransformS, 0);
+  public double azimuthTransform = MaudPreferences.getDouble(azimuthTransformS, 0);
 
 //	static int lastContourLevel = 10;
 
@@ -1400,6 +1491,12 @@ public class TexturePlot extends myJFrame {
       logValue = "true";
     MaudPreferences.setPref(logTexturePlotString, logValue);
 
+    polarTransform = Double.parseDouble(polarTF.getText());
+    MaudPreferences.setPref(polarTransformS, polarTF.getText());
+    azimuthTransform = Double.parseDouble(azimuthTF.getText());
+    MaudPreferences.setPref(azimuthTransformS, azimuthTF.getText());
+
+
     int colrsNumber = expansionJS.getValue();
     if (colrsNumber == 0) {
       colrsNumber = 8;
@@ -1441,26 +1538,26 @@ public class TexturePlot extends myJFrame {
       (new PlotPFCoverage(TexturePlot.this, thesample, thephase, hklnumber)).setVisible(true);
     else if (absorptionCorrection && twoDmap)
       (new PlotPoleFigure(this, thesample, poleList, 2, lastResolution, zoom,
-             filterWidth, grayShadedCB.isSelected(), maxAngle, logScale, colrsNumber)).setVisible(true);
+             filterWidth, grayShadedCB.isSelected(), maxAngle, logScale, colrsNumber, polarTransform, azimuthTransform)).setVisible(true);
     else if (reconstructed && !twoDmap)
       show3DPole(this, poleList[0], 1, lastResolution, maxAngle, logScale, colrsNumber);
     else if (reconstructed)
       (new PlotPoleFigure(this, thesample, poleList, 0, lastResolution, zoom,
-              filterWidth, grayShadedCB.isSelected(), maxAngle, logScale, colrsNumber)).setVisible(true);
+              filterWidth, grayShadedCB.isSelected(), maxAngle, logScale, colrsNumber, polarTransform, azimuthTransform)).setVisible(true);
     else if (experimental)
       (new PlotPoleFigure(this, thesample, poleList, 1, lastResolution, zoom,
-              filterWidth, grayShadedCB.isSelected(), maxAngle, logScale, colrsNumber)).setVisible(true);
+              filterWidth, grayShadedCB.isSelected(), maxAngle, logScale, colrsNumber, polarTransform, azimuthTransform)).setVisible(true);
     else if (inverse)
       (new PlotPoleFigure(this, thesample, poleList, 3, lastResolution, zoom,
-              filterWidth, grayShadedCB.isSelected(), maxAngle, logScale, colrsNumber)).setVisible(true);
+              filterWidth, grayShadedCB.isSelected(), maxAngle, logScale, colrsNumber, polarTransform, azimuthTransform)).setVisible(true);
     else if (reconstructedStrain && !twoDmap)
       show3DPole(this, poleList[0], -1, lastResolution, maxAngle, false, colrsNumber);
     else if (reconstructedStrain)
       (new PlotPoleFigure(this, thesample, poleList, 4, lastResolution, zoom,
-              filterWidth, grayShadedCB.isSelected(), maxAngle, false, colrsNumber)).setVisible(true);
+              filterWidth, grayShadedCB.isSelected(), maxAngle, false, colrsNumber, polarTransform, azimuthTransform)).setVisible(true);
     else if (experimentalStrain)
       (new PlotPoleFigure(this, thesample, poleList, 5, lastResolution, zoom,
-              filterWidth, grayShadedCB.isSelected(), maxAngle, false, colrsNumber)).setVisible(true);
+              filterWidth, grayShadedCB.isSelected(), maxAngle, false, colrsNumber, polarTransform, azimuthTransform)).setVisible(true);
     return;
   }
 

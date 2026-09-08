@@ -864,11 +864,11 @@ public class SizeStrainHarmonicTexture extends SizeStrainSymModel {
       JPanel jPanel8 = new JPanel();
       jPanel8.setLayout(new FlowLayout(FlowLayout.LEFT, 6, 6));
       principalPanel.add(BorderLayout.NORTH, jPanel8);
-      jPanel8.add(new JLabel("Sample symmetry: "));
+      jPanel8.add(new JLabel("Texture symmetry: "));
       symmetryCB = new JComboBox();
       for (int i = 0; i < symmetrychoice.length; i++)
         symmetryCB.addItem(symmetrychoice[i]);
-      symmetryCB.setToolTipText("Set up expected sample symmetry");
+      symmetryCB.setToolTipText("Set up expected sample texture symmetry");
       jPanel8.add(symmetryCB);
 
       harmonicCoefficientP = new HarmonicPane(parent, false);

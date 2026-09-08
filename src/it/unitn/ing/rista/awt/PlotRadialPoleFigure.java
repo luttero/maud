@@ -19,8 +19,7 @@
  */
 package it.unitn.ing.rista.awt;
 
-import it.unitn.ing.rista.diffr.Sample;
-import it.unitn.ing.rista.diffr.Reflection;
+import it.unitn.ing.rista.diffr.*;
 
 import java.awt.*;
 
@@ -37,7 +36,7 @@ public class PlotRadialPoleFigure {
                         int numberofPoints, double zoom, double filterWidth,
                         boolean grayScale, double maxAngle, boolean logScale, int colrsNumber) {
 
-    double[][] PF = null;
+//    double[][] PF = null;
     for (int i = 0; i < pole.length; i++) {
       double[] x = new double[numberofPoints];
       double[] y = new double[numberofPoints];
@@ -46,8 +45,14 @@ public class PlotRadialPoleFigure {
         x[j] = stepx * j;
         y[j] = 0.0;
       }
-      y = pole[i].getPoleFigureGrid(x, y);
-      plotFunction(parent, x, y);
+      Phase aphase = pole[i].getParent();
+      Texture texturemodel = aphase.getActiveTexture();
+      if (texturemodel != null)
+        y = texturemodel.getPoleFigureGrid(pole[i], x, y);
+      if (texturemodel != null)
+        y = texturemodel.getPoleFigureGrid(pole[i], x, y);
+      if (y != null)
+        plotFunction(parent, x, y);
     }
   }
 

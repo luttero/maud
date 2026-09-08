@@ -1146,7 +1146,7 @@ public class Sample extends Maincat {
 //    for (int nd = 0; nd < activeDatasetsNumber(); nd++)
 //      getActiveDataSet(nd).setRadiation();
 
-	  Texture.rotateAlpha = MaudPreferences.getDouble("Texture.phiZero", -90.0);
+//	  Texture.rotateAlpha = MaudPreferences.getDouble("Texture.phiZero", -90.0);
 
 	  // compute spectra
 //    System.out.println(numberOfLayers + " " + numberOfPhases + " " + activeDatasetsNumber());
@@ -2011,7 +2011,7 @@ public class Sample extends Maincat {
   }
 
   public void computeSpectra(DataFileSet[] tmpDataSet) {
-	  Texture.rotateAlpha = MaudPreferences.getDouble("Texture.phiZero", -90.0);
+//	  Texture.rotateAlpha = MaudPreferences.getDouble("Texture.phiZero", -90.0);
     for (int i = 0; i < tmpDataSet.length; i++)
       tmpDataSet[i].computeSpectra(this);
   }
