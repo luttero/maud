@@ -53,7 +53,7 @@ public class GeometryNoCorrections extends GeometryDiffractometer {
     description = "No Corrections instrument geometry";
   }
 
-  public double LorentzPolarization(DiffrDataFile adatafile, Sample asample, double position, boolean dspacingbase, boolean energyDispersive) {
+  public double LorentzPolarization(DiffrDataFile adatafile, Sample asample, double position) {
     return 1.0;
   }
 

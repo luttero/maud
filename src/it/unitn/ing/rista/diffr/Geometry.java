@@ -1021,19 +1021,15 @@ public class Geometry extends XRDcat {
 
   /**
    * Return the Lorentz-Polarization factor.
-   * @param adatafile  the spectrum or datafile for which the factor must be computed.
-   * @param asample  the sample object asking for the computation.
+   *
+   * @param adatafile the spectrum or datafile for which the factor must be computed.
+   * @param asample   the sample object asking for the computation.
    * @param position  the 2-theta or d-spacing (if the spectrum is in d-spacing) of the
-* point for which the correction should be computed.
-   * @param dspacingbase  true if position is in d-space (Angstroms), false if 2theta
-* The basic method here just return 1.0 always. Must be overwrited for other geometries.
-* The dspacingbase actually should not be used, as its value should be equal to
-   * @param energyDispersive
+   *                  point for which the correction should be computed.
    */
 
-  public double LorentzPolarization(DiffrDataFile adatafile, Sample asample, double position,
-                                    boolean dspacingbase, boolean energyDispersive) {
-    if (energyDispersive)
+  public double LorentzPolarization(DiffrDataFile adatafile, Sample asample, double position) {
+    if (adatafile.energyDispersive)
       position = adatafile.get2ThetaValue();
     position *= degtopi2;
     return Math.abs(polarization(adatafile, position) * Lorentz(adatafile, position));
@@ -1053,21 +1049,20 @@ public class Geometry extends XRDcat {
 
   /**
    * Compute the Lorentz-Polarization factor and return it as a multipler in the intensity array.
-   * @param adatafile  the spectrum or datafile for which the factor must be computed.
-   * @param asample  the sample object asking for the computation.
+   *
+   * @param adatafile the spectrum or datafile for which the factor must be computed.
+   * @param asample   the sample object asking for the computation.
    * @param position  the 2-theta or d-spacing (if the spectrum is in d-spacing) of the
-* point for which the correction should be computed.
-   * @param dspacingbase  true if position is in d-space (Angstroms), false if 2theta
-   * @param energyDispersive
-   * @param intensity  the array of intensities. In return the method give intensity *= LP
-   * The basic method here just return 1.0 always. Must be overwrited for other geometries.
-   * The dspacingbase actually should not be used, as its value should be equal to
+   *                  point for which the correction should be computed.
+   * @param intensity the array of intensities. In return the method give intensity *= LP
+   *                  The basic method here just return 1.0 always. Must be overwrited for other geometries.
+   *                  The dspacingbase actually should not be used, as its value should be equal to
    */
 
-  public void LorentzPolarization(DiffrDataFile adatafile, Sample asample, double[] position, boolean dspacingbase,
-                                  boolean energyDispersive, double[] intensity) {
+  public void LorentzPolarization(DiffrDataFile adatafile, Sample asample, double[] position,
+                                  double[] intensity) {
     for (int i = 0; i < intensity.length; i++) {
-      intensity[i] *= LorentzPolarization(adatafile, asample, position[i], dspacingbase, energyDispersive);
+      intensity[i] *= LorentzPolarization(adatafile, asample, position[i]);
     }
   }
 
@@ -1094,19 +1089,18 @@ public class Geometry extends XRDcat {
 
   /**
    * Return the correction factor for the absorption by the sample.
-   * @param adatafile  the spectrum or datafile for which the factor must be computed.
-   * @param asample  the sample object asking for the computation.
+   *
+   * @param adatafile the spectrum or datafile for which the factor must be computed.
+   * @param asample   the sample object asking for the computation.
    * @param position  the 2-theta or d-spacing (if the spectrum is in d-spacing) of the
-* point for which the correction should be computed.
-   * @param dspacingbase  true if position is in d-space (Angstroms), false if 2theta
-   * @param energyDispersive
-   * @param intensity  the array of intensities. In return the method give intensity *= LP
-   * The basic method here just return 1.0 always. Must be overwrited for other geometries.
-   * The dspacingbase actually should not be used, as its value should be equal to
+   *                  point for which the correction should be computed.
+   * @param intensity the array of intensities. In return the method give intensity *= LP
+   *                  The basic method here just return 1.0 always. Must be overwrited for other geometries.
+   *                  The dspacingbase actually should not be used, as its value should be equal to
    */
 
   public void computeShapeAbsorptionCorrection(DiffrDataFile adatafile, Sample asample, double[][] position,
-                                               boolean dspacingbase, boolean energyDispersive, double[][] intensity, double toLambda) {
+                                               double[][] intensity, double toLambda) {
   }
 
   public double getBeamOutCorrection(DiffrDataFile adatafile, Sample asample) {

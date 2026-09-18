@@ -44,13 +44,9 @@ public class AmtekAngularCalibration extends AngularCalibration {
   public static final double Etod = 2.0 * Math.PI / 1.01354;
 
   public static String[] diclistc = {
-    "_instrument_counter_bank_ID",
-    "_instrument_bank_tof_theta",
     "_inst_ang_calibration_coeff"};
   public static String[] diclistcrm = {
-    "_instrument_counter_bank_ID",
-    "2theta angle (deg) ",
-    "d-spacing calibration coeff"};
+    "energy calibration coeff"};
 
   public static String[] classlistc = {};
   public static String[] classlistcs = {};
@@ -79,9 +75,9 @@ public class AmtekAngularCalibration extends AngularCalibration {
 
   public void initConstant() {
     Nstring = 0;
-    Nstringloop = 1;
+    Nstringloop = 0;
     Nparameter = 0;
-    Nparameterloop = 2;
+    Nparameterloop = 1;
     Nsubordinate = 0;
     Nsubordinateloop = 0;
   }
@@ -104,8 +100,7 @@ public class AmtekAngularCalibration extends AngularCalibration {
     if (getFilePar().isLoadingFile() || !isAbilitatetoRefresh)
       return;
     super.updateParametertoDoubleBuffering(firstLoading);
-    theta = (double[]) parameterLoopValuesVector.elementAt(0);
-    difc = (double[]) parameterLoopValuesVector.elementAt(1);
+    difc = (double[]) parameterLoopValuesVector.elementAt(0);
     numberCoeff = difc.length;
   }
 
@@ -118,53 +113,67 @@ public class AmtekAngularCalibration extends AngularCalibration {
   }
 
   public void addCoeff(int index, String value) {
-    addparameterloopField(1, new Parameter(this, getParameterString(1, index), value, "0",
-            ParameterPreferences.getPref(getParameterString(1, index) + ".min", "-1"),
-            ParameterPreferences.getPref(getParameterString(1, index) + ".max", "1"), false));
+    addparameterloopField(0, new Parameter(this, getParameterString(0, index), value, "0",
+            ParameterPreferences.getPref(getParameterString(0, index) + ".min", "-1"),
+            ParameterPreferences.getPref(getParameterString(0, index) + ".max", "1"), false));
   }
 
   public Parameter getCoeffP(int index) {
-    return (Parameter) parameterloopField[1].elementAt(index);
+    return (Parameter) parameterloopField[0].elementAt(index);
   }
 
   public void setCoeff(int index, String value) {
     getCoeffP(index).setValue(value);
   }
 
-  public int getBankNumber(DiffrDataFile datafile) {
-    return datafile.getAngBankNumber();
-  }
-
-  public double getTthetaValue(DiffrDataFile datafile, double twotheta) {
-    return theta[getBankNumber(datafile)];
-  }
-
   public void calibrateX(DiffrDataFile datafile) {
     int datanumber = datafile.getTotalNumberOfData();
     updateParametertoDoubleBuffering(false);
-    double theta = getTthetaValue(datafile, 0.0) * Constants.DEGTOPI / 2.0;
-    double sintheta = Math.sin(theta);
-
+    double angcal;
     for (int i = 0; i < datanumber; i++) {
-      double angcal = 0.0;
       double value = datafile.getXDataForCalibration(i);
-      for (int j = 0; j < numberCoeff; j++) {
+      angcal = 0;
+      for (int j = 0; j < numberCoeff; j++)
         angcal += difc[j] * MoreMath.pow(value, j);
-      }
-      datafile.setCalibratedXDataOnly(i, Etod / (angcal * sintheta));
+      datafile.setCalibratedXDataOnly(i, angcal);
     }
   }
 
-  public double calibrateX(DiffrDataFile datafile, double value) {
-    double angcal = 0.0;
-    for (int j = 0; j < numberCoeff; j++) {
+  public int getChannelForZero(DiffrDataFile datafile) {
+    int channel = 0;
+    double value = datafile.getXDataForCalibration(channel);
+    double angcal = 0;
+    for (int j = 0; j < numberCoeff; j++)
       angcal += difc[j] * MoreMath.pow(value, j);
+    double minValue = Math.abs(angcal);
+
+    while (angcal < 0) {
+      angcal = 0;
+      double xDataForCalibration = datafile.getXDataForCalibration(++channel);
+      for (int j = 0; j < numberCoeff; j++)
+        angcal += difc[j] * MoreMath.pow(xDataForCalibration, j);
+      double absValue = Math.abs(angcal);
+      if (absValue < minValue)
+        minValue = absValue;
     }
-    return angcal;
+    while (angcal > 0 && channel > 0) {
+      angcal = 0;
+      double xDataForCalibration = datafile.getXDataForCalibration(--channel);
+      for (int j = 0; j < numberCoeff; j++)
+        angcal += difc[j] * MoreMath.pow(xDataForCalibration, j);
+    }
+    if (minValue < Math.abs(angcal))
+      channel++;
+
+    return channel;
   }
 
-   public double notCalibrated(DiffrDataFile datafile, double x) {
-    return 0.0;
+  public double getChannelStep(DiffrDataFile diffrDataFile) {
+    return difc[1];
+  }
+
+  public double notCalibrated(DiffrDataFile datafile, double x) {
+    return x;
   }
 
   public JOptionsDialog getOptionsDialog(Frame parent) {

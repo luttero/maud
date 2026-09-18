@@ -83,10 +83,13 @@ public class MultiPlotFitting extends PlotFitting {
 
     getContentPane().setBackground(Color.white);
 
-	  int mode = checkScaleModeX();
-	  PlotDataFile.checkCalibrateIntensity();
-	  PlotDataFile.checkBackgroundSubtraction();
-	  Constants.checkMinimumEnergy();
+    int modeX = checkScaleModeX();
+    int modeY = checkScaleMode();
+    checkCalibrateIntensity();
+    boolean calibInt = calibrateIntensity();
+    boolean calibLP = calibrateIntensityForLorentzPolarization();
+    boolean bkgSub = checkBackgroundSubtraction();
+    double minEnergyKeV = Constants.checkMinimumEnergy();
 
     datafile = afile;
     boolean markExcludedRegion = MaudPreferences.getBoolean("excludedRegion.setZeroForPlot", true);
@@ -164,12 +167,29 @@ public class MultiPlotFitting extends PlotFitting {
         np = datafile[sn].finalindex - datafile[sn].startingindex;
 
         double data[] = new double[2 * np];
-        mode = checkScaleModeX();
-        boolean subtractBackground = PlotDataFile.subtractBackground();
         for (i = j = 0; i < np; i++, j += 2) {
-          data[j] = datafile[sn].getXDataForPlot(i + datafile[sn].startingindex, mode);
-          data[j + 1] = datafile[sn].getYSqrtData(i + datafile[sn].startingindex, subtractBackground) + offset * sn;
-
+          data[j] = datafile[sn].getXData(i + datafile[sn].startingindex);
+          int index = i + datafile[sn].startingindex;
+          double intValue = PlotDataFile.getIntensity(datafile[sn], data[j], index);
+          double b_value = 0.0;
+          if (bkgSub)
+            b_value = getBackground(datafile[sn], data[j], index);
+          if (calibInt) {
+            double cal = PlotDataFile.getIntensityCalibration(datafile[sn], data[j], index);
+            if (cal > 0) {
+              intValue /= cal;
+              b_value /= cal;
+            }
+          }
+          if (calibLP) {
+            double cal = PlotDataFile.getIntensityLPCalibration(datafile[sn], data[j], index);
+            if (cal > 0) {
+              intValue /= cal;
+              b_value /= cal;
+            }
+          }
+          data[j + 1] = PlotDataFile.getScaledIntensity(datafile[sn], intValue - b_value, data[j], modeY)
+              + offset * sn;
           if (sn == 0)
             if (data[j + 1] > maxY)
               maxY = data[j + 1];
@@ -205,13 +225,35 @@ public class MultiPlotFitting extends PlotFitting {
           if (dataFitm == null)
             dataFitm = new DataSet[datafile.length];
           for (i = j = 0; i < np; i++, j += 2) {
-            if (datafile[sn].xInsideRange(datafile[sn].getXData(i + datafile[sn].startingindex)) || !markExcludedRegion)
-              data[j + 1] = datafile[sn].getFitSqrtData(i + datafile[sn].startingindex) + offset * sn;
-            else
+            if (datafile[sn].xInsideRange(datafile[sn].getXData(i + datafile[sn].startingindex)) || !markExcludedRegion) {
+              int index = i + datafile[sn].startingindex;
+              double intValue = PlotDataFile.getFitIntensity(datafile[sn], data[j], index);
+              double b_value = 0.0;
+              if (bkgSub)
+                b_value = getBackground(datafile[sn], data[j], index);
+              if (calibInt) {
+                double cal = PlotDataFile.getIntensityCalibration(datafile[sn], data[j], index);
+                if (cal > 0) {
+                  intValue /= cal;
+                  b_value /= cal;
+                }
+              }
+              if (calibLP) {
+                double cal = PlotDataFile.getIntensityLPCalibration(datafile[sn], data[j], index);
+                if (cal > 0) {
+                  intValue /= cal;
+                  b_value /= cal;
+                }
+              }
+              data[j + 1] = PlotDataFile.getScaledIntensity(datafile[sn], intValue - b_value, data[j], modeY)
+                  + offset * sn;
+            } else
               data[j + 1] = Double.NaN;
           }
 //	        data[1] = data[3]; // Luca: to check, workaround
 //	        data[np * 2 - 1] = data[np * 2 - 3]; // Luca: to check, workaround
+          for (i = j = 0; i < np; i++, j += 2)
+            data[j] = getScaledX(datafile[sn], data[j], modeX);
 
 	        if (debug)
             System.out.println("Fit computed");
@@ -229,7 +271,7 @@ public class MultiPlotFitting extends PlotFitting {
         if (xaxis == null) {
           xaxis = lgraph.createXAxis();
           if (datafile.length > 1) {
-            xaxis.setTitleText(datafile[sn].getAxisXLegend());
+            xaxis.setTitleText(getAxisXLegend(datafile[sn].calibrated, datafile[sn].dspacingbase, datafile[sn].energyDispersive));
             xaxis.setTitleFont(new Font(axisFont, Font.BOLD, XaxisTitleFontScale));
             xaxis.setLabelFont(new Font(labelFont, Font.PLAIN, XaxisLabelFontScale));
             xaxis.setTitleColor(XaxisTitleColor);
@@ -260,7 +302,7 @@ public class MultiPlotFitting extends PlotFitting {
             System.out.println("Fit attached");
         }
       }
-      yaxis.setTitleText(DiffrDataFile.getAxisYLegend());
+      yaxis.setTitleText(PlotDataFile.getAxisYLegend());
       yaxis.setTitleFont(new Font(axisFont, Font.BOLD, YaxisTitleFontScale));
       yaxis.setLabelFont(new Font(labelFont, Font.PLAIN, YaxisLabelFontScale));
       yaxis.setTitleColor(YaxisTitleColor);
@@ -312,7 +354,7 @@ public class MultiPlotFitting extends PlotFitting {
 
           datap = new PeakSet[dimension];
 
-          mode = checkScaleModeX();
+          int mode = checkScaleModeX();
 
           for (int ijn = 0; ijn < numberradiation; ijn++) {
             double wave = adataset.getInstrument().getRadiationType().getRadiationWavelength(ijn);
@@ -323,8 +365,11 @@ public class MultiPlotFitting extends PlotFitting {
                 if (tmpphase == phaselist[ij])
                   phaseindex = ij;
 	            // todo modify for more peaks per pattern
-	            double pos = adataset.getActiveDataFile(0).getPositions(tmpphase)[peaklist.elementAt(i).getOrderPosition()][0][ijn];
-              datapeak[j] = datafile[0].convertXDataForPlot(pos, wave, mode);
+	            double[][] pos = adataset.getActiveDataFile(0).getPositions(tmpphase)[peaklist.elementAt(i).getOrderPosition()];
+              if (pos[0].length > ijn)
+                datapeak[j] = datafile[0].convertXDataForPlot(pos[0][ijn], wave, mode);
+              else
+                datapeak[j] = -99999.0;
 
               datapeak[j + 1] = phaseindex + 1;
             }
@@ -434,15 +479,31 @@ public class MultiPlotFitting extends PlotFitting {
         np = datafile[0].finalindex - datafile[0].startingindex;
 
         double data[] = new double[2 * np];
-        mode = checkScaleModeX();
-        boolean subtractBackground = PlotDataFile.subtractBackground();
+//        mode = checkScaleModeX();
         for (i = j = 0; i < np; i++, j += 2) {
-          data[j] = (double) datafile[0].getXDataForPlot(i + datafile[0].startingindex, mode);
-          if (datafile[0].xInsideRange(datafile[0].getXData(i + datafile[0].startingindex)) || !markExcludedRegion)
-            data[j + 1] = datafile[0].getFitSqrtData(i + datafile[0].startingindex) -
-                  datafile[0].getYSqrtData(i + datafile[0].startingindex, subtractBackground);
-          else
+          int index = i + datafile[0].startingindex;
+          data[j] = datafile[0].getXData(index);
+          if (datafile[0].xInsideRange(data[j]) || !markExcludedRegion) {
+            double intValue = PlotDataFile.getFitIntensity(datafile[0], data[j], index);
+            double b_value = PlotDataFile.getIntensity(datafile[0], data[j], index);
+            if (calibInt) {
+              double cal = PlotDataFile.getIntensityCalibration(datafile[0], data[j], index);
+              if (cal > 0) {
+                intValue /= cal;
+                b_value /= cal;
+              }
+            }
+            if (calibLP) {
+              double cal = PlotDataFile.getIntensityLPCalibration(datafile[0], data[j], index);
+              if (cal > 0) {
+                intValue /= cal;
+                b_value /= cal;
+              }
+            }
+            data[j + 1] = PlotDataFile.getScaledIntensity(datafile[0], intValue - b_value, data[j], modeY);
+          } else
             data[j + 1] = Double.NaN;
+          data[j] = getScaledX(datafile[0], data[j], modeX);
         }
 //	      data[1] = data[3]; // Luca: to check, workaround
 //	      data[np * 2 - 1] = data[np * 2 - 3]; // Luca: to check, workaround
@@ -463,7 +524,7 @@ public class MultiPlotFitting extends PlotFitting {
         xaxisr.attachDataSet(datar);
         if (debug)
           System.out.println("Residual attached");
-        xaxisr.setTitleText(datafile[0].getAxisXLegend());
+        xaxisr.setTitleText(getAxisXLegend(datafile[0].calibrated, datafile[0].dspacingbase, datafile[0].energyDispersive));
         xaxisr.setTitleFont(new Font(axisFont, Font.BOLD, XaxisTitleFontScale));
         xaxisr.setLabelFont(new Font(labelFont, Font.PLAIN, XaxisLabelFontScale));
         xaxisr.setTitleColor(XaxisTitleColor);
@@ -485,7 +546,7 @@ public class MultiPlotFitting extends PlotFitting {
         yaxisr.setTitleColor(getBackground());
 
       } else {
-        xaxis.setTitleText(datafile[0].getAxisXLegend());
+        xaxis.setTitleText(getAxisXLegend(datafile[0].calibrated, datafile[0].dspacingbase, datafile[0].energyDispersive));
         xaxis.setTitleFont(new Font(axisFont, Font.BOLD, XaxisTitleFontScale));
         xaxis.setLabelFont(new Font(labelFont, Font.PLAIN, XaxisLabelFontScale));
         xaxis.setTitleColor(XaxisTitleColor);
@@ -560,7 +621,13 @@ public class MultiPlotFitting extends PlotFitting {
     boolean markExcludedRegion = MaudPreferences.getBoolean("excludedRegion.setZeroForPlot", true);
 
     try {
-      int mode = checkScaleModeX();
+      int modeX = checkScaleModeX();
+      int modeY = checkScaleMode();
+      checkCalibrateIntensity();
+      boolean calibInt = calibrateIntensity();
+      boolean calibLP = calibrateIntensityForLorentzPolarization();
+      boolean bkgSub = checkBackgroundSubtraction();
+      double minEnergyKeV = Constants.checkMinimumEnergy();
       boolean subtractBackground = PlotDataFile.subtractBackground();
       for (i = 0; i < numberphases; i++)
         phaselist[i] = filepar.getActiveSample().getPhase(i);
@@ -571,12 +638,32 @@ public class MultiPlotFitting extends PlotFitting {
 
         double data[] = new double[2 * np];
         for (i = j = 0; i < np; i++, j += 2) {
-          data[j] = (double) datafile[sn].getXDataForPlot(i + datafile[sn].startingindex, mode);
-          data[j + 1] = datafile[sn].getYSqrtData(i + datafile[sn].startingindex, subtractBackground) + offset * sn;
-
+          int index = i + datafile[sn].startingindex;
+          data[j] = datafile[sn].getXData(index);
+          double intValue = PlotDataFile.getIntensity(datafile[sn], data[j], index);
+          double b_value = 0.0;
+          if (bkgSub)
+            b_value = getBackground(datafile[sn], data[j], index);
+          if (calibInt) {
+            double cal = PlotDataFile.getIntensityCalibration(datafile[sn], data[j], index);
+            if (cal > 0) {
+              intValue /= cal;
+              b_value /= cal;
+            }
+          }
+          if (calibLP) {
+            double cal = PlotDataFile.getIntensityLPCalibration(datafile[sn], data[j], index);
+            if (cal > 0) {
+              intValue /= cal;
+              b_value /= cal;
+            }
+          }
+          data[j + 1] = PlotDataFile.getScaledIntensity(datafile[sn], intValue - b_value, data[j], modeY)
+              + offset * sn;
           if (sn == 0)
             if (data[j + 1] > maxY)
               maxY = data[j + 1];
+          data[j] = getScaledX(datafile[sn], data[j], modeX);
         }
 
         datam[sn].deleteData();
@@ -588,11 +675,33 @@ public class MultiPlotFitting extends PlotFitting {
         if (datafile[sn].hasfit()) {
 
           for (i = j = 0; i < np; i++, j += 2) {
+            int index = i + datafile[sn].startingindex;
+            data[j] = datafile[sn].getXData(index);
             if (datafile[sn].xInsideRange(datafile[sn].getXData(i + datafile[sn].startingindex)) ||
-                !markExcludedRegion)
-              data[j + 1] = datafile[sn].getFitSqrtData(i + datafile[sn].startingindex) + offset * sn;
-            else
+                !markExcludedRegion) {
+              double intValue = PlotDataFile.getFitIntensity(datafile[sn], data[j], index);
+              double b_value = 0.0;
+              if (bkgSub)
+                b_value = getBackground(datafile[sn], data[j], index);
+              if (calibInt) {
+                double cal = PlotDataFile.getIntensityCalibration(datafile[sn], data[j], index);
+                if (cal > 0) {
+                  intValue /= cal;
+                  b_value /= cal;
+                }
+              }
+              if (calibLP) {
+                double cal = PlotDataFile.getIntensityLPCalibration(datafile[sn], data[j], index);
+                if (cal > 0) {
+                  intValue /= cal;
+                  b_value /= cal;
+                }
+              }
+              data[j + 1] = PlotDataFile.getScaledIntensity(datafile[sn], intValue - b_value, data[j], modeY)
+                  + offset * sn;
+            } else
               data[j + 1] = Double.NaN;
+            data[j] = getScaledX(datafile[sn], data[j], modeX);
           }
 //		        data[1] = data[3]; // Luca: to check, workaround
 //		        data[np * 2 - 1] = data[np * 2 - 3]; // Luca: to check, workaround

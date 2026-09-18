@@ -358,8 +358,73 @@ public class Texture extends XRDcat {
     return new double[numberofPoints][numberofPoints];
   }
 
-  public double[] getPoleFigureGrid(Reflection refl, double[] x, double[] y) {
+  public void applySymmetryRules() {
+  }
 
+  public void addTextureBroadening() {
+  }
+
+  public double[] getPoleFigureGridRadial(Reflection refl, double[] x, double[] y1) {
+
+    double r;
+    double texture_angles[] = new double[2];
+
+
+//		Phase aphase = (Phase) refl.getParent();
+    applySymmetryRules();
+//		aphase.sghklcompute(false);
+    addTextureBroadening();
+    double[] y = new double[x.length];
+
+    for (int i = 0; i < x.length; i++) {
+      r = Math.sqrt(x[i] * x[i] + y1[i] * y1[i]);
+      if (r == 0.0) {
+        texture_angles[0] = 0.0f;
+        texture_angles[1] = 0.0f;
+        y[i] = computeTextureFactor(refl.phi[0], refl.beta[0],
+            texture_angles[0],
+            texture_angles[1]);
+      } else if (r < Math.PI / 2.0) {
+        double phaseAng = Math.atan2(x[i], y1[i]);
+        if (phaseAng < 0.0)
+          phaseAng += Constants.PI2;
+        texture_angles[0] = 2.0f * Math.asin(r / Constants.sqrt2);
+        if (texture_angles[0] < 0.0) {
+          texture_angles[0] = -texture_angles[0];
+          phaseAng += Constants.PI;
+          while (phaseAng >= Constants.PI2)
+            phaseAng -= Constants.PI2;
+        }
+        texture_angles[1] = phaseAng;
+//					System.out.println(Double.toXRDcatString(texture_angles[0]) + " " + Double.toXRDcatString(texture_angles[1]));
+
+        y[i] = computeTextureFactor(refl.phi[0], refl.beta[0],
+            texture_angles[0],
+            texture_angles[1]);
+      } else
+        y[i] = 0;
+    }
+    return y;
+  }
+
+  public double[] getPoleFigureGridPolar(Reflection refl, double[] x, double[] y) {
+
+    double r;
+    double texture_angles[] = new double[2];
+
+
+//		Phase aphase = (Phase) refl.getParent();
+    applySymmetryRules();
+//		aphase.sghklcompute(false);
+    addTextureBroadening();
+
+    for (int i = 0; i < x.length; i++) {
+      texture_angles[0] = x[i];
+      texture_angles[1] = 0;
+      y[i] = computeTextureFactor(refl.phi[0], refl.beta[0],
+             texture_angles[0],
+             texture_angles[1] - 90.0);
+    }
     return y;
   }
 

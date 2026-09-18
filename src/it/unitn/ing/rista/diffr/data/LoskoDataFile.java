@@ -73,9 +73,9 @@ public class LoskoDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
 	double pixelSizeY = sensorSizeY / pixelsNumberY;
 
 	double minAcceptedX = 0;
-	double maxAcceptedX = sensorSizeX;
-	double minAcceptedY = 0;
-	double maxAcceptedY = sensorSizeY;
+  double maxAcceptedX = originalPixelsNumberX;
+  double minAcceptedY = 0;
+  double maxAcceptedY = originalPixelsNumberY;
 
 	double totalCounts = 0;
 
@@ -168,10 +168,10 @@ public class LoskoDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
 
 		sensorSizeX = MaudPreferences.getDouble("LumaCam.sensorSizeX_mm", 134);
 		sensorSizeY = MaudPreferences.getDouble("LumaCam.sensorSizeY_mm", 134.0);
-		minAcceptedX = MaudPreferences.getDouble("LumaCam.minX_forAcceptance_mm", 9.5);
-		maxAcceptedX = MaudPreferences.getDouble("LumaCam.maxX_forAcceptance_mm", 124.5);
-		minAcceptedY = MaudPreferences.getDouble("LumaCam.minY_forAcceptance_mm", 9.5);
-		maxAcceptedY = MaudPreferences.getDouble("LumaCam.maxY_forAcceptance_mm", 124.5);
+		minAcceptedX = MaudPreferences.getDouble("LumaCam.minX_forAcceptance", 31.0);
+		maxAcceptedX = MaudPreferences.getDouble("LumaCam.maxX_forAcceptance", 224.0);
+		minAcceptedY = MaudPreferences.getDouble("LumaCam.minY_forAcceptance", 31.0);
+		maxAcceptedY = MaudPreferences.getDouble("LumaCam.maxY_forAcceptance", 224.0);
 		pixelsNumberX = originalPixelsNumberX / groupPixelsX;
 		pixelsNumberY = originalPixelsNumberY / groupPixelsY;
 		pixelSizeX = sensorSizeX / originalPixelsNumberX;
@@ -180,7 +180,7 @@ public class LoskoDataFile extends it.unitn.ing.rista.diffr.MultDiffrDataFile {
 		tofNumber = MaudPreferences.getInteger("LumaCam.numberTOFpoints", 2048);
 
 		clockWidth = MaudPreferences.getDouble("LumaCam.clockWidth", 100.0);
-		minTOF = MaudPreferences.getDouble("LumaCam.minTOF", 1.0E-5);
+		minTOF = MaudPreferences.getDouble("LumaCam.minTOF", 0);
 		maxTOF = MaudPreferences.getDouble("LumaCam.maxTOF", 10000.0);
 
 		boolean loadSuccessfull = false;

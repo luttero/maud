@@ -36,6 +36,8 @@ import java.util.Vector;
 
 import org.javadev.AnimatingCardLayout;
 
+import static it.unitn.ing.rista.awt.PlotDataFile.plotBackground;
+
 
 /**
  * The SpectrumPlotPanel is a class
@@ -92,7 +94,6 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
   public static boolean blackAndWhite = MaudPreferences.getBoolean("plot.black&white", false);
   public static boolean plotResiduals = MaudPreferences.getBoolean("plot.plotResiduals", true);
   public static boolean plotPeaks = MaudPreferences.getBoolean("plot.plotPeaks", true);
-  public static boolean plotBackground = MaudPreferences.getBoolean("plot.plotBackground", false);
 
 	G2Dint graph = null;
 //  CopyPrintPanel fullGraphPanel = null;
@@ -375,7 +376,7 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 		} else
 			keepMaxima = false;
 		removeAll();
-		adata.updateDataForPlot();
+		PlotDataFile.updateDataForPlot(adata);
 
 		initResources();
 
@@ -443,7 +444,7 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 	public CopyPrintPanel createGraph(boolean keepMaxima) {
 //    System.out.println("Creating graph, SpectrumPlotPanel");
 		CopyPrintPanel fullGraphPanel;
-		int mode = PlotDataFile.checkScaleModeX();
+		int modeX = PlotDataFile.checkScaleModeX();
 		PlotDataFile.checkCalibrateIntensity();
 		PlotDataFile.checkBackgroundSubtraction();
 		Constants.checkMinimumEnergy();
@@ -621,7 +622,7 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 					yaxis.attachDataSet(bkgData);
 			}
 
-			yaxis.setTitleText(DiffrDataFile.getAxisYLegend());
+			yaxis.setTitleText(PlotDataFile.getAxisYLegend());
 			yaxis.setTitleFont(new Font(axisFont, Font.BOLD, YaxisTitleFontScale));
 			yaxis.setLabelFont(new Font(labelFont, Font.PLAIN, YaxisLabelFontScale));
 			yaxis.setTitleColor(YaxisTitleColor);
@@ -704,8 +705,8 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 								double dspace = 0;
 								if (ijn < dataset.getActiveDataFile(0).getPositions(tmpphase)[0][0].length) {
 									double pos = dataset.getActiveDataFile(0).getPositions(tmpphase)[reflIndex][0][ijn];
-									datapeak[j] = dataset.getActiveDataFile(0).convertXDataForPlot(pos, wave, mode);
-									datapeak[j + 1] = (double) (phaseindex + 1);
+									datapeak[j] = dataset.getActiveDataFile(0).convertXDataForPlot(pos, wave, modeX);
+									datapeak[j + 1] = (phaseindex + 1);
 									dspace = dataset.getActiveDataFile(0).convertXToDspace(pos, wave);
 								}
 								if (ijn == 0) {
@@ -751,7 +752,7 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 								datap[ijn].markercolor = getPastelColor(ijn);
 						}
 						for (int ij = 0; ij < numberphases; ij++) {
-							double ypos = (double) (ij + 1);
+							double ypos = (ij + 1);
 							datap[ij].legend(1, ypos, phaselist[ij].toXRDcatString());
 							datap[ij].legendFont(new Font(labelFont, Font.PLAIN, PhasesFontScale));
 							if (blackAndWhite)
@@ -837,7 +838,7 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 
 						double wave = dataset.getInstrument().getRadiationType().getRadiationWavelength(0);
 						for (int i = 0; i < numberofRefl; i++) {
-							datapeak[2 * i] = dataset.getActiveDataFile(0).convertXDataForPlot(peaksList[0][i], wave, mode);
+							datapeak[2 * i] = dataset.getActiveDataFile(0).convertXDataForPlot(peaksList[0][i], wave, modeX);
 
 							datapeak[2 * i + 1] = 1.0;
 						}
@@ -946,7 +947,8 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 				xaxisr.referenceAxis = xaxis;
 				xaxisr.axiscolor = Color.black;
 				xaxisr.attachDataSet(datar);
-				xaxisr.setTitleText(dataset.getActiveDataFile(0).getAxisXLegend());
+				xaxisr.setTitleText(PlotDataFile.getAxisXLegend(dataset.getActiveDataFile(0).calibrated,
+            dataset.getActiveDataFile(0).dspacingbase, dataset.getActiveDataFile(0).energyDispersive));
 				xaxisr.setTitleFont(new Font(axisFont, Font.BOLD, XaxisTitleFontScale));
 				xaxisr.setLabelFont(new Font(labelFont, Font.PLAIN, XaxisLabelFontScale));
 				xaxisr.setTitleColor(XaxisTitleColor);
@@ -972,7 +974,8 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 				yaxisr.axiscolor = Color.black;
 
 			} else {
-				xaxis.setTitleText(dataset.getActiveDataFile(0).getAxisXLegend());
+				xaxis.setTitleText(PlotDataFile.getAxisXLegend(dataset.getActiveDataFile(0).calibrated,
+            dataset.getActiveDataFile(0).dspacingbase, dataset.getActiveDataFile(0).energyDispersive));
 				xaxis.setTitleFont(new Font(axisFont, Font.BOLD, XaxisTitleFontScale));
 				xaxis.setLabelFont(new Font(labelFont, Font.PLAIN, XaxisLabelFontScale));
 				xaxis.setTitleColor(XaxisTitleColor);
@@ -1006,18 +1009,21 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 	public CopyPrintPanel createGraph(DiffrDataFile[] afile, double[][] peaks,
                                     double[] derivative2, boolean keepMaxima) {
 //    System.out.println("Creating multispectrum graph, SpectrumPlotPanel");
-    double datafit[] = null;
-    double dataphase[];
+    double[] datafit = null;
+    Vector<double[]> dataphasev = null;
 	  CopyPrintPanel fullGraphPanel = null;
 
 	  if (afile == null) {
       return new NoDatafileCanvas();
     }
 
-		int mode = PlotDataFile.checkScaleModeX();
+		int modeX = PlotDataFile.checkScaleModeX();
+    int modeY = PlotDataFile.checkScaleMode();
 		PlotDataFile.checkCalibrateIntensity();
-		PlotDataFile.checkBackgroundSubtraction();
-		Constants.checkMinimumEnergy();
+    boolean calibInt = PlotDataFile.calibrateIntensity();
+    boolean calibLP = PlotDataFile.calibrateIntensityForLorentzPolarization();
+    boolean bkgSub = PlotDataFile.checkBackgroundSubtraction();
+		double minEnergyKeV = Constants.checkMinimumEnergy();
 
 //    if (peaks != null)
     peaksList = peaks;
@@ -1034,12 +1040,21 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 
 	    int numberphases = filepar.getActiveSample().phasesNumber();
 //      if (!plotPeaks)
-//        numberphases = 0;
-	    Phase[] phaselist = new Phase[numberphases];
+
+      Phase[] phaselist = new Phase[numberphases];
 	    for (int i = 0; i < numberphases; i++)
 		    phaselist[i] = filepar.getActiveSample().getPhase(i);
 
-	    int i;
+      int numberphasesFit = 0;
+      for (int s = 0; s < numberphases; s++)
+        if (phaselist[s].plotFit())
+          numberphasesFit++;
+//      if (plotBackground)
+//        numberphasesFit++;
+      DataSet[] phaseData = new DataSet[numberphasesFit];
+      dataphasev = new Vector<>(numberphasesFit);
+
+      int i;
 	    int j;
 
 	    int ylength = datafile.length;
@@ -1051,8 +1066,8 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 
 	    for (int is1 = 0; is1 < ylength; is1++) {
 		    int xlength = datafile[is1].finalindex - datafile[is1].startingindex - 1;
-		    double x1 = datafile[is1].getXDataForPlot(datafile[is1].startingindex, mode);
-		    double x2 = datafile[is1].getXDataForPlot(datafile[is1].finalindex - 1, mode);
+		    double x1 = datafile[is1].getXData(datafile[is1].startingindex);
+		    double x2 = datafile[is1].getXData(datafile[is1].finalindex - 1);
 		    double lstepX = Math.abs((x2 - x1) / xlength);
 		    if (lstepX < stepX)
 			    stepX = lstepX;
@@ -1068,57 +1083,141 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 	    int np = (int) Math.abs((xmax - xmin) / stepX) + 1;
 
 	    if (np > 0) {
-		    double data[] = new double[2 * np];
-		    if (datafile[0].hasfit() || peaksLocated) {
+        boolean hasFit = datafile[0].hasfit();
+        double b_value = 0;
+		    double[] data = new double[2 * np];
+        double[] b_data = null;
+        if (bkgSub || plotBackground)
+          b_data = new double[2 * np];
+		    if (hasFit || peaksLocated) {
 			    datafit = new double[2 * np];
 		    }
+        for (int ip = 0; ip < numberphasesFit; ip++) {
+          double[] dataphase = new double[2 * np];
+          dataphasev.add(dataphase);
+        }
 //		    mode = PlotDataFile.checkScaleModeX();
 		    for (int is1 = 0; is1 < np; is1++) {
 			    int is2 = is1 * 2;
 			    data[is2] = xmin + is1 * stepX;
-			    int total = 0;
+          int total = 0;
 			    int totalFit = 0;
 			    for (int sn = 0; sn < ylength; sn++) {
-				    double xstartmin = datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode);
-				    double xendmax = datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode);
-				    if (xendmax < datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode))
-					    xendmax = datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode);
-				    if (xstartmin > datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode))
-					    xstartmin = datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode);
+				    double xstartmin = datafile[sn].getXData(datafile[sn].startingindex);
+				    double xendmax = datafile[sn].getXData(datafile[sn].finalindex - 1);
+				    if (xendmax < datafile[sn].getXData(datafile[sn].startingindex))
+					    xendmax = datafile[sn].getXData(datafile[sn].startingindex);
+				    if (xstartmin > datafile[sn].getXData(datafile[sn].finalindex - 1))
+					    xstartmin = datafile[sn].getXData(datafile[sn].finalindex - 1);
 				    if (data[is2] >= xstartmin && data[is2] <= xendmax) {
-				    	double value = datafile[sn].getInterpolatedYSqrtIntensity(data[is2], 2, mode);
+              int index = datafile[sn].getOldNearestPoint(data[is2]);
+				    	double value = PlotDataFile.getIntensity(datafile[sn], data[is2], index);
+              double f_value = Double.NaN;
+              if (hasFit)
+                f_value = PlotDataFile.getFitIntensity(datafile[sn], data[is2], index);
+              double[] phaseFit = new double[numberphasesFit];
+              int nphase = 0;
+              for (int ip = 0; ip < numberphases; ip++) {
+                if (phaselist[ip].plotFit())
+                  phaseFit[nphase++] = PlotDataFile.getPhaseFitIntensity(datafile[sn], data[is2], index, ip);
+              }
+              if (bkgSub || plotBackground)
+                b_value = PlotDataFile.getBackground(datafile[sn], data[is2], index);
+              if (calibInt) {
+                double calibratingIntensity = PlotDataFile.getIntensityCalibration(datafile[sn], data[is2], index);
+                if (calibratingIntensity != 0.0) {
+                  value /= calibratingIntensity;
+                  if (bkgSub || plotBackground)
+                    b_value /= calibratingIntensity;
+                  if (!Double.isNaN(f_value))
+                    f_value /= calibratingIntensity;
+                  nphase = 0;
+                  for (int ip = 0; ip < numberphases; ip++) {
+                    if (phaselist[ip].plotFit())
+                      phaseFit[nphase++] /= calibratingIntensity;
+                  }
+                }
+              }
+              if (calibLP) {
+                double calibratingIntensity = PlotDataFile.getIntensityLPCalibration(datafile[sn], data[is2], index);
+                if (calibratingIntensity != 0.0) {
+                  value /= calibratingIntensity;
+                  if (bkgSub || plotBackground)
+                    b_value /= calibratingIntensity;
+                  if (!Double.isNaN(f_value))
+                    f_value /= calibratingIntensity;
+                  nphase = 0;
+                  for (int ip = 0; ip < numberphases; ip++) {
+                    if (phaselist[ip].plotFit())
+                      phaseFit[nphase++] /= calibratingIntensity;
+                  }
+                }
+              }
 				    	if (!Double.isNaN(value)) {
 					      data[is2 + 1] += value;
+                if (bkgSub || plotBackground)
+                  b_data[is2 + 1] += b_value;
 					      total++;
 				      }
-				    }
+              if (!Double.isNaN(f_value)) {
+                datafit[is2 + 1] += f_value;
+                totalFit++;
+              }
+              nphase = 0;
+              for (int ip = 0; ip < numberphases; ip++) {
+                if (phaselist[ip].plotFit()) {
+                  double[] phasesFit = dataphasev.get(nphase);
+                  phasesFit[is2 + 1] += phaseFit[nphase++];
+                }
+              }
+            }
 			    }
-			    if (total > 0)
-				    data[is2 + 1] /= total;
+			    if (total > 0) {
+            data[is2 + 1] /= total;
+            if (totalFit > 0)
+              datafit[is2 + 1] /= totalFit;
+            int nphase = 0;
+            for (int ip = 0; ip < numberphases; ip++) {
+              if (phaselist[ip].plotFit()) {
+                double[] phasesFit = dataphasev.get(nphase++);
+                phasesFit[is2 + 1] /= totalFit;
+              }
+            }
+            if (bkgSub) {
+              b_data[is2 + 1] /= total;
+              data[is2 + 1] -= b_data[is2 + 1];
+              if (hasFit)
+                datafit[is2 + 1] -= b_data[is2 + 1];
+            }
+            data[is2 + 1] = PlotDataFile.getScaledIntensity(datafile[0], data[is2 + 1], data[is2], modeY);
+            if (hasFit) {
+              datafit[is2 + 1] = PlotDataFile.getScaledIntensity(datafile[0], datafit[is2 + 1], data[is2], modeY);
+            }
+            if (plotBackground) {
+              b_data[is2 + 1] = PlotDataFile.getScaledIntensity(datafile[0], b_data[is2 + 1], data[is2], modeY);
+            }
+            nphase = 0;
+            for (int ip = 0; ip < numberphases; ip++) {
+              if (phaselist[ip].plotFit()) {
+                double[] phasesFit = dataphasev.get(nphase++);
+                phasesFit[is2 + 1] = PlotDataFile.getScaledIntensity(datafile[0], phasesFit[is2 + 1], data[is2], modeY);
+              }
+            }
+          }
+          data[is2] = PlotDataFile.getScaledX(datafile[0], data[is2], modeX);
+          datafit[is2] = data[is2];
+          if (plotBackground)
+            b_data[is2] = data[is2];
+          int nphase = 0;
+          for (int s = 0; s < numberphases; s++) {
+            if (phaselist[s].plotFit()) {
+              double[] phasesFit = dataphasev.get(nphase++);
+              phasesFit[is2] = data[is2];
+            }
+          }
+
 //          System.out.println(is2 + " " + data[is2] + " " + data[is2 + 1]);
 
-
-          if (datafile[0].hasfit()) {
-				    datafit[is2] = data[is2];
-
-				    for (int sn = 0; sn < ylength; sn++) {
-					    double xstartmin = datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode);
-					    double xendmax = datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode);
-					    if (xendmax < datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode))
-						    xendmax = datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode);
-					    if (xstartmin > datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode))
-						    xstartmin = datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode);
-					    if (datafit[is2] >= xstartmin && datafit[is2] <= xendmax) {
-						    double value = datafile[sn].getInterpolatedFitSqrtIntensity(datafit[is2], 1, mode);
-						    if (!Double.isNaN(value)) {
-							    datafit[is2 + 1] += value;
-							    totalFit++;
-						    }
-					    }
-				    }
-				    if (totalFit > 0)
-					    datafit[is2 + 1] /= totalFit;
-			    }
 		    }
 //		    if (datafile[0].hasfit()) {
 //			    datafit[1] = datafit[3]; // Luca: to check, workaround
@@ -1194,43 +1293,17 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 			    }
 		    }
 
-		    DataSet[] phaseData = new DataSet[numberphases];
-
 		    if (datafile[0].hasfit()) {
+          int nphase = 0;
 			    for (int s = 0; s < numberphases; s++) {
 				    if (phaselist[s].plotFit()) {
-					    dataphase = new double[2 * np];
-					    for (i = j = 0; i < np; i++, j += 2) {
-						    int totalFit = 0;
-						    for (int sn = 0; sn < ylength; sn++) {
-							    double xstartmin = datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode);
-							    double xendmax = datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode);
-							    if (xendmax < datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode))
-								    xendmax = datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode);
-							    if (xstartmin > datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode))
-								    xstartmin = datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode);
-//            if (is1 == 0)
-//              syaxis[ylength + 1 + sn] = ylength + 1 + sn;
-							    if (datafit[j] >= xstartmin && datafit[j] <= xendmax) {
-							    	double value = datafile[sn].getInterpolatedFitSqrtIntensity(datafit[j], 2, mode, s);
-							    	if (!Double.isNaN(value)) {
-								      dataphase[j + 1] += value;
-								      totalFit++;
-							      }
-							    }
-						    }
-						    if (totalFit > 0)
-							    dataphase[j + 1] /= totalFit;
-						    dataphase[j] = datafit[j];
-//            System.out.println(datafit[j] + " " + datafit[j + 1]);
-
-					    }
-					    phaseData[s] = graph.loadDataSet(dataphase, np);
-					    phaseData[s].linestyle = 1;
+              double[] dataphase = dataphasev.get(nphase);
+					    phaseData[nphase] = graph.loadDataSet(dataphase, np);
+					    phaseData[nphase].linestyle = 1;
 					    if (blackAndWhite)
-						    phaseData[s].linecolor = Color.black;
+						    phaseData[nphase].linecolor = Color.black;
 					    else
-						    phaseData[s].linecolor = getPastelColor(s + 2);
+						    phaseData[nphase++].linecolor = getPastelColor(s + 2);
 				    }
 			    }
 
@@ -1239,33 +1312,10 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 		    DataSet bkgData = null;
 
 		    if (datafile[0].hasfit() && plotBackground) {
-			    dataphase = new double[2 * np];
-			    for (i = j = 0; i < np; i++, j += 2) {
-				    int totalFit = 0;
-				    for (int sn = 0; sn < ylength; sn++) {
-					    double xstartmin = datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode);
-					    double xendmax = datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode);
-					    if (xendmax < datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode))
-						    xendmax = datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode);
-					    if (xstartmin > datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode))
-						    xstartmin = datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode);
-//            if (is1 == 0)
-//              syaxis[ylength + 1 + sn] = ylength + 1 + sn;
-					    if (datafit[j] >= xstartmin && datafit[j] <= xendmax) {
-					    	double value = datafile[sn].getInterpolatedBkgFitSqrtIntensity(datafit[j], 2, mode);
-					    	if (!Double.isNaN(value)) {
-						      dataphase[j + 1] += value;
-						      totalFit++;
-					      }
-					    }
-				    }
-				    if (totalFit > 0)
-					    dataphase[j + 1] /= totalFit;
-				    dataphase[j] = datafit[j];
 //            System.out.println(datafit[j] + " " + datafit[j + 1]);
 
-			    }
-			    bkgData = graph.loadDataSet(dataphase, np);
+
+			    bkgData = graph.loadDataSet(b_data, np);
 			    bkgData.linestyle = 1;
 			    if (blackAndWhite)
 				    bkgData.linecolor = Color.black;
@@ -1316,7 +1366,7 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 		    }
 
 
-		    yaxis.setTitleText(DiffrDataFile.getAxisYLegend());
+		    yaxis.setTitleText(PlotDataFile.getAxisYLegend());
 		    yaxis.setTitleFont(new Font(axisFont, Font.BOLD, YaxisTitleFontScale));
 		    yaxis.setLabelFont(new Font(labelFont, Font.PLAIN, YaxisLabelFontScale));
 		    yaxis.setTitleColor(YaxisTitleColor);
@@ -1420,8 +1470,8 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 							    double dspace = 0;
 							    if (ijn < datafile[0].getPositions(tmpphase)[0][0].length) {
 								    double pos = datafile[0].getPositions(tmpphase)[reflIndex][0][ijn];
-								    datapeak[j] = datafile[0].convertXDataForPlot(pos, wave, mode);
-								    datapeak[j + 1] = (double) (phaseindex + 1);
+								    datapeak[j] = datafile[0].convertXDataForPlot(pos, wave, modeX);
+								    datapeak[j + 1] = (phaseindex + 1);
 								    dspace = datafile[0].convertXToDspace(pos, wave);
 							    }
 							    if (ijn == 0) {
@@ -1553,7 +1603,7 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 
 					    double wave = adataset.getInstrument().getRadiationType().getRadiationWavelength(0);
 					    for (i = 0; i < numberofRefl; i++) {
-						    datapeak[2 * i] = datafile[0].convertXDataForPlot(peaksList[0][i], wave, mode);
+						    datapeak[2 * i] = datafile[0].convertXDataForPlot(peaksList[0][i], wave, modeX);
 
 						    datapeak[2 * i + 1] = 1.0;
 					    }
@@ -1673,7 +1723,7 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 			    xaxisr.referenceAxis = xaxis;
 			    xaxisr.axiscolor = Color.black;
 			    xaxisr.attachDataSet(datar);
-			    xaxisr.setTitleText(datafile[0].getAxisXLegend());
+			    xaxisr.setTitleText(PlotDataFile.getAxisXLegend(datafile[0].calibrated, datafile[0].dspacingbase, datafile[0].energyDispersive));
 			    xaxisr.setTitleFont(new Font(axisFont, Font.BOLD, XaxisTitleFontScale));
 			    xaxisr.setLabelFont(new Font(labelFont, Font.PLAIN, XaxisLabelFontScale));
 			    xaxisr.setTitleColor(XaxisTitleColor);
@@ -1699,7 +1749,7 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 			    yaxisr.axiscolor = Color.black;
 
 		    } else {
-			    xaxis.setTitleText(datafile[0].getAxisXLegend());
+			    xaxis.setTitleText(PlotDataFile.getAxisXLegend(datafile[0].calibrated, datafile[0].dspacingbase, datafile[0].energyDispersive));
 			    xaxis.setTitleFont(new Font(axisFont, Font.BOLD, XaxisTitleFontScale));
 			    xaxis.setLabelFont(new Font(labelFont, Font.PLAIN, XaxisLabelFontScale));
 			    xaxis.setTitleColor(XaxisTitleColor);
@@ -1746,10 +1796,13 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
       return new NoDatafileCanvas();
     }
 
-	  int mode = PlotDataFile.checkScaleModeX();
-	  PlotDataFile.checkCalibrateIntensity();
-	  PlotDataFile.checkBackgroundSubtraction();
-	  Constants.checkMinimumEnergy();
+    int modeX = PlotDataFile.checkScaleModeX();
+    int modeY = PlotDataFile.checkScaleMode();
+    PlotDataFile.checkCalibrateIntensity();
+    boolean calibInt = PlotDataFile.calibrateIntensity();
+    boolean calibLP = PlotDataFile.calibrateIntensityForLorentzPolarization();
+    boolean bkgSub = PlotDataFile.checkBackgroundSubtraction();
+    double minEnergyKeV = Constants.checkMinimumEnergy();
 
 //    datafile[0] = afile;
 //    if (peaks != null)
@@ -1845,18 +1898,59 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
         labels[1] = "check the datafiles!";
         return new NoDatafileCanvas(labels);
       }
-      double data[] = new double[2 * np];
 
-//          boolean forceDspace = MaudPreferences.getBoolean(xaxisModePref, xplotMode[0]);
-      mode = PlotDataFile.checkScaleModeX();
-      boolean subtractBackground = PlotDataFile.subtractBackground();
+      double[] dataBkg = null;
+      double[] intensityCalibration = null;
+      if (calibInt)
+        intensityCalibration = new double[np];
+      double[] lpCalibration = null;
+      if (calibLP)
+        lpCalibration = new double[np];
+
+      if (afile.hasfit() && (plotBackground || bkgSub)) {
+        dataBkg = new double[2 * np];
+        for (i = j = 0; i < np; i++, j += 2) {
+          int index = i + startingIndexG;
+          dataBkg[j] = afile.getXData(index);
+          if (index >= afile.startingindex && index < afile.finalindex) {
+            if (afile.xInsideRange(dataBkg[j]) || !markExcludedRegion) {
+              dataBkg[j + 1] = afile.getBkgFit(index);
+              if (calibInt) {
+                intensityCalibration[i] = PlotDataFile.getIntensityCalibration(afile, dataBkg[j], index);
+                if (intensityCalibration[i] > 0)
+                  dataBkg[j + 1] /= intensityCalibration[i];
+              }
+              if (calibLP) {
+                lpCalibration[i] = PlotDataFile.getIntensityLPCalibration(afile, dataBkg[j], index);
+                if (lpCalibration[i] > 0)
+                  dataBkg[j + 1] /= lpCalibration[i];
+              }
+            } else
+              dataBkg[j + 1] = Double.NaN;
+          }
+        }
+      }
+
+
+      double data[] = new double[2 * np];
       for (i = j = 0; i < np; i++, j += 2) {
         int index = i + startingIndexG;
+        data[j] = afile.getXData(index);
         if (index >= afile.startingindex && index < afile.finalindex) {
-          data[j] = afile.getXDataForPlot(index, mode);
-//            System.out.println(j + " " + data[j]);
-          data[j + 1] = afile.getYSqrtData(index, subtractBackground);
-//          System.out.println(j + " " + data[j] + " " + data[j + 1]);
+          data[j + 1] = afile.getYData(index);
+          if (calibInt) {
+            if (intensityCalibration[i] > 0)
+              data[j + 1] /= intensityCalibration[i];
+          }
+          if (calibLP) {
+            if (lpCalibration[i] > 0)
+              data[j + 1] /= lpCalibration[i];
+          }
+          if (bkgSub) {
+            data[j + 1] -= dataBkg[j + 1];
+          }
+          data[j + 1] = PlotDataFile.getScaledIntensity(afile, data[j + 1], data[j], modeY);
+          data[j] = PlotDataFile.getScaledX(afile, data[j], modeX);
         }
       }
 //          System.out.println("Data loaded");
@@ -1880,12 +1974,25 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
         datafit = new double[2 * np];
         for (i = j = 0; i < np; i++, j += 2) {
           int index = i + startingIndexG;
-//            System.out.println(data[j]);
+          datafit[j] = afile.getXData(index);
           if (index >= afile.startingindex && index < afile.finalindex) {
-            if (afile.xInsideRange(afile.getXData(index)) || !markExcludedRegion)
-              datafit[j + 1] = afile.getFitSqrtData(index);
-            else
+            if (afile.xInsideRange(datafit[j]) || !markExcludedRegion) {
+              datafit[j + 1] = PlotDataFile.getFitIntensity(afile, datafit[j], index);
+              if (calibInt) {
+                if (intensityCalibration[i] > 0)
+                  datafit[j + 1] /= intensityCalibration[i];
+              }
+              if (calibLP) {
+                if (lpCalibration[i] > 0)
+                  datafit[j + 1] /= lpCalibration[i];
+              }
+              if (bkgSub) {
+                datafit[j + 1] -= dataBkg[j + 1];
+              }
+              datafit[j + 1] = PlotDataFile.getScaledIntensity(afile, datafit[j + 1], datafit[j], modeY);
+            } else {
               datafit[j + 1] = Double.NaN;
+            }
           }
           datafit[j] = data[j];
         }
@@ -1905,13 +2012,24 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
             dataphase = new double[2 * np];
             for (i = j = 0; i < np; i++, j += 2) {
               int index = i + startingIndexG;
+              dataphase[j] = afile.getXData(index);
               if (index >= afile.startingindex && index < afile.finalindex) {
-                if (afile.xInsideRange(afile.getXData(index)) || !markExcludedRegion)
-                  dataphase[j + 1] = afile.getFitSqrtData(index, s);
-                else
+                if (afile.xInsideRange(dataphase[j]) || !markExcludedRegion) {
+                  dataphase[j + 1] = PlotDataFile.getPhaseFitIntensity(afile, dataphase[j], index, s);
+                  if (calibInt) {
+                    if (intensityCalibration[i] > 0)
+                      dataphase[j + 1] /= intensityCalibration[i];
+                  }
+                  if (calibLP) {
+                    if (lpCalibration[i] > 0)
+                      dataphase[j + 1] /= lpCalibration[i];
+                  }
+                  dataphase[j + 1] = PlotDataFile.getScaledIntensity(afile, dataphase[j + 1], dataphase[j], modeY);
+                } else {
                   dataphase[j + 1] = Double.NaN;
+                }
               }
-              dataphase[j] = data[j];
+              dataphase[j] = data[j];;
 //            System.out.println(datafit[j] + " " + datafit[j + 1]);
 
             }
@@ -1932,23 +2050,13 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
         dataphase = new double[2 * np];
         for (i = j = 0; i < np; i++, j += 2) {
           int index = i + startingIndexG;
-          if (index >= afile.startingindex && index < afile.finalindex) {
-            if (afile.xInsideRange(afile.getXData(index)) || !markExcludedRegion)
-              dataphase[j + 1] = afile.getBkgFitSqrtData(index);
-            else
-              dataphase[j + 1] = Double.NaN;
-          }
-          dataphase[j] = data[j];
-//            System.out.println(datafit[j] + " " + datafit[j + 1]);
-
+          if (!Double.isNaN(dataBkg[j + 1]))
+            dataBkg[j + 1] = PlotDataFile.getScaledIntensity(afile, dataBkg[j + 1], afile.getXData(index), modeY);
+          dataBkg[j] = data[j];
         }
-        bkgData = graph.loadDataSet(dataphase, np);
+        bkgData = graph.loadDataSet(dataBkg, np);
         bkgData.linestyle = 1;
-//            if (blackAndWhite)
         bkgData.linecolor = Color.black;
-//            else
-//              bkgData.linecolor = getPastelColor(0);
-
       }
 
 /*
@@ -1993,7 +2101,7 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
       }
 
 
-      yaxis.setTitleText(DiffrDataFile.getAxisYLegend());
+      yaxis.setTitleText(PlotDataFile.getAxisYLegend());
       yaxis.setTitleFont(new Font(axisFont, Font.BOLD, YaxisTitleFontScale));
       yaxis.setLabelFont(new Font(labelFont, Font.PLAIN, YaxisLabelFontScale));
       yaxis.setTitleColor(YaxisTitleColor);
@@ -2093,7 +2201,7 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
                     phaseindex = ij;
 								int reflIndex = tmpphase.getReflexIndex(peaklist.elementAt(i).getReflex());
                 double pos = adataset.getActiveDataFile(0).getPositions(tmpphase)[reflIndex][0][ijn];
-                datapeak[j] = afile.convertXDataForPlot(pos, wave, mode);
+                datapeak[j] = afile.convertXDataForPlot(pos, wave, modeX);
                 double dspace = adataset.getActiveDataFile(0).convertXToDspace(pos, wave);
                 datapeak[j + 1] = (double) (phaseindex + 1);
 	              if (ijn == 0) {
@@ -2225,7 +2333,7 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 
             double wave = adataset.getInstrument().getRadiationType().getRadiationWavelength(0);
             for (i = 0; i < numberofRefl; i++) {
-              datapeak[2 * i] = afile.convertXDataForPlot(peaksList[0][i], wave, mode);
+              datapeak[2 * i] = afile.convertXDataForPlot(peaksList[0][i], wave, modeX);
 
               datapeak[2 * i + 1] = 1.0;
             }
@@ -2338,7 +2446,7 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
         xaxisr.referenceAxis = xaxis;
         xaxisr.axiscolor = Color.black;
         xaxisr.attachDataSet(datar);
-        xaxisr.setTitleText(afile.getAxisXLegend());
+        xaxisr.setTitleText(PlotDataFile.getAxisXLegend(afile.calibrated, afile.dspacingbase, afile.energyDispersive));
         xaxisr.setTitleFont(new Font(axisFont, Font.BOLD, XaxisTitleFontScale));
         xaxisr.setLabelFont(new Font(labelFont, Font.PLAIN, XaxisLabelFontScale));
         xaxisr.setTitleColor(XaxisTitleColor);
@@ -2364,7 +2472,7 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
         yaxisr.axiscolor = Color.black;
 
       } else {
-        xaxis.setTitleText(afile.getAxisXLegend());
+        xaxis.setTitleText(PlotDataFile.getAxisXLegend(afile.calibrated, afile.dspacingbase, afile.energyDispersive));
         xaxis.setTitleFont(new Font(axisFont, Font.BOLD, XaxisTitleFontScale));
         xaxis.setLabelFont(new Font(labelFont, Font.PLAIN, XaxisLabelFontScale));
         xaxis.setTitleColor(XaxisTitleColor);

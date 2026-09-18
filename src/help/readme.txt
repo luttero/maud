@@ -43,6 +43,16 @@ from the older one.
 
 Maud Version notes:
 
+(18/09/2026):   3.05. It's still "Hippo scattering".
+                Faster fluorescence calculation in the angle-energy
+                map model. Fixed the polar plot section plotting.
+                All plotting panels have been extensively re-written
+                for better consistency with summation plots and
+                calibration, sqrt, log etc. scaling. Your main summed
+                (mean) plot in the case of multipatterns will look
+                differently now and it is more correct.
+                Few other bugs fixed.
+
 (08/09/2026):   3.04. It's still "Hippo scattering".
                 Pole figures can be rotated now in the plotting
                 window.

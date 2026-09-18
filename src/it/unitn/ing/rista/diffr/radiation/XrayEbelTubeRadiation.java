@@ -278,8 +278,7 @@ public class XrayEbelTubeRadiation extends RadiationType {
   }
 
   public int getSubdivision() {
-    return MaudPreferences.getInteger("xrf_detector.energySubdivision", 20);
-
+    return MaudPreferences.getInteger("xrf_detector.energySubdivision", 10);
   }
 
   public int getLinesCountForPlot() {

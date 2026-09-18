@@ -873,21 +873,21 @@ public class GSASDataFile extends MultDiffrDataFile {
 								for (int j = 0; j < repeat; j++) {
 									if (form.equalsIgnoreCase("TIME_MAP")) {
 //        				inputString = "I8";
-										linedata += formatStringFor(y[banknumber][ii], digits[0], -1);
+										linedata += Misc.formatStringFor(y[banknumber][ii], digits[0], -1);
 									} else if (form.equalsIgnoreCase("STD")) {
 //        				inputString = "I2,F6.0";
 										linedata += nctr[banknumber][ii]; // nctr
-										linedata += formatStringFor(y[banknumber][ii], digits[1], -1);
+										linedata += Misc.formatStringFor(y[banknumber][ii], digits[1], -1);
 									} else if (form.equalsIgnoreCase("ESD")) {
 //        				inputString = "F8,F8";
-										linedata += formatStringFor(y[banknumber][ii], digits[0], -1);
-										linedata += formatStringFor(Math.sqrt(esd[banknumber][ii]), digits[1], -1);
+										linedata += Misc.formatStringFor(y[banknumber][ii], digits[0], -1);
+										linedata += Misc.formatStringFor(Math.sqrt(esd[banknumber][ii]), digits[1], -1);
 //                  System.out.println("ESD " + data[j] + " " + data[j + 1]);
 									} else if (form.equalsIgnoreCase("ALT")) {
 //        				inputString = "F8.0,F7.4,F5.4";
 										linedata += x[banknumber][ii];
-										linedata += formatStringFor(y[banknumber][ii], digits[1], 4);
-										linedata += formatStringFor(Math.sqrt(esd[banknumber][ii]), digits[2], 4);
+										linedata += Misc.formatStringFor(y[banknumber][ii], digits[1], 4);
+										linedata += Misc.formatStringFor(Math.sqrt(esd[banknumber][ii]), digits[2], 4);
 									}
 									ii++;
 								}
@@ -920,13 +920,6 @@ public class GSASDataFile extends MultDiffrDataFile {
 		}
 
 		return finalName;
-	}
-
-	public static String formatStringFor(double value, int digits, int decimals) {
-		if (decimals < 0) // integer
-			return Misc.getIntStringFormatted((int) value, digits);
-		else // float
-			return Misc.getDoubleStringFormatted(value, digits, decimals);
 	}
 
   public static void saveBankInXYEformat(String filename, String title, String instrumentParameterFile,

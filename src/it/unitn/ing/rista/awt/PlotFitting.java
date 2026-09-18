@@ -1252,30 +1252,69 @@ public class PlotFitting extends PlotDataFile {
     if (thePlotPanel.datafile[0].hasfit()) {
       try {
 
-        int mode = checkScaleModeX();
-        boolean subtractBackground = PlotDataFile.subtractBackground();
+        int modeX = checkScaleModeX();
+        int modeY = checkScaleMode();
+        checkCalibrateIntensity();
+        boolean calibInt = calibrateIntensity();
+        boolean calibLP = calibrateIntensityForLorentzPolarization();
+        boolean bkgSub = checkBackgroundSubtraction();
+        double minEnergyKeV = Constants.checkMinimumEnergy();
+
         for (i = j = 0; i < thePlotPanel.np; i++, j += 2) {
-          data[j] = thePlotPanel.datafile[0].getXDataForPlot(i +
-              thePlotPanel.datafile[0].startingindex, mode);
-          if (datafile[0].xInsideRange(thePlotPanel.datafile[0].getXData(i +
-              thePlotPanel.datafile[0].startingindex)) || !markExcludedRegion)
-            data[j + 1] = thePlotPanel.datafile[0].getFitSqrtData(i +
-              thePlotPanel.datafile[0].startingindex);
-          else
+          int index = i + thePlotPanel.datafile[0].startingindex;
+          data[j] = thePlotPanel.datafile[0].getXData(index);
+          if (datafile[0].xInsideRange(data[j]) || !markExcludedRegion) {
+            double intValue = PlotDataFile.getFitIntensity(thePlotPanel.datafile[0], data[j], index);
+            double b_value = 0.0;
+            if (bkgSub || plotBackground)
+              b_value = getBackground(thePlotPanel.datafile[0], data[j], index);
+
+            if (calibInt) {
+              double cal = PlotDataFile.getIntensityCalibration(thePlotPanel.datafile[0], data[j], index);
+              if (cal > 0) {
+                intValue /= cal;
+                b_value /= cal;
+              }
+            }
+            if (calibLP) {
+              double cal = PlotDataFile.getIntensityLPCalibration(thePlotPanel.datafile[0], data[j], index);
+              if (cal > 0) {
+                intValue /= cal;
+                b_value /= cal;
+              }
+            }
+            data[j + 1] = PlotDataFile.getScaledIntensity(thePlotPanel.datafile[0], intValue - b_value, data[j], modeY);
+          } else
             data[j + 1] = Double.NaN;
+          data[j] = getScaledX(thePlotPanel.datafile[0], data[j], modeX);
         }
-//	      data[1] = data[3]; // Luca: to check, workaround
-//	      data[thePlotPanel.np * 2 - 1] = data[thePlotPanel.np * 2 - 3]; // Luca: to check, workaround
         thePlotPanel.dataFit.deleteData();
         thePlotPanel.dataFit.append(data, thePlotPanel.np);
 
         for (i = j = 0; i < thePlotPanel.np; i++, j += 2) {
-          if (datafile[0].xInsideRange(thePlotPanel.datafile[0].getXData(i + thePlotPanel.datafile[0].startingindex))
-              || !markExcludedRegion)
-            data[j + 1] = thePlotPanel.datafile[0].getFitSqrtData(i + thePlotPanel.datafile[0].startingindex) -
-                  thePlotPanel.datafile[0].getYSqrtData(i + thePlotPanel.datafile[0].startingindex, subtractBackground);
-          else
+          int index = i + thePlotPanel.datafile[0].startingindex;
+          data[j] = thePlotPanel.datafile[0].getXData(index);
+          if (datafile[0].xInsideRange(data[j]) || !markExcludedRegion) {
+            double intValue = PlotDataFile.getFitIntensity(thePlotPanel.datafile[0], data[j], index);
+            double b_value = PlotDataFile.getIntensity(thePlotPanel.datafile[0], data[j], index);
+            if (calibInt) {
+              double cal = PlotDataFile.getIntensityCalibration(thePlotPanel.datafile[0], data[j], index);
+              if (cal > 0) {
+                intValue /= cal;
+                b_value /= cal;
+              }
+            }
+            if (calibLP) {
+              double cal = PlotDataFile.getIntensityLPCalibration(thePlotPanel.datafile[0], data[j], index);
+              if (cal > 0) {
+                intValue /= cal;
+                b_value /= cal;
+              }
+            }
+            data[j + 1] = PlotDataFile.getScaledIntensity(thePlotPanel.datafile[0], intValue - b_value, data[j], modeY);
+          } else
             data[j + 1] = Double.NaN;
+          data[j] = getScaledX(thePlotPanel.datafile[0], data[j], modeX);
         }
         thePlotPanel.datar.deleteData();
         thePlotPanel.datar.append(data, thePlotPanel.np);
@@ -1302,7 +1341,7 @@ public class PlotFitting extends PlotDataFile {
                   phaseindex = ij;
 	            // todo modify for more peaks par pattern
 	            double pos = adataset.getActiveDataFile(0).getPositions(tmpphase)[peaklist.elementAt(i).getOrderPosition()][0][ijn];
-	            datapeak[j] = thePlotPanel.datafile[0].convertXDataForPlot(pos, wave, mode);
+	            datapeak[j] = thePlotPanel.datafile[0].convertXDataForPlot(pos, wave, modeX);
 
               datapeak[j + 1] = phaseindex + 1;
             }
@@ -1348,7 +1387,7 @@ public class PlotFitting extends PlotDataFile {
     if (thePlotPanel.peaksList == null)
       return;
 
-    double[] trange = thePlotPanel.positions.getRanges();
+//    double[] trange = thePlotPanel.positions.getRanges();
 
     try {
 
@@ -1371,7 +1410,7 @@ public class PlotFitting extends PlotDataFile {
       e.printStackTrace();
     }
 
-    thePlotPanel.positions.updateDataAndPaint(trange);
+//    thePlotPanel.positions.updateDataAndPaint(trange);
 
   }
 
@@ -1391,17 +1430,40 @@ public class PlotFitting extends PlotDataFile {
 //    FilePar filepar = (FilePar) datafile[0].getFilePar();
 
     try {
-      int mode = checkScaleModeX();
+      int modeX = checkScaleModeX();
+      int modeY = checkScaleMode();
+      checkCalibrateIntensity();
+      boolean calibInt = calibrateIntensity();
+      boolean calibLP = calibrateIntensityForLorentzPolarization();
+      boolean bkgSub = checkBackgroundSubtraction();
+      double minEnergyKeV = Constants.checkMinimumEnergy();
       for (i = j = 0; i < thePlotPanel.np; i++, j += 2) {
-//        System.out.println("j+1 " + (j + 1));
-        data[j] = (double) thePlotPanel.datafile[0].getXDataForPlot(i +
-            thePlotPanel.datafile[0].startingindex, mode);
-        if (datafile[0].xInsideRange(thePlotPanel.datafile[0].getXData(i +
-            thePlotPanel.datafile[0].startingindex)) || !markExcludedRegion)
-          data[j + 1] = thePlotPanel.datafile[0].getFitSqrtData(i +
-            thePlotPanel.datafile[0].startingindex);
-        else
+        int index = i + thePlotPanel.datafile[0].startingindex;
+        data[j] = thePlotPanel.datafile[0].getXData(index);
+        if (thePlotPanel.datafile[0].xInsideRange(data[j]) || !markExcludedRegion) {
+          double intValue = PlotDataFile.getFitIntensity(thePlotPanel.datafile[0], data[j], i +
+              thePlotPanel.datafile[0].startingindex);
+          double b_value = 0.0;
+          if (bkgSub || plotBackground)
+            b_value = getBackground(thePlotPanel.datafile[0], data[j], index);
+          if (calibInt) {
+            double cal = PlotDataFile.getIntensityCalibration(thePlotPanel.datafile[0], data[j], index);
+            if (cal > 0) {
+              intValue /= cal;
+              b_value /= cal;
+            }
+          }
+          if (calibLP) {
+            double cal = PlotDataFile.getIntensityLPCalibration(thePlotPanel.datafile[0], data[j], index);
+            if (cal > 0) {
+              intValue /= cal;
+              b_value /= cal;
+            }
+          }
+          data[j + 1] = PlotDataFile.getScaledIntensity(thePlotPanel.datafile[0], intValue - b_value, data[j], modeY);
+        } else
           data[j + 1] = Double.NaN;
+        data[j] = getScaledX(datafile[0], data[j], modeX);
       }
 //	    data[1] = data[3]; // Luca: to check, workaround
 //	    data[thePlotPanel.np * 2 - 1] = data[thePlotPanel.np * 2 - 3]; // Luca: to check, workaround

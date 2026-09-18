@@ -53,8 +53,8 @@ public class GeometryXRFInstrument extends GeometryBraggBrentano {
 		description = "XRF instrument geometry";
 	}
 
-	public double LorentzPolarization(DiffrDataFile adatafile, Sample asample, double position, boolean dspacingbase, boolean energyDispersive) {
-    double lp = super.LorentzPolarization(adatafile, asample, adatafile.getTiltingAngle()[4], dspacingbase, energyDispersive);
+	public double LorentzPolarization(DiffrDataFile adatafile, Sample asample, double position) {
+    double lp = super.LorentzPolarization(adatafile, asample, adatafile.getTiltingAngle()[4]);
 		return lp;
 	}
 

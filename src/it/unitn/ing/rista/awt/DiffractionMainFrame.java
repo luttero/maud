@@ -102,6 +102,7 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
   static final String DATA_REMOVE_BANKS = "Remove unused banks";
   static final String DATA_ENABLE_DATASETS = "Enable datasets";
   static final String DATA_DISABLE_DATASETS = "Disable datasets";
+  static final String DATA_ADD_INTENSITY = "Add intensity to all";
   static final String OPEN_ANALYSIS = "Open analysis...";
   static final String LOAD_DATAFILE = "Load datafile...";
   static final String RESTORE = "Restore";
@@ -146,7 +147,7 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
         "Edit object",
         "-",
         "Duplicate object",
-        "Selected datasets:11",
+        "Selected datasets:12",
           DATA_REMOVE_PATTERN,
           DATA_RESET_BACKGROUND,
           DATA_ENABLE_DATASETS,
@@ -158,6 +159,7 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
           DATA_USE_CHEBYSHEV_BKG,
           DATA_USE_POLYNOMIAL_BKG,
           DATA_REMOVE_BANKS,
+          DATA_ADD_INTENSITY,
 
       "Analysis:8",
         "Options",
@@ -254,6 +256,7 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
         KeyEvent.VK_F9,
         KeyEvent.VK_F10,
         KeyEvent.VK_F11,
+        KeyEvent.VK_F12,
 
       nullKeyEvent,
       KeyEvent.VK_I,
@@ -322,6 +325,7 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
       true,
       true,
       true,
+        true,
         true,
         true,
         true,
@@ -960,7 +964,7 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
     if (parameterfile != null && parameterfile.getActiveSample() != null &&
         parameterfile.getActiveSample().getSelectedDataSet() != null) {
       DataFileSet adata = parameterfile.getActiveSample().getSelectedDataSet();
-	    adata.updateDataForPlot();
+	    PlotDataFile.updateDataForPlot(adata);
       DiffrDataFile[] datafiles = adata.getActiveDataFiles();
       if (datafilePlotPanel.isVisible()) {
 	      datafilePlotPanel.setNewData(adata, keepMaxima);
@@ -1588,6 +1592,28 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
     }
   }
 
+  public void addIntensityToSelectedDatasets() {
+    int index = getVisibleTabPanelIndex();
+    switch (index) {
+      case 0: // datasets
+        ListVector list = getFocusedList();
+        if (list != null) {
+          Vector slist = list.selectedElements();
+          if (slist != null && slist.size() > 0) {
+            for (Object ocat: slist) {
+              ((DataFileSet) ocat).addIntensityToAll();
+            }
+            break;
+          }
+        }
+      case 1: // phases
+      case 2: // samples
+      default: {
+        WarningNothingSelected();
+      }
+    }
+  }
+
   boolean result = false;
 
   myJFrame parListFrame = null;
@@ -1908,6 +1934,9 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
         return;
       } else if (command.equals(DATA_DISABLE_DATASETS)) {
         disableSelectedDatasets();
+        return;
+      } else if (command.equals(DATA_ADD_INTENSITY)) {
+        addIntensityToSelectedDatasets();
         return;
       } else if (command.equals("Options")) {                 // Options
         refinementOptions_Action();

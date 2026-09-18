@@ -58,7 +58,7 @@ public class TOFPanelCalibration extends XRDcat {
 	static int ROTATION_Z_ID = 8;
 	static int ZOOM_X_ID = 9;
 	static int ZOOM_Y_ID = 10;
-	static int SHIFT_ID = -1;
+	static int SHIFT_ID = 1;
 
 	public static String[] diclistc = {
 			"_instrument_bank_ID", "_bank_original_dist_spec/detc",
@@ -156,38 +156,46 @@ public class TOFPanelCalibration extends XRDcat {
 		double ly = MaudPreferences.getDouble("TOFbank2D.centerY", 57.5);
 		double ltilt = MaudPreferences.getDouble("TOFbank2D.defaultTiltAngle", 0.0);
 		double lrot = MaudPreferences.getDouble("TOFbank2D.defaultRotationAngle", 0.0);
+    double lzoomx = MaudPreferences.getDouble("TOFbank2D.defaultZoomX", 1.0);
+    double lzoomy = MaudPreferences.getDouble("TOFbank2D.defaultZoomY", 1.0);
 
-	   parameterField[DISTANCE_ID] = new Parameter(this, getParameterString(DISTANCE_ID), 120.0,
+    parameterField[DIFA_ID] = new Parameter(this, getParameterString(DIFA_ID), 0.0,
+        ParameterPreferences.getDouble(getParameterString(DIFA_ID) + ".min", -10.0),
+        ParameterPreferences.getDouble(getParameterString(DIFA_ID) + ".max", 10.0));
+    parameterField[ZERO_ID] = new Parameter(this, getParameterString(ZERO_ID), 0.0,
+        ParameterPreferences.getDouble(getParameterString(ZERO_ID) + ".min", -100.0),
+        ParameterPreferences.getDouble(getParameterString(ZERO_ID) + ".max", 100.0));
+	   parameterField[DISTANCE_ID] = new Parameter(this, getParameterString(DISTANCE_ID), ldistance,
 				ParameterPreferences.getDouble(getParameterString(DISTANCE_ID) + ".min", 0.0),
 				ParameterPreferences.getDouble(getParameterString(DISTANCE_ID) + ".max", 10000.0));
-		parameterField[THETA_ID] = new Parameter(this, getParameterString(THETA_ID), 90.0,
+		parameterField[THETA_ID] = new Parameter(this, getParameterString(THETA_ID), ltheta2,
 				ParameterPreferences.getDouble(getParameterString(THETA_ID) + ".min", -180.0),
 				ParameterPreferences.getDouble(getParameterString(THETA_ID) + ".max", 180.0));
-		parameterField[ETA_ID] = new Parameter(this, getParameterString(ETA_ID), 0.0,
+		parameterField[ETA_ID] = new Parameter(this, getParameterString(ETA_ID), leta,
 				ParameterPreferences.getDouble(getParameterString(ETA_ID) + ".min", -180.0),
 				ParameterPreferences.getDouble(getParameterString(ETA_ID) + ".max", 180.0));
-		parameterField[CENTER_X_ID] = new Parameter(this, getParameterString(CENTER_X_ID), 57.5,
+		parameterField[CENTER_X_ID] = new Parameter(this, getParameterString(CENTER_X_ID), lx,
 				ParameterPreferences.getDouble(getParameterString(CENTER_X_ID) + ".min", 0.0),
 				ParameterPreferences.getDouble(getParameterString(CENTER_X_ID) + ".max", 1000.0));
-		parameterField[CENTER_Y_ID] = new Parameter(this, getParameterString(CENTER_Y_ID), 57.5,
+		parameterField[CENTER_Y_ID] = new Parameter(this, getParameterString(CENTER_Y_ID), ly,
 				ParameterPreferences.getDouble(getParameterString(CENTER_Y_ID) + ".min", 0.0),
 				ParameterPreferences.getDouble(getParameterString(CENTER_Y_ID) + ".max", 1000.0));
-		parameterField[TILT_X_ID] = new Parameter(this, getParameterString(TILT_X_ID), 0.0,
+		parameterField[TILT_X_ID] = new Parameter(this, getParameterString(TILT_X_ID), ltilt,
 				ParameterPreferences.getDouble(getParameterString(TILT_X_ID) + ".min", -2.0),
 				ParameterPreferences.getDouble(getParameterString(TILT_X_ID) + ".max", 2.0));
-		parameterField[ROTATION_Z_ID] = new Parameter(this, getParameterString(ROTATION_Z_ID), 0.0,
+		parameterField[ROTATION_Z_ID] = new Parameter(this, getParameterString(ROTATION_Z_ID), lrot,
 				ParameterPreferences.getDouble(getParameterString(ROTATION_Z_ID) + ".min", -5.0),
 				ParameterPreferences.getDouble(getParameterString(ROTATION_Z_ID) + ".max", 5.0));
-		parameterField[ZOOM_X_ID] = new Parameter(this, getParameterString(ZOOM_X_ID), 1.0,
+		parameterField[ZOOM_X_ID] = new Parameter(this, getParameterString(ZOOM_X_ID), lzoomx,
 				ParameterPreferences.getDouble(getParameterString(ZOOM_X_ID) + ".min", 0.5),
 				ParameterPreferences.getDouble(getParameterString(ZOOM_X_ID) + ".max", 2.0));
-		parameterField[ZOOM_Y_ID] = new Parameter(this, getParameterString(ZOOM_Y_ID), 1.0,
+		parameterField[ZOOM_Y_ID] = new Parameter(this, getParameterString(ZOOM_Y_ID), lzoomy,
 				ParameterPreferences.getDouble(getParameterString(ZOOM_Y_ID) + ".min", 0.5),
 				ParameterPreferences.getDouble(getParameterString(ZOOM_Y_ID) + ".max", 2.0));
 
 		stringField[0] = "Bank1";
-		stringField[1] = parameterField[DISTANCE_ID].getValue();
-		for (int i = 2; i < Nstring; i++)
+//		stringField[1] = parameterField[DISTANCE_ID].getValue();
+		for (int i = 1; i < Nstring; i++)
 			stringField[i] = parameterField[i + SHIFT_ID].getValue();
 
 		refreshComputation = true;
@@ -633,8 +641,8 @@ public class TOFPanelCalibration extends XRDcat {
 			textStrings[0] = "Bank ID:        ";
 			for (int i = 1; i < textStrings.length - 1; i++)
 				textStrings[i] = textStrings[i + 1];
-			textStrings[4] = "Center x:       ";
-			textStrings[5] = "Center y:       ";
+//			textStrings[4] = "Center x:       ";
+//			textStrings[5] = "Center y:       ";
 
 			String[] tooltipStrings = {
 					"BankID, used to identify the bank from the pattern",
@@ -649,12 +657,12 @@ public class TOFPanelCalibration extends XRDcat {
 				addStringField(secondPanelTop, textStrings[i], tooltipStrings[i], i);
 
 			setTitle("TOF 2D Bank calibration");
-			initParameters();
+//			initParameters();
 
 			pack();
 		}
 
-		@Override
+    @Override
 		public void retrieveParameters() {
 			for (int i = 0; i < stringField.length; i++)
 				stringField[i] = textfield[i].getText();

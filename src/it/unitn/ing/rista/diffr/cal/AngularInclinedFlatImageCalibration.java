@@ -884,7 +884,7 @@ public class AngularInclinedFlatImageCalibration extends AngularCalibration {
 		  optchoice[i].setSelectedItem(subordinateField[i].identifier);
 	  }
 
-  }
+    }
 
 	  public void retrieveParameters() {
 		  for (int i = 0; i < textfield.length; i++)

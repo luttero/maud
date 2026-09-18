@@ -22,13 +22,9 @@ package it.unitn.ing.rista.diffr.diffraction;
 
 import it.unitn.ing.rista.diffr.*;
 import it.unitn.ing.rista.diffr.detector.XRFDetector;
-import it.unitn.ing.rista.diffr.geometry.GeometryXRFInstrument;
 import it.unitn.ing.rista.diffr.radiation.XrayEbelTubeRadiation;
-import it.unitn.ing.rista.diffr.sfm.StructureFactorStandardModel;
-import it.unitn.ing.rista.diffr.sizestrain.SizeStrainHarmonicTexture;
 import it.unitn.ing.rista.interfaces.Peak;
-import it.unitn.ing.rista.util.Constants;
-import it.unitn.ing.rista.util.PersistentThread;
+import it.unitn.ing.rista.util.*;
 
 import java.io.*;
 import java.lang.*;
@@ -208,7 +204,7 @@ public class DiffractionAngleEnergyMap extends Diffraction {
             RadiationType radType = ainstrument.getRadiationType();
             XRFDetector detector = (XRFDetector) ainstrument.getDetector();
             int nrad = radType.getLinesCount();
-            int radiationSubdivision = 1;
+            int radiationSubdivision = radType.getSubdivision();
             int cLines = nrad;
             if (radType instanceof XrayEbelTubeRadiation)
               cLines = ((XrayEbelTubeRadiation) radType).getNumberOfCharacteristicsLines();
@@ -293,7 +289,7 @@ public class DiffractionAngleEnergyMap extends Diffraction {
       RadiationType radType = ainstrument.getRadiationType();
       XRFDetector detector = (XRFDetector) ainstrument.getDetector();
       int nrad = radType.getLinesCount();
-      int radiationSubdivision = 1;
+      int radiationSubdivision = radType.getSubdivision();
       int cLines = nrad;
       if (radType instanceof XrayEbelTubeRadiation)
         cLines = ((XrayEbelTubeRadiation) radType).getNumberOfCharacteristicsLines();
@@ -383,27 +379,29 @@ public class DiffractionAngleEnergyMap extends Diffraction {
         printStream = new PrintStream(baos);
         printStream.println("             Diffraction spectrum : " + diffrDataFile.toXRDcatString());
         printStream.println("Peaks list (Diffraction Angle Energy Maps) : ");
-        printStream.print(" #,"
-            + "rad#,"
-            + "phase,"
-            + "h,"
-            + "k,"
-            + "l,"
-            + "d-space,"
-            + "energy,"
-            + "Fhkl_calc,"
-            + "position,"
-            + "intensity,"
-            + "hwhm,"
-            + "gaussian,"
-            + "incident I,"
-            + "LP,"
-            + "texture,"
-            + "rad.wt,"
-            + "phase scale,"
-            + "absorption,"
-            + "strain,"
-            + "planar def"
+        printStream.print("    # |"
+            + " rad# |"
+            + "              phase |"
+            + "  h |"
+            + "  k |"
+            + "  l |"
+            + "       d-space |"
+            + "        energy |"
+            + "      position |"
+            + "     Fhkl_calc |"
+            + "     intensity |"
+            + "    size broad |"
+            + "    mstrain br |"
+            + "          hwhm |"
+            + "      gaussian |"
+            + "    incident I |"
+            + "            LP |"
+            + "       texture |"
+            + "        rad.wt |"
+            + "   phase scale |"
+            + "    absorption |"
+            + "        strain |"
+            + "    planar def |"
         );
         printStream.print(Constants.lineSeparator);
         printStream.flush();
@@ -432,8 +430,8 @@ public class DiffractionAngleEnergyMap extends Diffraction {
       double sampleLinearArea = detector.getGeometryCorrection(
           geometry.getBeamOutCorrection(diffrDataFile, asample));
     double areaCorrection = detector.getAreaCorrection(sampleLinearArea);
-    double lorentzPolarization = ainstrument.getGeometry().LorentzPolarization(diffrDataFile, asample, twotheta,
-        false, false);
+    double lorentzPolarization = ainstrument.getGeometry().LorentzPolarization(diffrDataFile, asample, twotheta
+    );
     double texture_angles[] = diffrDataFile.getTextureAngles(diffrDataFile.get2ThetaValue(), 0);
     double alpha = (texture_angles[0] * Constants.DEGTOPI);
     double beta = (texture_angles[1] * Constants.DEGTOPI);
@@ -448,6 +446,7 @@ public class DiffractionAngleEnergyMap extends Diffraction {
       
       Phase aphase = asample.getPhase(ij);
       String phase_name = aphase.toXRDcatString();
+      String formattedPhase = Misc.formatStringFor(phase_name, 20);
       
       minmaxindex[0] = diffrDataFile.finalindex - 1;
       minmaxindex[1] = diffrDataFile.startingindex;
@@ -492,15 +491,15 @@ public class DiffractionAngleEnergyMap extends Diffraction {
 //            System.out.println(diffrDataFile.toXRDcatString() + ": " + " " + refl.getH() + " " + refl.getK() + " " + refl.getL() + " " + refl.d_space + " " + peakEnergy + " - " + energy_min + " < " + energy[ir] + " < " + energy_max);
             if (energy[ir] > energy_min && energy[ir] < energy_max && radiationWeight[ir] > 0.0) {
               finalPosition[ir] = diffrDataFile.getPositionFromDspace(refl.d_space, ir);
-//              System.out.println(position + " " + strainFactor);
+    //          System.out.println("Pos: " + finalPosition[ir]);
               finalPosition[ir] = diffrDataFile.computeFinalPosition(asample, refl, strainFactor, finalPosition[ir], 0, ir);
               if (finalPosition[ir] != 0) {
                 intensity[0][ir] = intensitySingle * textureFactor * Fhkl[ir] * areaCorrection *
                     radiationWeight[ir] * aphase.getScaleFactor() * lorentzPolarization * absCorrection[ir];
-  
-                double sintheta1 = Math.sin(finalPosition[ir] * Constants.DEGTOPI * 0.5);
+
+                double sintheta1 = diffrDataFile.sintheta;  //Math.sin(finalPosition[ir] * Constants.DEGTOPI * 0.5);
                 sintheta1 *= sintheta1;
-                double costheta = Math.cos(finalPosition[ir] * Constants.DEGTOPI * 0.5);
+                double costheta = Math.sqrt(1.0 - sintheta1); // Math.cos(finalPosition[ir] * Constants.DEGTOPI * 0.5);
                 double corr = 4.0 * sintheta1 / costheta * Constants.PITODEG * energy[ir] / Constants.ENERGY_LAMBDA;
                 betaff[0] = betaf[i][0] * corr;
                 betaff[1] = betaf[i][1] * corr;
@@ -530,47 +529,52 @@ public class DiffractionAngleEnergyMap extends Diffraction {
                 if (logOutput && printStream != null) {
                   try {
                     printStream.print(" ");
-                    printStream.print(reflexIndex);
-                    printStream.print(" ");
-                    printStream.print(ir);
-                    printStream.print(" " + phase_name);
-                    printStream.print(" ");
-                    printStream.print(refl.getH());
-                    printStream.print(" ");
-                    printStream.print(refl.getK());
-                    printStream.print(" ");
-                    printStream.print(refl.getL());
-                    printStream.print(" ");
-                    printStream.print((float) refl.d_space);
-                    printStream.print(" ");
-                    printStream.print((float) energy[ir]);
-                    printStream.print(" ");
-                    printStream.print((float) Fhkl[ir]); // diffrDataFile.getDataFileSet().getStructureFactors(aphase)[1][reflexIndex][i]);
-                    printStream.print(" ");
-                    printStream.print((float) finalPosition[ir]);
-                    printStream.print(" ");
-                    printStream.print((float) intensity[0][ir]);
-                    printStream.print(" ");
-                    printStream.print((float) broadFactorTotal[0]);
-                    printStream.print(" ");
-                    printStream.print((float) eta[ir]);
-                    printStream.print(" ");
-                    printStream.print((float) intensitySingle);
-                    printStream.print(" ");
-                    printStream.print((float) lorentzPolarization);
-                    printStream.print(" ");
-                    printStream.print((float) textureFactor);
-                    printStream.print(" ");
-                    printStream.print((float) radiationWeight[ir]);
-                    printStream.print(" ");
-                    printStream.print((float) aphase.getScaleFactor());
-                    printStream.print(" ");
-                    printStream.print((float) absCorrection[ir]);
-                    printStream.print(" ");
-                    printStream.print((float) strainFactor);
-                    printStream.print(" ");
-                    printStream.print((float) refl.getPlanarDefectDisplacement(0));
-                    
+                    printStream.print(Misc.formatStringFor(reflexIndex, 5, -1));
+                    printStream.print("|");
+                    printStream.print(Misc.formatStringFor(ir, 6, -1));
+                    printStream.print("|" + formattedPhase);
+                    printStream.print("|");
+                    printStream.print(Misc.formatStringFor(refl.getH(), 4, -1));
+                    printStream.print("|");
+                    printStream.print(Misc.formatStringFor(refl.getK(), 4, -1));
+                    printStream.print("|");
+                    printStream.print(Misc.formatStringFor(refl.getL(), 4, -1));
+                    printStream.print("|");
+                    printStream.print(Misc.formatStringFor(refl.d_space, 6, 8));
+                    printStream.print("|");
+                    printStream.print(Misc.formatStringFor(energy[ir], 8, 6));
+                    printStream.print("|");
+                    printStream.print(Misc.formatStringFor(finalPosition[ir], 8, 6));
+                    printStream.print("|");
+                    printStream.print(Misc.formatStringFor(Fhkl[ir], 8, 6)); // diffrDataFile.getDataFileSet().getStructureFactors(aphase)[1][reflexIndex][i]);
+                    printStream.print("|");
+                    printStream.print(Misc.formatStringFor(intensity[0][ir], 8, 6));
+                    printStream.print("|");
+                    printStream.print(Misc.formatStringFor(betaf[i][0], 8, 6));
+                    printStream.print("|");
+                    printStream.print(Misc.formatStringFor(betaf[i][1], 8, 6));
+                    printStream.print("|");
+                    printStream.print(Misc.formatStringFor(broadFactorTotal[0], 8, 6));
+                    printStream.print("|");
+                    printStream.print(Misc.formatStringFor(eta[ir], 8, 6));
+                    printStream.print("|");
+                    printStream.print(Misc.formatStringFor(intensitySingle, 8, 6));
+                    printStream.print("|");
+                    printStream.print(Misc.formatStringFor(lorentzPolarization, 8, 6));
+                    printStream.print("|");
+                    printStream.print(Misc.formatStringFor(textureFactor, 8, 6));
+                    printStream.print("|");
+                    printStream.print(Misc.formatStringFor(radiationWeight[ir], 8, 6));
+                    printStream.print("|");
+                    printStream.print(Misc.formatStringFor(aphase.getScaleFactor(), 8, 6));
+                    printStream.print("|");
+                    printStream.print(Misc.formatStringFor(absCorrection[ir], 8, 6));
+                    printStream.print("|");
+                    printStream.print(Misc.formatStringFor(strainFactor, 8, 6));
+                    printStream.print("|");
+                    printStream.print(Misc.formatStringFor(refl.getPlanarDefectDisplacement(0), 8, 6));
+                    printStream.print("|");
+
                     printStream.print(Constants.lineSeparator);
                     printStream.flush();
                   } catch (Exception e) {
@@ -595,13 +599,12 @@ public class DiffractionAngleEnergyMap extends Diffraction {
               energyBroadeningVector.add(null);
             }
           }
-          
-/*          if (radiationSubdivision > 1)
+          if (radiationSubdivision > 1)
             peak.computeFunctions(diffrDataFile.getXData(), expfit, minindex, maxindex,
                 intensity, eta, hwhm_i, null, null, null, energy,
                 diffrDataFile.dspacingbase, diffrDataFile.energyDispersive, diffrDataFile.increasingX(), 0,
-                0, diffrDataFile.sintheta, energyBroadeningVector, refl.d_space, radiationSubdivision, characteristicLines);
-          else*/
+                null, diffrDataFile.sintheta, energyBroadeningVector, refl.d_space, radiationSubdivision, characteristicLines);
+          else
             peak.computeFunctionsQuick(diffrDataFile.getXData(), expfit, minindex, maxindex,
                 intensity, eta, hwhm_i, energy, diffrDataFile.sintheta, energyBroadeningVector, refl.d_space,
                 finalPosition);

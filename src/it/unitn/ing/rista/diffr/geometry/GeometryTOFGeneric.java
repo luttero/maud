@@ -24,7 +24,6 @@ import java.lang.*;
 
 import it.unitn.ing.rista.diffr.*;
 import it.unitn.ing.rista.awt.*;
-import it.unitn.ing.rista.diffr.cal.GSASbankCalibration;
 import it.unitn.ing.rista.util.*;
 
 import java.awt.*;
@@ -117,7 +116,7 @@ public class GeometryTOFGeneric extends GeometryDebyeScherrer {
 
   }
 
-  public double LorentzPolarization(DiffrDataFile adatafile, Sample asample, double position, boolean dspacingbase, boolean energyDispersive) {
+  public double LorentzPolarization(DiffrDataFile adatafile, Sample asample, double position) {
 
     double theta_detector = getThetaDetector(adatafile, position) / 2;
     double lp = Math.abs(Math.sin(theta_detector * Constants.DEGTOPI));

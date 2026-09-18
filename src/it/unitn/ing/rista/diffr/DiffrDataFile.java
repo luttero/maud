@@ -181,7 +181,7 @@ public class DiffrDataFile extends XRDcat {
   public int finalindex = 0;
   public boolean hasfit = false;
   int theindex = 0;
-  boolean calibrated = false;
+  public boolean calibrated = false;
   boolean refreshBkgComputation = true;
   boolean refreshInterpolatedBkgComputation = true;
 	boolean refreshExperimentalBkgComputation = true;
@@ -1067,10 +1067,8 @@ public class DiffrDataFile extends XRDcat {
 //    dataset.updateStringtoDoubleBuffering();
 	  for (int i = 0; i < maxAngleNumber; i++)
 		  tilting_angles[i] = Double.parseDouble(getString(i + 1));
-	  for (int i = 0; i < 4; i++)
+	  for (int i = 0; i < maxAngleNumber; i++)
 		  corrected_tilting_angles[i] = tilting_angles[i] + getDataFileSet().getDisalignementAngles()[i];
-	  for (int i = 4; i < maxAngleNumber; i++)
-		  corrected_tilting_angles[i] = tilting_angles[i];
     sintheta = Math.sin(get2ThetaValue() * Constants.DEGTOPI * 0.5);
 
 //	  if (MaudPreferences.getBoolean("testing.invertEta", true) && !MaudPreferences.getBoolean("testing.useNewRotationMatrices", true))
@@ -1143,6 +1141,14 @@ public class DiffrDataFile extends XRDcat {
 	  }
 	  for (int i = 5; i < maxAngleNumber; i++)
 		  corrected_tilting_angles[i] = tilting_angles[i];
+  }
+
+  public void updateAngles() {
+    for (int i = 0; i < maxAngleNumber; i++)
+      tilting_angles[i] = Double.parseDouble(getString(i + 1));
+    for (int i = 0; i < maxAngleNumber; i++)
+      corrected_tilting_angles[i] = tilting_angles[i] + getDataFileSet().getDisalignementAngles()[i];
+    sintheta = Math.sin(get2ThetaValue() * Constants.DEGTOPI * 0.5);
   }
 
 	public double getDatafileWeight() {
@@ -1662,113 +1668,6 @@ public class DiffrDataFile extends XRDcat {
     removeAllPLField(thetaDisplacementID);
   }
 
-  public String getAxisXLegend() {
-    if (!calibrated)
-      return "Uncalibrated";
-    int mode = PlotDataFile.checkScaleModeX();
-    if (mode == 2)
-      return "Q [Angstrom{^-1}]";
-	 if (mode == 4)
-		 return "Uncalibrated (original)";
-	  if (mode == 5)
-		  return "Channel";
-	  if (dspacingbase || mode == 1)
-		  return "d [Angstrom]";
-	  if (energyDispersive || mode == 3)
-		  return "Energy [eV]";
-    return "2-Theta [degrees]";
-  }
-
-  public String getAxisXLegendNoUnit() {
-    if (!calibrated)
-      return "Uncalibrated";
-    int mode = PlotDataFile.checkScaleModeX();
-    if (mode == 2)
-      return "Q";
-	  if (mode == 4)
-		  return "Uncalibrated";
-	  if (mode == 5)
-		  return "Channel";
-	  if (dspacingbase || mode == 1)
-		  return "d";
-	  if (energyDispersive || mode == 3)
-		  return "Energy";
-    return "2-Theta";
-  }
-
-  public String getAxisXLegendUnit() {
-    if (!calibrated)
-      return "";
-    int mode = PlotDataFile.checkScaleModeX();
-    if (mode == 2)
-      return "Angstrom^-1";
-	  if (mode == 4)
-		  return "original";
-	  if (mode == 5)
-		  return "number";
-	  if (dspacingbase || mode == 1)
-		  return "Angstrom";
-	  if (energyDispersive || mode == 3)
-		  return "eV";
-    return "degrees";
-  }
-
-  public static String getAxisYLegend() {
-    switch (PlotDataFile.getScaleMode()) {
-      case 1:
-        return "Intensity [Count]";
-      case 2:
-        return "Log10(Intensity) [Log10(Count)]";
-      case 3:
-        return "Intensity{^1/2} * Q";
-      case 4:
-        return "Intensity{^1/2} * Q^2";
-      case 5:
-        return "Intensity{^1/2} * Q^4";
-	    case 6:
-		    return "Intensity * Q";
-	    case 7:
-		    return "Intensity * Q^2";
-	    case 8:
-		    return "Intensity * Q^4";
-	    case 9:
-		    return "Log10(Intensity) * Q";
-	    case 10:
-		    return "Log10(Intensity) * Q^2";
-	    case 11:
-		    return "Log10(Intensity) * Q^4";
-	    case 12:
-		    return "Intensity{^1/2} / Q^1/2";
-	    case 13:
-		    return "Intensity{^1/2} / Q";
-	    case 14:
-      default: {
-        return "Intensity{^1/2} [Count{^1/2}]";
-      }
-    }
-
-  }
-
-/*  public static String getAxisYLegend2D() {
-    switch (PlotDataFile.getScaleMode()) {
-      case 1:
-        return "Intensity (Count)";
-      case 2:
-        return "Log10[Intensity] (Log10[Count])";
-      case 3:
-        return "Log10(Intensity) * Q";
-      case 4:
-        return "Log10(Intensity) * Q^2";
-      case 5:
-        return "Log10(Intensity) * Q^4";
-      case 0:
-      default: {
-        return "Intensity{^1/2} (Count{^1/2})";
-      }
-    }
-
-  }*/
-
   public double getXData(int index) {
     if (!calibrated) {
       calibrateX();
@@ -1909,6 +1808,29 @@ public class DiffrDataFile extends XRDcat {
     if (wave == 0.0)
       return x;
     return wave / 2.0 / MoreMath.sind(x / 2.0);
+  }
+
+  public double getXDataForPlot(double x, int mode) {
+    switch (mode) {
+      case 1:
+        return getXDataDspace(x);
+      case 2:
+        return getXInQ(x);
+      case 3:
+        return getXInEnergy(x);
+      case 4:
+        Instrument inst = getDataFileSet().getInstrument();
+        if (inst != null) {
+          Calibration angcal = inst.getAngularCalibration();
+          return angcal.notCalibrated(this, x);
+        } else
+          return x;
+      case 5:
+        return x;
+      default: {
+        return x;
+      }
+    }
   }
 
   public double getXDataForPlot(int index, int mode) {
@@ -2194,7 +2116,7 @@ public class DiffrDataFile extends XRDcat {
 		}
 	}
 
-	boolean isInsideHoles(double x) {
+	public boolean isInsideHoles(double x) {
 		for (int i = 0; i < indicesDataHoles.size(); i++) {
 			double[] values = indicesDataHoles.elementAt(i);
 			if (x > values[0] && x < values[1])
@@ -2281,7 +2203,7 @@ public class DiffrDataFile extends XRDcat {
     return getDataFileSet().getInstrument().getIntensityCalibration().calibrateData(value);
   }
 
-	public double getIntensityForStatistic(int index, double intensity, double qExp) {
+  public double getIntensityForStatistic(int index, double intensity, double qExp) {
 		if (reflectivityStats) {
 			if (intensity > 0.0)
 				return MoreMath.log10(intensity);
@@ -2758,7 +2680,7 @@ public class DiffrDataFile extends XRDcat {
     if (lorentz) {
       Instrument ainstrument = getDataFileSet().getInstrument();
       Sample asample = getFilePar().getActiveSample();
-      double calibratingIntensity = ainstrument.LorentzPolarization(this, asample, x, dspacingbase, energyDispersive);
+      double calibratingIntensity = ainstrument.LorentzPolarization(this, asample, x);
       if (calibratingIntensity != 0.0)
         intensity /= calibratingIntensity;
     }
@@ -2850,130 +2772,19 @@ public class DiffrDataFile extends XRDcat {
 
   }
 
-  public double getValueScaled(double intensity, int index) {
-    return getValueScaled(intensity, index, PlotDataFile.calibrateIntensity(),
-        PlotDataFile.calibrateIntensityForLorentzPolarization(), PlotDataFile.getScaleMode());
-  }
-
-  public double getInterpolatedYSqrtIntensity(double xvalue, double expT, double expT2, int mode) {
-    xvalue = revertXDataForPlot(xvalue, mode);
-    if (isInsideHoles(xvalue))
-    	return Double.NaN;
-    if (PlotDataFile.subtractBackground())
-      return getValueScaled(getInterpolatedIntensity(xvalue, expT, expT2) -
-          getInterpolatedBackground(xvalue, expT, expT2), getOldNearestPoint(xvalue));
-    else
-      return getValueScaled(getInterpolatedIntensity(xvalue, expT, expT2), getOldNearestPoint(xvalue));
-  }
-
-  public double getInterpolatedYSqrtIntensity(double xvalue, int exponent, int mode) {
-      return getInterpolatedYSqrtIntensity(xvalue, exponent, mode, PlotDataFile.subtractBackground(),
-          PlotDataFile.calibrateIntensity(), PlotDataFile.calibrateIntensityForLorentzPolarization(),
-          PlotDataFile.getScaleMode());
-  }
-
-  public double getInterpolatedYSqrtIntensity(double xvalue, int exponent, int mode, boolean subtractBackground,
-                                              boolean calibrate, boolean lorentz, int ymode) {
-    double xvaluen = revertXDataForPlot(xvalue, mode);
-//    System.out.println(xvalue + " " + xvaluen);
-    if (isInsideHoles(xvaluen))
-      return Double.NaN;
-    if (subtractBackground)
-      return getValueScaled(getInterpolatedIntensityAt(xvaluen, exponent) -
-          getInterpolatedBkgFitAt(xvaluen, exponent), getOldNearestPoint(xvaluen), calibrate, lorentz, ymode);
-    else
-      return getValueScaled(getInterpolatedIntensityAt(xvaluen, exponent), getOldNearestPoint(xvaluen), calibrate, lorentz, ymode);
-  }
-
-  public double getInterpolatedFitSqrtIntensity(double xvalue, int exponent, int mode, boolean subtractBackground,
-                                              boolean calibrate, boolean lorentz, int ymode) {
-    xvalue = revertXDataForPlot(xvalue, mode);
-    if (isInsideHoles(xvalue))
-      return Double.NaN;
-    if (subtractBackground)
-      return getValueScaled(getInterpolatedFitAt(xvalue, exponent) -
-          getInterpolatedBkgFitAt(xvalue, exponent), getOldNearestPoint(xvalue), calibrate, lorentz, ymode);
-    else
-      return getValueScaled(getInterpolatedFitAt(xvalue, exponent), getOldNearestPoint(xvalue), calibrate, lorentz, ymode);
-  }
-
   public double getInterpolatedYForSummation(double xvalue) {
-    xvalue = revertXDataForPlot(xvalue, 0);
+    xvalue = revertXDataForPlot(xvalue, 0);  // 3.0 rewrite
     if (isInsideHoles(xvalue))
     	return Double.NaN;
     return getInterpolatedIntensityAt(xvalue, 2);
   }
 
 	public double getInterpolatedFitForSummation(double xvalue) {
-		xvalue = revertXDataForPlot(xvalue, 0);
+		xvalue = revertXDataForPlot(xvalue, 0);  // 3.0 rewrite
 		if (isInsideHoles(xvalue))
 			return Double.NaN;
 		return getInterpolatedFitAt(xvalue, 2);
 	}
-
-	public double getInterpolatedFitSqrtIntensity(double xvalue, int exponent, int mode) {
-    xvalue = revertXDataForPlot(xvalue, mode);
-    if (isInsideHoles(xvalue))
-    	return Double.NaN;
-    if (PlotDataFile.subtractBackground())
-      return getValueScaled(getInterpolatedFitAt(xvalue, exponent) -
-          getInterpolatedBkgFitAt(xvalue, exponent), getOldNearestPoint(xvalue));
-    else
-      return getValueScaled(getInterpolatedFitAt(xvalue, exponent), getOldNearestPoint(xvalue));
-  }
-
-  public double getInterpolatedFitSqrtIntensity(double xvalue, int exponent, int mode, int phase) {
-    xvalue = revertXDataForPlot(xvalue, mode);
-    if (isInsideHoles(xvalue))
-    	return Double.NaN;
-    if (PlotDataFile.subtractBackground())
-      return getValueScaled(getInterpolatedFitAt(xvalue, exponent, phase), getOldNearestPoint(xvalue));
-    else
-      return getValueScaled(getInterpolatedFitAt(xvalue, exponent, phase) +
-          getInterpolatedBkgFitAt(xvalue, exponent), getOldNearestPoint(xvalue));
-  }
-
-  public double getInterpolatedBkgFitSqrtIntensity(double xvalue, int exponent, int mode) {
-    xvalue = revertXDataForPlot(xvalue, mode);
-    if (isInsideHoles(xvalue))
-    	return Double.NaN;
-    return getValueScaled(getInterpolatedBkgFitAt(xvalue, exponent), getOldNearestPoint(xvalue));
-  }
-
-  public double getYSqrtData(int index, boolean backgroundSubtract) {
-    if (backgroundSubtract)
-      return getValueScaled(getYData(index) - getBkgFit(index), index);
-    else
-      return getValueScaled(getYData(index), index);
-  }
-
-  public double getFitSqrtData(int index) {
-    if (PlotDataFile.subtractBackground())
-      return getValueScaled(getFit(index) - getBkgFit(index), index);
-    else
-      return getValueScaled(getFit(index), index);
-  }
-
-  public double getInterpolatedYForPDF(double xvalue) {
-    return getInterpolatedYSqrtIntensity(xvalue, 1, 2, true, true,
-        false, 1);
-  }
-
-  public double getInterpolatedFitForPDF(double xvalue) {
-    return getInterpolatedFitSqrtIntensity(xvalue, 1, 2, true, true,
-        false, 1);
-  }
-
-  public double getFitSqrtData(int index, int phaseIndex) {
-    if (PlotDataFile.subtractBackground())
-      return getValueScaled(getPhaseFit(index, phaseIndex), index);
-    else
-      return getValueScaled(getPhaseFit(index, phaseIndex) + getBkgFit(index), index);
-  }
-
-  public double getBkgFitSqrtData(int index) {
-    return getValueScaled(getBkgFit(index), index);
-  }
 
   public String getCIFXcoord() {
     if (dspacingbase)
@@ -3639,7 +3450,13 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 
   public double computeIntensityCalibration(int j) {
     Instrument ainstrument = getDataFileSet().getInstrument();
-    return ainstrument.getIntensityCalibration().calibrateData(this, getXDataOriginal(j), j, getXData(j));
+    return ainstrument.getIntensityCalibration().calibrateData(this, getXData(j), j, getXDataDspace(getXData(j)));
+  }
+
+  public double computeIntensityCalibration(double x, int j) {
+    double d_space = getXDataDspace(x);
+    Instrument ainstrument = getDataFileSet().getInstrument();
+    return ainstrument.getIntensityCalibration().calibrateData(this, x, j, d_space);
   }
 
   public int getBankNumber() {
@@ -4222,7 +4039,7 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 				if (getDataFileSet().omogeneous() && getDataFileSet().omogeneousDataset) {
 //					System.out.println("Computing omogeneous experimental background " + expDataFile.startingindex + " " + expDataFile.finalindex + " " + countTime);
 					for (int i = startingindex; i < finalindex; i++) {
-						double bkgIntensity = expDataFile.getInterpolatedIntensity(i) * countTime;
+						double bkgIntensity = expDataFile.getIntensity(i) * countTime;
 //		  double cal = getIntensityCalibration(i);
 //	      System.out.println("Computing omogeneous experimental background " + i + " " + bkgIntensity + " " + cal);
 //	      bkgIntensity *= cal;
@@ -4246,6 +4063,10 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 //			}
 		refreshExperimentalBkgComputation = false;
 
+  }
+
+  private double getIntensity(int i) {
+    return getYData(i);
   }
 
   public double getInterpolatedIntensity(int index) {
@@ -4302,9 +4123,7 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
     return MoreMath.getPolinomialValue(x, MoreMath.getPolinomialInterpolation(polinomialDegree, xdata, ydata)); // * monitorCounts;
   }
 
-  public double getBasicInterpolatedIntensity(double x) {
-    int index = getOldNearestPoint(x);
-//    System.out.println(index + " " + x + " " + getTotalNumberOfData());
+  public double getBasicInterpolatedIntensity(double x, int index) {
     double intensity = 0;
     if (index > getMinIndex() && index < getMaxIndex() - 1) {
       double x0 = getXData(index - 1);
@@ -4327,6 +4146,90 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
       intensity = getYData(getMinIndex());
     } else if (index >= getMaxIndex() - 1) {
       intensity = getYData(getMaxIndex() - 1);
+    }
+    return intensity;
+//	  return getYData(index) * monitorCounts;
+  }
+
+  public double getBasicInterpolatedFit(double x, int index) {
+    double intensity = 0;
+    if (index > getMinIndex() && index < getMaxIndex() - 1) {
+      double x0 = getXData(index - 1);
+      double y0 = getFit(index - 1);
+      double x1 = getXData(index + 1);
+      double y1 = getFit(index + 1);
+      if (Math.abs(x - x0) <= Math.abs(x - x1)) {
+        x1 = getXData(index);
+        y1 = getFit(index);
+      } else {
+        x0 = getXData(index);
+        y0 = getFit(index);
+      }
+      if (Math.abs(x1 - x0) > 1.0E-6)
+        intensity = y0 +  (y1 - y0) * (x - x0) / (x1 - x0);
+      else
+        intensity = (y1 + y0) / 2.0;
+//      System.out.println(intensity + " " + x0 + " " + x1 + " " + y0 + " " + y1);
+    } else if (index <= getMinIndex()) {
+      intensity = getFit(getMinIndex());
+    } else if (index >= getMaxIndex() - 1) {
+      intensity = getFit(getMaxIndex() - 1);
+    }
+    return intensity;
+//	  return getYData(index) * monitorCounts;
+  }
+
+  public double getBasicInterpolatedPhaseFit(double x, int index, int nphase) {
+    double intensity = 0;
+    if (index > getMinIndex() && index < getMaxIndex() - 1) {
+      double x0 = getXData(index - 1);
+      double y0 = getPhaseFit(index - 1, nphase);
+      double x1 = getXData(index + 1);
+      double y1 = getPhaseFit(index + 1, nphase);
+      if (Math.abs(x - x0) <= Math.abs(x - x1)) {
+        x1 = getXData(index);
+        y1 = getPhaseFit(index, nphase);
+      } else {
+        x0 = getXData(index);
+        y0 = getPhaseFit(index, nphase);
+      }
+      if (Math.abs(x1 - x0) > 1.0E-6)
+        intensity = y0 +  (y1 - y0) * (x - x0) / (x1 - x0);
+      else
+        intensity = (y1 + y0) / 2.0;
+//      System.out.println(intensity + " " + x0 + " " + x1 + " " + y0 + " " + y1);
+    } else if (index <= getMinIndex()) {
+      intensity = getPhaseFit(getMinIndex(), nphase);
+    } else if (index >= getMaxIndex() - 1) {
+      intensity = getPhaseFit(getMaxIndex() - 1, nphase);
+    }
+    return intensity;
+//	  return getYData(index) * monitorCounts;
+  }
+
+  public double getBasicInterpolatedBackground(double x, int index) {
+    double intensity = 0;
+    if (index > getMinIndex() && index < getMaxIndex() - 1) {
+      double x0 = getXData(index - 1);
+      double y0 = getBkgFit(index - 1);
+      double x1 = getXData(index + 1);
+      double y1 = getBkgFit(index + 1);
+      if (Math.abs(x - x0) <= Math.abs(x - x1)) {
+        x1 = getXData(index);
+        y1 = getBkgFit(index);
+      } else {
+        x0 = getXData(index);
+        y0 = getBkgFit(index);
+      }
+      if (Math.abs(x1 - x0) > 1.0E-6)
+        intensity = y0 +  (y1 - y0) * (x - x0) / (x1 - x0);
+      else
+        intensity = (y1 + y0) / 2.0;
+//      System.out.println(intensity + " " + x0 + " " + x1 + " " + y0 + " " + y1);
+    } else if (index <= getMinIndex()) {
+      intensity = getBkgFit(getMinIndex());
+    } else if (index >= getMaxIndex() - 1) {
+      intensity = getBkgFit(getMaxIndex() - 1);
     }
     return intensity;
 //	  return getYData(index) * monitorCounts;
@@ -5264,6 +5167,29 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
     return new BufferedInputStream(Misc.getInputStream(getFolder(), filename));
   }
 
+  public int getFileNumber() {
+    return getFileNumber(this.toXRDcatString());
+  }
+
+  public int getFileNumber(String label) {
+    int filenumber = -1;
+    String filename = label;
+    if (filename.endsWith(")")) {
+      int startIndex = -1;
+      for (int i = filename.length() - 1; i > 0; i--) {
+        if (filename.substring(i, i + 1).equals("(")) {
+          startIndex = i;
+          break;
+        }
+      }
+      if (startIndex != -1) {
+        String number = new String(filename.substring(startIndex + 1, filename.length() - 1));
+        filenumber = Integer.valueOf(number).intValue();
+      }
+    }
+    return filenumber;
+  }
+
   public static String filterfilename(String filename) {
     if (filename.endsWith(")")) {
       int startIndex = -1;
@@ -6014,7 +5940,6 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 		if (textureFactors != null && textureFactors.length > 0) {
 			int phaseIndex = getDataFileSet().getSample().getPhaseIndex(phase);
 //			System.out.println("Need restore: " + needRestore[phaseIndex]);
-// temporarly, to fix
       // needRestore = null;
 			if (needRestore != null && needRestore.length > phaseIndex && needRestore[phaseIndex]) {
 				for (int i1 = 0; i1 < textureFactors[0].length; i1++) {
@@ -6429,8 +6354,8 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 		for (int j = 0; j < positionsPerPattern; j++) {
 			for (int i = 0; i < reflNumber; i++) {
 				for (int k = 0; k < radNumber; k++)
-					lorentzPolarization[i][j][k] = ainstrument.LorentzPolarization(this, asample, positions[i][j][k],
-							                                  dspacingbase, energyDispersive);
+					lorentzPolarization[i][j][k] = ainstrument.LorentzPolarization(this, asample, positions[i][j][k]
+          );
 			}
 		}
 
@@ -6455,7 +6380,7 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 					for (int k = 0; k < radNumber; k++)
 					  intensity[j][k] = 1.0f;
 				ainstrument.computeShapeAbsorptionCorrection(this, asample, positions[i],
-						dspacingbase, energyDispersive, intensity);
+            intensity);
 				for (int j = 0; j < positionsPerPattern; j++) {
           double[] layer_abs = ainstrument.PhaseAndLayerAbsorption(this, asample, aphase, positions[i][j]);
           for (int k = 0; k < radNumber; k++) {

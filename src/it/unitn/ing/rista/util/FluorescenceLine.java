@@ -378,6 +378,6 @@ public class FluorescenceLine {
 	}
 
 	public void printToConsole() {
-		System.out.println("Peak " + energy + " " + dcx + " " + dgx + " " + hwhm + " " + eta);
+		System.out.println("Peak " + getIntensity() + " " + energy + " " + dcx + " " + dgx + " " + hwhm + " " + eta);
 	}
 }

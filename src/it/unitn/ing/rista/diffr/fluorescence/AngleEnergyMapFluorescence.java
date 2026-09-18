@@ -63,17 +63,24 @@ public class AngleEnergyMapFluorescence extends Fluorescence {
     IDlabel = modelID;
     description = descriptionID;
   }
-  
+
   public void computeFluorescence(Sample asample) {
+    boolean useNew = MaudPreferences.getBoolean("testing_fluo.useNewAngleEnergyMapFluorescence", true);
+    if (useNew)
+      computeFluorescence_new(asample);
+    else
+      computeFluorescence_alt(asample);
+  }
+
+    public void computeFluorescence_new(Sample asample) {
   
     long previousTime = System.currentTimeMillis();
   
     final DataFileSet theDataset = getDataFileSet();
     int datafilenumber = theDataset.activedatafilesnumber();
-
     Instrument ainstrument = theDataset.getInstrument();
     XRFDetector detector = (XRFDetector) ainstrument.getDetector();
-    Hashtable<Integer, Vector<AtomQuantity>> atomQuantities = getAllAtomsQuantities(asample);
+
     RadiationType radType = ainstrument.getRadiationType();
     int rad_lines = radType.getLinesCountForFluorescence();
     double[] energyInKeV = new double[rad_lines];
@@ -119,7 +126,8 @@ public class AngleEnergyMapFluorescence extends Fluorescence {
           for (FluorescenceLine line : filtersFluorescenceLines) {
             double detectorAbsorption = detector.computeAbsorptionForLineWithEnergy(line.getEnergy());
             double detectorEfficiency = detector.computeDetectorEfficiency(line.getEnergy());
-            line.setIntensity(line.getIntensity() * detectorAbsorption * detectorEfficiency);
+            double areaCorrection = 1.0; // detector.getAreaCorrection(sampleLinearArea);
+            line.setIntensity(line.getIntensity() * detectorAbsorption * detectorEfficiency * areaCorrection);
             boolean addLine = true;
             for (FluorescenceLine lineExisting : impurityLines) {
               //							lineExisting.setIntensity(lineExisting.getIntensity());
@@ -139,12 +147,15 @@ public class AngleEnergyMapFluorescence extends Fluorescence {
         }
       }
     }
+    // not in _alt
     for (FluorescenceLine aLine : impurityLines) {
 //      aLine.setMhuDet(detector.computeMACForLineWithEnergy(aLine.getEnergy()));
       java.util.Vector<double[]> broad = ainstrument.getInstrumentalEnergyBroadeningAt(aLine.getEnergy());  // this uses the new way, to check
       aLine.setFinalShape(broad);
     }
-  
+    // end not in _alt
+
+    Hashtable<Integer, Vector<AtomQuantity>> atomQuantities = getAllAtomsQuantities(asample);
     if (Constants.testtime)
       System.out.println("Fluorescence lines - get all lines: " +
           (-previousTime + (previousTime = System.currentTimeMillis())) + " millisecs.");
@@ -618,13 +629,6 @@ public class AngleEnergyMapFluorescence extends Fluorescence {
     for (int ej = 0; ej < rad_lines; ej++) {
       energyInKeV[ej] = radType.getRadiationEnergyForFluorescenceKeV(ej);
       energy_intensity[ej] = radType.getRadiationWeightForFluorescence(ej);
-/*      layerAbsorption[0][ej] = -asample.getlayer(0).getAbsorptionForXray(energyInKeV[ej]) * layerDensity[0] * sinPhii;
-      overLayerAbsorption[0][ej] = 0;
-      for (int j1 = 1; j1 < layersNumber; j1++) {
-        layerAbsorption[j1][ej] = -asample.getlayer(j1).getAbsorptionForXray(energyInKeV[ej]) * layerDensity[j1] * sinPhii;
-        overLayerAbsorption[j1][ej] = overLayerAbsorption[j1 - 1][ej] + layerAbsorption[j1 - 1][ej] * layerThickness[j1 - 1];
-//				System.out.println(overLayerAbsorption[j1][ej]);
-      }*/
     }
 //		int sub20 = radType.getSubdivision(); //MaudPreferences.getInteger("xrf_detector.energySubdivision", 20);
   
@@ -675,6 +679,7 @@ public class AngleEnergyMapFluorescence extends Fluorescence {
             if (addLine) {
               line.setIntensity(line.getIntensity() * energy_intensity[ej]);
               if (line.getIntensity() > 0) {
+                line.areaCorrection = true;
                 impurityLines.add(line);
               }
             }
@@ -698,6 +703,7 @@ public class AngleEnergyMapFluorescence extends Fluorescence {
         threads[i] = new PersistentThread(i) {
           @Override
           public void executeJob() {
+            this.setPriority(7);
             int i1 = this.getJobNumberStart();
             int i2 = this.getJobNumberEnd();
   
@@ -771,6 +777,9 @@ public class AngleEnergyMapFluorescence extends Fluorescence {
     double sampleLinearArea = detector.getGeometryCorrection(
         geometry.getBeamRelatedCorrection(adatafile, asample, 0, 0));
     double areaCorrection = detector.getAreaCorrection(sampleLinearArea);
+
+//    double maxEnergyInKeV = adatafile.getLargestCoordinate() * 0.0011;
+
 
 //		incidentIntensity *= sampleLinearArea;
 
@@ -857,7 +866,8 @@ public class AngleEnergyMapFluorescence extends Fluorescence {
         if (atomsQuantities > 0) {
           int atomNumber = AtomInfo.retrieveAtomNumber(atomQuantity.label);
           linesForAtom = fluoLines.get(atomNumber); // XRayDataSqLite.getFluorescenceLinesNoSensitivityFor(atomNumber, maxEnergyInKeV);
-          
+//          linesForAtom = XRayDataSqLite.getFluorescenceLinesNoSensitivityFor(atomNumber, maxEnergyInKeV);
+
           for (int ij = 0; ij < linesForAtom.size(); ij++) {
             FluorescenceLine line = linesForAtom.elementAt(ij);
             if (line.getFluorescenceYield() * line.getTransitionProbability() > 0) {
@@ -898,7 +908,7 @@ public class AngleEnergyMapFluorescence extends Fluorescence {
                     abs = 0;
                   
                   double lineSensitivity = XRayDataSqLite.getSensitivity(atomNumber, line.getCoreShellID(),
-                      line.xrl_line_number, energyInKeV[ej], line.getFluorescenceYield() * line.getTransitionProbability()); // / (line.getFluorescenceYield() * line.getTransitionProbability());
+                      line.xrl_line_number, energyInKeV[ej], line.getFluorescenceYield() * line.getTransitionProbability());
 //								if (atomNumber > 80 && line.transitionID.startsWith("M"))
 //									System.out.println(atomNumber - 1 + " " + lineEnergyKeV + " " + line.transitionID + " " + lineSensitivity + " " + energyInKeV[ej]
 //										+ " " + line.getCoreShellID() + " " + XRayDataSqLite.getTauShell(atomNumber - 1, line.getCoreShellID(), energyInKeV[ej]));
@@ -908,6 +918,7 @@ public class AngleEnergyMapFluorescence extends Fluorescence {
               }
               totalIntensity *= layerDensity[j1];
               double detectorAbsorption = detector.computeAbsorptionForLineWithEnergy(lineEnergyKeV);
+//              line.mhuDet = detector.computeMACForLineWithEnergy(lineEnergyKeV);
               double detectorEfficiency = detector.computeDetectorEfficiency(lineEnergyKeV);
 //						if (lineEnergyKeV * 1000 > xEnergy[0] && lineEnergyKeV * 1000 < xEnergy[numberOfPoints - 1])
 //						System.out.println("Line: " + lineEnergyKeV + " " + line.getIntensity() + " " + atomsQuantities + " " + totalIntensity + " " + detectorAbsorption + " " +
@@ -915,7 +926,8 @@ public class AngleEnergyMapFluorescence extends Fluorescence {
               double factor = atomsQuantities * detectorAbsorption *
                   detectorEfficiency * areaCorrection * getIntensityCorrection(atomNumber);
 //						  System.out.println("Line: " + lineEnergyKeV + " " + line.getIntensity() + " " + factor + " " + totalIntensity + " " + totalIntensity1 + " " + (line.getIntensity() * totalIntensity));
-              line.setIntensity(factor * totalIntensity);
+              line.multiplyIntensityBy(factor * totalIntensity);
+//              line.setIntensity(factor * totalIntensity);
 //             System.out.println("Line: " + line.transitionID + " " + lineEnergyKeV + " " + line.getIntensity() + " " + atomsQuantities + " " + totalIntensity + " " + detectorAbsorption + " " +
 //                  detectorEfficiency + " " + areaCorrection);
 //						System.out.println(line.transitionID + " " + line.getIntensity() + " " + lineEnergyKeV);

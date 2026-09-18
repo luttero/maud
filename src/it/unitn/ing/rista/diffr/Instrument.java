@@ -719,9 +719,9 @@ public class Instrument extends XRDcat {
 	}*/
 
 	public void computeShapeAbsorptionCorrection(DiffrDataFile adatafile, Sample asample,
-                                               double[][] position, boolean dspacingbase, boolean energyDispersive, double[][] intensity) {
+                                               double[][] position, double[][] intensity) {
     if (position != null && position.length > 0) // not reflectivity
-      getGeometry().computeShapeAbsorptionCorrection(adatafile, asample, position, dspacingbase, energyDispersive, intensity,
+      getGeometry().computeShapeAbsorptionCorrection(adatafile, asample, position, intensity,
               getLambdaForTOF(adatafile, position[0][0]));
   }
 
@@ -735,15 +735,15 @@ public class Instrument extends XRDcat {
   }
 
   public double LorentzPolarization(DiffrDataFile adatafile, Sample asample,
-                                    double position, boolean dspacingbase, boolean energyDispersive) {
-    return getGeometry().LorentzPolarization(adatafile, asample, position, dspacingbase, energyDispersive); /*
+                                    double position) {
+    return getGeometry().LorentzPolarization(adatafile, asample, position); /*
             asample.getActiveSubordinateModel(Sample.sampleShapeID).getCorrectionForVelocity(adatafile,
                     this, position, getLambdaForTOF(adatafile, (double) position)); */
   }
 
   public void LorentzPolarization(DiffrDataFile adatafile, Sample asample,
-                                  double[] position, boolean dspacingbase, boolean energyDispersive, double[] intensity) {
-    getGeometry().LorentzPolarization(adatafile, asample, position, dspacingbase, energyDispersive, intensity);
+                                  double[] position, double[] intensity) {
+    getGeometry().LorentzPolarization(adatafile, asample, position, intensity);
   }
 
   public double getBeamRelatedCorrection(DiffrDataFile adatafile, Sample asample, double position, int pointIndex) {

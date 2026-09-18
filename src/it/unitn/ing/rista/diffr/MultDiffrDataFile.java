@@ -87,29 +87,6 @@ public class MultDiffrDataFile extends DiffrDataFile {
   public MultDiffrDataFile() {
   }
 
-  public int getFileNumber() {
-    return getFileNumber(this.toXRDcatString());
-  }
-
-  public int getFileNumber(String label) {
-    int filenumber = -1;
-    String filename = label;
-    if (filename.endsWith(")")) {
-      int startIndex = -1;
-      for (int i = filename.length() - 1; i > 0; i--) {
-        if (filename.substring(i, i + 1).equals("(")) {
-          startIndex = i;
-          break;
-        }
-      }
-      if (startIndex != -1) {
-        String number = new String(filename.substring(startIndex + 1, filename.length() - 1));
-        filenumber = Integer.valueOf(number).intValue();
-      }
-    }
-    return filenumber;
-  }
-
   public boolean readallSpectra() {
     // this method must be overrided by subclasses
     boolean tmpB = isAbilitatetoRefresh;

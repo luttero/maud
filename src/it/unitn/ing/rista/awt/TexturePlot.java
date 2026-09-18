@@ -377,7 +377,9 @@ public class TexturePlot extends myJFrame {
     optionsMenu.add(menuitem = new JMenuItem("Export Pole Figures file..."));
     menuitem.addActionListener(e -> exportPFs());
     optionsMenu.add(menuitem = new JMenuItem("Plot radial distribution..."));
-    menuitem.addActionListener(e -> radialPF());
+    menuitem.addActionListener(e -> radialPF(true));
+    optionsMenu.add(menuitem = new JMenuItem("Plot polar distribution..."));
+    menuitem.addActionListener(e -> radialPF(false));
 
     return optionsMenu;
   }
@@ -1396,7 +1398,7 @@ public class TexturePlot extends myJFrame {
     thephase.getActiveTexture().plotODFMap(alphaStart, alphaEnd, alphaStep, betaStart, betaEnd, betaStep, do3DplotIndex);
   }
 
-  private void radialPF() {
+  private void radialPF(boolean equalArea) {
     if (thephase == null || thesample == null)
       return;
     boolean twoDmap = plotTypeRB[0].isSelected();
@@ -1422,6 +1424,11 @@ public class TexturePlot extends myJFrame {
     if (logScale)
       logValue = "true";
     MaudPreferences.setPref(logTexturePlotString, logValue);
+    polarTransform = Double.parseDouble(polarTF.getText());
+    MaudPreferences.setPref(polarTransformS, polarTF.getText());
+    azimuthTransform = Double.parseDouble(azimuthTF.getText());
+    MaudPreferences.setPref(azimuthTransformS, azimuthTF.getText());
+
 
     int colrsNumber = expansionJS.getValue();
     if (colrsNumber == 0) {
@@ -1461,7 +1468,7 @@ public class TexturePlot extends myJFrame {
     }
 
     new PlotRadialPoleFigure(this, thesample, poleList, 0, lastResolution, zoom,
-            filterWidth, grayShadedCB.isSelected(), maxAngle, logScale, colrsNumber);
+            filterWidth, grayShadedCB.isSelected(), maxAngle, logScale, colrsNumber, equalArea);
   }
 
   public void plot_action() {

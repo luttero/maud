@@ -307,6 +307,9 @@ public class DataFileSet extends XRDcat {
       sample_angles[2] = getParameterValue(samplePhiID); // phi
 	    for (int i = 0; i < disalignement_angles_number; i++)
 	      disalignement_angles[i] = getParameterValue(disalignementOmegaID + i);
+      for (int i = 0; i < getDataFileList().size(); i++)
+        getDataFile(i).updateAngles();
+
 	    for (int i = 0; i < 3; i++)
 		    displacement_errors[i] = getParameterValue(displacementxID + i);
 
@@ -372,6 +375,7 @@ public class DataFileSet extends XRDcat {
 	public boolean shouldNotifyParent(XRDcat source, int reason) {
 		return false; // not the default
 	}
+
 	public double[] dataForPlot = null;
 
 	public double[] getDataForPlot() {
@@ -445,7 +449,7 @@ public class DataFileSet extends XRDcat {
     return data;
   }
 
-	static public double[][] getSummedExperimentalComputedData(DiffrDataFile[] datafile, int mode,
+  public static double[][] getSummedExperimentalComputedData(DiffrDataFile[] datafile, int mode,
                                                              boolean meanIntensity) {
 
 		if (datafile == null || datafile.length == 0)
@@ -560,8 +564,8 @@ public class DataFileSet extends XRDcat {
           if (xstartmin > datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode))
             xstartmin = datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode);
           if (dataToExport[0][is1] >= xstartmin && dataToExport[0][is1] <= xendmax) {
-            double value = datafile[sn].getInterpolatedYForPDF(dataToExport[0][is1]);
-            double valuec = datafile[sn].getInterpolatedFitForPDF(dataToExport[0][is1]);
+            double value = datafile[sn].getBasicInterpolatedIntensity(dataToExport[0][is1], datafile[sn].getOldNearestPoint(dataToExport[0][is1]));
+            double valuec = datafile[sn].getBasicInterpolatedFit(dataToExport[0][is1], datafile[sn].getOldNearestPoint(dataToExport[0][is1]));
             if (!Double.isNaN(value))
               dataToExport[1][is1] += value;
             if (!Double.isNaN(valuec))
@@ -572,169 +576,6 @@ public class DataFileSet extends XRDcat {
     }
     return dataToExport;
   }
-
-  public void updateDataForPlot() {
-
-		dataForPlot = null;
-		datafitForPlot = null;
-		backgroundForPlot = null;
-		dataphaseForPlot = null;
-
-		DiffrDataFile[] datafile = getActiveDataFiles();
-		if (datafile == null || datafile.length == 0)
-			return;
-
-		int ylength = datafile.length;
-		int startingIndex = datafile[0].startingindex;
-		int finalIndex = datafile[0].finalindex;
-		double xmin = 1.0E10, xmax = 0.0;
-		double stepX = 1.0E10;
-		int mode = PlotDataFile.checkScaleModeX();
-
-		// minimum maximum range
-
-		for (int is1 = 0; is1 < ylength; is1++) {
-			int xlength = datafile[is1].finalindex - datafile[is1].startingindex - 1;
-			double x1 = datafile[is1].getXDataForPlot(datafile[is1].startingindex, mode);
-			double x2 = datafile[is1].getXDataForPlot(datafile[is1].finalindex - 1, mode);
-			double lstepX = Math.abs((x2 - x1) / xlength);
-			if (lstepX < stepX)
-				stepX = lstepX;
-			if (xmin > x1)
-				xmin = x1;
-			if (xmax < x2)
-				xmax = x2;
-			if (xmin > x2)
-				xmin = x2;
-			if (xmax < x1)
-				xmax = x1;
-		}
-		int np = (int) Math.abs((xmax - xmin) / stepX) + 1;
-
-		if (np > 0) {
-			dataForPlot = new double[2 * np];
-			if (datafile[0].hasfit()/* || peaksLocated todo ripristinare */) {
-				datafitForPlot = new double[2 * np];
-			}
-			for (int is1 = 0; is1 < np; is1++) {
-				int is2 = is1 * 2;
-				dataForPlot[is2] = xmin + is1 * stepX;
-				int total = 0;
-				int totalFit = 0;
-
-// data
-
-				for (int sn = 0; sn < ylength; sn++) {
-					double xstartmin = datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode);
-					double xendmax = datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode);
-					if (xendmax < datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode))
-						xendmax = datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode);
-					if (xstartmin > datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode))
-						xstartmin = datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode);
-					if (dataForPlot[is2] >= xstartmin && dataForPlot[is2] <= xendmax) {
-						double value = datafile[sn].getInterpolatedYSqrtIntensity(dataForPlot[is2], 2, mode);
-						if (!Double.isNaN(value)) {
-							dataForPlot[is2 + 1] += value;
-							total++;
-						}
-					}
-				}
-				if (total > 0)
-					dataForPlot[is2 + 1] /= total;
-//        System.out.println("Update: " + is2 + " " + dataForPlot[is2] + " " + dataForPlot[is2 + 1]);
-
-// fit
-
-				if (datafile[0].hasfit()) {
-					datafitForPlot[is2] = dataForPlot[is2];
-
-					for (int sn = 0; sn < ylength; sn++) {
-						double xstartmin = datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode);
-						double xendmax = datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode);
-						if (xendmax < datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode))
-							xendmax = datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode);
-						if (xstartmin > datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode))
-							xstartmin = datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode);
-						if (datafitForPlot[is2] >= xstartmin && datafitForPlot[is2] <= xendmax) {
-							double value = datafile[sn].getInterpolatedFitSqrtIntensity(datafitForPlot[is2], 2, mode);
-							if (!Double.isNaN(value)) {
-								datafitForPlot[is2 + 1] += value;
-								totalFit++;
-							}
-						}
-					}
-					if (totalFit > 0)
-						datafitForPlot[is2 + 1] /= totalFit;
-				}
-			}
-//			if (datafile[0].hasfit()) {
-//				datafitForPlot[1] = datafitForPlot[3]; // Luca: to check, workaround
-//				datafitForPlot[np * 2 - 1] = datafitForPlot[np * 2 - 3]; // Luca: to check, workaround
-//			}
-
-// Phases fit
-
-			if (datafitForPlot != null) {
-				int numberphases = getFilePar().getActiveSample().phasesNumber();
-				dataphaseForPlot = new double[numberphases][2 * np];
-				for (int s = 0; s < numberphases; s++) {
-					Phase phase = getFilePar().getActiveSample().getPhase(s);
-					if (phase.plotFit()) {
-						int j;
-						for (int i = j = 0; i < np; i++, j += 2) {
-							int totalFit = 0;
-							for (int sn = 0; sn < ylength; sn++) {
-								double xstartmin = datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode);
-								double xendmax = datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode);
-								if (xendmax < datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode))
-									xendmax = datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode);
-								if (xstartmin > datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode))
-									xstartmin = datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode);
-								if (datafitForPlot[j] >= xstartmin && datafitForPlot[j] < xendmax) {
-									double value = datafile[sn].getInterpolatedFitSqrtIntensity(datafitForPlot[j], 2, mode, s);
-									if (!Double.isNaN(value)) {
-										dataphaseForPlot[s][j + 1] += value;
-										totalFit++;
-									}
-								}
-							}
-							if (totalFit > 0)
-								dataphaseForPlot[s][j + 1] /= totalFit;
-							dataphaseForPlot[s][j] = datafitForPlot[j];
-
-						}
-					}
-				}
-
-// Background
-
-				backgroundForPlot = new double[2 * np];
-				int j;
-				for (int i = j = 0; i < np; i++, j += 2) {
-					int totalFit = 0;
-					for (int sn = 0; sn < ylength; sn++) {
-						double xstartmin = datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode);
-						double xendmax = datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode);
-						if (xendmax < datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode))
-							xendmax = datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode);
-						if (xstartmin > datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode))
-							xstartmin = datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode);
-						if (datafitForPlot[j] >= xstartmin && datafitForPlot[j] <= xendmax) {
-							double value = datafile[sn].getInterpolatedBkgFitSqrtIntensity(datafitForPlot[j], 2, mode);
-							if (!Double.isNaN(value)) {
-								backgroundForPlot[j + 1] += value;
-								totalFit++;
-							}
-						}
-					}
-					if (totalFit > 0)
-						backgroundForPlot[j + 1] /= totalFit;
-					backgroundForPlot[j] = datafitForPlot[j];
-				}
-			}
-
-		}
-	}
 
 	public double getDatasetWeight() {
 		return datasetWeight;
@@ -5313,7 +5154,23 @@ public class DataFileSet extends XRDcat {
 		return true;
 	}
 
-	static class datafileAnglesComparer implements Comparator {
+  public void addIntensityToAll() {
+    Constants.refreshTreePermitted = false;
+    int datafilenumber = datafilesnumber();
+
+    double intensity = MaudPreferences.getDouble("defaultDatafileIntensity.valueToAdd", 1);
+    for (int i = 0; i < datafilenumber; i++) {
+      DiffrDataFile tmpdatafile = getDataFile(i);
+      int numberOfData1 = tmpdatafile.getTotalNumberOfData();
+      for (int j = 0; j < numberOfData1; j++) {
+        tmpdatafile.intensity[j] += intensity;
+      }
+    }
+    Constants.refreshTreePermitted = true;
+    notifyUpObjectChanged(this, 0, -1);
+  }
+
+  static class datafileAnglesComparer implements Comparator {
 
     int[] order;
 

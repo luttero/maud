@@ -343,7 +343,8 @@ public class PseudoVoigt2DPeak extends PseudoVoigtPeak {
                                boolean energyDispersive, boolean increasingX, double planar_asymmetry,
                                double[] deff, double sintheta, java.util.Vector<java.util.Vector<double[]>> energyBroadeningVector,
                                double d_space, int radiationSubdivision, int characteristicLines) {
-  
+
+//    System.out.println("Functions");
     double theta2 = MoreMath.asind(sintheta) * 2.0;
   
     double constEnergy = Constants.ENERGY_LAMBDA / (2.0 * d_space);
@@ -368,7 +369,7 @@ public class PseudoVoigt2DPeak extends PseudoVoigtPeak {
     for (int ipv = 0; ipv < numberOfPV; ipv++) {
       java.util.Vector<double[]> broad = energyBroadeningVector.get(ipv);
       if (ipv > characteristicLines) {
-  
+  // Breemsstrahlung lines
         if (broad != null) {
           int lastIndex = ii - 1;
           int nextIndex = lastIndex + radiationSubdivision;
@@ -437,7 +438,8 @@ public class PseudoVoigt2DPeak extends PseudoVoigtPeak {
 //            System.out.println(energy_div[ii] + " " + intensity_div_alt1 + " " + intensity_div[ii] + " " + intensity_a + " " + inten);
             ii++;
           }
-          ii++;
+          if (radiationSubdivision <= 1)
+            ii++;
         } else {
           for (int y = 0; y < radiationSubdivision; y++) {
             imin[ii] = 0;
@@ -446,7 +448,7 @@ public class PseudoVoigt2DPeak extends PseudoVoigtPeak {
           }
         }
       } else {
-        
+        // Characteristic lines
         imin[ii] = minindex[ipv];
         imax[ii] = maxindex[ipv];
         double hwhm = 1.0;
@@ -605,7 +607,7 @@ public class PseudoVoigt2DPeak extends PseudoVoigtPeak {
  */
           }
         }
-        if (planar_asymmetry != 0.0) {
+/*        if (planar_asymmetry != 0.0) {
           double rec_planar_asymmetry = 1.0 / planar_asymmetry;
           double newFit[] = new double[imax1 - imin1];
           int absdirection = -1;  // increasing step
@@ -627,7 +629,7 @@ public class PseudoVoigt2DPeak extends PseudoVoigtPeak {
             newFit[j - imin1] = function / normalization;
           }
           System.arraycopy(newFit, 0, tmpFit, 0, imax1 - imin1);
-        }
+        }*/
         for (int i = imin1; i < imax1; i++)
           f[i] += tmpFit[i - imin1];
       }// else
@@ -657,7 +659,7 @@ public class PseudoVoigt2DPeak extends PseudoVoigtPeak {
         // angular broadening
         double dgx = (1.0 - eta[ipv]) * Constants.sqrtln2pi * hwhm_i[ipv];
         double dcx = eta[ipv] * hwhm_i[ipv] / Math.PI;
-        double theta2_i = constEnergy / actualPosition[ipv]; // energy[ipv]; //
+        double theta2_i = constEnergy / energy[ipv]; //
         theta2_i = MoreMath.asind(theta2_i) * 2.0;
         double dx = theta2_i - theta2;
         dx *= hwhm_i[ipv];
@@ -725,7 +727,132 @@ public class PseudoVoigt2DPeak extends PseudoVoigtPeak {
       }
     }
   }
-  
+
+  private static final double FOUR_LN_2 = Math.log(2.0);
+  private static final double FOUR_LN_2_PI = Math.sqrt(FOUR_LN_2 / Math.PI);
+
+  public void computeFunctionsQuick_ChatGPT(double[] x, double[] f, int[] minindex, int[] maxindex, double[][] intensity,
+                                    double[] eta, double[] hwhm_i, double[] energy, double sintheta,
+                                    java.util.Vector<java.util.Vector<double[]>> energyBroadeningVector,
+                                    double d_space, double[] actualPosition) {
+
+    double theta2 = MoreMath.asind(sintheta) * 2.0;
+    double constEnergy = Constants.ENERGY_LAMBDA / (2.0 * d_space);
+
+    int numberOfPV = minindex.length;
+    int totalLines = numberOfPV;
+    double intensity_a;
+    for (int ipv = 0; ipv < totalLines; ipv++) {
+      int imin1 = minindex[ipv];
+      int imax1 = maxindex[ipv];
+      if (imax1 - imin1 > 0) {
+        if (intensity[0][ipv] > 1.0E-9) {
+          java.util.Vector<double[]> broad = energyBroadeningVector.get(ipv);
+          if (broad != null) {
+//            double[] tmpFit = new double[imax1 - imin1];
+
+            // angular broadening
+            double theta2_i = constEnergy / energy[ipv]; //
+            theta2_i = MoreMath.asind(theta2_i) * 2.0;
+
+            // energy broadening
+            double hwhm = broad.get(0)[0];
+            double eta_e = broad.get(1)[0];
+            double hwhm_i_e = 1.0 / hwhm;
+
+            // Gaussian component
+            double gaussianNormX = FOUR_LN_2_PI * hwhm_i[ipv];
+            double gaussianNormY = FOUR_LN_2_PI * hwhm_i_e;
+            double gaussianFactorX = FOUR_LN_2 * hwhm_i[ipv] * hwhm_i[ipv];       // (fwhmX * fwhmX);
+            double gaussianFactorY = FOUR_LN_2 * hwhm_i_e * hwhm_i_e;             // (fwhmY * fwhmY);
+            double lorentzianNormX = 1.0 / (hwhm_i[ipv] * Math.PI);
+            double lorentzianNormY = 1.0 / (hwhm_i_e * Math.PI);
+
+            double dx = theta2 - theta2_i;
+            double expx = gaussianFactorX * dx * dx;
+            double gaussianX = 0;
+            if (expx < 30.0)
+              gaussianX = gaussianNormX * Math.exp(-expx);
+            double scaledDistance = dx * hwhm_i[ipv];
+            double lorentzianX = lorentzianNormX / (1.0 + scaledDistance * scaledDistance);
+            double valueX = (1.0 - eta[ipv]) * gaussianX + eta[ipv] * lorentzianX;
+
+            for (int i = imin1; i < imax1; i++) {
+              double dy = x[i] - actualPosition[ipv];
+              double gaussianY = 0;
+              double expy = gaussianFactorY * dy * dy;
+              if (expy < 30.0)
+                gaussianY = gaussianNormY * Math.exp(-expy);
+              scaledDistance = dy * hwhm_i_e;
+              double lorentzianY = lorentzianNormY / (1.0 + scaledDistance * scaledDistance);
+              double valueY = (1.0 - eta_e) * gaussianY + eta_e * lorentzianY;
+
+              f[i] += intensity[0][ipv] * valueX * valueY;
+//              tmpFit[i - imin1] += value;
+//              f[i] += tmpFit[i - imin1];
+
+/*        double dgx = (1.0 - eta[ipv]) * Constants.sqrtln2pi * hwhm_i[ipv];
+        double dcx = eta[ipv] * hwhm_i[ipv] / Math.PI;
+            dx *= hwhm_i[ipv];
+            dx *= dx;
+            if (dx > 30.0)
+              intensity_a = dcx / (1.0 + dx);
+            else
+              intensity_a = dcx / (1.0 + dx) + dgx * Math.exp(-Constants.LN2 * dx);
+            intensity_a *= intensity[0][ipv];
+
+            double one_over_beta = 1.0;
+            double fT = 0;
+            double fS = 0;
+
+            if (ipv < 2 && broad.size() > 2) {
+              fS = broad.get(2)[0];
+              double beta = broad.get(3)[0];
+
+              if (beta > 0)
+                one_over_beta = 1.0 / beta;
+              else
+                one_over_beta = 1.0;
+
+              fT = broad.get(4)[0];
+            }
+
+            double symPeakIntensity = 1.0 - fT - fS;
+            double dgx_e = symPeakIntensity * (1.0 - eta_e) * Constants.sqrtln2pi * hwhm_i_e;
+            double dcx_e = symPeakIntensity * eta_e * hwhm_i_e / Math.PI;
+            double one_over_sigma = Constants.sqrt2ln2 * hwhm_i_e;
+            double one_over_beta2 = one_over_beta * one_over_beta;
+            double exp_one_over_beta2 = one_over_beta * one_over_sigma * 0.5 / Math.exp(-0.5 * one_over_beta2);
+            double erf_arg = Constants.one_sqrt2 * one_over_sigma;
+            double one_over_2energy = 1.0 / (2.0 * energy[ipv]);
+
+            for (int i = imin1; i < imax1; i++) {
+              double dx_e1 = x[i] - actualPosition[ipv]; //energy[ipv]; //position[0][ipv];
+              double dx_e = dx_e1 * hwhm_i_e;
+              dx_e *= dx_e;
+              if (dx_e > 30.0)
+                tmpFit[i - imin1] += intensity_a * dcx_e / (1.0 + dx_e);
+              else
+                tmpFit[i - imin1] += intensity_a * (dcx_e / (1.0 + dx_e) + dgx_e *
+                    Math.exp(-Constants.LN2 * dx_e));
+
+              if (fT > 0)
+                tmpFit[i - imin1] += intensity_a * exp_one_over_beta2 * fT * Math.exp(dx_e1 * one_over_beta * one_over_sigma) *
+                    erfc(Constants.one_sqrt2 * (dx_e1 * one_over_sigma + one_over_beta));
+              if (fS > 0)
+                tmpFit[i - imin1] += intensity_a * erfc(dx_e1 * erf_arg) * one_over_2energy * fS;
+
+            } */
+            }
+//            for (int i = imin1; i < imax1; i++)
+//              f[i] += tmpFit[i - imin1];
+          }
+
+        }
+      }
+    }
+  }
+
 }
 
 
@@ -886,5 +1013,151 @@ public static void main(String[] args) {
 }
 }
 
+
+ */
+
+/*
+
+public final class AnisotropicPseudoVoigt2D {
+
+    private static final double FOUR_LN_2 = 4.0 * Math.log(2.0);
+
+    private final double centerX;
+    private final double centerY;
+
+    private final double fwhmX;
+    private final double fwhmY;
+
+    private final double etaX;
+    private final double etaY;
+
+    // Gaussian normalization and exponent factors
+    private final double gaussianNormX;
+    private final double gaussianNormY;
+    private final double gaussianFactorX;
+    private final double gaussianFactorY;
+
+    // Lorentzian normalization factors
+    private final double lorentzianNormX;
+    private final double lorentzianNormY;
+
+    public AnisotropicPseudoVoigt2D(
+            double centerX,
+            double centerY,
+            double fwhmX,
+            double fwhmY,
+            double etaX,
+            double etaY) {
+
+        if (!Double.isFinite(centerX) || !Double.isFinite(centerY)) {
+            throw new IllegalArgumentException(
+                    "Center coordinates must be finite.");
+        }
+
+        if (!Double.isFinite(fwhmX) || fwhmX <= 0.0 ||
+            !Double.isFinite(fwhmY) || fwhmY <= 0.0) {
+            throw new IllegalArgumentException(
+                    "FWHM values must be finite and greater than zero.");
+        }
+
+        validateEta(etaX, "etaX");
+        validateEta(etaY, "etaY");
+
+        this.centerX = centerX;
+        this.centerY = centerY;
+        this.fwhmX = fwhmX;
+        this.fwhmY = fwhmY;
+        this.etaX = etaX;
+        this.etaY = etaY;
+
+        //
+        // Normalized one-dimensional Gaussian:
+        //
+        // sqrt(4 ln(2) / pi) / FWHM
+        //     * exp[-4 ln(2) * delta^2 / FWHM^2]
+         //
+gaussianNormX =
+    Math.sqrt(FOUR_LN_2 / Math.PI) / fwhmX;
+
+gaussianNormY =
+    Math.sqrt(FOUR_LN_2 / Math.PI) / fwhmY;
+
+gaussianFactorX = FOUR_LN_2 / (fwhmX * fwhmX);
+gaussianFactorY = FOUR_LN_2 / (fwhmY * fwhmY);
+
+//
+// Normalized one-dimensional Lorentzian:
+//
+// [2 / (pi * FWHM)]
+//     / [1 + 4 * delta^2 / FWHM^2]
+//
+lorentzianNormX = 2.0 / (Math.PI * fwhmX);
+lorentzianNormY = 2.0 / (Math.PI * fwhmY);
+    }
+
+private static void validateEta(double eta, String name) {
+  if (!Double.isFinite(eta) || eta < 0.0 || eta > 1.0) {
+    throw new IllegalArgumentException(
+        name + " must be between 0 and 1.");
+  }
+}
+
+public double value(double x, double y) {
+  return profileX(x) * profileY(y);
+}
+
+public double profileX(double x) {
+  double dx = x - centerX;
+
+  double gaussian =
+      gaussianNormX *
+          Math.exp(-gaussianFactorX * dx * dx);
+
+  double scaledDistance = 2.0 * dx / fwhmX;
+  double lorentzian =
+      lorentzianNormX /
+          (1.0 + scaledDistance * scaledDistance);
+
+  return (1.0 - etaX) * gaussian
+      + etaX * lorentzian;
+}
+
+public double profileY(double y) {
+  double dy = y - centerY;
+
+  double gaussian =
+      gaussianNormY *
+          Math.exp(-gaussianFactorY * dy * dy);
+
+  double scaledDistance = 2.0 * dy / fwhmY;
+  double lorentzian =
+      lorentzianNormY /
+          (1.0 + scaledDistance * scaledDistance);
+
+  return (1.0 - etaY) * gaussian
+      + etaY * lorentzian;
+}
+
+public static void main(String[] args) {
+  AnisotropicPseudoVoigt2D profile =
+      new AnisotropicPseudoVoigt2D(
+          0.0,  // centerX
+          0.0,  // centerY
+          2.0,  // FWHM along x
+          5.0,  // FWHM along y
+          0.2,  // etaX: mostly Gaussian
+          0.8   // etaY: mostly Lorentzian
+      );
+
+  double peak = profile.value(0.0, 0.0);
+
+  System.out.println("Peak        = " + peak);
+  System.out.println("At FWHM_X/2 = "
+      + profile.value(1.0, 0.0));
+  System.out.println("At FWHM_Y/2 = "
+      + profile.value(0.0, 2.5));
+  System.out.println("Peak / 2    = " + peak / 2.0);
+}
+}
 
  */

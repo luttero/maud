@@ -188,32 +188,35 @@ public class MultiPlotFitting2D extends myJFrame {
     int startingIndex = datafile[0].startingindex;
     int finalIndex = datafile[0].finalindex;
     datafile[0].initializeInterpolation();
-    int mode = PlotDataFile.checkScaleModeX();
+    int startDatafile = 0;
+    int finalDatafile = 0;
     double xmin = 1.0E10, xmax = 0.0;
-    if (xmin > datafile[0].getXDataForPlot(datafile[0].startingindex, mode))
-      xmin = datafile[0].getXDataForPlot(datafile[0].startingindex, mode);
-    if (xmax < datafile[0].getXDataForPlot(datafile[0].finalindex - 1, mode))
-      xmax = datafile[0].getXDataForPlot(datafile[0].finalindex - 1, mode);
-    if (xmin > datafile[0].getXDataForPlot(datafile[0].finalindex - 1, mode))
-      xmin = datafile[0].getXDataForPlot(datafile[0].finalindex - 1, mode);
-    if (xmax < datafile[0].getXDataForPlot(datafile[0].startingindex, mode))
-      xmax = datafile[0].getXDataForPlot(datafile[0].startingindex, mode);
+    if (xmin > datafile[0].getXData(datafile[0].startingindex))
+      xmin = datafile[0].getXData(datafile[0].startingindex);
+    if (xmax < datafile[0].getXData(datafile[0].finalindex - 1))
+      xmax = datafile[0].getXData(datafile[0].finalindex - 1);
+    if (xmin > datafile[0].getXData(datafile[0].finalindex - 1))
+      xmin = datafile[0].getXData(datafile[0].finalindex - 1);
+    if (xmax < datafile[0].getXData(datafile[0].startingindex))
+      xmax = datafile[0].getXData(datafile[0].startingindex);
     for (int i = 1; i < ylength; i++) {
       datafile[i].initializeInterpolation();
       if (startingIndex > datafile[i].startingindex) {
         startingIndex = datafile[i].startingindex;
+        startDatafile = i;
       }
       if (finalIndex < datafile[i].finalindex) {
         finalIndex = datafile[i].finalindex;
+        finalDatafile = i;
       }
-        if (xmin > datafile[i].getXDataForPlot(datafile[i].startingindex, mode))
-          xmin = datafile[i].getXDataForPlot(datafile[i].startingindex, mode);
-        if (xmax < datafile[i].getXDataForPlot(datafile[i].finalindex - 1, mode))
-          xmax = datafile[i].getXDataForPlot(datafile[i].finalindex - 1, mode);
-        if (xmin > datafile[i].getXDataForPlot(datafile[i].finalindex - 1, mode))
-          xmin = datafile[i].getXDataForPlot(datafile[i].finalindex - 1, mode);
-        if (xmax < datafile[i].getXDataForPlot(datafile[i].startingindex, mode))
-          xmax = datafile[i].getXDataForPlot(datafile[i].startingindex, mode);
+      if (xmin > datafile[i].getXData(datafile[i].startingindex))
+        xmin = datafile[i].getXData(datafile[i].startingindex);
+      if (xmax < datafile[i].getXData(datafile[i].finalindex - 1))
+        xmax = datafile[i].getXData(datafile[i].finalindex - 1);
+      if (xmin > datafile[i].getXData(datafile[i].finalindex - 1))
+        xmin = datafile[i].getXData(datafile[i].finalindex - 1);
+      if (xmax < datafile[i].getXData(datafile[i].startingindex))
+        xmax = datafile[i].getXData(datafile[i].startingindex);
     }
     int xlength = finalIndex - startingIndex;
     double stepX = (xmax - xmin) / (xlength - 1);
@@ -226,34 +229,31 @@ public class MultiPlotFitting2D extends myJFrame {
     int j = 0;
 //    IntensityMin = (double) 1.0E60;
 //    IntensityMax = (double) -1.0E60;
+    int modeX = PlotDataFile.checkScaleModeX();
+    int modeY = PlotDataFile.checkScaleMode();
+    PlotDataFile.checkCalibrateIntensity();
+    boolean calibInt = PlotDataFile.calibrateIntensity();
+    boolean calibLP = PlotDataFile.calibrateIntensityForLorentzPolarization();
+    boolean bkgSub = PlotDataFile.checkBackgroundSubtraction();
+    double minEnergyKeV = Constants.checkMinimumEnergy();
+    double sep = 0.0;
     for (int i = 0; i < xlength; i++) {
-/*
-      if (startingIndex + i < datafile[0].startingindex)
-        xaxis[i] = (double) datafile[startDatafile].getXDataForPlot(i + startingIndex, mode);
-      else if (finalIndex + i >= datafile[0].finalindex)
-        xaxis[i] = (double) datafile[finalDatafile].getXDataForPlot(i + startingIndex, mode);
-      else
-        xaxis[i] = (double) datafile[0].getXDataForPlot(i + startingIndex, mode);
-*/
       xaxis[i] = xmin + i * stepX;
       for (int sn = 0; sn < ylength; sn++) {
         if (i == 0) {
-          if (yaxisUnit == null)
           yaxis[sn] = sn;
-          else
-            yaxis[sn] = datafile[sn].get2ThetaValue();
           if (hasFit == 1 && ylength == 1) {
             yaxis[1] = 1;
             yaxis[2] = 2;
           }
         }
 //        System.out.println(i + " " + sn + " " + j);
-        double xstartmin = datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode);
-        double xendmax = datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode);
-        if (xendmax < datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode))
-          xendmax = datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode);
-        if (xstartmin > datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode))
-          xstartmin = datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode);
+        double xstartmin = datafile[sn].getXData(datafile[sn].startingindex);
+        double xendmax = datafile[sn].getXData(datafile[sn].finalindex - 1);
+        if (xendmax < datafile[sn].getXData(datafile[sn].startingindex))
+          xendmax = datafile[sn].getXData(datafile[sn].startingindex);
+        if (xstartmin > datafile[sn].getXData(datafile[sn].finalindex - 1))
+          xstartmin = datafile[sn].getXData(datafile[sn].finalindex - 1);
         if (xaxis[i] < xstartmin || xaxis[i] > xendmax) {
           values[j++] = it.unitn.ing.jgraph.ColorMap.DUMMY_VALUE;
           if (hasFit == 1 && ylength == 1) {
@@ -261,85 +261,112 @@ public class MultiPlotFitting2D extends myJFrame {
             values[j++] = it.unitn.ing.jgraph.ColorMap.DUMMY_VALUE;
           }
         } else {
-          double intValue = datafile[sn].getInterpolatedYSqrtIntensity(xaxis[i], 2, mode);
+          int index = datafile[sn].getOldNearestPoint(xaxis[i]);
+          double intValue = PlotDataFile.getIntensity(datafile[sn], xaxis[i], index);
+          double b_value = 0.0;
+          if (bkgSub)
+            b_value = PlotDataFile.getBackground(datafile[sn], xaxis[i], index);
+          if (calibInt) {
+            double cal = PlotDataFile.getIntensityCalibration(datafile[sn], xaxis[i], index);
+            if (cal > 0) {
+              intValue /= cal;
+              b_value /= cal;
+            }
+          }
+          if (calibLP) {
+            double cal = PlotDataFile.getIntensityLPCalibration(datafile[sn], xaxis[i], index);
+            if (cal > 0) {
+              intValue /= cal;
+              b_value /= cal;
+            }
+          }
+          intValue -= b_value;
+          intValue = PlotDataFile.getScaledIntensity(datafile[sn], intValue, xaxis[i], modeY);
           values[j++] = intValue;
           if (hasFit == 1 && ylength == 1) {
             values[j++] = intValue;
             values[j++] = intValue;
           }
-	        if (values[j - 1] != Double.NaN) {
-		        if (values[j - 1] < IntensityMin && computeMinMax)
-			        IntensityMin = values[j - 1];
-		        else if (values[j - 1] < IntensityMin && !computeMinMax)
-			        values[j - 1] = IntensityMin;
-		        if (values[j - 1] > IntensityMax && computeMinMax)
-			        IntensityMax = values[j - 1];
-		        else if (values[j - 1] > IntensityMax && !computeMinMax)
-			        values[j - 1] = IntensityMax;
-	        }
-        }
-/*
-
-        if (startingIndex + i < datafile[sn].startingindex ||
-            startingIndex + i >= datafile[sn].finalindex) {
-          values[j++] = it.unitn.ing.jgraph.ColorMap.DUMMY_VALUE;
-          if (hasFit == 1 && ylength == 1) {
-            values[j++] = it.unitn.ing.jgraph.ColorMap.DUMMY_VALUE;
-            values[j++] = it.unitn.ing.jgraph.ColorMap.DUMMY_VALUE;
+          if (values[j - 1] != Double.NaN) {
+            if (values[j - 1] < IntensityMin && computeMinMax)
+              IntensityMin = values[j - 1];
+            else if (values[j - 1] < IntensityMin && !computeMinMax)
+              values[j - 1] = IntensityMin;
+            if (values[j - 1] > IntensityMax && computeMinMax)
+              IntensityMax = values[j - 1];
+            else if (values[j - 1] > IntensityMax && !computeMinMax)
+              values[j - 1] = IntensityMax;
           }
-        } else {
-          values[j++] = datafile[sn].getYSqrtData(i + startingIndex);
-          if (hasFit == 1 && ylength == 1) {
-            values[j++] = datafile[0].getYSqrtData(i + startingIndex);
-            values[j++] = datafile[0].getYSqrtData(i + startingIndex);
-          }
-          if (values[j - 1] < IntensityMin && computeMinMax)
-            IntensityMin = (double) values[j - 1];
-          else if (values[j - 1] < IntensityMin && !computeMinMax)
-            values[j - 1] = IntensityMin;
-          if (values[j - 1] > IntensityMax && computeMinMax)
-            IntensityMax = (double) values[j - 1];
-          else if (values[j - 1] > IntensityMax && !computeMinMax)
-            values[j - 1] = IntensityMax;
         }
-*/
       }
       if (hasFit > 1) {
-        double last2theta = datafile[ylength - 1].get2ThetaValue() * 1.01;
         values[j++] = it.unitn.ing.jgraph.ColorMap.DUMMY_VALUE;
         if (i == 0)
           yaxis[ylength] = ylength;
 
         for (int sn = 0; sn < ylength; sn++) {
-          double xstartmin = datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode);
-          double xendmax = datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode);
-          if (xendmax < datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode))
-            xendmax = datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode);
-          if (xstartmin > datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode))
-            xstartmin = datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode);
-          if (i == 0) {
-            if (yaxisUnit == null)
+          double xstartmin = datafile[sn].getXData(datafile[sn].startingindex);
+          double xendmax = datafile[sn].getXData(datafile[sn].finalindex - 1);
+          if (xendmax < datafile[sn].getXData(datafile[sn].startingindex))
+            xendmax = datafile[sn].getXData(datafile[sn].startingindex);
+          if (xstartmin > datafile[sn].getXData(datafile[sn].finalindex - 1))
+            xstartmin = datafile[sn].getXData(datafile[sn].finalindex - 1);
+          if (i == 0)
             yaxis[ylength + 1 + sn] = ylength + 1 + sn;
-            else
-              yaxis[sn] = datafile[sn].get2ThetaValue() + last2theta;
-          }
           if (xaxis[i] < xstartmin || xaxis[i] > xendmax)
             values[j++] = it.unitn.ing.jgraph.ColorMap.DUMMY_VALUE;
           else {
-            values[j++] = datafile[sn].getInterpolatedFitSqrtIntensity(xaxis[i], 2, mode);
-	          if (values[j - 1] != Double.NaN) {
-		          if (values[j - 1] < IntensityMin && computeMinMax)
-			          IntensityMin = values[j - 1];
-		          else if (values[j - 1] < IntensityMin && !computeMinMax)
-			          values[j - 1] = IntensityMin;
-		          if (values[j - 1] > IntensityMax && computeMinMax)
-			          IntensityMax = values[j - 1];
-		          else if (values[j - 1] > IntensityMax && !computeMinMax)
-			          values[j - 1] = IntensityMax;
-	          }
+            int index = datafile[sn].getOldNearestPoint(xaxis[i]);
+            double intValue = PlotDataFile.getFitIntensity(datafile[sn], xaxis[i], index);
+            double b_value = 0.0;
+            if (bkgSub)
+              b_value = PlotDataFile.getBackground(datafile[sn], xaxis[i], index);
+            if (calibInt) {
+              double cal = PlotDataFile.getIntensityCalibration(datafile[sn], xaxis[i], index);
+              if (cal > 0) {
+                intValue /= cal;
+                b_value /= cal;
+              }
+            }
+            if (calibLP) {
+              double cal = PlotDataFile.getIntensityLPCalibration(datafile[sn], xaxis[i], index);
+              if (cal > 0) {
+                intValue /= cal;
+                b_value /= cal;
+              }
+            }
+            intValue -= b_value;
+            intValue = PlotDataFile.getScaledIntensity(datafile[sn], intValue, xaxis[i], modeY);
+            values[j++] = intValue;
+            if (hasFit == 1 && ylength == 1) {
+              values[j++] = intValue;
+              values[j++] = intValue;
+            }
+            if (values[j - 1] != Double.NaN) {
+              if (values[j - 1] < IntensityMin && computeMinMax)
+                IntensityMin = values[j - 1];
+              else if (values[j - 1] < IntensityMin && !computeMinMax)
+                values[j - 1] = IntensityMin;
+              if (values[j - 1] > IntensityMax && computeMinMax)
+                IntensityMax = values[j - 1];
+              else if (values[j - 1] > IntensityMax && !computeMinMax)
+                values[j - 1] = IntensityMax;
+            }
+            values[j++] = intValue;
+            if (values[j - 1] != Double.NaN) {
+              if (values[j - 1] < IntensityMin && computeMinMax)
+                IntensityMin = values[j - 1];
+              else if (values[j - 1] < IntensityMin && !computeMinMax)
+                values[j - 1] = IntensityMin;
+              if (values[j - 1] > IntensityMax && computeMinMax)
+                IntensityMax = values[j - 1];
+              else if (values[j - 1] > IntensityMax && !computeMinMax)
+                values[j - 1] = IntensityMax;
+            }
           }
         }
       }
+      xaxis[i] = PlotDataFile.getScaledX(datafile[0], xaxis[i], modeX);
     }
 
     /* Contour plot lines, defining range */
@@ -349,8 +376,10 @@ public class MultiPlotFitting2D extends myJFrame {
     //
     // create SimpleGrid
     //
-    SGTMetaData zMeta = new SGTMetaData(DiffrDataFile.getAxisYLegend(), "");
-    SGTMetaData xMeta = new SGTMetaData(datafile[0].getAxisXLegendNoUnit(), datafile[0].getAxisXLegendUnit());
+    SGTMetaData zMeta = new SGTMetaData(PlotDataFile.getAxisYLegend(), "");
+    SGTMetaData xMeta = new SGTMetaData(PlotDataFile.getAxisXLegendNoUnit(
+        datafile[0].calibrated, datafile[0].dspacingbase, datafile[0].energyDispersive),
+        PlotDataFile.getAxisXLegendUnit(datafile[0].calibrated, datafile[0].dspacingbase, datafile[0].energyDispersive));
 
     String information;
     if (hasFit > 1)
@@ -393,7 +422,7 @@ public class MultiPlotFitting2D extends myJFrame {
      * Add the grid to the layout and give a label for
      * the ColorKey.
      */
-    rpl.addData(sg, gridAttr_, DiffrDataFile.getAxisYLegend());
+    rpl.addData(sg, gridAttr_, PlotDataFile.getAxisYLegend());
     /*
      * Change the layout's three title lines.
      */

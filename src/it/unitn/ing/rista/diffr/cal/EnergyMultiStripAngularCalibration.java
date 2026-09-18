@@ -21,10 +21,13 @@ public class EnergyMultiStripAngularCalibration extends AngularCalibration {
   public static String descriptionID = "Channel calibration of the multistrip detector with energy resolution";
   
   public static String[] diclistc = {"_inst_detector_multistrip_center_channel",
+      "_inst_ang_calibration_set_2-theta",
       "_inst_detector_multistrip_pitch", "_inst_ang_calibration_radius",
+      "_riet_par_2-theta_offset",
       "_inst_channel_calibration_zero", "_inst_channel_calibration_gain"};
-  public static String[] diclistcrm = { "Center channel number ",
-      "Strip pitch ", "Detector to sample distance ", "Energy of channel zero ", "Gain in eV per channel "};
+  public static String[] diclistcrm = { "Center channel number ", "Set the pattern 2-theta",
+      "Strip pitch ", "Detector to sample distance ", "2-theta offset",
+      "Energy of channel zero ", "Gain in eV per channel "};
   
   public static String[] classlistc = {};
   public static String[] classlistcs = {};
@@ -36,6 +39,8 @@ public class EnergyMultiStripAngularCalibration extends AngularCalibration {
   double radius = 283.0;
   double[] zero = null;
   double[] gain = null;
+  double theta2_offset = 0.0;
+  boolean set2theta = false;
   
   public EnergyMultiStripAngularCalibration(XRDcat obj, String alabel) {
     super(obj, alabel);
@@ -56,9 +61,9 @@ public class EnergyMultiStripAngularCalibration extends AngularCalibration {
   }
   
   public void initConstant() {
-    Nstring = 1;
+    Nstring = 2;
     Nstringloop = 0;
-    Nparameter = 2;
+    Nparameter = 3;
     Nparameterloop = 2;
     Nsubordinate = 0;
     Nsubordinateloop = 0;
@@ -76,16 +81,18 @@ public class EnergyMultiStripAngularCalibration extends AngularCalibration {
   
   public void initParameters() {
     super.initParameters();
+    setString(0, "0");
+    setString(1, "false");
     parameterField[0] = new Parameter(this, getParameterString(0), 0.2,
         ParameterPreferences.getDouble(getParameterString(0) + ".min", 0.01),
         ParameterPreferences.getDouble(getParameterString(0) + ".max", 1));
     parameterField[1] = new Parameter(this, getParameterString(1), 283,
         ParameterPreferences.getDouble(getParameterString(1) + ".min", 3),
         ParameterPreferences.getDouble(getParameterString(1) + ".max", 1000));
-/*    parameterField[2] = new Parameter(this, getParameterString(2), 0,
+    parameterField[2] = new Parameter(this, getParameterString(2), 10,
         ParameterPreferences.getDouble(getParameterString(2) + ".min", -10),
-        ParameterPreferences.getDouble(getParameterString(2) + ".max", 10));
-    parameterField[3] = new Parameter(this, getParameterString(3), 200.0,
+        ParameterPreferences.getDouble(getParameterString(2) + ".max", 180));
+/*    parameterField[3] = new Parameter(this, getParameterString(3), 200.0,
         ParameterPreferences.getDouble(getParameterString(3) + ".min", 0.0001),
         ParameterPreferences.getDouble(getParameterString(3) + ".max", 1));*/
   }
@@ -93,6 +100,7 @@ public class EnergyMultiStripAngularCalibration extends AngularCalibration {
   public void updateStringtoDoubleBuffering(boolean firstLoading) {
     super.updateStringtoDoubleBuffering(false);
     centerChannel = Integer.parseInt(getString(0));
+    set2theta = Boolean.parseBoolean(getString(1));
   }
   
   public void updateParametertoDoubleBuffering(boolean firstLoading) {
@@ -101,6 +109,8 @@ public class EnergyMultiStripAngularCalibration extends AngularCalibration {
     super.updateParametertoDoubleBuffering(firstLoading);
     pitch = getParameterValue(0);
     radius = getParameterValue(1);
+    theta2_offset = getParameterValue(2);
+
     int banks = numberofelementPL(0);
     if (zero == null || zero.length != banks)
       zero = new double[banks];
@@ -189,6 +199,13 @@ public class EnergyMultiStripAngularCalibration extends AngularCalibration {
       angcal = zero[bankNumber] + gain[bankNumber] * value;
       datafile.setCalibratedXDataOnly(i, angcal);
     }
+    int index = datafile.getFileNumber();
+    if (index >= 0 && set2theta) {
+      double theta2_angleD = theta2_offset + pitch * (index - centerChannel) / radius * Constants.PITODEG;
+      datafile.setAngleValue(4, theta2_angleD);
+    } else {
+
+    }
   }
   
   public int getChannelForZero(DiffrDataFile datafile) {
@@ -231,6 +248,7 @@ public class EnergyMultiStripAngularCalibration extends AngularCalibration {
     
     JParameterListPane coeffPanel[];
     JTextField centerChannelTF;
+    JCheckBox set2ThetaCB;
     String[] tabLabels = {"Zero", "Gain"};
     
     public JPolMSAngOptionsD(Frame parent, XRDcat obj) {
@@ -245,9 +263,13 @@ public class EnergyMultiStripAngularCalibration extends AngularCalibration {
       gridPanel.add(new JLabel("Center channel number: "));
       centerChannelTF = new JTextField(Constants.FLOAT_FIELD);
       gridPanel.add(centerChannelTF);
+      set2ThetaCB = new JCheckBox("Set pattern 2-theta");
+      gridPanel.add(set2ThetaCB);
+      set2ThetaCB.setToolTipText("If selected the 2-thata value of each datafile will be calculated from 2-theta offset, strip pitch and radius");
       
       addParField(gridPanel, "Multistrip pitch (mm): ", parameterField[0]);
       addParField(gridPanel, "Detector distance (mm): ", parameterField[1]);
+      addParField(gridPanel, "2-theta offset   (deg): ", parameterField[2]);
 //      addParField(principalPanel, "Zero channel (eV): ", parameterField[2]);
 //      addParField(principalPanel, "Gain (eV/channel): ", parameterField[3]);
   
@@ -270,6 +292,7 @@ public class EnergyMultiStripAngularCalibration extends AngularCalibration {
     public void initParameters() {
       super.initParameters();
       centerChannelTF.setText(getCenterChannelS());
+      set2ThetaCB.setSelected(Boolean.parseBoolean(getString(1)));
       for (int i = 0; i < tabLabels.length; i++)
         coeffPanel[i].setList(XRDparent, i);
     }
@@ -277,6 +300,7 @@ public class EnergyMultiStripAngularCalibration extends AngularCalibration {
     public void retrieveParameters() {
       super.retrieveParameters();
       setCenterChannel(centerChannelTF.getText());
+      setString(1, Boolean.toString(set2ThetaCB.isSelected()));
     }
   
     public void dispose() {

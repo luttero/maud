@@ -66,7 +66,7 @@ public class GeometryBBReflectivity extends GeometryDiffractometer {
     return super.getTextureAngles(datafile, newtilting_angles, sample, theta_detector, ppp);
   }
 
-  public double LorentzPolarization(DiffrDataFile adatafile, Sample asample, double position, boolean dspacingbase, boolean energyDispersive) {
+  public double LorentzPolarization(DiffrDataFile adatafile, Sample asample, double position) {
 
     // first correction for absorption on asymmetric diffraction
     double lp = 1.0;

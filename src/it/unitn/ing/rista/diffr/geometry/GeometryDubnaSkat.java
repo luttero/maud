@@ -124,11 +124,10 @@ public class GeometryDubnaSkat extends GeometryDebyeScherrer {
     return polar_angles;
   }
 
-  public double LorentzPolarization(DiffrDataFile adatafile, Sample asample, double position,
-                                    boolean dspacingbase, boolean energyDispersive) {
+  public double LorentzPolarization(DiffrDataFile adatafile, Sample asample, double position) {
 
     double detector_efficiency = getDetector().getIntensityCalibration(adatafile, asample,
-		    position, dspacingbase, energyDispersive);
+		    position, adatafile.dspacingbase, adatafile.energyDispersive);
 
     return position * position * position * position * detector_efficiency;
   }

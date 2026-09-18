@@ -135,7 +135,7 @@ public class D20IntensityCalibration extends IntensityFileCalibration {
 
   }
 
-  public double calibrateData(DiffrDataFile datafile, double x, int index, double coord) {
+  public double calibrateData(DiffrDataFile datafile, double x, int index, double d_space) {
     if (calintensity == null) {
       if (getFileName() != null && !getFileName().equals("")) {
       } else

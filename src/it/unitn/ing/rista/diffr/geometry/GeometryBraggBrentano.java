@@ -69,17 +69,16 @@ public class GeometryBraggBrentano extends GeometryDiffractometer {
 
   boolean warningAlreadyPrinted = false;
 
-  public double LorentzPolarization(DiffrDataFile adatafile, Sample asample, double position, boolean dspacingbase,
-                                    boolean energyDispersive) {
+  public double LorentzPolarization(DiffrDataFile adatafile, Sample asample, double position) {
 
     double sin2theta;
     double lp = 1.0;
-    if (energyDispersive)
+    if (adatafile.energyDispersive)
       position = adatafile.get2ThetaValue();
     position *= Constants.DEGTOPI;
 	  double positionHalf = position * 0.5;
     if (getAutomaticSlit()) {
-      if (!dspacingbase && !energyDispersive)
+      if (!adatafile.dspacingbase && !adatafile.energyDispersive)
         lp *= Math.sin(positionHalf);
       else if (!warningAlreadyPrinted) {
         System.out.println("Warning: programmable slits option not selectable with non-2theta based data");

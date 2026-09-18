@@ -908,13 +908,13 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 		incidentSpectrum.set(bank, incidentData);
 	}
 
-	public double calibrateData(DiffrDataFile datafile, double x, int index, double d) {
+	public double calibrateData(DiffrDataFile datafile, double x, int index, double d_space) {
 //    updateStringtoDoubleBuffering(false);
 		int bank = getBankNumber(datafile);
-		return calibrateData(bank, x, index, d);
+		return calibrateData(bank, x, index, d_space);
 	}
 
-	public double calibrateData(int bank, double x, int index, double d) {
+	public double calibrateData(int bank, double x, int index, double d_space) {
 //    updateStringtoDoubleBuffering(false);
 //		System.out.println(bank + " " + x + " " + index);
 		double wt = 0.0, tx = 0.0, cal = 0.0, timeCorr = 0.0;
@@ -929,7 +929,7 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 			GSASbankCalibration calib_ref = (GSASbankCalibration) dataset.getInstrument().getAngularCalibration();
 			double distDiff = calib.getDetectorDistanceValue(bank) -
 						calib_ref.getDetectorDistanceValue(bank);
-			timeCorr = 2.0 * distDiff * Constants.LAMBDA_SPEED_NEUTRON_CONV_ANG * 0.001 * d *
+			timeCorr = 2.0 * distDiff * Constants.LAMBDA_SPEED_NEUTRON_CONV_ANG * 0.001 * d_space *
 						MoreMath.sind(calib.getTtheta(bank).getValueD() * 0.5);
 //			System.out.println(bank + " " + x + " " + timeCorr + " " + distDiff + " " + d);
 		}

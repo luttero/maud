@@ -262,6 +262,7 @@ public class principalJFrame extends myJFrame {
 
   void results_Action() {
     TextViewer resultWindow = new TextViewer(this);
+    resultWindow.setMonospacedFont();
     resultWindow.DisplayText(parameterfile.getLstNameToSave());
     resultWindow.setVisible(true);
   }

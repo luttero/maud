@@ -150,7 +150,7 @@ public class Calibration extends it.unitn.ing.rista.diffr.XRDcat {
     return intensity;
   }
 
-  public double calibrateData(DiffrDataFile datafile, double x, int index, double coord) {
+  public double calibrateData(DiffrDataFile datafile, double x, int index, double d_space) {
     return 1.0;
   }
 

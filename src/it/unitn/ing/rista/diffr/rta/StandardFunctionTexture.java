@@ -798,7 +798,7 @@ public class StandardFunctionTexture extends Texture {
     return PFreconstructed;
   }
 
-  public double[] getPoleFigureGrid(Reflection refl, double[] x, double[] y) {
+/*  public double[] getPoleFigureGrid(Reflection refl, double[] x, double[] y) {
 
     double r;
     double texture_angles[] = new double[2];
@@ -838,7 +838,7 @@ public class StandardFunctionTexture extends Texture {
         y[i] = 0;
     }
     return y;
-  }
+  }*/
 
   public double[][] getInversePoleFigureGrid(double[] texture_angles,
                                              double maxPhi, int phiPointNumber,

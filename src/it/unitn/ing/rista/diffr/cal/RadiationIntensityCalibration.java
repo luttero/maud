@@ -94,7 +94,7 @@ public class RadiationIntensityCalibration extends IntensityCalibration {
     calIntensity.sort(new IncreasingEnergy());
   }
 
-  public double calibrateData(DiffrDataFile datafile, double x, int index, double coord) {
+  public double calibrateData(DiffrDataFile datafile, double x, int index, double d_space) {
     if (calIntensity.isEmpty()) {
       computeAllPost();
     }

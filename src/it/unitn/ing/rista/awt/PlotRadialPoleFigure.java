@@ -20,6 +20,7 @@
 package it.unitn.ing.rista.awt;
 
 import it.unitn.ing.rista.diffr.*;
+import it.unitn.ing.rista.util.Constants;
 
 import java.awt.*;
 
@@ -34,7 +35,8 @@ public class PlotRadialPoleFigure {
 
   public PlotRadialPoleFigure(Frame parent, Sample asample, Reflection[] pole, int mode,
                         int numberofPoints, double zoom, double filterWidth,
-                        boolean grayScale, double maxAngle, boolean logScale, int colrsNumber) {
+                        boolean grayScale, double maxAngle, boolean logScale, int colrsNumber,
+                              boolean equalArea) {
 
 //    double[][] PF = null;
     for (int i = 0; i < pole.length; i++) {
@@ -47,20 +49,35 @@ public class PlotRadialPoleFigure {
       }
       Phase aphase = pole[i].getParent();
       Texture texturemodel = aphase.getActiveTexture();
-      if (texturemodel != null)
-        y = texturemodel.getPoleFigureGrid(pole[i], x, y);
-      if (texturemodel != null)
-        y = texturemodel.getPoleFigureGrid(pole[i], x, y);
+      if (texturemodel != null) {
+        if (equalArea) {
+          y = texturemodel.getPoleFigureGridRadial(pole[i], x, y);
+          for (int ij = 0; ij < x.length; ij++) {
+            x[ij] = Math.asin(x[ij] / Constants.sqrt2) * 90.0;
+          }
+        } else {
+          y = texturemodel.getPoleFigureGridPolar(pole[i], x, y);
+          for (int ij = 0; ij < x.length; ij++) {
+            x[ij] = x[ij] * 90.0;
+          }
+        }
+      }
       if (y != null)
-        plotFunction(parent, x, y);
+        plotFunction(parent, x, y, equalArea);
     }
   }
 
-  public void plotFunction(Frame theframe, double[] x, double[] y) {
-    (new PlotSimpleData(theframe, x, y)).setVisible(true);
+  public void plotFunction(Frame theframe, double[] x, double[] y, boolean equalArea) {
+    String title = "Radial distribution";
+    if (!equalArea)
+      title = "Polar distribution";
+
+    PlotSimpleData radialPlot = new PlotSimpleData(theframe, x, y, 1, false, "Polar angle", "PF", title);
+    radialPlot.setXaxisTitle("Polar angle");
+    radialPlot.setYaxisTitle("PF");
+    radialPlot.setVisible(true);
 
   }
-
 
 
 }

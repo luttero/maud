@@ -140,6 +140,10 @@ public class TextViewer extends myJFrame {
     }
   }
 
+  public void setMonospacedFont() {
+    textArea.setFont(new Font("Courier new", Font.PLAIN, 12));
+  }
+
   public void DisplayText(URL filename) {
 //    setTitle("Help");
     BufferedReader data;
@@ -155,8 +159,8 @@ public class TextViewer extends myJFrame {
 
       textArea.setText(Buf.toString());
       JScrollBar scrollBar = scrollarea.getVerticalScrollBar();
-//      if (scrollBar != null)
-//        scrollBar.setValue(0);
+      if (scrollBar != null)
+        scrollBar.setValue(0);
     } catch (IOException e) {
       setVisible(false);
     }
@@ -177,12 +181,15 @@ public class TextViewer extends myJFrame {
       data.close();
 
       textArea.setText(Buf.toString());
-	    if (scrollarea.getVerticalScrollBar() != null)
-		    javax.swing.SwingUtilities.invokeLater(new Runnable() {
-			    public void run() {
-				    //scrollarea.getVerticalScrollBar().setValue(0);
-			    }
-		    });
+      final JScrollBar scrollBar = scrollarea.getVerticalScrollBar();
+	    if (scrollBar != null) {
+        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
+            scrollBar.setValue(0);
+          }
+        });
+        scrollBar.setValue(0);
+      }
     } catch (IOException e) {
       setVisible(false);
     }
@@ -200,6 +207,9 @@ public class TextViewer extends myJFrame {
       data.close();
 
       setText(Buf.toString());
+      JScrollBar scrollBar = scrollarea.getVerticalScrollBar();
+      if (scrollBar != null)
+        scrollBar.setValue(0);
     } catch (IOException e) {
       setVisible(false);
     }

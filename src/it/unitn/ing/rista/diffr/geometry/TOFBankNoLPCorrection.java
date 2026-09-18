@@ -54,7 +54,7 @@ public class TOFBankNoLPCorrection extends GeometryIPNS_LANSCE {
 		description = modelID + " instrument geometry";
 	}
 
-	public double LorentzPolarization(DiffrDataFile adatafile, Sample asample, double position, boolean dspacingbase, boolean energyDispersive) {
+	public double LorentzPolarization(DiffrDataFile adatafile, Sample asample, double position) {
 		return 1.0;
 	}
 

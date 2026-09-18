@@ -82,14 +82,14 @@ public class DifferencePlot2D extends MultiPlotFitting2D {
 			int startDatafile = 0;
 			int finalDatafile = 0;
 			double xmin = 1.0E10, xmax = 0.0;
-			if (xmin > datafile[0].getXDataForPlot(datafile[0].startingindex))
-				xmin = datafile[0].getXDataForPlot(datafile[0].startingindex);
-			if (xmax < datafile[0].getXDataForPlot(datafile[0].finalindex - 1))
-				xmax = datafile[0].getXDataForPlot(datafile[0].finalindex - 1);
-			if (xmin > datafile[0].getXDataForPlot(datafile[0].finalindex - 1))
-				xmin = datafile[0].getXDataForPlot(datafile[0].finalindex - 1);
-			if (xmax < datafile[0].getXDataForPlot(datafile[0].startingindex))
-				xmax = datafile[0].getXDataForPlot(datafile[0].startingindex);
+      if (xmin > datafile[0].getXData(datafile[0].startingindex))
+        xmin = datafile[0].getXData(datafile[0].startingindex);
+      if (xmax < datafile[0].getXData(datafile[0].finalindex - 1))
+        xmax = datafile[0].getXData(datafile[0].finalindex - 1);
+      if (xmin > datafile[0].getXData(datafile[0].finalindex - 1))
+        xmin = datafile[0].getXData(datafile[0].finalindex - 1);
+      if (xmax < datafile[0].getXData(datafile[0].startingindex))
+        xmax = datafile[0].getXData(datafile[0].startingindex);
 			for (int i = 1; i < ylength; i++) {
 				datafile[i].initializeInterpolation();
 				if (startingIndex > datafile[i].startingindex) {
@@ -100,14 +100,14 @@ public class DifferencePlot2D extends MultiPlotFitting2D {
 					finalIndex = datafile[i].finalindex;
 					finalDatafile = i;
 				}
-				if (xmin > datafile[i].getXDataForPlot(datafile[i].startingindex))
-					xmin = datafile[i].getXDataForPlot(datafile[i].startingindex);
-				if (xmax < datafile[i].getXDataForPlot(datafile[i].finalindex - 1))
-					xmax = datafile[i].getXDataForPlot(datafile[i].finalindex - 1);
-				if (xmin > datafile[i].getXDataForPlot(datafile[i].finalindex - 1))
-					xmin = datafile[i].getXDataForPlot(datafile[i].finalindex - 1);
-				if (xmax < datafile[i].getXDataForPlot(datafile[i].startingindex))
-					xmax = datafile[i].getXDataForPlot(datafile[i].startingindex);
+        if (xmin > datafile[i].getXData(datafile[i].startingindex))
+          xmin = datafile[i].getXData(datafile[i].startingindex);
+        if (xmax < datafile[i].getXData(datafile[i].finalindex - 1))
+          xmax = datafile[i].getXData(datafile[i].finalindex - 1);
+        if (xmin > datafile[i].getXData(datafile[i].finalindex - 1))
+          xmin = datafile[i].getXData(datafile[i].finalindex - 1);
+        if (xmax < datafile[i].getXData(datafile[i].startingindex))
+          xmax = datafile[i].getXData(datafile[i].startingindex);
 			}
 			int xlength = finalIndex - startingIndex;
 			double stepX = (xmax - xmin) / (xlength - 1);
@@ -120,7 +120,11 @@ public class DifferencePlot2D extends MultiPlotFitting2D {
 			int j = 0;
 //    IntensityMin = (double) 1.0E60;
 //    IntensityMax = (double) -1.0E60;
-			int mode = PlotDataFile.checkScaleModeX();
+      int modeX = PlotDataFile.checkScaleModeX();
+      int modeY = PlotDataFile.checkScaleMode();
+      PlotDataFile.checkCalibrateIntensity();
+      boolean calibInt = PlotDataFile.calibrateIntensity();
+      boolean calibLP = PlotDataFile.calibrateIntensityForLorentzPolarization();
 			double sep = 0.0;
 			for (int i = 0; i < xlength; i++) {
 /*        if (startingIndex + i < datafile[0].startingindex)
@@ -143,12 +147,12 @@ public class DifferencePlot2D extends MultiPlotFitting2D {
 					}
 //        System.out.println(i + " " + sn + " " + j);
 
-					double xstartmin = datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode);
-					double xendmax = datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode);
-					if (xendmax < datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode))
-						xendmax = datafile[sn].getXDataForPlot(datafile[sn].startingindex, mode);
-					if (xstartmin > datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode))
-						xstartmin = datafile[sn].getXDataForPlot(datafile[sn].finalindex - 1, mode);
+          double xstartmin = datafile[sn].getXData(datafile[sn].startingindex);
+          double xendmax = datafile[sn].getXData(datafile[sn].finalindex - 1);
+          if (xendmax < datafile[sn].getXData(datafile[sn].startingindex))
+            xendmax = datafile[sn].getXData(datafile[sn].startingindex);
+          if (xstartmin > datafile[sn].getXData(datafile[sn].finalindex - 1))
+            xstartmin = datafile[sn].getXData(datafile[sn].finalindex - 1);
 					if (xaxis[i] < xstartmin || xaxis[i] > xendmax) {
 						values[j++] = it.unitn.ing.jgraph.ColorMap.DUMMY_VALUE;
 						if (hasFit == 1 && ylength == 1) {
@@ -156,9 +160,25 @@ public class DifferencePlot2D extends MultiPlotFitting2D {
 							values[j++] = it.unitn.ing.jgraph.ColorMap.DUMMY_VALUE;
 						}
 					} else {
-						double intValue = datafile[sn].getInterpolatedYSqrtIntensity(xaxis[i], 2, mode) -
-								datafile[sn].getInterpolatedFitSqrtIntensity(xaxis[i], 2, mode);
-						values[j++] = intValue;
+            int index = datafile[sn].getOldNearestPoint(xaxis[i]);
+            double intValue = PlotDataFile.getIntensity(datafile[sn], xaxis[i], index);
+            double intFitValue = PlotDataFile.getFitIntensity(datafile[sn], xaxis[i], index);
+            if (calibInt) {
+              double cal = PlotDataFile.getIntensityCalibration(datafile[sn], xaxis[i], index);
+              if (cal > 0) {
+                intValue /= cal;
+                intFitValue /= cal;
+              }
+            }
+            if (calibLP) {
+              double cal = PlotDataFile.getIntensityLPCalibration(datafile[sn], xaxis[i], index);
+              if (cal > 0) {
+                intValue /= cal;
+                intFitValue /= cal;
+              }
+            }
+            intValue = PlotDataFile.getScaledIntensity(datafile[sn], intFitValue - intValue, xaxis[i], modeY);
+            values[j++] = intValue;
 						if (hasFit == 1 && ylength == 1) {
 							values[j++] = intValue;
 							values[j++] = intValue;
@@ -175,6 +195,7 @@ public class DifferencePlot2D extends MultiPlotFitting2D {
 						}
 					}
 				}
+        xaxis[i] = PlotDataFile.getScaledX(datafile[0], xaxis[i], modeX);
 			}
 
 			/* Contour plot lines, defining range */
@@ -184,8 +205,10 @@ public class DifferencePlot2D extends MultiPlotFitting2D {
 			//
 			// create SimpleGrid
 			//
-			SGTMetaData zMeta = new SGTMetaData(datafile[0].getAxisYLegend(), "");
-			SGTMetaData xMeta = new SGTMetaData(datafile[0].getAxisXLegendNoUnit(), datafile[0].getAxisXLegendUnit());
+			SGTMetaData zMeta = new SGTMetaData(PlotDataFile.getAxisYLegend(), "");
+			SGTMetaData xMeta = new SGTMetaData(PlotDataFile.getAxisXLegendNoUnit(datafile[0].calibrated,
+          datafile[0].dspacingbase, datafile[0].energyDispersive),
+          PlotDataFile.getAxisXLegendUnit(datafile[0].calibrated, datafile[0].dspacingbase, datafile[0].energyDispersive));
 
 			String information = "residuals";
 			if (yaxisUnit != null) {
@@ -221,7 +244,7 @@ public class DifferencePlot2D extends MultiPlotFitting2D {
 			 * Add the grid to the layout and give a label for
 			 * the ColorKey.
 			 */
-			rpl.addData(sg, gridAttr_, datafile[0].getAxisYLegend());
+			rpl.addData(sg, gridAttr_, PlotDataFile.getAxisYLegend());
 			/*
 			 * Change the layout's three title lines.
 			 */

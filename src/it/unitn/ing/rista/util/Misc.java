@@ -681,6 +681,23 @@ public class Misc {
             getIntStringFormattedFullZeros(decimalpart, decimals));
   }
 
+  public static String formatStringFor(double value, int digits, int decimals) {
+    if (decimals < 0) // integer
+      return getIntStringFormatted((int) value, digits);
+    else // float
+      return getDoubleStringFormatted(value, digits, decimals);
+  }
+
+  public static String formatStringFor(String value, int digits) {
+    if (value.length() > digits)
+      return value.substring(0, digits);
+    String temp = value;
+    while (temp.length() < digits) {
+      temp = " " + temp;
+    }
+    return temp;
+  }
+
   public static final String getFirstPFline(Phase aphase) {
     double acell[] = Angles.getLattice(aphase);
 
