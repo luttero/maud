@@ -1009,8 +1009,10 @@ public class PlotDataFile extends GraphFrame {
               adata.dataphaseForPlot[ip][is2 + 1] /= totalFit;
             }
           }
-          if (hasFit && bkgSub) {
+          if (hasFit && (bkgSub || plotBackground)) {
             adata.backgroundForPlot[is2 + 1] /= total;
+          }
+          if (hasFit && bkgSub) {
             adata.dataForPlot[is2 + 1] -= adata.backgroundForPlot[is2 + 1];
             adata.datafitForPlot[is2 + 1] -= adata.backgroundForPlot[is2 + 1];
           }

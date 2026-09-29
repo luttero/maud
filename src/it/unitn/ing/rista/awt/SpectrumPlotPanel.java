@@ -333,6 +333,7 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
     MaudPreferences.setPref(PlotDataFile.plotCalIntensity, calibrateIntensity.isSelected());
 	  MaudPreferences.setPref(PlotDataFile.plotLPIntensity, calibrateForLPIntensity.isSelected());
     MaudPreferences.setPref(xaxisModePref, xplotModeCB.getSelectedItem().toString());
+    MaudPreferences.setPref("plot.plotBackground", plotBackground);
     PlotDataFile.checkScaleMode();
     PlotDataFile.checkBackgroundSubtraction();
     PlotDataFile.checkCalibrateIntensity();
@@ -1183,8 +1184,10 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
                 phasesFit[is2 + 1] /= totalFit;
               }
             }
-            if (bkgSub) {
+            if (plotBackground || bkgSub) {
               b_data[is2 + 1] /= total;
+            }
+            if (bkgSub) {
               data[is2 + 1] -= b_data[is2 + 1];
               if (hasFit)
                 datafit[is2 + 1] -= b_data[is2 + 1];

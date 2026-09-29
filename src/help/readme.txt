@@ -43,6 +43,10 @@ from the older one.
 
 Maud Version notes:
 
+(29/09/2026):   3.06. It's still "Hippo scattering".
+                Corrected 2 bugs for the new plotting. One for
+                background plotting, the other for the 2D maps.
+
 (18/09/2026):   3.05. It's still "Hippo scattering".
                 Faster fluorescence calculation in the angle-energy
                 map model. Fixed the polar plot section plotting.

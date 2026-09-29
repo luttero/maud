@@ -202,7 +202,9 @@ public class Parameter extends Object implements Cloneable, basicObj {
     setFree(false);
     ratio = new Vector<>();
     constant = "0";
-//    setRatio("1");
+    Vector<String> firstRatio = new Vector<>(1);
+    firstRatio.add("1");
+    setRatio(firstRatio);
 //    setConstant("0");
     setError("0");
     refParameter_v = new Vector<>();

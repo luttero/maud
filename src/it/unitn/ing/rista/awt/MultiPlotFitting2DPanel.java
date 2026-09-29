@@ -254,7 +254,7 @@ public class MultiPlotFitting2DPanel extends CopyPrintablePanel {
       ylen += 2;
     yaxis = new double[ylen];
     values = new double[xlength * ylen];
-            System.out.println(xlength + " " + ylen + " " + hasFit);
+//            System.out.println(xlength + " " + ylen + " " + hasFit);
 
     int j = 0;
 //    IntensityMin = (double) 1.0E60;

@@ -338,21 +338,6 @@ public class MultiPlotFitting2D extends myJFrame {
             intValue -= b_value;
             intValue = PlotDataFile.getScaledIntensity(datafile[sn], intValue, xaxis[i], modeY);
             values[j++] = intValue;
-            if (hasFit == 1 && ylength == 1) {
-              values[j++] = intValue;
-              values[j++] = intValue;
-            }
-            if (values[j - 1] != Double.NaN) {
-              if (values[j - 1] < IntensityMin && computeMinMax)
-                IntensityMin = values[j - 1];
-              else if (values[j - 1] < IntensityMin && !computeMinMax)
-                values[j - 1] = IntensityMin;
-              if (values[j - 1] > IntensityMax && computeMinMax)
-                IntensityMax = values[j - 1];
-              else if (values[j - 1] > IntensityMax && !computeMinMax)
-                values[j - 1] = IntensityMax;
-            }
-            values[j++] = intValue;
             if (values[j - 1] != Double.NaN) {
               if (values[j - 1] < IntensityMin && computeMinMax)
                 IntensityMin = values[j - 1];
