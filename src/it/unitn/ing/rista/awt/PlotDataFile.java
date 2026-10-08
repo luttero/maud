@@ -921,6 +921,7 @@ public class PlotDataFile extends GraphFrame {
     }
     int np = (int) Math.abs((xmax - xmin) / stepX) + 1;
 
+    boolean addBkg = MaudPreferences.getBoolean("plot.phaseIntensityAddBkg", true);
     if (np > 0) {
       adata.dataForPlot  = new double[2 * np];
       boolean hasFit = datafile[0].hasfit();
@@ -952,10 +953,12 @@ public class PlotDataFile extends GraphFrame {
             double[] phaseFit = new double[numberphases];
             if (hasFit) {
               f_value = getFitIntensity(datafile[sn], adata.dataForPlot[is2], index);
-              for (int ip = 0; ip < numberphases; ip++)
+              b_value = getBackground(datafile[sn], adata.dataForPlot[is2], index);
+              for (int ip = 0; ip < numberphases; ip++) {
                 phaseFit[ip] = getPhaseFitIntensity(datafile[sn], adata.dataForPlot[is2], index, ip);
-              if (bkgSub || plotBackground)
-                b_value = getBackground(datafile[sn], adata.dataForPlot[is2], index);
+                if (addBkg) phaseFit[ip] += b_value;
+              }
+//              if (bkgSub || plotBackground)
             }
             if (calibInt) {
               double calibratingIntensity = getIntensityCalibration(datafile[sn], adata.dataForPlot[is2], index);

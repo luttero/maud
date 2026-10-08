@@ -43,6 +43,16 @@ from the older one.
 
 Maud Version notes:
 
+(30/09/2026):   3.07. The "ACME" release.
+                Is Maud introducing bugs to test users? Is Maud distributed
+                by ACME?
+                Corrected a bug related to the incident intensity correction
+                on TOF neutrons introduced in version 3.05. It waas affecting
+                plots and calculation. Added a Maud preference
+                "plot.phaseIntensityAddBkg" to control if you want to
+                plot the single phase intensities over the background
+                or without.
+
 (29/09/2026):   3.06. It's still "Hippo scattering".
                 Corrected 2 bugs for the new plotting. One for
                 background plotting, the other for the 2D maps.

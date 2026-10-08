@@ -1083,7 +1083,9 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 	    }
 	    int np = (int) Math.abs((xmax - xmin) / stepX) + 1;
 
-	    if (np > 0) {
+      boolean addBkg = MaudPreferences.getBoolean("plot.phaseIntensityAddBkg", true);
+
+      if (np > 0) {
         boolean hasFit = datafile[0].hasfit();
         double b_value = 0;
 		    double[] data = new double[2 * np];
@@ -1118,12 +1120,15 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
                 f_value = PlotDataFile.getFitIntensity(datafile[sn], data[is2], index);
               double[] phaseFit = new double[numberphasesFit];
               int nphase = 0;
+              b_value = PlotDataFile.getBackground(datafile[sn], data[is2], index);
               for (int ip = 0; ip < numberphases; ip++) {
-                if (phaselist[ip].plotFit())
-                  phaseFit[nphase++] = PlotDataFile.getPhaseFitIntensity(datafile[sn], data[is2], index, ip);
+                if (phaselist[ip].plotFit()) {
+                  phaseFit[nphase] = PlotDataFile.getPhaseFitIntensity(datafile[sn], data[is2], index, ip);
+                  if (addBkg) phaseFit[nphase] += b_value;
+                  nphase++;
+                }
               }
-              if (bkgSub || plotBackground)
-                b_value = PlotDataFile.getBackground(datafile[sn], data[is2], index);
+//              if (bkgSub || plotBackground)
               if (calibInt) {
                 double calibratingIntensity = PlotDataFile.getIntensityCalibration(datafile[sn], data[is2], index);
                 if (calibratingIntensity != 0.0) {
@@ -2009,6 +2014,8 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 
       DataSet[] phaseData = new DataSet[numberphases];
 
+      boolean addBkg = MaudPreferences.getBoolean("plot.phaseIntensityAddBkg", true);
+
       if (afile.hasfit()) {
         for (int s = 0; s < numberphases; s++) {
           if (phaselist[s].plotFit()) {
@@ -2019,6 +2026,7 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
               if (index >= afile.startingindex && index < afile.finalindex) {
                 if (afile.xInsideRange(dataphase[j]) || !markExcludedRegion) {
                   dataphase[j + 1] = PlotDataFile.getPhaseFitIntensity(afile, dataphase[j], index, s);
+                  if (addBkg) dataphase[j + 1] += PlotDataFile.getBackground(afile, dataphase[j], index);
                   if (calibInt) {
                     if (intensityCalibration[i] > 0)
                       dataphase[j + 1] /= intensityCalibration[i];

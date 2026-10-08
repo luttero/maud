@@ -873,7 +873,7 @@ public class GSASbankIntCalibration extends IntensityCalibration {
 	}
 
 	public void loadIncidentSpectrum(String filename, int bank) {
-		filename += "(" + Integer.toString(bank) + ")";
+		filename += "(" + bank + ")";
 		DataFileSet dataset = (DataFileSet) getInstrument().getParent();
 
 		boolean replaceDatafileOld = dataset.replaceDatafile();

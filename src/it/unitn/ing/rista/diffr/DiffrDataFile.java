@@ -3450,7 +3450,7 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 
   public double computeIntensityCalibration(int j) {
     Instrument ainstrument = getDataFileSet().getInstrument();
-    return ainstrument.getIntensityCalibration().calibrateData(this, getXData(j), j, getXDataDspace(getXData(j)));
+    return ainstrument.getIntensityCalibration().calibrateData(this, getXDataOriginal(j), j, getXDataDspace(getXData(j)));
   }
 
   public double computeIntensityCalibration(double x, int j) {
@@ -4039,7 +4039,7 @@ public double computeAbsorptionPath(double x, Instrument ainstrument) {
 				if (getDataFileSet().omogeneous() && getDataFileSet().omogeneousDataset) {
 //					System.out.println("Computing omogeneous experimental background " + expDataFile.startingindex + " " + expDataFile.finalindex + " " + countTime);
 					for (int i = startingindex; i < finalindex; i++) {
-						double bkgIntensity = expDataFile.getIntensity(i) * countTime;
+						double bkgIntensity = expDataFile.getInterpolatedIntensity(i) * countTime;
 //		  double cal = getIntensityCalibration(i);
 //	      System.out.println("Computing omogeneous experimental background " + i + " " + bkgIntensity + " " + cal);
 //	      bkgIntensity *= cal;
