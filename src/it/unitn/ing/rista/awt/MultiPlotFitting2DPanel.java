@@ -35,6 +35,7 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.event.*;
 
 import it.unitn.ing.rista.diffr.*;
+import it.unitn.ing.rista.diffr.instrument.AngleEnergyMapInstrument;
 import it.unitn.ing.rista.util.*;
 import it.unitn.ing.jgraph.ThermalColorMap;
 import org.javadev.AnimatingCardLayout;
@@ -73,6 +74,7 @@ public class MultiPlotFitting2DPanel extends CopyPrintablePanel {
   JComboBox plotModeCB, xplotModeCB;
   JTextField legendMinTF;
   JTextField legendMaxTF;
+  boolean yAxis2Theta = false;
 
   public MultiPlotFitting2DPanel(myJFrame parent) {
     theParent = parent;
@@ -215,6 +217,19 @@ public class MultiPlotFitting2DPanel extends CopyPrintablePanel {
     int ylength = datafile.length;
     int startingIndex = datafile[0].startingindex;
     int finalIndex = datafile[0].finalindex;
+
+    yAxis2Theta = MaudPreferences.getBoolean("multiplot2D.use2Theta", false);
+    String yTitle = "Spectrum #";
+    String yUnit = "experimental";
+    if (hasFit > 1)
+      yUnit = "data | fit";
+
+    if (yAxis2Theta && datafile[0].getDataFileSet().getInstrument().IDlabel == AngleEnergyMapInstrument.modelID) {
+      yTitle = "2θ˚";
+      if (hasFit > 1)
+        yUnit = "data | fit";
+    }
+
     datafile[0].initializeInterpolation();
     int startDatafile = 0;
     int finalDatafile = 0;
@@ -271,7 +286,10 @@ public class MultiPlotFitting2DPanel extends CopyPrintablePanel {
       xaxis[i] = xmin + i * stepX;
       for (int sn = 0; sn < ylength; sn++) {
         if (i == 0) {
-          yaxis[sn] = sn;
+          if (yAxis2Theta)
+            yaxis[sn] = datafile[sn].get2ThetaValue();
+          else
+            yaxis[sn] = sn;
           if (hasFit == 1 && ylength == 1) {
             yaxis[1] = 1;
             yaxis[2] = 2;
@@ -329,7 +347,7 @@ public class MultiPlotFitting2DPanel extends CopyPrintablePanel {
 	        }
         }
       }
-      if (hasFit > 1) {
+      if (hasFit > 1 && !yAxis2Theta) {
         values[j++] = it.unitn.ing.jgraph.ColorMap.DUMMY_VALUE;
         if (i == 0)
           yaxis[ylength] = ylength;
@@ -343,6 +361,60 @@ public class MultiPlotFitting2DPanel extends CopyPrintablePanel {
             xstartmin = datafile[sn].getXData(datafile[sn].finalindex - 1);
           if (i == 0)
             yaxis[ylength + 1 + sn] = ylength + 1 + sn;
+          if (xaxis[i] < xstartmin || xaxis[i] > xendmax)
+            values[j++] = it.unitn.ing.jgraph.ColorMap.DUMMY_VALUE;
+          else {
+            int index = datafile[sn].getOldNearestPoint(xaxis[i]);
+            double intValue = PlotDataFile.getFitIntensity(datafile[sn], xaxis[i], index);
+            double b_value = 0.0;
+            if (bkgSub)
+              b_value = PlotDataFile.getBackground(datafile[sn], xaxis[i], index);
+            if (calibInt) {
+              double cal = PlotDataFile.getIntensityCalibration(datafile[sn], xaxis[i], index);
+              if (cal > 0) {
+                intValue /= cal;
+                b_value /= cal;
+              }
+            }
+            if (calibLP) {
+              double cal = PlotDataFile.getIntensityLPCalibration(datafile[sn], xaxis[i], index);
+              if (cal > 0) {
+                intValue /= cal;
+                b_value /= cal;
+              }
+            }
+            intValue -= b_value;
+            intValue = PlotDataFile.getScaledIntensity(datafile[sn], intValue, xaxis[i], modeY);
+            values[j++] = intValue;
+            if (values[j - 1] != Double.NaN) {
+              if (values[j - 1] < IntensityMin && computeMinMax)
+                IntensityMin = values[j - 1];
+              else if (values[j - 1] < IntensityMin && !computeMinMax)
+                values[j - 1] = IntensityMin;
+              if (values[j - 1] > IntensityMax && computeMinMax)
+                IntensityMax = values[j - 1];
+              else if (values[j - 1] > IntensityMax && !computeMinMax)
+                values[j - 1] = IntensityMax;
+            }
+          }
+        }
+      } else if (hasFit > 1) {
+        values[j++] = it.unitn.ing.jgraph.ColorMap.DUMMY_VALUE;
+        double ystep = 1;
+        if (ylength > 1)
+          ystep = datafile[ylength - 1].get2ThetaValue() - datafile[ylength - 2].get2ThetaValue();
+        if (i == 0)
+          yaxis[ylength] = yaxis[ylength - 1] + ystep;
+
+        for (int sn = 0; sn < ylength; sn++) {
+          double xstartmin = datafile[sn].getXData(datafile[sn].startingindex);
+          double xendmax = datafile[sn].getXData(datafile[sn].finalindex - 1);
+          if (xendmax < datafile[sn].getXData(datafile[sn].startingindex))
+            xendmax = datafile[sn].getXData(datafile[sn].startingindex);
+          if (xstartmin > datafile[sn].getXData(datafile[sn].finalindex - 1))
+            xstartmin = datafile[sn].getXData(datafile[sn].finalindex - 1);
+          if (i == 0)
+            yaxis[ylength + 1 + sn] = yaxis[ylength - 1] + ystep + datafile[sn].get2ThetaValue() - datafile[0].get2ThetaValue();
           if (xaxis[i] < xstartmin || xaxis[i] > xendmax)
             values[j++] = it.unitn.ing.jgraph.ColorMap.DUMMY_VALUE;
           else {
@@ -396,12 +468,7 @@ public class MultiPlotFitting2DPanel extends CopyPrintablePanel {
         datafile[0].calibrated, datafile[0].dspacingbase, datafile[0].energyDispersive),
         PlotDataFile.getAxisXLegendUnit(datafile[0].calibrated, datafile[0].dspacingbase, datafile[0].energyDispersive));
 
-    String information;
-    if (hasFit > 1)
-      information = "data | fit";
-    else
-      information = "experimental";
-    SGTMetaData yMeta = new SGTMetaData("Spectrum #", information);
+    SGTMetaData yMeta = new SGTMetaData(yTitle, yUnit);
     SimpleGrid sg = new SimpleGrid(values, xaxis, yaxis, "2D Multiplot");
     sg.setXMetaData(xMeta);
     sg.setYMetaData(yMeta);
@@ -437,13 +504,10 @@ public class MultiPlotFitting2DPanel extends CopyPrintablePanel {
       ((TransformAccess) cmap).setRange(new Range2D(IntensityMin, IntensityMax));
     }
 
+    String information = "measured data only";
     if (datafile[0].hasfit())
       information = "measured data and fit";
-    else
-      information = "measured data only";
-    rpl.setTitles("2D Multiplot for " + title,
-        information,
-        "");
+    rpl.setTitles("2D Multiplot for " + title, information, "");
     /*
      * Resize the graph  and place in the "Center" of the frame.
      */

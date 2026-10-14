@@ -389,7 +389,7 @@ public class principalJFrame extends myJFrame {
   void multiPlot2D_Action() {
     DataFileSet adata = parameterfile.getActiveSample().getSelectedDataSet();
     if (adata != null) {
-      adata.multiPlot2D(this);
+      adata.multiPlot2D(this, 0);
     }
   }
 

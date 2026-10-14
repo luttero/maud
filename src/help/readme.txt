@@ -43,6 +43,14 @@ from the older one.
 
 Maud Version notes:
 
+(14/10/2026):   3.08. The "Angle-Energy" release.
+                Bug correction in the angle-energy maps about the fluorescence
+                dependency on 2theta angle.
+                Added to the 2D map plot the possibility to plot only the data
+                or just the fit. This can permit some flexibility to
+                produce final figures. Angle-energy map use 2theta as vertical
+                coordinate.
+
 (30/09/2026):   3.07. The "ACME" release.
                 Is Maud introducing bugs to test users? Is Maud distributed
                 by ACME?

@@ -27,6 +27,8 @@ import gov.noaa.pmel.sgt.*;
 import gov.noaa.pmel.sgt.dm.SGTMetaData;
 import gov.noaa.pmel.sgt.dm.SimpleGrid;
 import gov.noaa.pmel.util.Range2D;
+import it.unitn.ing.rista.diffr.instrument.AngleEnergyMapInstrument;
+import it.unitn.ing.rista.util.MaudPreferences;
 
 
 /**
@@ -71,6 +73,15 @@ public class DifferencePlot2DPanel extends MultiPlotFitting2DPanel {
     double[] values;
 
     int hasFit = 1;
+    yAxis2Theta = MaudPreferences.getBoolean("multiplot2D.use2Theta", false);
+    String yTitle = "Spectrum #";
+    String yUnit = "residuals";
+
+    if (yAxis2Theta && datafile[0].getDataFileSet().getInstrument().IDlabel == AngleEnergyMapInstrument.modelID) {
+      yTitle = "2θ˚";
+//      yUnit = "";
+    }
+
     if (datafile[0].hasfit()) {
     int ylength = datafile.length;
     int startingIndex = datafile[0].startingindex;
@@ -133,7 +144,10 @@ public class DifferencePlot2DPanel extends MultiPlotFitting2DPanel {
       	xaxis[i] = xmin + i * stepX;
         for (int sn = 0; sn < ylength; sn++) {
           if (i == 0) {
-            yaxis[sn] = sn;
+            if (yAxis2Theta)
+              yaxis[sn] = datafile[sn].get2ThetaValue();
+            else
+              yaxis[sn] = sn;
             if (hasFit == 1 && ylength == 1) {
               yaxis[1] = 1;
               yaxis[2] = 2;
@@ -205,8 +219,7 @@ public class DifferencePlot2DPanel extends MultiPlotFitting2DPanel {
           datafile[0].dspacingbase, datafile[0].energyDispersive),
           PlotDataFile.getAxisXLegendUnit(datafile[0].calibrated, datafile[0].dspacingbase, datafile[0].energyDispersive));
 
-      String information = "residuals";
-      SGTMetaData yMeta = new SGTMetaData("Spectrum #", information);
+      SGTMetaData yMeta = new SGTMetaData(yTitle, yUnit);
       SimpleGrid sg = new SimpleGrid(values, xaxis, yaxis, "2D Multiplot");
       sg.setXMetaData(xMeta);
       sg.setYMetaData(yMeta);

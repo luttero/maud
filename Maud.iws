@@ -11,10 +11,14 @@
       <change beforePath="$PROJECT_DIR$/libs/current/ij.jar" beforeDir="false" afterPath="$PROJECT_DIR$/libs/current/ij.jar" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/libs/current/miscLib.jar" beforeDir="false" afterPath="$PROJECT_DIR$/libs/current/miscLib.jar" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/help/readme.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/help/readme.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/PlotDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/PlotDataFile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/SpectrumPlotPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/SpectrumPlotPanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/DiffrDataFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/DiffrDataFile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/GSASbankIntCalibration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/cal/GSASbankIntCalibration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/DifferencePlot2D.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/DifferencePlot2D.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/DifferencePlot2DPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/DifferencePlot2DPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/DiffractionMainFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/DiffractionMainFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/MultiPlotFitting2D.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/MultiPlotFitting2D.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/MultiPlotFitting2DPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/MultiPlotFitting2DPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/principalJFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/awt/principalJFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/DataFileSet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/DataFileSet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/fluorescence/AngleEnergyMapFluorescence.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/diffr/fluorescence/AngleEnergyMapFluorescence.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/it/unitn/ing/rista/util/Constants.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -53,61 +57,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0" />
-      <entry key="MS500" value="1.0000000016350705" />
-      <entry key="S2" value="1.0063589438504126" />
-      <entry key="S5" value="1.1343129246586598" />
-      <entry key="S10" value="1.5137638082592928" />
-      <entry key="S30" value="5.6347593214773894" />
-      <entry key="S60" value="13.599064399061625" />
-      <entry key="M2" value="25.00899869816369" />
-      <entry key="M5" value="41.97341023111172" />
-      <entry key="M10" value="58.23593357834681" />
-      <entry key="M15" value="68.42952264687726" />
-      <entry key="M30" value="83.60819486431343" />
-      <entry key="H1" value="94.00211212933482" />
-      <entry key="H2" value="100.1325855052091" />
-      <entry key="H4" value="103.46815733329025" />
-      <entry key="D1" value="121.60073397178422" />
-      <entry key="W1" value="947.8361637254284" />
+      <entry key="MS100" value="1.0000000467648564" />
+      <entry key="MS500" value="1.034196678164398" />
+      <entry key="S2" value="1.430027253387625" />
+      <entry key="S5" value="1.7135072528589395" />
+      <entry key="S10" value="1.844693585190043" />
+      <entry key="S30" value="1.946298272601744" />
+      <entry key="S60" value="2.1975718874935115" />
+      <entry key="M2" value="5.701034534317654" />
+      <entry key="M5" value="22.807791117039983" />
+      <entry key="M10" value="39.26053509286767" />
+      <entry key="M15" value="47.31115840812092" />
+      <entry key="M30" value="58.275462198107434" />
+      <entry key="H1" value="72.18031074384739" />
+      <entry key="H2" value="93.64540789811272" />
+      <entry key="H4" value="116.37864084100735" />
+      <entry key="D1" value="159.17064183393455" />
+      <entry key="W1" value="802.1038117061282" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
-      <entry key="MS500" value="5.255853745635795E-307" />
-      <entry key="S2" value="2.6925316555200362E-77" />
-      <entry key="S5" value="2.355398136726582E-31" />
-      <entry key="S10" value="4.853244715466681E-16" />
-      <entry key="S30" value="7.893864539487995E-6" />
-      <entry key="S60" value="0.003086550115093068" />
-      <entry key="M2" value="0.08384329346478607" />
-      <entry key="M5" value="0.8688283146857134" />
-      <entry key="M10" value="2.0474831636610054" />
-      <entry key="M15" value="2.7469024996638636" />
-      <entry key="M30" value="3.6992943193993435" />
-      <entry key="H1" value="4.29885242478419" />
-      <entry key="H2" value="4.635685191134716" />
-      <entry key="H4" value="4.814267838258626" />
-      <entry key="D1" value="7.371069168270014" />
-      <entry key="W1" value="175.84330422990897" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="0.0" />
+      <entry key="S5" value="0.0" />
+      <entry key="S10" value="3.682810188593506E-285" />
+      <entry key="S30" value="1.5442814168277302E-95" />
+      <entry key="S60" value="3.929833695320994E-48" />
+      <entry key="M2" value="2.00791812086274E-24" />
+      <entry key="M5" value="5.363410799836397E-10" />
+      <entry key="M10" value="6.219575303949564E-5" />
+      <entry key="M15" value="0.0033791111058573357" />
+      <entry key="M30" value="0.20546269688226382" />
+      <entry key="H1" value="1.8775014421853742" />
+      <entry key="H2" value="6.266070227123901" />
+      <entry key="H4" value="11.851883033906487" />
+      <entry key="D1" value="21.03321643875967" />
+      <entry key="W1" value="141.54941623168725" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.9138314502294005" />
-      <entry key="MS500" value="0.9821395968714867" />
-      <entry key="S2" value="1.0018372303445704" />
-      <entry key="S5" value="1.132289758779895" />
-      <entry key="S10" value="1.5124578255622205" />
-      <entry key="S30" value="5.633352744004241" />
-      <entry key="S60" value="13.600115123186466" />
-      <entry key="M2" value="25.08724374198888" />
-      <entry key="M5" value="42.827318235409294" />
-      <entry key="M10" value="60.26728530770696" />
-      <entry key="M15" value="71.16231596141353" />
-      <entry key="M30" value="87.29816768849255" />
-      <entry key="H1" value="98.2955927629244" />
-      <entry key="H2" value="104.76538526917683" />
-      <entry key="H4" value="108.28092957985184" />
-      <entry key="D1" value="128.97128059120217" />
-      <entry key="W1" value="1123.677187850998" />
+      <entry key="MS100" value="0.9526380416770912" />
+      <entry key="MS500" value="1.0240687543237879" />
+      <entry key="S2" value="1.4261163973785045" />
+      <entry key="S5" value="1.7115488717132956" />
+      <entry key="S10" value="1.8436232057495057" />
+      <entry key="S30" value="1.9459179207543402" />
+      <entry key="S60" value="2.197326706428583" />
+      <entry key="M2" value="5.700163404007207" />
+      <entry key="M5" value="22.80516915299713" />
+      <entry key="M10" value="39.25793169098165" />
+      <entry key="M15" value="47.31225797695979" />
+      <entry key="M30" value="58.4788176083244" />
+      <entry key="H1" value="74.05409658079225" />
+      <entry key="H2" value="99.90636943321397" />
+      <entry key="H4" value="128.2259501825641" />
+      <entry key="D1" value="180.20250677776556" />
+      <entry key="W1" value="943.6514761663702" />
     </decayedShown>
   </component>
   <component name="ProblemsViewState">
@@ -242,7 +246,9 @@
       <workItem from="1790011779784" duration="4000" />
       <workItem from="1790336565730" duration="14865000" />
       <workItem from="1790765577379" duration="8277000" />
-      <workItem from="1791283073318" duration="11764000" />
+      <workItem from="1791283073318" duration="35040000" />
+      <workItem from="1791813668936" duration="11640000" />
+      <workItem from="1791988741844" duration="1406000" />
     </task>
     <task id="LOCAL-00001" summary="New version 5/2023&#10;Some modifications on GSASDataFile and more options for plotting types.">
       <created>1684773902547</created>

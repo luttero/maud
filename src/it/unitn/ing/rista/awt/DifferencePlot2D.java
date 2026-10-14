@@ -32,6 +32,8 @@ import gov.noaa.pmel.util.Range2D;
 import java.awt.*;
 
 import it.unitn.ing.rista.diffr.DiffrDataFile;
+import it.unitn.ing.rista.diffr.instrument.AngleEnergyMapInstrument;
+import it.unitn.ing.rista.util.MaudPreferences;
 
 
 /**
@@ -50,9 +52,8 @@ public class DifferencePlot2D extends MultiPlotFitting2D {
 
   }
 
-  public DifferencePlot2D(Frame parent, DiffrDataFile[] adatafile, String title, String yTitle,
-                          String yUnit) {
-    super(parent, adatafile, title, yTitle, yUnit);
+  public DifferencePlot2D(Frame parent, DiffrDataFile[] adatafile, String title) {
+    super(parent, adatafile, title, 0);
   }
 
 	JPlotLayout makeGraph(DiffrDataFile[] datafile) {
@@ -74,7 +75,17 @@ public class DifferencePlot2D extends MultiPlotFitting2D {
 		double[] values;
 
 		int hasFit = 1;
-		if (datafile[0].hasfit()) {
+    yAxis2Theta = MaudPreferences.getBoolean("multiplot2D.use2Theta", false)
+        || datafile[0].getDataFileSet().getInstrument().IDlabel == AngleEnergyMapInstrument.modelID;
+    String yTitle = "Spectrum #";
+    String yUnit = "residuals";
+
+    if (yAxis2Theta) {
+      yTitle = "2θ˚";
+//      yUnit = "";
+    }
+
+    if (datafile[0].hasfit()) {
 			int ylength = datafile.length;
 			int startingIndex = datafile[0].startingindex;
 			int finalIndex = datafile[0].finalindex;
@@ -136,10 +147,10 @@ public class DifferencePlot2D extends MultiPlotFitting2D {
 				xaxis[i] = xmin + i * stepX;
 				for (int sn = 0; sn < ylength; sn++) {
 					if (i == 0) {
-						if (yaxisUnit == null)
-							yaxis[sn] = sn;
-						else
-							yaxis[sn] = datafile[sn].get2ThetaValue();
+            if (yAxis2Theta)
+              yaxis[sn] = datafile[sn].get2ThetaValue();
+            else
+              yaxis[sn] = sn;
 						if (hasFit == 1 && ylength == 1) {
 							yaxis[1] = 1;
 							yaxis[2] = 2;
@@ -210,14 +221,7 @@ public class DifferencePlot2D extends MultiPlotFitting2D {
           datafile[0].dspacingbase, datafile[0].energyDispersive),
           PlotDataFile.getAxisXLegendUnit(datafile[0].calibrated, datafile[0].dspacingbase, datafile[0].energyDispersive));
 
-			String information = "residuals";
-			if (yaxisUnit != null) {
-				information = yaxisUnit;
-			}
-			String yTitle = "Spectrum #";
-			if (yaxisTitle != null)
-				yTitle = yaxisTitle;
-			SGTMetaData yMeta = new SGTMetaData(yTitle, information);
+			SGTMetaData yMeta = new SGTMetaData(yTitle, yUnit);
 			SimpleGrid sg = new SimpleGrid(values, xaxis, yaxis, "2D Multiplot");
 			sg.setXMetaData(xMeta);
 			sg.setYMetaData(yMeta);

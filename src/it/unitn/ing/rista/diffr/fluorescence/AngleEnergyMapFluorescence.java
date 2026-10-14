@@ -72,7 +72,7 @@ public class AngleEnergyMapFluorescence extends Fluorescence {
       computeFluorescence_alt(asample);
   }
 
-    public void computeFluorescence_new(Sample asample) {
+  public void computeFluorescence_new(Sample asample) {
   
     long previousTime = System.currentTimeMillis();
   
@@ -373,10 +373,11 @@ public class AngleEnergyMapFluorescence extends Fluorescence {
 //		System.out.println(adatafile.getLabel() + ", incident beam angle: " + incidentDiffracted[0] * Constants.PITODEG + ", exiting beam angle: " + incidentDiffracted[2] * Constants.PITODEG + " " + adatafile.getTiltingAngle()[4]);
 //	  incidentDiffracted[0] *= Constants.DEGTOPI;
 
-//		double cosPhi2 = Math.cos(incidentDiffracted[0]);
-    double sinPhii = 1.0 / Math.sin(incidentDiffracted[0]);
-    double sinPhid = 1.0 / Math.sin(incidentDiffracted[2]);
-//    areaCorrection *= sinPhii + sinPhid;
+//		double sinPhii = Math.sin(incidentDiffracted[0]);
+    
+    double one_sinPhii = 1.0 / Math.sin(incidentDiffracted[0]);
+    double one_sinPhid = 1.0 / Math.sin(incidentDiffracted[2]);
+//    areaCorrection *= one_sinPhii + one_sinPhid;
     
     RadiationType radType = ainstrument.getRadiationType();
     int rad_lines = radType.getLinesCountForFluorescence();
@@ -395,10 +396,10 @@ public class AngleEnergyMapFluorescence extends Fluorescence {
     for (int ej = 0; ej < rad_lines; ej++) {
       energyInKeV[ej] = radType.getRadiationEnergyForFluorescenceKeV(ej);
       energy_intensity[ej] = radType.getRadiationWeightForFluorescence(ej);
-      layerAbsorption[0][ej] = -asample.getlayer(0).getAbsorption(radType, ej) * layerDensity[0] * sinPhii;
+      layerAbsorption[0][ej] = -asample.getlayer(0).getAbsorption(radType, ej) * layerDensity[0] * one_sinPhii;
       overLayerAbsorption[0][ej] = 0;
       for (int j1 = 1; j1 < layersNumber; j1++) {
-        layerAbsorption[j1][ej] = -asample.getlayer(j1).getAbsorption(radType, ej) * layerDensity[j1] * sinPhii;
+        layerAbsorption[j1][ej] = -asample.getlayer(j1).getAbsorption(radType, ej) * layerDensity[j1] * one_sinPhii;
         overLayerAbsorption[j1][ej] = overLayerAbsorption[j1 - 1][ej] + layerAbsorption[j1 - 1][ej] * layerThickness[j1 - 1];
 //				System.out.println(overLayerAbsorption[j1][ej]);
       }
@@ -426,11 +427,11 @@ public class AngleEnergyMapFluorescence extends Fluorescence {
               double lineInnerShellEnergyKeV = line.getCoreShellEnergy(); // in KeV
               double overLayerAbsorptionForLine = 0;
               for (int j2 = 0; j2 < j1; j2++) {
-                double actualLayerAbs = -asample.getlayer(j2).getAbsorption(lineEnergyKeV) * layerDensity[j2] * sinPhid;
+                double actualLayerAbs = -asample.getlayer(j2).getAbsorption(lineEnergyKeV) * layerDensity[j2] * one_sinPhid;
                 overLayerAbsorptionForLine += actualLayerAbs * layerThickness[j2];
               }
-              double actualLayerAbsorption = -asample.getlayer(j1).getAbsorption(lineEnergyKeV) * layerDensity[j1] * sinPhid;
-//						System.out.println(actualLayerAbsorption + " " + asample.getlayer(j1).getAbsorption(lineEnergyKeV) + " " + layerDensity[j1] + " " + sinPhid);
+              double actualLayerAbsorption = -asample.getlayer(j1).getAbsorption(lineEnergyKeV) * layerDensity[j1] * one_sinPhid;
+//						System.out.println(actualLayerAbsorption + " " + asample.getlayer(j1).getAbsorption(lineEnergyKeV) + " " + layerDensity[j1] + " " + one_sinPhid);
               double totalIntensity = 0;
               for (int ej = 0; ej < rad_lines; ej++) {
                 if (energyInKeV[ej] > lineInnerShellEnergyKeV && lineEnergyKeV <= energyInKeV[ej]) {
@@ -463,7 +464,7 @@ public class AngleEnergyMapFluorescence extends Fluorescence {
 //									System.out.println(atomNumber - 1 + " " + lineEnergyKeV + " " + line.transitionID + " " + lineSensitivity + " " + energyInKeV[ej]
 //										+ " " + line.getCoreShellID() + " " + XRayDataSqLite.getTauShell(atomNumber - 1, line.getCoreShellID(), energyInKeV[ej]));
 //                  System.out.println(line.getFluorescenceYield() + " " + line.getTransitionProbability() + " " + actualLayerAbsorption + " " + layerAbsorption[j1][ej] + " " + lineSensitivity + " " + over_abs + " " + abs + " " + energy_intensity[ej]);
-                  totalIntensity += over_abs * abs * line.getIntensityMultiple(ej);
+                  totalIntensity += over_abs * abs * line.getIntensityMultiple(ej) * one_sinPhii;
                 }
               }
               totalIntensity *= layerDensity[j1];
@@ -821,8 +822,8 @@ public class AngleEnergyMapFluorescence extends Fluorescence {
 //	  incidentDiffracted[0] *= Constants.DEGTOPI;
 
 //		double cosPhi2 = Math.cos(incidentDiffracted[0]);
-    double sinPhii = 1.0 / Math.sin(incidentDiffracted[0]);
-    double sinPhid = 1.0 / Math.sin(incidentDiffracted[2]);
+    double one_sinPhii = 1.0 / Math.sin(incidentDiffracted[0]);
+    double one_sinPhid = 1.0 / Math.sin(incidentDiffracted[2]);
     
     RadiationType radType = ainstrument.getRadiationType();
     int rad_lines = radType.getLinesCountForFluorescence();
@@ -841,10 +842,10 @@ public class AngleEnergyMapFluorescence extends Fluorescence {
     for (int ej = 0; ej < rad_lines; ej++) {
       energyInKeV[ej] = radType.getRadiationEnergyForFluorescenceKeV(ej);
       energy_intensity[ej] = radType.getRadiationWeightForFluorescence(ej);
-      layerAbsorption[0][ej] = -asample.getlayer(0).getAbsorption(energyInKeV[ej]) * layerDensity[0] * sinPhii;
+      layerAbsorption[0][ej] = -asample.getlayer(0).getAbsorption(energyInKeV[ej]) * layerDensity[0] * one_sinPhii;
       overLayerAbsorption[0][ej] = 0;
       for (int j1 = 1; j1 < layersNumber; j1++) {
-        layerAbsorption[j1][ej] = -asample.getlayer(j1).getAbsorption(energyInKeV[ej]) * layerDensity[j1] * sinPhii;
+        layerAbsorption[j1][ej] = -asample.getlayer(j1).getAbsorption(energyInKeV[ej]) * layerDensity[j1] * one_sinPhii;
         overLayerAbsorption[j1][ej] = overLayerAbsorption[j1 - 1][ej] + layerAbsorption[j1 - 1][ej] * layerThickness[j1 - 1];
 //				System.out.println(overLayerAbsorption[j1][ej]);
       }
@@ -876,11 +877,11 @@ public class AngleEnergyMapFluorescence extends Fluorescence {
               double lineInnerShellEnergyKeV = line.getCoreShellEnergy(); // in KeV
               double overLayerAbsorptionForLine = 0;
               for (int j2 = 0; j2 < j1; j2++) {
-                double actualLayerAbs = -asample.getlayer(j2).getAbsorption(lineEnergyKeV) * layerDensity[j2] * sinPhid;
+                double actualLayerAbs = -asample.getlayer(j2).getAbsorption(lineEnergyKeV) * layerDensity[j2] * one_sinPhid;
                 overLayerAbsorptionForLine += actualLayerAbs * layerThickness[j2];
               }
-              double actualLayerAbsorption = -asample.getlayer(j1).getAbsorption(lineEnergyKeV) * layerDensity[j1] * sinPhid;
-//						System.out.println(actualLayerAbsorption + " " + asample.getlayer(j1).getAbsorption(lineEnergyKeV) + " " + layerDensity[j1] + " " + sinPhid);
+              double actualLayerAbsorption = -asample.getlayer(j1).getAbsorption(lineEnergyKeV) * layerDensity[j1] * one_sinPhid;
+//						System.out.println(actualLayerAbsorption + " " + asample.getlayer(j1).getAbsorption(lineEnergyKeV) + " " + layerDensity[j1] + " " + one_sinPhid);
               double totalIntensity = 0;
               for (int ej = 0; ej < rad_lines; ej++) {
                 if (energyInKeV[ej] > lineInnerShellEnergyKeV && lineEnergyKeV <= energyInKeV[ej]) {

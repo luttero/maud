@@ -3240,16 +3240,10 @@ public class DataFileSet extends XRDcat {
   String yTitle = null;
   String yUnit = null;
 
-  public void multiPlot2D(Frame aframe) {
+  public void multiPlot2D(Frame aframe, int atype) {
     int datafilenumber = activedatafilesnumber();
 
-    yTitle = null;
-    yUnit = null;
     boolean angleAxis = MaudPreferences.getBoolean("multiplot2D.use2Theta", false);
-    if (angleAxis && getInstrument().IDlabel == AngleEnergyMapInstrument.modelID) {
-      yTitle = "2Theta";
-      yUnit = "degrees";
-    }
 
     final Frame newFrame = aframe;
     final DiffrDataFile[] adfile = new DiffrDataFile[datafilenumber];
@@ -3260,21 +3254,13 @@ public class DataFileSet extends XRDcat {
     (new PersistentThread() {
   @Override
       public void executeJob() {
-        new MultiPlotFitting2D(newFrame, adfile, label, yTitle, yUnit);
+        new MultiPlotFitting2D(newFrame, adfile, label, atype);
       }
     }).start();
   }
 
 	public void plot2DandExportPng(String plotOutput2DFileName, double ymin, double ymax) {
 		int datafilenumber = activedatafilesnumber();
-
-    yTitle = null;
-    yUnit = null;
-    boolean angleAxis = MaudPreferences.getBoolean("multiplot2D.use2Theta", false);
-    if (angleAxis && getInstrument().IDlabel == AngleEnergyMapInstrument.modelID) {
-      yTitle = "2Theta";
-      yUnit = "degrees";
-    }
 
 		final DiffrDataFile[] adfile = new DiffrDataFile[datafilenumber];
 		for (int i = 0; i < datafilenumber; i++) {
@@ -3283,7 +3269,7 @@ public class DataFileSet extends XRDcat {
 		final String label = DataFileSet.this.toXRDcatString();
 //    System.out.println("Creating 2D plot... ");
     try {
-      MultiPlotFitting2D plot = new MultiPlotFitting2D(null, adfile, label, ymin, ymax, yTitle, yUnit);
+      MultiPlotFitting2D plot = new MultiPlotFitting2D(null, adfile, label, ymin, ymax, 0);
       System.out.println("Saving 2D plot... ");
     (new PersistentThread() {
 			@Override
@@ -3487,14 +3473,6 @@ public class DataFileSet extends XRDcat {
   public void differencePlot2D(Frame aframe) {
     int datafilenumber = activedatafilesnumber();
 
-    yTitle = null;
-    yUnit = null;
-    boolean angleAxis = MaudPreferences.getBoolean("multiplot2D.use2Theta", false);
-    if (angleAxis && getInstrument().IDlabel == AngleEnergyMapInstrument.modelID) {
-      yTitle = "2Theta";
-      yUnit = "degrees";
-    }
-  
     final Frame newFrame = aframe;
     final DiffrDataFile[] adfile = new DiffrDataFile[datafilenumber];
     for (int i = 0; i < datafilenumber; i++) {
@@ -3504,7 +3482,7 @@ public class DataFileSet extends XRDcat {
     (new PersistentThread() {
   @Override
       public void executeJob() {
-        new DifferencePlot2D(newFrame, adfile, label, yTitle, yUnit);
+        new DifferencePlot2D(newFrame, adfile, label);
       }
     }).start();
   }

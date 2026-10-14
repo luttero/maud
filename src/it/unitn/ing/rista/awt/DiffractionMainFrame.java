@@ -115,6 +115,10 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
   static final String QUIT_MAUD = "Quit";
   static final String BATCH_FILE = "Prepare batch file";
   static final String BATCH_REFINE = "Launch batch file";
+  static final String PLOT2D_FULLMAP = "MapPlot of selected dataset";
+  static final String PLOT2D_DIFFERENCEMAP = "Difference 2D Plot of selected dataset";
+  static final String PLOT2D_ONLYDATA = "Only data";
+  static final String PLOT2D_ONLYFIT = "Only fit";
 
   static String[] mainMenuLabels = {
       "File:15",
@@ -173,8 +177,12 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
 
       "Graphic:10",
         "Plot selected dataset",
-        "MapPlot of selected dataset",
-        "Difference 2D Plot of selected dataset",
+        "2D plots:4",
+          PLOT2D_FULLMAP,
+          PLOT2D_DIFFERENCEMAP,
+          PLOT2D_ONLYDATA,
+          PLOT2D_ONLYFIT,
+        "-",
         "Polar plot of selected dataset",
 		    "Section plot of selected dataset",
         "Texture plot",
@@ -270,7 +278,11 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
 
       nullKeyEvent,
       KeyEvent.VK_P,
-      KeyEvent.VK_J,
+      nullKeyEvent,
+        KeyEvent.VK_J,
+        nullKeyEvent,
+        nullKeyEvent,
+        nullKeyEvent,
       nullKeyEvent,
       nullKeyEvent,
 		  nullKeyEvent,
@@ -354,6 +366,10 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
       true,
       true,
       true,
+        true,
+        true,
+        true,
+        true,
       true,
       true,
       true,
@@ -446,8 +462,8 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
           null,
           null},
       {"Plot selected dataset", // Graphic
-          "MapPlot of selected dataset",
-          "Difference 2D Plot of selected dataset",
+          "2D plots",
+          "-",
           "Polar plot of selected dataset",
 		      "Section plot of selected dataset",
           "Texture plot",
@@ -615,7 +631,7 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
         "Compute spectra",
         "Launch parameters refinement (I feel lucky!)",
         "-", "-",
-        "Plot selected dataset",
+        PLOT2D_FULLMAP,
         "-", "-",
         "General help for the MAUD program"
     };
@@ -1107,10 +1123,10 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
     }
   }
 
-  void multiPlot2D_Action() {
+  void multiPlot2D_Action(int type) {
     DataFileSet adata = parameterfile.getActiveSample().getSelectedDataSet();
     if (adata != null) {
-      adata.multiPlot2D(this);
+      adata.multiPlot2D(this, type);
     }
   }
 
@@ -1962,11 +1978,17 @@ public class DiffractionMainFrame extends principalJFrame implements TreeEventRe
       } else if (command.equals("Plot selected dataset")) {                 // Plot selected dataset
         multiPlot_Action();
         return;
-      } else if (command.equals("MapPlot of selected dataset")) {         // MapPlot selected dataset
-        multiPlot2D_Action();
+      } else if (command.equals(PLOT2D_FULLMAP)) {         // MapPlot selected dataset
+        multiPlot2D_Action(0);
         return;
-      } else if (command.equals("Difference 2D Plot of selected dataset")) {         // Difference MapPlot selected dataset
+      } else if (command.equals(PLOT2D_DIFFERENCEMAP)) {         // Difference MapPlot selected dataset
         differencePlot2D_Action();
+        return;
+      } else if (command.equals(PLOT2D_ONLYDATA)) {         // MapPlot selected dataset
+        multiPlot2D_Action(1);
+        return;
+      } else if (command.equals(PLOT2D_ONLYFIT)) {         // Difference MapPlot selected dataset
+        multiPlot2D_Action(2);
         return;
       } else if (command.equals("Polar plot of selected dataset")) {         // Polar Plot selected dataset
         polarPlot2D_Action();
