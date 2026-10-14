@@ -1,13 +1,13 @@
 ---
 layout: post
-title:  "New Version 3.08"
-date:   2026-10-14 18:80:00 +0200
+title: "New Version 3.08"
+date: 2026-10-14 18:00:00 +0200
 categories: Maud release
 ---
 
 A new MAUD version (3.08) is available in the releases section.
 Bug correction in the angle-energy maps about the fluorescence dependency on 2theta angle.
-Added to the 2D map plot the possibility to plot only the data or just the fit. 
+Added to the 2D map plot the possibility to plot only the data or just the fit.
 This can permit some flexibility to produce final figures. 
 Angle-energy map use 2theta as vertical coordinate.
 
