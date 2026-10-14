@@ -1,7 +1,7 @@
 ---
 layout: post
-title: "New Version 3.08"
-date: 2026-10-14 18:00:00 +0200
+title:  "New Version 3.08"
+date:   2026-10-14 17:30:00 +0200
 categories: Maud release
 ---
 
