@@ -43,6 +43,11 @@ from the older one.
 
 Maud Version notes:
 
+(04/11/2026):   3.09. The "Reckoning" release.
+                Simple bug correction release. Fixed some bugs in the 2D
+                plots routines and one affecting normalization of intensities
+                by the intensity calibration (if any).
+
 (14/10/2026):   3.08. The "Angle-Energy" release.
                 Bug correction in the angle-energy maps about the fluorescence
                 dependency on 2theta angle.

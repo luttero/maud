@@ -1271,7 +1271,7 @@ public class PlotFitting extends PlotDataFile {
 
             if (calibInt) {
               double cal = PlotDataFile.getIntensityCalibration(thePlotPanel.datafile[0], data[j], index);
-              if (cal > 0) {
+              if (cal != 0 && !Double.isNaN(cal)) {
                 intValue /= cal;
                 b_value /= cal;
               }
@@ -1299,7 +1299,7 @@ public class PlotFitting extends PlotDataFile {
             double b_value = PlotDataFile.getIntensity(thePlotPanel.datafile[0], data[j], index);
             if (calibInt) {
               double cal = PlotDataFile.getIntensityCalibration(thePlotPanel.datafile[0], data[j], index);
-              if (cal > 0) {
+              if (cal != 0 && !Double.isNaN(cal)) {
                 intValue /= cal;
                 b_value /= cal;
               }
@@ -1448,7 +1448,7 @@ public class PlotFitting extends PlotDataFile {
             b_value = getBackground(thePlotPanel.datafile[0], data[j], index);
           if (calibInt) {
             double cal = PlotDataFile.getIntensityCalibration(thePlotPanel.datafile[0], data[j], index);
-            if (cal > 0) {
+            if (cal != 0 && !Double.isNaN(cal)) {
               intValue /= cal;
               b_value /= cal;
             }

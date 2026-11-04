@@ -176,7 +176,7 @@ public class MultiPlotFitting extends PlotFitting {
             b_value = getBackground(datafile[sn], data[j], index);
           if (calibInt) {
             double cal = PlotDataFile.getIntensityCalibration(datafile[sn], data[j], index);
-            if (cal > 0) {
+            if (cal != 0 && !Double.isNaN(cal)) {
               intValue /= cal;
               b_value /= cal;
             }
@@ -233,7 +233,7 @@ public class MultiPlotFitting extends PlotFitting {
                 b_value = getBackground(datafile[sn], data[j], index);
               if (calibInt) {
                 double cal = PlotDataFile.getIntensityCalibration(datafile[sn], data[j], index);
-                if (cal > 0) {
+                if (cal != 0 && !Double.isNaN(cal)) {
                   intValue /= cal;
                   b_value /= cal;
                 }
@@ -488,7 +488,7 @@ public class MultiPlotFitting extends PlotFitting {
             double b_value = PlotDataFile.getIntensity(datafile[0], data[j], index);
             if (calibInt) {
               double cal = PlotDataFile.getIntensityCalibration(datafile[0], data[j], index);
-              if (cal > 0) {
+              if (cal != 0 && !Double.isNaN(cal)) {
                 intValue /= cal;
                 b_value /= cal;
               }
@@ -646,7 +646,7 @@ public class MultiPlotFitting extends PlotFitting {
             b_value = getBackground(datafile[sn], data[j], index);
           if (calibInt) {
             double cal = PlotDataFile.getIntensityCalibration(datafile[sn], data[j], index);
-            if (cal > 0) {
+            if (cal != 0 && !Double.isNaN(cal)) {
               intValue /= cal;
               b_value /= cal;
             }
@@ -685,7 +685,7 @@ public class MultiPlotFitting extends PlotFitting {
                 b_value = getBackground(datafile[sn], data[j], index);
               if (calibInt) {
                 double cal = PlotDataFile.getIntensityCalibration(datafile[sn], data[j], index);
-                if (cal > 0) {
+                if (cal != 0 && !Double.isNaN(cal)) {
                   intValue /= cal;
                   b_value /= cal;
                 }

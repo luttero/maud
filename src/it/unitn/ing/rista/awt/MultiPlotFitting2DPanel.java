@@ -316,7 +316,7 @@ public class MultiPlotFitting2DPanel extends CopyPrintablePanel {
             b_value = PlotDataFile.getBackground(datafile[sn], xaxis[i], index);
           if (calibInt) {
             double cal = PlotDataFile.getIntensityCalibration(datafile[sn], xaxis[i], index);
-            if (cal > 0) {
+            if (cal != 0 && !Double.isNaN(cal)) {
               intValue /= cal;
               b_value /= cal;
             }
@@ -371,7 +371,7 @@ public class MultiPlotFitting2DPanel extends CopyPrintablePanel {
               b_value = PlotDataFile.getBackground(datafile[sn], xaxis[i], index);
             if (calibInt) {
               double cal = PlotDataFile.getIntensityCalibration(datafile[sn], xaxis[i], index);
-              if (cal > 0) {
+              if (cal != 0 && !Double.isNaN(cal)) {
                 intValue /= cal;
                 b_value /= cal;
               }
@@ -425,7 +425,7 @@ public class MultiPlotFitting2DPanel extends CopyPrintablePanel {
               b_value = PlotDataFile.getBackground(datafile[sn], xaxis[i], index);
             if (calibInt) {
               double cal = PlotDataFile.getIntensityCalibration(datafile[sn], xaxis[i], index);
-              if (cal > 0) {
+              if (cal != 0 && !Double.isNaN(cal)) {
                 intValue /= cal;
                 b_value /= cal;
               }

@@ -3243,7 +3243,7 @@ public class DataFileSet extends XRDcat {
   public void multiPlot2D(Frame aframe, int atype) {
     int datafilenumber = activedatafilesnumber();
 
-    boolean angleAxis = MaudPreferences.getBoolean("multiplot2D.use2Theta", false);
+//    boolean angleAxis = MaudPreferences.getBoolean("multiplot2D.use2Theta", false);
 
     final Frame newFrame = aframe;
     final DiffrDataFile[] adfile = new DiffrDataFile[datafilenumber];

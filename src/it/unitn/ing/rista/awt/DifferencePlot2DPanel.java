@@ -173,7 +173,7 @@ public class DifferencePlot2DPanel extends MultiPlotFitting2DPanel {
             double intFitValue = PlotDataFile.getFitIntensity(datafile[sn], xaxis[i], index);
             if (calibInt) {
               double cal = PlotDataFile.getIntensityCalibration(datafile[sn], xaxis[i], index);
-              if (cal > 0) {
+              if (cal != 0 && !Double.isNaN(cal)) {
                 intValue /= cal;
                 intFitValue /= cal;
               }

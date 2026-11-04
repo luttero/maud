@@ -175,148 +175,148 @@
     <injection language="SQL" injector-id="java">
       <display-name>AsyncQueryRunner (org.apache.commons.dbutils)</display-name>
       <single-file value="true" />
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("batch").withParameterCount(2).definedInClass("org.apache.commons.dbutils.AsyncQueryRunner"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("insertBatch").withParameterCount(3).definedInClass("org.apache.commons.dbutils.AsyncQueryRunner"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query", "insert").withParameters("java.lang.String", "org.apache.commons.dbutils.ResultSetHandler").definedInClass("org.apache.commons.dbutils.AsyncQueryRunner"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query", "insert").withParameters("java.lang.String", "org.apache.commons.dbutils.ResultSetHandler", "java.lang.Object...").definedInClass("org.apache.commons.dbutils.AsyncQueryRunner"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("update").withParameters("java.lang.String").definedInClass("org.apache.commons.dbutils.AsyncQueryRunner"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("update").withParameters("java.lang.String", "java.lang.Object").definedInClass("org.apache.commons.dbutils.AsyncQueryRunner"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("update").withParameters("java.lang.String", "java.lang.Object...").definedInClass("org.apache.commons.dbutils.AsyncQueryRunner"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(1, psiMethod().withName("batch").withParameterCount(3).definedInClass("org.apache.commons.dbutils.AsyncQueryRunner"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(1, psiMethod().withName("insertBatch").withParameterCount(4).definedInClass("org.apache.commons.dbutils.AsyncQueryRunner"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(1, psiMethod().withName("query", "insert").withParameters("java.sql.Connection", "java.lang.String", "org.apache.commons.dbutils.ResultSetHandler").definedInClass("org.apache.commons.dbutils.AsyncQueryRunner"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(1, psiMethod().withName("query", "insert").withParameters("java.sql.Connection", "java.lang.String", "org.apache.commons.dbutils.ResultSetHandler", "java.lang.Object...").definedInClass("org.apache.commons.dbutils.AsyncQueryRunner"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(1, psiMethod().withName("update").withParameters("java.sql.Connection", "java.lang.String").definedInClass("org.apache.commons.dbutils.AsyncQueryRunner"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(1, psiMethod().withName("update").withParameters("java.sql.Connection", "java.lang.String", "java.lang.Object").definedInClass("org.apache.commons.dbutils.AsyncQueryRunner"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(1, psiMethod().withName("update").withParameters("java.sql.Connection", "java.lang.String", "java.lang.Object...").definedInClass("org.apache.commons.dbutils.AsyncQueryRunner"))]]></place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;batch&quot;).withParameterCount(2).definedInClass(&quot;org.apache.commons.dbutils.AsyncQueryRunner&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;insertBatch&quot;).withParameterCount(3).definedInClass(&quot;org.apache.commons.dbutils.AsyncQueryRunner&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;, &quot;insert&quot;).withParameters(&quot;java.lang.String&quot;, &quot;org.apache.commons.dbutils.ResultSetHandler&quot;).definedInClass(&quot;org.apache.commons.dbutils.AsyncQueryRunner&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;, &quot;insert&quot;).withParameters(&quot;java.lang.String&quot;, &quot;org.apache.commons.dbutils.ResultSetHandler&quot;, &quot;java.lang.Object...&quot;).definedInClass(&quot;org.apache.commons.dbutils.AsyncQueryRunner&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;update&quot;).withParameters(&quot;java.lang.String&quot;).definedInClass(&quot;org.apache.commons.dbutils.AsyncQueryRunner&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;update&quot;).withParameters(&quot;java.lang.String&quot;, &quot;java.lang.Object&quot;).definedInClass(&quot;org.apache.commons.dbutils.AsyncQueryRunner&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;update&quot;).withParameters(&quot;java.lang.String&quot;, &quot;java.lang.Object...&quot;).definedInClass(&quot;org.apache.commons.dbutils.AsyncQueryRunner&quot;))</place>
+      <place>psiParameter().ofMethod(1, psiMethod().withName(&quot;batch&quot;).withParameterCount(3).definedInClass(&quot;org.apache.commons.dbutils.AsyncQueryRunner&quot;))</place>
+      <place>psiParameter().ofMethod(1, psiMethod().withName(&quot;insertBatch&quot;).withParameterCount(4).definedInClass(&quot;org.apache.commons.dbutils.AsyncQueryRunner&quot;))</place>
+      <place>psiParameter().ofMethod(1, psiMethod().withName(&quot;query&quot;, &quot;insert&quot;).withParameters(&quot;java.sql.Connection&quot;, &quot;java.lang.String&quot;, &quot;org.apache.commons.dbutils.ResultSetHandler&quot;).definedInClass(&quot;org.apache.commons.dbutils.AsyncQueryRunner&quot;))</place>
+      <place>psiParameter().ofMethod(1, psiMethod().withName(&quot;query&quot;, &quot;insert&quot;).withParameters(&quot;java.sql.Connection&quot;, &quot;java.lang.String&quot;, &quot;org.apache.commons.dbutils.ResultSetHandler&quot;, &quot;java.lang.Object...&quot;).definedInClass(&quot;org.apache.commons.dbutils.AsyncQueryRunner&quot;))</place>
+      <place>psiParameter().ofMethod(1, psiMethod().withName(&quot;update&quot;).withParameters(&quot;java.sql.Connection&quot;, &quot;java.lang.String&quot;).definedInClass(&quot;org.apache.commons.dbutils.AsyncQueryRunner&quot;))</place>
+      <place>psiParameter().ofMethod(1, psiMethod().withName(&quot;update&quot;).withParameters(&quot;java.sql.Connection&quot;, &quot;java.lang.String&quot;, &quot;java.lang.Object&quot;).definedInClass(&quot;org.apache.commons.dbutils.AsyncQueryRunner&quot;))</place>
+      <place>psiParameter().ofMethod(1, psiMethod().withName(&quot;update&quot;).withParameters(&quot;java.sql.Connection&quot;, &quot;java.lang.String&quot;, &quot;java.lang.Object...&quot;).definedInClass(&quot;org.apache.commons.dbutils.AsyncQueryRunner&quot;))</place>
     </injection>
     <injection language="SQL" injector-id="java">
       <display-name>Jodd (jodd.db)</display-name>
       <single-file value="true" />
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query").withParameterCount(1).definedInClass("jodd.db.DbQuery"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(1, psiMethod().withName("DbQuery").withParameterCount(2).definedInClass("jodd.db.DbQuery"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(1, psiMethod().withName("query").withParameterCount(2).definedInClass("jodd.db.DbQuery"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(2, psiMethod().withName("DbQuery").withParameterCount(3).definedInClass("jodd.db.DbQuery"))]]></place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;).withParameterCount(1).definedInClass(&quot;jodd.db.DbQuery&quot;))</place>
+      <place>psiParameter().ofMethod(1, psiMethod().withName(&quot;DbQuery&quot;).withParameterCount(2).definedInClass(&quot;jodd.db.DbQuery&quot;))</place>
+      <place>psiParameter().ofMethod(1, psiMethod().withName(&quot;query&quot;).withParameterCount(2).definedInClass(&quot;jodd.db.DbQuery&quot;))</place>
+      <place>psiParameter().ofMethod(2, psiMethod().withName(&quot;DbQuery&quot;).withParameterCount(3).definedInClass(&quot;jodd.db.DbQuery&quot;))</place>
     </injection>
     <injection language="SQL" injector-id="java">
       <display-name>MyBatis @Select/@Delete/@Insert/@Update</display-name>
       <single-file value="true" />
-      <place><![CDATA[psiMethod().withName("value").withParameters().definedInClass("org.apache.ibatis.annotations.Delete")]]></place>
-      <place><![CDATA[psiMethod().withName("value").withParameters().definedInClass("org.apache.ibatis.annotations.Insert")]]></place>
-      <place><![CDATA[psiMethod().withName("value").withParameters().definedInClass("org.apache.ibatis.annotations.Select")]]></place>
-      <place><![CDATA[psiMethod().withName("value").withParameters().definedInClass("org.apache.ibatis.annotations.Update")]]></place>
+      <place>psiMethod().withName(&quot;value&quot;).withParameters().definedInClass(&quot;org.apache.ibatis.annotations.Delete&quot;)</place>
+      <place>psiMethod().withName(&quot;value&quot;).withParameters().definedInClass(&quot;org.apache.ibatis.annotations.Insert&quot;)</place>
+      <place>psiMethod().withName(&quot;value&quot;).withParameters().definedInClass(&quot;org.apache.ibatis.annotations.Select&quot;)</place>
+      <place>psiMethod().withName(&quot;value&quot;).withParameters().definedInClass(&quot;org.apache.ibatis.annotations.Update&quot;)</place>
     </injection>
     <injection language="SQL" injector-id="java">
       <display-name>QueryRunner (org.apache.commons.dbutils)</display-name>
       <single-file value="true" />
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("batch").withParameterCount(2).definedInClass("org.apache.commons.dbutils.QueryRunner"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("insertBatch").withParameterCount(3).definedInClass("org.apache.commons.dbutils.QueryRunner"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query", "insert").withParameters("java.lang.String", "org.apache.commons.dbutils.ResultSetHandler").definedInClass("org.apache.commons.dbutils.QueryRunner"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query", "insert", "execute").withParameters("java.lang.String", "org.apache.commons.dbutils.ResultSetHandler", "java.lang.Object...").definedInClass("org.apache.commons.dbutils.QueryRunner"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("update").withParameters("java.lang.String").definedInClass("org.apache.commons.dbutils.QueryRunner"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("update").withParameters("java.lang.String", "java.lang.Object").definedInClass("org.apache.commons.dbutils.QueryRunner"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("update", "execute").withParameters("java.lang.String", "java.lang.Object...").definedInClass("org.apache.commons.dbutils.QueryRunner"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(1, psiMethod().withName("batch").withParameterCount(3).definedInClass("org.apache.commons.dbutils.QueryRunner"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(1, psiMethod().withName("insertBatch").withParameterCount(4).definedInClass("org.apache.commons.dbutils.QueryRunner"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(1, psiMethod().withName("query", "insert").withParameters("java.sql.Connection", "java.lang.String", "org.apache.commons.dbutils.ResultSetHandler", "java.lang.Object...").definedInClass("org.apache.commons.dbutils.QueryRunner"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(1, psiMethod().withName("query", "insert", "execute").withParameters("java.sql.Connection", "java.lang.String", "org.apache.commons.dbutils.ResultSetHandler").definedInClass("org.apache.commons.dbutils.QueryRunner"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(1, psiMethod().withName("update").withParameters("java.sql.Connection", "java.lang.String").definedInClass("org.apache.commons.dbutils.QueryRunner"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(1, psiMethod().withName("update").withParameters("java.sql.Connection", "java.lang.String", "java.lang.Object").definedInClass("org.apache.commons.dbutils.QueryRunner"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(1, psiMethod().withName("update", "execute").withParameters("java.sql.Connection", "java.lang.String", "java.lang.Object...").definedInClass("org.apache.commons.dbutils.QueryRunner"))]]></place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;batch&quot;).withParameterCount(2).definedInClass(&quot;org.apache.commons.dbutils.QueryRunner&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;insertBatch&quot;).withParameterCount(3).definedInClass(&quot;org.apache.commons.dbutils.QueryRunner&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;, &quot;insert&quot;).withParameters(&quot;java.lang.String&quot;, &quot;org.apache.commons.dbutils.ResultSetHandler&quot;).definedInClass(&quot;org.apache.commons.dbutils.QueryRunner&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;, &quot;insert&quot;, &quot;execute&quot;).withParameters(&quot;java.lang.String&quot;, &quot;org.apache.commons.dbutils.ResultSetHandler&quot;, &quot;java.lang.Object...&quot;).definedInClass(&quot;org.apache.commons.dbutils.QueryRunner&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;update&quot;).withParameters(&quot;java.lang.String&quot;).definedInClass(&quot;org.apache.commons.dbutils.QueryRunner&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;update&quot;).withParameters(&quot;java.lang.String&quot;, &quot;java.lang.Object&quot;).definedInClass(&quot;org.apache.commons.dbutils.QueryRunner&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;update&quot;, &quot;execute&quot;).withParameters(&quot;java.lang.String&quot;, &quot;java.lang.Object...&quot;).definedInClass(&quot;org.apache.commons.dbutils.QueryRunner&quot;))</place>
+      <place>psiParameter().ofMethod(1, psiMethod().withName(&quot;batch&quot;).withParameterCount(3).definedInClass(&quot;org.apache.commons.dbutils.QueryRunner&quot;))</place>
+      <place>psiParameter().ofMethod(1, psiMethod().withName(&quot;insertBatch&quot;).withParameterCount(4).definedInClass(&quot;org.apache.commons.dbutils.QueryRunner&quot;))</place>
+      <place>psiParameter().ofMethod(1, psiMethod().withName(&quot;query&quot;, &quot;insert&quot;).withParameters(&quot;java.sql.Connection&quot;, &quot;java.lang.String&quot;, &quot;org.apache.commons.dbutils.ResultSetHandler&quot;, &quot;java.lang.Object...&quot;).definedInClass(&quot;org.apache.commons.dbutils.QueryRunner&quot;))</place>
+      <place>psiParameter().ofMethod(1, psiMethod().withName(&quot;query&quot;, &quot;insert&quot;, &quot;execute&quot;).withParameters(&quot;java.sql.Connection&quot;, &quot;java.lang.String&quot;, &quot;org.apache.commons.dbutils.ResultSetHandler&quot;).definedInClass(&quot;org.apache.commons.dbutils.QueryRunner&quot;))</place>
+      <place>psiParameter().ofMethod(1, psiMethod().withName(&quot;update&quot;).withParameters(&quot;java.sql.Connection&quot;, &quot;java.lang.String&quot;).definedInClass(&quot;org.apache.commons.dbutils.QueryRunner&quot;))</place>
+      <place>psiParameter().ofMethod(1, psiMethod().withName(&quot;update&quot;).withParameters(&quot;java.sql.Connection&quot;, &quot;java.lang.String&quot;, &quot;java.lang.Object&quot;).definedInClass(&quot;org.apache.commons.dbutils.QueryRunner&quot;))</place>
+      <place>psiParameter().ofMethod(1, psiMethod().withName(&quot;update&quot;, &quot;execute&quot;).withParameters(&quot;java.sql.Connection&quot;, &quot;java.lang.String&quot;, &quot;java.lang.Object...&quot;).definedInClass(&quot;org.apache.commons.dbutils.QueryRunner&quot;))</place>
     </injection>
     <injection language="SQL" injector-id="java">
       <display-name>R2DBC (io.r2dbc)</display-name>
       <single-file value="true" />
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("add").definedInClass("io.r2dbc.spi.Batch"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("createStatement").definedInClass("io.r2dbc.spi.Connection"))]]></place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;add&quot;).definedInClass(&quot;io.r2dbc.spi.Batch&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;createStatement&quot;).definedInClass(&quot;io.r2dbc.spi.Connection&quot;))</place>
     </injection>
     <injection language="PostgreSQL" injector-id="java">
       <display-name>Reactiverse Postgres Client (io.reactiverse)</display-name>
       <single-file value="true" />
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query", "prepare", "preparedQuery", "preparedBatch").definedInClass("io.reactiverse.pgclient.PgConnection"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query", "prepare", "preparedQuery", "preparedBatch").definedInClass("io.reactiverse.pgclient.PgTransaction"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query", "prepare", "preparedQuery", "preparedBatch", "rxQuery", "rxPrepare", "rxPreparedQuery", "rxPreparedBatch").definedInClass("io.reactiverse.reactivex.pgclient.PgClient"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query", "prepare", "preparedQuery", "preparedBatch", "rxQuery", "rxPrepare", "rxPreparedQuery", "rxPreparedBatch").definedInClass("io.reactiverse.reactivex.pgclient.PgConnection"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query", "prepare", "preparedQuery", "preparedBatch", "rxQuery", "rxPrepare", "rxPreparedQuery", "rxPreparedBatch").definedInClass("io.reactiverse.reactivex.pgclient.PgPool"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query", "prepare", "preparedQuery", "preparedBatch", "rxQuery", "rxPrepare", "rxPreparedQuery", "rxPreparedBatch").definedInClass("io.reactiverse.reactivex.pgclient.PgTransaction"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query", "preparedQuery", "preparedBatch").definedInClass("io.reactiverse.axle.pgclient.PgClient"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query", "preparedQuery", "preparedBatch").definedInClass("io.reactiverse.pgclient.PgClient"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query", "preparedQuery", "preparedBatch").definedInClass("io.reactiverse.pgclient.PgPool"))]]></place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;, &quot;prepare&quot;, &quot;preparedQuery&quot;, &quot;preparedBatch&quot;).definedInClass(&quot;io.reactiverse.pgclient.PgConnection&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;, &quot;prepare&quot;, &quot;preparedQuery&quot;, &quot;preparedBatch&quot;).definedInClass(&quot;io.reactiverse.pgclient.PgTransaction&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;, &quot;prepare&quot;, &quot;preparedQuery&quot;, &quot;preparedBatch&quot;, &quot;rxQuery&quot;, &quot;rxPrepare&quot;, &quot;rxPreparedQuery&quot;, &quot;rxPreparedBatch&quot;).definedInClass(&quot;io.reactiverse.reactivex.pgclient.PgClient&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;, &quot;prepare&quot;, &quot;preparedQuery&quot;, &quot;preparedBatch&quot;, &quot;rxQuery&quot;, &quot;rxPrepare&quot;, &quot;rxPreparedQuery&quot;, &quot;rxPreparedBatch&quot;).definedInClass(&quot;io.reactiverse.reactivex.pgclient.PgConnection&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;, &quot;prepare&quot;, &quot;preparedQuery&quot;, &quot;preparedBatch&quot;, &quot;rxQuery&quot;, &quot;rxPrepare&quot;, &quot;rxPreparedQuery&quot;, &quot;rxPreparedBatch&quot;).definedInClass(&quot;io.reactiverse.reactivex.pgclient.PgPool&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;, &quot;prepare&quot;, &quot;preparedQuery&quot;, &quot;preparedBatch&quot;, &quot;rxQuery&quot;, &quot;rxPrepare&quot;, &quot;rxPreparedQuery&quot;, &quot;rxPreparedBatch&quot;).definedInClass(&quot;io.reactiverse.reactivex.pgclient.PgTransaction&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;, &quot;preparedQuery&quot;, &quot;preparedBatch&quot;).definedInClass(&quot;io.reactiverse.axle.pgclient.PgClient&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;, &quot;preparedQuery&quot;, &quot;preparedBatch&quot;).definedInClass(&quot;io.reactiverse.pgclient.PgClient&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;, &quot;preparedQuery&quot;, &quot;preparedBatch&quot;).definedInClass(&quot;io.reactiverse.pgclient.PgPool&quot;))</place>
     </injection>
     <injection language="SQL" injector-id="java">
       <display-name>SmallRye Axle SqlClient (io.vertx.axle.sqlclient)</display-name>
       <single-file value="true" />
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query", "preparedQuery", "preparedBatch").definedInClass("io.vertx.axle.sqlclient.Pool"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query", "preparedQuery", "preparedBatch").definedInClass("io.vertx.axle.sqlclient.SqlClient"))]]></place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;, &quot;preparedQuery&quot;, &quot;preparedBatch&quot;).definedInClass(&quot;io.vertx.axle.sqlclient.Pool&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;, &quot;preparedQuery&quot;, &quot;preparedBatch&quot;).definedInClass(&quot;io.vertx.axle.sqlclient.SqlClient&quot;))</place>
     </injection>
     <injection language="SQL" injector-id="java">
       <display-name>SmallRye Mutiny SqlClient (io.vertx.mutiny.sqlclient)</display-name>
       <single-file value="true" />
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query", "preparedQuery", "preparedBatch").definedInClass("io.vertx.mutiny.sqlclient.Pool"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query", "preparedQuery", "preparedBatch").definedInClass("io.vertx.mutiny.sqlclient.SqlClient"))]]></place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;, &quot;preparedQuery&quot;, &quot;preparedBatch&quot;).definedInClass(&quot;io.vertx.mutiny.sqlclient.Pool&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;, &quot;preparedQuery&quot;, &quot;preparedBatch&quot;).definedInClass(&quot;io.vertx.mutiny.sqlclient.SqlClient&quot;))</place>
     </injection>
     <injection language="SQL" injector-id="java">
       <display-name>SmallRye Mutiny SqlConnection (io.vertx.mutiny.sqlclient)</display-name>
       <single-file value="true" />
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("prepare", "prepareAndAwait").definedInClass("io.vertx.mutiny.db2client.DB2Connection"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("prepare", "prepareAndAwait").definedInClass("io.vertx.mutiny.mssqlclient.MSSQLConnection"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("prepare", "prepareAndAwait").definedInClass("io.vertx.mutiny.mysqlclient.MySQLConnection"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("prepare", "prepareAndAwait").definedInClass("io.vertx.mutiny.pgclient.PgConnection"))]]></place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;prepare&quot;, &quot;prepareAndAwait&quot;).definedInClass(&quot;io.vertx.mutiny.db2client.DB2Connection&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;prepare&quot;, &quot;prepareAndAwait&quot;).definedInClass(&quot;io.vertx.mutiny.mssqlclient.MSSQLConnection&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;prepare&quot;, &quot;prepareAndAwait&quot;).definedInClass(&quot;io.vertx.mutiny.mysqlclient.MySQLConnection&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;prepare&quot;, &quot;prepareAndAwait&quot;).definedInClass(&quot;io.vertx.mutiny.pgclient.PgConnection&quot;))</place>
     </injection>
     <injection language="SQL" injector-id="java">
       <display-name>Vert.x SQL Extensions (io.vertx.ext.sql)</display-name>
       <single-file value="true" />
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query", "queryWithParams", "queryStream", "queryStreamWithParams", "querySingle", "querySingleWithParams", "update", "updateWithParams", "call", "callWithParams").definedInClass("io.vertx.ext.sql.SQLClient"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query", "queryWithParams", "queryStream", "queryStreamWithParams", "querySingle", "querySingleWithParams", "update", "updateWithParams", "call", "callWithParams").definedInClass("io.vertx.ext.sql.SQLOperations"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query", "queryWithParams", "queryStream", "queryStreamWithParams", "querySingle", "querySingleWithParams", "update", "updateWithParams", "call", "callWithParams", "execute", "batchWithParams", "batchCallableWithParams").definedInClass("io.vertx.ext.sql.SQLConnection"))]]></place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;, &quot;queryWithParams&quot;, &quot;queryStream&quot;, &quot;queryStreamWithParams&quot;, &quot;querySingle&quot;, &quot;querySingleWithParams&quot;, &quot;update&quot;, &quot;updateWithParams&quot;, &quot;call&quot;, &quot;callWithParams&quot;).definedInClass(&quot;io.vertx.ext.sql.SQLClient&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;, &quot;queryWithParams&quot;, &quot;queryStream&quot;, &quot;queryStreamWithParams&quot;, &quot;querySingle&quot;, &quot;querySingleWithParams&quot;, &quot;update&quot;, &quot;updateWithParams&quot;, &quot;call&quot;, &quot;callWithParams&quot;).definedInClass(&quot;io.vertx.ext.sql.SQLOperations&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;, &quot;queryWithParams&quot;, &quot;queryStream&quot;, &quot;queryStreamWithParams&quot;, &quot;querySingle&quot;, &quot;querySingleWithParams&quot;, &quot;update&quot;, &quot;updateWithParams&quot;, &quot;call&quot;, &quot;callWithParams&quot;, &quot;execute&quot;, &quot;batchWithParams&quot;, &quot;batchCallableWithParams&quot;).definedInClass(&quot;io.vertx.ext.sql.SQLConnection&quot;))</place>
     </injection>
     <injection language="SQL" injector-id="java">
       <display-name>Vert.x SQL Reactive Extensions (io.vertx.reactivex.ext.sql)</display-name>
       <single-file value="true" />
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query", "queryWithParams", "queryStream", "queryStreamWithParams", "querySingle", "querySingleWithParams", "update", "updateWithParams", "call", "callWithParams").definedInClass("io.vertx.reactivex.ext.sql.SQLOperations"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query", "queryWithParams", "queryStream", "queryStreamWithParams", "querySingle", "querySingleWithParams", "update", "updateWithParams", "call", "callWithParams", "execute", "batchWithParams", "batchCallableWithParams", "rxQuerySingle", "rxQuerySingleWithParams", "rxQuery", "rxQueryWithParams", "rxQueryStream", "rxQueryStreamWithParams", "rxUpdate", "rxUpdateWithParams", "rxCall", "rxCallWithParams", "rxExecute", "rxBatchWithParams", "rxBatchCallableWithParams").definedInClass("io.vertx.reactivex.ext.sql.SQLClient"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query", "queryWithParams", "queryStream", "queryStreamWithParams", "querySingle", "querySingleWithParams", "update", "updateWithParams", "call", "callWithParams", "execute", "batchWithParams", "batchCallableWithParams", "rxQuerySingle", "rxQuerySingleWithParams", "rxQuery", "rxQueryWithParams", "rxQueryStream", "rxQueryStreamWithParams", "rxUpdate", "rxUpdateWithParams", "rxCall", "rxCallWithParams", "rxExecute", "rxBatchWithParams", "rxBatchCallableWithParams").definedInClass("io.vertx.reactivex.ext.sql.SQLConnection"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("querySingle", "rxQuerySingle", "querySingleWithParams", "rxQuerySingleWithParams").definedInClass("io.vertx.reactivex.ext.asyncsql.AsyncSQLClient"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("querySingle", "rxQuerySingle", "querySingleWithParams", "rxQuerySingleWithParams").definedInClass("io.vertx.reactivex.ext.asyncsql.MySQLClient"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("querySingle", "rxQuerySingle", "querySingleWithParams", "rxQuerySingleWithParams").definedInClass("io.vertx.reactivex.ext.asyncsql.PostgreSQLClient"))]]></place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;, &quot;queryWithParams&quot;, &quot;queryStream&quot;, &quot;queryStreamWithParams&quot;, &quot;querySingle&quot;, &quot;querySingleWithParams&quot;, &quot;update&quot;, &quot;updateWithParams&quot;, &quot;call&quot;, &quot;callWithParams&quot;).definedInClass(&quot;io.vertx.reactivex.ext.sql.SQLOperations&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;, &quot;queryWithParams&quot;, &quot;queryStream&quot;, &quot;queryStreamWithParams&quot;, &quot;querySingle&quot;, &quot;querySingleWithParams&quot;, &quot;update&quot;, &quot;updateWithParams&quot;, &quot;call&quot;, &quot;callWithParams&quot;, &quot;execute&quot;, &quot;batchWithParams&quot;, &quot;batchCallableWithParams&quot;, &quot;rxQuerySingle&quot;, &quot;rxQuerySingleWithParams&quot;, &quot;rxQuery&quot;, &quot;rxQueryWithParams&quot;, &quot;rxQueryStream&quot;, &quot;rxQueryStreamWithParams&quot;, &quot;rxUpdate&quot;, &quot;rxUpdateWithParams&quot;, &quot;rxCall&quot;, &quot;rxCallWithParams&quot;, &quot;rxExecute&quot;, &quot;rxBatchWithParams&quot;, &quot;rxBatchCallableWithParams&quot;).definedInClass(&quot;io.vertx.reactivex.ext.sql.SQLClient&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;, &quot;queryWithParams&quot;, &quot;queryStream&quot;, &quot;queryStreamWithParams&quot;, &quot;querySingle&quot;, &quot;querySingleWithParams&quot;, &quot;update&quot;, &quot;updateWithParams&quot;, &quot;call&quot;, &quot;callWithParams&quot;, &quot;execute&quot;, &quot;batchWithParams&quot;, &quot;batchCallableWithParams&quot;, &quot;rxQuerySingle&quot;, &quot;rxQuerySingleWithParams&quot;, &quot;rxQuery&quot;, &quot;rxQueryWithParams&quot;, &quot;rxQueryStream&quot;, &quot;rxQueryStreamWithParams&quot;, &quot;rxUpdate&quot;, &quot;rxUpdateWithParams&quot;, &quot;rxCall&quot;, &quot;rxCallWithParams&quot;, &quot;rxExecute&quot;, &quot;rxBatchWithParams&quot;, &quot;rxBatchCallableWithParams&quot;).definedInClass(&quot;io.vertx.reactivex.ext.sql.SQLConnection&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;querySingle&quot;, &quot;rxQuerySingle&quot;, &quot;querySingleWithParams&quot;, &quot;rxQuerySingleWithParams&quot;).definedInClass(&quot;io.vertx.reactivex.ext.asyncsql.AsyncSQLClient&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;querySingle&quot;, &quot;rxQuerySingle&quot;, &quot;querySingleWithParams&quot;, &quot;rxQuerySingleWithParams&quot;).definedInClass(&quot;io.vertx.reactivex.ext.asyncsql.MySQLClient&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;querySingle&quot;, &quot;rxQuerySingle&quot;, &quot;querySingleWithParams&quot;, &quot;rxQuerySingleWithParams&quot;).definedInClass(&quot;io.vertx.reactivex.ext.asyncsql.PostgreSQLClient&quot;))</place>
     </injection>
     <injection language="SQL" injector-id="java">
       <display-name>Vert.x SqlClient (io.vertx.sqlclient)</display-name>
       <single-file value="true" />
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query", "prepare", "preparedQuery", "preparedBatch").definedInClass("io.vertx.mssqlclient.MSSQLConnection"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query", "prepare", "preparedQuery", "preparedBatch").definedInClass("io.vertx.mysqlclient.MySQLConnection"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query", "prepare", "preparedQuery", "preparedBatch").definedInClass("io.vertx.pgclient.PgConnection"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query", "prepare", "preparedQuery", "preparedBatch").definedInClass("io.vertx.sqlclient.Pool"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query", "prepare", "preparedQuery", "preparedBatch").definedInClass("io.vertx.sqlclient.SqlClient"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query", "prepare", "preparedQuery", "preparedBatch").definedInClass("io.vertx.sqlclient.SqlConnection"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query", "prepare", "preparedQuery", "preparedBatch").definedInClass("io.vertx.sqlclient.Transaction"))]]></place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;, &quot;prepare&quot;, &quot;preparedQuery&quot;, &quot;preparedBatch&quot;).definedInClass(&quot;io.vertx.mssqlclient.MSSQLConnection&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;, &quot;prepare&quot;, &quot;preparedQuery&quot;, &quot;preparedBatch&quot;).definedInClass(&quot;io.vertx.mysqlclient.MySQLConnection&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;, &quot;prepare&quot;, &quot;preparedQuery&quot;, &quot;preparedBatch&quot;).definedInClass(&quot;io.vertx.pgclient.PgConnection&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;, &quot;prepare&quot;, &quot;preparedQuery&quot;, &quot;preparedBatch&quot;).definedInClass(&quot;io.vertx.sqlclient.Pool&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;, &quot;prepare&quot;, &quot;preparedQuery&quot;, &quot;preparedBatch&quot;).definedInClass(&quot;io.vertx.sqlclient.SqlClient&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;, &quot;prepare&quot;, &quot;preparedQuery&quot;, &quot;preparedBatch&quot;).definedInClass(&quot;io.vertx.sqlclient.SqlConnection&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;, &quot;prepare&quot;, &quot;preparedQuery&quot;, &quot;preparedBatch&quot;).definedInClass(&quot;io.vertx.sqlclient.Transaction&quot;))</place>
     </injection>
     <injection language="SQL" injector-id="java">
       <display-name>Vert.x SqlClient RxJava2 (io.vertx.reactivex.sqlclient)</display-name>
       <single-file value="true" />
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query", "prepare", "preparedQuery", "preparedBatch", "rxQuery", "rxPrepare", "rxPreparedQuery", "rxPreparedBatch").definedInClass("io.vertx.reactivex.mysqlclient.MySQLConnection"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query", "prepare", "preparedQuery", "preparedBatch", "rxQuery", "rxPrepare", "rxPreparedQuery", "rxPreparedBatch").definedInClass("io.vertx.reactivex.pgclient.PgConnection"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query", "prepare", "preparedQuery", "preparedBatch", "rxQuery", "rxPrepare", "rxPreparedQuery", "rxPreparedBatch").definedInClass("io.vertx.reactivex.sqlclient.SqlConnection"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query", "prepare", "preparedQuery", "preparedBatch", "rxQuery", "rxPrepare", "rxPreparedQuery", "rxPreparedBatch").definedInClass("io.vertx.reactivex.sqlclient.Transaction"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query", "prepare", "preparedQuery", "preparedBatch", "rxQuery", "rxPreparedQuery", "rxPreparedBatch").definedInClass("io.vertx.reactivex.mysqlclient.MySQLPool"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query", "prepare", "preparedQuery", "preparedBatch", "rxQuery", "rxPreparedQuery", "rxPreparedBatch").definedInClass("io.vertx.reactivex.pgclient.PgPool"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query", "prepare", "preparedQuery", "preparedBatch", "rxQuery", "rxPreparedQuery", "rxPreparedBatch").definedInClass("io.vertx.reactivex.sqlclient.Pool"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query", "prepare", "preparedQuery", "preparedBatch", "rxQuery", "rxPreparedQuery", "rxPreparedBatch").definedInClass("io.vertx.reactivex.sqlclient.SqlClient"))]]></place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;, &quot;prepare&quot;, &quot;preparedQuery&quot;, &quot;preparedBatch&quot;, &quot;rxQuery&quot;, &quot;rxPrepare&quot;, &quot;rxPreparedQuery&quot;, &quot;rxPreparedBatch&quot;).definedInClass(&quot;io.vertx.reactivex.mysqlclient.MySQLConnection&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;, &quot;prepare&quot;, &quot;preparedQuery&quot;, &quot;preparedBatch&quot;, &quot;rxQuery&quot;, &quot;rxPrepare&quot;, &quot;rxPreparedQuery&quot;, &quot;rxPreparedBatch&quot;).definedInClass(&quot;io.vertx.reactivex.pgclient.PgConnection&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;, &quot;prepare&quot;, &quot;preparedQuery&quot;, &quot;preparedBatch&quot;, &quot;rxQuery&quot;, &quot;rxPrepare&quot;, &quot;rxPreparedQuery&quot;, &quot;rxPreparedBatch&quot;).definedInClass(&quot;io.vertx.reactivex.sqlclient.SqlConnection&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;, &quot;prepare&quot;, &quot;preparedQuery&quot;, &quot;preparedBatch&quot;, &quot;rxQuery&quot;, &quot;rxPrepare&quot;, &quot;rxPreparedQuery&quot;, &quot;rxPreparedBatch&quot;).definedInClass(&quot;io.vertx.reactivex.sqlclient.Transaction&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;, &quot;prepare&quot;, &quot;preparedQuery&quot;, &quot;preparedBatch&quot;, &quot;rxQuery&quot;, &quot;rxPreparedQuery&quot;, &quot;rxPreparedBatch&quot;).definedInClass(&quot;io.vertx.reactivex.mysqlclient.MySQLPool&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;, &quot;prepare&quot;, &quot;preparedQuery&quot;, &quot;preparedBatch&quot;, &quot;rxQuery&quot;, &quot;rxPreparedQuery&quot;, &quot;rxPreparedBatch&quot;).definedInClass(&quot;io.vertx.reactivex.pgclient.PgPool&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;, &quot;prepare&quot;, &quot;preparedQuery&quot;, &quot;preparedBatch&quot;, &quot;rxQuery&quot;, &quot;rxPreparedQuery&quot;, &quot;rxPreparedBatch&quot;).definedInClass(&quot;io.vertx.reactivex.sqlclient.Pool&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;, &quot;prepare&quot;, &quot;preparedQuery&quot;, &quot;preparedBatch&quot;, &quot;rxQuery&quot;, &quot;rxPreparedQuery&quot;, &quot;rxPreparedBatch&quot;).definedInClass(&quot;io.vertx.reactivex.sqlclient.SqlClient&quot;))</place>
     </injection>
     <injection language="SQL" injector-id="java">
       <display-name>jOOQ (org.jooq.DSLContext)</display-name>
       <single-file value="true" />
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("batch").withParameters("java.lang.String", "java.lang.Object[]...").definedInClass("org.jooq.DSLContext"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query", "fetch", "fetchLazy", "fetchAsync", "fetchStream", "fetchMany", "fetchOne", "fetchSingle", "fetchOptional", "fetchValue", "fetchOptionalValue", "fetchValues", "execute", "resultQuery").withParameters("java.lang.String", "java.lang.Object...").definedInClass("org.jooq.DSLContext"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("query", "fetch", "fetchLazy", "fetchAsync", "fetchStream", "fetchMany", "fetchOne", "fetchSingle", "fetchOptional", "fetchValue", "fetchOptionalValue", "fetchValues", "execute", "resultQuery", "batch").withParameters("java.lang.String").definedInClass("org.jooq.DSLContext"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(psiMethod().withName("batch").withParameters("java.lang.String...").definedInClass("org.jooq.DSLContext"))]]></place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;batch&quot;).withParameters(&quot;java.lang.String&quot;, &quot;java.lang.Object[]...&quot;).definedInClass(&quot;org.jooq.DSLContext&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;, &quot;fetch&quot;, &quot;fetchLazy&quot;, &quot;fetchAsync&quot;, &quot;fetchStream&quot;, &quot;fetchMany&quot;, &quot;fetchOne&quot;, &quot;fetchSingle&quot;, &quot;fetchOptional&quot;, &quot;fetchValue&quot;, &quot;fetchOptionalValue&quot;, &quot;fetchValues&quot;, &quot;execute&quot;, &quot;resultQuery&quot;).withParameters(&quot;java.lang.String&quot;, &quot;java.lang.Object...&quot;).definedInClass(&quot;org.jooq.DSLContext&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;query&quot;, &quot;fetch&quot;, &quot;fetchLazy&quot;, &quot;fetchAsync&quot;, &quot;fetchStream&quot;, &quot;fetchMany&quot;, &quot;fetchOne&quot;, &quot;fetchSingle&quot;, &quot;fetchOptional&quot;, &quot;fetchValue&quot;, &quot;fetchOptionalValue&quot;, &quot;fetchValues&quot;, &quot;execute&quot;, &quot;resultQuery&quot;, &quot;batch&quot;).withParameters(&quot;java.lang.String&quot;).definedInClass(&quot;org.jooq.DSLContext&quot;))</place>
+      <place>psiParameter().ofMethod(psiMethod().withName(&quot;batch&quot;).withParameters(&quot;java.lang.String...&quot;).definedInClass(&quot;org.jooq.DSLContext&quot;))</place>
     </injection>
     <injection language="SQL" injector-id="java">
       <display-name>rxjava2-jdbc (org.davidmoten.rx.jdbc)</display-name>
       <single-file value="true" />
-      <place><![CDATA[psiMethod().withName("value").definedInClass("org.davidmoten.rx.jdbc.annotations.Query")]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("call", "select", "update").definedInClass("org.davidmoten.rx.jdbc.Database"))]]></place>
-      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("call", "select", "update").definedInClass("org.davidmoten.rx.jdbc.TransactedBuilder"))]]></place>
+      <place>psiMethod().withName(&quot;value&quot;).definedInClass(&quot;org.davidmoten.rx.jdbc.annotations.Query&quot;)</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;call&quot;, &quot;select&quot;, &quot;update&quot;).definedInClass(&quot;org.davidmoten.rx.jdbc.Database&quot;))</place>
+      <place>psiParameter().ofMethod(0, psiMethod().withName(&quot;call&quot;, &quot;select&quot;, &quot;update&quot;).definedInClass(&quot;org.davidmoten.rx.jdbc.TransactedBuilder&quot;))</place>
     </injection>
   </component>
   <component name="LogConsolePreferences">

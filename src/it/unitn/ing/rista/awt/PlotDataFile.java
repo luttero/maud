@@ -560,7 +560,7 @@ public class PlotDataFile extends GraphFrame {
   public static double getIntensityCalibration(DiffrDataFile datafile, double x, int index) {
     if (datafile.isInsideHoles(x))
       return Double.NaN;
-    return datafile.computeIntensityCalibration(x, index);
+    return datafile.computeIntensityCalibration(index); // datafile.computeIntensityCalibration(x, index);
   }
 
   public static double getIntensityLPCalibration(DiffrDataFile datafile, double x, int index) {
@@ -962,8 +962,10 @@ public class PlotDataFile extends GraphFrame {
             }
             if (calibInt) {
               double calibratingIntensity = getIntensityCalibration(datafile[sn], adata.dataForPlot[is2], index);
-              if (calibratingIntensity != 0.0) {
+              if (calibratingIntensity != 0.0 && !Double.isNaN(calibratingIntensity)) {
+//                System.out.print(calibratingIntensity + " " + value);
                 value /= calibratingIntensity;
+//                System.out.println(" " + value);
                 if (hasFit) {
                   if (bkgSub || plotBackground)
                     b_value /= calibratingIntensity;

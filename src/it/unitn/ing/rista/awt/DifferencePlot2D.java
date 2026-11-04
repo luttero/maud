@@ -76,7 +76,7 @@ public class DifferencePlot2D extends MultiPlotFitting2D {
 
 		int hasFit = 1;
     yAxis2Theta = MaudPreferences.getBoolean("multiplot2D.use2Theta", false)
-        || datafile[0].getDataFileSet().getInstrument().IDlabel == AngleEnergyMapInstrument.modelID;
+        && datafile[0].getDataFileSet().getInstrument().IDlabel == AngleEnergyMapInstrument.modelID;
     String yTitle = "Spectrum #";
     String yUnit = "residuals";
 
@@ -176,7 +176,7 @@ public class DifferencePlot2D extends MultiPlotFitting2D {
             double intFitValue = PlotDataFile.getFitIntensity(datafile[sn], xaxis[i], index);
             if (calibInt) {
               double cal = PlotDataFile.getIntensityCalibration(datafile[sn], xaxis[i], index);
-              if (cal > 0) {
+              if (cal != 0 && !Double.isNaN(cal)) {
                 intValue /= cal;
                 intFitValue /= cal;
               }

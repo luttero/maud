@@ -93,7 +93,7 @@ public class MultiPlotFitting2D extends myJFrame {
     this(parent);
     pType = type;
     yAxis2Theta = MaudPreferences.getBoolean("multiplot2D.use2Theta", false)
-        || datafile[0].getDataFileSet().getInstrument().IDlabel == AngleEnergyMapInstrument.modelID;
+        && adatafile[0].getDataFileSet().getInstrument().IDlabel == AngleEnergyMapInstrument.modelID;
 
     if (IntensityMin != IntensityMax) {
       computeMinMax = false;
@@ -190,7 +190,7 @@ public class MultiPlotFitting2D extends myJFrame {
     int startingIndex = datafile[0].startingindex;
     int finalIndex = datafile[0].finalindex;
     yAxis2Theta = MaudPreferences.getBoolean("multiplot2D.use2Theta", false)
-        || datafile[0].getDataFileSet().getInstrument().IDlabel == AngleEnergyMapInstrument.modelID;
+        && datafile[0].getDataFileSet().getInstrument().IDlabel == AngleEnergyMapInstrument.modelID;
     String yTitle = "Spectrum #";
     String yUnit = "experimental";
     if (hasFit == 1)
@@ -308,7 +308,7 @@ public class MultiPlotFitting2D extends myJFrame {
             b_value = PlotDataFile.getBackground(datafile[sn], xaxis[i], index);
           if (calibInt) {
             double cal = PlotDataFile.getIntensityCalibration(datafile[sn], xaxis[i], index);
-            if (cal > 0) {
+            if (cal != 0 && !Double.isNaN(cal)) {
               intValue /= cal;
               b_value /= cal;
             }
@@ -363,7 +363,7 @@ public class MultiPlotFitting2D extends myJFrame {
               b_value = PlotDataFile.getBackground(datafile[sn], xaxis[i], index);
             if (calibInt) {
               double cal = PlotDataFile.getIntensityCalibration(datafile[sn], xaxis[i], index);
-              if (cal > 0) {
+              if (cal != 0 && !Double.isNaN(cal)) {
                 intValue /= cal;
                 b_value /= cal;
               }
@@ -417,7 +417,7 @@ public class MultiPlotFitting2D extends myJFrame {
               b_value = PlotDataFile.getBackground(datafile[sn], xaxis[i], index);
             if (calibInt) {
               double cal = PlotDataFile.getIntensityCalibration(datafile[sn], xaxis[i], index);
-              if (cal > 0) {
+              if (cal != 0 && !Double.isNaN(cal)) {
                 intValue /= cal;
                 b_value /= cal;
               }

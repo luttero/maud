@@ -1131,7 +1131,7 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
 //              if (bkgSub || plotBackground)
               if (calibInt) {
                 double calibratingIntensity = PlotDataFile.getIntensityCalibration(datafile[sn], data[is2], index);
-                if (calibratingIntensity != 0.0) {
+                if (calibratingIntensity != 0.0 && !Double.isNaN(calibratingIntensity)) {
                   value /= calibratingIntensity;
                   if (bkgSub || plotBackground)
                     b_value /= calibratingIntensity;
@@ -1925,7 +1925,7 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
               dataBkg[j + 1] = afile.getBkgFit(index);
               if (calibInt) {
                 intensityCalibration[i] = PlotDataFile.getIntensityCalibration(afile, dataBkg[j], index);
-                if (intensityCalibration[i] > 0)
+                if (intensityCalibration[i] != 0 && !Double.isNaN(intensityCalibration[i]))
                   dataBkg[j + 1] /= intensityCalibration[i];
               }
               if (calibLP) {
@@ -1947,7 +1947,7 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
         if (index >= afile.startingindex && index < afile.finalindex) {
           data[j + 1] = afile.getYData(index);
           if (calibInt) {
-            if (intensityCalibration[i] > 0)
+            if (intensityCalibration[i] != 0 && !Double.isNaN(intensityCalibration[i]))
               data[j + 1] /= intensityCalibration[i];
           }
           if (calibLP) {
@@ -1987,7 +1987,7 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
             if (afile.xInsideRange(datafit[j]) || !markExcludedRegion) {
               datafit[j + 1] = PlotDataFile.getFitIntensity(afile, datafit[j], index);
               if (calibInt) {
-                if (intensityCalibration[i] > 0)
+                if (intensityCalibration[i] != 0 && !Double.isNaN(intensityCalibration[i]))
                   datafit[j + 1] /= intensityCalibration[i];
               }
               if (calibLP) {
@@ -2028,7 +2028,7 @@ public class SpectrumPlotPanel extends CopyPrintablePanel {
                   dataphase[j + 1] = PlotDataFile.getPhaseFitIntensity(afile, dataphase[j], index, s);
                   if (addBkg) dataphase[j + 1] += PlotDataFile.getBackground(afile, dataphase[j], index);
                   if (calibInt) {
-                    if (intensityCalibration[i] > 0)
+                    if (intensityCalibration[i] != 0 && !Double.isNaN(intensityCalibration[i]))
                       dataphase[j + 1] /= intensityCalibration[i];
                   }
                   if (calibLP) {
