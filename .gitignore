@@ -22,6 +22,3 @@ ui.inf.xml
 usageView.xml
 web-browsers.xml
 /.pixi/
-/out/
-/ant_home/
-/maud_build.properties

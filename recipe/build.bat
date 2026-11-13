@@ -14,20 +14,19 @@ if not exist ant_home mkdir ant_home
 type nul > build_numbers\Maud_full_build.number
 set "SRC_FWD=%SRC_DIR:\=/%"
 set "JH_FWD=%JAVA_HOME:\=/%"
-(
-  echo java_version=21
-  echo build=%SRC_FWD%/out
-  echo JAVA_HOME=%JH_FWD%
-  echo openjdk=%JH_FWD%
-  echo installerDir=%SRC_FWD%/inst
-) > maud_build.properties
+rem One line at a time, not in a ( ) block: a ")" in a path would end the block.
+> maud_build.properties echo java_version=21
+>> maud_build.properties echo build=%SRC_FWD%/out
+>> maud_build.properties echo JAVA_HOME=%JH_FWD%
+>> maud_build.properties echo openjdk=%JH_FWD%
+>> maud_build.properties echo installerDir=%SRC_FWD%/inst
 rem ant.bat splits unquoted arguments at "=", so the -D argument is quoted whole.
 call ant "-Duser.home=%SRC_DIR%\ant_home" -propertyfile maud_build.properties build_full
 if errorlevel 1 exit 1
 
 if not exist "%PREFIX%\share\maud\lib" mkdir "%PREFIX%\share\maud\lib"
 for %%j in (libs\current\*.jar) do (
-  echo %%~nxj| findstr /b /l /c:"._" >nul || copy /y "%%j" "%PREFIX%\share\maud\lib\" >nul
+  echo %%~nxj| findstr /b /l /c:"._" >nul || copy /y "%%j" "%PREFIX%\share\maud\lib\" >nul || exit 1
 )
 copy /y out\Maud.jar "%PREFIX%\share\maud\lib\Maud.jar"
 if errorlevel 1 exit 1

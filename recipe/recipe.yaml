@@ -9,6 +9,9 @@ package:
 
 source:
   path: ..
+  filter:
+    exclude:
+      - .git/**
 
 build:
   number: 0
@@ -31,8 +34,14 @@ about:
   homepage: https://github.com/luttero/Maud
   repository: https://github.com/luttero/Maud
   license: BSD-3-Clause
-  license_file: LICENSE
+  license_file:
+    - LICENSE
+    - src/help/license_maud.txt
+    - src/license/lesser.txt
+    - src/license/license_superflip.txt
+    - src/license/SciMark.txt
   summary: MAUD (Materials Analysis Using Diffraction), jars to run with java -cp share/maud/lib/*
   description: |
     MAUD built from source. share/maud/lib also holds the third-party jars of
-    libs/current, which keep their own licences.
+    libs/current, which keep their own licences; the licence texts in the
+    repository are installed with the package.

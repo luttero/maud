@@ -2,7 +2,8 @@
 # conda-forge's OpenJDK:
 #   pixi run maud                          # the GUI
 #   pixi run maud-batch -file analysis.ins # batch mode (MaudText, headless)
-# Other pixi projects can depend on a MAUD commit:
+# Other pixi projects can depend on a MAUD commit (they also need
+# preview = ["pixi-build"] in their [workspace]):
 #   maud = { git = "https://github.com/luttero/Maud.git", rev = "<commit>" }
 # The tasks run in the directory pixi was called from, so relative paths work.
 # The jars are installed in $CONDA_PREFIX/share/maud/lib.
