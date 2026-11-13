@@ -1,0 +1,29 @@
+# MAUD as a pixi workspace, built from this repository with ant and run with
+# conda-forge's OpenJDK:
+#   pixi run maud                          # the GUI
+#   pixi run maud-batch -file analysis.ins # batch mode (MaudText, headless)
+# Other pixi projects can depend on a MAUD commit:
+#   maud = { git = "https://github.com/luttero/Maud.git", rev = "<commit>" }
+# The tasks run in the directory pixi was called from, so relative paths work.
+# The jars are installed in $CONDA_PREFIX/share/maud/lib.
+# The build recipe, with the package version, is recipe/recipe.yaml. On a new
+# MAUD release, set its version to maud_version in
+# src/it/unitn/ing/rista/util/Constants.java (the build fails otherwise).
+[workspace]
+name = "maud"
+channels = ["conda-forge"]
+platforms = ["linux-64", "linux-aarch64", "osx-64", "osx-arm64", "win-64"]
+preview = ["pixi-build"]
+
+[package]
+name = "maud"
+
+[package.build]
+backend = { name = "pixi-build-rattler-build", version = "*" }
+
+[dependencies]
+maud = { path = "." }
+
+[tasks]
+maud = "cd \"$INIT_CWD\" && java -Xmx16g --enable-native-access=ALL-UNNAMED --add-opens java.base/java.net=ALL-UNNAMED -cp \"$CONDA_PREFIX/share/maud/lib/*\" com.radiographema.Maud"
+maud-batch = "cd \"$INIT_CWD\" && java -Xmx16g -Djava.awt.headless=true --enable-native-access=ALL-UNNAMED --add-opens java.base/java.net=ALL-UNNAMED -cp \"$CONDA_PREFIX/share/maud/lib/*\" com.radiographema.MaudText"

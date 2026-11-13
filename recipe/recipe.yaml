@@ -1,0 +1,38 @@
+# Builds Maud.jar from this repository with ant (target build_full) and installs
+# it, with the third-party jars of libs/current, into $PREFIX/share/maud/lib.
+# noarch: jars only; the JVM is conda-forge's openjdk. The build scripts are
+# build.sh (Linux, macOS) and build.bat (Windows); each fails if the version
+# below differs from maud_version in src/it/unitn/ing/rista/util/Constants.java.
+package:
+  name: maud
+  version: "3.09"
+
+source:
+  path: ..
+
+build:
+  number: 0
+  noarch: generic
+
+requirements:
+  build:
+    - openjdk 21.*
+    - ant
+  run:
+    - openjdk 21.*
+
+tests:
+  - package_contents:
+      files:
+        - share/maud/lib/Maud.jar
+        - share/maud/lib/Files.jar
+
+about:
+  homepage: https://github.com/luttero/Maud
+  repository: https://github.com/luttero/Maud
+  license: BSD-3-Clause
+  license_file: LICENSE
+  summary: MAUD (Materials Analysis Using Diffraction), jars to run with java -cp share/maud/lib/*
+  description: |
+    MAUD built from source. share/maud/lib also holds the third-party jars of
+    libs/current, which keep their own licences.
