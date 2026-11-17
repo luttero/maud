@@ -24,6 +24,7 @@ backend = { name = "pixi-build-rattler-build", version = "*" }
 
 [dependencies]
 maud = { path = "." }
+openjdk = "21.*"
 
 [tasks]
 maud = "cd \"$INIT_CWD\" && java -Xmx16g --enable-native-access=ALL-UNNAMED --add-opens java.base/java.net=ALL-UNNAMED -cp \"$CONDA_PREFIX/share/maud/lib/*\" com.radiographema.Maud"

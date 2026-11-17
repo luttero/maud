@@ -19,10 +19,12 @@ build:
 
 requirements:
   build:
+    # Java 21 gives class files identical to the official release.
     - openjdk 21.*
     - ant
   run:
-    - openjdk 21.*
+    # MAUD needs Java 21 or later; Java 26 removed java.applet, which MAUD uses.
+    - openjdk >=21,<26
 
 tests:
   - package_contents:
