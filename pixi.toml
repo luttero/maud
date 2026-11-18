@@ -1,11 +1,14 @@
 # MAUD as a pixi workspace, built from this repository with ant and run with
 # conda-forge's OpenJDK:
-#   pixi run maud                          # the GUI
-#   pixi run maud-batch -file analysis.ins # batch mode (MaudText, headless)
+#   cd /path/to/analysis
+#   pixi run --manifest-path /path/to/Maud/pixi.toml maud         # the GUI
+#   pixi run --manifest-path /path/to/Maud/pixi.toml maud-batch -file analysis.ins
+# The tasks run in the directory pixi was called from, so relative paths work.
+# Start them outside this checkout: any new file in it (MAUD's outputs, or on
+# macOS its file-chooser history) makes pixi rebuild MAUD on the next run.
 # Other pixi projects can depend on a MAUD commit (they also need
 # preview = ["pixi-build"] in their [workspace]):
 #   maud = { git = "https://github.com/luttero/Maud.git", rev = "<commit>" }
-# The tasks run in the directory pixi was called from, so relative paths work.
 # The jars are installed in $CONDA_PREFIX/share/maud/lib.
 # The build recipe, with the package version, is recipe/recipe.yaml. On a new
 # MAUD release, set its version to maud_version in
