@@ -1,0 +1,34 @@
+# MAUD as a pixi workspace, built from this repository with ant and run with
+# conda-forge's OpenJDK:
+#   cd /path/to/analysis
+#   pixi run --manifest-path /path/to/Maud/pixi.toml maud         # the GUI
+#   pixi run --manifest-path /path/to/Maud/pixi.toml maud-batch -file analysis.ins
+# The tasks run in the directory pixi was called from, so relative paths work.
+# Start them outside this checkout: any new file in it (MAUD's outputs, or on
+# macOS its file-chooser history) makes pixi rebuild MAUD on the next run.
+# Other pixi projects can depend on a MAUD commit (they also need
+# preview = ["pixi-build"] in their [workspace]):
+#   maud = { git = "https://github.com/luttero/Maud.git", rev = "<commit>" }
+# The jars are installed in $CONDA_PREFIX/share/maud/lib.
+# The build recipe, with the package version, is recipe/recipe.yaml. On a new
+# MAUD release, set its version to maud_version in
+# src/it/unitn/ing/rista/util/Constants.java (the build fails otherwise).
+[workspace]
+name = "maud"
+channels = ["conda-forge"]
+platforms = ["linux-64", "linux-aarch64", "osx-64", "osx-arm64", "win-64"]
+preview = ["pixi-build"]
+
+[package]
+name = "maud"
+
+[package.build]
+backend = { name = "pixi-build-rattler-build", version = "*" }
+
+[dependencies]
+maud = { path = "." }
+openjdk = "21.*"
+
+[tasks]
+maud = "cd \"$INIT_CWD\" && java -Xmx16g --enable-native-access=ALL-UNNAMED --add-opens java.base/java.net=ALL-UNNAMED -cp \"$CONDA_PREFIX/share/maud/lib/*\" com.radiographema.Maud"
+maud-batch = "cd \"$INIT_CWD\" && java -Xmx16g -Djava.awt.headless=true --enable-native-access=ALL-UNNAMED --add-opens java.base/java.net=ALL-UNNAMED -cp \"$CONDA_PREFIX/share/maud/lib/*\" com.radiographema.MaudText"
